@@ -65,7 +65,6 @@ namespace HaXeContext.Model
         private bool inGeneric;
         private bool inValue;
         private bool hadValue;
-        private bool inConst;
         private bool inType;
         private bool inAnonType;
         private int flattenNextBlock;
@@ -178,7 +177,6 @@ namespace HaXeContext.Model
             inAbstract = false;
             inValue = false;
             hadValue = false;
-            inConst = false;
             inType = false;
             inGeneric = false;
             inAnonType = false;
@@ -448,7 +446,7 @@ namespace HaXeContext.Model
                         if (matchStart.Success)
                         {
                             string regionName = matchStart.Groups["name"].Value.Trim();
-                            MemberModel region = new MemberModel(regionName, String.Empty, FlagType.Declaration, Visibility.Default);
+                            MemberModel region = new MemberModel(regionName, string.Empty, FlagType.Declaration, Visibility.Default);
                             region.LineFrom = line;
                             model.Regions.Add(region);
                         }
@@ -597,7 +595,7 @@ namespace HaXeContext.Model
                     }
 
                     // in params, store the default value
-                    else if ((inParams || inType || inConst) && valueLength < VALUE_BUFFER)
+                    else if ((inParams || inType) && valueLength < VALUE_BUFFER)
                     {
                         if (c1 <= 32)
                         {
@@ -654,48 +652,40 @@ namespace HaXeContext.Model
                     else if (inType)
                     {
                         foundColon = false;
-                        if (true)
+                        if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
                         {
-                            if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
-                            {
-                                length = 0;
-                                valueLength = 0;
-                                hadValue = false;
-                                inValue = false;
-                                param = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
-                                if (string.IsNullOrEmpty(curMember.Type)) curMember.Type = param;
-                                else curMember.Type += param;
-                                i -= 2;
-                                continue;
-                            }
-                            if (param.EndsWith('}') || param.Contains('>'))
-                            {
-                                param = ASFileParserRegexes.Spaces.Replace(param, "");
-                                param = param.Replace(",", ", ");
-                                //param = param.Replace("->", " -> ");
-                            }
+                            length = 0;
+                            valueLength = 0;
+                            hadValue = false;
+                            inValue = false;
+                            param = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                            if (string.IsNullOrEmpty(curMember.Type)) curMember.Type = param;
+                            else curMember.Type += param;
+                            i -= 2;
+                            continue;
+                        }
+                        if (param.EndsWith('}') || param.Contains('>'))
+                        {
+                            param = ASFileParserRegexes.Spaces.Replace(param, "");
+                            param = param.Replace(",", ", ");
+                            //param = param.Replace("->", " -> ");
                         }
                         curMember.Type = param;
                         length = 0;
                         inType = false;
                     }
-                    // AS3 const or method parameter's default value 
+                    // method parameter's default value 
                     else if ((curMember.Flags & FlagType.Variable) > 0)
                     {
-                        if (inParams || inConst) curMember.Value = param;
+                        if (inParams) curMember.Value = param;
                         curMember.LineTo = line;
                         if (c1 == '\r' || c1 == '\n') curMember.LineTo--;
-                        if (inConst && c1 != ',')
-                        {
-                            context = 0;
-                            inConst = false;
-                        }
                     }
                     //
                     hadValue = false;
                     valueLength = 0;
                     valueMember = null;
-                    if (!inParams && !(inConst && context != 0) && c1 != '{' && c1 != ',') continue;
+                    if (!inParams && c1 != '{' && c1 != ',') continue;
                     length = 0;
                 }
 
@@ -1099,7 +1089,6 @@ namespace HaXeContext.Model
                                 curMethod.Name = curToken.Text;
                                 curMethod.Flags = curModifiers | FlagType.Function | FlagType.Static;
                                 curMethod.Parameters = new List<MemberModel>();
-                                //
                                 if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
                             }
 
@@ -1112,7 +1101,6 @@ namespace HaXeContext.Model
                                 curMethod.Name = curToken.Text;
                                 curMethod.Flags = curModifiers | FlagType.Function;
                                 curMethod.Parameters = new List<MemberModel>();
-                                //
                                 if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
                             }
                             // an Abstract "opaque type"
@@ -1130,7 +1118,7 @@ namespace HaXeContext.Model
                         // end of statement
                         else if (c1 == ';')
                         {
-                            context = (inEnum) ? FlagType.Enum : 0;
+                            context = inEnum ? FlagType.Enum : 0;
                             inGeneric = false;
                             inType = false;
                             modifiers = 0;
@@ -1157,7 +1145,6 @@ namespace HaXeContext.Model
                                 {
                                     inValue = true;
                                     hadValue = false;
-                                    inConst = (curMember.Flags & FlagType.Constant) > 0;
                                     inType = false;
                                     inGeneric = false;
                                     paramBraceCount = 0;
@@ -1210,7 +1197,6 @@ namespace HaXeContext.Model
                 if (addChar)
                 {
                     if (length < TOKEN_BUFFER) buffer[length++] = c1;
-
                     if (length == 1)
                     {
                         tokPos = i - 1;
@@ -1365,8 +1351,8 @@ namespace HaXeContext.Model
         /// <returns>A keyword was found</returns>
         private bool EvalToken(bool evalContext, bool evalKeyword)
         {
-            bool hadContext = (context != 0);
-            bool hadKeyword = (foundKeyword != 0);
+            bool hadContext = context != 0;
+            bool hadKeyword = foundKeyword != 0;
             foundKeyword = 0;
 
             /* KEYWORD EVALUATION */
@@ -1421,13 +1407,11 @@ namespace HaXeContext.Model
                     foundKeyword = FlagType.Enum;
                     modifiers |= FlagType.Enum;
                 }
-
                 // head declarations
                 else if (token == features.importKey || token == features.importKeyAlt)
                 {
                     foundKeyword = FlagType.Import;
                 }
-
                 // modifiers
                 else
                 {
@@ -1472,7 +1456,6 @@ namespace HaXeContext.Model
                             }
                         }
                     }
-
                     // properties
                     else if (context == FlagType.Function)
                     {
@@ -1548,7 +1531,6 @@ namespace HaXeContext.Model
                         inAbstract = false;
                         inValue = false;
                         hadValue = false;
-                        inConst = false;
                         inType = false;
                         inGeneric = false;
                         valueMember = null;
@@ -1565,7 +1547,6 @@ namespace HaXeContext.Model
                             //modifiersPos = curToken.Position;
                         }
                         modifiers |= foundModifier;
-
                         return true;
                     }
                 }
@@ -1590,7 +1571,6 @@ namespace HaXeContext.Model
                 inGeneric = false;
                 inValue = false;
                 hadValue = false;
-                inConst = false;
                 if (token != "function") valueMember = null;
                 foundColon = false;
                 foundConstant = false;
@@ -1604,48 +1584,46 @@ namespace HaXeContext.Model
                 curMember = null;
                 return true;
             }
-            else
+
+            // when not in a class, parse if/for/while blocks
+            if (ScriptMode)
             {
-                // when not in a class, parse if/for/while blocks
-                if (ScriptMode)
+                if (token == "catch" || token == "for")
                 {
-                    if (token == "catch" || token == "for")
-                    {
-                        curModifiers = 0;
-                        foundKeyword = FlagType.Variable;
-                        context = FlagType.Variable;
-                        return false;
-                    }
+                    curModifiers = 0;
+                    foundKeyword = FlagType.Variable;
+                    context = FlagType.Variable;
+                    return false;
                 }
+            }
 
-                if (inValue && valueMember != null) valueMember = null;
-                if (!evalContext) return false;
-                if (dotIndex > 0) token = curToken.Text;
+            if (inValue && valueMember != null) valueMember = null;
+            if (!evalContext) return false;
+            if (dotIndex > 0) token = curToken.Text;
 
-                // some heuristic around Enums & Typedefs
-                if (inEnum && !inValue)
-                {
-                    curModifiers = 0;
-                    curAccess = Visibility.Public;
-                }
-                if (inTypedef && !inValue && curModifiers != FlagType.Extends)
-                {
-                    curModifiers = 0;
-                    curAccess = Visibility.Public;
-                }
-                else if (!inTypedef && curModifiers == FlagType.TypeDef && curClass != null && token != "extends")
-                {
-                    curClass.ExtendsType = token;
-                    curModifiers = 0;
-                    context = 0;
-                    curComment = null;
-                    curClass = null;
-                    curNamespace = "internal";
-                    curAccess = 0;
-                    modifiers = 0;
-                    modifiersLine = 0;
-                    return true;
-                }
+            // some heuristic around Enums & Typedefs
+            if (inEnum && !inValue)
+            {
+                curModifiers = 0;
+                curAccess = Visibility.Public;
+            }
+            if (inTypedef && !inValue && curModifiers != FlagType.Extends)
+            {
+                curModifiers = 0;
+                curAccess = Visibility.Public;
+            }
+            else if (!inTypedef && curModifiers == FlagType.TypeDef && curClass != null && token != "extends")
+            {
+                curClass.ExtendsType = token;
+                curModifiers = 0;
+                context = 0;
+                curComment = null;
+                curClass = null;
+                curNamespace = "internal";
+                curAccess = 0;
+                modifiers = 0;
+                modifiersLine = 0;
+                return true;
             }
 
 
@@ -1727,7 +1705,7 @@ namespace HaXeContext.Model
                             }
                         }
                         else if ((context == FlagType.Class && (prevToken.Text == "class" || prevToken.Text == "interface"))
-                            || (context == FlagType.Struct && prevToken.Text == "struct"))
+                                 || (context == FlagType.Struct && prevToken.Text == "struct"))
                         {
                             if (curClass != null)
                             {

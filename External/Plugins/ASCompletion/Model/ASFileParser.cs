@@ -1926,16 +1926,6 @@ namespace ASCompletion.Model
                                 member.Flags |= FlagType.Constant; 
                             model.Imports.Add(member);
                         }
-                        else if (prevToken.Text == features.importKeyAlt)
-                        {
-                            member = new MemberModel();
-                            member.Name = LastStringToken(token, ".");
-                            member.Type = token;
-                            member.LineFrom = prevToken.Line;
-                            member.LineTo = curToken.Line;
-                            member.Flags = FlagType.Class | FlagType.Using;
-                            model.Imports.Add(member);
-                        }
                         break;
 
                     case FlagType.Class: 
