@@ -3052,7 +3052,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Infer very simple cases: function foo(value = {expression})
         /// </summary>
-        private void InferParameterVarType(MemberModel var)
+        protected void InferParameterVarType(MemberModel var)
         {
             var ctx = ASContext.Context;
             var type = ctx.ResolveToken(var.Value, ctx.CurrentModel);
