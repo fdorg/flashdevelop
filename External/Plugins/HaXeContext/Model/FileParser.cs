@@ -4,7 +4,6 @@
  * Date: 18/03/2006
  * Time: 19:03
  */
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,6 @@ using PluginCore;
 
 namespace HaXeContext.Model
 {
-
     #region Token class
     class Token
     {
@@ -38,45 +36,8 @@ namespace HaXeContext.Model
     }
     #endregion
 
-    #region ASFileParserRegexes class
-    //
-    public class ASFileParserRegexes
-    {
-        public static readonly Regex Spaces = new Regex("\\s+", RegexOptions.Compiled);
-        public static readonly Regex RegionStart = new Regex(@"^{[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
-        public static readonly Regex RegionEnd = new Regex(@"^}[ ]?endregion", RegexOptions.Compiled);
-        public static readonly Regex QuotedString = new Regex("(\"(\\\\.|[^\"\\\\])*\")|('(\\\\.|[^'\\\\])*')", RegexOptions.Compiled);
-        public static readonly Regex FunctionType = new Regex(@"\)\s*\:\s*(?<fType>[\w\$\.\<\>\@]+)", RegexOptions.Compiled);
-        public static readonly Regex ValidTypeName = new Regex("^(\\s*of\\s*)?(?<type>[\\w.\\$]*)$", RegexOptions.Compiled);
-        public static readonly Regex ValidObjectType = new Regex("^(?<type>[\\w.,\\$]*)$", RegexOptions.Compiled);
-        public static readonly Regex Import = new Regex("^[\\s]*import[\\s]+(?<package>[\\w.]+)",
-                                                        ASFileParserRegexOptions.MultilineComment);
-        public static readonly Regex Parameter = new Regex(@"[\(,]\s*((?<pName>(\.\.\.)?[\w\$]+)\s*(\:\s*(?<pType>[\w\$\*\.\<\>\@]+))?(\s*\=\s*(?<pVal>[^\,\)]+))?)",
-                                                           RegexOptions.Compiled);
-        public static readonly Regex BalancedBraces = new Regex("{[^{}]*(((?<Open>{)[^{}]*)+((?<Close-Open>})[^{}]*)+)*(?(Open)(?!))}",
-                                                                ASFileParserRegexOptions.SinglelineComment);
-
-        private const string typeChars = @"[\w\$][\w\d\$]*";
-        private const string typeClsf = @"(\s*(?<Classifier>" + typeChars + @"(\." + typeChars + ")*" + @"(\:\:?" + typeChars + ")?" + @")\s*)";
-        private const string typeComment = @"(\s*\/\*(?<Comment>.*)\*\/\s*)";
-        public static readonly Regex TypeDefinition = new Regex(@"^((" + typeClsf + typeComment + ")|(" + typeComment + typeClsf + ")|(" + typeClsf + "))$",
-                                                                RegexOptions.Compiled);
-    }
-    //
-    #endregion
-
-    #region ASFileParserRegexOptions class
-    //
-    public class ASFileParserRegexOptions
-    {
-        public const RegexOptions MultilineComment = RegexOptions.Compiled | RegexOptions.Multiline;
-        public const RegexOptions SinglelineComment = RegexOptions.Compiled | RegexOptions.Singleline;
-    }
-    //
-    #endregion
-
     /// <summary>
-    /// Old & clumsy AS2/AS3/haxe file parser - beware!
+    /// Old & clumsy Haxe file parser - beware!
     /// </summary>
     public class FileParser : IFileParser
     {
@@ -125,9 +86,9 @@ namespace HaXeContext.Model
         private List<ASMetaData> carriedMetaData;
         #endregion
 
-        #region tokenizer
-
         public bool ScriptMode { private get; set;}
+
+        #region tokenizer
 
         public FileParser() : this(new ContextFeatures())
         {
@@ -330,28 +291,6 @@ namespace HaXeContext.Model
 
                                 // Even number of escaped \ means we are not on an escaped ' or ""
                                 if (escNo % 2 == 0) inString = 0;
-                            }
-
-                            // extract "include" declarations
-                            if (inString == 0 && length == 7 && context == 0)
-                            {
-                                string token = new string(buffer, 0, length);
-                                if (token == "include")
-                                {
-                                    string inc = ba.Substring(tokPos, i - tokPos);
-                                    ASMetaData meta = new ASMetaData("Include");
-                                    meta.ParseParams(inc);
-                                    if (curClass == null)
-                                    {
-                                        if (carriedMetaData == null) carriedMetaData = new List<ASMetaData>();
-                                        carriedMetaData.Add(meta);
-                                    }
-                                    else
-                                    {
-                                        if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
-                                        curClass.MetaDatas.Add(meta);
-                                    }
-                                }
                             }
                         }
                         break;
@@ -771,14 +710,14 @@ namespace HaXeContext.Model
                 // a dot can be in an identifier
                 if (c1 == '.')
                 {
-                    if (length > 0 || (inParams && 4 == 3))
+                    if (length > 0)
                     {
                         hadWS = false;
                         hadDot = true;
                         addChar = true;
                         if (!inValue && context == FlagType.Variable && !foundColon)
                         {
-                            bool keepContext = inParams && (length == 0 || buffer[0] == '.');
+                            var keepContext = inParams && (length == 0 || buffer[0] == '.');
                             if (!keepContext) context = 0;
                         }
                     }
@@ -1176,14 +1115,12 @@ namespace HaXeContext.Model
                                 //
                                 if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
                             }
-
                             // an Abstract "opaque type"
                             else if (context == FlagType.Abstract && prevToken.Text == "abstract") 
                             {
                                 foundKeyword = FlagType.Class;
                                 curModifiers = FlagType.Extends;
                             }
-
                             else if (curMember == null && curToken.Text != "catch" && curToken.Text != "for")
                             {
                                 context = 0;
@@ -1449,22 +1386,6 @@ namespace HaXeContext.Model
                 {
                     foundKeyword = FlagType.Function;
                 }
-                else if (features.hasConsts && token == "const")
-                {
-                    foundKeyword = FlagType.Variable;
-                    modifiers |= FlagType.Constant;
-                }
-                else if (features.hasNamespaces && token == "namespace")
-                {
-                    if (context == 0 && prevToken.Text != "use")
-                        foundKeyword = FlagType.Namespace;
-                }
-                else if (features.hasDelegates && token == "delegate")
-                {
-                    foundKeyword = FlagType.Function;
-                    modifiers |= FlagType.Delegate;
-                }
-
                 // class declaration
                 else if (tryPackage && token == "package")
                 {
@@ -1616,15 +1537,6 @@ namespace HaXeContext.Model
                         {
                             foundModifier = FlagType.Dynamic;
                         }
-                        // namespace modifier
-                        else if (features.hasNamespaces && model.Namespaces.Count > 0)
-                            foreach (var ns in model.Namespaces)
-                                if (token == ns.Key)
-                                {
-                                    curAccess = ns.Value;
-                                    curNamespace = token;
-                                    foundModifier = FlagType.Namespace;
-                                }
                     }
                     // a declaration modifier was recognized
                     if (foundModifier != 0)
