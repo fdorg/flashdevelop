@@ -177,6 +177,10 @@ namespace HaXeContext.Generators
                     .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateSwitchLabels_issue2285_18"))
                     .SetName("Generate switch labels. Issue 2285. Case 18")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2285");
+                yield return new TestCaseData("BeforeGenerateSwitchLabels_issue2285_19", GeneratorJobType.Switch, false)
+                    .Returns(null)
+                    .SetName("Generate switch labels. Issue 2285. Case 19")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2285");
             }
         }
 

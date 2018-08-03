@@ -443,7 +443,9 @@ namespace HaXeContext.Generators
         bool CanShowGenerateSwitch(ScintillaControl sci, int position, ASResult expr)
         {
             var member = expr.Member;
-            if (member == null || member.Flags.HasFlag(FlagType.Enum)) return false;
+            if (member == null
+                || member.Flags.HasFlag(FlagType.Enum) 
+                || (member.Flags.HasFlag(FlagType.ParameterVar) && expr.Context.BeforeBody)) return false;
             var ctx = ASContext.Context;
             var word = expr.Context.WordBefore;
             if (word == ctx.Features.varKey || word == ctx.Features.functionKey) return false;
