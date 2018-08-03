@@ -52,7 +52,7 @@ namespace ASCompletion.Model
         TypedCallback = 3,
         TypedObject = 4
     }
-    //
+    
     #endregion
 
     #region TypeCommentUtils class
@@ -61,17 +61,8 @@ namespace ASCompletion.Model
     /// </summary>
     public class TypeCommentUtils
     {
-        //---------------------
-        // FIELDS
-        //---------------------
-
-        public static string ObjectType = "Object"; // will differ in haxe
+        const string ObjectType = "Object";
         private static Random random = new Random(123456);
-
-
-        //---------------------
-        // PUBLIC METHODS
-        //---------------------
 
         /// <summary>
         /// Type-comment parsing into model (source and destination)
@@ -299,11 +290,11 @@ namespace ASCompletion.Model
             return fm;
         }
     }
-    //
+    
     #endregion
 
     #region ASFileParserRegexes class
-    //
+    
     public class ASFileParserRegexes
     {
         public static readonly Regex Spaces = new Regex("\\s+", RegexOptions.Compiled);
@@ -313,20 +304,16 @@ namespace ASCompletion.Model
         public static readonly Regex FunctionType = new Regex(@"\)\s*\:\s*(?<fType>[\w\$\.\<\>\@]+)", RegexOptions.Compiled);
         public static readonly Regex ValidTypeName = new Regex("^(\\s*of\\s*)?(?<type>[\\w.\\$]*)$", RegexOptions.Compiled);
         public static readonly Regex ValidObjectType = new Regex("^(?<type>[\\w.,\\$]*)$", RegexOptions.Compiled);
-        public static readonly Regex Import = new Regex("^[\\s]*import[\\s]+(?<package>[\\w.]+)",
-                                                        ASFileParserRegexOptions.MultilineComment);
-        public static readonly Regex Parameter = new Regex(@"[\(,]\s*((?<pName>(\.\.\.)?[\w\$]+)\s*(\:\s*(?<pType>[\w\$\*\.\<\>\@]+))?(\s*\=\s*(?<pVal>[^\,\)]+))?)",
-                                                           RegexOptions.Compiled);
-        public static readonly Regex BalancedBraces = new Regex("{[^{}]*(((?<Open>{)[^{}]*)+((?<Close-Open>})[^{}]*)+)*(?(Open)(?!))}",
-                                                                ASFileParserRegexOptions.SinglelineComment);
+        public static readonly Regex Import = new Regex("^[\\s]*import[\\s]+(?<package>[\\w.]+)", ASFileParserRegexOptions.MultilineComment);
+        public static readonly Regex Parameter = new Regex(@"[\(,]\s*((?<pName>(\.\.\.)?[\w\$]+)\s*(\:\s*(?<pType>[\w\$\*\.\<\>\@]+))?(\s*\=\s*(?<pVal>[^\,\)]+))?)", RegexOptions.Compiled);
+        public static readonly Regex BalancedBraces = new Regex("{[^{}]*(((?<Open>{)[^{}]*)+((?<Close-Open>})[^{}]*)+)*(?(Open)(?!))}", ASFileParserRegexOptions.SinglelineComment);
 
         private const string typeChars = @"[\w\$][\w\d\$]*";
         private const string typeClsf = @"(\s*(?<Classifier>" + typeChars + @"(\." + typeChars + ")*" + @"(\:\:?" + typeChars + ")?" + @")\s*)";
         private const string typeComment = @"(\s*\/\*(?<Comment>.*)\*\/\s*)";
-        public static readonly Regex TypeDefinition = new Regex(@"^((" + typeClsf + typeComment + ")|(" + typeComment + typeClsf + ")|(" + typeClsf + "))$",
-                                                                RegexOptions.Compiled);
+        public static readonly Regex TypeDefinition = new Regex(@"^((" + typeClsf + typeComment + ")|(" + typeComment + typeClsf + ")|(" + typeClsf + "))$", RegexOptions.Compiled);
     }
-    //
+    
     #endregion
 
     #region ASFileParserRegexOptions class
@@ -340,7 +327,7 @@ namespace ASCompletion.Model
     #endregion
 
     #region ASFileParserUtils class
-    //
+    
     public class ASFileParserUtils
     {
         /// <summary>
@@ -403,7 +390,7 @@ namespace ASCompletion.Model
             return TypeCommentUtils.Parse(typeComment, model);
         }
     }
-    //
+    
     #endregion
 
     public interface IFileParser
@@ -420,7 +407,7 @@ namespace ASCompletion.Model
     }
 
     /// <summary>
-    /// Old & clumsy AS2/AS3/haxe file parser - beware!
+    /// Old & clumsy AS2/AS3 file parser - beware!
     /// </summary>
     public class ASFileParser : IFileParser
     {
@@ -471,9 +458,6 @@ namespace ASCompletion.Model
         private bool foundColon;
         private bool foundConstant;
         private bool inParams;
-        private bool inEnum;
-        private bool inTypedef;
-        private bool inAbstract;
         private bool inGeneric;
         private bool inValue;
         private bool hadValue;
@@ -569,7 +553,6 @@ namespace ASCompletion.Model
             // tokenisation
             tryPackage = true;
             hasPackageSection = false;
-            TypeCommentUtils.ObjectType = features.dynamicKey;
             version = 1;
             curToken = new Token();
             prevToken = new Token();
@@ -595,9 +578,6 @@ namespace ASCompletion.Model
             bool hadWS = true;
             bool hadDot = false;
             inParams = false;
-            inEnum = false;
-            inTypedef = false;
-            inAbstract = false;
             inValue = false;
             hadValue = false;
             inConst = false;
@@ -1178,7 +1158,7 @@ namespace ASCompletion.Model
                         {
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
-                            // AS3/Haxe generics
+                            // AS3 generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
@@ -1275,59 +1255,6 @@ namespace ASCompletion.Model
                         {
                             // parse package/class block
                             if (context == FlagType.Package || context == FlagType.Class) context = 0;
-                            else if (context == FlagType.Enum) // parse enum block
-                            {
-                                if (curClass != null && (curClass.Flags & FlagType.Enum) > 0) inEnum = true;
-                                else
-                                {
-                                    context = 0;
-                                    curModifiers = 0;
-                                    braceCount++; // ignore block
-                                }
-                            }
-                            else if (context == FlagType.TypeDef) // parse typedef block
-                            {
-                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) > 0)
-                                {
-                                    inTypedef = true;
-                                    var pos = i;
-                                    while (pos < len)
-                                    {
-                                        var c = ba[pos++];
-                                        if (c <= ' ') continue;
-                                        if (c == '>')
-                                        {
-                                            buffer[0] = 'e';
-                                            buffer[1] = 'x';
-                                            buffer[2] = 't';
-                                            buffer[3] = 'e';
-                                            buffer[4] = 'n';
-                                            buffer[5] = 'd';
-                                            buffer[6] = 's';
-                                            length = 7;
-                                            context = FlagType.Class;
-                                        }
-                                        break;
-                                    }
-                                }
-                                else
-                                {
-                                    context = 0;
-                                    curModifiers = 0;
-                                    braceCount++; // ignore block
-                                }
-                            }
-                            else if (context == FlagType.Abstract) // parse abstract block
-                            {
-                                if (curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
-                                    inAbstract = true;
-                                else
-                                {
-                                    context = 0;
-                                    curModifiers = 0;
-                                    braceCount++; // ignore block
-                                }
-                            }
                             else if (foundConstant) // start config block
                             {
                                 flattenNextBlock++;
@@ -1351,15 +1278,11 @@ namespace ASCompletion.Model
                             {
                                 flattenNextBlock--;
                             }
-
                             // outside of a method, the '}' ends the current class
                             else if (curClass != null)
                             {
                                 curClass.LineTo = line;
                                 curClass = null;
-                                inEnum = false;
-                                inTypedef = false;
-                                inAbstract = false;
                             }
                             else
                             {
@@ -1378,7 +1301,7 @@ namespace ASCompletion.Model
                         // next variable declaration
                         else if (c1 == ',')
                         {
-                            if ((context == FlagType.Variable || context == FlagType.TypeDef) && curMember != null)
+                            if (context == FlagType.Variable && curMember != null)
                             {
                                 curAccess = curMember.Access;
                                 foundKeyword = FlagType.Variable;
@@ -1440,36 +1363,6 @@ namespace ASCompletion.Model
                                     curMethod = curMember;
                                 }
                             }
-                            // an Enum value with parameters
-                            else if (inEnum)
-                            {
-                                context = FlagType.Variable;
-                                inParams = true;
-                                curMethod = curMember ?? new MemberModel();
-                                curMethod.Name = curToken.Text;
-                                curMethod.Flags = curModifiers | FlagType.Function | FlagType.Static;
-                                curMethod.Parameters = new List<MemberModel>();
-                                //
-                                if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
-                            }
-                            // a TypeDef method with parameters
-                            else if (inTypedef)
-                            {
-                                context = FlagType.Variable;
-                                inParams = true;
-                                curMethod = curMember ?? new MemberModel();
-                                curMethod.Name = curToken.Text;
-                                curMethod.Flags = curModifiers | FlagType.Function;
-                                curMethod.Parameters = new List<MemberModel>();
-                                //
-                                if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
-                            }
-                            // an Abstract "opaque type"
-                            else if (context == FlagType.Abstract && prevToken.Text == "abstract") 
-                            {
-                                foundKeyword = FlagType.Class;
-                                curModifiers = FlagType.Extends;
-                            }
                             else if (curMember == null && curToken.Text != "catch")
                             {
                                 context = 0;
@@ -1479,7 +1372,7 @@ namespace ASCompletion.Model
                         // end of statement
                         else if (c1 == ';')
                         {
-                            context = (inEnum) ? FlagType.Enum : 0;
+                            context = 0;
                             inGeneric = false;
                             inType = false;
                             modifiers = 0;
@@ -1490,9 +1383,7 @@ namespace ASCompletion.Model
                         else if (c1 == ')' && inParams)
                         {
                             context = 0;
-                            if (inEnum) context = FlagType.Enum;
-                            else if (inTypedef) context = FlagType.TypeDef;
-                            else context = FlagType.Variable;
+                            context = FlagType.Variable;
                             modifiers = 0;
                             inParams = false;
                             curMember = curMethod;
@@ -1500,7 +1391,7 @@ namespace ASCompletion.Model
                         // skip value of a declared variable
                         else if (c1 == '=')
                         {
-                            if (context == FlagType.Variable || (context == FlagType.Enum && inEnum))
+                            if (context == FlagType.Variable)
                             {
                                 if (!inValue && curMember != null)
                                 {
@@ -1772,25 +1663,10 @@ namespace ASCompletion.Model
                         hasPackageSection = true;
                     }
                 }
-                else if (features.hasTypeDefs && token == "typedef")
-                {
-                    foundKeyword = FlagType.TypeDef;
-                    modifiers |= FlagType.TypeDef;
-                }
-                else if (features.hasTypeDefs && token == "abstract")
-                {
-                    foundKeyword = FlagType.Abstract;
-                    modifiers |= FlagType.Abstract;
-                }
                 else if (features.hasStructs && token == "struct")
                 {
                     foundKeyword = FlagType.Struct;
                     modifiers |= FlagType.Class | FlagType.Struct;
-                }
-                else if (features.hasEnums && token == "enum")
-                {
-                    foundKeyword = FlagType.Enum;
-                    modifiers |= FlagType.Enum;
                 }
                 // head declarations
                 else if (token == features.importKey)
@@ -1800,7 +1676,7 @@ namespace ASCompletion.Model
                 // modifiers
                 else
                 {
-                    if (context == FlagType.Class || context == FlagType.TypeDef)
+                    if (context == FlagType.Class)
                     {
                         if (token == "extends")
                         {
@@ -1815,33 +1691,6 @@ namespace ASCompletion.Model
                             return true;
                         }
                     }
-                    else if (context == FlagType.Abstract)
-                    {
-                        if (features.hasTypeDefs)
-                        {
-                            if (token == "from")
-                            {
-                                foundKeyword = FlagType.Class;
-                                curModifiers = FlagType.Extends;
-                                if (curClass != null)
-                                {
-                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
-                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
-                                }
-                                return true;
-                            }
-                            if (token == "to")
-                            {
-                                if (curClass != null)
-                                {
-                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
-                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
-                                }
-                                return true;
-                            }
-                        }
-                    }
-
                     // properties
                     else if (context == FlagType.Function)
                     {
@@ -1917,10 +1766,6 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Native;
                         }
-                        else if (version == 4 && token == "extern" && context != FlagType.Package)
-                        {
-                            foundModifier = FlagType.Intrinsic | FlagType.Extern;
-                        }
                         else if (token == "final")
                         {
                             foundModifier = FlagType.Final;
@@ -1931,7 +1776,7 @@ namespace ASCompletion.Model
                         }
                         // namespace modifier
                         else if (features.hasNamespaces && model.Namespaces.Count > 0)
-                            foreach (KeyValuePair<string, Visibility> ns in model.Namespaces)
+                            foreach (var ns in model.Namespaces)
                                 if (token == ns.Key)
                                 {
                                     curAccess = ns.Value;
@@ -1944,9 +1789,6 @@ namespace ASCompletion.Model
                     {
                         if (inParams && inValue) valueKeyword = new Token(curToken);
                         inParams = false;
-                        inEnum = false;
-                        inTypedef = false;
-                        inAbstract = false;
                         inValue = false;
                         hadValue = false;
                         inConst = false;
@@ -1966,7 +1808,6 @@ namespace ASCompletion.Model
                             //modifiersPos = curToken.Position;
                         }
                         modifiers |= foundModifier;
-
                         return true;
                     }
                 }
@@ -1985,9 +1826,6 @@ namespace ASCompletion.Model
 
                 if (inParams && inValue) valueKeyword = new Token(curToken);
                 inParams = false;
-                inEnum = false;
-                inTypedef = false;
-                inAbstract = false;
                 inGeneric = false;
                 inValue = false;
                 hadValue = false;
@@ -2005,50 +1843,22 @@ namespace ASCompletion.Model
                 curMember = null;
                 return true;
             }
-            else
+
+            // when not in a class, parse if/for/while blocks
+            if (ScriptMode)
             {
-                // when not in a class, parse if/for/while blocks
-                if (ScriptMode)
-                {
-                    if (token == "catch")
-                    {
-                        curModifiers = 0;
-                        foundKeyword = FlagType.Variable;
-                        context = FlagType.Variable;
-                        return false;
-                    }
-                }
-
-                if (inValue && valueMember != null) valueMember = null;
-                if (!evalContext) return false;
-                if (dotIndex > 0) token = curToken.Text;
-
-                // some heuristic around Enums & Typedefs
-                if (inEnum && !inValue)
+                if (token == "catch")
                 {
                     curModifiers = 0;
-                    curAccess = Visibility.Public;
-                }
-                if (inTypedef && !inValue && curModifiers != FlagType.Extends)
-                {
-                    curModifiers = 0;
-                    curAccess = Visibility.Public;
-                }
-                else if (!inTypedef && curModifiers == FlagType.TypeDef && curClass != null && token != "extends")
-                {
-                    curClass.ExtendsType = token;
-                    curModifiers = 0;
-                    context = 0;
-                    curComment = null;
-                    curClass = null;
-                    curNamespace = "internal";
-                    curAccess = 0;
-                    modifiers = 0;
-                    modifiersLine = 0;
-                    return true;
+                    foundKeyword = FlagType.Variable;
+                    context = FlagType.Variable;
+                    return false;
                 }
             }
 
+            if (inValue && valueMember != null) valueMember = null;
+            if (!evalContext) return false;
+            if (dotIndex > 0) token = curToken.Text;
 
             /* EVAL DECLARATION */
 
@@ -2063,7 +1873,7 @@ namespace ASCompletion.Model
                 if (TypeCommentUtils.Parse(lastComment, curMember) != TypeDefinitionKind.Null)
                     lastComment = null;
             }
-            else if (hadContext && (hadKeyword || inParams || inEnum || inTypedef))
+            else if (hadContext && (hadKeyword || inParams))
             {
                 MemberModel member;
                 switch (context)
@@ -2146,7 +1956,6 @@ namespace ASCompletion.Model
                                     }
                                 }
                                 curClass.ExtendsType = token;
-                                if (inTypedef) context = FlagType.TypeDef;
                             }
                         }
                         else if (curModifiers == FlagType.Implements)
@@ -2173,7 +1982,7 @@ namespace ASCompletion.Model
                                     model.Package = token.Substring(0, p);
                                     token = token.Substring(p + 1);
                                 }
-                                //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
+                                //TODO  Error: AS3 classes are qualified by their package declaration
                             }
 
                             if (model.PrivateSectionIndex != 0 && curToken.Line > model.PrivateSectionIndex)
@@ -2209,176 +2018,55 @@ namespace ASCompletion.Model
                         }
                         break;
 
-                    case FlagType.Enum:
-                        if (inEnum && curClass != null && prevToken.Text != "enum")
+                    case FlagType.Variable:
+                        member = new MemberModel();
+                        member.Comments = curComment;
+                        member.Name = token;
+                        if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
+                        member.Flags = curModifiers | FlagType.Variable;
+                        member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
+                        member.Namespace = curNamespace;
+                        member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
+                        member.LineTo = curToken.Line;
+                        //
+                        // method parameter
+                        if (inParams && curMethod != null)
                         {
-                            member = new MemberModel();
-                            member.Comments = curComment;
-                            member.Name = token;
-                            member.Flags = curModifiers | FlagType.Variable | FlagType.Enum | FlagType.Static;
-                            member.Access = Visibility.Public;
-                            member.Namespace = curNamespace;
-                            member.LineFrom = member.LineTo = curToken.Line;
-                            curClass.Members.Add(member);
-                            //
-                            curMember = member;
+                            member.Flags = FlagType.Variable | FlagType.ParameterVar;
+                            if (curMethod.Parameters == null) curMethod.Parameters = new List<MemberModel>();
+                            member.Access = 0;
+                            if (member.Name.Length > 0)
+                                curMethod.Parameters.Add(member);
                         }
+                        // class member
+                        else if (curClass != null)
+                        {
+                            FlagType forcePublic = FlagType.Interface;
+                            if ((curClass.Flags & forcePublic) > 0)
+                                member.Access = Visibility.Public;
+
+                            curClass.Members.Add(member);
+                            curClass.LineTo = member.LineTo;
+                        }
+                        // package member
                         else
                         {
-                            if (curClass != null)
-                            {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Flags = curModifiers;
-                            curClass.Access = (curAccess == 0) ? features.enumModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
-                            AddClass(model, curClass);
+                            member.InFile = model;
+                            member.IsPackageLevel = true;
+                            model.Members.Add(member);
                         }
-                        break;
 
-                    case FlagType.TypeDef:
-                        if (inTypedef && curClass != null && prevToken.Text != "typedef")
-                        {
-                            member = new MemberModel();
-                            member.Comments = curComment;
-                            member.Name = token;
-                            member.Flags = curModifiers | FlagType.Variable | FlagType.Dynamic;
-                            member.Access = Visibility.Public;
-                            member.Namespace = curNamespace;
-                            member.LineFrom = member.LineTo = curToken.Line;
-                            curClass.Members.Add(member);
-                            //
-                            curMember = member;
-                        }
-                        else 
-                        {
-                            if (curClass != null)
-                            {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Flags = FlagType.Class | FlagType.TypeDef;
-                            curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
-                            AddClass(model, curClass);
-                        }
-                        break;
+                        //
+                        curMember = member;
 
-                    case FlagType.Abstract:
-                        if (inAbstract && curClass != null && prevToken.Text != "abstract")
-                        {
-                            member = new MemberModel();
-                            member.Comments = curComment;
-                            member.Name = token;
-                            member.Flags = curModifiers | FlagType.Variable | FlagType.Dynamic;
-                            member.Access = Visibility.Public;
-                            member.Namespace = curNamespace;
-                            member.LineFrom = member.LineTo = curToken.Line;
-                            curClass.Members.Add(member);
-                            //
-                            curMember = member;
-                        }
-                        else if (!inAbstract && curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
-                        {
-                            if (prevToken.Text == "to") { /* can be casted to X */ }
-                            else curClass.ExtendsType = curToken.Text;
-                        }
-                        else
-                        {
-                            if (curClass != null)
-                            {
-                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
-                            }
-                            curClass = new ClassModel();
-                            curClass.InFile = model;
-                            curClass.Comments = curComment;
-                            var qtype = QualifiedName(model, token);
-                            curClass.Type = qtype.Type;
-                            curClass.Template = qtype.Template;
-                            curClass.Name = qtype.Name;
-                            curClass.Flags = FlagType.Class | FlagType.Abstract;
-                            curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
-                            curClass.Namespace = curNamespace;
-                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            curClass.LineTo = curToken.Line;
-                            AddClass(model, curClass);
-                        }
                         if (carriedMetaData != null)
                         {
-                            if (curClass.MetaDatas == null) curClass.MetaDatas = carriedMetaData;
-                            else curClass.MetaDatas.AddRange(carriedMetaData);
+                            if (member.MetaDatas == null)
+                                member.MetaDatas = carriedMetaData;
+                            else member.MetaDatas.AddRange(carriedMetaData);
                             carriedMetaData = null;
                         }
-                        break;
 
-                    case FlagType.Variable:
-                        {
-                            member = new MemberModel();
-                            member.Comments = curComment;
-                            member.Name = token;
-                            if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
-                            member.Flags = curModifiers | FlagType.Variable;
-                            member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
-                            member.Namespace = curNamespace;
-                            member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                            member.LineTo = curToken.Line;
-                            //
-                            // method parameter
-                            if (inParams && curMethod != null)
-                            {
-                                member.Flags = FlagType.Variable | FlagType.ParameterVar;
-                                if (inEnum) member.Flags |= FlagType.Enum;
-                                if (curMethod.Parameters == null) curMethod.Parameters = new List<MemberModel>();
-                                member.Access = 0;
-                                if (member.Name.Length > 0)
-                                    curMethod.Parameters.Add(member);
-                            }
-                            // class member
-                            else if (curClass != null)
-                            {
-                                FlagType forcePublic = FlagType.Interface;
-                                if ((curClass.Flags & forcePublic) > 0)
-                                    member.Access = Visibility.Public;
-
-                                curClass.Members.Add(member);
-                                curClass.LineTo = member.LineTo;
-                            }
-                            // package member
-                            else
-                            {
-                                member.InFile = model;
-                                member.IsPackageLevel = true;
-                                model.Members.Add(member);
-                            }
-                            //
-                            curMember = member;
-
-                            if (carriedMetaData != null)
-                            {
-                                if (member.MetaDatas == null)
-                                    member.MetaDatas = carriedMetaData;
-                                else member.MetaDatas.AddRange(carriedMetaData);
-
-                                carriedMetaData = null;
-                            }
-                        }
                         break;
 
                     case FlagType.Function:
