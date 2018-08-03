@@ -207,12 +207,20 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_3", GeneratorJobType.FieldFromParameter, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2022_3"))
-                    .SetName("foo(?ar|gs). Field from parameter. Case 1")
+                    .SetName("foo(?ar|gs). Field from parameter. Issue 2022. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_4", GeneratorJobType.FieldFromParameter, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2022_4"))
-                    .SetName("foo(?ar|gs). Field From parameter. Case 2")
+                    .SetName("foo(?ar|gs). Field From parameter. Issue 2022. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2312_1", GeneratorJobType.FieldFromParameter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2312_1"))
+                    .SetName("foo(?ar|gs = ''). Field From parameter. Issue 2312. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2312");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2312_2", GeneratorJobType.FieldFromParameter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2312_2"))
+                    .SetName("foo(?ar|gs = true). Field From parameter. Issue 2312. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2312");
             }
         }
 
