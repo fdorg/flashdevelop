@@ -349,6 +349,7 @@ namespace HaXeContext
             var imports = ASContext.Context.ResolveImports(context.CurrentModel);
             return imports.Items;
         }
+        
         static IEnumerable<TestCaseData> ParseFileIssue1150_2_TestCases
         {
             get
@@ -376,6 +377,44 @@ namespace HaXeContext
             expectedImports.Sort();
             actualImports.Sort();
             Assert.AreEqual(expectedImports, actualImports.Items);
+        }
+
+        static IEnumerable<TestCaseData> ResolveStaticExtensionsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_2", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_3", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_4", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_5", false);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_6", false);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_7", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_8", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_9", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_10", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_11", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_12", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_13", true);
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveStaticExtensionsTestCases))]
+        public void ResolveStaticExtensions(string fileName, bool hasExtensions)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
+            var ctx = (Context) ASContext.GetLanguageContext("haxe");
+            var type = ctx.InternalResolveType(expr.Type.Name, ASContext.Context.CurrentModel);
+            ctx.hxCompletionCache.StaticExtensions.Clear();
+            var extensions = ctx.ResolveStaticExtensions(type, ASContext.Context.CurrentModel).Items;
+            if (hasExtensions)
+            {
+                Assert.IsNotEmpty(extensions);
+                //var exprType = expr.Type;
+                //Assert.IsTrue(extensions.All(it => exprType.Members.Items.Any(m => m.Name == it.Name)));
+            }
+            else Assert.IsEmpty(extensions);
         }
     }
 }

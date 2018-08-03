@@ -1911,8 +1911,7 @@ namespace ASCompletion.Completion
                         return HandleImportCompletion(Sci, expr.Value, autoHide);
                 }
                 // type
-                else if (features.hasEcmaTyping && expr.Separator == ":"
-                    && HandleColonCompletion(Sci, expr.Value, autoHide))
+                else if (features.hasEcmaTyping && expr.Separator == ":" && HandleColonCompletion(Sci, expr.Value, autoHide))
                     return true;
 
                 // no completion
@@ -1952,11 +1951,7 @@ namespace ASCompletion.Completion
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                 }
             }
-            else
-            {
-                if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) 
-                    return false;
-            }
+            else if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) return false;
 
             string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
@@ -1973,7 +1968,7 @@ namespace ASCompletion.Completion
             // Context
             ASResult result;
             ClassModel tmpClass;
-            bool outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
+            var outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
             var cFile = ctx.CurrentModel;
             var cClass = ctx.CurrentClass;
 
@@ -1993,8 +1988,7 @@ namespace ASCompletion.Completion
                     if (outOfDate) ctx.SetOutOfDate();
                     return true;
                 }
-                if (autoHide && features.hasE4X && IsXmlType(result.Type))
-                    return true;
+                if (autoHide && features.hasE4X && IsXmlType(result.Type)) return true;
                 tmpClass = result.Type;
             }
             else
@@ -2864,7 +2858,7 @@ namespace ASCompletion.Completion
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = context.ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = context.ResolveType("Function", null);
-                                else result.Type = ResolveType(var.Type, inFile);
+                                else result.Type = context.ResolveType(var.Type, inFile);
                                 return result;
                             }
                         }
@@ -2932,8 +2926,8 @@ namespace ASCompletion.Completion
                 }
                 else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
                 {
-                    ClassModel friendClass = null;
-                    if (aDecl.InFile != null)
+                    var friendClass = aDecl as ClassModel;
+                    if (friendClass == null && aDecl.InFile != null)
                     {
                         foreach(var aClass in aDecl.InFile.Classes)
                             if (aClass.Name == token)
@@ -3176,8 +3170,7 @@ namespace ASCompletion.Completion
         /// <param name="acc">Visibility mask</param>
         public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility acc)
         {
-            if (string.IsNullOrEmpty(token))
-                return;
+            if (string.IsNullOrEmpty(token)) return;
 
             IASContext context = ASContext.Context;
             ContextFeatures features = context.Features;
@@ -3214,6 +3207,7 @@ namespace ASCompletion.Completion
                 {
                     if ((result.Member.Flags & FlagType.Constructor) > 0)
                         result.Type = inClass;
+                    // TODO slavara: check this
                     else result.Type = ResolveType(result.Member.Type, result.InFile);
                 }
                 return;
@@ -3319,7 +3313,7 @@ namespace ASCompletion.Completion
             if (found != null)
             {
                 result.InClass = tmpClass;
-                result.InFile = tmpClass.InFile;
+                result.InFile = result.Member?.InFile ?? tmpClass.InFile;
                 if (result.Type == null) 
                     result.Type = ASContext.Context.ResolveType(found.Type, tmpClass.InFile);
                 return;
@@ -4617,20 +4611,17 @@ namespace ASCompletion.Completion
         #endregion
 
         #region tooltips formatting
-        static public string GetCodeTipCode(ASResult result)
+        public static string GetCodeTipCode(ASResult result)
         {
-            if (result.Member == null)
-            {
-                return result.Type?.ToString();
-            }
+            if (result.Member == null) return result.Type?.ToString();
 
             var file = GetFileContents(result.InFile);
             if (string.IsNullOrEmpty(file))
             {
-                return MemberTooltipText(result.Member, ClassModel.VoidClass);
+                return ASContext.Context.CodeComplete.MemberTooltipText(result.Member, ClassModel.VoidClass);
             }
 
-            int eolMode = LineEndDetector.DetectNewLineMarker(file, (Int32)PluginBase.MainForm.Settings.EOLMode);
+            var eolMode = LineEndDetector.DetectNewLineMarker(file, (int)PluginBase.MainForm.Settings.EOLMode);
             var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
             var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
             var code = new StringBuilder();
@@ -4642,11 +4633,11 @@ namespace ASCompletion.Completion
             return code.ToString();
         }
 
-        static private string GetFileContents(FileModel model)
+        private static string GetFileContents(FileModel model)
         {
             if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
             {
-                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
                     if (doc.IsEditable && doc.FileName.ToUpper() == model.FileName.ToUpper())
                     {
@@ -4661,19 +4652,20 @@ namespace ASCompletion.Completion
 
         public static string GetToolTipText(ASResult result)
         {
+            var complete = ASContext.Context.CodeComplete;
             if (result.Member != null && result.InClass != null)
             {
-                return MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
+                return complete.MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
             }
             if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
             {
-                return MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
+                return complete.MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
             }
             if (result.InClass != null)
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            if (result.Type != null && result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+            if (result.Type != null && result.Context.WordBefore == "new") return complete.GetConstructorTooltipText(result.Type);
             return null;
         }
 
@@ -4691,7 +4683,7 @@ namespace ASCompletion.Completion
             return details.TrimStart(' ', '\u2026');
         }
 
-        protected static string MemberTooltipText(MemberModel member, ClassModel inClass)
+        protected virtual string MemberTooltipText(MemberModel member, ClassModel inClass)
         {
             // modifiers
             var ft = member.Flags;
@@ -4722,7 +4714,7 @@ namespace ASCompletion.Completion
             }
             // signature
             var foundIn = "";
-            if (inClass != ClassModel.VoidClass)
+            if (!inClass.IsVoid())
             {
                 var themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
                 var foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";

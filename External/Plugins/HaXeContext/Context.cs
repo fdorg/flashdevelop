@@ -47,7 +47,7 @@ namespace HaXeContext
         private string haxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
-        HaxeCompletionCache hxCompletionCache;
+        internal HaxeCompletionCache hxCompletionCache;
         ClassModel stubFunctionClass;
 
         public Context(HaXeSettings initSettings) : this(initSettings, path => null)
@@ -945,7 +945,7 @@ namespace HaXeContext
                         var p2 = lpart.LastIndexOf('.');
                         if (p2 != -1) lpart = import.Substring(p2 + 1);
                         if (char.IsLower(lpart[0])) continue;
-                        var type = ResolveType(lpart, Context.CurrentModel);
+                        var type = InternalResolveType(lpart, Context.CurrentModel);
                         if (type.IsVoid() || type.Members.Count <= 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
@@ -1035,10 +1035,27 @@ namespace HaXeContext
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="className">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public override ClassModel ResolveType(string cname, FileModel inFile)
+        public override ClassModel ResolveType(string className, FileModel inFile)
+        {
+            var result = InternalResolveType(className, inFile);
+            if (!result.IsVoid() && inFile == CurrentModel)
+            {
+                var staticExtensions = ResolveStaticExtensions(result, inFile);
+                if (staticExtensions.Count > 0)
+                {
+                    completionCache.Elements.Remove(result);
+                    result = (ClassModel)result.Clone();
+                    result.Members.Merge(staticExtensions);
+                    completionCache.Elements.Add(result);
+                }
+            }
+            return result;
+        }
+
+        internal ClassModel InternalResolveType(string cname, FileModel inFile)
         {
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
@@ -1066,7 +1083,7 @@ namespace HaXeContext
                 package = cname.Substring(0, p);
                 cname = cname.Substring(p + 1);
             }
-            else 
+            else
             {
                 // search in file
                 if (inFile != null)
@@ -1088,6 +1105,7 @@ namespace HaXeContext
                         var dotIndex = type.LastIndexOf('.');
                         if (dotIndex > 0) package = type.Substring(0, dotIndex);
                     }
+
                     found = true;
                     break;
                 }
@@ -1353,8 +1371,10 @@ namespace HaXeContext
         /// <returns>Imported classes list (not null)</returns>
         private MemberList ResolveDefaults(string package)
         {
+            if (hxCompletionCache?.Defaults != null) return hxCompletionCache.Defaults;
             var result = new MemberList();
             if (GetCurrentSDKVersion() < "3.3.0") return result;
+            if (CurrentModel == null || package != CurrentModel.Package) return result;
             var packagePath = string.IsNullOrEmpty(package) ? string.Empty : package.Replace('.', dirSeparatorChar);
             while(true)
             {
@@ -1370,7 +1390,82 @@ namespace HaXeContext
                 if (string.IsNullOrEmpty(packagePath)) break;
                 packagePath = Path.GetDirectoryName(packagePath);
             }
+            if (result.Count > 0)
+            {
+                if (hxCompletionCache == null) completionCache = hxCompletionCache = new HaxeCompletionCache(this, new MemberList(), new MemberList());
+                hxCompletionCache.Defaults = result;
+            }
             return result;
+        }
+
+        /// <summary>
+        /// https://haxe.org/manual/lf-static-extension.html
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="inFile">Current file</param>
+        /// <returns></returns>
+        public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
+        {
+            if (hxCompletionCache != null && hxCompletionCache.StaticExtensions.TryGetValue(target, out var result)) return result;
+            result = new MemberList();
+            if (target.IsVoid() || inFile == null) return result;
+            var imports = ResolveDefaults(inFile.Package);
+            imports.Merge(inFile.Imports);
+            var kind = FlagType.Static | FlagType.Function;
+            for (var i = imports.Count - 1; i >= 0; i--)
+            {
+                var import = imports[i];
+                if (!import.Flags.HasFlag(FlagType.Using)) continue;
+                var type = InternalResolveType(import.Name, inFile);
+                if (type.IsVoid() || type.Members.Count == 0) continue;
+                var access = TypesAffinity(target, type);
+                var extends = target;
+                extends.ResolveExtends();
+                while (!extends.IsVoid())
+                {
+                    foreach (MemberModel member in type.Members)
+                    {
+                        if ((member.Access & access) == 0
+                            || !member.Flags.HasFlag(kind)
+                            || member.Parameters == null || member.Parameters.Count == 0
+                            || result.Search(member.Name, 0, 0) != null
+                            || !CanBeExtended(extends, member, access)) continue;
+                        var extension = (MemberModel) member.Clone();
+                        extension.Parameters.RemoveAt(0);
+                        extension.Flags = FlagType.Dynamic | FlagType.Function;
+                        extension.InFile = type.InFile;
+                        result.Add(extension);
+                    }
+                    extends = extends.Extends;
+                }
+            }
+            if (result.Count > 0)
+            {
+                if (hxCompletionCache == null) completionCache = hxCompletionCache = new HaxeCompletionCache(this, new MemberList(), new MemberList());
+                hxCompletionCache.StaticExtensions[target] = result;
+            }
+            return result;
+            // utils
+            bool CanBeExtended(ClassModel type, MemberModel extension, Visibility access)
+            {
+                var firstParamType = extension.Parameters[0].Type;
+                if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
+                {
+                    var targetType = type.Type;
+                    var index = targetType.IndexOf('<');
+                    if (index != -1) targetType = targetType.Remove(index);
+                    index = firstParamType.IndexOf('<');
+                    if (index != -1) firstParamType = firstParamType.Remove(index);
+                    if (firstParamType != targetType) return false;
+                }
+                while (!type.IsVoid())
+                {
+                    var model = type.Members.Search(extension.Name, 0, access);
+                    if (model != null && !model.Flags.HasFlag(FlagType.Static)) return false;
+                    type = type.Extends;
+                }
+                return true;
+            }
         }
 
         public override string GetDefaultValue(string type)
@@ -1678,7 +1773,6 @@ namespace HaXeContext
         public override MemberList GetVisibleExternalElements()
         {
             if (!IsFileValid) return new MemberList();
-
             if (completionCache.IsDirty)
             {
                 var elements = new MemberList();
@@ -1743,7 +1837,7 @@ namespace HaXeContext
                 elements.Add(imports);
                 foreach (MemberModel import in imports)
                 {
-                    TryAddEnums(import as ClassModel ?? ResolveType(import.Name, cFile), other);
+                    TryAddEnums(import as ClassModel ?? InternalResolveType(import.Name, cFile), other);
                 }
                 // in cache
                 elements.Sort();
@@ -2158,7 +2252,9 @@ namespace HaXeContext
 
     class HaxeCompletionCache: CompletionCache
     {
-        public MemberList OtherElements;
+        public MemberList Defaults;
+        public readonly MemberList OtherElements;
+        public readonly Dictionary<MemberModel, MemberList> StaticExtensions = new Dictionary<MemberModel, MemberList>();
 
         public HaxeCompletionCache(ASContext context, MemberList elements, MemberList otherElements)
             : base(context, elements)
