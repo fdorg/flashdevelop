@@ -149,7 +149,7 @@ namespace PHPContext
         /// <summary>
         /// Build the file DOM
         /// </summary>
-        /// <param name="filename">File path</param>
+        /// <param name="fileName">File path</param>
         protected override void GetCurrentFileModel(string fileName)
         {
             string ext = Path.GetExtension(fileName);

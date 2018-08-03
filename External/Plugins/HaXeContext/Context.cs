@@ -19,6 +19,7 @@ using ProjectManager.Projects;
 using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
+using HaXeContext.Model;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -706,6 +707,8 @@ namespace HaXeContext
             }
             return result;
         }
+
+        protected override IFileParser GetCodeParser() => new FileParser(context.Features);
 
         /// <summary>
         /// Delete current class's cached file

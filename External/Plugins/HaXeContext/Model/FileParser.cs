@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
+using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Helpers;
 
-namespace ASCompletion.Model
+namespace HaXeContext.Model
 {
 
     #region Token class
@@ -34,10 +35,7 @@ namespace ASCompletion.Model
             Position = copy.Position;
         }
 
-        override public string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
     }
     #endregion
 
@@ -407,52 +405,11 @@ namespace ASCompletion.Model
     //
     #endregion
 
-    public interface IFileParser
-    {
-        bool ScriptMode { set; }
-
-        /// <summary>
-        /// Rebuild a file model with the source provided
-        /// </summary>
-        /// <param name="fileModel">Model</param>
-        /// <param name="src">Source</param>
-        void ParseSrc(FileModel fileModel, string src);
-        void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract);
-    }
-
     /// <summary>
     /// Old & clumsy AS2/AS3/haxe file parser - beware!
     /// </summary>
-    public class ASFileParser : IFileParser
+    public class FileParser : IFileParser
     {
-
-        #region public methods
-
-        public static FileModel ParseFile(FileModel fileModel)
-        {
-            // parse file
-            if (fileModel.FileName.Length > 0)
-            {
-                if (File.Exists(fileModel.FileName))
-                {
-                    var parser = new ASFileParser();
-                    parser.Parse(fileModel);
-                }
-                // the file is not available (for the moment?)
-                else if (Path.GetExtension(fileModel.FileName).Length > 0)
-                {
-                    fileModel.OutOfDate = true;
-                }
-            }
-            // this is a package
-            else
-            {
-                // ignore
-            }
-            return fileModel;
-        }
-        #endregion
-
         #region parser context
         const int COMMENTS_BUFFER = 4096;
         const int TOKEN_BUFFER = 1024;
@@ -502,13 +459,13 @@ namespace ASCompletion.Model
 
         #region tokenizer
 
-        public bool ScriptMode { get; set; }
+        public bool ScriptMode {get; set;}
 
-        public ASFileParser() : this(new ContextFeatures())
+        public FileParser() : this(new ContextFeatures())
         {
         }
 
-        public ASFileParser(ContextFeatures features)
+        public FileParser(ContextFeatures features)
         {
             this.features = features;
         }
@@ -525,7 +482,11 @@ namespace ASCompletion.Model
             return fileModel;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Rebuild a file model with the source provided
+        /// </summary>
+        /// <param name="fileModel">Model</param>
+        /// <param name="src">Source</param>
         public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
 
         public void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract)
