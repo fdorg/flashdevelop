@@ -221,6 +221,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2312_2"))
                     .SetName("foo(?ar|gs = true). Field From parameter. Issue 2312. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2312");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2312_3", GeneratorJobType.FieldFromParameter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2312_3"))
+                    .SetName("foo(ar|gs = AbstractEnum.Value). Field From parameter. Issue 2312. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2312");
             }
         }
 
