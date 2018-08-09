@@ -67,10 +67,8 @@ namespace ASCompletion.Model
         /// <summary>
         /// Type-comment parsing into model (source and destination)
         /// </summary>
-        public static TypeDefinitionKind Parse(string comment, MemberModel model)
-        {
-            return Parse(comment, model, false);
-        }
+        public static TypeDefinitionKind Parse(string comment, MemberModel model) => Parse(comment, model, false);
+
         public static TypeDefinitionKind Parse(string comment, MemberModel model, bool detectKindOnly)
         {
             if (model != null && !string.IsNullOrEmpty(comment))
@@ -93,10 +91,8 @@ namespace ASCompletion.Model
         /// <summary>
         /// Typed object parsing
         /// </summary>
-        public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model)
-        {
-            return ParseTypedObject(comment, model, false);
-        }
+        public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model) => ParseTypedObject(comment, model, false);
+
         public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model, bool detectKindOnly)
         {
             if (model != null && !string.IsNullOrEmpty(comment))
@@ -115,10 +111,8 @@ namespace ASCompletion.Model
         /// <summary>
         /// Typed array parsing
         /// </summary>
-        public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model)
-        {
-            return ParseTypedArray(comment, model, false);
-        }
+        public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model) => ParseTypedArray(comment, model, false);
+
         public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model, bool detectKindOnly)
         {
             if (model != null && !string.IsNullOrEmpty(comment))
@@ -138,10 +132,8 @@ namespace ASCompletion.Model
         /// <summary>
         /// Typed callbck parsing
         /// </summary>
-        public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model)
-        {
-            return ParseTypedCallback(comment, model, false);
-        }
+        public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model) => ParseTypedCallback(comment, model, false);
+
         public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model, bool detectKindOnly)
         {
             if (model != null && !string.IsNullOrEmpty(comment)
@@ -1085,7 +1077,11 @@ namespace ASCompletion.Model
                     // AS3 const or method parameter's default value 
                     else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
                     {
-                        if (inParams || inConst) curMember.Value = param;
+                        if (inParams || inConst)
+                        {
+                            curMember.Value = param;
+                            curMember.ValueEndPosition = i;
+                        }
                         curMember.LineTo = line;
                         if (c1 == '\r' || c1 == '\n') curMember.LineTo--;
                         if (inConst && c1 != ',')

@@ -677,7 +677,11 @@ namespace HaXeContext.Model
                     // method parameter's default value 
                     else if ((curMember.Flags & FlagType.Variable) > 0)
                     {
-                        if (inParams) curMember.Value = param;
+                        if (inParams)
+                        {
+                            curMember.Value = param;
+                            curMember.ValueEndPosition = i;
+                        }
                         curMember.LineTo = line;
                         if (c1 == '\r' || c1 == '\n') curMember.LineTo--;
                     }

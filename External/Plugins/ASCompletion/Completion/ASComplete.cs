@@ -3062,7 +3062,12 @@ namespace ASCompletion.Completion
         {
             var ctx = ASContext.Context;
             var type = ctx.ResolveToken(var.Value, ctx.CurrentModel);
-            if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+            if (type.IsVoid())
+            {
+                if (var.Value != null && var.ValueEndPosition != -1)
+                    type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
+                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+            }
             var.Type = type.Name;
         }
 
