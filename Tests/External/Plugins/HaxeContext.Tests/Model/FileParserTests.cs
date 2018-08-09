@@ -49,37 +49,78 @@ namespace HaXeContext.Model
             get
             {
                 yield return new TestCaseData("Issue2210_1")
-                    .Returns(new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                    .Returns(new List<MemberModel>
                     {
-                        LineFrom = 2,
-                        LineTo = 2,
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        }
                     })
                     .SetName("function foo() return 1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_2")
-                    .Returns(new MemberModel("bar", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                    .Returns(new List<MemberModel>
                     {
-                        LineFrom = 4,
-                        LineTo = 4,
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("bar", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 4,
+                            LineTo = 4,
+                        }
                     })
                     .SetName("function foo() return 1;\nfunction bar() return 1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_3")
-                    .Returns(new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                    .Returns(new List<MemberModel>
                     {
-                        LineFrom = 2,
-                        LineTo = 5,
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 5,
+                        }
                     })
                     .SetName("function foo(i:Int):Int\nreturn i % 2 == 0\n? 0\n: 1;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_4")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("v", "Int", FlagType.Dynamic | FlagType.Variable, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int this.v = i;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");;
+                yield return new TestCaseData("Issue2210_5")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int var v = i;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }
 
         [Test, TestCaseSource(nameof(Issue2210TestCases))]
-        public MemberModel ParseFile_Issue2210(string fileName)
+        public List<MemberModel> ParseFile_Issue2210(string fileName)
         {
             var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
-            return model.Classes.First().Members.Items.Last();
+            return model.Classes.First().Members.Items;
         }
     }
 }
