@@ -241,6 +241,17 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2320TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2320_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceTextIssue2320_1"))
+                    .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2320");
+            }
+        }
+
         static IEnumerable<TestCaseData> OnCharAndReplaceTextTestCases
         {
             get
@@ -332,6 +343,7 @@ namespace HaXeContext.Completion
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2320TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
             // TODO: That tests pass without other tests.
             //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)),

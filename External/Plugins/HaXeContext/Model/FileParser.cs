@@ -726,7 +726,9 @@ namespace HaXeContext.Model
                     }
 
                     // should we evaluate the token?
-                    if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0)
+                    if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
+                        // for example: foo(? v)
+                        && (!inParams || (length > 0 && buffer[length - 1] != '?')))
                     {
                         evalToken = 1;
                     }
