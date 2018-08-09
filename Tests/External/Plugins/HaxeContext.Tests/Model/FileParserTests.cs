@@ -21,13 +21,16 @@ namespace HaXeContext.Model
         {
             get
             {
-                yield return new TestCaseData("Issue2320_1", 1)
+                yield return new TestCaseData("Issue2320_1")
+                    .Returns(1)
                     .SetName("foo(? v)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2320");
-                yield return new TestCaseData("Issue2320_2", 1)
+                yield return new TestCaseData("Issue2320_2")
+                    .Returns(1)
                     .SetName("foo(?     v)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2320");
-                yield return new TestCaseData("Issue2320_3", 2)
+                yield return new TestCaseData("Issue2320_3")
+                    .Returns(2)
                     .SetName("foo(?\nv1\n,\nv2)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2320");
             }
