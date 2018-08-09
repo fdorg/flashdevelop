@@ -69,6 +69,7 @@
     <Compile Include="Generators\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
+    <Compile Include="Model\FileParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
@@ -697,6 +698,15 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_19.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2312_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2312_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2320_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceTextIssue2320_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2320_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2320_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2320_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2312_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2312_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2312_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2312_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

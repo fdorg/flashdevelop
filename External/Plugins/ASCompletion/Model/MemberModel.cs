@@ -10,7 +10,7 @@ using PluginCore;
 namespace ASCompletion.Model
 {
     /// <summary>
-    /// Object representation of an Actionscript MemberModel
+    /// Object representation of an ActionScript MemberModel
     /// </summary>
     [Serializable]
     public class MemberModel: ICloneable, IComparable
@@ -30,6 +30,7 @@ namespace ASCompletion.Model
         public string Template;
         public string Comments;
         public string Value;
+        public int ValueEndPosition = -1;
         public int LineFrom;
         public int LineTo;
         public List<ASMetaData> MetaDatas;
@@ -77,6 +78,7 @@ namespace ASCompletion.Model
             copy.Type = Type;
             copy.Comments = Comments;
             copy.Value = Value;
+            copy.ValueEndPosition = ValueEndPosition;
             copy.LineFrom = LineFrom;
             copy.LineTo = LineTo;
             return copy;
