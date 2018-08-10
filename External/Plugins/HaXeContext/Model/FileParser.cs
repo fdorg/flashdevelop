@@ -498,7 +498,30 @@ namespace HaXeContext.Model
                     }
                     if (inFunction)
                     {
-                        if (c1 == ';')
+                        var abort = false;
+                        if (c1 <= 32)
+                        {
+                            if (valueLength >= "static".Length
+                                     && valueBuffer[valueLength - 6] == 's'
+                                     && valueBuffer[valueLength - 5] == 't'
+                                     && valueBuffer[valueLength - 4] == 'a'
+                                     && valueBuffer[valueLength - 3] == 't'
+                                     && valueBuffer[valueLength - 2] == 'i'
+                                     && valueBuffer[valueLength - 1] == 'c')
+                            {
+                                abort = true;
+                                i -= valueLength;
+                            }
+                            valueLength = 0;
+                        }
+                        // extern
+                        // private
+                        // public
+                        // static
+                        // inline
+                        // override
+                        // final
+                        if (c1 == ';' || abort)
                         {
                             lastComment = null;
                             if (curMethod != null)
@@ -508,7 +531,9 @@ namespace HaXeContext.Model
                                 curMethod = null;
                             }
                             inFunction = false;
+                            length = 0;
                         }
+                        else if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
                         continue;
                     }
                 }
@@ -753,12 +778,13 @@ namespace HaXeContext.Model
                     hadWS = false;
                     hadDot = false;
                     var shortcut = true;
-                    if (context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
+                    if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
                         && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
                         && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
                     {
-                        evalToken = 2;
                         inFunction = true;
+                        i -= 2;
+                        continue;
                     }
                     if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
                         || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
