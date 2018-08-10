@@ -137,7 +137,7 @@ namespace HaXeContext.Model
                             LineFrom = 2,
                             LineTo = 2,
                         },
-                        new MemberModel("v", "Int", FlagType.Dynamic | FlagType.Static | FlagType.Variable, Visibility.Private)
+                        new MemberModel("v", "Int", FlagType.Static | FlagType.Variable, Visibility.Private)
                         {
                             LineFrom = 3,
                             LineTo = 3,
