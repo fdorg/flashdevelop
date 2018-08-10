@@ -593,7 +593,6 @@ namespace HaXeContext.Model
                         inGeneric = false;
                         hadValue = true;
                     }
-
                     // in params, store the default value
                     else if ((inParams || inType) && valueLength < VALUE_BUFFER)
                     {
@@ -627,14 +626,12 @@ namespace HaXeContext.Model
                 if (hadValue) //!inValue && valueLength > 0)
                 {
                     string param = valueLength > 0 ? new string(valueBuffer, 0, valueLength) : "";
-
                     // get text before the last keyword found
                     if (valueKeyword != null)
                     {
                         int p = param.LastIndexOfOrdinal(valueKeyword.Text);
                         if (p > 0) param = param.Substring(0, p).TrimEnd();
                     }
-
                     if (curMember == null)
                     {
                         if (inType)
@@ -981,7 +978,6 @@ namespace HaXeContext.Model
                             {
                                 flattenNextBlock--;
                             }
-
                             // outside of a method, the '}' ends the current class
                             else if (curClass != null)
                             {
@@ -991,10 +987,8 @@ namespace HaXeContext.Model
                                 inTypedef = false;
                                 inAbstract = false;
                             }
-                            else
-                            {
-                                if (hasPackageSection && model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
-                            }
+                            else if (hasPackageSection && model.PrivateSectionIndex == 0)
+                                model.PrivateSectionIndex = line + 1;
                         }
                         // member type declaration
                         else if (c1 == ':' && !inValue && !inGeneric)
