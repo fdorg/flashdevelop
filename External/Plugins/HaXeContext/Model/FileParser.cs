@@ -501,13 +501,25 @@ namespace HaXeContext.Model
                         var abort = false;
                         if (c1 <= 32)
                         {
-                            if (valueLength >= "static".Length
-                                     && valueBuffer[valueLength - 6] == 's'
-                                     && valueBuffer[valueLength - 5] == 't'
-                                     && valueBuffer[valueLength - 4] == 'a'
-                                     && valueBuffer[valueLength - 3] == 't'
-                                     && valueBuffer[valueLength - 2] == 'i'
-                                     && valueBuffer[valueLength - 1] == 'c')
+                            char wc1 = ' ';
+                            char wc2 = ' ';
+                            char wc3 = ' ';
+                            char wc4 = ' ';
+                            char wc5 = ' ';
+                            char wc6 = ' ';
+                            if (valueLength >= 6/*extern, public, static, inline*/)
+                            {
+                                wc1 = valueBuffer[valueLength - 6];
+                                wc2 = valueBuffer[valueLength - 5];
+                                wc3 = valueBuffer[valueLength - 4];
+                                wc4 = valueBuffer[valueLength - 3];
+                                wc5 = valueBuffer[valueLength - 2];
+                                wc6 = valueBuffer[valueLength - 1];
+                            }
+                            if (/*(wc1 == 'e' && wc2 == 'x' && wc3 == 't' && wc4 == 'e' && wc5 == 'r' && wc6 == 'n')
+                                || */(wc1 == 'p' && wc2 == 'u' && wc3 == 'b' && wc4 == 'l' && wc5 == 'i' && wc6 == 'c')
+                                || (wc1 == 's' && wc2 == 't' && wc3 == 'a' && wc4 == 't' && wc5 == 'i' && wc6 == 'c')
+                                || (wc1 == 'i' && wc2 == 'n' && wc3 == 'l' && wc4 == 'i' && wc5 == 'n' && wc6 == 'e'))
                             {
                                 abort = true;
                                 i -= valueLength;
@@ -516,11 +528,7 @@ namespace HaXeContext.Model
                         }
                         // extern
                         // private
-                        // public
-                        // static
-                        // inline
                         // override
-                        // final
                         if (c1 == ';' || abort)
                         {
                             lastComment = null;

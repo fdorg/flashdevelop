@@ -716,6 +716,9 @@
     <EmbeddedResource Include="Test Files\parser\Issue2210_5.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2210_6.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2210_7.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2210_8.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2210_9.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2210_10.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -145,6 +145,55 @@ namespace HaXeContext.Model
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vstatic var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_8")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("v", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int trace(i)\vpublic var v:Int;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_9")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("v", "Int", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int trace(i)\vinline public static var v:Int;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_10")
+                    .Ignore("")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("v", "Int", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int trace(i)\vextern var v:Int;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }
 
