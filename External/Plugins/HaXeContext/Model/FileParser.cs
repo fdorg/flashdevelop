@@ -85,7 +85,7 @@ namespace HaXeContext.Model
         private List<ASMetaData> carriedMetaData;
         #endregion
 
-        public bool ScriptMode { private get; set;}
+        public bool ScriptMode { private get; set; }
 
         #region tokenizer
 
@@ -180,6 +180,7 @@ namespace HaXeContext.Model
             inType = false;
             inGeneric = false;
             inAnonType = false;
+            var inFunction = false;
 
             bool addChar = false;
             int evalToken = 0;
@@ -473,27 +474,43 @@ namespace HaXeContext.Model
                         valueBuffer[valueLength++] = c1;
                     continue;
                 }
-                if (braceCount > 0 && !inValue)
+                if (!inValue)
                 {
-                    if (c1 == '/')
+                    if (braceCount > 0)
                     {
-                        LookupRegex(ba, ref i);
-                    }
-                    else if (c1 == '}')
-                    {
-                        lastComment = null;
-                        braceCount--;
-                        if (braceCount == 0 && curMethod != null)
+                        if (c1 == '/') LookupRegex(ba, ref i);
+                        else if (c1 == '}')
                         {
-                            if (curMethod.Equals(curMember)) curMember = null;
-                            curMethod.LineTo = line;
-                            curMethod = null;
+                            lastComment = null;
+                            braceCount--;
+                            if (braceCount == 0 && curMethod != null)
+                            {
+                                if (curMethod.Equals(curMember)) curMember = null;
+                                curMethod.LineTo = line;
+                                curMethod = null;
+                            }
                         }
+                        else if (c1 == '{') braceCount++;
+                        // escape next char
+                        else if (c1 == '\\') i++;
+
+                        continue;
                     }
-                    else if (c1 == '{') braceCount++;
-                    // escape next char
-                    else if (c1 == '\\') i++;
-                    continue;
+                    if (inFunction)
+                    {
+                        if (c1 == ';')
+                        {
+                            lastComment = null;
+                            if (curMethod != null)
+                            {
+                                if (curMethod.Equals(curMember)) curMember = null;
+                                curMethod.LineTo = line;
+                                curMethod = null;
+                            }
+                            inFunction = false;
+                        }
+                        continue;
+                    }
                 }
 
 
@@ -735,19 +752,26 @@ namespace HaXeContext.Model
                     }
                     hadWS = false;
                     hadDot = false;
-                    bool shortcut = true;
-
-                    // valid char for keyword
-                    if (c1 >= 'a' && c1 <= 'z') addChar = true;
+                    var shortcut = true;
+                    if (context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
+                        && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
+                        && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
+                    {
+                        evalToken = 2;
+                        inFunction = true;
+                    }
+                    if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
+                        || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
+                        || (c1 == '$' || c1 == '_')
+                        || (c1 >= '0' && c1 <= '9'))
+                    {
+                        addChar = true;
+                    }
                     else
                     {
-                        // valid chars for identifiers
-                        if ((c1 >= 'A' && c1 <= 'Z')) addChar = true;
-                        else if (c1 == '$' || c1 == '_') addChar = true;
-                        else if (length > 0)
+                        if (length > 0)
                         {
-                            if (c1 >= '0' && c1 <= '9') addChar = true;
-                            else if (c1 == '*' && context == FlagType.Import) addChar = true;
+                            if (c1 == '*' && context == FlagType.Import) addChar = true;
                             // generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
