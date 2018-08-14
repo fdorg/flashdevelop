@@ -225,6 +225,22 @@ namespace HaXeContext.Model
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vprivate var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_13")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("max", "ExprOf<T>", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int trace(i)\nmacro public static inline max(v1, v2) return v1;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }
 

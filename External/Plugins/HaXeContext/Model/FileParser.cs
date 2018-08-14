@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
-using ScintillaNet.Enums;
 
 namespace HaXeContext.Model
 {
@@ -510,10 +509,11 @@ namespace HaXeContext.Model
                                 else start = j + 1;
                             }
                             var count = end - start;
-                            if (count > 5)
+                            if (count > 4)
                             {
                                 var word = new string(valueBuffer, start, count);
-                                if (word == "extern" || word == "public" || word == "static" || word == "inline"
+                                if (word == "macro"
+                                    || word == "extern" || word == "public" || word == "static" || word == "inline"
                                     || word == "private"
                                     || word == "override")
                                 {
