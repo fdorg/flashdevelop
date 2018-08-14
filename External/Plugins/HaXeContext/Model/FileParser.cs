@@ -501,36 +501,48 @@ namespace HaXeContext.Model
                         var abort = false;
                         if (c1 <= 32)
                         {
-                            char wc1 = ' ';
-                            char wc2 = ' ';
-                            char wc3 = ' ';
-                            char wc4 = ' ';
-                            char wc5 = ' ';
-                            char wc6 = ' ';
-                            char wc7 = ' ';
+                            var wc1 = ' ';
+                            var wc2 = ' ';
+                            var lc6 = ' ';
+                            var lc5 = ' ';
+                            var lc4 = ' ';
+                            var lc3 = ' ';
+                            var lc2 = ' ';
+                            var lc1 = ' ';
                             if (valueLength >= 6/*extern, public, static, inline*/)
                             {
                                 wc1 = valueBuffer[valueLength - 6];
                                 wc2 = valueBuffer[valueLength - 5];
-                                wc3 = valueBuffer[valueLength - 4];
-                                wc4 = valueBuffer[valueLength - 3];
-                                wc5 = valueBuffer[valueLength - 2];
-                                wc6 = valueBuffer[valueLength - 1];
+                                lc6 = valueBuffer[valueLength - 4];
+                                lc5 = valueBuffer[valueLength - 3];
+                                lc4 = valueBuffer[valueLength - 2];
+                                lc3 = valueBuffer[valueLength - 1];
                             }
-                            if (/*(wc1 == 'e' && wc2 == 'x' && wc3 == 't' && wc4 == 'e' && wc5 == 'r' && wc6 == 'n')
-                                || */(wc1 == 'p' && wc2 == 'u' && wc3 == 'b' && wc4 == 'l' && wc5 == 'i' && wc6 == 'c')
-                                || (wc1 == 's' && wc2 == 't' && wc3 == 'a' && wc4 == 't' && wc5 == 'i' && wc6 == 'c')
-                                || (wc1 == 'i' && wc2 == 'n' && wc3 == 'l' && wc4 == 'i' && wc5 == 'n' && wc6 == 'e')
-                                || (wc1 == 'p' && wc2 == 'r' && wc3 == 'i' && wc4 == 'v' && wc5 == 'a' && wc6 == 't' && wc7== 'e'))
+                            if (valueLength >= 8 /*override*/)
+                            {
+                                wc1 = valueBuffer[valueLength - 8];
+                                wc2 = valueBuffer[valueLength - 7];
+                                lc6 = valueBuffer[valueLength - 6];
+                                lc5 = valueBuffer[valueLength - 5];
+                                lc4 = valueBuffer[valueLength - 4];
+                                lc3 = valueBuffer[valueLength - 3];
+                                lc2 = valueBuffer[valueLength - 2];
+                                lc1 = valueBuffer[valueLength - 1];
+                            }
+                            if (valueLength > 5
+                                && ((wc1 == 'e' && wc2 == 'x' && lc6 == 't' && lc5 == 'e' && lc4 == 'r' && lc3 == 'n')
+                                    || (wc1 == 'p' && wc2 == 'u' && lc6 == 'b' && lc5 == 'l' && lc4 == 'i' && lc3 == 'c')
+                                    || (wc1 == 's' && wc2 == 't' && lc6 == 'a' && lc5 == 't' && lc4 == 'i' && lc3 == 'c')
+                                    || (wc1 == 'i' && wc2 == 'n' && lc6 == 'l' && lc5 == 'i' && lc4 == 'n' && lc3 == 'e')
+                                    || (wc1 == 'p' && wc2 == 'r' && lc6 == 'i' && lc5 == 'v' && lc4 == 'a' && lc3 == 't' && lc2 == 'e')
+                                    || (wc2 == 'p' && lc6 == 'r' && lc5 == 'i' && lc4 == 'v' && lc3 == 'a' && lc2 == 't' && lc1 == 'e')
+                                    || (wc1 == 'o' && wc2 == 'v' && lc6 == 'e' && lc5 == 'r' && lc4 == 'r' && lc3 == 'i' && lc2 == 'd' && lc1 == 'e')))
                             {
                                 abort = true;
                                 i -= valueLength;
                             }
                             valueLength = 0;
                         }
-                        // extern
-                        // private
-                        // override
                         if (c1 == ';' || abort)
                         {
                             lastComment = null;
