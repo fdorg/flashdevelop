@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
+using ScintillaNet.Enums;
 
 namespace HaXeContext.Model
 {
@@ -493,7 +494,6 @@ namespace HaXeContext.Model
                         else if (c1 == '{') braceCount++;
                         // escape next char
                         else if (c1 == '\\') i++;
-
                         continue;
                     }
                     if (inFunction)
@@ -501,45 +501,25 @@ namespace HaXeContext.Model
                         var abort = false;
                         if (c1 <= 32)
                         {
-                            var wc1 = ' ';
-                            var wc2 = ' ';
-                            var wc3 = ' ';
-                            var wc4 = ' ';
-                            var wc5 = ' ';
-                            var wc6 = ' ';
-                            var wc7 = ' ';
-                            var wc8 = ' ';
-                            if (valueLength >= 6/*extern, public, static, inline*/)
+                            var start = 0;
+                            var end = -1;
+                            for (var j = 0; j < valueLength; j++)
                             {
-                                wc1 = valueBuffer[valueLength - 6];
-                                wc2 = valueBuffer[valueLength - 5];
-                                wc3 = valueBuffer[valueLength - 4];
-                                wc4 = valueBuffer[valueLength - 3];
-                                wc5 = valueBuffer[valueLength - 2];
-                                wc6 = valueBuffer[valueLength - 1];
+                                if (valueBuffer[j] >= ' ') end = j + 1;
+                                else if (end != -1) break;
+                                else start = j + 1;
                             }
-                            if (valueLength >= 8 /*override*/)
+                            var count = end - start;
+                            if (count > 5)
                             {
-                                wc1 = valueBuffer[valueLength - 8];
-                                wc2 = valueBuffer[valueLength - 7];
-                                wc3 = valueBuffer[valueLength - 6];
-                                wc4 = valueBuffer[valueLength - 5];
-                                wc5 = valueBuffer[valueLength - 4];
-                                wc6 = valueBuffer[valueLength - 3];
-                                wc7 = valueBuffer[valueLength - 2];
-                                wc8 = valueBuffer[valueLength - 1];
-                            }
-                            if (valueLength > 5
-                                && (   (wc1 == 'e' && wc2 == 'x' && wc3 == 't' && wc4 == 'e' && wc5 == 'r' && wc6 == 'n')
-                                    || (wc1 == 'p' && wc2 == 'u' && wc3 == 'b' && wc4 == 'l' && wc5 == 'i' && wc6 == 'c')
-                                    || (wc1 == 's' && wc2 == 't' && wc3 == 'a' && wc4 == 't' && wc5 == 'i' && wc6 == 'c')
-                                    || (wc1 == 'i' && wc2 == 'n' && wc3 == 'l' && wc4 == 'i' && wc5 == 'n' && wc6 == 'e')
-                                    || (wc1 == 'p' && wc2 == 'r' && wc3 == 'i' && wc4 == 'v' && wc5 == 'a' && wc6 == 't' && wc7 == 'e')
-                                    || (wc2 == 'p' && wc3 == 'r' && wc4 == 'i' && wc5 == 'v' && wc6 == 'a' && wc7 == 't' && wc8 == 'e')
-                                    || (wc1 == 'o' && wc2 == 'v' && wc3 == 'e' && wc4 == 'r' && wc5 == 'r' && wc6 == 'i' && wc7 == 'd' && wc8 == 'e')))
-                            {
-                                abort = true;
-                                i -= valueLength;
+                                var word = new string(valueBuffer, start, count);
+                                if (word == "extern" || word == "public" || word == "static" || word == "inline"
+                                    || word == "private"
+                                    || word == "override")
+                                {
+                                    abort = true;
+                                    i -= valueLength;
+                                }
                             }
                             valueLength = 0;
                         }
