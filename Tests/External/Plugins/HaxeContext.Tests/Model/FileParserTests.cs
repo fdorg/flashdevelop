@@ -241,6 +241,39 @@ namespace HaXeContext.Model
                     })
                     .SetName("function foo(i:Int):Int trace(i)\nmacro public static inline max(v1, v2) return v1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_14")
+                    .Ignore("")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("v", "Int", FlagType.Getter | FlagType.Setter, Visibility.Private)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int trace(i)\vvar v(get, set):Int;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_15")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 2,
+                            LineTo = 2,
+                        },
+                        new MemberModel("bar", null, FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Private)
+                        {
+                            LineFrom = 3,
+                            LineTo = 3,
+                        }
+                    })
+                    .SetName("function foo(i:Int):Int trace(i)\voverride function bar() {}")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }
 
