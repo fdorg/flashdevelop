@@ -507,6 +507,7 @@ namespace HaXeContext.Model
                             char wc4 = ' ';
                             char wc5 = ' ';
                             char wc6 = ' ';
+                            char wc7 = ' ';
                             if (valueLength >= 6/*extern, public, static, inline*/)
                             {
                                 wc1 = valueBuffer[valueLength - 6];
@@ -519,7 +520,8 @@ namespace HaXeContext.Model
                             if (/*(wc1 == 'e' && wc2 == 'x' && wc3 == 't' && wc4 == 'e' && wc5 == 'r' && wc6 == 'n')
                                 || */(wc1 == 'p' && wc2 == 'u' && wc3 == 'b' && wc4 == 'l' && wc5 == 'i' && wc6 == 'c')
                                 || (wc1 == 's' && wc2 == 't' && wc3 == 'a' && wc4 == 't' && wc5 == 'i' && wc6 == 'c')
-                                || (wc1 == 'i' && wc2 == 'n' && wc3 == 'l' && wc4 == 'i' && wc5 == 'n' && wc6 == 'e'))
+                                || (wc1 == 'i' && wc2 == 'n' && wc3 == 'l' && wc4 == 'i' && wc5 == 'n' && wc6 == 'e')
+                                || (wc1 == 'p' && wc2 == 'r' && wc3 == 'i' && wc4 == 'v' && wc5 == 'a' && wc6 == 't' && wc7== 'e'))
                             {
                                 abort = true;
                                 i -= valueLength;
