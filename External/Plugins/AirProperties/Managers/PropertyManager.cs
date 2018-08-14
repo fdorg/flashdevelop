@@ -20,7 +20,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "28.0";
+        private const String _MaxSupportedVersion = "31.0";
 
         public enum AirVersion
         {
@@ -61,22 +61,14 @@ namespace AirProperties
             V280 = 39,  // Version 28.0
             V290 = 40,  // Version 29.0
             V300 = 41,  // Version 30.0
+            V310 = 42,  // Version 31.0
         }
 
-        public static Exception LastException
-        {
-            get { return _lastException; }
-        }
+        public static Exception LastException => _lastException;
 
-        public static Boolean IsInitialised
-        {
-            get { return _isInitialised; }
-        }
+        public static Boolean IsInitialised => _isInitialised;
 
-        public static AirVersion MajorVersion
-        {
-            get { return _version; }
-        }
+        public static AirVersion MajorVersion => _version;
 
         public static String Version
         {
@@ -87,15 +79,9 @@ namespace AirProperties
             }
         }
 
-        public static Boolean IsUnsupportedVersion
-        {
-            get { return _unsupportedVersion; }
-        }
+        public static Boolean IsUnsupportedVersion => _unsupportedVersion;
 
-        public static String MaxSupportedVersion
-        {
-            get { return _MaxSupportedVersion; }
-        }
+        public static String MaxSupportedVersion => _MaxSupportedVersion;
 
         public static Boolean InitializeProperties(string filePath)
         {
@@ -151,11 +137,12 @@ namespace AirProperties
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "28.0")) _version = AirVersion.V280;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "29.0")) _version = AirVersion.V290;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "30.0")) _version = AirVersion.V300;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "31.0")) _version = AirVersion.V310;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V300;
+                        _version = AirVersion.V310;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
