@@ -1554,65 +1554,46 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return
-                        new TestCaseData("foo($(EntryPoint));function foo();")
-                            .Returns(0);
-                    yield return
-                        new TestCaseData("foo(1, $(EntryPoint));function foo(x:Int, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo([1,2,3,4,5], $(EntryPoint));function foo(x:Array<Int>, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo(new Array<Int>(), $(EntryPoint));function foo(x:Array<Int>, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo(new Map<Int, String>(), $(EntryPoint));function foo(x:Map<Int, String>, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo({x:Int, y:Int}, $(EntryPoint));function foo(x:{x:Int, y:Int}, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo(',,,,', $(EntryPoint));function foo(s:String, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo(\",,,,\", $(EntryPoint));function foo(s:String, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo(\"\\ \", $(EntryPoint));function foo(s:String, y:Int);")
-                            .Returns(1);
-                    yield return
-                        new TestCaseData("foo(0, ';', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, '}}}', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, '<<>>><{}>}->({[]})>><<,,;>><<', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, '(', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, ')', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, {c:Array(<Int>->Map<String, Int>)->Void}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, function(i:Int, s:String) {return Std.string(i) + ', ' + s;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo(0, function() {var i = 1, j = 2; return i + j;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
-                            .Returns(2);
-                    yield return
-                        new TestCaseData("foo([1 => 1], $(EntryPoint));")
-                            .Returns(1)
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
-                    yield return
-                        new TestCaseData("foo([for(i in 0...10) i], $(EntryPoint)")
-                            .Returns(1)
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
+                    yield return new TestCaseData("foo($(EntryPoint));function foo();")
+                        .Returns(0);
+                    yield return new TestCaseData("foo(1, $(EntryPoint));function foo(x:Int, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo([1,2,3,4,5], $(EntryPoint));function foo(x:Array<Int>, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo(new Array<Int>(), $(EntryPoint));function foo(x:Array<Int>, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo(new Map<Int, String>(), $(EntryPoint));function foo(x:Map<Int, String>, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo({x:Int, y:Int}, $(EntryPoint));function foo(x:{x:Int, y:Int}, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo(',,,,', $(EntryPoint));function foo(s:String, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo(\",,,,\", $(EntryPoint));function foo(s:String, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo(\"\\ \", $(EntryPoint));function foo(s:String, y:Int);")
+                        .Returns(1);
+                    yield return new TestCaseData("foo(0, ';', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, '}}}', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, '<<>>><{}>}->({[]})>><<,,;>><<', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, '(', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, ')', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, {c:Array(<Int>->Map<String, Int>)->Void}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, function(i:Int, s:String) {return Std.string(i) + ', ' + s;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo(0, function() {var i = 1, j = 2; return i + j;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
+                        .Returns(2);
+                    yield return new TestCaseData("foo([1 => 1], $(EntryPoint));")
+                        .Returns(1)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
+                    yield return new TestCaseData("foo([for(i in 0...10) i], $(EntryPoint)")
+                        .Returns(1)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
                 }
             }
 
