@@ -1774,9 +1774,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '(')
                     {
-                        if (--parCount < 0)
-                            // function start found
-                            break;
+                        if (--parCount < 0) break; // function start found
                     }
                     else if (c == '>') genCount++;
                     else if (c == '<' && genCount > 0)
