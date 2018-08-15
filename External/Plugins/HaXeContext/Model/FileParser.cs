@@ -790,8 +790,7 @@ namespace HaXeContext.Model
                     }
                     if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
                         || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
-                        || (c1 == '$' || c1 == '_')
-                        || (c1 >= '0' && c1 <= '9'))
+                        || (c1 == '$' || c1 == '_'))
                     {
                         addChar = true;
                     }
@@ -799,7 +798,8 @@ namespace HaXeContext.Model
                     {
                         if (length > 0)
                         {
-                            if (c1 == '*' && context == FlagType.Import) addChar = true;
+                            if (c1 >= '0' && c1 <= '9') addChar = true;
+                            else if (c1 == '*' && context == FlagType.Import) addChar = true;
                             // generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
