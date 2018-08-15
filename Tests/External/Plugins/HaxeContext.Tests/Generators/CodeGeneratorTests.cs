@@ -380,6 +380,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2210TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2210_1", GeneratorJobType.FieldFromParameter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2210_1"))
+                    .SetName("foo(arg|s) -> foo(args) this.args = args;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2326");
+            }
+        }
+
         static IEnumerable<TestCaseData> Issue2220TestCases
         {
             get
@@ -1067,6 +1078,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2017TestCases)),
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
+            //TestCaseSource(nameof(Issue2210TestCases)),
             TestCaseSource(nameof(Issue2220TestCases)),
             TestCaseSource(nameof(Issue2295TestCases)),
             TestCaseSource(nameof(Issue2297TestCases)),

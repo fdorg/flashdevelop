@@ -85,7 +85,7 @@ namespace HaXeContext.Model
         private List<ASMetaData> carriedMetaData;
         #endregion
 
-        public bool ScriptMode { private get; set;}
+        public bool ScriptMode { private get; set; }
 
         #region tokenizer
 
@@ -180,6 +180,7 @@ namespace HaXeContext.Model
             inType = false;
             inGeneric = false;
             inAnonType = false;
+            var inFunction = false;
 
             bool addChar = false;
             int evalToken = 0;
@@ -473,27 +474,70 @@ namespace HaXeContext.Model
                         valueBuffer[valueLength++] = c1;
                     continue;
                 }
-                if (braceCount > 0 && !inValue)
+                if (!inValue)
                 {
-                    if (c1 == '/')
+                    if (braceCount > 0)
                     {
-                        LookupRegex(ba, ref i);
-                    }
-                    else if (c1 == '}')
-                    {
-                        lastComment = null;
-                        braceCount--;
-                        if (braceCount == 0 && curMethod != null)
+                        if (c1 == '/') LookupRegex(ba, ref i);
+                        else if (c1 == '}')
                         {
-                            if (curMethod.Equals(curMember)) curMember = null;
-                            curMethod.LineTo = line;
-                            curMethod = null;
+                            lastComment = null;
+                            braceCount--;
+                            if (braceCount == 0 && curMethod != null)
+                            {
+                                if (curMethod.Equals(curMember)) curMember = null;
+                                curMethod.LineTo = line;
+                                curMethod = null;
+                            }
                         }
+                        else if (c1 == '{') braceCount++;
+                        // escape next char
+                        else if (c1 == '\\') i++;
+                        continue;
                     }
-                    else if (c1 == '{') braceCount++;
-                    // escape next char
-                    else if (c1 == '\\') i++;
-                    continue;
+                    if (inFunction)
+                    {
+                        var abort = false;
+                        if (c1 <= 32)
+                        {
+                            var start = 0;
+                            var end = -1;
+                            for (var j = 0; j < valueLength; j++)
+                            {
+                                if (valueBuffer[j] >= ' ') end = j + 1;
+                                else if (end != -1) break;
+                                else start = j + 1;
+                            }
+                            var count = end - start;
+                            if (count > 4)
+                            {
+                                var word = new string(valueBuffer, start, count);
+                                if (word == "macro"
+                                    || word == "extern" || word == "public" || word == "static" || word == "inline"
+                                    || word == "private"
+                                    || word == "override")
+                                {
+                                    abort = true;
+                                    i -= valueLength;
+                                }
+                            }
+                            valueLength = 0;
+                        }
+                        if (c1 == ';' || abort)
+                        {
+                            lastComment = null;
+                            if (curMethod != null)
+                            {
+                                if (curMethod.Equals(curMember)) curMember = null;
+                                curMethod.LineTo = line;
+                                curMethod = null;
+                            }
+                            inFunction = false;
+                            length = 0;
+                        }
+                        else if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
+                        continue;
+                    }
                 }
 
 
@@ -593,7 +637,6 @@ namespace HaXeContext.Model
                         inGeneric = false;
                         hadValue = true;
                     }
-
                     // in params, store the default value
                     else if ((inParams || inType) && valueLength < VALUE_BUFFER)
                     {
@@ -627,14 +670,12 @@ namespace HaXeContext.Model
                 if (hadValue) //!inValue && valueLength > 0)
                 {
                     string param = valueLength > 0 ? new string(valueBuffer, 0, valueLength) : "";
-
                     // get text before the last keyword found
                     if (valueKeyword != null)
                     {
                         int p = param.LastIndexOfOrdinal(valueKeyword.Text);
                         if (p > 0) param = param.Substring(0, p).TrimEnd();
                     }
-
                     if (curMember == null)
                     {
                         if (inType)
@@ -738,16 +779,24 @@ namespace HaXeContext.Model
                     }
                     hadWS = false;
                     hadDot = false;
-                    bool shortcut = true;
-
-                    // valid char for keyword
-                    if (c1 >= 'a' && c1 <= 'z') addChar = true;
+                    var shortcut = true;
+                    if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
+                        && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
+                        && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
+                    {
+                        inFunction = true;
+                        i -= 2;
+                        continue;
+                    }
+                    if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
+                        || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
+                        || (c1 == '$' || c1 == '_'))
+                    {
+                        addChar = true;
+                    }
                     else
                     {
-                        // valid chars for identifiers
-                        if ((c1 >= 'A' && c1 <= 'Z')) addChar = true;
-                        else if (c1 == '$' || c1 == '_') addChar = true;
-                        else if (length > 0)
+                        if (length > 0)
                         {
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
@@ -981,7 +1030,6 @@ namespace HaXeContext.Model
                             {
                                 flattenNextBlock--;
                             }
-
                             // outside of a method, the '}' ends the current class
                             else if (curClass != null)
                             {
@@ -991,10 +1039,8 @@ namespace HaXeContext.Model
                                 inTypedef = false;
                                 inAbstract = false;
                             }
-                            else
-                            {
-                                if (hasPackageSection && model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
-                            }
+                            else if (hasPackageSection && model.PrivateSectionIndex == 0)
+                                model.PrivateSectionIndex = line + 1;
                         }
                         // member type declaration
                         else if (c1 == ':' && !inValue && !inGeneric)
