@@ -324,8 +324,8 @@ namespace CodeRefactor.Commands
                     if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed
-                        string tmpPath = oldPath + "$renaming$";
-                        File.Move(oldPath, tmpPath);
+                        var tmpPath = oldPath + "$renaming$";
+                        Directory.Move(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
                     RefactoringHelper.Move(oldPath, newPath, renaming, originalOld);
