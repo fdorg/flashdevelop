@@ -1727,11 +1727,12 @@ namespace ASCompletion.Completion
         internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
             var context = ASContext.Context;
-            int parCount = 0;
-            int braCount = 0;
-            int comaCount = 0;
-            int arrCount = 0;
+            var parCount = 0;
+            var braCount = 0;
+            var comaCount = 0;
+            var arrCount = 0;
             var genCount = 0;
+            var prevComaPos = -1;
             while (position >= 0)
             {
                 var style = sci.BaseStyleAt(position);
@@ -1757,7 +1758,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                     // new block
-                    else if (c == '}') braCount++;
+                    if (c == '}') braCount++;
                     else if (c == ']') arrCount++;
                     else if (c == ')') parCount++;
                     // block closed
@@ -1778,13 +1779,25 @@ namespace ASCompletion.Completion
                             break;
                     }
                     else if (c == '>') genCount++;
-                    else if (c == '<') genCount--;
+                    else if (c == '<' && genCount > 0)
+                    {
+                        genCount--;
+                        prevComaPos = -1;
+                    }
                     // new parameter reached
-                    else if (c == ',' && parCount == 0 && genCount == 0)
-                        comaCount++;
+                    else if (c == ',')
+                    {
+                        if (parCount == 0 && genCount == 0)
+                        {
+                            comaCount++;
+                            prevComaPos = -1;
+                        }
+                        else if (genCount != 0) prevComaPos = position;
+                    }
                 }
                 position--;
             }
+            if (prevComaPos != -1) comaCount++;
             return comaCount;
         }
 

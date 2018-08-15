@@ -1588,12 +1588,30 @@ namespace ASCompletion.Completion
                         .Returns(2);
                     yield return new TestCaseData("foo(0, function() {var i = 1, j = 2; return i + j;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
                         .Returns(2);
+                    yield return new TestCaseData("foo([1 => 1], [1, $(EntryPoint));")
+                        .Returns(1);
+                    yield return new TestCaseData("foo([1 => 1], {x:1, y:$(EntryPoint));")
+                        .Returns(1);
+                    yield return new TestCaseData("foo([1 => 1], bar({x:1, y:$(EntryPoint)));")
+                        .Returns(0);
                     yield return new TestCaseData("foo([1 => 1], $(EntryPoint));")
                         .Returns(1)
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
                     yield return new TestCaseData("foo([for(i in 0...10) i], $(EntryPoint)")
                         .Returns(1)
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
+                    yield return new TestCaseData("foo(1, 1 > 2$(EntryPoint)")
+                        .Returns(1)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");
+                    yield return new TestCaseData("foo(1, 1 < 2$(EntryPoint)")
+                        .Returns(1)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");
+                    yield return new TestCaseData("foo(1, 1 > 2, 1 < 2 ? 2 > 3 : $(EntryPoint)")
+                        .Returns(2)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");
+                    yield return new TestCaseData("foo(1, bar(1, 2), 1 < 2$(EntryPoint)")
+                        .Returns(2)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");
                 }
             }
 
