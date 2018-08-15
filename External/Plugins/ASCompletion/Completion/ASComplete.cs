@@ -1727,11 +1727,12 @@ namespace ASCompletion.Completion
         internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
             var context = ASContext.Context;
-            int parCount = 0;
-            int braCount = 0;
-            int comaCount = 0;
-            int arrCount = 0;
+            var parCount = 0;
+            var braCount = 0;
+            var comaCount = 0;
+            var arrCount = 0;
             var genCount = 0;
+            var hasComma = false;
             while (position >= 0)
             {
                 var style = sci.BaseStyleAt(position);
@@ -1756,11 +1757,9 @@ namespace ASCompletion.Completion
                         position = -1;
                         break;
                     }
-                    // new block
-                    else if (c == '}') braCount++;
+                    if (c == '}') braCount++;
                     else if (c == ']') arrCount++;
                     else if (c == ')') parCount++;
-                    // block closed
                     else if (c == '{')
                     {
                         if (braCount == 0) comaCount = 0;
@@ -1773,25 +1772,36 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '(')
                     {
-                        if (--parCount < 0)
-                            // function start found
-                            break;
+                        if (--parCount < 0) break; // function start found
                     }
+                    else if (c == '?' && genCount > 0) genCount = 0;
                     else if (c == '>') genCount++;
-                    else if (c == '<') genCount--;
+                    else if (c == '<' && genCount > 0)
+                    {
+                        genCount--;
+                        hasComma = false;
+                    }
                     // new parameter reached
-                    else if (c == ',' && parCount == 0 && genCount == 0)
-                        comaCount++;
+                    else if (c == ',')
+                    {
+                        if (parCount == 0 && genCount == 0)
+                        {
+                            comaCount++;
+                            hasComma = false;
+                        }
+                        else if (genCount != 0) hasComma = true;
+                    }
                 }
                 position--;
             }
+            if (hasComma) comaCount++;
             return comaCount;
         }
 
         private static void ShowListeners(ScintillaControl Sci, int position, ClassModel ofClass)
         {
             // find event metadatas
-            List<ASMetaData> events = new List<ASMetaData>();
+            var events = new List<ASMetaData>();
             while (ofClass != null && !ofClass.IsVoid())
             {
                 if (ofClass.MetaDatas != null)
@@ -1805,8 +1815,8 @@ namespace ASCompletion.Completion
 
             // format
             events.Sort();
-            Dictionary<String, ClassModel> eventTypes = new Dictionary<string, ClassModel>();
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            var eventTypes = new Dictionary<string, ClassModel>();
+            var list = new List<ICompletionListItem>();
             foreach (ASMetaData meta in events)
             {
                 string name = meta.Params["name"];
@@ -1850,9 +1860,9 @@ namespace ASCompletion.Completion
 
             // filter
             list.Sort(new CompletionItemComparer());
-            List<ICompletionListItem> items = new List<ICompletionListItem>();
+            var items = new List<ICompletionListItem>();
             string prev = null;
-            foreach (ICompletionListItem item in list)
+            foreach (var item in list)
             {
                 if (item.Label != prev) items.Add(item);
                 prev = item.Label;
@@ -1860,7 +1870,7 @@ namespace ASCompletion.Completion
 
             // display
             Sci.SetSel(position + 1, Sci.CurrentPos);
-            string tail = Sci.SelText;
+            var tail = Sci.SelText;
             Sci.SetSel(Sci.SelectionEnd, Sci.SelectionEnd);
             CompletionList.Show(items, true, tail);
         }
