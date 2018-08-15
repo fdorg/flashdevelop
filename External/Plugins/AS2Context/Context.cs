@@ -824,93 +824,92 @@ namespace AS2Context
             {
                 var package = cFile.Package;
                 var pClass = cFile.GetPublicClass();
-                if (package.Length > 0)
+                var pathname = package.Replace('.', Path.DirectorySeparatorChar);
+                var fullpath = Path.GetDirectoryName(cFile.FileName);
+                if (package.Length == 0 || !fullpath.EndsWithOrdinal(pathname))
                 {
-                    string pathname = package.Replace('.', Path.DirectorySeparatorChar);
-                    string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.EndsWithOrdinal(pathname))
+                    if (settings.FixPackageAutomatically && CurSciControl != null)
                     {
-                        if (settings.FixPackageAutomatically && CurSciControl != null)
+                        Regex packagePattern = null;
+                        if (cFile.Context.Settings.LanguageId == "AS2")
                         {
-                            Regex packagePattern = null;
-                            if (cFile.Context.Settings.LanguageId == "AS2")
-                            {
-                                packagePattern = new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')');
-                            }
-                            else
-                            {
-                                packagePattern = new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
-                            }
-
-                            var regexPackageLine = "";
-                            var pos = -1;
-                            var txt = "";
-                            var p = 0;
-                            var counter = CurSciControl.Length;
-                            while (p < counter)
-                            {
-                                var c = (char)CurSciControl.CharAt(p++);
-                                txt += c;
-                                if (txt.Length > 5 && c <= 32)
-                                {
-                                    var m = packagePattern.Match(txt);
-                                    if (m.Success)
-                                    {
-                                        pos = m.Groups[1].Index;
-                                        regexPackageLine = m.Value;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (regexPackageLine.Length > 0 && pos > -1)
-                            {
-                                var orgid = "Info.PackageDontMatchFilePath";
-                                var classpaths = Context.Classpath;
-                                if (classpaths != null)
-                                {
-                                    string correctPath = null;
-                                    foreach (var pm in classpaths)
-                                    {
-                                        if (fullpath.Contains(pm.Path) && fullpath.Length > pm.Path.Length)
-                                        {
-                                            correctPath = fullpath.Substring(pm.Path.Length + 1);
-                                        }
-                                        else if (fullpath.ToLower() == pm.Path.ToLower())
-                                        {
-                                            correctPath = ""; // We are in root, no package..
-                                        }
-                                    }
-                                    if (correctPath != null)
-                                    {
-                                        correctPath = correctPath.Replace(Path.DirectorySeparatorChar, '.');
-                                        CurSciControl.SetSel(pos, pos + cFile.Package.Length);
-                                        CurSciControl.ReplaceSel(correctPath);
-                                        orgid = "Info.PackageDidntMatchFilePath";
-                                    }
-                                }
-                                string org = TextHelper.GetString(orgid);
-                                string msg = String.Format(org, package) + "\n" + cFile.FileName;
-                                MessageBar.ShowWarning(msg);
-                            }
+                            packagePattern = new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')');
                         }
                         else
                         {
-                            string org = TextHelper.GetString("Info.PackageDontMatchFilePath");
-                            string msg = String.Format(org, package) + "\n" + cFile.FileName;
+                            packagePattern = new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
+                        }
+
+                        var regexPackageLine = "";
+                        var pos = -1;
+                        var txt = "";
+                        var p = 0;
+                        var counter = CurSciControl.Length;
+                        while (p < counter)
+                        {
+                            var c = (char) CurSciControl.CharAt(p++);
+                            txt += c;
+                            if (txt.Length > 5 && c <= 32)
+                            {
+                                var m = packagePattern.Match(txt);
+                                if (m.Success)
+                                {
+                                    pos = m.Groups[1].Index;
+                                    regexPackageLine = m.Value;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (regexPackageLine.Length > 0 && pos > -1)
+                        {
+                            var orgid = "Info.PackageDontMatchFilePath";
+                            var classpaths = Context.Classpath;
+                            if (classpaths != null)
+                            {
+                                string correctPath = null;
+                                foreach (var pm in classpaths)
+                                {
+                                    if (fullpath.Contains(pm.Path) && fullpath.Length > pm.Path.Length)
+                                    {
+                                        correctPath = fullpath.Substring(pm.Path.Length + 1);
+                                    }
+                                    else if (fullpath.ToLower() == pm.Path.ToLower())
+                                    {
+                                        correctPath = ""; // We are in root, no package..
+                                    }
+                                }
+                                if (correctPath == "" && package.Length == 0) return;
+                                if (correctPath != null)
+                                {
+                                    correctPath = correctPath.Replace(Path.DirectorySeparatorChar, '.');
+                                    CurSciControl.SetSel(pos, pos + cFile.Package.Length);
+                                    CurSciControl.ReplaceSel(correctPath);
+                                    orgid = "Info.PackageDidntMatchFilePath";
+                                }
+                            }
+                            var org = TextHelper.GetString(orgid);
+                            var msg = string.Format(org, package) + "\n" + cFile.FileName;
                             MessageBar.ShowWarning(msg);
                         }
-                        return;
                     }
-                    MessageBar.HideWarning();
+                    else
+                    {
+                        var org = TextHelper.GetString("Info.PackageDontMatchFilePath");
+                        var msg = string.Format(org, package) + "\n" + cFile.FileName;
+                        MessageBar.ShowWarning(msg);
+                    }
+                    return;
                 }
+
+                MessageBar.HideWarning();
                 if (!pClass.IsVoid())
                 {
                     string cname = pClass.Name;
                     if (prevPackage != package || prevCname != cname)
                     {
                         if (package.Length > 0) cname = package + "." + cname;
-                        string filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
+                        var filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
                         if (!cFile.FileName.ToUpper().EndsWithOrdinal(filename.ToUpper()))
                         {
                             string org = TextHelper.GetString("Info.TypeDontMatchFileName");
