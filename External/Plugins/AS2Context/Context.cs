@@ -810,8 +810,13 @@ namespace AS2Context
                 base.CheckModel(onFileOpen);
                 return;
             }
-            string prevPackage = (onFileOpen) ? null : cFile.Package;
-            string prevCname = (onFileOpen) ? null : cFile.GetPublicClass().Name;
+            string prevPackage = null;
+            string prevCname = null;
+            if(onFileOpen)
+            {
+                prevPackage = cFile.Package;
+                prevCname = cFile.GetPublicClass().Name;
+            }
             // refresh model
             base.CheckModel(onFileOpen);
 
