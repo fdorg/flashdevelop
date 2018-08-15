@@ -1615,6 +1615,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("foo(1, 1 > 2, 1 < 2 ? 2 > 3 : $(EntryPoint)")
                         .Returns(2)
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");
+                    yield return new TestCaseData("foo(1, 1 > 2, 1 < 2 ? 2 >>> 3 : $(EntryPoint)")
+                        .Returns(2)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");
                     yield return new TestCaseData("foo(1, bar(1, 2), 1 < 2$(EntryPoint)")
                         .Returns(2)
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2324");

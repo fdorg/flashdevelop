@@ -1732,7 +1732,7 @@ namespace ASCompletion.Completion
             var comaCount = 0;
             var arrCount = 0;
             var genCount = 0;
-            var prevComaPos = -1;
+            var hasComma = false;
             while (position >= 0)
             {
                 var style = sci.BaseStyleAt(position);
@@ -1757,11 +1757,9 @@ namespace ASCompletion.Completion
                         position = -1;
                         break;
                     }
-                    // new block
                     if (c == '}') braCount++;
                     else if (c == ']') arrCount++;
                     else if (c == ')') parCount++;
-                    // block closed
                     else if (c == '{')
                     {
                         if (braCount == 0) comaCount = 0;
@@ -1776,11 +1774,12 @@ namespace ASCompletion.Completion
                     {
                         if (--parCount < 0) break; // function start found
                     }
+                    else if (c == '?' && genCount > 0) genCount = 0;
                     else if (c == '>') genCount++;
                     else if (c == '<' && genCount > 0)
                     {
                         genCount--;
-                        prevComaPos = -1;
+                        hasComma = false;
                     }
                     // new parameter reached
                     else if (c == ',')
@@ -1788,21 +1787,21 @@ namespace ASCompletion.Completion
                         if (parCount == 0 && genCount == 0)
                         {
                             comaCount++;
-                            prevComaPos = -1;
+                            hasComma = false;
                         }
-                        else if (genCount != 0) prevComaPos = position;
+                        else if (genCount != 0) hasComma = true;
                     }
                 }
                 position--;
             }
-            if (prevComaPos != -1) comaCount++;
+            if (hasComma) comaCount++;
             return comaCount;
         }
 
         private static void ShowListeners(ScintillaControl Sci, int position, ClassModel ofClass)
         {
             // find event metadatas
-            List<ASMetaData> events = new List<ASMetaData>();
+            var events = new List<ASMetaData>();
             while (ofClass != null && !ofClass.IsVoid())
             {
                 if (ofClass.MetaDatas != null)
@@ -1816,8 +1815,8 @@ namespace ASCompletion.Completion
 
             // format
             events.Sort();
-            Dictionary<String, ClassModel> eventTypes = new Dictionary<string, ClassModel>();
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            var eventTypes = new Dictionary<string, ClassModel>();
+            var list = new List<ICompletionListItem>();
             foreach (ASMetaData meta in events)
             {
                 string name = meta.Params["name"];
@@ -1861,9 +1860,9 @@ namespace ASCompletion.Completion
 
             // filter
             list.Sort(new CompletionItemComparer());
-            List<ICompletionListItem> items = new List<ICompletionListItem>();
+            var items = new List<ICompletionListItem>();
             string prev = null;
-            foreach (ICompletionListItem item in list)
+            foreach (var item in list)
             {
                 if (item.Label != prev) items.Add(item);
                 prev = item.Label;
@@ -1871,7 +1870,7 @@ namespace ASCompletion.Completion
 
             // display
             Sci.SetSel(position + 1, Sci.CurrentPos);
-            string tail = Sci.SelText;
+            var tail = Sci.SelText;
             Sci.SetSel(Sci.SelectionEnd, Sci.SelectionEnd);
             CompletionList.Show(items, true, tail);
         }
