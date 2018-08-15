@@ -817,8 +817,8 @@ namespace AS2Context
 
             if (!MessageBar.Locked && features.checkFileName && cFile.Version > 1)
             {
-                string package = cFile.Package;
-                ClassModel pClass = cFile.GetPublicClass();
+                var package = cFile.Package;
+                var pClass = cFile.GetPublicClass();
                 if (package.Length > 0)
                 {
                     string pathname = package.Replace('.', Path.DirectorySeparatorChar);
@@ -827,17 +827,8 @@ namespace AS2Context
                     {
                         if (settings.FixPackageAutomatically && CurSciControl != null)
                         {
-                            bool isAs2 = cFile.Context.Settings.LanguageId == "AS2";
-
-                            int pos = -1;
-
-                            string txt = "";
-                            string regexPackageLine = "";
-
-                            int counter = CurSciControl.Length;
-                            int p = 0;
                             Regex packagePattern = null;
-                            if (isAs2)
+                            if (cFile.Context.Settings.LanguageId == "AS2")
                             {
                                 packagePattern = new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')');
                             }
@@ -845,13 +836,19 @@ namespace AS2Context
                             {
                                 packagePattern = new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
                             }
+
+                            var regexPackageLine = "";
+                            var pos = -1;
+                            var txt = "";
+                            var p = 0;
+                            var counter = CurSciControl.Length;
                             while (p < counter)
                             {
-                                char c = (char)CurSciControl.CharAt(p++);
+                                var c = (char)CurSciControl.CharAt(p++);
                                 txt += c;
                                 if (txt.Length > 5 && c <= 32)
                                 {
-                                    Match m = packagePattern.Match(txt);
+                                    var m = packagePattern.Match(txt);
                                     if (m.Success)
                                     {
                                         pos = m.Groups[1].Index;
@@ -863,12 +860,12 @@ namespace AS2Context
 
                             if (regexPackageLine.Length > 0 && pos > -1)
                             {
-                                string orgid = "Info.PackageDontMatchFilePath";
-                                List<PathModel> classpaths = Context.Classpath;
+                                var orgid = "Info.PackageDontMatchFilePath";
+                                var classpaths = Context.Classpath;
                                 if (classpaths != null)
                                 {
                                     string correctPath = null;
-                                    foreach (PathModel pm in classpaths)
+                                    foreach (var pm in classpaths)
                                     {
                                         if (fullpath.Contains(pm.Path) && fullpath.Length > pm.Path.Length)
                                         {
@@ -891,7 +888,6 @@ namespace AS2Context
                                 string msg = String.Format(org, package) + "\n" + cFile.FileName;
                                 MessageBar.ShowWarning(msg);
                             }
-
                         }
                         else
                         {
@@ -901,7 +897,7 @@ namespace AS2Context
                         }
                         return;
                     }
-                    else MessageBar.HideWarning();
+                    MessageBar.HideWarning();
                 }
                 if (!pClass.IsVoid())
                 {
