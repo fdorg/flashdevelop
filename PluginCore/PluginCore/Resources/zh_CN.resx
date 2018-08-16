@@ -6273,4 +6273,8 @@ AND - All conditions are met.</value>
     <value>Generate switch</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="ASCompletion.Label.PeekDefinition" xml:space="preserve">
+    <value>Peek Definition</value>
+    <comment>Added after 5.3.4</comment>
+  </data>
 </root>

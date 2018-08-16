@@ -26,11 +26,6 @@ namespace CodeRefactor
     public class PluginMain : IPlugin
     {
         public const string REG_IDENTIFIER = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
-        private String pluginName = "CodeRefactor";
-        private String pluginGuid = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds refactoring capabilities to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem editorReferencesItem;
         private ToolStripMenuItem viewReferencesItem;
         private SurroundMenu surroundContextMenu;
@@ -47,59 +42,38 @@ namespace CodeRefactor
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "CodeRefactor";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "5c0d3740-a6f2-11de-8a39-0800200c9a66";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds refactoring capabilities to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public Object Settings => settingObject;
 
         #endregion
 
@@ -254,7 +228,7 @@ namespace CodeRefactor
             String dataPath = Path.Combine(PathHelper.DataDir, "CodeRefactor");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
 
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.FormatCodeProcessor());
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
