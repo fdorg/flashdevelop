@@ -141,9 +141,9 @@ namespace ASCompletion
 
         #region Required Methods
 
-        /**
-        * Initializes the plugin
-        */
+        /// <summary>
+        /// Initializes the plugin
+        /// </summary>
         public virtual void Initialize()
         {
             try
@@ -176,7 +176,7 @@ namespace ASCompletion
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             try
             {
@@ -741,16 +741,15 @@ namespace ASCompletion
 
             // toolbar items
             ToolStrip toolStrip = mainForm.ToolStrip;
-            ToolStripButton button;
             if (toolStrip != null)
             {
                 toolStrip.Items.Add(new ToolStripSeparator());
                 // check
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
-                button = new ToolStripButton(image);
+                var button = new ToolStripButton(image);
                 button.Name = "CheckSyntax";
                 button.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.CheckSyntax");
-                button.Click += new EventHandler(CheckSyntax);
+                button.Click += CheckSyntax;
                 PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.CheckSyntax", button);
                 toolStrip.Items.Add(button);
                 menuItems.Add(button);
@@ -762,9 +761,16 @@ namespace ASCompletion
             {
                 menu.DropDownItems.Add(new ToolStripSeparator());
 
+                // peek definition
+                image = mainForm.FindImage("99|9|3|-3");
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.PeekDefinition"), image, PeekDefinition);
+                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.PeekDefinition", item);
+                menu.DropDownItems.Add(item);
+                menuItems.Add(item);
+
                 // goto declaration
                 image = mainForm.FindImage("99|9|3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration), Keys.F4);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, GotoDeclaration, Keys.F4);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.GotoDeclaration", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
@@ -778,7 +784,7 @@ namespace ASCompletion
 
                 // goto back from declaration
                 image = mainForm.FindImage("99|1|-3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, BackDeclaration, Keys.Shift | Keys.F4);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromDeclaration", item);
                 menu.DropDownItems.Add(item);
                 pluginUI.LookupMenuItem = item;
@@ -788,17 +794,27 @@ namespace ASCompletion
                 ContextMenuStrip emenu = mainForm.EditorMenu;
                 if (emenu != null)
                 {
+                    // peek definition
                     image = mainForm.FindImage("99|9|3|-3");
-                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
-                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
+                    item = new ToolStripMenuItem(TextHelper.GetString("Label.PeekDefinition"), image, PeekDefinition);
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.PeekDefinition", item);
+                    item.Enabled = false;
                     emenu.Items.Insert(4, item);
                     menuItems.Add(item);
 
+                    // goto declaration
+                    image = mainForm.FindImage("99|9|3|-3");
+                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, GotoDeclaration);
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
+                    emenu.Items.Insert(5, item);
+                    menuItems.Add(item);
+
+                    // goto type declaration
                     image = mainForm.FindImage("99|9|3|-3");
                     item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
                     PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoTypeDeclaration", item);
-                    emenu.Items.Insert(5, item);
-                    emenu.Items.Insert(6, new ToolStripSeparator());
+                    emenu.Items.Insert(6, item);
+                    emenu.Items.Insert(7, new ToolStripSeparator());
                     menuItems.Add(item);
                 }
             }
@@ -1029,29 +1045,32 @@ namespace ASCompletion
         }
 
         /// <summary>
+        /// Menu item command: Peek Definition
+        /// </summary>
+        void PeekDefinition(object sender, EventArgs e)
+        {
+            if (ASComplete.CurrentResolvedContext?.Result is ASResult result && !result.IsNull())
+            {
+                var code = ASComplete.GetCodeTipCode(result);
+                if (code == null) return;
+                UITools.CodeTip.Show(ASContext.CurSciControl, result.Context.PositionExpression, code);
+            }
+        }
+
+        /// <summary>
         /// Menu item command: Goto Declaration
         /// </summary>
-        public void GotoDeclaration(object sender, EventArgs e)
-        {
-            ASComplete.DeclarationLookup(ASContext.CurSciControl);
-        }
+        public void GotoDeclaration(object sender, EventArgs e) => ASComplete.DeclarationLookup(ASContext.CurSciControl);
 
         /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
-        void GotoTypeDeclaration(object sender, EventArgs e)
-        {
-            ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
-        }
+        void GotoTypeDeclaration(object sender, EventArgs e) => ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
 
         /// <summary>
         /// Menu item command: Back From Declaration or Type Declaration
         /// </summary>
-        public void BackDeclaration(object sender, EventArgs e)
-        {
-            pluginUI.RestoreLastLookupPosition();
-        }
-
+        public void BackDeclaration(object sender, EventArgs e) => pluginUI.RestoreLastLookupPosition();
 
         /// <summary>
         /// Sets the IsEnabled value of all the CommandBarItems
