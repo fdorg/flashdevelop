@@ -724,6 +724,20 @@
     <EmbeddedResource Include="Test Files\parser\Issue2210_13.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2210_14.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2210_15.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_4.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_6_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_5_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_4_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_3_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_7_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_7.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_8_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue163_8.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -277,7 +277,75 @@ namespace HaXeContext.Model
             }
         }
 
-        [Test, TestCaseSource(nameof(Issue2210TestCases))]
+        static IEnumerable<TestCaseData> Issue163TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue163_1")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_2") 
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 1.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_3")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_3_1")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 2.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_4")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Getter | FlagType.Setter, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_4_1")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Getter | FlagType.Setter, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 3.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_5")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_5_1")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 4.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_6")
+                    .Returns(new List<MemberModel> {new MemberModel("Foo", null, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_6_1")
+                    .Returns(new List<MemberModel> {new MemberModel("Foo", null, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 5.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_7")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_7_1")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 6.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_8")
+                    .Ignore("")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+                yield return new TestCaseData("Issue163_8_1")
+                    .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public)})
+                    .SetName("Support for @:publicFields. case 7.1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(Issue163TestCases)),
+            TestCaseSource(nameof(Issue2210TestCases)),
+        ]
         public List<MemberModel> ParseFile_Issue2210(string fileName)
         {
             var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
