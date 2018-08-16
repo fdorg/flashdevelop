@@ -1218,7 +1218,7 @@ namespace HaXeContext.Model
                         }
                         else if (!inValue && c1 == '@')
                         {
-                            var meta = LookupHaxeMeta(ref ba, ref i);
+                            var meta = LookupMeta(ref ba, ref i);
                             if (meta != null)
                             {
                                 carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
@@ -1320,7 +1320,7 @@ namespace HaXeContext.Model
             return true;
         }
 
-        private ASMetaData LookupHaxeMeta(ref string ba, ref int i)
+        private ASMetaData LookupMeta(ref string ba, ref int i)
         {
             int len = ba.Length;
             int i0 = i;
@@ -1388,6 +1388,22 @@ namespace HaXeContext.Model
                 : (model.Package == ""
                     ? model.Module
                     : model.Package + '.' + model.Module);
+            for (var i = model.Classes.Count - 1; i >= 0; i--)
+            {
+                var @class = model.Classes[i];
+                if (@class.MetaDatas == null || @class.Members.Count == 0) continue;
+                for (var j = @class.MetaDatas.Count - 1; j >= 0; j--)
+                {
+                    if (@class.MetaDatas[j].Name != ":publicFields") continue;
+                    for (var k = @class.Members.Count - 1; k >= 0; k--)
+                    {
+                        var member = @class.Members[k];
+                        if ((member.Flags & FlagType.Override) != 0) continue;
+                        member.Access = Visibility.Public;
+                        member.Flags |= FlagType.Access;
+                    }
+                }
+            }
             if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
         }
@@ -2068,28 +2084,28 @@ namespace HaXeContext.Model
 
         #region tool methods
 
-        public QType QualifiedName(FileModel InFile, string Name) 
+        QType QualifiedName(FileModel inFile, string name) 
         {
             var qt = new QType();
-            var type = Name;
-            if (InFile.Package == "") type = Name;
-            else if (InFile.Module == "" || InFile.Module == Name) type = InFile.Package + "." + Name;
-            else type = InFile.Package + "." + InFile.Module + "." + Name;
+            var type = name;
+            if (inFile.Package == "") type = name;
+            else if (inFile.Module == "" || inFile.Module == name) type = inFile.Package + "." + name;
+            else type = inFile.Package + "." + inFile.Module + "." + name;
             qt.Type = type;
-            int p = Name.IndexOf('<');
+            int p = name.IndexOf('<');
             if (p > 0)
             {
-                qt.Template = Name.Substring(p);
-                if (Name[p - 1] == '.') p--;
-                qt.Name = Name.Substring(0, p);
+                qt.Template = name.Substring(p);
+                if (name[p - 1] == '.') p--;
+                qt.Name = name.Substring(0, p);
             }
-            else qt.Name = Name;
+            else qt.Name = name;
             return qt;
         }
 
-        private String LastStringToken(string token, string separator)
+        string LastStringToken(string token, string separator)
         {
-            int p = token.LastIndexOfOrdinal(separator);
+            var p = token.LastIndexOfOrdinal(separator);
             return (p >= 0) ? token.Substring(p + 1) : token;
         }
 
