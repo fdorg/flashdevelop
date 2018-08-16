@@ -215,7 +215,26 @@ namespace HaXeContext.Completion
             }
         }
 
-        [Test, TestCaseSource(nameof(DeclarationLookupIssue2291TestCases))]
+        static IEnumerable<TestCaseData> DeclarationLookupIssue366TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("DeclarationLookupIssue366_1")
+                    .Returns(string.Empty)
+                    .SetName("Support for @:publicFields. Goto Declaration. Issue 366. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/366");
+                yield return new TestCaseData("DeclarationLookupIssue366_2")
+                    .Returns("foo")
+                    .SetName("Support for @:publicFields. Goto Declaration. Issue 366. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/366");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(DeclarationLookupIssue366TestCases)),
+            TestCaseSource(nameof(DeclarationLookupIssue2291TestCases)),
+        ]
         public string DeclarationLookup(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));

@@ -738,6 +738,8 @@
     <EmbeddedResource Include="Test Files\parser\Issue163_7.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue163_8_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue163_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\DeclarationLookupIssue366_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\DeclarationLookupIssue366_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
