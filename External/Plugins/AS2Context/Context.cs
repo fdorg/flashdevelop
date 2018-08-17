@@ -980,15 +980,15 @@ namespace AS2Context
                 //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
             }
 
-            if (topLevel.Members.Search("_root", 0, 0) == null)
+            if (!topLevel.Members.Contains("_root", 0, 0))
                 topLevel.Members.Add(new MemberModel("_root", docType, FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search("_global", 0, 0) == null)
+            if (!topLevel.Members.Contains("_global", 0, 0))
                 topLevel.Members.Add(new MemberModel("_global", features.objectKey, FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search("this", 0, 0) == null)
+            if (!topLevel.Members.Contains("this", 0, 0))
                 topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search("super", 0, 0) == null)
+            if (!topLevel.Members.Contains("super", 0, 0))
                 topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search(features.voidKey, 0, 0) == null)
+            if (!topLevel.Members.Contains(features.voidKey, 0, 0))
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Class | FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)

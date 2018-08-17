@@ -210,7 +210,7 @@ namespace HaXeContext.Completion
                         var member = members.Search("iterator", 0, 0);
                         if (member == null)
                         {
-                            if (members.Search("hasNext", 0, 0) != null)
+                            if (members.Contains("hasNext", 0, 0))
                             {
                                 member = members.Search("next", 0, 0);
                                 if (member != null) iteratorIndexType = member.Type;

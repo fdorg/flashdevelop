@@ -112,7 +112,7 @@ namespace HaXeContext.Generators
             {
                 foreach (MemberModel member in tmpClass.Members)
                 {
-                    if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
+                    if (curClass.Members.Contains(member.Name, FlagType.Override, 0)) continue;
                     var parameters = member.Parameters;
                     var parametersCount = parameters?.Count ?? 0;
                     if ((member.Flags & FlagType.Dynamic) != 0
@@ -429,14 +429,14 @@ namespace HaXeContext.Generators
         protected override string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
             if (parameters == null || parameters.Count == 0 || parameters.First().Name != "get"
-                || ASContext.Context.CurrentClass.Members.Search($"get_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
+                || ASContext.Context.CurrentClass.Members.Contains($"get_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideGetterTemplate(ofClass, parameters, newMember);
         }
 
         protected override string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
             if (parameters == null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
-                || ASContext.Context.CurrentClass.Members.Search($"set_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
+                || ASContext.Context.CurrentClass.Members.Contains($"set_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
 
