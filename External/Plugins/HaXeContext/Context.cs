@@ -12,7 +12,6 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
