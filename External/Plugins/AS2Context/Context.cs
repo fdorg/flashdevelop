@@ -1064,7 +1064,7 @@ namespace AS2Context
                             if (nameLen > 1) package = package.Substring(nameLen);
                             int p = package.IndexOf('.');
                             if (p > 0) package = package.Substring(0, p);
-                            if (pModel.Imports.Search(package, 0, 0) == null) // sub packages
+                            if (!pModel.Imports.Contains(package, 0, 0)) // sub packages
                             {
                                 pModel.Imports.Add(new MemberModel(package, package, FlagType.Package, Visibility.Public));
                             }
@@ -1097,7 +1097,7 @@ namespace AS2Context
             {
                 var mname = GetLastStringToken(entry, dirSeparator);
                 mname = mname.Substring(0, mname.LastIndexOf('.'));
-                if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
+                if (mname.Length > 0 && !memberList.Contains(mname, 0, 0) && re_token.IsMatch(mname))
                 {
                     var type = mname;
                     if (package.Length > 0) type = package + "." + mname;
@@ -1119,7 +1119,7 @@ namespace AS2Context
             foreach (string entry in dirEntries)
             {
                 var mname = GetLastStringToken(entry, dirSeparator);
-                if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
+                if (mname.Length > 0 && !memberList.Contains(mname, 0, 0) && re_token.IsMatch(mname))
                 {
                     var type = mname;
                     if (package.Length > 0) type = package + "." + mname;
