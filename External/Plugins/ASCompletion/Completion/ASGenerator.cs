@@ -3948,7 +3948,7 @@ namespace ASCompletion.Completion
                 }
                 foreach (MemberModel member in tmpClass.Members)
                 {
-                    if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
+                    if (curClass.Members.Contains(member.Name, FlagType.Override, 0)) continue;
                     if ((member.Flags & FlagType.Dynamic) == 0
                         || (member.Access & access) == 0
                         || ((member.Flags & FlagType.Function) == 0 && (member.Flags & mask) == 0)) continue;
@@ -4073,7 +4073,7 @@ namespace ASCompletion.Completion
         protected virtual string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
             var name = newMember.Name;
-            if (ofClass.Members.Search(name, FlagType.Getter, 0) == null) return string.Empty;
+            if (!ofClass.Members.Contains(name, FlagType.Getter, 0)) return string.Empty;
             var result = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
             result = TemplateUtils.ToDeclarationWithModifiersString(newMember, result);
             result = TemplateUtils.ReplaceTemplateVariable(result, "Member", $"super.{name}");
@@ -4083,7 +4083,7 @@ namespace ASCompletion.Completion
         protected virtual string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
             var name = newMember.Name;
-            if (ofClass.Members.Search(name, FlagType.Setter, 0) == null) return string.Empty;
+            if (!ofClass.Members.Contains(name, FlagType.Setter, 0)) return string.Empty;
             var template = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
             template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Member", $"super.{name}");

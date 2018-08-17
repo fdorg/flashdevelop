@@ -2068,16 +2068,14 @@ namespace HaXeContext.Model
         private void AddClass(FileModel model, ClassModel curClass)
         {
             // avoid empty duplicates due to Haxe directives
-            foreach(var aClass in model.Classes)
-                if (aClass.Name == curClass.Name)
-                {
-                    if (aClass.Members.Count == 0)
-                    {
-                        model.Classes.Remove(aClass);
-                        break;
-                    }
-                    return;
-                }
+            for (int i = 0, count = model.Classes.Count; i < count; i++)
+            {
+                var aClass = model.Classes[i];
+                if (aClass.Name != curClass.Name) continue;
+                if (aClass.Members.Count != 0) return;
+                model.Classes.Remove(aClass);
+                break;
+            }
             model.Classes.Add(curClass);
         }
         #endregion

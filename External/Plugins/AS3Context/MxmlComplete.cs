@@ -862,7 +862,6 @@ namespace AS3Context
 
     class MXMLListItemComparer : IComparer<ICompletionListItem>
     {
-
         public int Compare(ICompletionListItem a, ICompletionListItem b)
         {
             string a1;
@@ -870,7 +869,7 @@ namespace AS3Context
             if (a.Label.Equals(b.Label, StringComparison.OrdinalIgnoreCase))
             {
                 if (a is HtmlAttributeItem && b is HtmlTagItem) return 1;
-                else if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
+                if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
             }
             if (a is IHtmlCompletionListItem)
             {

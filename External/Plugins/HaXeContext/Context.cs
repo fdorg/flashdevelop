@@ -680,28 +680,68 @@ namespace HaXeContext
             }
             if (result.Classes != null)
             {
-                foreach (var model in result.Classes)
+                foreach (var @class in result.Classes)
                 {
-                    if (!model.Flags.HasFlag(FlagType.Abstract)) continue;
-                    var meta = model.MetaDatas;
-                    if (meta == null || meta.All(it => it.Name != ":enum")) continue;
-                    /**
-                     * transform
-                     * @:enum abstract AType(T) {
-                     *     var Value;
-                     * }
-                     * to
-                     * @:enum abstract AType(T) {
-                     *     public static var Value;
-                     * }
-                     */
-                    foreach (MemberModel member in model.Members)
+                    var flags = @class.Flags;
+                    if ((flags & FlagType.Abstract) != 0)
                     {
-                        if (!member.Flags.HasFlag(FlagType.Variable)) continue;
-                        member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
-                        member.Access = Visibility.Public;
-                        if (string.IsNullOrEmpty(member.Type)) member.Type = model.Type;
-                        member.InFile = model.InFile;
+                        var meta = @class.MetaDatas;
+                        if (meta != null && meta.Any(it => it.Name == ":enum"))
+                        {
+                            /**
+                             * transform
+                             * @:enum abstract AType(T) {
+                             *     var Value;
+                             * }
+                             * to
+                             * @:enum abstract AType(T) {
+                             *     public static var Value;
+                             * }
+                             */
+                            foreach (MemberModel member in @class.Members)
+                            {
+                                if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                                member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
+                                member.Access = Visibility.Public;
+                                if (string.IsNullOrEmpty(member.Type)) member.Type = @class.Type;
+                                member.InFile = @class.InFile;
+                            }
+                        }
+                    }
+                    else if (flags == FlagType.Class && @class.Members.Count > 0)
+                    {
+                        /**
+                         * transform
+                         * class Bar extends Foo {
+                         *     override foo() {}
+                         * }
+                         * class Foo {
+                         *     public function foo() {}
+                         * }
+                         * to
+                         * class Bar extends Foo {
+                         *     public override foo() {}
+                         * }
+                         * class Foo {
+                         *     public function foo() {}
+                         * }
+                         */
+                        @class.ResolveExtends();
+                        var parent = @class.Extends;
+                        while (!parent.IsVoid())
+                        {
+                            for (int i = 0, count = @class.Members.Count; i < count; i++)
+                            {
+                                var member = @class.Members[i];
+                                if ((member.Flags & FlagType.Override) == 0
+                                    || (member.Access & Visibility.Public) != 0
+                                    || !parent.Members.Contains(member.Name, 0, Visibility.Public)) continue;
+                                member.Access = Visibility.Public;
+                                member.Flags |= FlagType.Access;
+                                break;
+                            }
+                            parent = parent.Extends;
+                        }
                     }
                 }
             }

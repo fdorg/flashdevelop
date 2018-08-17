@@ -980,15 +980,15 @@ namespace AS2Context
                 //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
             }
 
-            if (topLevel.Members.Search("_root", 0, 0) == null)
+            if (!topLevel.Members.Contains("_root", 0, 0))
                 topLevel.Members.Add(new MemberModel("_root", docType, FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search("_global", 0, 0) == null)
+            if (!topLevel.Members.Contains("_global", 0, 0))
                 topLevel.Members.Add(new MemberModel("_global", features.objectKey, FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search("this", 0, 0) == null)
+            if (!topLevel.Members.Contains("this", 0, 0))
                 topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search("super", 0, 0) == null)
+            if (!topLevel.Members.Contains("super", 0, 0))
                 topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
-            if (topLevel.Members.Search(features.voidKey, 0, 0) == null)
+            if (!topLevel.Members.Contains(features.voidKey, 0, 0))
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Class | FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
@@ -1064,7 +1064,7 @@ namespace AS2Context
                             if (nameLen > 1) package = package.Substring(nameLen);
                             int p = package.IndexOf('.');
                             if (p > 0) package = package.Substring(0, p);
-                            if (pModel.Imports.Search(package, 0, 0) == null) // sub packages
+                            if (!pModel.Imports.Contains(package, 0, 0)) // sub packages
                             {
                                 pModel.Imports.Add(new MemberModel(package, package, FlagType.Package, Visibility.Public));
                             }
@@ -1097,7 +1097,7 @@ namespace AS2Context
             {
                 var mname = GetLastStringToken(entry, dirSeparator);
                 mname = mname.Substring(0, mname.LastIndexOf('.'));
-                if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
+                if (mname.Length > 0 && !memberList.Contains(mname, 0, 0) && re_token.IsMatch(mname))
                 {
                     var type = mname;
                     if (package.Length > 0) type = package + "." + mname;
@@ -1119,7 +1119,7 @@ namespace AS2Context
             foreach (string entry in dirEntries)
             {
                 var mname = GetLastStringToken(entry, dirSeparator);
-                if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
+                if (mname.Length > 0 && !memberList.Contains(mname, 0, 0) && re_token.IsMatch(mname))
                 {
                     var type = mname;
                     if (package.Length > 0) type = package + "." + mname;

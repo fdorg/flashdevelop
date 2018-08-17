@@ -569,11 +569,9 @@ namespace CodeRefactor.Commands
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
-                bool needsImport = directory != Path.GetDirectoryName(currentTarget.NewFilePath) &&
-                                   directory != currentTarget.OwnerPath &&
-                                   ASContext.Context.CurrentModel.Imports.Search(targetName,
-                                                                                 FlagType.Class & FlagType.Function &
-                                                                                 FlagType.Namespace, 0) == null;
+                bool needsImport = directory != Path.GetDirectoryName(currentTarget.NewFilePath)
+                                   && directory != currentTarget.OwnerPath
+                                   && !ASContext.Context.CurrentModel.Imports.Contains(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0);
 
                 // Replace matches
                 int typeDiff = sci.MBSafeTextLength(oldType) - sci.MBSafeTextLength(targetName);

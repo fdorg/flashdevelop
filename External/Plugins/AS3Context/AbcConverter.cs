@@ -401,7 +401,7 @@ namespace AS3Context
                 if (models.ContainsKey(objPath))
                 {
                     ClassModel objModel = models[objPath].GetPublicClass();
-                    if (objModel.Members.Search("prototype", 0, 0) == null)
+                    if (!objModel.Members.Contains("prototype", 0, 0))
                     {
                         MemberModel proto = new MemberModel("prototype", "Object", FlagType.Dynamic | FlagType.Variable, Visibility.Public);
                         objModel.Members.Add(proto);

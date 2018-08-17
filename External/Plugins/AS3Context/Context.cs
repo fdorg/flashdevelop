@@ -1023,11 +1023,11 @@ namespace AS3Context
             string filename = "toplevel.as";
             topLevel = new FileModel(filename);
 
-            if (topLevel.Members.Search("this", 0, 0) == null)
+            if (!topLevel.Members.Contains("this", 0, 0))
                 topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
-            if (topLevel.Members.Search("super", 0, 0) == null)
+            if (!topLevel.Members.Contains("super", 0, 0))
                 topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable | FlagType.Intrinsic, Visibility.Public));
-            if (topLevel.Members.Search(features.voidKey, 0, 0) == null)
+            if (!topLevel.Members.Contains(features.voidKey, 0, 0))
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
         }
