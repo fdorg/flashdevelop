@@ -330,7 +330,6 @@ namespace HaXeContext.Model
                     .SetName("Support for @:publicFields. case 6.1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
                 yield return new TestCaseData("Issue163_8")
-                    //.Ignore("")
                     .Returns(new List<MemberModel> {new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public)})
                     .SetName("Support for @:publicFields. case 8")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/163");
