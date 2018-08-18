@@ -1064,15 +1064,15 @@ namespace HaXeContext
             var name = member.Name;
             var p = name.IndexOf('#');
             if (p > 0) name = name.Substring(0, p);
-
-            var fullName = member.Type;
+            var type = member.Type;
+            var isShortType = name == type;
             var curFile = Context.CurrentModel;
             var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
             foreach (var import in imports)
             {
-                if (import.Name == name) return true;
-                if (import.Name == "*" && import.Type.Replace("*", name) == fullName) return true;
-                if (fullName.StartsWithOrdinal(import.Type + ".")) return true;
+                if ((isShortType && import.Name == name) || import.Type == type) return true;
+                if (import.Name == "*" && import.Type.Replace("*", name) == type) return true;
+                if (type.StartsWithOrdinal(import.Type + ".")) return true;
             }
             return false;
         }

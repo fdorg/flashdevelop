@@ -4887,9 +4887,7 @@ namespace ASCompletion.Completion
                 inFile = context.InFile;
                 import = context.Type;
             }
-            if (inFile == null || import == null)
-                return false;
-
+            if (inFile == null || import == null) return false;
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
@@ -4922,15 +4920,13 @@ namespace ASCompletion.Completion
             /*if (cFile == inFile || features.hasPackages && cFile.Package == inFile.Package)
                 return true*/
 
-            if (IsMetadataArgument(sci, position))
-                return false;
+            if (IsMetadataArgument(sci, position)) return false;
 
             // type name already present in imports
             try
             {
-                int curLine = sci.LineFromPosition(position);
-                if (ASContext.Context.IsImported(import, curLine))
-                    return true;
+                var curLine = sci.LineFromPosition(position);
+                if (ASContext.Context.IsImported(import, curLine)) return true;
             }
             catch (Exception) 
             {
@@ -4940,28 +4936,24 @@ namespace ASCompletion.Completion
             // class with same name exists in current package?
             if (ASContext.Context.Features.hasPackages && import is ClassModel)
             {
-                string cname = import.Name;
-                if (cFile.Package.Length > 0) cname = cFile.Package + "." + cname;
-                ClassModel inPackage = ASContext.Context.ResolveType(cname, cFile);
-                if (!inPackage.IsVoid())
-                    return true;
+                var name = import.Name;
+                if (cFile.Package.Length > 0) name = cFile.Package + "." + name;
+                var inPackage = ASContext.Context.ResolveType(name, cFile);
+                if (!inPackage.IsVoid()) return true;
             }
 
             // insert import
-            if (ASContext.Context.Settings.GenerateImports)
+            if (!ASContext.Context.Settings.GenerateImports) return false;
+            sci.BeginUndoAction();
+            try
             {
-                sci.BeginUndoAction();
-                try
-                {
-                    offset = ASGenerator.InsertImport(import, true);
-                }
-                finally
-                {
-                    sci.EndUndoAction();
-                }
-                return true;
+                offset = ASGenerator.InsertImport(import, true);
             }
-            return false;
+            finally
+            {
+                sci.EndUndoAction();
+            }
+            return true;
         }
 
         private static string CheckShortName(string name)
