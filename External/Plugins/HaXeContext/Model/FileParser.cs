@@ -1322,20 +1322,41 @@ namespace HaXeContext.Model
 
         private ASMetaData LookupMeta(ref string ba, ref int i)
         {
-            int len = ba.Length;
-            int i0 = i;
-            int line0 = line;
-            int inString = 0;
-            int parCount = 0;
-            bool isComplex = false;
+            var i0 = i;
+            var line0 = line;
+            var inString = 0;
+            var parCount = 0;
+            var isComplex = false;
+            var isOverload = false;
+            var count = 0;
+            var len = ba.Length;
             while (i < len)
             {
-                char c = ba[i];
+                var c = ba[i];
                 if (inString == 0)
                 {
-                    if (c == '"') inString = 1;
+                    /**
+                     * for example:
+                     * @:overload(function(port:Int, host:String, ?listener:Void->Void):Socket {})
+                     * static function connect(options:EitherType<NetConnectOptionsTcp, NetConnectOptionsUnix>, ?listener:Void->Void):Socket;
+                     */
+                    if (count == 8
+                        && ba[i - 8] == ':'
+                        && ba[i - 7] == 'o'
+                        && ba[i - 6] == 'v'
+                        && ba[i - 5] == 'e'
+                        && ba[i - 4] == 'r'
+                        && ba[i - 3] == 'l'
+                        && ba[i - 2] == 'o'
+                        && ba[i - 1] == 'a'
+                        && c == 'd')
+                    {
+                        isOverload = true;
+                    }
+                    else if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if (c == '{' || c == ';' || c == '[') // Is this valid in Haxe meta?
+                    else if ((!isOverload && (c == '{' || c == ';' || c == '[')) // Is this valid in Haxe meta?
+                             || (isOverload && (c == '\n' || c == '\r')))
                     {
                         i = i0;
                         line = line0;
@@ -1351,10 +1372,7 @@ namespace HaXeContext.Model
                         parCount--;
                         if (parCount <= 0) break;
                     }
-                    else if (c <= 32 && parCount <= 0)
-                    {
-                        break;
-                    }
+                    else if (c <= 32 && parCount <= 0) break;
                 }
                 else if (inString == 1 && c == '"') inString = 0;
                 else if (inString == 2 && c == '\'') inString = 0;
@@ -1364,18 +1382,14 @@ namespace HaXeContext.Model
                     if (c == 13 && i < len && ba[i + 1] == 10) i++;
                 }
                 i++;
+                count++;
             }
-
-            string meta = ba.Substring(i0, i - i0);
-            ASMetaData md = new ASMetaData(isComplex ? meta.Substring(0, meta.IndexOf('(')) : meta);
+            var meta = ba.Substring(i0, i - i0);
+            var parIndex = meta.IndexOf('(');
+            var md = new ASMetaData(isComplex ? meta.Substring(0, parIndex) : meta);
             md.LineFrom = line0;
             md.LineTo = line;
-            if (isComplex)
-            {
-                meta = meta.Substring(meta.IndexOf('(') + 1).Trim();
-                md.Params = new Dictionary<string, string>();
-                md.Params["Default"] = meta;
-            }
+            if (isComplex) md.Params = new Dictionary<string, string> {["Default"] = meta.Substring(parIndex + 1).Trim()};
             return md;
         }
 
