@@ -337,6 +337,14 @@ namespace HaXeContext.Model
                     })
                     .SetName("function foo(i:Int):Int trace(i)\voverride function bar() {}")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_16")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo1", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("foo2", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                    })
+                    .SetName("function foo() return switch(true) {\n\tcase: 1;\n\tcase _: 2;\n}")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }
 
@@ -359,6 +367,10 @@ namespace HaXeContext.Model
                         },
                     })
                     .SetName("Issue 2342. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2342");
+                yield return new TestCaseData("Issue2342_2")
+                    .Returns(new List<MemberModel>())
+                    .SetName("Issue 2342. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2342");
             }
         }

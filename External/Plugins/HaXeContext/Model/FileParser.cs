@@ -476,25 +476,6 @@ namespace HaXeContext.Model
                 }
                 if (!inValue)
                 {
-                    if (braceCount > 0)
-                    {
-                        if (c1 == '/') LookupRegex(ba, ref i);
-                        else if (c1 == '}')
-                        {
-                            lastComment = null;
-                            braceCount--;
-                            if (braceCount == 0 && curMethod != null)
-                            {
-                                if (curMethod.Equals(curMember)) curMember = null;
-                                curMethod.LineTo = line;
-                                curMethod = null;
-                            }
-                        }
-                        else if (c1 == '{') braceCount++;
-                        // escape next char
-                        else if (c1 == '\\') i++;
-                        continue;
-                    }
                     if (inFunction)
                     {
                         var abort = false;
@@ -515,7 +496,8 @@ namespace HaXeContext.Model
                                 if (word == "macro"
                                     || word == "extern" || word == "public" || word == "static" || word == "inline"
                                     || word == "private"
-                                    || word == "override")
+                                    || word == "override"
+                                    || word == "function")
                                 {
                                     abort = true;
                                     i -= valueLength;
@@ -523,7 +505,9 @@ namespace HaXeContext.Model
                             }
                             valueLength = 0;
                         }
-                        if (c1 == ';' || abort)
+                        if (c1 == '{') braceCount++;
+                        else if (c1 == '}') braceCount--;
+                        else if (abort || (braceCount == 0 && c1 == ';'))
                         {
                             lastComment = null;
                             if (curMethod != null)
@@ -536,6 +520,25 @@ namespace HaXeContext.Model
                             length = 0;
                         }
                         else if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
+                        continue;
+                    }
+                    if (braceCount > 0)
+                    {
+                        if (c1 == '/') LookupRegex(ba, ref i);
+                        else if (c1 == '}')
+                        {
+                            lastComment = null;
+                            braceCount--;
+                            if (braceCount == 0 && curMethod != null)
+                            {
+                                if (curMethod.Equals(curMember)) curMember = null;
+                                curMethod.LineTo = line;
+                                curMethod = null;
+                            }
+                        }
+                        else if (c1 == '{') braceCount++;
+                        // escape next char
+                        else if (c1 == '\\') i++;
                         continue;
                     }
                 }
@@ -805,19 +808,6 @@ namespace HaXeContext.Model
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if (ba[i] == '*')
-                                    {
-                                        inGeneric = true;
-                                        inValue = false;
-                                        hadValue = false;
-                                        inType = false;
-                                        inAnonType = false;
-                                        valueLength = 0;
-                                        buffer[length++] = '<';
-                                        buffer[length++] = '*';
-                                        i++;
-                                        continue;
-                                    }
                                     if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
                                         && (char.IsLetter(ba[i]) || (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?'))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
