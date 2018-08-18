@@ -772,17 +772,17 @@ namespace HaXeContext.Model
                         inType = true;
                         continue;
                     }
-
                     // should we evaluate the token?
                     if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
                         // for example: foo(? v)
-                        && (!inParams || (length > 0 && buffer[length - 1] != '?')))
+                        && (!inParams || (buffer[length - 1] != '?')))
                     {
                         evalToken = 1;
                     }
                     hadWS = false;
                     hadDot = false;
                     var shortcut = true;
+                    // for example: function foo() return null;
                     if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
                         && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
                         && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
@@ -804,7 +804,7 @@ namespace HaXeContext.Model
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
                             // generics
-                            else if (c1 == '<' && features.hasGenerics)
+                            else if (c1 == '<')
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
@@ -887,13 +887,15 @@ namespace HaXeContext.Model
                                 inAnonType = true;
                                 addChar = true;
                             }
-                            else if (inAnonType && c1 == '}')
+                            else if (inAnonType && paramBraceCount > 0 && c1 == '}')
                             {
-                                paramBraceCount--;
-                                if (paramBraceCount == 0) inAnonType = false;
+                                if (c1 == '}')
+                                {
+                                    paramBraceCount--;
+                                    if (paramBraceCount == 0) inAnonType = false;
+                                }
                                 addChar = true;
                             }
-                            else if (inAnonType && paramBraceCount > 0) addChar = true;
                             else if (c1 == '?')
                             {
                                 hadWS = false;
@@ -1345,7 +1347,7 @@ namespace HaXeContext.Model
                     }
                     else if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if ((!isOverload && (c == '{' || c == ';' || c == '[')) // Is this valid in Haxe meta?
+                    else if ((!isOverload && (c == '{' || c == ';' || c == '[')) // Is this valid in Haxe meta? - slavara: yes, https://haxe.org/manual/lf-metadata.html
                              || (isOverload && (c == '\n' || c == '\r')))
                     {
                         i = i0;
@@ -1468,11 +1470,6 @@ namespace HaXeContext.Model
                 {
                     foundKeyword = FlagType.Abstract;
                     modifiers |= FlagType.Abstract;
-                }
-                else if (features.hasStructs && token == "struct")
-                {
-                    foundKeyword = FlagType.Struct;
-                    modifiers |= FlagType.Class | FlagType.Struct;
                 }
                 else if (features.hasEnums && token == "enum")
                 {
