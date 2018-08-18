@@ -351,7 +351,23 @@ namespace HaXeContext.Model
                         new MemberModel("foo1", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("foo2", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                     })
-                    .SetName("function foo() return if(true) {\n\t1;\n} else {\n\t2;\n}")
+                    .SetName("function foo() return if(true) {\n\t1;\n} else {\n\t2;\n}. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_18")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo1", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("foo2", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                    })
+                    .SetName("function foo() return if(true) {\n\t(function bar() {return 1;})();\n} else {\n\t2;\n}")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_19")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo1", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("foo2", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                    })
+                    .SetName("function foo() return if(true) {\n\t1;\n} else {\n\t2;\n}. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }

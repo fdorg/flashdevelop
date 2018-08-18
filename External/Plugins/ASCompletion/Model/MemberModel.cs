@@ -247,62 +247,60 @@ namespace ASCompletion.Model
     {
         private bool sorted;
         
-        public IEnumerator GetEnumerator() => Items.GetEnumerator();
+        public IEnumerator GetEnumerator() => items.GetEnumerator();
 
-        public List<MemberModel> Items { get; }
+        readonly List<MemberModel> items = new List<MemberModel>();
 
-        public int Count => Items.Count;
+        public List<MemberModel> Items => items;
+
+        public int Count => items.Count;
 
         public MemberList()
         {
-            Items = new List<MemberModel>();
         }
         
         public MemberModel this[int index]
         {
-            get
-            {
-                return Items[index];
-            }
+            get => items[index];
             set
             {
                 sorted = false;
-                Items[index] = value;
+                items[index] = value;
             }
         }
         
         public int Add(MemberModel value)
         {
             sorted = false;
-            Items.Add(value);
-            return Items.Count;
+            items.Add(value);
+            return items.Count;
         }
 
         public int Add(MemberList list)
         {
             sorted = false;
-            Items.AddRange(list.Items);
-            return Items.Count;
+            items.AddRange(list.Items);
+            return items.Count;
         }
 
         public void Insert(int index, MemberModel value)
         {
             sorted = false;
-            Items.Insert(index, value);
+            items.Insert(index, value);
         }
         
-        public void Remove(MemberModel value) => Items.Remove(value);
+        public void Remove(MemberModel value) => items.Remove(value);
 
         public void Remove(string name)
         {
-            MemberModel member = Search(name, 0, 0);
-            if (member != null) Items.Remove(member);
+            var member = Search(name, 0, 0);
+            if (member != null) items.Remove(member);
         }
 
         public void Clear()
         {
             sorted = true;
-            Items.Clear();
+            items.Clear();
         }
 
         public bool Contains(string name, FlagType mask, Visibility access) => Search(name, mask, access) != null;
@@ -316,10 +314,10 @@ namespace ASCompletion.Model
         /// <returns>First match</returns>
         public MemberModel Search(string name, FlagType mask, Visibility access)
         {
-            var count = Items.Count;
+            var count = items.Count;
             for (var i = 0; i < count; i++)
             {
-                var m = Items[i];
+                var m = items[i];
                 if (((m.Flags & mask) == mask)
                     && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) return m;
@@ -337,7 +335,7 @@ namespace ASCompletion.Model
         public MemberList MultipleSearch(string name, FlagType mask, Visibility access) 
         {
             var result = new MemberList();
-            foreach (var m in Items)
+            foreach (var m in items)
                 if (((m.Flags & mask) == mask)
                     && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) result.Add(m);
@@ -348,11 +346,9 @@ namespace ASCompletion.Model
 
         public void Sort(IComparer<MemberModel> comparer)
         {
-            if (!sorted)
-            {
-                Items.Sort(comparer);
-                sorted = true;
-            }
+            if (sorted) return;
+            items.Sort(comparer);
+            sorted = true;
         }
 
         /// <summary>
@@ -362,7 +358,7 @@ namespace ASCompletion.Model
         public void Merge(MemberModel item)
         {
             if (item == null) return;
-            MemberList list = new MemberList();
+            var list = new MemberList();
             list.Add(item);
             Merge(list);
         }
@@ -378,22 +374,23 @@ namespace ASCompletion.Model
             foreach (MemberModel m in list)
             {
                 var added = false;
-                while (index < Items.Count)
+                while (index < items.Count)
                 {
-                    if (m.Name.CompareTo(Items[index].Name) <= 0)
+                    var item = items[index];
+                    if (m.Name.CompareTo(item.Name) <= 0)
                     {
-                        if (m.Name != Items[index].Name) Items.Insert(index, m);
-                        else if ((Items[index].Flags & FlagType.Setter) > 0)
+                        if (m.Name != item.Name) items.Insert(index, m);
+                        else if ((item.Flags & FlagType.Setter) > 0)
                         {
-                            Items.RemoveAt(index);
-                            Items.Insert(index, m);
+                            items.RemoveAt(index);
+                            items.Insert(index, m);
                         }
                         added = true;
                         break;
                     }
                     index++;
                 }
-                if (!added) Items.Add(m);
+                if (!added) items.Add(m);
             }
         }
 
@@ -402,17 +399,17 @@ namespace ASCompletion.Model
             if (item == null) return;
             var index = 0;
             var added = false;
-            while (index < Items.Count)
+            while (index < items.Count)
             {
-                if (item.LineFrom <= Items[index].LineFrom)
+                if (item.LineFrom <= items[index].LineFrom)
                 {
-                    Items.Insert(index, item);
+                    items.Insert(index, item);
                     added = true;
                     break;
                 }
                 index++;
             }
-            if (!added) Items.Add(item);
+            if (!added) items.Add(item);
         }
 
         /// <summary>
@@ -426,17 +423,17 @@ namespace ASCompletion.Model
             foreach (MemberModel item in list)
             {
                 var added = false;
-                while (index < Items.Count)
+                while (index < items.Count)
                 {
-                    if (item.LineFrom <= Items[index].LineFrom)
+                    if (item.LineFrom <= items[index].LineFrom)
                     {
-                        Items.Insert(index, item);
+                        items.Insert(index, item);
                         added = true;
                         break;
                     }
                     index++;
                 }
-                if (!added) Items.Add(item);
+                if (!added) items.Add(item);
             }
         }
 
@@ -452,22 +449,23 @@ namespace ASCompletion.Model
             if ((m.Flags & mask) == mask && (m.Access & access) > 0)
             {
                 var added = false;
-                while (index < Items.Count)
+                while (index < items.Count)
                 {
-                    if (m.Name.CompareTo(Items[index].Name) <= 0)
+                    var item = items[index];
+                    if (m.Name.CompareTo(item.Name) <= 0)
                     {
-                        if (m.Name != Items[index].Name) Items.Insert(index, m);
-                        else if ((Items[index].Flags & FlagType.Setter) > 0)
+                        if (m.Name != item.Name) Items.Insert(index, m);
+                        else if ((item.Flags & FlagType.Setter) > 0)
                         {
-                            Items.RemoveAt(index);
-                            Items.Insert(index, m);
+                            items.RemoveAt(index);
+                            items.Insert(index, m);
                         }
                         added = true;
                         break;
                     }
                     index++;
                 }
-                if (!added) Items.Add(m);
+                if (!added) items.Add(m);
             }
         }
 
