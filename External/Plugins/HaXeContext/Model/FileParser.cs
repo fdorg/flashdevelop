@@ -887,7 +887,7 @@ namespace HaXeContext.Model
                                 inAnonType = true;
                                 addChar = true;
                             }
-                            else if (inAnonType && paramBraceCount > 0 && c1 == '}')
+                            else if (inAnonType && paramBraceCount > 0)
                             {
                                 if (c1 == '}')
                                 {

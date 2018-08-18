@@ -147,7 +147,7 @@ namespace HaXeContext.Model
                             LineTo = 5,
                         }
                     })
-                    .SetName("function foo(i:Int):Int\nreturn i % 2 == 0\n? 0\n: 1;")
+                    .SetName("function foo(i:Int):Int\nreturn i % 2 == 0\n\t? 0\n\t: 1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_4")
                     .Returns(new List<MemberModel>
@@ -344,6 +344,14 @@ namespace HaXeContext.Model
                         new MemberModel("foo2", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                     })
                     .SetName("function foo() return switch(true) {\n\tcase: 1;\n\tcase _: 2;\n}")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
+                yield return new TestCaseData("Issue2210_17")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo1", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("foo2", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                    })
+                    .SetName("function foo() return if(true) {\n\t1;\n} else {\n\t2;\n}")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
             }
         }
