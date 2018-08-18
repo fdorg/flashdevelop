@@ -476,25 +476,6 @@ namespace HaXeContext.Model
                 }
                 if (!inValue)
                 {
-                    if (braceCount > 0)
-                    {
-                        if (c1 == '/') LookupRegex(ba, ref i);
-                        else if (c1 == '}')
-                        {
-                            lastComment = null;
-                            braceCount--;
-                            if (braceCount == 0 && curMethod != null)
-                            {
-                                if (curMethod.Equals(curMember)) curMember = null;
-                                curMethod.LineTo = line;
-                                curMethod = null;
-                            }
-                        }
-                        else if (c1 == '{') braceCount++;
-                        // escape next char
-                        else if (c1 == '\\') i++;
-                        continue;
-                    }
                     if (inFunction)
                     {
                         var abort = false;
@@ -515,7 +496,8 @@ namespace HaXeContext.Model
                                 if (word == "macro"
                                     || word == "extern" || word == "public" || word == "static" || word == "inline"
                                     || word == "private"
-                                    || word == "override")
+                                    || word == "override"
+                                    || word == "function")
                                 {
                                     abort = true;
                                     i -= valueLength;
@@ -523,7 +505,9 @@ namespace HaXeContext.Model
                             }
                             valueLength = 0;
                         }
-                        if (c1 == ';' || abort)
+                        if (c1 == '{') braceCount++;
+                        else if (c1 == '}') braceCount--;
+                        else if (abort || (braceCount == 0 && c1 == ';'))
                         {
                             lastComment = null;
                             if (curMethod != null)
@@ -536,6 +520,25 @@ namespace HaXeContext.Model
                             length = 0;
                         }
                         else if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
+                        continue;
+                    }
+                    if (braceCount > 0)
+                    {
+                        if (c1 == '/') LookupRegex(ba, ref i);
+                        else if (c1 == '}')
+                        {
+                            lastComment = null;
+                            braceCount--;
+                            if (braceCount == 0 && curMethod != null)
+                            {
+                                if (curMethod.Equals(curMember)) curMember = null;
+                                curMethod.LineTo = line;
+                                curMethod = null;
+                            }
+                        }
+                        else if (c1 == '{') braceCount++;
+                        // escape next char
+                        else if (c1 == '\\') i++;
                         continue;
                     }
                 }
@@ -769,17 +772,17 @@ namespace HaXeContext.Model
                         inType = true;
                         continue;
                     }
-
                     // should we evaluate the token?
                     if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
                         // for example: foo(? v)
-                        && (!inParams || (length > 0 && buffer[length - 1] != '?')))
+                        && (!inParams || (buffer[length - 1] != '?')))
                     {
                         evalToken = 1;
                     }
                     hadWS = false;
                     hadDot = false;
                     var shortcut = true;
+                    // for example: function foo() return null;
                     if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
                         && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
                         && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
@@ -801,23 +804,10 @@ namespace HaXeContext.Model
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
                             // generics
-                            else if (c1 == '<' && features.hasGenerics)
+                            else if (c1 == '<')
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if (ba[i] == '*')
-                                    {
-                                        inGeneric = true;
-                                        inValue = false;
-                                        hadValue = false;
-                                        inType = false;
-                                        inAnonType = false;
-                                        valueLength = 0;
-                                        buffer[length++] = '<';
-                                        buffer[length++] = '*';
-                                        i++;
-                                        continue;
-                                    }
                                     if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
                                         && (char.IsLetter(ba[i]) || (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?'))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
@@ -897,13 +887,15 @@ namespace HaXeContext.Model
                                 inAnonType = true;
                                 addChar = true;
                             }
-                            else if (inAnonType && c1 == '}')
+                            else if (inAnonType && paramBraceCount > 0)
                             {
-                                paramBraceCount--;
-                                if (paramBraceCount == 0) inAnonType = false;
+                                if (c1 == '}')
+                                {
+                                    paramBraceCount--;
+                                    if (paramBraceCount == 0) inAnonType = false;
+                                }
                                 addChar = true;
                             }
-                            else if (inAnonType && paramBraceCount > 0) addChar = true;
                             else if (c1 == '?')
                             {
                                 hadWS = false;
@@ -1322,20 +1314,41 @@ namespace HaXeContext.Model
 
         private ASMetaData LookupMeta(ref string ba, ref int i)
         {
-            int len = ba.Length;
-            int i0 = i;
-            int line0 = line;
-            int inString = 0;
-            int parCount = 0;
-            bool isComplex = false;
+            var i0 = i;
+            var line0 = line;
+            var inString = 0;
+            var parCount = 0;
+            var isComplex = false;
+            var isOverload = false;
+            var count = 0;
+            var len = ba.Length;
             while (i < len)
             {
-                char c = ba[i];
+                var c = ba[i];
                 if (inString == 0)
                 {
-                    if (c == '"') inString = 1;
+                    /**
+                     * for example:
+                     * @:overload(function(port:Int, host:String, ?listener:Void->Void):Socket {})
+                     * static function connect(options:EitherType<NetConnectOptionsTcp, NetConnectOptionsUnix>, ?listener:Void->Void):Socket;
+                     */
+                    if (count == 8
+                        && ba[i - 8] == ':'
+                        && ba[i - 7] == 'o'
+                        && ba[i - 6] == 'v'
+                        && ba[i - 5] == 'e'
+                        && ba[i - 4] == 'r'
+                        && ba[i - 3] == 'l'
+                        && ba[i - 2] == 'o'
+                        && ba[i - 1] == 'a'
+                        && c == 'd')
+                    {
+                        isOverload = true;
+                    }
+                    else if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if (c == '{' || c == ';' || c == '[') // Is this valid in Haxe meta?
+                    else if ((!isOverload && (c == '{' || c == ';' || c == '[')) // Is this valid in Haxe meta? - slavara: yes, https://haxe.org/manual/lf-metadata.html
+                             || (isOverload && (c == '\n' || c == '\r')))
                     {
                         i = i0;
                         line = line0;
@@ -1351,10 +1364,7 @@ namespace HaXeContext.Model
                         parCount--;
                         if (parCount <= 0) break;
                     }
-                    else if (c <= 32 && parCount <= 0)
-                    {
-                        break;
-                    }
+                    else if (c <= 32 && parCount <= 0) break;
                 }
                 else if (inString == 1 && c == '"') inString = 0;
                 else if (inString == 2 && c == '\'') inString = 0;
@@ -1364,18 +1374,14 @@ namespace HaXeContext.Model
                     if (c == 13 && i < len && ba[i + 1] == 10) i++;
                 }
                 i++;
+                count++;
             }
-
-            string meta = ba.Substring(i0, i - i0);
-            ASMetaData md = new ASMetaData(isComplex ? meta.Substring(0, meta.IndexOf('(')) : meta);
+            var meta = ba.Substring(i0, i - i0);
+            var parIndex = meta.IndexOf('(');
+            var md = new ASMetaData(isComplex ? meta.Substring(0, parIndex) : meta);
             md.LineFrom = line0;
             md.LineTo = line;
-            if (isComplex)
-            {
-                meta = meta.Substring(meta.IndexOf('(') + 1).Trim();
-                md.Params = new Dictionary<string, string>();
-                md.Params["Default"] = meta;
-            }
+            if (isComplex) md.Params = new Dictionary<string, string> {["Default"] = meta.Substring(parIndex + 1).Trim()};
             return md;
         }
 
@@ -1464,11 +1470,6 @@ namespace HaXeContext.Model
                 {
                     foundKeyword = FlagType.Abstract;
                     modifiers |= FlagType.Abstract;
-                }
-                else if (features.hasStructs && token == "struct")
-                {
-                    foundKeyword = FlagType.Struct;
-                    modifiers |= FlagType.Class | FlagType.Struct;
                 }
                 else if (features.hasEnums && token == "enum")
                 {
