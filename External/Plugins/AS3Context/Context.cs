@@ -856,8 +856,14 @@ namespace AS3Context
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
-            if (member.InFile?.Package == CurrentModel.Package) return true;
-            return base.IsImported(member, atLine);
+            // same package is auto-imported
+            var package = member?.InFile.Package;
+            if (package == null) {
+                package = (member.Type.Length > member.Name.Length
+                        ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
+                        : "");
+            }
+            return package == Context.CurrentModel.Package || base.IsImported(member, atLine);
         }
 
         /// <summary>

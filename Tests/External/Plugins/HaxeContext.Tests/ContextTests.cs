@@ -177,7 +177,7 @@ namespace HaXeContext
                 else
                 {
                     var type = sci.GetWordFromPosition(sci.CurrentPos);
-                    member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                    member = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
                 }
             }
             return ASContext.Context.IsImported(member, sci.CurrentLine);
