@@ -52,7 +52,7 @@ namespace AS3Context
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("IsImported_case1"))
+                yield return new TestCaseData("IsImported_case1")
                     .Returns(true);
                 yield return new TestCaseData(null)
                     .Returns(false)
@@ -62,14 +62,20 @@ namespace AS3Context
         }
 
         [Test, TestCaseSource(nameof(IsImportedTestCases))]
-        public bool IsImported(string sourceText)
+        public bool IsImported(string fileName)
         {
             MemberModel member;
-            if (sourceText != null)
+            if (fileName != null)
             {
+                var sourceText = ReadAllText(fileName);
                 SetSrc(sci, sourceText);
-                var type = sci.GetWordFromPosition(sci.CurrentPos);
-                member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                var expr = ASComplete.GetExpressionType(sci, ASComplete.ExpressionEndPosition(sci, sci.CurrentPos), false, true);
+                if (expr.Type != null) member = expr.Type;
+                else
+                {
+                    var type = sci.GetWordFromPosition(sci.CurrentPos);
+                    member = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+                }
             }
             else member = ClassModel.VoidClass;
             return ASContext.Context.IsImported(member, sci.CurrentLine);

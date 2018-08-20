@@ -76,15 +76,15 @@ namespace HaXeContext
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("Issue1849_1"))
+                yield return new TestCaseData("Issue1849_1")
                     .Returns("Dynamic<T>")
                     .SetName("implements Dynamic<T>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
-                yield return new TestCaseData(ReadAllText("Issue1849_2"))
+                yield return new TestCaseData("Issue1849_2")
                     .Returns("IStruct<T>")
                     .SetName("implements IStruct<T>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
-                yield return new TestCaseData(ReadAllText("Issue1849_3"))
+                yield return new TestCaseData("Issue1849_3")
                     .Returns("IStruct<K,V>")
                     .SetName("implements IStruct<K,V>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
@@ -92,8 +92,9 @@ namespace HaXeContext
         }
 
         [Test, TestCaseSource(nameof(ParseFileIssue1849TestCases))]
-        public string ParseFileIssue1849(string sourceText)
+        public string ParseFileIssue1849(string fileName)
         {
+            var sourceText = ReadAllText(fileName);
             var model = ASContext.Context.GetCodeModel(sourceText);
             var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
             return interfaceType.Type;
@@ -103,24 +104,25 @@ namespace HaXeContext
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_1"), null)
+                yield return new TestCaseData("ResolveDotContext_Issue1926_1", null)
                     .SetName("case 1");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_2"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData("ResolveDotContext_Issue1926_2", new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 2");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_3"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData("ResolveDotContext_Issue1926_3", new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 3");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_4"), null)
+                yield return new TestCaseData("ResolveDotContext_Issue1926_4", null)
                     .SetName("case 4");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_5"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData("ResolveDotContext_Issue1926_5", new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 5");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_6"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData("ResolveDotContext_Issue1926_6", new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 6");
             }
         }
 
         [Test, TestCaseSource(nameof(ResolveDotContextIssue750TestCases))]
-        public void ResolveDotContextIssue750(string sourceText, MemberModel code)
+        public void ResolveDotContextIssue750(string fileName, MemberModel code)
         {
+            var sourceText = ReadAllText(fileName);
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             SetSrc(sci, sourceText);
             var mix = new MemberList();
@@ -133,43 +135,51 @@ namespace HaXeContext
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("IsImported_case1"))
+                yield return new TestCaseData("IsImported_case1")
                     .Returns(true)
                     .SetName("Case 1");
-                yield return new TestCaseData(ReadAllText("IsImported_case2"))
+                yield return new TestCaseData("IsImported_case2")
                     .Returns(false)
                     .SetName("Case 2");
                 yield return new TestCaseData(null)
                     .Returns(false)
                     .SetName("ClassModel.VoidClass")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1930");
-                yield return new TestCaseData(ReadAllText("IsImported_issue1969_1"))
+                yield return new TestCaseData("IsImported_issue1969_1")
                     .Returns(true)
                     .SetName("Issue 1969. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1969");
-                yield return new TestCaseData(ReadAllText("IsImported_issue1969_2"))
+                yield return new TestCaseData("IsImported_issue1969_2")
                     .Returns(true)
                     .SetName("Issue 1969. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1969");
+                yield return new TestCaseData("IsImported_Issue2339_1")
+                    .Returns(false)
+                    .SetName("Issue 2339. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2339");
+                yield return new TestCaseData("IsImported_Issue2339_2")
+                    .Returns(true)
+                    .SetName("Issue 2339. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2339");
             }
         }
 
         [Test, TestCaseSource(nameof(IsImportedTestCases))]
-        public bool IsImported(string sourceText)
+        public bool IsImported(string fileName)
         {
-            MemberModel member;
-            if (sourceText != null)
+            MemberModel member = ClassModel.VoidClass;
+            if (fileName != null)
             {
+                var sourceText = ReadAllText(fileName);
                 SetSrc(sci, sourceText);
                 var expr = ASComplete.GetExpressionType(sci, ASComplete.ExpressionEndPosition(sci, sci.CurrentPos), false, true);
                 if (expr.Type != null) member = expr.Type;
                 else
                 {
                     var type = sci.GetWordFromPosition(sci.CurrentPos);
-                    member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                    member = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
                 }
             }
-            else member = ClassModel.VoidClass;
             return ASContext.Context.IsImported(member, sci.CurrentLine);
         }
 
@@ -349,6 +359,7 @@ namespace HaXeContext
             var imports = ASContext.Context.ResolveImports(context.CurrentModel);
             return imports.Items;
         }
+        
         static IEnumerable<TestCaseData> ParseFileIssue1150_2_TestCases
         {
             get

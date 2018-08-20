@@ -4887,9 +4887,7 @@ namespace ASCompletion.Completion
                 inFile = context.InFile;
                 import = context.Type;
             }
-            if (inFile == null || import == null)
-                return false;
-
+            if (inFile == null || import == null) return false;
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
@@ -4918,50 +4916,36 @@ namespace ASCompletion.Completion
 
         private static bool ShouldShortenType(ScintillaControl sci, int position, MemberModel import, FileModel cFile, ref int offset)
         {
-            // check if in the same file or package
-            /*if (cFile == inFile || features.hasPackages && cFile.Package == inFile.Package)
-                return true*/
-
-            if (IsMetadataArgument(sci, position))
-                return false;
-
-            // type name already present in imports
+            if (!ASContext.Context.Settings.GenerateImports) return false;
+            if (IsMetadataArgument(sci, position)) return false;
+            var importName = import.Name;
             try
             {
-                int curLine = sci.LineFromPosition(position);
+                var curLine = sci.LineFromPosition(position);
                 if (ASContext.Context.IsImported(import, curLine))
-                    return true;
+                {
+                    var importType = import.Type;
+                    var imports = ASContext.Context.ResolveImports(cFile);
+                    return !imports.Items.Any(it => it.Name == importName && it.Type != importType);
+                }
             }
-            catch (Exception) 
+            catch (Exception)
             {
-                return false;
+                // ignored
             }
-
-            // class with same name exists in current package?
-            if (ASContext.Context.Features.hasPackages && import is ClassModel)
-            {
-                string cname = import.Name;
-                if (cFile.Package.Length > 0) cname = cFile.Package + "." + cname;
-                ClassModel inPackage = ASContext.Context.ResolveType(cname, cFile);
-                if (!inPackage.IsVoid())
-                    return true;
-            }
-
             // insert import
-            if (ASContext.Context.Settings.GenerateImports)
+            sci.BeginUndoAction();
+            try
             {
-                sci.BeginUndoAction();
-                try
-                {
-                    offset = ASGenerator.InsertImport(import, true);
-                }
-                finally
-                {
-                    sci.EndUndoAction();
-                }
-                return true;
+                var imports = ASContext.Context.ResolveImports(cFile);
+                offset = ASGenerator.InsertImport(import, true);
+                if (imports.Items.Any(it => it.Name == importName)) return false;
             }
-            return false;
+            finally
+            {
+                sci.EndUndoAction();
+            }
+            return true;
         }
 
         private static string CheckShortName(string name)

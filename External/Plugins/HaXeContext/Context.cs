@@ -680,8 +680,9 @@ namespace HaXeContext
             }
             if (result.Classes != null)
             {
-                foreach (var @class in result.Classes)
+                for (int i = 0, length = result.Classes.Count; i < length; i++)
                 {
+                    var @class = result.Classes[i];
                     var flags = @class.Flags;
                     if ((flags & FlagType.Abstract) != 0)
                     {
@@ -698,8 +699,9 @@ namespace HaXeContext
                              *     public static var Value;
                              * }
                              */
-                            foreach (MemberModel member in @class.Members)
+                            for (int index = 0, count = @class.Members.Count; index < count; index++)
                             {
+                                var member = @class.Members[index];
                                 if (!member.Flags.HasFlag(FlagType.Variable)) continue;
                                 member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
                                 member.Access = Visibility.Public;
@@ -730,9 +732,9 @@ namespace HaXeContext
                         var parent = @class.Extends;
                         while (!parent.IsVoid())
                         {
-                            for (int i = 0, count = @class.Members.Count; i < count; i++)
+                            for (int index = 0, count = @class.Members.Count; index < count; index++)
                             {
-                                var member = @class.Members[i];
+                                var member = @class.Members[index];
                                 if ((member.Flags & FlagType.Override) == 0
                                     || (member.Access & Visibility.Public) != 0
                                     || !parent.Members.Contains(member.Name, 0, Visibility.Public)) continue;
@@ -1062,15 +1064,15 @@ namespace HaXeContext
             var name = member.Name;
             var p = name.IndexOf('#');
             if (p > 0) name = name.Substring(0, p);
-
-            var fullName = member.Type;
+            var type = member.Type;
+            var isShortType = name == type;
             var curFile = Context.CurrentModel;
             var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
             foreach (var import in imports)
             {
-                if (import.Name == name) return true;
-                if (import.Name == "*" && import.Type.Replace("*", name) == fullName) return true;
-                if (fullName.StartsWithOrdinal(import.Type + ".")) return true;
+                if ((isShortType && import.Name == name) || import.Type == type) return true;
+                if (import.Name == "*" && import.Type.Replace("*", name) == type) return true;
+                if (type.StartsWithOrdinal(import.Type + ".")) return true;
             }
             return false;
         }
