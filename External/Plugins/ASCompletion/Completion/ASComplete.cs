@@ -4919,12 +4919,19 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.Settings.GenerateImports) return false;
             if (IsMetadataArgument(sci, position)) return false;
             var importName = import.Name;
-            var curLine = sci.LineFromPosition(position);
-            if (ASContext.Context.IsImported(import, curLine))
+            try
             {
-                var importType = import.Type;
-                var imports = ASContext.Context.ResolveImports(cFile);
-                return !imports.Items.Any(it => it.Name == importName && it.Type != importType);
+                var curLine = sci.LineFromPosition(position);
+                if (ASContext.Context.IsImported(import, curLine))
+                {
+                    var importType = import.Type;
+                    var imports = ASContext.Context.ResolveImports(cFile);
+                    return !imports.Items.Any(it => it.Name == importName && it.Type != importType);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
             // insert import
             sci.BeginUndoAction();
