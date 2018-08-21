@@ -1877,7 +1877,6 @@ namespace ASCompletion.Completion
             InsertCode(start, template, sci);
             var position = sci.LineEndPosition(sci.CurrentLine);
             sci.SetSel(position, position);
-            sci.CurrentPos = position;
             if (ASContext.Context.Settings.GenerateImports)
             {
                 var imports = new List<string> {contextMember.Type};
@@ -1969,7 +1968,6 @@ namespace ASCompletion.Completion
             bodyStart = GetOrSetPointOfInsertion(bodyStart, endPos, fbsLine, sci);
 
             sci.SetSel(bodyStart, bodyStart);
-            sci.CurrentPos = bodyStart;
 
             var paramName = contextMember.Name;
             var paramType = contextMember.Type;
@@ -2019,7 +2017,6 @@ namespace ASCompletion.Completion
             var position = FindNewVarPosition(sci, inClass, latest);
             if (position <= 0) return;
             sci.SetSel(position, position);
-            sci.CurrentPos = position;
 
             var newMember = NewMember(varName, member, FlagType.Variable, scope);
             newMember.Type = paramType;
@@ -2928,7 +2925,12 @@ namespace ASCompletion.Completion
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = new List<MemberModel>();
+            foreach (var it in parameters)
+            {
+                var type = it.paramType.Length > it.paramQualType.Length ? it.paramType : it.paramQualType;
+                newMember.Parameters.Add(new MemberModel(AvoidKeyword(it.paramName), GetShortType(type), FlagType.ParameterVar, 0));
+            }
             if (newMemberType != null) newMember.Type = newMemberType;
             ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, newMember, position, inClass, detach);
         }

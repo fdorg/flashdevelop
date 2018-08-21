@@ -3349,6 +3349,13 @@ namespace ASCompletion.Completion
                         Assert.IsNotEmpty(options);
                         var item = options.Find(it => ((GeneratorItem)it).Job == job);
                         Assert.IsNotNull(item);
+                        ASContext.Context.ResolveImports(null).ReturnsForAnyArgs(it =>
+                        {
+                            var ctx = (ASContext) ASContext.GetLanguageContext(sci.ConfigurationLanguage);
+                            ctx.completionCache.IsDirty = true;
+                            ctx.completionCache.Imports = null;
+                            return ctx.ResolveImports(it.ArgAt<FileModel>(0));
+                        });
                         var value = item.Value;
                         return sci.Text;
                     }
