@@ -1600,7 +1600,6 @@ namespace ASCompletion.Completion
 
             AddLookupPosition();
 
-            sci.CurrentPos = position;
             sci.SetSel(position, position);
             InsertCode(position, template, sci);
         }
