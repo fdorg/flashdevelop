@@ -1210,6 +1210,13 @@ namespace ASCompletion.Completion
                         if ((contextMember.Flags & FlagType.Function) != 0) newMember.Type = $"Function/*({contextMember.ParametersString()}):{newMember.Type}*/";
                         GenerateVariable(newMember, position, detach);
                         sci.SetSel(lookupPosition, lookupPosition);
+                        if (ASContext.Context.Settings.GenerateImports)
+                        {
+                            var imports = new List<string> {newMember.Type};
+                            var types = GetQualifiedTypes(imports, inClass.InFile);
+                            lookupPosition += AddImportsByName(types, sci.LineFromPosition(lookupPosition));
+                            sci.SetSel(lookupPosition, lookupPosition);
+                        }
                     }
                     finally
                     {
@@ -1227,7 +1234,6 @@ namespace ASCompletion.Completion
                     {
                         sci.EndUndoAction();
                     }
-                    
                     break;
 
                 case GeneratorJobType.AddImport:
@@ -1794,64 +1800,56 @@ namespace ASCompletion.Completion
                 paramsDiffer = true;
             }
 
-            if (paramsDiffer)
+            if (!paramsDiffer) return;
+            int app = 0;
+            var newParameters = new List<MemberModel>();
+            var existingParameters = memberModel.Parameters;
+            for (int i = 0; i < functionParameters.Count; i++)
             {
-                int app = 0;
-                List<MemberModel> newParameters = new List<MemberModel>();
-                List<MemberModel> existingParameters = memberModel.Parameters;
-                for (int i = 0; i < functionParameters.Count; i++)
+                FunctionParameter p = functionParameters[i];
+                if (existingParameters != null
+                    && existingParameters.Count > (i - app)
+                    && existingParameters[i - app].Type == p.paramType)
                 {
-                    FunctionParameter p = functionParameters[i];
-                    if (existingParameters != null
-                        && existingParameters.Count > (i - app)
-                        && existingParameters[i - app].Type == p.paramType)
-                    {
-                        newParameters.Add(existingParameters[i - app]);
-                    }
-                    else
-                    {
-                        if (existingParameters != null && existingParameters.Count < functionParameters.Count)
-                        {
-                            app++;
-                        }
-                        newParameters.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
-                    }
+                    newParameters.Add(existingParameters[i - app]);
                 }
-                memberModel.Parameters = newParameters;
-
-                int posStart = sci.PositionFromLine(memberModel.LineFrom);
-                int posEnd = sci.LineEndPosition(memberModel.LineTo);
-                sci.SetSel(posStart, posEnd);
-                string selectedText = sci.SelText;
-                Regex rStart = new Regex(@"\s{1}" + memberModel.Name + @"\s*\(([^\)]*)\)(\s*:\s*([^({{|\n|\r|\s|;)]+))?");
-                Match mStart = rStart.Match(selectedText);
-                if (!mStart.Success)
+                else
                 {
-                    return;
+                    if (existingParameters != null && existingParameters.Count < functionParameters.Count) app++;
+                    newParameters.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                 }
-
-                int start = mStart.Index + posStart;
-                int end = start + mStart.Length;
-
-                sci.SetSel(start, end);
-
-                string decl = TemplateUtils.ToDeclarationString(memberModel, TemplateUtils.GetTemplate("MethodDeclaration"));
-                InsertCode(sci.CurrentPos, "$(Boundary) " + decl, sci);
-
-                // add imports to function argument types
-                if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
-                {
-                    var l = new string[functionParameters.Count];
-                    for (var i = 0; i < functionParameters.Count; i++)
-                    {
-                        l[i] = functionParameters[i].paramQualType;
-                    }
-                    var types = GetQualifiedTypes(l, inClass.InFile);
-                    start += AddImportsByName(types, sci.LineFromPosition(end));
-                }
-
-                sci.SetSel(start, start);
             }
+
+            memberModel.Parameters = newParameters;
+
+            var posStart = sci.PositionFromLine(memberModel.LineFrom);
+            var posEnd = sci.LineEndPosition(memberModel.LineTo);
+            sci.SetSel(posStart, posEnd);
+            var selectedText = sci.SelText;
+            var rStart = new Regex(@"\s{1}" + memberModel.Name + @"\s*\(([^\)]*)\)(\s*:\s*([^({{|\n|\r|\s|;)]+))?");
+            var mStart = rStart.Match(selectedText);
+            if (!mStart.Success) return;
+
+            var start = mStart.Index + posStart;
+            var end = start + mStart.Length;
+
+            sci.SetSel(start, end);
+
+            var decl = TemplateUtils.ToDeclarationString(memberModel, TemplateUtils.GetTemplate("MethodDeclaration"));
+            InsertCode(sci.CurrentPos, "$(Boundary) " + decl, sci);
+
+            // add imports to function argument types
+            if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
+            {
+                var l = new string[functionParameters.Count];
+                for (var i = 0; i < functionParameters.Count; i++)
+                {
+                    l[i] = functionParameters[i].paramQualType;
+                }
+                var types = GetQualifiedTypes(l, inClass.InFile);
+                start += AddImportsByName(types, sci.LineFromPosition(end));
+            }
+            sci.SetSel(start, start);
         }
 
         private static void AddAsParameter(ScintillaControl sci, MemberModel member)
@@ -1877,9 +1875,16 @@ namespace ASCompletion.Completion
             else memberCopy.Parameters.Add(contextMember);
             var template = TemplateUtils.ToDeclarationString(memberCopy, TemplateUtils.GetTemplate("MethodDeclaration"));
             InsertCode(start, template, sci);
-            var pos = sci.LineEndPosition(sci.CurrentLine);
-            sci.SetSel(pos, pos);
-            sci.CurrentPos = pos;
+            var position = sci.LineEndPosition(sci.CurrentLine);
+            sci.SetSel(position, position);
+            sci.CurrentPos = position;
+            if (ASContext.Context.Settings.GenerateImports)
+            {
+                var imports = new List<string> {contextMember.Type};
+                var types = GetQualifiedTypes(imports, ASContext.Context.CurrentModel);
+                position += AddImportsByName(types, sci.LineFromPosition(position));
+                sci.SetSel(position, position);
+            }
         }
 
         private static void AddInterfaceDefJob(ScintillaControl sci, MemberModel member, ClassModel inClass, string interf)
@@ -2021,6 +2026,13 @@ namespace ASCompletion.Completion
 
             GenerateVariable(newMember, position, true);
             ASContext.Panel.RestoreLastLookupPosition();
+            if (ASContext.Context.Settings.GenerateImports)
+            {
+                var imports = new List<string> {paramType};
+                var types = GetQualifiedTypes(imports, inClass.InFile);
+                position += AddImportsByName(types, sci.LineFromPosition(position));
+                sci.SetSel(position, position);
+            }
         }
 
         protected virtual string GetFieldTypeFromParameter(string paramType, ref string paramName)
@@ -4277,20 +4289,14 @@ namespace ASCompletion.Completion
 
         private static string CleanType(string type)
         {
-            if (string.IsNullOrEmpty(type))
-            {
-                return type;
-            }
+            if (string.IsNullOrEmpty(type)) return type;
             int p = type.IndexOf('$');
             if (p > 0) type = type.Substring(0, p);
             p = type.IndexOf('<');
             if (p > 1 && type[p - 1] == '.') p--;
             if (p > 0) type = type.Substring(0, p);
             p = type.IndexOf('@');
-            if (p > 0)
-            {
-                type = type.Substring(0, p);
-            }
+            if (p > 0) type = type.Substring(0, p);
             return type;
         }
 

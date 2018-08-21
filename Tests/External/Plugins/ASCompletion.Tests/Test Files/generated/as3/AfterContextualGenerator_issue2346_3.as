@@ -5,6 +5,7 @@
 		private var sprite:flash.display.Sprite;
 		public function Main(sprite:flash.display.Sprite) {
 			this.sprite = sprite;
+			
 		}
 	}
 }
