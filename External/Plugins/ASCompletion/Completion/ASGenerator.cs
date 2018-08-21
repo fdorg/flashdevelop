@@ -1816,7 +1816,7 @@ namespace ASCompletion.Completion
                 else
                 {
                     if (existingParameters != null && existingParameters.Count < functionParameters.Count) app++;
-                    newParameters.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
+                    newParameters.Add(new MemberModel(AvoidKeyword(p.paramName), GetShortType(p.paramQualType), FlagType.ParameterVar, 0));
                 }
             }
 
@@ -2415,7 +2415,7 @@ namespace ASCompletion.Completion
                     else if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                         returnTypeStr = returnType.Member.Type;
                 }
-                else if (returnType.Type != null) returnTypeStr = returnType.Type.Name;
+                else if (returnType.Type != null) returnTypeStr = GetShortType(returnType.Type.Type);
                 if (ASContext.Context.Settings.GenerateImports)
                 {
                     ClassModel inClassForImport;
@@ -4282,9 +4282,21 @@ namespace ASCompletion.Completion
             if (p > 0 && p < startPos) startPos = p;
         }
 
-        private static string GetShortType(string type)
+        static Regex reShortType = new Regex(@"(?=\w+\.<)|(?:\w+\.)");
+
+        static string GetShortType(string type)
         {
-            return string.IsNullOrEmpty(type) ? type : Regex.Replace(type, @"(?=\w+\.<)|(?:\w+\.)", string.Empty);
+            if (string.IsNullOrEmpty(type)) return type;
+            if (!type.Contains('@') && type.LastIndexOf('.') is int startIndex && startIndex != -1)
+            {
+                var importName = type.Substring(startIndex + 1);
+                var imports = ASContext.Context.ResolveImports(ASContext.Context.CurrentModel);
+                if (imports.Count == 0) imports = ASContext.Context.CurrentModel.Imports;
+                if (!imports.Items.Any(it => it.Name == importName && it.Type != type))
+                    type = reShortType.Replace(type, string.Empty);
+            }
+            else type = reShortType.Replace(type, string.Empty);
+            return MemberModel.FormatType(type);
         }
 
         private static string CleanType(string type)
