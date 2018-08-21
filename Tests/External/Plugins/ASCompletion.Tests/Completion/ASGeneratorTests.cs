@@ -3301,7 +3301,31 @@ namespace ASCompletion.Completion
                     {
                         yield return new TestCaseData("BeforeContextualGenerator_issue2346_1", GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_1"))
-                            .SetName("Issue 2346. Case 1.")
+                            .SetName("Issue 2346. Case 1. Assign statement to var")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_2", GeneratorJobType.Function, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_2"))
+                            .SetName("Issue 2346. Case 2. Generate function")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_3", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_3"))
+                            .SetName("Issue 2346. Case 3. Generate field from parameter")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_4", GeneratorJobType.PromoteLocal, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_4"))
+                            .SetName("Issue 2346. Case 4. Promote local")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_5", GeneratorJobType.ChangeMethodDecl, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_5"))
+                            .SetName("Issue 2346. Case 5. Change method declaration")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_6", GeneratorJobType.Variable, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_6"))
+                            .SetName("Issue 2346. Case 6. Generate variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_7", GeneratorJobType.AddAsParameter, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_7"))
+                            .SetName("Issue 2346. Case 7. Add as parameter")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
                     }
                 }
