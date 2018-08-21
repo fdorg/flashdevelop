@@ -3081,10 +3081,8 @@ namespace ASCompletion.Completion
                 }
             }
             
-            sci.CurrentPos = insertPosition;
-            sci.SetSel(sci.CurrentPos, sci.CurrentPos);
-            MemberModel m = new MemberModel(newName, "", FlagType.LocalVar, 0);
-            m.Value = expression;
+            sci.SetSel(insertPosition, insertPosition);
+            var m = new MemberModel(newName, "", FlagType.LocalVar, 0) {Value = expression};
 
             string snippet = TemplateUtils.GetTemplate("Variable");
             snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
