@@ -456,13 +456,9 @@ namespace AS2Context
             var lineMax = atLine;
             foreach (MemberModel import in cFile.Imports)
             {
-                if (import.LineFrom >= lineMin && import.LineFrom <= lineMax && import.Name == name)
-                {
-                    if (import.Type != fullName) throw new Exception("Ambiguous Type");
+                if (import.LineFrom >= lineMin && import.LineFrom <= lineMax && import.Name == name && import.Type == fullName)
                     return true;
-                }
-                if (import.Name == "*" && import.Type.Replace("*", name) == fullName)
-                    return true;
+                if (import.Name == "*" && import.Type.Replace("*", name) == fullName) return true;
             }
             return false;
         }

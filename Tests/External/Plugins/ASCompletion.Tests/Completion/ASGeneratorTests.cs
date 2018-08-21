@@ -3295,10 +3295,22 @@ namespace ASCompletion.Completion
                     }
                 }
 
+                static IEnumerable<TestCaseData> Issue2346TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2346_1", GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2346_1"))
+                            .SetName("Issue 2346. Case 1.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2346");
+                    }
+                }
+
                 [
                     Test, 
                     TestCaseSource(nameof(ContextualGeneratorTestCases)),
                     TestCaseSource(nameof(Issue2297TestCases)),
+                    TestCaseSource(nameof(Issue2346TestCases)),
                 ]
                 public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => Common(sci, fileName, job, hasGenerator);
 

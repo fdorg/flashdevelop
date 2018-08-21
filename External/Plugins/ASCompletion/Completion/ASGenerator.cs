@@ -1501,7 +1501,18 @@ namespace ASCompletion.Completion
         protected virtual void AssignStatementToVar(ScintillaControl sci, int position, string name, string type)
         {
             name = AvoidKeyword(name);
-            if (type != null) type = MemberModel.FormatType(GetShortType(type));
+            if (type != null)
+            {
+                if (!type.Contains('@') && type.LastIndexOf('.') is int startIndex && startIndex != -1)
+                {
+                    var importName = type.Substring(startIndex + 1);
+                    var imports = ASContext.Context.ResolveImports(ASContext.Context.CurrentModel);
+                    if (imports.Count == 0) imports = ASContext.Context.CurrentModel.Imports;
+                    if (!imports.Items.Any(it => it.Name == importName && it.Type != type))
+                        type = MemberModel.FormatType(GetShortType(type));
+                }
+                else type = MemberModel.FormatType(GetShortType(type));
+            }
             var template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", name);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type);
