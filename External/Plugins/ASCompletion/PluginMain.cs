@@ -847,7 +847,7 @@ namespace ASCompletion
             timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
+            timerPosition.Elapsed += timerPosition_Elapsed;
 
             //Cache update
             astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
@@ -1151,10 +1151,7 @@ namespace ASCompletion
             });
         }
 
-        void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            astCache.UpdateOutdatedModels();
-        }
+        void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e) => astCache.UpdateOutdatedModels();
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
         {
@@ -1207,22 +1204,21 @@ namespace ASCompletion
         /// <summary>
         /// Display completion list or calltip info
         /// </summary>
-        private void OnChar(ScintillaControl Sci, int Value)
+        private void OnChar(ScintillaControl sci, int value)
         {
-            if (Sci.Lexer == 3 || Sci.Lexer == 4)
-                ASComplete.OnChar(Sci, Value, true);
+            if (sci.Lexer == 3 || sci.Lexer == 4)
+                ASComplete.OnChar(sci, value, true);
         }
 
         private void OnMouseHover(ScintillaControl sci, int position)
         {
-            if (!ASContext.Context.IsFileValid)
-                return;
-
+            var ctx = ASContext.Context;
+            if (!ctx.IsFileValid) return;
             lastHoverPosition = position;
 
             // get word at mouse position
-            int style = sci.BaseStyleAt(position);
-            if (!ASComplete.IsTextStyle(style)) return;
+            var style = sci.BaseStyleAt(position);
+            if (!ASComplete.IsTextStyle(style) && (!ctx.Features.hasInterfaces || !ctx.CodeComplete.IsStringInterpolationStyle(sci, position))) return;
             position = ASComplete.ExpressionEndPosition(sci, position);
             var result = ASComplete.GetExpressionType(sci, position, false, true);
 
@@ -1237,7 +1233,7 @@ namespace ASCompletion
                 }
                 else
                 {
-                    string text = ASComplete.GetToolTipText(result);
+                    var text = ASComplete.GetToolTipText(result);
                     if (text == null) return;
                     // show tooltip
                     UITools.Tip.ShowAtMouseLocation(text);
