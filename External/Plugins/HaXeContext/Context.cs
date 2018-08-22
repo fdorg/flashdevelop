@@ -1438,7 +1438,7 @@ namespace HaXeContext
             foreach (var type in types)
             {
                 if (string.IsNullOrEmpty(type)) continue;
-                if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
+                if (type.Contains('{') || type.Contains('<') || type.Contains("->"))
                 {
                     var length = type.Length;
                     var braCount = 0;

@@ -1201,6 +1201,18 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2297_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue2346_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue2346_7.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

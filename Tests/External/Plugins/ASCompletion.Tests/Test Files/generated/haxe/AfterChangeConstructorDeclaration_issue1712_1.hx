@@ -8,7 +8,7 @@ class Main {
 }
 
 class Some {
-	public function new(array:Array<haxe.Timer->Type.ValueType>) {
+	public function new(array:Array<Timer->ValueType>) {
 		
 	}
 }

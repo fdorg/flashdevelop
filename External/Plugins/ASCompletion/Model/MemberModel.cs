@@ -211,17 +211,14 @@ namespace ASCompletion.Model
                 throw new InvalidCastException("This object is not of type MemberModel");
             MemberModel to = (MemberModel)obj;
             if (Name == to.Name) return (int)Flags - (int)to.Flags;
-            else return string.Compare(Name, to.Name, false);
+            return string.Compare(Name, to.Name, false);
         }
 
-        static public string FormatType(string type)
+        public static string FormatType(string type) => FormatType(type, false);
+
+        public static string FormatType(string type, bool allowBBCode)
         {
-            return FormatType(type, false);
-        }
-        static public string FormatType(string type, bool allowBBCode)
-        {
-            if (string.IsNullOrEmpty(type))
-                return null;
+            if (string.IsNullOrEmpty(type)) return null;
             int p = type.IndexOf('@');
             if (p > 0)
             {
@@ -230,10 +227,9 @@ namespace ASCompletion.Model
 
                 if (type.Substring(0, p) == "Array")
                     return type.Substring(0, p) + bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose;
-                else if (type.IndexOfOrdinal("<T>") > 0)
+                if (type.IndexOfOrdinal("<T>") > 0)
                     return type.Substring(0, type.IndexOfOrdinal("<T>")) + bbCodeOpen + "<" + type.Substring(p + 1) + ">" + bbCodeClose;
-                else
-                    return bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose + type.Substring(0, p);
+                return bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose + type.Substring(0, p);
             }
             return type;
         }
