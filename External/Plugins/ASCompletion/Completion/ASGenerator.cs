@@ -1922,7 +1922,6 @@ namespace ASCompletion.Completion
             }
             else type = member.Type ?? ctx.Features.voidKey;
             sci.SetSel(position, position);
-            sci.CurrentPos = position;
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type);
             template = TemplateUtils.ToDeclarationString(member, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
@@ -1940,7 +1939,6 @@ namespace ASCompletion.Completion
                 }
             }
             sci.SetSel(position, position);
-            sci.CurrentPos = position;
             InsertCode(position, template, sci);
         }
 
