@@ -3074,7 +3074,7 @@ namespace ASCompletion.Completion
             var type = ctx.ResolveToken(var.Value, ctx.CurrentModel);
             if (type.IsVoid())
             {
-                if (var.Value != null && var.ValueEndPosition != -1)
+                if (!string.IsNullOrEmpty(var.Value) && var.ValueEndPosition != -1)
                     type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
                 if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
             }
