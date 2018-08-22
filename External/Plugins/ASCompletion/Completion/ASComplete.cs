@@ -1599,7 +1599,6 @@ namespace ASCompletion.Completion
         /// <returns>Function successfully resolved</returns>
         protected virtual bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
-           
             if (!expr.IsNull() && expr.Member == null && expr.Type != null)
             {
                 foreach (MemberModel member in expr.Type.Members)

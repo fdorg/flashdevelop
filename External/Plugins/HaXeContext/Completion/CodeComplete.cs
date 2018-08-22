@@ -103,32 +103,30 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
-            if (expr.Member == null && expr.Type is ClassModel type)
+            if ((expr.Member != null && expr.Path != "super") || !(expr.Type is ClassModel type))
+                return base.ResolveFunction(sci, position, expr, autoHide);
+            var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
+            type.ResolveExtends();
+            while (!type.IsVoid())
             {
-                var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
-                type.ResolveExtends();
-                while (!type.IsVoid())
+                var constructor = ASContext.GetLastStringToken(type.Name, ".");
+                var member = type.Members.Search(constructor, FlagType.Constructor, 0);
+                if (member != null)
                 {
-                    var constructor = ASContext.GetLastStringToken(type.Name, ".");
-                    var member = type.Members.Search(constructor, FlagType.Constructor, 0);
-                    if (member != null)
+                    if (originConstructor != member.Name)
                     {
-                        if (originConstructor != member.Name)
-                        {
-                            member = (MemberModel) member.Clone();
-                            member.Name = originConstructor;
-                        }
-                        expr.Member = member;
-                        expr.Context.Position = position;
-                        FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
-                        return true;
+                        member = (MemberModel) member.Clone();
+                        member.Name = originConstructor;
                     }
-                    if (type.Flags.HasFlag(FlagType.Abstract)) return false;
-                    type = type.Extends;
+                    expr.Member = member;
+                    expr.Context.Position = position;
+                    FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
+                    return true;
                 }
-                return false;
+                if (type.Flags.HasFlag(FlagType.Abstract)) return false;
+                type = type.Extends;
             }
-            return base.ResolveFunction(sci, position, expr, autoHide);
+            return false;
         }
 
         /// <inheritdoc />
