@@ -1496,34 +1496,21 @@ namespace ASCompletion.Completion
             if (varname == null) varname = GuessVarName(word, type);
             if (varname != null && varname == word) varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
             ((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, pos, varname, type);
-            if (ctx.Settings.GenerateImports && type != null)
-            {
-                var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
-                var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
-                AddImportsByName(types, sci.LineFromPosition(pos));
-            }
         }
 
         protected virtual void AssignStatementToVar(ScintillaControl sci, int position, string name, string type)
         {
-            name = AvoidKeyword(name);
-            if (type != null)
-            {
-                if (!type.Contains('@') && type.LastIndexOf('.') is int startIndex && startIndex != -1)
-                {
-                    var importName = type.Substring(startIndex + 1);
-                    var imports = ASContext.Context.ResolveImports(ASContext.Context.CurrentModel);
-                    if (imports.Count == 0) imports = ASContext.Context.CurrentModel.Imports;
-                    if (!imports.Items.Any(it => it.Name == importName && it.Type != type))
-                        type = MemberModel.FormatType(GetShortType(type));
-                }
-                else type = MemberModel.FormatType(GetShortType(type));
-            }
             var template = TemplateUtils.GetTemplate("AssignVariable");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", name);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", AvoidKeyword(name));
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", GetShortType(type));
             sci.SetSel(position, position);
             InsertCode(position, template, sci);
+            if (ASContext.Context.Settings.GenerateImports && type != null)
+            {
+                var types = GetQualifiedTypes(new [] {type}, ASContext.Context.CurrentModel);
+                position += AddImportsByName(types, sci.LineFromPosition(position));
+                sci.SetSel(position, position);
+            }
         }
 
         protected virtual bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)

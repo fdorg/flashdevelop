@@ -1215,7 +1215,22 @@ namespace HaXeContext.Generators
             }
         }
 
-        [Test, TestCaseSource(nameof(AssignStatementToVarIssue2230TestCases))]
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2352TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2352_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2352_1"))
+                    .SetName("Issue 2352. Case 1. Disable type declaration.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2352");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(AssignStatementToVarIssue2230TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2352TestCases)),
+        ]
         public string AssignStatementToVarIssue2230(string fileName, GeneratorJobType job, bool hasGenerator)
         {
             ((HaXeSettings) ASContext.Context.Settings).DisableTypeDeclaration = true;
