@@ -763,6 +763,7 @@ namespace HaXeContext.Model
                 }
                 else
                 {
+                    hadWS = false;
                     // function types
                     if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && ba[i] == '>')
                     {
@@ -775,11 +776,12 @@ namespace HaXeContext.Model
                     // should we evaluate the token?
                     if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
                         // for example: foo(? v)
-                        && (!inParams || (buffer[length - 1] != '?')))
+                        && (!inParams || (buffer[length - 1] != '?'))
+                        // for example: String -> Int
+                        && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
                     {
                         evalToken = 1;
                     }
-                    hadWS = false;
                     hadDot = false;
                     var shortcut = true;
                     // for example: function foo() return null;
