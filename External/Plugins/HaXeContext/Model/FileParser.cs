@@ -1127,7 +1127,6 @@ namespace HaXeContext.Model
                                     curMethod = curMember;
                                 }
                             }
-
                             // an Enum value with parameters
                             else if (inEnum)
                             {
@@ -1139,7 +1138,6 @@ namespace HaXeContext.Model
                                 curMethod.Parameters = new List<MemberModel>();
                                 if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
                             }
-
                             // a TypeDef method with parameters
                             else if (inTypedef)
                             {
