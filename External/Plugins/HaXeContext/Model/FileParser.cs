@@ -770,12 +770,16 @@ namespace HaXeContext.Model
                         buffer[length++] = '>';
                         i++;
                         inType = true;
+                        hadWS = false;
+                        hadDot = false;
                         continue;
                     }
                     // should we evaluate the token?
                     if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
                         // for example: foo(? v)
-                        && (!inParams || (buffer[length - 1] != '?')))
+                        && (!inParams || (buffer[length - 1] != '?'))
+                        // for example: String -> Int
+                        && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
                     {
                         evalToken = 1;
                     }
@@ -1123,7 +1127,6 @@ namespace HaXeContext.Model
                                     curMethod = curMember;
                                 }
                             }
-
                             // an Enum value with parameters
                             else if (inEnum)
                             {
@@ -1135,7 +1138,6 @@ namespace HaXeContext.Model
                                 curMethod.Parameters = new List<MemberModel>();
                                 if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
                             }
-
                             // a TypeDef method with parameters
                             else if (inTypedef)
                             {

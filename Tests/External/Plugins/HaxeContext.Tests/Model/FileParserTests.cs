@@ -44,6 +44,24 @@ namespace HaXeContext.Model
             return model.Classes.First().Members.Items.First().Parameters.Count;
         }
 
+        static IEnumerable<TestCaseData> Issue2359TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2359_1")
+                    .Returns("Null<String>->EitherType<Int,String>->EitherType<Int,String>->Void")
+                    .SetName("typedef TDef = Null<String> -> EitherType<Int,String> -> EitherType<Int,String> -> Void;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2359");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(Issue2359TestCases))]
+        public string ParseFile_Issue2359(string fileName)
+        {
+            var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
+            return model.Classes.First().ExtendsType;
+        }
+
         static IEnumerable<TestCaseData> Issue163TestCases
         {
             get
