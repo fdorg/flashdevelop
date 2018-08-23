@@ -763,7 +763,6 @@ namespace HaXeContext.Model
                 }
                 else
                 {
-                    hadWS = false;
                     // function types
                     if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && ba[i] == '>')
                     {
@@ -782,6 +781,7 @@ namespace HaXeContext.Model
                     {
                         evalToken = 1;
                     }
+                    hadWS = false;
                     hadDot = false;
                     var shortcut = true;
                     // for example: function foo() return null;
