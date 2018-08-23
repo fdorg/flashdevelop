@@ -770,6 +770,8 @@ namespace HaXeContext.Model
                         buffer[length++] = '>';
                         i++;
                         inType = true;
+                        hadWS = false;
+                        hadDot = false;
                         continue;
                     }
                     // should we evaluate the token?
