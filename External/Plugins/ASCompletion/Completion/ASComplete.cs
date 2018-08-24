@@ -1699,10 +1699,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        public virtual MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
-        {
-            return new MemberModel {Type = ASContext.Context.Features.voidKey};
-        }
+        public virtual MemberModel FunctionTypeToMemberModel(string type, FileModel inFile) => null;
 
         protected virtual string GetCalltipDef(MemberModel member) => member.ToString();
 

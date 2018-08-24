@@ -103,22 +103,29 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
-            if ((expr.Member != null && expr.Path != "super") || !(expr.Type is ClassModel type))
+            var member = expr.Member;
+            if (member != null && (member.Flags & FlagType.Variable) != 0 &&
+                !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            {
+                FunctionContextResolved(sci, expr.Context, member, expr.RelClass, false);
+                return true;
+            }
+            var type = expr.Type;
+            if ((expr.Member != null && expr.Path != "super") || !(type is ClassModel))
                 return base.ResolveFunction(sci, position, expr, autoHide);
             var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
             type.ResolveExtends();
             while (!type.IsVoid())
             {
-                var constructor = ASContext.GetLastStringToken(type.Name, ".");
-                var member = type.Members.Search(constructor, FlagType.Constructor, 0);
-                if (member != null)
+                var constructor = type.Members.Search(ASContext.GetLastStringToken(type.Name, "."), FlagType.Constructor, 0);
+                if (constructor != null)
                 {
-                    if (originConstructor != member.Name)
+                    if (originConstructor != constructor.Name)
                     {
-                        member = (MemberModel) member.Clone();
-                        member.Name = originConstructor;
+                        constructor = (MemberModel) constructor.Clone();
+                        constructor.Name = originConstructor;
                     }
-                    expr.Member = member;
+                    expr.Member = constructor;
                     expr.Context.Position = position;
                     FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
                     return true;
@@ -610,6 +617,13 @@ namespace HaXeContext.Completion
 
         protected override string GetCalltipDef(MemberModel member)
         {
+            if ((member.Flags & FlagType.Variable) != 0 && !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            {
+                var tmp = FunctionTypeToMemberModel(member.Type, member.InFile);
+                tmp.Name = member.Name;
+                tmp.Flags |= FlagType.Function;
+                member = tmp;
+            }
             return base.GetCalltipDef(member);
         }
     }

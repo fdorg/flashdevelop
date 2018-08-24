@@ -2807,15 +2807,19 @@ namespace ASCompletion.Completion
                 else
                 {
                     var model = ASContext.Context.CodeComplete.FunctionTypeToMemberModel(parameterType, callerExpr.InFile);
-                    newMemberType = model.Type;
-                    if (model.Parameters != null)
+                    if (model != null)
                     {
-                        foreach (var it in model.Parameters)
+                        newMemberType = model.Type;
+                        if (model.Parameters != null)
                         {
-                            var type = CleanType(it.Type);
-                            parameters.Add(new FunctionParameter(it.Name, type, type, null));
+                            foreach (var it in model.Parameters)
+                            {
+                                var type = CleanType(it.Type);
+                                parameters.Add(new FunctionParameter(it.Name, type, type, null));
+                            }
                         }
                     }
+                    else newMemberType = ASContext.Context.Features.voidKey;
                 }
                 newMemberType = CleanType(newMemberType);
                 // for example: 
