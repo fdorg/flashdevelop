@@ -533,5 +533,10 @@ namespace HaXeContext.Completion
             }
             return null;
         }
+
+        protected override string GetCalltipDef(MemberModel member)
+        {
+            return base.GetCalltipDef(member);
+        }
     }
 }
