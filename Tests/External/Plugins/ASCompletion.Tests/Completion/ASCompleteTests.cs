@@ -1308,6 +1308,22 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2362TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2362_1"))
+                        .Returns(new ClassModel {Name = "Dynamic", Flags = FlagType.Class})
+                        .SetName("var фывValue. = ''");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2362_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("function foo(?фывValue. = '')");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2362_3"))
+                        .Returns(new ClassModel {Name = "VariableType", Flags = FlagType.Class | FlagType.TypeDef})
+                        .SetName("typedef фывVariableType. = String");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1317,6 +1333,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_MapInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_new_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2362TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
