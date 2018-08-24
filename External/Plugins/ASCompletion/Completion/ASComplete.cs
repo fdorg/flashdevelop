@@ -1699,83 +1699,9 @@ namespace ASCompletion.Completion
             }
         }
 
-        public MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
+        public virtual MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
         {
-            var voidKey = ASContext.Context.Features.voidKey;
-            if (type == "Function")
-            {
-                if (inFile.haXe)
-                {
-                    var paramType = ASContext.Context.ResolveType(type, inFile);
-                    if (paramType.InFile.Package == "haxe" && paramType.InFile.Module == "Constraints")
-                        return new MemberModel {Type = voidKey};
-                }
-                else return new MemberModel {Type = voidKey};
-            }
-            var result = new MemberModel {Parameters = new List<MemberModel>()};
-            var parCount = 0;
-            var braCount = 0;
-            var genCount = 0;
-            var startPosition = 0;
-            var typeLength = type.Length;
-            for (var i = 0; i < typeLength; i++)
-            {
-                string parameterType = null;
-                var c = type[i];
-                if (c == '(') parCount++;
-                else if (c == ')')
-                {
-                    parCount--;
-                    if (parCount == 0 && braCount == 0 && genCount == 0)
-                    {
-                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
-                        startPosition = i + 1;
-                    }
-                }
-                else if (c == '{') braCount++;
-                else if (c == '}')
-                {
-                    braCount--;
-                    if (parCount == 0 && braCount == 0 && genCount == 0)
-                    {
-                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
-                        startPosition = i + 1;
-                    }
-                }
-                else if (c == '<') genCount++;
-                else if (c == '>' && type[i - 1] != '-')
-                {
-                    genCount--;
-                    if (parCount == 0 && braCount == 0 && genCount == 0)
-                    {
-                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
-                        startPosition = i + 1;
-                    }
-                }
-                else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && type[i + 1] == '>')
-                {
-                    if (i > startPosition) parameterType = type.Substring(startPosition, i - startPosition);
-                    startPosition = i + 2;
-                    i++;
-                }
-                if (parameterType == null)
-                {
-                    if (i == typeLength - 1 && i > startPosition) result.Type = type.Substring(startPosition);
-                    continue;
-                }
-                //type = CleanType(type);
-                var parameterName = $"parameter{result.Parameters.Count}";
-                if (parameterType.StartsWith('?'))
-                {
-                    parameterName = $"?{parameterName}";
-                    parameterType = parameterType.TrimStart('?');
-                }
-                if (i == typeLength - 1) result.Type = parameterType;
-                else result.Parameters.Add(new MemberModel(parameterName, parameterType, FlagType.ParameterVar, 0));
-            }
-            if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey)
-                result.Parameters.Clear();
-            return result;
+            return new MemberModel {Type = ASContext.Context.Features.voidKey};
         }
 
         protected virtual string GetCalltipDef(MemberModel member) => member.ToString();
