@@ -270,6 +270,7 @@ namespace HaXeContext.Completion
 
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
+            if (local.PositionExpression <= rvalueStart && rvalueStart <= local.Position) return;
             var word = sci.GetWordRight(rvalueStart, true);
             // for example: var v = v;
             if (word == local.Value) return;
@@ -316,9 +317,9 @@ namespace HaXeContext.Completion
 
         void InferLocalVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
+            var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
-            var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
             var arrCount = 0;
             var parCount = 0;
             var genCount = 0;
