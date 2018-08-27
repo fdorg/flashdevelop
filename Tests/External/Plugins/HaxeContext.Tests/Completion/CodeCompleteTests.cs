@@ -231,10 +231,22 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> DeclarationLookupIssue2366TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("DeclarationLookupIssue2366_1")
+                    .Returns(string.Empty)
+                    .SetName("tra|ce(''). Issue 2366. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2366");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(DeclarationLookupIssue366TestCases)),
             TestCaseSource(nameof(DeclarationLookupIssue2291TestCases)),
+            TestCaseSource(nameof(DeclarationLookupIssue2366TestCases)),
         ]
         public string DeclarationLookup(string fileName)
         {

@@ -31,7 +31,7 @@ namespace ASCompletion.Completion
         #region regular_expressions_definitions
         static private readonly RegexOptions ro_csr = ASFileParserRegexOptions.SinglelineComment | RegexOptions.RightToLeft;
         // refine last expression
-        static private readonly Regex re_refineExpression = new Regex("[^\\[\\]{}(:,=+*/%!<>-]*$", ro_csr);
+        static private readonly Regex re_refineExpression = new Regex("[^\\[\\]'\"{}(:,=+*/%!<>-]*$", ro_csr);
         // code cleaning
         static private readonly Regex re_whiteSpace = new Regex("[\\s]+", ASFileParserRegexOptions.SinglelineComment);
         // balanced matching, see: http://blogs.msdn.com/bclteam/archive/2005/03/15/396452.aspx
@@ -2617,20 +2617,20 @@ namespace ASCompletion.Completion
             ASResult head = null;
             if (token[0] == '#')
             {
-                Match mSub = re_sub.Match(token);
+                var mSub = re_sub.Match(token);
                 if (mSub.Success)
                 {
-                    string subExpr = context.SubExpressions[Convert.ToInt16(mSub.Groups["index"].Value)];
+                    var subExpr = context.SubExpressions[Convert.ToInt16(mSub.Groups["index"].Value)];
                     // parse sub expression
                     subExpr = subExpr.Substring(1, subExpr.Length - 2).Trim();
-                    ASExpr subContext = new ASExpr(context);
+                    var subContext = new ASExpr(context);
                     subContext.SubExpressions = ExtractedSubex = new List<string>();
                     subExpr = re_balancedParenthesis.Replace(subExpr, ExtractSubex);
-                    Match m = re_refineExpression.Match(subExpr);
+                    var m = re_refineExpression.Match(subExpr);
                     if (!m.Success) return notFound;
-                    Regex re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
+                    var re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
                     subExpr = re_dot.Replace(re_whiteSpace.Replace(m.Value, " "), features.dot).Trim();
-                    int space = subExpr.LastIndexOf(' ');
+                    var space = subExpr.LastIndexOf(' ');
                     if (space > 0) subExpr = subExpr.Substring(space + 1);
                     // eval sub expression
                     head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
@@ -2647,7 +2647,7 @@ namespace ASCompletion.Completion
             {
                 var type = ctx.ResolveToken(token, inClass.InFile);
                 if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
-                if (token.Contains("<")) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
+                if (token.Contains('<')) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
                 else head = EvalVariable(token, context, inFile, inClass); // regular eval
             }
 
