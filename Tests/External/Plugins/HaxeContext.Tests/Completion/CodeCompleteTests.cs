@@ -6,6 +6,7 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 
 namespace HaXeContext.Completion
 {
@@ -241,6 +242,29 @@ namespace HaXeContext.Completion
             SetCurrentFile(GetFullPath(fileName));
             ASComplete.DeclarationLookup(sci);
             return sci.SelText;
+        }
+
+        static IEnumerable<TestCaseData> CalltipDefIssue2364TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2364_1")
+                    .Returns("foo (parameter0:Int, parameter1:Int) : Bool")
+                    .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 1");
+                yield return new TestCaseData("CalltipDef_issue2364_2")
+                    .Returns("foo (parameter0:Int, parameter1:Int) : Bool")
+                    .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 2");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(CalltipDefIssue2364TestCases))]
+        public string CalltipDefIssue2364(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFile(GetFullPath(fileName));
+            var manager = UITools.Manager;
+            ASComplete.HandleFunctionCompletion(sci, false);
+            return ASComplete.calltipDef;
         }
     }
 

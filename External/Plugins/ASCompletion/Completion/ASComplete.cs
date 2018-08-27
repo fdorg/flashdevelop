@@ -1384,7 +1384,7 @@ namespace ASCompletion.Completion
         #endregion
 
         #region function_completion
-        static private string calltipDef;
+        internal static string calltipDef;
         static private MemberModel calltipMember;
         static private bool calltipDetails;
         static private int calltipPos = -1;
@@ -1392,10 +1392,7 @@ namespace ASCompletion.Completion
         static private ClassModel calltipRelClass;
         static private string prevParam = "";
 
-        public static bool HasCalltip()
-        {
-            return UITools.CallTip.CallTipActive && (calltipDef != null);
-        }
+        public static bool HasCalltip() => UITools.CallTip.CallTipActive && (calltipDef != null);
 
         /// <summary>
         /// Show highlighted calltip
@@ -1683,7 +1680,7 @@ namespace ASCompletion.Completion
             int position = expr.Position;
             calltipPos = position;
             calltipOffset = Math.Min(expr.Value.Length, method.Name.Length);
-            calltipDef = ((ASComplete) ASContext.Context.CodeComplete).GetCalltipDef(method);
+            calltipDef = ASContext.Context.CodeComplete.GetCalltipDef(method);
             calltipMember = method;
             calltipDetails = UITools.Manager.ShowDetails;
             calltipRelClass = inClass;
