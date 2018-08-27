@@ -103,22 +103,29 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
-            if ((expr.Member != null && expr.Path != "super") || !(expr.Type is ClassModel type))
+            var member = expr.Member;
+            if (member != null && (member.Flags & FlagType.Variable) != 0 &&
+                !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            {
+                FunctionContextResolved(sci, expr.Context, member, expr.RelClass, false);
+                return true;
+            }
+            var type = expr.Type;
+            if ((expr.Member != null && expr.Path != "super") || !(type is ClassModel))
                 return base.ResolveFunction(sci, position, expr, autoHide);
             var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
             type.ResolveExtends();
             while (!type.IsVoid())
             {
-                var constructor = ASContext.GetLastStringToken(type.Name, ".");
-                var member = type.Members.Search(constructor, FlagType.Constructor, 0);
-                if (member != null)
+                var constructor = type.Members.Search(ASContext.GetLastStringToken(type.Name, "."), FlagType.Constructor, 0);
+                if (constructor != null)
                 {
-                    if (originConstructor != member.Name)
+                    if (originConstructor != constructor.Name)
                     {
-                        member = (MemberModel) member.Clone();
-                        member.Name = originConstructor;
+                        constructor = (MemberModel) constructor.Clone();
+                        constructor.Name = originConstructor;
                     }
-                    expr.Member = member;
+                    expr.Member = constructor;
                     expr.Context.Position = position;
                     FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
                     return true;
@@ -532,6 +539,92 @@ namespace HaXeContext.Completion
                 type = type.Extends;
             }
             return null;
+        }
+
+        public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
+        {
+            var voidKey = ASContext.Context.Features.voidKey;
+            if (type == "Function")
+            {
+                var paramType = ASContext.Context.ResolveType(type, inFile);
+                if (paramType.InFile.Package == "haxe" && paramType.InFile.Module == "Constraints")
+                    return new MemberModel {Type = voidKey};
+            }
+            var result = new MemberModel {Parameters = new List<MemberModel>()};
+            var parCount = 0;
+            var braCount = 0;
+            var genCount = 0;
+            var startPosition = 0;
+            var typeLength = type.Length;
+            for (var i = 0; i < typeLength; i++)
+            {
+                string parameterType = null;
+                var c = type[i];
+                if (c == '(') parCount++;
+                else if (c == ')')
+                {
+                    parCount--;
+                    if (parCount == 0 && braCount == 0 && genCount == 0)
+                    {
+                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
+                        startPosition = i + 1;
+                    }
+                }
+                else if (c == '{') braCount++;
+                else if (c == '}')
+                {
+                    braCount--;
+                    if (parCount == 0 && braCount == 0 && genCount == 0)
+                    {
+                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
+                        startPosition = i + 1;
+                    }
+                }
+                else if (c == '<') genCount++;
+                else if (c == '>' && type[i - 1] != '-')
+                {
+                    genCount--;
+                    if (parCount == 0 && braCount == 0 && genCount == 0)
+                    {
+                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
+                        startPosition = i + 1;
+                    }
+                }
+                else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && type[i + 1] == '>')
+                {
+                    if (i > startPosition) parameterType = type.Substring(startPosition, i - startPosition);
+                    startPosition = i + 2;
+                    i++;
+                }
+                if (parameterType == null)
+                {
+                    if (i == typeLength - 1 && i > startPosition) result.Type = type.Substring(startPosition);
+                    continue;
+                }
+                var parameterName = $"parameter{result.Parameters.Count}";
+                if (parameterType.StartsWith('?'))
+                {
+                    parameterName = $"?{parameterName}";
+                    parameterType = parameterType.TrimStart('?');
+                }
+                if (i == typeLength - 1) result.Type = parameterType;
+                else result.Parameters.Add(new MemberModel(parameterName, parameterType, FlagType.ParameterVar, 0));
+            }
+            if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey)
+                result.Parameters.Clear();
+            return result;
+        }
+
+        protected override string GetCalltipDef(MemberModel member)
+        {
+            if ((member.Flags & FlagType.Variable) != 0 && !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            {
+                var tmp = FunctionTypeToMemberModel(member.Type, member.InFile);
+                tmp.Name = member.Name;
+                tmp.Flags |= FlagType.Function;
+                member = tmp;
+            }
+            return base.GetCalltipDef(member);
         }
     }
 }

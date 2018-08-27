@@ -2806,86 +2806,20 @@ namespace ASCompletion.Completion
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
                 else
                 {
-                    var isNativeFunctionType = false;
-                    if (parameterType == "Function")
+                    var model = ASContext.Context.CodeComplete.FunctionTypeToMemberModel(parameterType, callerExpr.InFile);
+                    if (model != null)
                     {
-                        if (IsHaxe)
+                        newMemberType = model.Type;
+                        if (model.Parameters != null)
                         {
-                            var paramType = ASContext.Context.ResolveType(parameterType, callerExpr.InFile);
-                            if (paramType.InFile.Package == "haxe" && paramType.InFile.Module == "Constraints")
-                                isNativeFunctionType = true;
+                            foreach (var it in model.Parameters)
+                            {
+                                var type = CleanType(it.Type);
+                                parameters.Add(new FunctionParameter(it.Name, type, type, null));
+                            }
                         }
-                        else isNativeFunctionType = true;
                     }
-                    var voidKey = ASContext.Context.Features.voidKey;
-                    if (isNativeFunctionType) newMemberType = voidKey;
-                    else
-                    {
-                        var parCount = 0;
-                        var braCount = 0;
-                        var genCount = 0;
-                        var startPosition = 0;
-                        var typeLength = parameterType.Length;
-                        for (var i = 0; i < typeLength; i++)
-                        {
-                            string type = null;
-                            var c = parameterType[i];
-                            if (c == '(') parCount++;
-                            else if (c == ')')
-                            {
-                                parCount--;
-                                if (parCount == 0 && braCount == 0 && genCount == 0)
-                                {
-                                    type = parameterType.Substring(startPosition, (i + 1) - startPosition);
-                                    startPosition = i + 1;
-                                }
-                            }
-                            else if (c == '{') braCount++;
-                            else if (c == '}')
-                            {
-                                braCount--;
-                                if (parCount == 0 && braCount == 0 && genCount == 0)
-                                {
-                                    type = parameterType.Substring(startPosition, (i + 1) - startPosition);
-                                    startPosition = i + 1;
-                                }
-                            }
-                            else if (c == '<') genCount++;
-                            else if (c == '>' && parameterType[i - 1] != '-')
-                            {
-                                genCount--;
-                                if (parCount == 0 && braCount == 0 && genCount == 0)
-                                {
-                                    type = parameterType.Substring(startPosition, (i + 1) - startPosition);
-                                    startPosition = i + 1;
-                                }
-                            }
-                            else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' &&
-                                     parameterType[i + 1] == '>')
-                            {
-                                if (i > startPosition) type = parameterType.Substring(startPosition, i - startPosition);
-                                startPosition = i + 2;
-                                i++;
-                            }
-                            if (type == null)
-                            {
-                                if (i == typeLength - 1 && i > startPosition)
-                                    newMemberType = parameterType.Substring(startPosition);
-                                continue;
-                            }
-                            type = CleanType(type);
-                            var parameter = $"parameter{parameters.Count}";
-                            if (type.StartsWith('?'))
-                            {
-                                parameter = $"?{parameter}";
-                                type = type.TrimStart('?');
-                            }
-                            if (i == typeLength - 1) newMemberType = type;
-                            else parameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
-                        }
-                        if (parameters.Count == 1 && parameters[0].paramType == voidKey)
-                            parameters.Clear();
-                    }
+                    else newMemberType = ASContext.Context.Features.voidKey;
                 }
                 newMemberType = CleanType(newMemberType);
                 // for example: 
