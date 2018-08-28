@@ -275,6 +275,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("CalltipDef_issue2368_1")
                     .Returns("foo (v1, v2)")
                     .SetName("foo(1|, 2). Calltip. Issue 2368. Case 1");
+                yield return new TestCaseData("CalltipDef_issue2368_2")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo(1, 2|). Calltip. Issue 2368. Case 2");
             }
         }
 
