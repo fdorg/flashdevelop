@@ -1726,6 +1726,7 @@ namespace ASCompletion.Completion
         /// </summary>
         internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var context = ASContext.Context;
             var parCount = 0;
             var braCount = 0;
@@ -1770,10 +1771,7 @@ namespace ASCompletion.Completion
                         if (arrCount == 0) comaCount = 0;
                         else arrCount--;
                     }
-                    else if (c == '(')
-                    {
-                        if (--parCount < 0) break; // function start found
-                    }
+                    else if (c == '(') --parCount;
                     else if (c == '?' && genCount > 0) genCount = 0;
                     else if (c == '>') genCount++;
                     else if (c == '<' && genCount > 0)
@@ -1784,12 +1782,18 @@ namespace ASCompletion.Completion
                     // new parameter reached
                     else if (c == ',')
                     {
-                        if (parCount == 0 && genCount == 0)
+                        parCount = 0;
+                        if (genCount == 0)
                         {
                             comaCount++;
                             hasComma = false;
                         }
-                        else if (genCount != 0) hasComma = true;
+                        else hasComma = true;
+                    }
+                    else if (parCount < 0 && characterClass.Contains(c))
+                    {
+                        position++;
+                        break; // function start found 
                     }
                 }
                 position--;

@@ -278,6 +278,21 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("CalltipDef_issue2368_2")
                     .Returns("foo (v1, v2)")
                     .SetName("foo(1, 2|). Calltip. Issue 2368. Case 2");
+                yield return new TestCaseData("CalltipDef_issue2368_3")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo((1 + 1)|, 2). Calltip. Issue 2368. Case 3");
+                yield return new TestCaseData("CalltipDef_issue2368_4")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo((1 +| 1), 2). Calltip. Issue 2368. Case 4");
+                yield return new TestCaseData("CalltipDef_issue2368_5")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo(1, 2 * (3 +| 1)). Calltip. Issue 2368. Case 5");
+                yield return new TestCaseData("CalltipDef_issue2368_6")
+                    .Returns("bar (v1, v2)")
+                    .SetName("foo(1, bar(3|, 1)). Calltip. Issue 2368. Case 6");
+                yield return new TestCaseData("CalltipDef_issue2368_7")
+                    .Returns("bar (v1, v2)")
+                    .SetName("foo(1, bar({x|:1}, 1)). Calltip. Issue 2368. Case 7");
             }
         }
 
@@ -292,6 +307,7 @@ namespace HaXeContext.Completion
             SetCurrentFile(GetFullPath(fileName));
             var manager = UITools.Manager;
             ASComplete.HandleFunctionCompletion(sci, false);
+            Assert.IsTrue(UITools.CallTip.CallTipActive);
             return ASComplete.calltipDef;
         }
     }
