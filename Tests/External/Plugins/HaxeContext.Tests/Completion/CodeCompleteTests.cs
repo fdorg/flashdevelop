@@ -268,8 +268,21 @@ namespace HaXeContext.Completion
                     .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 2");
             }
         }
+        static IEnumerable<TestCaseData> CalltipDefIssue2368TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2368_1")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo(1|, 2). Calltip. Issue 2368. Case 1");
+            }
+        }
 
-        [Test, TestCaseSource(nameof(CalltipDefIssue2364TestCases))]
+        [
+            Test,
+            TestCaseSource(nameof(CalltipDefIssue2364TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue2368TestCases)),
+        ]
         public string CalltipDefIssue2364(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
