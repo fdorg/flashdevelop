@@ -268,14 +268,46 @@ namespace HaXeContext.Completion
                     .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 2");
             }
         }
+        static IEnumerable<TestCaseData> CalltipDefIssue2368TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2368_1")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo(1|, 2). Calltip. Issue 2368. Case 1");
+                yield return new TestCaseData("CalltipDef_issue2368_2")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo(1, 2|). Calltip. Issue 2368. Case 2");
+                yield return new TestCaseData("CalltipDef_issue2368_3")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo((1 + 1)|, 2). Calltip. Issue 2368. Case 3");
+                yield return new TestCaseData("CalltipDef_issue2368_4")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo((1 +| 1), 2). Calltip. Issue 2368. Case 4");
+                yield return new TestCaseData("CalltipDef_issue2368_5")
+                    .Returns("foo (v1, v2)")
+                    .SetName("foo(1, 2 * (3 +| 1)). Calltip. Issue 2368. Case 5");
+                yield return new TestCaseData("CalltipDef_issue2368_6")
+                    .Returns("bar (v1, v2)")
+                    .SetName("foo(1, bar(3|, 1)). Calltip. Issue 2368. Case 6");
+                yield return new TestCaseData("CalltipDef_issue2368_7")
+                    .Returns("bar (v1, v2)")
+                    .SetName("foo(1, bar({x|:1}, 1)). Calltip. Issue 2368. Case 7");
+            }
+        }
 
-        [Test, TestCaseSource(nameof(CalltipDefIssue2364TestCases))]
+        [
+            Test,
+            TestCaseSource(nameof(CalltipDefIssue2364TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue2368TestCases)),
+        ]
         public string CalltipDefIssue2364(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(GetFullPath(fileName));
             var manager = UITools.Manager;
             ASComplete.HandleFunctionCompletion(sci, false);
+            Assert.IsTrue(UITools.CallTip.CallTipActive);
             return ASComplete.calltipDef;
         }
     }

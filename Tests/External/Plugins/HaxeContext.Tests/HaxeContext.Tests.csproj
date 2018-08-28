@@ -756,6 +756,13 @@
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2364_1.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2364_2.hx" />
     <EmbeddedResource Include="Test Files\completion\DeclarationLookupIssue2366_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_7.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
