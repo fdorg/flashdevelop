@@ -3080,8 +3080,7 @@ namespace ASCompletion.Completion
             if (type.IsVoid())
             {
                 if (!string.IsNullOrEmpty(value) && var.ValueEndPosition != -1
-                    && value.First() is char first && char.IsLetter(first)
-                    && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
+                    && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
                     type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
                 if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
             }
