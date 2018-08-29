@@ -1690,8 +1690,8 @@ namespace HaXeContext
             if (topLevel == null) return hxCompletionCache.OtherElements;
             var items = new MemberList();
             if (topLevel.OutOfDate) InitTopLevelElements();
-            items.Merge(topLevel.Members);
-            items.Merge(hxCompletionCache.OtherElements);
+            items.Add(topLevel.Members);
+            items.Add(hxCompletionCache.OtherElements);
             return items;
         }
 
@@ -1701,15 +1701,19 @@ namespace HaXeContext
             var list = GetTopLevelElements();
             if (list != null && list.Count > 0)
             {
-                var item = list.Search(token, 0, 0);
-                if (item != null)
+                var items = list.MultipleSearch(token, 0, 0);
+                if (items != null)
                 {
-                    result.InClass = ClassModel.VoidClass;
-                    result.InFile = item.InFile;
-                    result.Member = item;
-                    result.Type = ResolveType(item.Type, item.InFile);
-                    result.IsStatic = false;
-                    result.IsPackage = false;
+                    if (items.Count == 1)
+                    {
+                        var item = items[0];
+                        result.InClass = ClassModel.VoidClass;
+                        result.InFile = item.InFile;
+                        result.Member = item;
+                        result.Type = ResolveType(item.Type, item.InFile);
+                        result.IsStatic = false;
+                        result.IsPackage = false;
+                    }
                     return;
                 }
             }
