@@ -673,6 +673,14 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_4"))
                     .SetName("foo(?v = /*123*/). Infer parameter var type. Issue 2371. Case 4.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_5"))
+                    .SetName("foo(?v = 1.0f). Infer parameter var type. Issue 2371. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_6"))
+                    .SetName("foo(?v = v). Infer parameter var type. Issue 2371. Case 6.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
             }
         }
 

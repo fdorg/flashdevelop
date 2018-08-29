@@ -3075,11 +3075,13 @@ namespace ASCompletion.Completion
         protected void InferParameterVarType(MemberModel var)
         {
             var ctx = ASContext.Context;
-            var type = ctx.ResolveToken(var.Value, ctx.CurrentModel);
+            var value = var.Value;
+            var type = ctx.ResolveToken(value, ctx.CurrentModel);
             if (type.IsVoid())
             {
-                if (!string.IsNullOrEmpty(var.Value) && var.ValueEndPosition != -1
-                    && var.Value.First() is char first && char.IsLetter(first))
+                if (!string.IsNullOrEmpty(value) && var.ValueEndPosition != -1
+                    && value.First() is char first && char.IsLetter(first)
+                    && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
                     type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
                 if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
             }
