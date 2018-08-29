@@ -143,10 +143,22 @@ namespace HaXeContext.CodeRefactor.Commands
             }
         }
 
+        static IEnumerable<TestCaseData> RenameEnumAbstractValueTestIssue2373Cases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeRename_issue2373_1", "NewName")
+                    .Returns(ReadAllText("AfterRename_issue2373_1"))
+                    .SetName("AType.Enu|mAbstractValue. Issue 2373. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2373");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(TestCases)),
             TestCaseSource(nameof(RenameEnumTestCases)),
+            TestCaseSource(nameof(RenameEnumAbstractValueTestIssue2373Cases)),
         ]
         public string Rename(string fileName, string newName)
         {

@@ -1324,6 +1324,21 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2373TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2373_1"))
+                        .Returns(new ClassModel {Name = "Issue2373Foo", Flags = FlagType.Class | FlagType.Abstract})
+                        .SetName("var One = 1. Issue 2373. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2373");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2373_2"))
+                        .Returns(new ClassModel {Name = "Issue2373Bar", Flags = FlagType.Class | FlagType.Abstract})
+                        .SetName("var One = 1. Issue 2373. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2373");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1334,6 +1349,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_new_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2362TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2373TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
