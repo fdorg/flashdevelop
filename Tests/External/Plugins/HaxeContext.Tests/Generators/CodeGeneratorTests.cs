@@ -648,7 +648,43 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2350_1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2350_1"))
-                    .SetName("Infer parameter var type. Issue 2350. Case 1.");
+                    .SetName("foo(?v = ). Infer parameter var type. Issue 2350. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2350");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarInferParameterVarIssue2371TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_1"))
+                    .SetName("foo(?v = [). Infer parameter var type. Issue 2371. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_2"))
+                    .SetName("foo(?v = {). Infer parameter var type. Issue 2371. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_3"))
+                    .SetName("foo(?v = (). Infer parameter var type. Issue 2371. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_4"))
+                    .SetName("foo(?v = /*123*/). Infer parameter var type. Issue 2371. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_5"))
+                    .SetName("foo(?v = 1.0f). Infer parameter var type. Issue 2371. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_6"))
+                    .SetName("foo(?v = v). Infer parameter var type. Issue 2371. Case 6.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_7", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_7"))
+                    .SetName("foo(?v = someText). Infer parameter var type. Issue 2371. Case 7.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
             }
         }
 
@@ -1107,6 +1143,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2306TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2350TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2371TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferVarTestCases)),
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),

@@ -88,7 +88,8 @@ namespace HaXeContext.Completion
                 var name = item.Name;
                 if (name[0] == '?')
                 {
-                    if (string.IsNullOrEmpty(item.Type)) InferParameterVarType(item);
+                    if (string.IsNullOrEmpty(item.Type) && (expression.Separator != "=" || item.Value != expression.Value))
+                        InferParameterVarType(item);
                     var type = item.Type;
                     if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
                     else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
