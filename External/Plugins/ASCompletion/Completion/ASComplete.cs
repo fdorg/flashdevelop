@@ -1736,8 +1736,7 @@ namespace ASCompletion.Completion
             var hasComma = false;
             while (position >= 0)
             {
-                var style = sci.BaseStyleAt(position);
-                if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
+                if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     var c = (char)sci.CharAt(position);
                     if (c <= ' ')
@@ -1790,10 +1789,14 @@ namespace ASCompletion.Completion
                         }
                         else hasComma = true;
                     }
-                    else if (parCount < 0 && characterClass.Contains(c))
+                    else if (parCount < 0)
                     {
-                        position++;
-                        break; // function start found 
+                        if (characterClass.Contains(c) || c == '_')
+                        {
+                            position++;
+                            break; // function start found 
+                        }
+                        if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
                     }
                 }
                 position--;

@@ -1,5 +1,5 @@
 ﻿package;
-class CalltipDef_issue2364_1 {
+class CalltipDef_issue2364_3 {
 	static function main() {
 		foo((1 + 1)$(EntryPoint), 2);
 	}
