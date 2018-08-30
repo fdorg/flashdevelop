@@ -2,6 +2,7 @@
 using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
@@ -268,6 +269,7 @@ namespace HaXeContext.Completion
                     .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 2");
             }
         }
+
         static IEnumerable<TestCaseData> CalltipDefIssue2368TestCases
         {
             get
@@ -296,15 +298,40 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue2356TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2356_1")
+                    .Returns("CalltipDef_issue2356_1_super (v1:Int)")
+                    .SetName("super(|). Case 1");
+                yield return new TestCaseData("CalltipDef_issue2356_2")
+                    .Returns("CalltipDef_issue2356_2_super (v1:Int, v2:Int)")
+                    .SetName("super(1, |). Case 2");
+            }
+        }
+
         [
             Test,
+            TestCaseSource(nameof(CalltipDefIssue2356TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2364TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2368TestCases)),
         ]
-        public string CalltipDefIssue2364(string fileName)
+        public string CalltipDef(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(GetFullPath(fileName));
+            ASContext.Context
+                .When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it =>
+                {
+                    var topLevel = new FileModel();
+                    topLevel.Members.Add(new MemberModel("this", ASContext.Context.CurrentClass.Name, FlagType.Variable, Visibility.Public) {InFile = ASContext.Context.CurrentModel});
+                    topLevel.Members.Add(new MemberModel("super", ASContext.Context.CurrentClass.ExtendsType, FlagType.Variable, Visibility.Public) {InFile = ASContext.Context.CurrentModel});
+                    var ctx = (ASContext) ASContext.GetLanguageContext("haxe");
+                    ctx.TopLevel = topLevel;
+                    ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
+                });
             var manager = UITools.Manager;
             ASComplete.HandleFunctionCompletion(sci, false);
             Assert.IsTrue(UITools.CallTip.CallTipActive);

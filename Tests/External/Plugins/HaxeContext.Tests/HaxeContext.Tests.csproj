@@ -780,6 +780,8 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_issue2373_1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_issue2373_1_withoutEntryPoint.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_issue2373_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2356_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2356_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
