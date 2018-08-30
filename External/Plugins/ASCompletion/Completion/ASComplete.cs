@@ -1791,12 +1791,12 @@ namespace ASCompletion.Completion
                     }
                     else if (parCount < 0)
                     {
-                        if (char.IsPunctuation(c)) parCount = 0;
-                        else if (characterClass.Contains(c))
+                        if (characterClass.Contains(c) || c == '_')
                         {
                             position++;
                             break; // function start found 
                         }
+                        if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
                     }
                 }
                 position--;
