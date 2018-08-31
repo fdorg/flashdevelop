@@ -55,8 +55,27 @@ namespace HaXeContext.Model
             }
         }
 
-        [Test, TestCaseSource(nameof(Issue2359TestCases))]
-        public string ParseFile_Issue2359(string fileName)
+        static IEnumerable<TestCaseData> Issue2377TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2377_1")
+                    .Returns("Vector<T>")
+                    .SetName("typedef UnsafeArray<T> = Vector<T>;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2377");
+                yield return new TestCaseData("Issue2377_2")
+                    .Returns("Vector<T>")
+                    .SetName("private typedef UnsafeArray<T> = Vector<T>;")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2377");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(Issue2359TestCases)),
+            TestCaseSource(nameof(Issue2377TestCases)),
+        ]
+        public string ParseFileExtendsType(string fileName)
         {
             var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
             return model.Classes.First().ExtendsType;
