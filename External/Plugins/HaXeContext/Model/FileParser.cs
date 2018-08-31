@@ -1673,7 +1673,7 @@ namespace HaXeContext.Model
                 curModifiers = 0;
                 curAccess = Visibility.Public;
             }
-            else if (!inTypedef && curModifiers == FlagType.TypeDef && curClass != null && token != "extends")
+            else if (!inTypedef && (curModifiers & FlagType.TypeDef) != 0 && curClass != null && token != "extends")
             {
                 curClass.ExtendsType = token;
                 curModifiers = 0;
