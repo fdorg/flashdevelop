@@ -787,6 +787,8 @@
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2368_10.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2377_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2377_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2358_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceTextIssue2358_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

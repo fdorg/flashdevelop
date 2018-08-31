@@ -2056,25 +2056,39 @@ namespace ASCompletion.Completion
                 else mask = 0;
                 if (argumentType != null) mask |= FlagType.Variable;
 
-                // explore members
-                tmpClass.ResolveExtends();
                 if (!limitMembers || result.IsStatic || tmpClass.Name != features.objectKey)
-                while (!tmpClass.IsVoid())
                 {
-                    mix.Merge(tmpClass.GetSortedMembersList(), mask, acc);
-                    // static inheritance
-                    if ((mask & FlagType.Static) > 0)
+                    // explore members
+                    tmpClass.ResolveExtends();
+                    if (!string.IsNullOrEmpty(tmpClass.ExtendsType) && tmpClass.ExtendsType != features.objectKey && tmpClass.Extends.IsVoid()
+                        && !string.IsNullOrEmpty(tmpClass.Template) && !string.IsNullOrEmpty(tmpClass.IndexType))
                     {
-                        if ((!features.hasStaticInheritance || dotIndex > 0) && (tmpClass.Flags & FlagType.TypeDef) == 0)
-                            break;
+                        /**
+                         * Temporary fix:
+                         * If `tmpClass` is generic type with the concrete type explicit definition, like `Null<UserType>`,
+                         * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
+                         */
+                        tmpClass = (ClassModel) tmpClass.Clone();
+                        tmpClass.InFile = result.InFile;
+                        tmpClass.ResolveExtends();
                     }
-                    else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
-                    tmpClass = tmpClass.Extends;
-                    // hide Object class members
-                    if (limitMembers && tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 
-                        break;
-                    // members visibility
-                    acc = ctx.TypesAffinity(curClass, tmpClass);
+                    while (!tmpClass.IsVoid())
+                    {
+                        mix.Merge(tmpClass.GetSortedMembersList(), mask, acc);
+                        // static inheritance
+                        if ((mask & FlagType.Static) > 0)
+                        {
+                            if ((!features.hasStaticInheritance || dotIndex > 0) && (tmpClass.Flags & FlagType.TypeDef) == 0)
+                                break;
+                        }
+                        else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
+                        tmpClass = tmpClass.Extends;
+                        // hide Object class members
+                        if (limitMembers && tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 
+                            break;
+                        // members visibility
+                        acc = ctx.TypesAffinity(curClass, tmpClass);
+                    }
                 }
             }
             // known classes / toplevel vars/methods

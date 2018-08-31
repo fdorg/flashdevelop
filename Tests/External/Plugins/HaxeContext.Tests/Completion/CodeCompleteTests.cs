@@ -175,7 +175,23 @@ namespace HaXeContext.Completion
             }
         }
 
-        [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
+        
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2358TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_1", '.', false, false)
+                    .SetName("(v:Null<Vector<Int>>).| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+            }
+        }
+
+        [
+            Test, 
+            TestCaseSource(nameof(OnCharIssue2105TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2358TestCases)),
+        ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
         static IEnumerable<TestCaseData> GetToolTipTextTestCases
@@ -468,8 +484,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2320TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
-            // TODO: That tests pass without other tests.
-            //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)),
+            //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)), // TODO: That tests pass without other tests.
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
