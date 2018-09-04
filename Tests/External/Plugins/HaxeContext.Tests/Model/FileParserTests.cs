@@ -152,26 +152,14 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        }
                     })
                     .SetName("function foo() return 1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_2")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("bar", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 4,
-                            LineTo = 4,
-                        }
                     })
                     .SetName("function foo() return 1;\nfunction bar() return 1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
@@ -179,26 +167,14 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 5,
-                        }
                     })
                     .SetName("function foo(i:Int):Int\nreturn i % 2 == 0\n\t? 0\n\t: 1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_4")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("v", "Int", FlagType.Dynamic | FlagType.Variable, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("v", "Int", FlagType.Dynamic | FlagType.Variable, Visibility.Private),
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int this.v = i;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
@@ -206,138 +182,70 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        }
                     })
                     .SetName("function foo(i:Int):Int var v = i;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_6")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Dynamic | FlagType.Variable, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i);\vvar v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_7")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Static | FlagType.Variable, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vstatic var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_8")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vpublic var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_9")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vinline public static var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_10")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Intrinsic | FlagType.Extern | FlagType.Dynamic | FlagType.Variable, Visibility.Public)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vextern var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_11")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vprivate var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_12")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vprivate var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_13")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("max", "ExprOf<T>", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\nmacro public static inline max(v1, v2) return v1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
@@ -345,32 +253,16 @@ namespace HaXeContext.Model
                     .Ignore("")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("v", "Int", FlagType.Getter | FlagType.Setter, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vvar v(get, set):Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
                 yield return new TestCaseData("Issue2210_15")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
                         new MemberModel("bar", null, FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Private)
-                        {
-                            LineFrom = 3,
-                            LineTo = 3,
-                        }
                     })
                     .SetName("function foo(i:Int):Int trace(i)\voverride function bar() {}")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
@@ -416,16 +308,8 @@ namespace HaXeContext.Model
                 yield return new TestCaseData("Issue2342_1")
                     .Returns(new List<MemberModel>
                     {
-                        new MemberModel("listen", "Void", FlagType.Dynamic | FlagType.Function, Visibility.Public)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
-                        new MemberModel("close", "Void", FlagType.Dynamic | FlagType.Function, Visibility.Public)
-                        {
-                            LineFrom = 2,
-                            LineTo = 2,
-                        },
+                        new MemberModel("listen", "Void", FlagType.Dynamic | FlagType.Function, Visibility.Public),
+                        new MemberModel("close", "Void", FlagType.Dynamic | FlagType.Function, Visibility.Public),
                     })
                     .SetName("Issue 2342. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2342");
@@ -436,11 +320,28 @@ namespace HaXeContext.Model
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2381TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2381_1")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "String->String", FlagType.Access | FlagType.Dynamic | FlagType.Getter | FlagType.Setter, Visibility.Public),
+                        new MemberModel("get_foo", "String->String", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("set_foo", "String->String", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                    })
+                    .SetName("Issue 2381. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2381");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(Issue163TestCases)),
             TestCaseSource(nameof(Issue2210TestCases)),
             TestCaseSource(nameof(Issue2342TestCases)),
+            TestCaseSource(nameof(Issue2381TestCases)),
         ]
         public List<MemberModel> ParseFile(string fileName)
         {
