@@ -793,6 +793,7 @@ namespace HaXeContext.Model
                         && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
                     {
                         inFunction = true;
+                        inType = false;
                         i -= 2;
                         continue;
                     }
@@ -1013,6 +1014,11 @@ namespace HaXeContext.Model
                             else if (ScriptMode) // not in a class, parse if/for/while/do blocks
                             {
                                 context = 0;
+                            }
+                            else if (curMember != null && (curMember.Flags & FlagType.Function) != 0 && length == 0 && !foundColon)
+                            {
+                                inType = false;
+                                braceCount++;
                             }
                             else braceCount++; // ignore block
                         }
