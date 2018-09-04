@@ -517,6 +517,7 @@ namespace HaXeContext.Model
                                 curMethod = null;
                             }
                             inFunction = false;
+                            inType = false;
                             length = 0;
                         }
                         else if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
@@ -1612,7 +1613,6 @@ namespace HaXeContext.Model
                     }
                 }
             }
-
             // a declaration keyword was recognized
             if (foundKeyword != 0)
             {
@@ -1645,7 +1645,6 @@ namespace HaXeContext.Model
                 curMember = null;
                 return true;
             }
-
             // when not in a class, parse if/for/while blocks
             if (ScriptMode)
             {
@@ -1657,11 +1656,9 @@ namespace HaXeContext.Model
                     return false;
                 }
             }
-
             if (inValue && valueMember != null) valueMember = null;
             if (!evalContext) return false;
             if (dotIndex > 0) token = curToken.Text;
-
             // some heuristic around Enums & Typedefs
             if (inEnum && !inValue)
             {

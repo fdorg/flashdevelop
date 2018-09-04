@@ -175,8 +175,6 @@ namespace HaXeContext.Completion
             }
         }
 
-        
-
         static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2358TestCases
         {
             get
