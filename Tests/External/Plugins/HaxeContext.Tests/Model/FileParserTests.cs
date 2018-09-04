@@ -333,6 +333,16 @@ namespace HaXeContext.Model
                     })
                     .SetName("Issue 2381. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2381");
+                yield return new TestCaseData("Issue2381_2")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("foo", "String->String", FlagType.Access | FlagType.Dynamic | FlagType.Getter | FlagType.Setter, Visibility.Public),
+                        new MemberModel("get_foo", "String->String", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("set_foo", "String->String", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                        new MemberModel("checkLength", "Bool", FlagType.Dynamic | FlagType.Function, Visibility.Private),
+                    })
+                    .SetName("Issue 2381. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2381");
             }
         }
 
