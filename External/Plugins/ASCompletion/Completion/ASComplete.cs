@@ -3238,7 +3238,6 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType(context.Features.objectKey, null);
                 }
                 else result.Type = ResolveType(result.Type.IndexType, result.InFile);
-
                 return;
             }
             // previous member called as a method

@@ -542,6 +542,35 @@ namespace HaXeContext.Completion
             return null;
         }
 
+        protected override string GetCalltipDef(MemberModel member)
+        {
+            if ((member.Flags & FlagType.Variable) != 0 && !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            {
+                var tmp = FunctionTypeToMemberModel(member.Type, member.InFile);
+                tmp.Name = member.Name;
+                tmp.Flags |= FlagType.Function;
+                member = tmp;
+            }
+            return base.GetCalltipDef(member);
+        }
+
+        protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
+        {
+            if (!string.IsNullOrEmpty(token) && token.Length > 1 && token[0] == '[' && token.Last() == ']'
+                && inClass != null && result.Type != null && (result.Type.Flags & FlagType.TypeDef) != 0
+                && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
+            {
+                /**
+                 * for example:
+                 * typedef Ints = Array<Int>;
+                 * var ints:Ints;
+                 * ints[0].<complete>
+                 */
+                result.Type = ASContext.Context.ResolveType(result.Type.ExtendsType, result.InFile);
+            }
+            base.FindMemberEx(token, inClass, result, mask, access);
+        }
+
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
         {
             var voidKey = ASContext.Context.Features.voidKey;
@@ -614,18 +643,6 @@ namespace HaXeContext.Completion
             if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey)
                 result.Parameters.Clear();
             return result;
-        }
-
-        protected override string GetCalltipDef(MemberModel member)
-        {
-            if ((member.Flags & FlagType.Variable) != 0 && !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
-            {
-                var tmp = FunctionTypeToMemberModel(member.Type, member.InFile);
-                tmp.Name = member.Name;
-                tmp.Flags |= FlagType.Function;
-                member = tmp;
-            }
-            return base.GetCalltipDef(member);
         }
     }
 }
