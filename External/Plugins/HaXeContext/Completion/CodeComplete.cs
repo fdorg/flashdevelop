@@ -33,9 +33,8 @@ namespace HaXeContext.Completion
             var stringChar = sci.GetStringType(position - 1);
             if (ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar))
             {
-                char current = (char)sci.CharAt(position);
-
-                for (int i = position - 1; i >= 0; i--)
+                var current = (char)sci.CharAt(position);
+                for (var i = position - 1; i >= 0; i--)
                 {
                     var next = current;
                     current = (char)sci.CharAt(i);
@@ -112,7 +111,7 @@ namespace HaXeContext.Completion
                 return true;
             }
             var type = expr.Type;
-            if ((expr.Member != null && expr.Path != "super") || !(type is ClassModel))
+            if ((expr.Member != null && expr.Path != "super") || type == null)
                 return base.ResolveFunction(sci, position, expr, autoHide);
             var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
             type.ResolveExtends();
