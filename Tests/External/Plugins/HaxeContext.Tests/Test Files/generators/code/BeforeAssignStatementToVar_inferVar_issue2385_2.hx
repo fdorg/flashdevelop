@@ -4,7 +4,7 @@ typedef Ints2 = Ints1;
 typedef Ints3 = Ints2;
 class Foo2385_1 {
 	public function new() {
-		var ints:Ints1;
+		var ints:Ints3;
 		ints[0];$(EntryPoint)
 	}
 }
