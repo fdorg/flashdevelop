@@ -566,7 +566,12 @@ namespace HaXeContext.Completion
                  * var ints:Ints;
                  * ints[0].<complete>
                  */
-                result.Type = ASContext.Context.ResolveType(result.Type.ExtendsType, result.InFile);
+                var type = result.Type;
+                while (!type.IsVoid() && string.IsNullOrEmpty(type.IndexType))
+                {
+                    type = ASContext.Context.ResolveType(type.ExtendsType, result.InFile);
+                }
+                result.Type = type;
             }
             base.FindMemberEx(token, inClass, result, mask, access);
         }
