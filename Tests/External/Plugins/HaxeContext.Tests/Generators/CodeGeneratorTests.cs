@@ -753,6 +753,22 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarInferVarIssue2385TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2385_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2385_1"))
+                    .SetName("Infer var type. Issue 2385. Case 1.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2385_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2385_2"))
+                    .SetName("Infer var type. Issue 2385. Case 2.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2385_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2385_3"))
+                    .SetName("Infer var type. Issue 2385. Case 3.");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue220TestCases
         {
             get
@@ -1145,6 +1161,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2350TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2371TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferVarTestCases)),
+            TestCaseSource(nameof(AssignStatementToVarInferVarIssue2385TestCases)),
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(AddToInterfaceIssue1733TestCases)),
