@@ -607,6 +607,12 @@ namespace HaXeContext.Model
                     else if (c1 == '>')
                     {
                         if (ba[i - 2] == '-') { /*haxe method signatures*/ }
+                        else if (paramBraceCount > 0 && inAnonType)
+                        {
+                            valueBuffer[valueLength++] = c1;
+                            if (paramTempCount > 0) paramTempCount--;
+                            continue;
+                        }
                         else if (paramTempCount > 0)
                         {
                             paramTempCount--;
@@ -936,6 +942,20 @@ namespace HaXeContext.Model
                         // start of block
                         if (c1 == '{')
                         {
+                            if (foundColon && length == 0) // copy Haxe anonymous type
+                            {
+                                inValue = true;
+                                hadValue = false;
+                                inType = true;
+                                inAnonType = true;
+                                valueLength = 0;
+                                valueBuffer[valueLength++] = c1;
+                                paramBraceCount = 1;
+                                paramParCount = 0;
+                                paramSqCount = 0;
+                                paramTempCount = 0;
+                                continue;
+                            }
                             // parse package/class block
                             if (context == FlagType.Package || context == FlagType.Class) context = 0;
                             else if (context == FlagType.Enum) // parse enum block
@@ -982,28 +1002,13 @@ namespace HaXeContext.Model
                             }
                             else if (context == FlagType.Abstract) // parse abstract block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
-                                    inAbstract = true;
+                                if (curClass != null && (curClass.Flags & FlagType.Abstract) > 0) inAbstract = true;
                                 else
                                 {
                                     context = 0;
                                     curModifiers = 0;
                                     braceCount++; // ignore block
                                 }
-                            }
-                            else if (foundColon && length == 0) // copy Haxe anonymous type
-                            {
-                                inValue = true;
-                                hadValue = false;
-                                inType = true;
-                                inAnonType = true;
-                                valueLength = 0;
-                                valueBuffer[valueLength++] = c1;
-                                paramBraceCount = 1;
-                                paramParCount = 0;
-                                paramSqCount = 0;
-                                paramTempCount = 0;
-                                continue;
                             }
                             else if (foundConstant) // start config block
                             {

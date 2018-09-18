@@ -346,12 +346,42 @@ namespace HaXeContext.Model
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2387TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2387_1")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("totalChunks", "Int", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("straightRoads", "String->String", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("corners", "{>CourseGeneratorSetting, size:Array<Int>, }", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("jumpObstacles", "CourseGeneratorSetting", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("smallRoads", "CourseGeneratorSetting", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                    })
+                    .SetName("Issue 2387. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2387");
+                yield return new TestCaseData("Issue2387_2")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("totalChunks", "Int", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("straightRoads", "String->String", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("corners", "{straightRoads : {>CourseGeneratorSetting, point:{x:Int, y:Int}, size:Array<Int>, foo:{>CourseGeneratorSetting,bar:{>Bar, id:String, }, }, }}", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("jumpObstacles", "CourseGeneratorSetting", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("smallRoads", "CourseGeneratorSetting", FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                    })
+                    .SetName("Issue 2387. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2387");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(Issue163TestCases)),
             TestCaseSource(nameof(Issue2210TestCases)),
             TestCaseSource(nameof(Issue2342TestCases)),
             TestCaseSource(nameof(Issue2381TestCases)),
+            TestCaseSource(nameof(Issue2387TestCases)),
         ]
         public List<MemberModel> ParseFile(string fileName)
         {
