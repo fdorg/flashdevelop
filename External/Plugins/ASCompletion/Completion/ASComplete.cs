@@ -3212,22 +3212,21 @@ namespace ASCompletion.Completion
         /// <param name="result">Class/Member struct</param>
         /// <param name="mask">Flags mask</param>
         /// <param name="acc">Visibility mask</param>
-        public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility acc)
+        public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
-            if (string.IsNullOrEmpty(token))
-                return;
+            ASContext.Context.CodeComplete.FindMemberEx(token, inClass, result, mask, access);
+        }
 
-            IASContext context = ASContext.Context;
-            ContextFeatures features = context.Features;
-            MemberModel found = null;
-            ClassModel tmpClass = inClass;
-
+        protected virtual void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
+        {
+            if (string.IsNullOrEmpty(token)) return;
             if (inClass == null)
             {
-                if (result.InFile != null) FindMember(token, result.InFile, result, mask, acc);
+                if (result.InFile != null) FindMember(token, result.InFile, result, mask, access);
                 return;
             }
-            else result.RelClass = inClass;
+            var context = ASContext.Context;
+            result.RelClass = inClass;
             // previous member accessed as an array
             if (token.Length >= 2 && token.First() == '[' && token.Last() == ']')
             {
@@ -3238,14 +3237,11 @@ namespace ASCompletion.Completion
                     result.InFile = null;
                     result.Type = ResolveType(context.Features.objectKey, null);
                 }
-                else
-                {
-                    result.Type = ResolveType(result.Type.IndexType, result.InFile);
-                }
+                else result.Type = ResolveType(result.Type.IndexType, result.InFile);
                 return;
             }
             // previous member called as a method
-            else if (token[0] == '#')
+            if (token[0] == '#')
             {
                 result.IsStatic = false;
                 if (result.Member != null)
@@ -3257,119 +3253,116 @@ namespace ASCompletion.Completion
                 return;
             }
             // variable
-            else if (tmpClass != null)
+            MemberModel found = null;
+            var features = context.Features;
+            // member
+            var tmpClass = inClass;
+            tmpClass.ResolveExtends();
+            while (!tmpClass.IsVoid())
             {
-                // member
-                tmpClass.ResolveExtends();
-                while (!tmpClass.IsVoid())
+                found = tmpClass.Members.Search(token, mask, access);
+                // ignore setters
+                if (found != null && (found.Flags & FlagType.Setter) > 0)
                 {
-                    found = tmpClass.Members.Search(token, mask, acc);
-                    // ignore setters
-                    if (found != null && (found.Flags & FlagType.Setter) > 0)
+                    found = null;
+                    var matches = tmpClass.Members.MultipleSearch(token, mask, access);
+                    foreach (MemberModel member in matches)
                     {
-                        found = null;
-                        MemberList matches = tmpClass.Members.MultipleSearch(token, mask, acc);
-                        foreach (MemberModel member in matches)
-                        {
-                            found = member;
-                            if ((member.Flags & FlagType.Getter) > 0) break;
-                        }
-                    }
-                    if (found != null)
-                    {
-                        result.Member = found;
-                        // variable / getter
-                        if ((found.Flags & FlagType.Function) == 0)
-                        {
-                            result.Type = ResolveType(found.Type, tmpClass.InFile);
-                            result.IsStatic = false;
-                        }
-                        // constructor
-                        else if ((found.Flags & FlagType.Constructor) > 0)
-                        {
-                            // is the constructor - ie. a Type
-                            if (tmpClass != inClass) // constructor of inherited type
-                            {
-                                found = null;
-                                result.Type = null;
-                                result.Member = null;
-                                break; 
-                            }
-                            result.Type = tmpClass;
-                            result.IsStatic = true;
-                        }
-                        // in enum
-                        else if ((found.Flags & FlagType.Enum) > 0)
-                        {
-                            result.Type = ResolveType(found.Type, tmpClass.InFile);
-                        }
-                        // method
-                        else
-                        {
-                            result.Type = ResolveType("Function", null);
-                            result.IsStatic = false;
-                        }
-                        break;
-                    }
-                    // Flash IDE-like typing
-                    else if (tmpClass.Name == "MovieClip")
-                    {
-                        string autoType = null;
-                        if (tmpClass.InFile.Version < 3)
-                        {
-                            if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc")) autoType = "MovieClip";
-                            else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt")) autoType = "TextField";
-                            else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt")) autoType = "Button";
-                        }
-                        else if (tmpClass.InFile.Version == 3) 
-                        {
-                            if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc")) autoType = "flash.display.MovieClip";
-                            else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt")) autoType = "flash.text.TextField";
-                            else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt")) autoType = "flash.display.SimpleButton";
-                        }
-                        if (autoType != null)
-                        {
-                            result.Type = ASContext.Context.ResolveType(autoType, null);
-                            result.Member = new MemberModel(token, autoType, FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public);
-                            result.IsStatic = false;
-                            return;
-                        }
-                    }
-
-                    // static inheritance: only AS2 and Haxe typedefs inherit static members
-                    if ((mask & FlagType.Static) > 0)
-                    {
-                        if (!features.hasStaticInheritance && (tmpClass.Flags & FlagType.TypeDef) == 0)
-                            break; 
-                    }
-
-                    tmpClass = tmpClass.Extends;
-
-                    if (acc == 0 && !tmpClass.IsVoid() && tmpClass.InFile.Version == 3)
-                    {
-                        acc = Visibility.Public | Visibility.Protected;
-                        if (inClass.InFile.Package == tmpClass.InFile.Package) acc |= Visibility.Internal;
+                        found = member;
+                        if ((member.Flags & FlagType.Getter) > 0) break;
                     }
                 }
+                if (found != null)
+                {
+                    result.Member = found;
+                    // variable / getter
+                    if ((found.Flags & FlagType.Function) == 0)
+                    {
+                        result.Type = ResolveType(found.Type, tmpClass.InFile);
+                        result.IsStatic = false;
+                    }
+                    // constructor
+                    else if ((found.Flags & FlagType.Constructor) > 0)
+                    {
+                        // is the constructor - ie. a Type
+                        if (tmpClass != inClass) // constructor of inherited type
+                        {
+                            found = null;
+                            result.Type = null;
+                            result.Member = null;
+                            break;
+                        }
+                        result.Type = tmpClass;
+                        result.IsStatic = true;
+                    }
+                    // in enum
+                    else if ((found.Flags & FlagType.Enum) > 0)
+                    {
+                        result.Type = ResolveType(found.Type, tmpClass.InFile);
+                    }
+                    // method
+                    else
+                    {
+                        result.Type = ResolveType("Function", null);
+                        result.IsStatic = false;
+                    }
+                    break;
+                }
+                // Flash IDE-like typing
+                if (tmpClass.Name == "MovieClip")
+                {
+                    string autoType = null;
+                    if (tmpClass.InFile.Version < 3)
+                    {
+                        if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc")) autoType = "MovieClip";
+                        else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt"))
+                            autoType = "TextField";
+                        else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt")) autoType = "Button";
+                    }
+                    else if (tmpClass.InFile.Version == 3)
+                    {
+                        if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc"))
+                            autoType = "flash.display.MovieClip";
+                        else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt"))
+                            autoType = "flash.text.TextField";
+                        else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt"))
+                            autoType = "flash.display.SimpleButton";
+                    }
+                    if (autoType != null)
+                    {
+                        result.Type = context.ResolveType(autoType, null);
+                        result.Member = new MemberModel(token, autoType, FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public);
+                        result.IsStatic = false;
+                        return;
+                    }
+                }
+                // static inheritance: only AS2 and Haxe typedefs inherit static members
+                if ((mask & FlagType.Static) > 0)
+                {
+                    if (!features.hasStaticInheritance && (tmpClass.Flags & FlagType.TypeDef) == 0)
+                        break;
+                }
+                tmpClass = tmpClass.Extends;
+                if (access == 0 && !tmpClass.IsVoid() && tmpClass.InFile.Version == 3)
+                {
+                    access = Visibility.Public | Visibility.Protected;
+                    if (inClass.InFile.Package == tmpClass.InFile.Package) access |= Visibility.Internal;
+                }
             }
-
             // result found!
             if (found != null)
             {
                 result.InClass = tmpClass;
                 result.InFile = tmpClass.InFile;
-                if (result.Type == null) 
-                    result.Type = ASContext.Context.ResolveType(found.Type, tmpClass.InFile);
+                if (result.Type == null) result.Type = context.ResolveType(found.Type, tmpClass.InFile);
                 return;
             }
             // try subpackages
-            else if (inClass.InFile.TryAsPackage)
+            if (inClass.InFile.TryAsPackage)
             {
-                result.Type = ASContext.Context.ResolveType(inClass.Name + "." + token, null);
-                if (!result.Type.IsVoid())
-                    return;
+                result.Type = context.ResolveType(inClass.Name + "." + token, null);
+                if (!result.Type.IsVoid()) return;
             }
-
             // not found
             result.Type = null;
             result.Member = null;
