@@ -1132,6 +1132,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> CreateNewClassIssue2393TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeCreateNewClass_issue2393_1", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("@:meta|Tag. Generate new class. Issue 2393. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2393");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -1173,6 +1184,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
             TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
+            TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
