@@ -470,8 +470,7 @@ namespace HaXeContext.Completion
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
                 }
-                var c = expression[0];
-                if (c == '\'' || c == '"')
+                if (expression.Length > 1 && expression[0] is char c && (c == '\'' || c == '"'))
                 {
                     var type = ctx.ResolveType(features.stringKey, inFile);
                     // for example: ""|, ''|
