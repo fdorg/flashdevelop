@@ -188,79 +188,59 @@ namespace HaXeContext
             get
             {
                 yield return new TestCaseData("true", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("true");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("false", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("false");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("{}", "3.4.0")
-                    .Returns(new ClassModel {Name = "Dynamic", Type = "Dynamic", InFile = FileModel.Ignore})
-                    .SetName("{}");
+                    .Returns(new ClassModel {Name = "Dynamic", Type = "Dynamic", InFile = FileModel.Ignore});
                 yield return new TestCaseData("10", "3.4.0")
-                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
-                    .SetName("10");
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore});
                 yield return new TestCaseData("-10", "3.4.0")
-                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
-                    .SetName("-10");
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"\"", "3.4.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("\"\"");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("\"", "3.4.0")
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("''", "3.4.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("''");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("'", "3.4.0")
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("0xFF0000", "3.4.0")
-                    .Returns(new ClassModel {Name = "Int", Type = "Int", InFile = FileModel.Ignore})
-                    .SetName("0xFF0000");
+                    .Returns(new ClassModel {Name = "Int", Type = "Int", InFile = FileModel.Ignore});
                 yield return new TestCaseData("[]", "3.4.0")
-                    .Returns(new ClassModel {Name = "Array<T>", Type = "Array<T>", InFile = FileModel.Ignore})
-                    .SetName("[]");
+                    .Returns(new ClassModel {Name = "Array<T>", Type = "Array<T>", InFile = FileModel.Ignore});
                 yield return new TestCaseData("[1 => 1]", "3.4.0")
-                    .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
-                    .SetName("[1 => 1]");
+                    .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("(v:String). Haxe 3.4.0");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:Map<Dynamic, Dynamic>)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore})
-                    .SetName("(v:Map<Dynamic, Dynamic>). Haxe 3.4.0");
+                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:Map<Dynamic, {x:Int}>)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Map<Dynamic,{x:Int}>", Type = "Map<Dynamic,{x:Int}>", InFile = FileModel.Ignore})
-                    .SetName("(v:Map<Dynamic, {x:Int}>). Haxe 3.4.0");
+                    .Returns(new ClassModel {Name = "Map<Dynamic,{x:Int}>", Type = "Map<Dynamic,{x:Int}>", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:String)", "3.0.0")
-                    .Returns(ClassModel.VoidClass)
-                    .SetName("(v:String). Haxe 3.0.0");
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("new Sprite().addChild(new Sprite())", "3.0.0")
                     .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("new String('1')", "3.0.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("new String('1')");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v is String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("(v is String)");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(['is'] is Array)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("(['is'] is Array)");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(' is string' is String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("(' is string' is String)");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("({x:Int, y:Int} is Point)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("({x:Int, y:Int} is Point)");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("('   is  ' is Array)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("('   is  ' is Array)");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("('   is  '   is  Array)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
-                    .SetName("('   is  '   is  Array)");
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("cast('s', String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("cast('s', String)");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("cast(v, Array<Dynamic>)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Array<Dynamic>", Type = "Array<Dynamic>", InFile = FileModel.Ignore})
-                    .SetName("cast(v, Array<Dynamic>)");
+                    .Returns(new ClassModel {Name = "Array<Dynamic>", Type = "Array<Dynamic>", InFile = FileModel.Ignore});
                 yield return new TestCaseData("cast(v, Map<Dynamic, Dynamic>)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore})
-                    .SetName("cast(v, Map<Dynamic, Dynamic>)");
+                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore});
             }
         }
 

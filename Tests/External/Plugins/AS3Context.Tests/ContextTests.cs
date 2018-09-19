@@ -99,8 +99,12 @@ namespace AS3Context
                     .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"\"")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("\"")
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("''")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("'")
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("</>")
                     .Returns(new ClassModel {Name = "XML", Type = "XML", InFile = FileModel.Ignore});
                 yield return new TestCaseData("0xFF0000")

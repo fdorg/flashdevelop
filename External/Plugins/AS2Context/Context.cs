@@ -476,8 +476,7 @@ namespace AS2Context
                 return ClassModel.VoidClass;
 
             // typed array
-            if (cname.IndexOf('@') > 0)
-                return ResolveTypeIndex(cname, inFile);
+            if (cname.Contains('@')) return ResolveTypeIndex(cname, inFile);
 
             string package = "";
             Match m = re_lastDot.Match(cname);
@@ -553,15 +552,16 @@ namespace AS2Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 0)
+            var tokenLength = token != null ? token.Length : 0;
+            if (tokenLength > 0)
             {
                 if (token == "true" || token == "false") return ResolveType(features.booleanKey, inFile);
-                if (char.IsDigit(token, 0) || (token.Length > 1 && token[0] == '-' && char.IsDigit(token, 1))) return ResolveType(features.numberKey, inFile);
                 var first = token[0];
-                var last = token[token.Length - 1];
+                if (char.IsDigit(token, 0) || (tokenLength > 1 && first == '-' && char.IsDigit(token, 1))) return ResolveType(features.numberKey, inFile);
+                var last = token[tokenLength - 1];
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
-                if ((first == '"' || first == '\'') && last == first) return ResolveType(features.stringKey, inFile);
+                if (tokenLength > 1 && (first == '"' || first == '\'') && last == first) return ResolveType(features.stringKey, inFile);
             }
             return base.ResolveToken(token, inFile);
         }
