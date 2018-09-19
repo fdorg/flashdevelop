@@ -1549,7 +1549,26 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource(nameof(GetExpressionTestCases))]
+            static IEnumerable<TestCaseData> GetExpressionIssue2386TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("cast(v, String).charAt(1), '$(EntryPoint)")
+                        .Returns(" ")
+                        .SetName("cast(v, String).charAt(1), '|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2386");
+                    yield return new TestCaseData("cast(v, String).charAt(1), \"$(EntryPoint)")
+                        .Returns(" ")
+                        .SetName("cast(v, String).charAt(1), \"|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2386");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(GetExpressionTestCases)),
+                TestCaseSource(nameof(GetExpressionIssue2386TestCases)),
+            ]
             public string GetExpression(string sourceText) => GetExpression(sci, sourceText);
 
             static IEnumerable<TestCaseData> DisambiguateComaHaxeTestCases

@@ -3484,6 +3484,13 @@ namespace ASCompletion.Completion
                     c = (char)sci.CharAt(position);
                     if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
                     {
+                        if (!IsStringStyle(style) && !IsCharStyle(style) && !context.CodeComplete.IsStringInterpolationStyle(sci, position))
+                        {
+                            sb.Clear();
+                            positionExpression = expression.Position;
+                            expression.SubExpressions = null;
+                            break;
+                        }
                         sbSub.Insert(0, c);
                         continue;
                     }
