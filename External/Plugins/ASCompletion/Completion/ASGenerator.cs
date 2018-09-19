@@ -124,8 +124,7 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
-                    // for example: public var foo : Fo|o
-                    if (resolve.Context.Separator == ":")
+                    if (CanShowCreateNewClass(sci, position, resolve, found))
                     {
                         ShowNewClassList(found, resolve.Context, options);
                         return;
@@ -568,6 +567,20 @@ namespace ASCompletion.Completion
                    && !found.InClass.IsVoid()
                    && found.InClass.Implements != null
                    && found.InClass.Implements.Count > 0;
+        }
+
+        /// <summary>
+        /// Check if "Create new class" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show "Create new class" list</returns>
+        protected virtual bool CanShowCreateNewClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            // for example: public var foo : Fo|o
+            return expr.Context.Separator == ":";
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)

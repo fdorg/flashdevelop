@@ -49,6 +49,14 @@ namespace HaXeContext.Generators
         }
 
         /// <inheritdoc />
+        protected override bool CanShowCreateNewClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            // for example: @:meta|Tag
+            if (expr.Context.Separator == ":" && expr.Context.SeparatorPosition > 0 && sci.CharAt(expr.Context.SeparatorPosition - 1) == '@') return false;
+            return base.CanShowCreateNewClass(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
         protected override bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Context.Separator != "=" && base.CanShowImplementInterfaceList(sci, position, expr, found);

@@ -3834,6 +3834,7 @@ namespace ASCompletion.Completion
                     else if (c == ':')
                     {
                         expression.Separator = ":";
+                        expression.SeparatorPosition = position;
                         break;
                     }
                     else if (features.ArithmeticOperators.Contains(c))
