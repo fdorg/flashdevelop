@@ -276,7 +276,7 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("CalltipDef_issue2364_1")
-                    .Returns("foo (parameter0:Int, parameter1:Int) : Bool")
+                    .Returns("foo : Function<[BGCOLOR=#2F90:NORMAL](parameter0:Int, parameter1:Int):Bool[/BGCOLOR]>")
                     .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 1");
                 yield return new TestCaseData("CalltipDef_issue2364_2")
                     .Returns("foo (parameter0:Int, parameter1:Int) : Bool")
