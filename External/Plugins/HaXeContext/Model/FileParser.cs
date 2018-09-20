@@ -1411,6 +1411,7 @@ namespace HaXeContext.Model
             for (var i = model.Classes.Count - 1; i >= 0; i--)
             {
                 var @class = model.Classes[i];
+                FinalizeMembers(@class.Members);
                 if (@class.MetaDatas == null || @class.Members.Count == 0) continue;
                 for (var j = @class.MetaDatas.Count - 1; j >= 0; j--)
                 {
@@ -1424,8 +1425,27 @@ namespace HaXeContext.Model
                     }
                 }
             }
+            FinalizeMembers(model.Members);
             if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
+            // utils
+            void FinalizeMembers(MemberList members)
+            {
+                for (var i = members.Count - 1; i >= 0; i--)
+                {
+                    var member = members[i];
+                    if ((member.Flags & FlagType.Variable) != 0 && member.Type != null && member.Type.Contains("->"))
+                    {
+                        // for example: var f:Int->Int->Void
+                        //member.Flags &= ~FlagType.Variable;
+                        member.Flags |= FlagType.Function;
+                        // TODO: quick hack
+                        //member.Flags &= ~FlagType.Getter;
+                        //member.Flags &= ~FlagType.Setter;
+                        FunctionTypeToMemberModel(member.Type, member);
+                    }
+                }
+            }
         }
         #endregion
 
@@ -2119,6 +2139,76 @@ namespace HaXeContext.Model
         }
 
         #endregion
+
+        public MemberModel FunctionTypeToMemberModel(string type) => FunctionTypeToMemberModel(type, new MemberModel());
+
+        public MemberModel FunctionTypeToMemberModel(string type, MemberModel result)
+        {
+            var voidKey = features.voidKey;
+            if (result.Parameters == null) result.Parameters = new List<MemberModel>();
+            var parCount = 0;
+            var braCount = 0;
+            var genCount = 0;
+            var startPosition = 0;
+            var typeLength = type.Length;
+            for (var i = 0; i < typeLength; i++)
+            {
+                string parameterType = null;
+                var c = type[i];
+                if (c == '(') parCount++;
+                else if (c == ')')
+                {
+                    parCount--;
+                    if (parCount == 0 && braCount == 0 && genCount == 0)
+                    {
+                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
+                        startPosition = i + 1;
+                    }
+                }
+                else if (c == '{') braCount++;
+                else if (c == '}')
+                {
+                    braCount--;
+                    if (parCount == 0 && braCount == 0 && genCount == 0)
+                    {
+                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
+                        startPosition = i + 1;
+                    }
+                }
+                else if (c == '<') genCount++;
+                else if (c == '>' && type[i - 1] != '-')
+                {
+                    genCount--;
+                    if (parCount == 0 && braCount == 0 && genCount == 0)
+                    {
+                        parameterType = type.Substring(startPosition, (i + 1) - startPosition);
+                        startPosition = i + 1;
+                    }
+                }
+                else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && type[i + 1] == '>')
+                {
+                    if (i > startPosition) parameterType = type.Substring(startPosition, i - startPosition);
+                    startPosition = i + 2;
+                    i++;
+                }
+                if (parameterType == null)
+                {
+                    if (i == typeLength - 1 && i > startPosition) result.Type = type.Substring(startPosition);
+                    continue;
+                }
+                var parameterName = $"parameter{result.Parameters.Count}";
+                if (parameterType.StartsWith('?'))
+                {
+                    parameterName = $"?{parameterName}";
+                    parameterType = parameterType.TrimStart('?');
+                }
+                if (i == typeLength - 1) result.Type = parameterType;
+                else result.Parameters.Add(new MemberModel(parameterName, parameterType, FlagType.ParameterVar, 0));
+            }
+            if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey)
+                result.Parameters.Clear();
+            return result;
+        }
     }
 
     public class QType
