@@ -2637,7 +2637,8 @@ namespace ASCompletion.Completion
                                 }
                                 else
                                 {
-                                    paramQualType = GetQualifiedType(result.Member.Type, result.InClass);
+                                    //paramQualType = GetQualifiedType(result.Member.Type, result.InClass);
+                                    paramQualType = GetQualifiedType(paramType, result.InClass);
                                 }
                             }
                         }
