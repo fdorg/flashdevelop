@@ -2405,7 +2405,7 @@ namespace ASCompletion.Completion
                 if (returnType.Member != null)
                 {
                     if ((returnType.Member.Flags & FlagType.Function) != 0)
-                        returnTypeStr = $"Function/*({returnType.Member.ParametersString()}):{returnType.Member.Type}*/";
+                        returnTypeStr = ((ASGenerator) ASContext.Context.CodeGenerator).GetFunctionType(returnType);
                     else if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                         returnTypeStr = returnType.Member.Type;
                 }
@@ -2419,7 +2419,7 @@ namespace ASCompletion.Completion
                     List<string> imports = null;
                     if (returnType.Member != null)
                     {
-                        if (returnType.Member.Type != ASContext.Context.Features.voidKey) imports = new List<string> {returnType.Member.Type};
+                        if (returnTypeStr != ASContext.Context.Features.voidKey) imports = new List<string> {returnTypeStr};
                     }
                     else if (returnType.Type != null) imports = new List<string> {returnType.Type.QualifiedName};
                     if (imports != null)
@@ -3218,7 +3218,7 @@ namespace ASCompletion.Completion
             return new StatementReturnType(resolve, pos, word);
         }
 
-        protected virtual string GetFunctionType(ASResult expr) => "Function";
+        protected virtual string GetFunctionType(ASResult expr) => expr.Member != null ? $"Function/*({expr.Member.ParametersString()}):{expr.Member.Type}*/" : "Function";
 
         protected static string GuessVarName(string name, string type)
         {
