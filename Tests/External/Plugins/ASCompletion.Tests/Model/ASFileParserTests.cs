@@ -1127,7 +1127,7 @@ namespace ASCompletion.Model
                             {
                                 new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private)
                             }
-                        }, "Int->String"));
+                        }, "(Int->String)"));
                     yield return new TestCaseData("var functionType:String->(Int->String)->Void;")
                         .Returns(new MemberWithType(new MemberModel
                         {
