@@ -322,11 +322,11 @@ namespace HaXeContext.Generators
             return paramType;
         }
 
-        protected override string GetFunctionType(ASResult expr)
+        protected override string GetFunctionType(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
-            var parameters = expr.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-            parameters.Add(expr.Member.Type ?? voidKey);
+            var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+            parameters.Add(member.Type ?? voidKey);
             var qualifiedName = string.Empty;
             for (var i = 0; i < parameters.Count; i++)
             {

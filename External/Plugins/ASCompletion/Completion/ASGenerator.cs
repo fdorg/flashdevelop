@@ -1220,7 +1220,10 @@ namespace ASCompletion.Completion
                         };
                         if ((member.Flags & FlagType.Static) > 0) newMember.Flags |= FlagType.Access;
                         // for example: var f<generator>:Function/*(v1:Type):void*/
-                        if ((contextMember.Flags & FlagType.Function) != 0) newMember.Type = $"Function/*({contextMember.ParametersString()}):{newMember.Type}*/";
+                        if ((contextMember.Flags & FlagType.Function) != 0)
+                        {
+                            newMember.Type = ((ASGenerator) ASContext.Context.CodeGenerator).GetFunctionType(new MemberModel {Parameters = contextMember.Parameters, Type = newMember.Type});
+                        }
                         GenerateVariable(newMember, position, detach);
                         sci.SetSel(lookupPosition, lookupPosition);
                         if (ASContext.Context.Settings.GenerateImports)
@@ -1405,7 +1408,7 @@ namespace ASCompletion.Completion
                 if ((member.Flags & FlagType.Function) != 0)
                 {
                     member = (MemberModel) member.Clone();
-                    member.Type = $"Function/*({member.ParametersString()}):{member.Type}*/";
+                    member.Type = ((ASGenerator) ASContext.Context.CodeGenerator).GetFunctionType(member);
                 }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
                 else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
@@ -1868,7 +1871,7 @@ namespace ASCompletion.Completion
             if ((contextMember.Flags & FlagType.Function) != 0 && contextMember.Parameters != null)
             {
                 var parameter = (MemberModel) contextMember.Clone();
-                parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                parameter.Type = ((ASGenerator) ASContext.Context.CodeGenerator).GetFunctionType(parameter);
                 memberCopy.Parameters.Add(parameter);
             }
             else memberCopy.Parameters.Add(contextMember);
@@ -1897,7 +1900,8 @@ namespace ASCompletion.Completion
                 aType = cm;
                 break;
             }
-            var template = ((ASGenerator) ctx.CodeGenerator).GetAddInterfaceDefTemplate(member);
+            var codeGenerator = (ASGenerator) ctx.CodeGenerator;
+            var template = codeGenerator.GetAddInterfaceDefTemplate(member);
             ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             sci = ASContext.CurSciControl;
             var latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
@@ -1914,7 +1918,7 @@ namespace ASCompletion.Completion
                 if (member.Parameters != null && member.Parameters.Count > 0)
                 {
                     var parameter = member.Parameters[0];
-                    if ((parameter.Flags & FlagType.Function) != 0) type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                    if ((parameter.Flags & FlagType.Function) != 0) type = codeGenerator.GetFunctionType(parameter);
                     else type = parameter.Type;
                 }
                 if (type == null) type = member.Type;
@@ -2032,7 +2036,7 @@ namespace ASCompletion.Completion
         protected virtual string GetFieldTypeFromParameter(string paramType, ref string paramName)
         {
             //foo(v1<generator>:Function/*(v1:Type):void*/)
-            if ((contextMember.Flags & FlagType.Function) != 0) return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
+            if ((contextMember.Flags & FlagType.Function) != 0) return GetFunctionType(new MemberModel {Parameters = contextMember.Parameters, Type = paramType});
             if (paramName.StartsWithOrdinal("..."))
             {
                 paramName = paramName.TrimStart('.');
@@ -3218,7 +3222,9 @@ namespace ASCompletion.Completion
             return new StatementReturnType(resolve, pos, word);
         }
 
-        protected virtual string GetFunctionType(ASResult expr) => expr.Member != null ? $"Function/*({expr.Member.ParametersString()}):{expr.Member.Type}*/" : "Function";
+        private string GetFunctionType(ASResult expr) => GetFunctionType(expr.Member);
+
+        protected virtual string GetFunctionType(MemberModel member) => member != null ? $"Function/*({member.ParametersString()}):{member.Type}*/" : "Function";
 
         protected static string GuessVarName(string name, string type)
         {
@@ -3270,6 +3276,7 @@ namespace ASCompletion.Completion
             var result = new ASResult();
             var ctx = ASContext.Context;
             var features = ctx.Features;
+            var codeGenerator = ((ASGenerator) ctx.CodeGenerator);
             var canGenerate = false;
             var isHaxe = IsHaxe;
             var flags = (FlagType.Function | FlagType.Getter | FlagType.Setter);
@@ -3293,8 +3300,8 @@ namespace ASCompletion.Completion
                     {
                         // for example: function get foo():Function/*(v:*):int*/
                         if ((method.Flags & FlagType.Function) != 0 && method.Parameters != null)
-                            method.Type = $"Function/*({method.ParametersString()}):{method.Type}*/";
-                        decl = ((ASGenerator) ctx.CodeGenerator).GetGetterImplementationTemplate(method);
+                            method.Type = codeGenerator.GetFunctionType(method);
+                        decl = codeGenerator.GetGetterImplementationTemplate(method);
                     }
                     else if ((method.Flags & FlagType.Setter) > 0)
                     {
@@ -3303,7 +3310,7 @@ namespace ASCompletion.Completion
                         {
                             var parameter = method.Parameters[0];
                             if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
-                                parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                                parameter.Type = codeGenerator.GetFunctionType(parameter);
                         }
                         decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
                     }
@@ -3315,7 +3322,7 @@ namespace ASCompletion.Completion
                             foreach (var parameter in method.Parameters)
                             {
                                 if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
-                                    parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                                    parameter.Type = codeGenerator.GetFunctionType(parameter);
                             }
                         }
                         decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
@@ -3880,6 +3887,7 @@ namespace ASCompletion.Completion
         protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
             var ctx = ASContext.Context;
+            var codeGenerator = (ASGenerator)ctx.CodeGenerator;
             var curClass = ctx.CurrentClass;
             if (curClass.IsVoid()) return false;
 
@@ -3912,13 +3920,13 @@ namespace ASCompletion.Completion
                         foreach (var it in member.Parameters)
                         {
                             if ((it.Flags & FlagType.Function) == 0 || it.Parameters == null) continue;
-                            it.Type = $"Function/*({it.ParametersString()}):{it.Type}*/";
+                            it.Type = codeGenerator.GetFunctionType(it);
                             it.Parameters = null;
                         }
                     }
                     if ((member.Flags & FlagType.Getter) != 0 && member.Parameters != null)
                     {
-                        member.Type = $"Function/*({member.ParametersString()}):{member.Type}*/";
+                        member.Type = codeGenerator.GetFunctionType(member);
                         member.Parameters = null;
                     }
                     members.Add(member);

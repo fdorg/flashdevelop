@@ -1411,7 +1411,7 @@ namespace HaXeContext.Model
             for (var i = model.Classes.Count - 1; i >= 0; i--)
             {
                 var @class = model.Classes[i];
-                FinalizeMembers(@class.Members);
+                FinalizeMembers(@class.Members.Items);
                 if (@class.MetaDatas == null || @class.Members.Count == 0) continue;
                 for (var j = @class.MetaDatas.Count - 1; j >= 0; j--)
                 {
@@ -1425,24 +1425,20 @@ namespace HaXeContext.Model
                     }
                 }
             }
-            FinalizeMembers(model.Members);
+            FinalizeMembers(model.Members.Items);
             if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
             // utils
-            void FinalizeMembers(MemberList members)
+            void FinalizeMembers(IList<MemberModel> members)
             {
                 for (var i = members.Count - 1; i >= 0; i--)
                 {
                     var member = members[i];
-                    if ((member.Flags & FlagType.Variable) != 0 && member.Type != null && member.Type.Contains("->"))
+                    if (((member.Flags & FlagType.Variable) != 0)
+                        && member.Type != null && member.Type.Contains("->"))
                     {
-                        // for example: var f:Int->Int->Void
-                        //member.Flags &= ~FlagType.Variable;
                         member.Flags |= FlagType.Function;
-                        // TODO: quick hack
-                        //member.Flags &= ~FlagType.Getter;
-                        //member.Flags &= ~FlagType.Setter;
-                        FunctionTypeToMemberModel(member.Type, member);
+                        FunctionTypeToMemberModel(member.Type, member, features);
                     }
                 }
             }
@@ -2140,9 +2136,9 @@ namespace HaXeContext.Model
 
         #endregion
 
-        public MemberModel FunctionTypeToMemberModel(string type) => FunctionTypeToMemberModel(type, new MemberModel());
+        public static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features) => FunctionTypeToMemberModel(type, new MemberModel(), features);
 
-        public MemberModel FunctionTypeToMemberModel(string type, MemberModel result)
+        static MemberModel FunctionTypeToMemberModel(string type, MemberModel result, ContextFeatures features)
         {
             var voidKey = features.voidKey;
             if (result.Parameters == null) result.Parameters = new List<MemberModel>();
