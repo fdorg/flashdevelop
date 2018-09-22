@@ -2872,17 +2872,13 @@ namespace ASCompletion.Completion
                         var vars = local.LocalVars.Items.Where(it => it.Name == token).ToList();
                         if (vars.Count > 0)
                         {
-                            var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
-                                && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOfOrdinal(".#0~")
-                                // array access check
-                                && local.SubExpressions[0][0] != '[';
                             MemberModel var = null;
                             if (vars.Count > 1)
                             {
                                 vars.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
-                                var = vars.FirstOrDefault(it => it.LineTo < local.LineTo && (!checkFunction || it.Flags.HasFlag(FlagType.Function)));
+                                var = vars.FirstOrDefault(it => it.LineTo < local.LineTo);
                             }
-                            if (var == null) var = vars.FirstOrDefault(it => !checkFunction || it.Flags.HasFlag(FlagType.Function));
+                            if (var == null) var = vars.FirstOrDefault();
                             if (var != null)
                             {
                                 result.Member = var;

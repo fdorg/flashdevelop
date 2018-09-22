@@ -179,9 +179,37 @@ namespace HaXeContext.Completion
         {
             get
             {
-                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_1", '.', false, false)
-                    .SetName("(v:Null<Vector<Int>>).| ")
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_1", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_2", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_3", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_4", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+            }
+        }
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2396TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_1", '.', false, true)
+                    .SetName("localCallback().| Issue 2396. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_2", '.', false, true)
+                    .SetName("parameterCallback().| Issue 2396. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_3", '.', false, true)
+                    .SetName("localFunction().| Issue 2396. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_4", '.', false, true)
+                    .SetName("localCallback().| Issue 2396. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
             }
         }
 
@@ -189,8 +217,13 @@ namespace HaXeContext.Completion
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2358TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2396TestCases)),
         ]
-        public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+        public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
+        {
+            ((HaXeSettings) ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
+            OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+        }
 
         static IEnumerable<TestCaseData> GetToolTipTextTestCases
         {
@@ -276,7 +309,7 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("CalltipDef_issue2364_1")
-                    .Returns("foo (parameter0:Int, parameter1:Int) : Bool")
+                    .Returns("foo : Function<[BGCOLOR=#2F90:NORMAL](parameter0:Int, parameter1:Int):Bool[/BGCOLOR]>")
                     .SetName("var foo:Int->Int->Bool;\nfoo(|). Case 1");
                 yield return new TestCaseData("CalltipDef_issue2364_2")
                     .Returns("foo (parameter0:Int, parameter1:Int) : Bool")

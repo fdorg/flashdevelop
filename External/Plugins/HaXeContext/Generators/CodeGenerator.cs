@@ -322,11 +322,11 @@ namespace HaXeContext.Generators
             return paramType;
         }
 
-        protected override string GetFunctionType(ASResult expr)
+        protected override string GetFunctionType(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
-            var parameters = expr.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-            parameters.Add(expr.Member.Type ?? voidKey);
+            var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+            parameters.Add(member.Type ?? voidKey);
             var qualifiedName = string.Empty;
             for (var i = 0; i < parameters.Count; i++)
             {
@@ -481,7 +481,7 @@ namespace HaXeContext.Generators
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateConstructorOfEnum(sci, expr, expr.RelClass);
+                        GenerateEnumConstructor(sci, expr, expr.RelClass);
                     }
                     finally { sci.EndUndoAction(); }
                     break;
@@ -496,7 +496,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        static void GenerateConstructorOfEnum(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        static void GenerateEnumConstructor(ScintillaControl sci, ASResult expr, ClassModel inClass)
         {
             var end = sci.WordEndPosition(sci.CurrentPos, true);
             var parameters = ParseFunctionParameters(sci, end);
