@@ -184,11 +184,24 @@ namespace HaXeContext.Completion
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
             }
         }
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2396TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_1", '.', false, false)
+                    .SetName("localCallback().| Issue 2396. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_2", '.', false, false)
+                    .SetName("parameterCallback().| Issue 2396. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
+            }
+        }
 
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2358TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2396TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
