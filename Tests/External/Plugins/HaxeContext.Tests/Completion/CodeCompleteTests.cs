@@ -180,7 +180,16 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_1", '.', false, true)
-                    .SetName("(v:Null<Vector<Int>>).| ")
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_2", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_3", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2358_4", '.', false, true)
+                    .SetName("(v:Null<Vector<Int>>).| Issue 2358. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2358");
             }
         }
