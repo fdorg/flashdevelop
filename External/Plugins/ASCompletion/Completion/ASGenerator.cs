@@ -2589,14 +2589,8 @@ namespace ASCompletion.Completion
                         else result = ASComplete.GetExpressionType(sci, p - 1, false, true);
                         if (result != null && !result.IsNull())
                         {
-                            if (characterClass.Contains(last))
-                            {
-                                types.Insert(0, result);
-                            }
-                            else
-                            {
-                                types.Add(result);
-                            }
+                            if (characterClass.Contains(last)) types.Insert(0, result);
+                            else types.Add(result);
                         }
                         if (types.Count == 0)
                         {
@@ -2635,15 +2629,8 @@ namespace ASCompletion.Completion
                                     paramType = ((ASGenerator) ctx.CodeGenerator).GetFunctionType(result);
                                 }
                                 else paramType = MemberModel.FormatType(GetShortType(result.Member.Type));
-                                if (result.InClass == null)
-                                {
-                                    paramQualType = result.Type.QualifiedName;
-                                }
-                                else
-                                {
-                                    //paramQualType = GetQualifiedType(result.Member.Type, result.InClass);
-                                    paramQualType = GetQualifiedType(paramType, result.InClass);
-                                }
+                                if (result.InClass == null) paramQualType = result.Type.QualifiedName;
+                                else paramQualType = GetQualifiedType(paramType, result.InClass);
                             }
                         }
                         prms.Add(new FunctionParameter(paramName, paramType, paramQualType, result));
