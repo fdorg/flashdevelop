@@ -801,6 +801,7 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeCreateNewClass_issue2393_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

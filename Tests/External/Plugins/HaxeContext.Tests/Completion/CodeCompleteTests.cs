@@ -194,6 +194,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_2", '.', false, false)
                     .SetName("parameterCallback().| Issue 2396. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2396_3", '.', false, false)
+                    .SetName("localFunction().| Issue 2396. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2396");
             }
         }
 
