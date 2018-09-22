@@ -802,6 +802,7 @@
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_2.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2396_4.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

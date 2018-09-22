@@ -590,7 +590,7 @@ namespace HaXeContext
             contextSetup.AdditionalPaths.Add(path);
         }
 
-        override protected bool ExplorePath(PathModel path)
+        protected override bool ExplorePath(PathModel path)
         {
             if (!path.WasExplored && !path.IsVirtual && !path.IsTemporaryPath)
             {

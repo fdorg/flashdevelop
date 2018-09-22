@@ -481,7 +481,7 @@ namespace HaXeContext.Generators
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateConstructorOfEnum(sci, expr, expr.RelClass);
+                        GenerateEnumConstructor(sci, expr, expr.RelClass);
                     }
                     finally { sci.EndUndoAction(); }
                     break;
@@ -496,7 +496,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        static void GenerateConstructorOfEnum(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        static void GenerateEnumConstructor(ScintillaControl sci, ASResult expr, ClassModel inClass)
         {
             var end = sci.WordEndPosition(sci.CurrentPos, true);
             var parameters = ParseFunctionParameters(sci, end);
