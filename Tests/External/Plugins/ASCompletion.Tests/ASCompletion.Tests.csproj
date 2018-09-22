@@ -1218,6 +1218,7 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_issue2362_3.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_issue2373_1.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_issue2373_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_issue2401_1.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

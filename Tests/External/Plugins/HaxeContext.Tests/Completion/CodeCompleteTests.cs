@@ -175,7 +175,7 @@ namespace HaXeContext.Completion
             }
         }
 
-        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2358TestCases
+        static IEnumerable<TestCaseData> OnCharIssue2358TestCases
         {
             get
             {
@@ -194,7 +194,7 @@ namespace HaXeContext.Completion
             }
         }
 
-        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2396TestCases
+        static IEnumerable<TestCaseData> OnCharIssue2396TestCases
         {
             get
             {
@@ -216,8 +216,8 @@ namespace HaXeContext.Completion
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
-            TestCaseSource(nameof(OnCharAndReplaceTextIssue2358TestCases)),
-            TestCaseSource(nameof(OnCharAndReplaceTextIssue2396TestCases)),
+            TestCaseSource(nameof(OnCharIssue2358TestCases)),
+            TestCaseSource(nameof(OnCharIssue2396TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {
