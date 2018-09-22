@@ -2069,7 +2069,7 @@ namespace ASCompletion.Completion
                          * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
                          */
                         tmpClass = (ClassModel) tmpClass.Clone();
-                        tmpClass.InFile = result.InFile;
+                        tmpClass.InFile = result.InFile ?? ctx.CurrentModel;
                         tmpClass.ResolveExtends();
                     }
                     while (!tmpClass.IsVoid())
