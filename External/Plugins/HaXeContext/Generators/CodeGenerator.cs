@@ -26,6 +26,8 @@ namespace HaXeContext.Generators
         /// <inheritdoc />
         protected override void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
+            // for example: @:meta|Tag
+            if (expr.Context.Separator == ":" && expr.Context.SeparatorPosition > 0 && sci.CharAt(expr.Context.SeparatorPosition - 1) == '@') return;
             var ctx = ASContext.Context;
             var currentClass = ctx.CurrentClass;
             if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || currentClass.Flags.HasFlag(FlagType.Interface))
@@ -46,14 +48,6 @@ namespace HaXeContext.Generators
         {
             return !ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position) 
                 && base.CanShowConvertToConst(sci, position, expr, found);
-        }
-
-        /// <inheritdoc />
-        protected override bool CanShowCreateNewClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
-        {
-            // for example: @:meta|Tag
-            if (expr.Context.Separator == ":" && expr.Context.SeparatorPosition > 0 && sci.CharAt(expr.Context.SeparatorPosition - 1) == '@') return false;
-            return base.CanShowCreateNewClass(sci, position, expr, found);
         }
 
         /// <inheritdoc />
