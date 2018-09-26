@@ -1143,6 +1143,25 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateGetterSetterInAbstractIssue2403TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_in_abstract_issue2403_1", GeneratorJobType.GetterSetter, false)
+                    .Returns(null)
+                    .SetName("Generate getter and setter. Issue 2403. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2403");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_in_abstract_issue2403_1", GeneratorJobType.Getter, false)
+                    .Returns(null)
+                    .SetName("Generate getter. Issue 2403. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2403");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_in_abstract_issue2403_1", GeneratorJobType.Setter, false)
+                    .Returns(null)
+                    .SetName("Generate setter. Issue 2403. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2403");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -1185,6 +1204,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
             TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
             TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
+            TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

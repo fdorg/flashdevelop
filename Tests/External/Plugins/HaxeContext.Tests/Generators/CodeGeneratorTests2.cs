@@ -188,11 +188,11 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2301_1", GeneratorJobType.ConstructorOfEnum, true)
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2301_1", GeneratorJobType.EnumConstructor, true)
                     .Returns(CodeGeneratorTests.ReadAllText("AfterContextualGeneratorTests_issue2301_1"))
                     .SetName("Enum.Fo|o. Issue 2301. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2301");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2301_2", GeneratorJobType.ConstructorOfEnum, true)
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2301_2", GeneratorJobType.EnumConstructor, true)
                     .Returns(CodeGeneratorTests.ReadAllText("AfterContextualGeneratorTests_issue2301_2"))
                     .SetName("Enum.Fo|o(1, '', true). Issue 2301. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2301");
