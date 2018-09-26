@@ -2,6 +2,7 @@
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
@@ -199,11 +200,23 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateSwitchIssue2409TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2409_1", GeneratorJobType.Switch, true)
+                    .Returns(CodeGeneratorTests.ReadAllText("AfterContextualGeneratorTests_issue2409_1"))
+                    .SetName("thi|s. Generate switch labels. Issue 2409. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2301");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(Issue2301TestCases)),
             TestCaseSource(nameof(GenerateSwitchLabelsIssue1759TestCases)),
             TestCaseSource(nameof(GenerateSwitchLabelsIssue2285TestCases)),
+            TestCaseSource(nameof(GenerateSwitchIssue2409TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
@@ -215,6 +228,21 @@ namespace HaXeContext.Generators
             context.CurrentModel = ASContext.Context.CurrentModel;
             context.completionCache.IsDirty = true;
             context.GetTopLevelElements();
+            ASContext.Context
+                .When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it =>
+                {
+                    var token = it.ArgAt<string>(0);
+                    var result = it.ArgAt<ASResult>(1);
+                    if (token == "this")
+                    {
+                        result.Type = ASContext.Context.CurrentClass;
+                        result.InFile = ASContext.Context.CurrentModel;
+                        result.InClass = ASContext.Context.CurrentClass;
+                        result.Member = new MemberModel("this", ASContext.Context.CurrentClass.Type, FlagType.Variable | FlagType.Intrinsic, Visibility.Public);
+                    }
+                    else context.ResolveTopLevelElement(token, result);
+                });
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             if (hasGenerator)
