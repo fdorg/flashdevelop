@@ -514,6 +514,33 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2407TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2407_1", GeneratorJobType.Variable , false)
+                    .Returns(null)
+                    .SetName("@:me$(EntryPoint)ta Issue 2407. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2407_1", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("@:me$(EntryPoint)ta Issue 2407. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2407_1", GeneratorJobType.Function, false)
+                    .Returns(null)
+                    .SetName("@:me$(EntryPoint)ta Issue 2407. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2407_1", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("@:me$(EntryPoint)ta Issue 2407. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2407_1", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("@:me$(EntryPoint)ta Issue 2407. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue1999TestCases
         {
             get
@@ -1176,6 +1203,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2297TestCases)),
             TestCaseSource(nameof(Issue2299TestCases)),
             TestCaseSource(nameof(Issue2303TestCases)),
+            TestCaseSource(nameof(Issue2407TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
