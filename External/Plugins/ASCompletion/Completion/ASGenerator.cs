@@ -146,7 +146,7 @@ namespace ASCompletion.Completion
                         var type = context.ResolveType(contextToken, context.CurrentModel);
                         if (type.IsVoid() && CheckAutoImport(resolve, options)) return;
                     }
-                    ShowGetSetList(found, options);
+                    if (CanShowGetSetList(sci, position, resolve, found)) ShowGetSetList(found, options);
                     return;
                 }
                 // inside a function
@@ -456,6 +456,16 @@ namespace ASCompletion.Completion
             return !ASContext.Context.CurrentClass.Flags.HasFlag(FlagType.Interface)
                 && ASComplete.IsLiteralStyle(sci.BaseStyleAt(position));
         }
+
+        /// <summary>
+        /// Check if "Getter and Setter" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show "Getter and Setter" list</returns>
+        protected virtual bool CanShowGetSetList(ScintillaControl sci, int position, ASResult resolve, FoundDeclaration found) => true;
 
         /// <summary>
         /// Check if "Getter" are available at the current cursor position.
