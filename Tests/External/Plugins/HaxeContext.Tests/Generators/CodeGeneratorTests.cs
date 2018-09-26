@@ -184,7 +184,6 @@ namespace HaXeContext.Generators
             }
         }
 
-
         static IEnumerable<TestCaseData> ContextualGeneratorForOptionParametersTestCases
         {
             get
@@ -537,6 +536,53 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2407_1", GeneratorJobType.Class, false)
                     .Returns(null)
                     .SetName("@:me$(EntryPoint)ta Issue 2407. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+            }
+        }
+
+        static IEnumerable<TestCaseData> Issue2411TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_1", GeneratorJobType.Variable , false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) fr$(EntryPoint)om. Issue 2411. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_1", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) fr$(EntryPoint)om. Issue 2411. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_1", GeneratorJobType.Function, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) fr$(EntryPoint)om. Issue 2411. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_1", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) fr$(EntryPoint)om. Issue 2411. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_1", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) fr$(EntryPoint)om. Issue 2411. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_2", GeneratorJobType.Variable , false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) t$(EntryPoint)o. Issue 2411. Case 6.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_2", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) t$(EntryPoint)o. Issue 2411. Case 7.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_2", GeneratorJobType.Function, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) t$(EntryPoint)o. Issue 2411. Case 8.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_2", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) t$(EntryPoint)o. Issue 2411. Case 9.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2411_2", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("abstract AFoo(Int) t$(EntryPoint)o. Issue 2411. Case 10.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2407");
             }
         }
@@ -1204,6 +1250,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2299TestCases)),
             TestCaseSource(nameof(Issue2303TestCases)),
             TestCaseSource(nameof(Issue2407TestCases)),
+            TestCaseSource(nameof(Issue2411TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),

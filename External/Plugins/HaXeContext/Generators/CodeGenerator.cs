@@ -71,7 +71,9 @@ namespace HaXeContext.Generators
             var inClass = expr.RelClass ?? found.InClass;
             if (inClass.Flags.HasFlag(FlagType.Enum) && !expr.IsStatic) return false;
             if (inClass.Flags.HasFlag(FlagType.TypeDef) && expr.IsStatic) return false;
-            return base.CanShowNewMethodList(sci, position, expr, found);
+            return !found.InClass.IsVoid()
+                && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
+                && base.CanShowNewMethodList(sci, position, expr, found);
         }
 
         /// <inheritdoc />
