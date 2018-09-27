@@ -509,6 +509,37 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2415TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_1"))
+                    .SetName("foo(function() {return null;}).| Issue 2415. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_2"))
+                    .SetName("[function() {return null;}].| Issue 2415. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_3"))
+                    .SetName("[function() return null].| Issue 2415. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_4", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_4"))
+                    .SetName("[function():Void->Array<Void->Void> return null].| Issue 2415. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_5"))
+                    .SetName("[function():{x:Int, y:Int} return null].| Issue 2415. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_6"))
+                    .SetName("[function() return [], [function() return []].| Issue 2415. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -516,12 +547,14 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2320TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
             //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)), // TODO: That tests pass without other tests.
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2415TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
             ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
             //{TODO slavara: quick hack
-            ASContext.Context.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+            ASContext.Context
+                .When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
                 .Do(it =>
                 {
                     var ctx = (Context) ASContext.GetLanguageContext("haxe");

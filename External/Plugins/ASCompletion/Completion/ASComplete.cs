@@ -3575,7 +3575,7 @@ namespace ASCompletion.Completion
                         }
                     }
                     // ignore sub-expressions (method calls' parameters)
-                    else if (c == '(')
+                    else if (c == '(' && arrCount == 0)
                     {
                         parCount--;
                         if (parCount == 0 && arrCount == 0)
@@ -3619,7 +3619,7 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
-                    else if (c == ')')
+                    else if (c == ')' && arrCount == 0)
                     {
                         ignoreWhiteSpace = false;
                         if (!hadDot)
@@ -3741,11 +3741,6 @@ namespace ASCompletion.Completion
                     }
                     if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0 || dQuotes > 0 || sQuotes > 0) 
                     {
-                        if (c == ';') // not expected: something's wrong
-                        {
-                            expression.Separator = ";";
-                            break;
-                        }
                         // build sub expression
                         sbSub.Insert(0, c);
                         continue;
