@@ -529,6 +529,14 @@ namespace HaXeContext.Completion
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_4"))
                     .SetName("[function():Void->Array<Void->Void> return null].| Issue 2415. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_5"))
+                    .SetName("[function():{x:Int, y:Int} return null].| Issue 2415. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2415_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2415_6"))
+                    .SetName("[function() return [], [function() return []].| Issue 2415. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2415");
             }
         }
 
