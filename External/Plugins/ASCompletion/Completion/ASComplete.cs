@@ -3741,11 +3741,6 @@ namespace ASCompletion.Completion
                     }
                     if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0 || dQuotes > 0 || sQuotes > 0) 
                     {
-                        if (c == ';') // not expected: something's wrong
-                        {
-                            expression.Separator = ";";
-                            break;
-                        }
                         // build sub expression
                         sbSub.Insert(0, c);
                         continue;
