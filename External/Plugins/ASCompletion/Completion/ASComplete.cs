@@ -3575,7 +3575,7 @@ namespace ASCompletion.Completion
                         }
                     }
                     // ignore sub-expressions (method calls' parameters)
-                    else if (c == '(')
+                    else if (c == '(' && arrCount == 0)
                     {
                         parCount--;
                         if (parCount == 0 && arrCount == 0)
@@ -3619,7 +3619,7 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
-                    else if (c == ')')
+                    else if (c == ')' && arrCount == 0)
                     {
                         ignoreWhiteSpace = false;
                         if (!hadDot)
