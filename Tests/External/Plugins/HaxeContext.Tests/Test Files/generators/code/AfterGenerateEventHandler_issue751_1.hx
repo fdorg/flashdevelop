@@ -6,7 +6,7 @@ class Main {
 		a.addEventListener("click", myClickHandler);
 	}
 	
-	function myClickHandler(e:String):Void {
+	function myClickHandler(e):Void {
 		
 	}
 }
