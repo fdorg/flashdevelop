@@ -1913,7 +1913,10 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
+                [
+                    Test, 
+                    TestCaseSource(nameof(AS3TestCases)),
+                ]
                 public string AS3(string sourceText, string[] autoRemove) => AS3Impl(sourceText, autoRemove, sci);
 
                 static IEnumerable<TestCaseData> HaxeTestCases
@@ -3330,11 +3333,23 @@ namespace ASCompletion.Completion
                     }
                 }
 
+                static IEnumerable<TestCaseData> GenerateEventHandlerIssue2421TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeGenerateEventHandler_issue2421_1", GeneratorJobType.ComplexEvent, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_issue2421_1"))
+                            .SetName("Generate event handler. Issue 2421. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2421");
+                    }
+                }
+
                 [
                     Test, 
                     TestCaseSource(nameof(ContextualGeneratorTestCases)),
                     TestCaseSource(nameof(Issue2297TestCases)),
                     TestCaseSource(nameof(Issue2346TestCases)),
+                    TestCaseSource(nameof(GenerateEventHandlerIssue2421TestCases)),
                 ]
                 public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => Common(sci, fileName, job, hasGenerator);
 

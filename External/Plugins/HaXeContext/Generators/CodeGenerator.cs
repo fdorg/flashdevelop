@@ -7,6 +7,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
@@ -297,6 +298,24 @@ namespace HaXeContext.Generators
                 UpdateLookupPosition(position, 1);
                 return;
             }
+        }
+
+        protected override string CheckEventType(MemberModel handler, string eventName)
+        {
+            if (handler?.Parameters is List<MemberModel> parameters && parameters.Count > 1 && parameters[1]?.Type is string type)
+            {
+                if (type == "haxe.Constraints.Function") return string.Empty;
+                if (type.Contains("->"))
+                {
+                    var member = FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
+                    if (member.Parameters.Count > 0 && member.Parameters[0].Type is string result)
+                    {
+                        if (result.Equals(ASContext.Context.Features.voidKey)) return string.Empty;
+                        return result;
+                    }
+                }
+            }
+            return base.CheckEventType(handler, eventName);
         }
 
         protected override string GetAddInterfaceDefTemplate(MemberModel member)

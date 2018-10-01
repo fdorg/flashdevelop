@@ -174,7 +174,7 @@ namespace ASCompletion.Completion
                             contextMatch = m;
                             var pos = ASComplete.ExpressionEndPosition(sci, sci.PositionFromLine(line) + m.Index);
                             var expr = ASComplete.GetExpressionType(sci, pos, false, true);
-                            contextParam = CheckEventType(expr.Member, m.Groups["event"].Value);
+                            contextParam = ((ASGenerator) context.CodeGenerator).CheckEventType(expr.Member, m.Groups["event"].Value);
                             ShowEventList(found, options);
                             return;
                         }
@@ -758,10 +758,17 @@ namespace ASCompletion.Completion
             return "Event";
         }
 
-        internal static string CheckEventType(MemberModel handler, string eventName)
+        protected virtual string CheckEventType(MemberModel handler, string eventName)
         {
-            var first = handler?.Parameters?.FirstOrDefault();
-            if (first != null && !string.IsNullOrEmpty(first.Type)) return first.Type;
+            if (handler?.Parameters is List<MemberModel> parameters && parameters.Count > 1)
+            {
+                var parameter = parameters[1];
+                if (parameter != null)
+                {
+                    if (parameter.Parameters != null && parameter.Parameters.Count > 0) return parameter.Parameters[0].Type;
+                    if (parameter.Type is string type && type != "Function") return type;
+                }
+            }
             return CheckEventType(eventName);
         }
         #endregion
