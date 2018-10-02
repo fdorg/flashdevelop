@@ -3352,6 +3352,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_1"))
                             .SetName("Convert to const. Issue 2406. Case 1")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
+                        yield return new TestCaseData("BeforeConvertToConst_issue2406_2", GeneratorJobType.ConvertToConst, true)
+                            .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_2"))
+                            .SetName("Convert to const. Issue 2406. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
                     }
                 }
 
