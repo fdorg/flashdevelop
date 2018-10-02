@@ -519,6 +519,7 @@ namespace HaXeContext.Model
                             inFunction = false;
                             inType = false;
                             length = 0;
+                            valueLength = 0;
                         }
                         else if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
                         continue;

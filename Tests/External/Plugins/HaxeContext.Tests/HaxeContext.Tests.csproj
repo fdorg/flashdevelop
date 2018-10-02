@@ -826,6 +826,7 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2415_6.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2404_1.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceTextIssue2404_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2425_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
