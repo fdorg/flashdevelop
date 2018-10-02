@@ -58,52 +58,51 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Character written in editor
         /// </summary>
-        /// <param name="Sci">Scintilla Control</param>
-        /// <param name="Value">Character inserted</param>
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="value">Character inserted</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
         /// <returns>Auto-completion has been handled</returns>
-        public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
+        public static bool OnChar(ScintillaControl sci, int value, bool autoHide)
         {
             var ctx = ASContext.Context;
-            if (!ctx.CodeComplete.IsAvailable(ctx, autoHide)) return false;
             var features = ctx.Features;
             try
             {
-                if (Sci.IsSelectionRectangle) return false;
+                if (sci.IsSelectionRectangle) return false;
                 // code auto
-                int eolMode = Sci.EOLMode;
-                if (((Value == '\n') && (eolMode != 1)) || ((Value == '\r') && (eolMode == 1)))
+                int eolMode = sci.EOLMode;
+                if (((value == '\n') && (eolMode != 1)) || ((value == '\r') && (eolMode == 1)))
                 {
-                    if (ASContext.HasContext && ctx.IsFileValid) HandleStructureCompletion(Sci);
+                    if (ASContext.HasContext && ctx.IsFileValid) HandleStructureCompletion(sci);
                     return false;
                 }
 
-                int position = Sci.CurrentPos;
+                int position = sci.CurrentPos;
                 if (position < 2) return false;
 
-                char prevValue = (char) Sci.CharAt(position - 2);
+                char prevValue = (char) sci.CharAt(position - 2);
                 bool skipQuoteCheck = false;
 
-                Sci.Colourise(0, -1);
-                int style = Sci.BaseStyleAt(position - 1);
+                sci.Colourise(0, -1);
+                int style = sci.BaseStyleAt(position - 1);
 
                 if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
-                    var stringTypeChar = Sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
+                    var stringTypeChar = sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
                     // string interpolation
                     if (features.stringInterpolationQuotes.Contains(stringTypeChar)
-                        && IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
+                        && IsMatchingQuote(stringTypeChar, sci.BaseStyleAt(position - 2)))
                     {
-                        if (Value == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 1, '$'))
+                        if (value == '$' && !ctx.CodeComplete.IsEscapedCharacter(sci, position - 1, '$'))
                         {
-                            return HandleInterpolationCompletion(Sci, autoHide, false);
+                            return HandleInterpolationCompletion(sci, autoHide, false);
                         }
-                        if (Value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 2, '$'))
+                        if (value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(sci, position - 2, '$'))
                         {
-                            if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
-                            return HandleInterpolationCompletion(Sci, autoHide, true);
+                            if (autoHide) HandleAddClosingBraces(sci, (char) value, true);
+                            return HandleInterpolationCompletion(sci, autoHide, true);
                         }
-                        if (ctx.CodeComplete.IsStringInterpolationStyle(Sci, position - 2))
+                        if (ctx.CodeComplete.IsStringInterpolationStyle(sci, position - 2))
                         {
                             skipQuoteCheck = true; // continue on with regular completion
                         }
@@ -113,62 +112,70 @@ namespace ASCompletion.Completion
                 if (!skipQuoteCheck)
                 {
                     // ignore text in comments & quoted text
-                    if (!IsTextStyle(style) && !IsTextStyle(Sci.BaseStyleAt(position)))
+                    if (!IsTextStyle(style) && !IsTextStyle(sci.BaseStyleAt(position)))
                     {
                         // documentation completion
                         if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
                         {
-                            return ASDocumentation.OnChar(Sci, Value, position, style);
+                            return ASDocumentation.OnChar(sci, value, position, style);
                         }
                         if (autoHide)
                         {
                             // close quotes
-                            HandleAddClosingBraces(Sci, (char) Value, true);
+                            HandleAddClosingBraces(sci, (char) value, true);
                         }
                         return false;
                     }
                 }
 
                 // close brace/parens
-                if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
+                if (autoHide) HandleAddClosingBraces(sci, (char) value, true);
 
                 // stop here if the class is not valid
                 if (!ASContext.HasContext || !ctx.IsFileValid) return false;
 
-                // handle
-                switch (Value)
+                if (ctx.CodeComplete.IsAvailable(ctx, autoHide))
                 {
-                    case '.':
-                        if (features.dot == "." || !autoHide) return HandleDotCompletion(Sci, autoHide);
-                        break;
+                    switch (value)
+                    {
+                        case '.':
+                            if (features.dot == "." || !autoHide) return HandleDotCompletion(sci, autoHide);
+                            break;
 
-                    case '>':
-                        if (features.dot == "->" && prevValue == '-') return HandleDotCompletion(Sci, autoHide);
-                        break;
+                        case '>':
+                            if (features.dot == "->" && prevValue == '-') return HandleDotCompletion(sci, autoHide);
+                            break;
 
-                    case ' ':
-                        if (ctx.CodeComplete.HandleWhiteSpaceCompletion(Sci, position, autoHide)) return true;
-                        break;
+                        case ' ':
+                            if (ctx.CodeComplete.HandleWhiteSpaceCompletion(sci, position, autoHide)) return true;
+                            break;
 
-                    case ':':
-                        if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide);
-                        if (features.hasEcmaTyping) return HandleColonCompletion(Sci, "", autoHide);
-                        break;
+                        case ':':
+                            if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide);
+                            if (features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
+                            break;
 
-                    case '<':
-                        if (features.hasGenerics && position > 2)
-                        {
-                            char c0 = (char)Sci.CharAt(position - 2);
-                            //TODO: We should check if we are actually on a generic type
-                            if ((ctx.CurrentModel.Version == 3 && c0 == '.') || char.IsLetterOrDigit(c0))
-                                return HandleColonCompletion(Sci, "", autoHide);
-                            return false;
-                        }
-                        break;
+                        case '<':
+                            if (features.hasGenerics && position > 2)
+                            {
+                                var c0 = (char) sci.CharAt(position - 2);
+                                //TODO: We should check if we are actually on a generic type
+                                if ((ctx.CurrentModel.Version == 3 && c0 == '.') || char.IsLetterOrDigit(c0))
+                                    return HandleColonCompletion(sci, "", autoHide);
+                                return false;
+                            }
+                            break;
 
+                        default:
+                            AutoStartCompletion(sci, position);
+                            break;
+                    }
+                }
+                switch (value)
+                {
                     case '(':
                     case ',':
-                        if (!ASContext.CommonSettings.DisableCallTip) return HandleFunctionCompletion(Sci, autoHide);
+                        if (!ASContext.CommonSettings.DisableCallTip) return HandleFunctionCompletion(sci, autoHide);
                         return false;
 
                     case ')':
@@ -176,15 +183,11 @@ namespace ASCompletion.Completion
                         return false;
 
                     case '*':
-                        if (features.hasImportsWildcard) return CodeAutoOnChar(Sci, Value);
+                        if (features.hasImportsWildcard) return CodeAutoOnChar(sci, value);
                         break;
 
                     case ';':
-                        if (!ASContext.CommonSettings.DisableCodeReformat) ReformatLine(Sci, position);
-                        break;
-
-                    default:
-                        AutoStartCompletion(Sci, position);
+                        if (!ASContext.CommonSettings.DisableCodeReformat) ReformatLine(sci, position);
                         break;
                 }
             }
@@ -5061,7 +5064,7 @@ namespace ASCompletion.Completion
         }
 
         #endregion
-        
+
     }
 
     #region completion list

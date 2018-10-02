@@ -670,5 +670,36 @@ namespace HaXeContext.Completion
             //TestCaseSource(nameof(OnCharIssue825TestCases2)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide) => OnChar(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide, false);
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2404TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2404_1", ';', true, true)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceTextIssue2404_1"))
+                    .SetName("var v:Int=1;| Issue 2404. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2404");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2404_1", ';', true, false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceTextIssue2404_1"))
+                    .SetName("var v:Int=1;| Issue 2404. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2404");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(OnCharAndReplaceTextIssue2404TestCases))]
+        public string OnCharAndReplaceTextIssue2404(string fileName, char addedChar, bool autoHide, bool disableCompletionOnDemand)
+        {
+            var settings = (HaXeSettings) ASContext.GetLanguageContext("haxe").Settings;
+            var originDisableCompletionOnDemand = settings.DisableCompletionOnDemand;
+            settings.DisableCompletionOnDemand = disableCompletionOnDemand;
+            PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
+            var manager = UITools.Manager;
+            SetSrc(sci, CodeCompleteTests.ReadAllText(fileName));
+            ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
+            ASContext.HasContext = true;
+            ASComplete.OnChar(sci, addedChar, autoHide);
+            settings.DisableCompletionOnDemand = originDisableCompletionOnDemand;
+            return sci.Text;
+        }
     }
 }
