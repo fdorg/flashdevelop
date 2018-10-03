@@ -79,13 +79,13 @@ namespace PluginCore.Utilities
             //Avoids performing the split if there are no semi-colons or if fileMask is null which would throw a null-object-reference exception
             //Not sure if the fileMask NULL case is handled outside, I'll leave that for you to decide whether or not to keep
             //I suppose if it is handled, you could just perform the split operation always.  Probably no real measurable performance impact either way.
-            if (fileMask != null && fileMask.Contains(";"))
+            if (fileMask != null && fileMask.Contains(';'))
             {
-                this.ExploreFolderWithMasks(path, fileMask.Split(new Char[1]{';'}, StringSplitOptions.RemoveEmptyEntries));
+                this.ExploreFolderWithMasks(path, fileMask.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries));
             }
             else
             {
-                this.ExploreFolderWithMasks(path, new String[1] { fileMask });
+                this.ExploreFolderWithMasks(path, new[] {fileMask});
             }
         }
 
