@@ -3356,6 +3356,27 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_2"))
                             .SetName("Convert to const. Issue 2406. Case 2")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
+                        yield return new TestCaseData("BeforeConvertToConst_issue2406_3", GeneratorJobType.ConvertToConst, true)
+                            .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_3"))
+                            .SetName("Convert to const. Issue 2406. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
+                        yield return new TestCaseData("BeforeConvertToConst_issue2406_4", GeneratorJobType.ConvertToConst, true)
+                            .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_4"))
+                            .SetName("Convert to const. Issue 2406. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
+                        yield return new TestCaseData("BeforeConvertToConst_issue2406_5", GeneratorJobType.ConvertToConst, true)
+                            .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_5"))
+                            .SetName("Convert to const. Issue 2406. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
+                        yield return new TestCaseData("BeforeConvertToConst_issue2406_6", GeneratorJobType.ConvertToConst, true)
+                            .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_6"))
+                            .SetName("Convert to const. Issue 2406. Case 6")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
+                        yield return new TestCaseData("BeforeConvertToConst_issue2406_7", GeneratorJobType.ConvertToConst, true)
+                            .Returns(ReadAllTextAS3("AfterConvertToConst_issue2406_7"))
+                            .SetName("Convert to const. Issue 2406. Case 7")
+                            .Ignore("")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2406");
                     }
                 }
 
