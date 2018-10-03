@@ -1626,24 +1626,20 @@ namespace ASCompletion.Completion
 
         private static void ConvertToConst(ScintillaControl sci, MemberModel member, ClassModel inClass, bool detach)
         {
-            String suggestion = "NEW_CONST";
-            String label = TextHelper.GetString("ASCompletion.Label.ConstName");
-            String title = TextHelper.GetString("ASCompletion.Title.ConvertToConst");
+            var suggestion = "NEW_CONST";
+            var label = TextHelper.GetString("ASCompletion.Label.ConstName");
+            var title = TextHelper.GetString("ASCompletion.Title.ConvertToConst");
 
             Hashtable info = new Hashtable();
             info["suggestion"] = suggestion;
             info["label"] = label;
             info["title"] = title;
-            DataEvent de = new DataEvent(EventType.Command, "ProjectManager.LineEntryDialog", info);
+            var de = new DataEvent(EventType.Command, "ProjectManager.LineEntryDialog", info);
             EventManager.DispatchEvent(null, de);
-            if (!de.Handled)
-                return;
-            
-            suggestion = (string)info["suggestion"];
+            if (!de.Handled) return;
 
             int position = sci.CurrentPos;
             int style = sci.BaseStyleAt(position);
-            MemberModel latest = null;
 
             int wordPosEnd = position + 1;
             int wordPosStart = position;
@@ -1652,7 +1648,8 @@ namespace ASCompletion.Completion
             while (sci.BaseStyleAt(wordPosStart - 1) == style) wordPosStart--;
             
             sci.SetSel(wordPosStart, wordPosEnd);
-            string word = sci.SelText;
+            var word = sci.SelText;
+            suggestion = (string)info["suggestion"];
             sci.ReplaceSel(suggestion);
             
             if (member == null)
@@ -1664,11 +1661,17 @@ namespace ASCompletion.Completion
             }
             else
             {
-                latest = GetLatestMemberForVariable(GeneratorJobType.Constant, inClass, 
-                    Visibility.Private, new MemberModel("", "", FlagType.Static, 0));
+                var latest = GetLatestMemberForVariable(GeneratorJobType.Constant, inClass, Visibility.Private, new MemberModel("", "", FlagType.Static, 0));
                 if (latest != null)
                 {
-                    position = FindNewVarPosition(sci, inClass, latest);
+                    if (!member.Flags.HasFlag(FlagType.Function) && sci.LineFromPosition(wordPosStart) is int line && latest.LineFrom >= line)
+                    {
+                        position = sci.LineIndentPosition(line);
+                        sci.SetSel(position, position);
+                        sci.NewLine();
+                        detach = false;
+                    }
+                    else position = FindNewVarPosition(sci, inClass, latest);
                 }
                 else
                 {
@@ -1679,18 +1682,15 @@ namespace ASCompletion.Completion
                 sci.SetSel(position, position);
             }
 
-            MemberModel m = NewMember(suggestion, member, FlagType.Variable | FlagType.Constant | FlagType.Static, GetDefaultVisibility(inClass));
-
-            var features = ASContext.Context.Features;
-
+            var m = NewMember(suggestion, member, FlagType.Variable | FlagType.Constant | FlagType.Static, GetDefaultVisibility(inClass));
             switch (style)
             {
                 case 4:
-                    m.Type = features.numberKey;
+                    m.Type = ASContext.Context.Features.numberKey;
                     break;
                 case 6:
                 case 7:
-                    m.Type = features.stringKey;
+                    m.Type = ASContext.Context.Features.stringKey;
                     break;
             }
 
@@ -3731,12 +3731,12 @@ namespace ASCompletion.Completion
             return ASContext.Context.Features.privateKey ?? "private";
         }
 
-        private static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility funcVisi, MemberModel isStatic)
+        private static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility access, MemberModel isStatic)
         {
             MemberModel latest = null;
             if (isStatic != null && (isStatic.Flags & FlagType.Static) > 0)
             {
-                latest = FindLatest(FlagType.Function | FlagType.Static, funcVisi, inClass);
+                latest = FindLatest(FlagType.Function | FlagType.Static, access, inClass);
                 if (latest == null)
                 {
                     latest = FindLatest(FlagType.Function | FlagType.Static, 0, inClass, true, false);
@@ -3744,7 +3744,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                latest = FindLatest(FlagType.Function, funcVisi, inClass);
+                latest = FindLatest(FlagType.Function, access, inClass);
             }
             if (latest == null)
             {
@@ -3757,18 +3757,18 @@ namespace ASCompletion.Completion
             return latest;
         }
 
-        private static MemberModel GetLatestMemberForVariable(GeneratorJobType job, ClassModel inClass, Visibility varVisi, MemberModel isStatic)
+        private static MemberModel GetLatestMemberForVariable(GeneratorJobType job, ClassModel inClass, Visibility access, MemberModel isStatic)
         {
             MemberModel latest = null;
             if (job.Equals(GeneratorJobType.Constant))
             {
                 if ((isStatic.Flags & FlagType.Static) > 0)
                 {
-                    latest = FindLatest(FlagType.Constant | FlagType.Static, varVisi, inClass);
+                    latest = FindLatest(FlagType.Constant | FlagType.Static, access, inClass);
                 }
                 else
                 {
-                    latest = FindLatest(FlagType.Constant, varVisi, inClass);
+                    latest = FindLatest(FlagType.Constant, access, inClass);
                 }
                 if (latest == null)
                 {
@@ -3779,7 +3779,7 @@ namespace ASCompletion.Completion
             {
                 if ((isStatic.Flags & FlagType.Static) > 0)
                 {
-                    latest = FindLatest(FlagType.Variable | FlagType.Static, varVisi, inClass);
+                    latest = FindLatest(FlagType.Variable | FlagType.Static, access, inClass);
                     if (latest == null)
                     {
                         latest = FindLatest(FlagType.Variable | FlagType.Static, 0, inClass, true, false);
@@ -3787,12 +3787,12 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    latest = FindLatest(FlagType.Variable, varVisi, inClass);
+                    latest = FindLatest(FlagType.Variable, access, inClass);
                 }
             }
             if (latest == null)
             {
-                latest = FindLatest(FlagType.Variable, varVisi, inClass, false, false);
+                latest = FindLatest(FlagType.Variable, access, inClass, false, false);
             }
             return latest;
         }

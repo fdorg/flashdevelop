@@ -1221,6 +1221,20 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_issue2401_1.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler_issue2421_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_issue2421_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_7.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
