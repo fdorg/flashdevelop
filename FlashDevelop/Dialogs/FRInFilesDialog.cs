@@ -274,9 +274,10 @@ namespace FlashDevelop.Dialogs
             {
                 var backColor = SystemColors.Window;
                 var buttonsEnabled = true;
-                if (!IsValidExtensionFilter() || !IsValidTopLevel())
+                var isValidTopLevel = IsValidTopLevel();
+                if (!IsValidExtensionFilter() || !isValidTopLevel)
                 {
-                    if (folderComboBox.Text.Trim().Length > 0) backColor = Color.Salmon;
+                    if (!isValidTopLevel && folderComboBox.Text.Trim().Length > 0) backColor = Color.Salmon;
                     buttonsEnabled = false;
                 }
                 folderComboBox.BackColor = backColor;
@@ -307,9 +308,10 @@ namespace FlashDevelop.Dialogs
             {
                 var backColor = SystemColors.Window;
                 var buttonsEnabled = true;
-                if (!IsValidExtensionFilter() || !IsValidTopLevel())
+                var isValidExtensionFilter = IsValidExtensionFilter();
+                if (!isValidExtensionFilter || !IsValidTopLevel())
                 {
-                    if (extensionComboBox.Text.Trim().Length > 0) backColor = Color.Salmon;
+                    if (!isValidExtensionFilter && extensionComboBox.Text.Trim().Length > 0) backColor = Color.Salmon;
                     buttonsEnabled = false;
                 }
                 extensionComboBox.BackColor = backColor;
