@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -390,7 +391,11 @@ namespace CodeRefactor.Provider
             FRRunner runner = new FRRunner();
             if (progressReportHandler != null) runner.ProgressReport += progressReportHandler;
             if (findFinishedHandler != null) runner.Finished += findFinishedHandler;
-            if (asynchronous) runner.SearchAsync(config);
+            if (asynchronous)
+            {
+                //runner.SearchAsync(config);
+                runner.SearchAsync2(config);
+            }
             else return runner.SearchSync(config);
             return null;
         }
