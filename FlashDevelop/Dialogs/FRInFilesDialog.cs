@@ -272,7 +272,7 @@ namespace FlashDevelop.Dialogs
             this.folderComboBox.Text = "<Project>";
             this.folderComboBox.TextChanged += (sender, args) =>
             {
-                var backColor = SystemColors.Window;
+                var backColor = findComboBox.BackColor;
                 var buttonsEnabled = true;
                 var isValidTopLevel = IsValidTopLevel();
                 if (!IsValidExtensionFilter() || !isValidTopLevel)
@@ -306,7 +306,7 @@ namespace FlashDevelop.Dialogs
             this.extensionComboBox.Text = ".ext";
             this.extensionComboBox.TextChanged += (sender, args) =>
             {
-                var backColor = SystemColors.Window;
+                var backColor = findComboBox.BackColor;
                 var buttonsEnabled = true;
                 var isValidExtensionFilter = IsValidExtensionFilter();
                 if (!isValidExtensionFilter || !IsValidTopLevel())
