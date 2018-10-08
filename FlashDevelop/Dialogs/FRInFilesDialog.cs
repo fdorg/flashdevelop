@@ -557,9 +557,9 @@ namespace FlashDevelop.Dialogs
         private void FindButtonClick(Object sender, EventArgs e)
         {
             String mask = this.extensionComboBox.Text;
-            Boolean recursive = this.subDirectoriesCheckBox.Checked;
             if (IsValidPattern() && this.IsValidFileMask(mask))
             {
+                bool recursive = this.subDirectoriesCheckBox.Checked;
                 var paths = this.folderComboBox.Text.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String path in paths)
                 {
@@ -584,7 +584,6 @@ namespace FlashDevelop.Dialogs
         private void ReplaceButtonClick(Object sender, EventArgs e)
         {
             String mask = this.extensionComboBox.Text;
-            Boolean recursive = this.subDirectoriesCheckBox.Checked;
             if (IsValidPattern() && this.IsValidFileMask(mask))
             {
                 if (!Globals.Settings.DisableReplaceFilesConfirm)
@@ -594,6 +593,7 @@ namespace FlashDevelop.Dialogs
                     DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                     if (result == DialogResult.Cancel) return;
                 }
+                var recursive = this.subDirectoriesCheckBox.Checked;
                 var paths = this.folderComboBox.Text.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String path in paths)
                 {
@@ -628,7 +628,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BrowseButtonClick(Object sender, EventArgs e)
         {
-            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
+            using (var fbd = new VistaFolderBrowserDialog())
             {
                 fbd.Multiselect = true;
                 String curDir = this.folderComboBox.Text;
@@ -657,17 +657,14 @@ namespace FlashDevelop.Dialogs
         {
             if (this.resultsView.SelectedItems.Count < 1) return;
             ListViewItem item = this.resultsView.SelectedItems[0];
-            KeyValuePair<String, SearchMatch> data = (KeyValuePair<String, SearchMatch>)item.Tag;
+            var data = (KeyValuePair<String, SearchMatch>)item.Tag;
             if (File.Exists(data.Key))
             {
                 Globals.MainForm.Activate();
                 var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
-                if (doc != null && doc.IsEditable)
+                if (doc != null && doc.IsEditable && this.resultsView.Columns.Count == 4)
                 {
-                    if (this.resultsView.Columns.Count == 4)
-                    {
-                        FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
-                    }
+                    FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
                 }
             }
         }
@@ -677,10 +674,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void CancelButtonClick(Object sender, System.EventArgs e)
         {
-            if (this.runner != null)
-            {
-                this.runner.CancelAsync();
-            }
+            runner?.CancelAsync();
         }
 
         /// <summary>
@@ -712,37 +706,39 @@ namespace FlashDevelop.Dialogs
             {
                 if (!this.redirectCheckBox.Checked)
                 {
-                    Int32 fileCount = 0;
-                    Int32 matchCount = 0;
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    resultsView.BeginUpdate();
+                    var fileCount = 0;
+                    var matchCount = 0;
+                    foreach (var entry in results)
                     {
                         fileCount++;
-                        foreach (SearchMatch match in entry.Value)
+                        foreach (var match in entry.Value)
                         {
                             matchCount++;
-                            ListViewItem item = new ListViewItem();
+                            var item = new ListViewItem();
                             item.Text = match.Line.ToString();
                             item.SubItems.Add(match.LineText.Trim());
                             item.SubItems.Add(Path.GetFileName(entry.Key));
                             item.SubItems.Add(Path.GetDirectoryName(entry.Key));
-                            item.Tag = new KeyValuePair<String, SearchMatch>(entry.Key, match);
+                            item.Tag = new KeyValuePair<string, SearchMatch>(entry.Key, match);
                             this.resultsView.Items.Add(item);
                             this.AddToGroup(item, entry.Key);
                         }
                     }
-                    String message = TextHelper.GetString("Info.FoundInFiles");
-                    String formatted = String.Format(message, matchCount, fileCount);
+                    var message = TextHelper.GetString("Info.FoundInFiles");
+                    var formatted = string.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
+                    resultsView.EndUpdate();
                 } 
                 else 
                 {
-                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    foreach (var entry in results)
                     {
-                        foreach (SearchMatch match in entry.Value)
+                        foreach (var match in entry.Value)
                         {
-                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
+                            var message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
@@ -774,40 +770,38 @@ namespace FlashDevelop.Dialogs
             {
                 if (!this.redirectCheckBox.Checked)
                 {
-                    Int32 fileCount = 0;
-                    Int32 matchCount = 0;
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    resultsView.BeginUpdate();
+                    var fileCount = 0;
+                    var matchCount = 0;
+                    foreach (var entry in results)
                     {
                         fileCount++;
-                        Int32 replaceCount = 0;
-                        foreach (SearchMatch match in entry.Value)
-                        {
-                            replaceCount++;
-                            matchCount++;
-                        }
+                        var replaceCount = entry.Value.Count;
                         if (replaceCount == 0) continue;
-                        ListViewItem item = new ListViewItem();
-                        item.Tag = new KeyValuePair<String, SearchMatch>(entry.Key, null);
+                        matchCount += replaceCount;
+                        var item = new ListViewItem();
+                        item.Tag = new KeyValuePair<string, SearchMatch>(entry.Key, null);
                         item.Text = replaceCount.ToString();
                         item.SubItems.Add(Path.GetFileName(entry.Key));
                         item.SubItems.Add(Path.GetDirectoryName(entry.Key));
                         this.resultsView.Items.Add(item);
                         this.AddToGroup(item, entry.Key);
                     }
-                    String message = TextHelper.GetString("Info.ReplacedInFiles");
-                    String formatted = String.Format(message, matchCount, fileCount);
+                    var message = TextHelper.GetString("Info.ReplacedInFiles");
+                    var formatted = string.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
+                    resultsView.EndUpdate();
                 } 
                 else
                 {
-                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    foreach (var entry in results)
                     {
-                        foreach (SearchMatch match in entry.Value)
+                        foreach (var match in entry.Value)
                         {
-                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
-                            TraceManager.Add(message, (Int32)TraceType.Info, groupData);
+                            var message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
+                            TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
@@ -820,31 +814,24 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, String path)
+        private void AddToGroup(ListViewItem item, string path)
         {
-            String gpname;
-            Boolean found = false;
-            ListViewGroup gp = null;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("Group.Other");
             foreach (ListViewGroup lvg in this.resultsView.Groups)
             {
                 if (lvg.Tag.ToString() == path)
                 {
-                    found = true;
-                    gp = lvg;
-                    break;
+                    lvg.Items.Add(item);
+                    return;
                 }
             }
-            if (found) gp.Items.Add(item);
-            else
-            {
-                gp = new ListViewGroup();
-                gp.Tag = path;
-                gp.Header = gpname;
-                this.resultsView.Groups.Add(gp);
-                gp.Items.Add(item);
-            }
+            string gpname;
+            if (File.Exists(path)) gpname = Path.GetFileName(path);
+            else gpname = TextHelper.GetString("Group.Other");
+            var gp = new ListViewGroup();
+            gp.Tag = path;
+            gp.Header = gpname;
+            this.resultsView.Groups.Add(gp);
+            gp.Items.Add(item);
         }
 
         /// <summary>
@@ -870,7 +857,7 @@ namespace FlashDevelop.Dialogs
         private void DialogClosing(Object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            if (this.runner != null) this.runner.CancelAsync();
+            runner?.CancelAsync();
             Globals.CurrentDocument.Activate();
             this.Hide();
         }
@@ -902,7 +889,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, System.EventArgs e)
+        private void VisibleChange(Object sender, EventArgs e)
         {
             if (this.Visible)
             {
@@ -985,34 +972,27 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private FRConfiguration GetFRConfig(String path, String mask, Boolean recursive)
         {
-            if (path.Trim() == "<Project>")
+            if (path.Trim() != "<Project>") return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
+            if (PluginBase.CurrentProject == null) return null;
+            var allFiles = new List<String>();
+            var project = PluginBase.CurrentProject;
+            var projPath = Path.GetDirectoryName(project.ProjectPath);
+            var walker = new PathWalker(projPath, mask, recursive);
+            var projFiles = walker.GetFiles();
+            foreach (String file in projFiles)
             {
-                if (PluginBase.CurrentProject != null)
-                {
-                    PathWalker walker;
-                    List<String> allFiles = new List<String>();
-                    IProject project = PluginBase.CurrentProject;
-                    String projPath = Path.GetDirectoryName(project.ProjectPath);
-                    walker = new PathWalker(projPath, mask, recursive);
-                    List<String> projFiles = walker.GetFiles();
-                    foreach (String file in projFiles)
-                    {
-                        if (!IsFileHidden(file, project)) allFiles.Add(file);
-                    }
-                    for (var i = 0; i < project.SourcePaths.Length; i++)
-                    {
-                        String sourcePath = project.GetAbsolutePath(project.SourcePaths[i]);
-                        if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
-                        {
-                            walker = new PathWalker(sourcePath, mask, recursive);
-                            allFiles.AddRange(walker.GetFiles());
-                        }
-                    }
-                    return new FRConfiguration(allFiles, this.GetFRSearch());
-                }
-                else return null;
+                if (!IsFileHidden(file, project)) allFiles.Add(file);
             }
-            else return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
+            foreach (var sp in project.SourcePaths)
+            {
+                String sourcePath = project.GetAbsolutePath(sp);
+                if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
+                {
+                    walker = new PathWalker(sourcePath, mask, recursive);
+                    allFiles.AddRange(walker.GetFiles());
+                }
+            }
+            return new FRConfiguration(allFiles, this.GetFRSearch());
         }
 
         /// <summary>
