@@ -1448,6 +1448,7 @@ namespace ASCompletion.Completion
         {
             var ctx = inClass.InFile.Context;
             var resolve = returnType.resolve;
+            string type = null;
             List<ASResult> expressions = null;
             var context = resolve.Context;
             if (context != null)
@@ -1466,12 +1467,14 @@ namespace ASCompletion.Completion
                     && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries).Any(it => operators.Contains(it.Trim())));
                 if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator) || isValid(context))
                 {
+                    if (context.Separator == "/" || context.Separator == "%") type = ctx.Features.numberKey;
                     var current = resolve;
                     context = current.Context;
                     expressions = new List<ASResult> {current};
                     var rop = false;
                     while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator)) || isValid(context))
                     {
+                        if (type == null && (context.Separator == "/" || context.Separator == "%")) type = ctx.Features.numberKey;
                         var position = rop ? context.PositionExpression : context.SeparatorPosition;
                         current = ASComplete.GetExpressionType(sci, position, false, true);
                         if (current == null || current.IsNull()) break;
@@ -1481,7 +1484,6 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            string type = null;
             int pos;
             if (expressions == null) pos = GetStartOfStatement(resolve);
             else
@@ -1580,6 +1582,7 @@ namespace ASCompletion.Completion
                    || features.declKeywords.Contains(word)
                    || features.typesKeywords.Contains(word)
                    || features.typesPreKeys.Contains(word)
+                   || features.Literals.Contains(word)
                 ? $"{word}Value"
                 : word;
         }

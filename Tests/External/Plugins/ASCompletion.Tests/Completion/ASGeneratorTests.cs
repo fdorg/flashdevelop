@@ -2403,58 +2403,49 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfStringInitializer"))
-                                .Returns(new ClassModel {Name = "String", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of \"\"");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit"))
-                                .Returns(new ClassModel {Name = "Number", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of 1");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfObjectInitializer"))
-                                .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of {}");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewArray"))
-                                .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new Array()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayInitializer"))
-                                .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of []");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewVector"))
-                                .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new Vector.<int>()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfVectorInitializer"))
-                                .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new <int>[]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfTwoDimensionalVectorInitializer"))
-                                .Returns(new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new new <Vector.<int>>[new <int>[0]]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfVector"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of vector[0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfTwoDimensionalVector"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of vector[0][0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfMultidimensionalVector"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of vector[0][0][0][0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayAccess"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of v[0][0].length");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewObject"))
-                                .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new Object");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfStringInitializer"))
+                            .Returns(new ClassModel {Name = "String", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of \"\"");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of 1");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit_2"))
+                            .Ignore("")
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of 1.0");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfObjectInitializer"))
+                            .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of {}");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewArray"))
+                            .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new Array()");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayInitializer"))
+                            .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of []");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewVector"))
+                            .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new Vector.<int>()");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfVectorInitializer"))
+                            .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new <int>[]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfTwoDimensionalVectorInitializer"))
+                            .Returns(new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new new <Vector.<int>>[new <int>[0]]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfVector"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of vector[0]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfTwoDimensionalVector"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of vector[0][0]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfMultidimensionalVector"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of vector[0][0][0][0]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayAccess"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of v[0][0].length");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewObject"))
+                            .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new Object");
                     }
                 }
 
@@ -2494,8 +2485,11 @@ namespace ASCompletion.Completion
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(false)");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
-                            .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit_2"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1.0)");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Array())");
@@ -2985,6 +2979,8 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("set").Returns("setValue");
                         yield return new TestCaseData("class").Returns("classValue");
                         yield return new TestCaseData("interface").Returns("interfaceValue");
+                        yield return new TestCaseData("int").Returns("intValue");
+                        yield return new TestCaseData("uint").Returns("uintValue");
                     }
                 }
 

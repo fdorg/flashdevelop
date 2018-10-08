@@ -1235,6 +1235,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_6.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeConvertToConst_issue2406_7.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterConvertToConst_issue2406_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfDigit_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Digit_2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

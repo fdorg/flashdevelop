@@ -74,6 +74,7 @@ namespace ASCompletion.Completion
         public string objectKey;
         public string booleanKey;
         public string numberKey;
+        public string IntegerKey;
         public string stringKey;
         public string arrayKey;
         public string dynamicKey;
@@ -84,6 +85,7 @@ namespace ASCompletion.Completion
         public string[] codeKeywords = { };
         public string[] declKeywords = { };
         public string[] typesKeywords = { };
+        public HashSet<string> Literals = new HashSet<string>();
         public string varKey;
         public string constKey;
         public string functionKey;

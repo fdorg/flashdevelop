@@ -7,7 +7,7 @@
 }
 
 class Some {
-	public function Some(number:Number) {
+	public function Some(intValue:int) {
 		
 	}
 }
