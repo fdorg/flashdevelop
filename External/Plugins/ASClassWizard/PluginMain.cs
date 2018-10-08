@@ -117,10 +117,10 @@ namespace ASClassWizard
                     break;
 
                 case EventType.ProcessArgs:
-                    TextEvent te = e as TextEvent;
                     project = PluginBase.CurrentProject as Project;
                     if (lastFileFromTemplate != null && project != null && (project.Language.StartsWithOrdinal("as") || project.Language == "haxe"))
                     {
+                        var te = (TextEvent) e;
                         te.Value = ProcessArgs(project, te.Value);
                     }
                     break;
@@ -357,13 +357,13 @@ namespace ASClassWizard
                                 superConstructor = "super(";
                                 index = 0;
                                 if (member.Parameters != null)
-                                foreach (MemberModel param in member.Parameters)
-                                {
-                                    if (param.Name.StartsWith('.')) break;
-                                    var pname = TemplateUtils.GetParamName(param);
-                                    superConstructor += (index > 0 ? ", " : "") + pname;
-                                    index++;
-                                }
+                                    foreach (MemberModel param in member.Parameters)
+                                    {
+                                        if (param.Name.StartsWith('.')) break;
+                                        var pname = TemplateUtils.GetParamName(param);
+                                        superConstructor += (index > 0 ? ", " : "") + pname;
+                                        index++;
+                                    }
                                 superConstructor += ");\n" + (lastFileOptions.Language == "as3" ? "\t\t\t" : "\t\t");
                                 break;
                             }
@@ -427,19 +427,23 @@ namespace ASClassWizard
             return args;
         }
 
-        private void AddImports(List<String> imports, MemberModel member, ClassModel inClass)
+        private void AddImports(ICollection<string> imports, MemberModel member, ClassModel inClass)
         {
             AddImport(imports, member.Type, inClass);
             if (member.Parameters != null)
             {
-                foreach (MemberModel item in member.Parameters)
+                foreach (var item in member.Parameters)
                 {
-                    AddImport(imports, item.Type, inClass);
+                    var types = ASContext.Context.DecomposeTypes(new[] {item.Type});
+                    foreach (var type in types)
+                    {
+                        AddImport(imports, type, inClass);
+                    }
                 }
             }
         }
 
-        private void AddImport(List<string> imports, string cname, ClassModel inClass)
+        private void AddImport(ICollection<string> imports, string cname, ClassModel inClass)
         {
             var aClass = processContext.ResolveType(cname, inClass.InFile);
             if (!aClass.IsVoid() && aClass.InFile.Package != "")
