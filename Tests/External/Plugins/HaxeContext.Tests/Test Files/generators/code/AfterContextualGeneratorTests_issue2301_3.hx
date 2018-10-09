@@ -1,10 +1,10 @@
 ﻿package;
 class EFoo {
 	public function new() {
-		Enum.Fo$(EntryPoint)o(1.0, "", true)
+		Enum.Foo(1, "", true)
 	}
 }
 
 enum Enum {
-	
+	Foo(int:Int, string:String, bool:Bool);
 }

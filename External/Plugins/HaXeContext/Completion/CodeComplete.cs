@@ -451,6 +451,15 @@ namespace HaXeContext.Completion
             {
                 var ctx = ASContext.Context;
                 var features = ctx.Features;
+                // for example: 1.0.<complete>, -1.<complete>, 5e-324.<complete>
+                if (char.IsDigit(expression, 0) || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1)))
+                {
+                    MemberModel type;
+                    if (expression.Contains('.') || expression.Contains('e')) type = ctx.ResolveType(features.numberKey, inFile);
+                    else type = ctx.ResolveType("Int", inFile);
+                    expression = type.Name + ".#.";
+                    return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                }
                 if (context.SubExpressions != null)
                 {
                     var count = context.SubExpressions.Count - 1;

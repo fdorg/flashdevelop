@@ -1,7 +1,7 @@
 ﻿package;
 public class Main {
 	public function new() {
-		new Foo(1);
+		new Foo(1.0);
 	}
 }
 

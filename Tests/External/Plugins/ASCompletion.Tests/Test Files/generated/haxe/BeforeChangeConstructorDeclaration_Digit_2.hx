@@ -1,12 +1,12 @@
 ﻿package;
 class Main {
 	public function Main() {
-		new Some(1);
+		new Some$(EntryPoint)(1.0);
 	}
 }
 
 class Some {
-	public function new(int:Int) {
+	public function new() {
 		
 	}
 }

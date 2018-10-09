@@ -1239,6 +1239,12 @@
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Digit_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_Digit_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterChangeConstructorDeclaration_Digit_2.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_Digit_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_Digit_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Digit_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_14_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_14_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

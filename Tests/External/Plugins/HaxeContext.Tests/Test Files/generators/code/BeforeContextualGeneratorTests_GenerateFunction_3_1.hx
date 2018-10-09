@@ -1,7 +1,6 @@
 ﻿package;
 class EFoo {
 	public function new() {
-		var v = 1.0;
-		v;$(EntryPoint)
+		fo$(EntryPoint)o(1 < 2 && 1 > 0 ? 1 : 0);
 	}
 }

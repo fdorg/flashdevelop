@@ -737,11 +737,14 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13"))
                                 .SetName("Issue103. Case 13")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
-                                .SetName("Issue103. Case 14")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
+                            .SetName("Issue103. Case 14")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14_1"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1"))
+                            .SetName("Issue103. Case 14.1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_15"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_15"))
@@ -895,41 +898,38 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
-                                .SetName("Issue103. Case 13")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
-                                .SetName("Issue103. Case 14")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_18"))
-                                .SetName("Issue103. Case 18")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_19"))
-                                .SetName("Issue103. Case 19")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_20"))
-                                .SetName("Issue103. Case 20")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_21"))
-                                .SetName("Issue103. Case 21")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645_2"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645_2"))
-                                .SetName("Issue1645. Case 2")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
+                            .SetName("Issue103. Case 13")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
+                            .SetName("Issue103. Case 14")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14_1"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14_1"))
+                            .SetName("Issue103. Case 14.1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_18"))
+                            .SetName("Issue103. Case 18")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_19"))
+                            .SetName("Issue103. Case 19")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_20"))
+                            .SetName("Issue103. Case 20")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_21"))
+                            .SetName("Issue103. Case 21")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645_2"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645_2"))
+                            .SetName("Issue1645. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
                     }
                 }
 
@@ -2570,10 +2570,12 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean_false"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(false)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Int", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit_2"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1)");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Array"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
@@ -2707,40 +2709,35 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_String")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String"))
-                                .SetName("new Foo(\"\") -> function new(string:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_String2")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String2"))
-                                .SetName("new Foo(\"\", \"\") -> function new(string:String, string1:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit"))
-                                .SetName("new Foo(1) -> function new(float:Float)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Boolean"))
-                                .SetName("new Foo(true) -> function new(bool:Bool)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
-                                .SetName("new Foo(strings[0][0]) -> function new(string:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
-                                .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_1"))
-                                .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_2"))
-                                .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String"))
+                            .SetName("new Foo(\"\") -> function new(string:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String2")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String2"))
+                            .SetName("new Foo(\"\", \"\") -> function new(string:String, string1:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit"))
+                            .SetName("new Foo(1) -> function new(int:Int)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit_2")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit_2"))
+                            .SetName("new Foo(1.0) -> function new(float:Float)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Boolean"))
+                            .SetName("new Foo(true) -> function new(bool:Bool)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
+                            .SetName("new Foo(strings[0][0]) -> function new(string:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
+                            .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_1"))
+                            .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_2"))
+                            .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
                     }
                 }
 

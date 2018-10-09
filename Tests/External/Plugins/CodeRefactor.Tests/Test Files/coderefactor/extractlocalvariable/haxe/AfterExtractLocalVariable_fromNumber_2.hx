@@ -3,7 +3,7 @@ import flash.display.Sprite;
 
 class ExtractLocalVariable extends Sprite {
 	public function extractLocalVariable() {
-		var newVar:Int = 0;
-		var name = getChildAt(newVar).name;
+		var newVar:Float = 0.0;
+		var name = newVar;
 	}
 }

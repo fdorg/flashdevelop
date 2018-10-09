@@ -1,7 +1,10 @@
 ﻿package;
 class EFoo {
 	public function new() {
-		var v = 1.0;
-		v;$(EntryPoint)
+		Enum.Fo$(EntryPoint)o(1, "", true)
 	}
+}
+
+enum Enum {
+	
 }
