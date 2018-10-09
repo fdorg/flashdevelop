@@ -3841,6 +3841,7 @@ namespace ASCompletion.Completion
                     else if (features.ArithmeticOperators.Contains(c))
                     {
                         var p = position - 1;
+                        // for example: 5e-324, 1.79e+308
                         if ((c == '-' || c == '+') && p > minPos && sci.CharAt(p) == 'e')
                         {
                             sb.Insert(0, c);
