@@ -17,11 +17,34 @@ namespace AS3Context.Completion
                 // for example: 1.0.<complete>, -1.<complete>, 5e-324.<complete>
                 if (char.IsDigit(expression, 0) || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1)))
                 {
-                    MemberModel type;
-                    if (expression.Contains('.') || expression.Contains('e')) type = ctx.ResolveType(features.numberKey, inFile);
-                    else type = ctx.ResolveType("int", inFile);
-                    expression = type.Name + ".#.";
-                    return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                    var p = -1;
+                    var pe1 = -1;
+                    var pe2 = -1;
+                    if ((pe1 = expression.IndexOfOrdinal("e-")) != -1 || (pe2 = expression.IndexOfOrdinal("e+")) != -1)
+                    {
+                        p = expression.IndexOf('.');
+                        if (p == -1) p = expression.Length - 1;
+                        else if (p < pe1 || p < pe2)
+                        {
+                            var p2 = expression.IndexOf('.', p + 1);
+                            p = p2 != -1 ? p2 : expression.Length - 1;
+                        }
+                    }
+                    else
+                    {
+                        p = expression.IndexOf('.');
+                        if (p == expression.Length - 1) p = -1;
+                        else if (p != -1)
+                        {
+                            var p2 = expression.IndexOf('.', p + 1);
+                            p = p2 != -1 ? p2 : expression.Length - 1;
+                        }
+                    }
+                    if (p != -1)
+                    {
+                        expression = "Number.#." + expression.Substring(p + 1);
+                        return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                    }
                 }
                 if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {

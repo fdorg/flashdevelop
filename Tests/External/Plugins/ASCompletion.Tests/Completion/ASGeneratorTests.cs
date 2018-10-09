@@ -3161,6 +3161,10 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateFunction_1", GeneratorJobType.Function, true)
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_1"))
                             .SetName("Generate function. case 1");
+                        yield return new TestCaseData("BeforeGenerateFunction_2", GeneratorJobType.Function, true)
+                            .Ignore("")
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_2"))
+                            .SetName("Generate function. case 2");
                         yield return new TestCaseData("BeforeImplementInterfaceMethods", GeneratorJobType.ImplementInterface, true)
                             .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
                             .SetName("Implement interface methods. Issue 1684")

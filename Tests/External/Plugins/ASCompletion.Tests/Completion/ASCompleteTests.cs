@@ -471,6 +471,34 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionTypeIssue2429TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("0.1.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("5e-324.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_3"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("1.79e+308.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_4"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("2.225e-308.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_5"))
+                        .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("2.225e-308.<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_6"))
+                        .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("1.79e+308.<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_7"))
+                        .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("5e-324.<complete>");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
@@ -479,6 +507,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_Vector_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_XML_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionTypeIssue2429TestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
