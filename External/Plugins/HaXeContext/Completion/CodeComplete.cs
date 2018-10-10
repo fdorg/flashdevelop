@@ -473,8 +473,14 @@ namespace HaXeContext.Completion
                         if (p == expression.Length - 1) p = -1;
                         else if (p != -1)
                         {
-                            var p2 = expression.IndexOf('.', p + 1);
-                            p = p2 != -1 ? p2 : expression.Length - 1;
+                            // for example: 1.0.<complete>
+                            if (char.IsDigit(expression[p + 1]))
+                            {
+                                var p2 = expression.IndexOf('.', p + 1);
+                                p = p2 != -1 ? p2 : expression.Length - 1;
+                            }
+                            // for example: -1.extensionMethod().<complete>
+                            else p = -1;
                         }
                     }
                     if (p != -1)

@@ -496,6 +496,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_7"))
                         .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("5e-324.<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_8"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("-1.valueOf().<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_9"))
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("0xFF0000.valueOf().<complete>");
                 }
             }
 
