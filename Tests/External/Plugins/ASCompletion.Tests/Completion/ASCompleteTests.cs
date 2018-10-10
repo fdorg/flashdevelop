@@ -471,6 +471,40 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionTypeIssue2429TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("0.1.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("5e-324.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_3"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("1.79e+308.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_4"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("2.225e-308.toExponential(2).<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_5"))
+                        .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("2.225e-308.<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_6"))
+                        .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("1.79e+308.<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_7"))
+                        .Returns(new ClassModel {Name = "Number", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("5e-324.<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_8"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("-1.valueOf().<complete>");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2429_9"))
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("0xFF0000.valueOf().<complete>");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
@@ -479,6 +513,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_Vector_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_XML_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionTypeIssue2429TestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
@@ -490,76 +525,58 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfString"))
                             .Returns(";String")
                             .SetName("From String|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewString"))
                             .Returns("new String")
                             .SetName("From new String|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt"))
                             .Returns("new String().charCodeAt")
                             .SetName("From new String().charCodeAt|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt0.toString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt0.toString"))
                             .Returns("new String().charCodeAt(0).toString")
                             .SetName("From new String().charCodeAt(0).toString|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer.charCodeAt0.toString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer.charCodeAt0.toString"))
                             .Returns(";\"string\".charCodeAt(0).toString")
                             .SetName("From \"string\".charCodeAt(0).toString|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
                             .Returns(";'string'.charCodeAt(0).toString")
                             .SetName("From 'string'.charCodeAt(0).toString|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializer"))
                             .Returns(";\"\"")
                             .SetName("From \"\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializerSingleQuotes"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializerSingleQuotes"))
                             .Returns(";''")
                             .SetName("From ''|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer"))
                             .Returns(";\"string\"")
                             .SetName("From \"string\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2"))
                             .Returns(";\"{[(<string\"")
                             .SetName("From \"{[(<string\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer3"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer3"))
                             .Returns(";\"string>}])\"")
                             .SetName("From \"string>}])\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfGlobalFunctionString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfGlobalFunctionString"))
                             .Returns(";")
                             .SetName("From String(\"string\")|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfObjectInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfObjectInitializer"))
                             .Returns(";{}")
                             .SetName("From {}|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer"))
                             .Returns(";[]")
                             .SetName("From []|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer.push"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer.push"))
                             .Returns(";[].push")
                             .SetName("From [].push|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalArrayInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalArrayInitializer"))
                             .Returns(";[[], []]")
                             .SetName("From [[], []]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfVectorInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfVectorInitializer"))
                             .Returns("new <int>[]")
                             .SetName("From new <int>[]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalVectorInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalVectorInitializer"))
                             .Returns("new <Vector.<int>>[new <int>[]]")
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return new TestCaseData(ReadAllText("GetExpressionOfArrayAccess"))
@@ -689,7 +706,27 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource(nameof(GetExpressionTestCases))]
+            static IEnumerable<TestCaseData> GetExpressionIssue2429TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("1.79e+308$(EntryPoint)")
+                        .Returns(" 1.79e+308")
+                        .SetName("1.79e+308|");
+                    yield return new TestCaseData("2.225e-308$(EntryPoint)")
+                        .Returns(" 2.225e-308")
+                        .SetName("2.225e-308|");
+                    yield return new TestCaseData("5e-324$(EntryPoint)")
+                        .Returns(" 5e-324")
+                        .SetName("5e-324|");
+                }
+            }
+
+            [
+                Test, 
+                TestCaseSource(nameof(GetExpressionTestCases)),
+                TestCaseSource(nameof(GetExpressionIssue2429TestCases)),
+            ]
             public string GetExpression(string sourceText) => GetExpression(sci, sourceText);
 
             static IEnumerable<TestCaseData> DisambiguateComaTestCases

@@ -94,8 +94,14 @@ namespace AS3Context
                 yield return new TestCaseData("{}")
                     .Returns(new ClassModel {Name = "Object", Type = "Object", InFile = FileModel.Ignore});
                 yield return new TestCaseData("10")
-                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "int", Type = "int", InFile = FileModel.Ignore});
                 yield return new TestCaseData("-10")
+                    .Returns(new ClassModel {Name = "int", Type = "int", InFile = FileModel.Ignore});
+                yield return new TestCaseData("10.0")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
+                yield return new TestCaseData("-10.0")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
+                yield return new TestCaseData("5e-324")
                     .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"\"")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});

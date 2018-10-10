@@ -104,6 +104,7 @@ namespace AS3Context
             features.objectKey = "Object";
             features.booleanKey = "Boolean";
             features.numberKey = "Number";
+            features.IntegerKey = "int";
             features.stringKey = "String";
             features.arrayKey = "Array";
             features.dynamicKey = "*";
@@ -133,10 +134,11 @@ namespace AS3Context
             features.accessKeywords = new[] {"native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"};
             features.declKeywords = new[] {features.varKey, features.functionKey, features.constKey, features.namespaceKey, features.getKey, features.setKey};
             features.typesKeywords = new[] {features.importKey, "class", "interface"};
-            features.ArithmeticOperators = new HashSet<char>{'+', '-', '*', '/', '%'};
+            features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!==", "==="};
+            features.Literals = new HashSet<string> {"int", "uint"};
             /* INITIALIZATION */
 
             settings = initSettings;

@@ -451,6 +451,44 @@ namespace HaXeContext.Completion
             {
                 var ctx = ASContext.Context;
                 var features = ctx.Features;
+                // for example: 1.0.<complete>, -1.<complete>, 5e-324.<complete>
+                if (char.IsDigit(expression, 0) || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1)))
+                {
+                    int p;
+                    int pe1;
+                    var pe2 = -1;
+                    if ((pe1 = expression.IndexOfOrdinal("e-")) != -1 || (pe2 = expression.IndexOfOrdinal("e+")) != -1)
+                    {
+                        p = expression.IndexOf('.');
+                        if (p == -1) p = expression.Length - 1;
+                        else if (p < pe1 || p < pe2)
+                        {
+                            var p2 = expression.IndexOf('.', p + 1);
+                            p = p2 != -1 ? p2 : expression.Length - 1;
+                        }
+                    }
+                    else
+                    {
+                        p = expression.IndexOf('.');
+                        if (p == expression.Length - 1) p = -1;
+                        else if (p != -1)
+                        {
+                            // for example: 1.0.<complete>
+                            if (char.IsDigit(expression[p + 1]))
+                            {
+                                var p2 = expression.IndexOf('.', p + 1);
+                                p = p2 != -1 ? p2 : expression.Length - 1;
+                            }
+                            // for example: -1.extensionMethod().<complete>
+                            else p = -1;
+                        }
+                    }
+                    if (p != -1)
+                    {
+                        expression = "Float.#." + expression.Substring(p + 1);
+                        return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                    }
+                }
                 if (context.SubExpressions != null)
                 {
                     var count = context.SubExpressions.Count - 1;

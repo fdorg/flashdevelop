@@ -827,6 +827,20 @@
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2404_1.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceTextIssue2404_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2425_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2301_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2301_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_3_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_3_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_7_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_7_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferParameterVar_2_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferParameterVar_2_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_9_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_9_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2069_7_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_7_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_GenerateFunction_3_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_GenerateFunction_3_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

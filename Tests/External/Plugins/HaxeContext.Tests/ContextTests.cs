@@ -193,10 +193,14 @@ namespace HaXeContext
                     .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("{}", "3.4.0")
                     .Returns(new ClassModel {Name = "Dynamic", Type = "Dynamic", InFile = FileModel.Ignore});
+                yield return new TestCaseData("10.0", "3.4.0")
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore});
+                yield return new TestCaseData("-10.0", "3.4.0")
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore});
                 yield return new TestCaseData("10", "3.4.0")
-                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "Int", Type = "Int", InFile = FileModel.Ignore});
                 yield return new TestCaseData("-10", "3.4.0")
-                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "Int", Type = "Int", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"\"", "3.4.0")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"", "3.4.0")

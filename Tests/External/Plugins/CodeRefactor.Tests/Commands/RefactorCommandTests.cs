@@ -38,7 +38,10 @@ namespace CodeRefactor.Commands
                         .SetName("ExtractLocaleVariable from String");
                     yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromNumber"), "newVar" )
                         .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromNumber"))
-                        .SetName("ExtractLocaleVariable from Number");
+                        .SetName("ExtractLocaleVariable from Int");
+                    yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromNumber_2"), "newVar" )
+                        .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromNumber_2"))
+                        .SetName("ExtractLocaleVariable from Float");
                     yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_inSinglelineMethod"), "newVar")
                         .Ignore("Not supported at the moment")
                         .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_inSinglelineMethod"))

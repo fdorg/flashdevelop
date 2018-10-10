@@ -3840,8 +3840,14 @@ namespace ASCompletion.Completion
                     }
                     else if (features.ArithmeticOperators.Contains(c))
                     {
-                        expression.SeparatorPosition = position;
                         var p = position - 1;
+                        // for example: 5e-324, 1.79e+308
+                        if ((c == '-' || c == '+') && p > minPos && sci.CharAt(p) == 'e')
+                        {
+                            sb.Insert(0, c);
+                            continue;
+                        }
+                        expression.SeparatorPosition = position;
                         var curOp = c.ToString();
                         foreach (var op in features.IncrementDecrementOperators)
                         {
