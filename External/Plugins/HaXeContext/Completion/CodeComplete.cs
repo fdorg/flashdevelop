@@ -454,8 +454,8 @@ namespace HaXeContext.Completion
                 // for example: 1.0.<complete>, -1.<complete>, 5e-324.<complete>
                 if (char.IsDigit(expression, 0) || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1)))
                 {
-                    var p = -1;
-                    var pe1 = -1;
+                    int p;
+                    int pe1;
                     var pe2 = -1;
                     if ((pe1 = expression.IndexOfOrdinal("e-")) != -1 || (pe2 = expression.IndexOfOrdinal("e+")) != -1)
                     {
