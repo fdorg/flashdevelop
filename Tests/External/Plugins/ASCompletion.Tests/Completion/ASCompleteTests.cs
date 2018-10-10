@@ -519,76 +519,58 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfString"))
                             .Returns(";String")
                             .SetName("From String|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewString"))
                             .Returns("new String")
                             .SetName("From new String|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt"))
                             .Returns("new String().charCodeAt")
                             .SetName("From new String().charCodeAt|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt0.toString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewString.charCodeAt0.toString"))
                             .Returns("new String().charCodeAt(0).toString")
                             .SetName("From new String().charCodeAt(0).toString|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer.charCodeAt0.toString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer.charCodeAt0.toString"))
                             .Returns(";\"string\".charCodeAt(0).toString")
                             .SetName("From \"string\".charCodeAt(0).toString|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
                             .Returns(";'string'.charCodeAt(0).toString")
                             .SetName("From 'string'.charCodeAt(0).toString|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializer"))
                             .Returns(";\"\"")
                             .SetName("From \"\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializerSingleQuotes"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfEmptyStringInitializerSingleQuotes"))
                             .Returns(";''")
                             .SetName("From ''|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer"))
                             .Returns(";\"string\"")
                             .SetName("From \"string\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer2"))
                             .Returns(";\"{[(<string\"")
                             .SetName("From \"{[(<string\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInitializer3"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInitializer3"))
                             .Returns(";\"string>}])\"")
                             .SetName("From \"string>}])\"|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfGlobalFunctionString"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfGlobalFunctionString"))
                             .Returns(";")
                             .SetName("From String(\"string\")|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfObjectInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfObjectInitializer"))
                             .Returns(";{}")
                             .SetName("From {}|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer"))
                             .Returns(";[]")
                             .SetName("From []|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer.push"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfArrayInitializer.push"))
                             .Returns(";[].push")
                             .SetName("From [].push|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalArrayInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalArrayInitializer"))
                             .Returns(";[[], []]")
                             .SetName("From [[], []]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfVectorInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfVectorInitializer"))
                             .Returns("new <int>[]")
                             .SetName("From new <int>[]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalVectorInitializer"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalVectorInitializer"))
                             .Returns("new <Vector.<int>>[new <int>[]]")
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return new TestCaseData(ReadAllText("GetExpressionOfArrayAccess"))
@@ -718,7 +700,27 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource(nameof(GetExpressionTestCases))]
+            static IEnumerable<TestCaseData> GetExpressionIssue2429TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("1.79e+308$(EntryPoint)")
+                        .Returns(" 1.79e+308")
+                        .SetName("1.79e+308|");
+                    yield return new TestCaseData("2.225e-308$(EntryPoint)")
+                        .Returns(" 2.225e-308")
+                        .SetName("2.225e-308|");
+                    yield return new TestCaseData("5e-324$(EntryPoint)")
+                        .Returns(" 5e-324")
+                        .SetName("5e-324|");
+                }
+            }
+
+            [
+                Test, 
+                TestCaseSource(nameof(GetExpressionTestCases)),
+                TestCaseSource(nameof(GetExpressionIssue2429TestCases)),
+            ]
             public string GetExpression(string sourceText) => GetExpression(sci, sourceText);
 
             static IEnumerable<TestCaseData> DisambiguateComaTestCases
