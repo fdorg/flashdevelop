@@ -85,7 +85,7 @@
     <Compile Include="BatchProcessors\TruncateImportsProcessor.cs" />
     <Compile Include="Commands\ExtractLocalVariableCommand.cs" />
     <Compile Include="Commands\ExtractMethodCommand.cs" />
-    <Compile Include="Commands\DelegateMethodsCommand.cs" />
+    <Compile Include="Commands\DelegateMethods.cs" />
     <Compile Include="Commands\InlineRename.cs" />
     <Compile Include="Commands\Move.cs" />
     <Compile Include="Commands\OrganizeImports.cs" />

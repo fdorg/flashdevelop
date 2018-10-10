@@ -842,6 +842,12 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_GenerateFunction_3_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_GenerateFunction_3_1.hx" />
     <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2439_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_3.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_4.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_5.hx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

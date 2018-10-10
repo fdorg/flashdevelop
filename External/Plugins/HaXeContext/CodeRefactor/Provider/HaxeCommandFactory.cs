@@ -20,6 +20,13 @@ namespace HaXeContext.CodeRefactor.Provider
                 var inFile = expr.InFile;
                 return Path.GetFileName(inFile.FileName) != "import.hx" && inFile.Imports.Count > 0;
             });
+            RegisterValidator(typeof(DelegateMethods), expr =>
+            {
+                var validator = CommandFactoryProvider.DefaultFactory.GetValidator(typeof(DelegateMethods));
+                return validator != null && validator(expr)
+                    && !expr.InClass.Flags.HasFlag(FlagType.Interface)
+                    && !expr.InClass.Flags.HasFlag(FlagType.TypeDef);
+            });
         }
 
         public override Command CreateOrganizeImportsCommand() => new Commands.HaxeOrganizeImports();
