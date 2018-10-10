@@ -191,6 +191,13 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_4.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber_2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_4.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_5.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_6.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_7.as" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

@@ -11,9 +11,9 @@ namespace CodeRefactor.Provider
 
     public class CommandFactory : ICommandFactory
     {
-        public virtual DelegateMethodsCommand CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers)
+        public virtual DelegateMethods CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers)
         {
-            return new DelegateMethodsCommand(result, selectedMembers);
+            return new DelegateMethods(result, selectedMembers);
         }
 
         public virtual Command CreateExtractLocalVariableCommand()

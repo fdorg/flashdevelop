@@ -35,7 +35,7 @@ namespace CodeRefactor
         private String settingFilename;
         TreeView projectTreeView;
 
-        public const string TraceGroup = "CodeRefactor";
+        public const string TraceGroup = nameof(CodeRefactor);
         
         #region Required Properties
 
@@ -325,30 +325,27 @@ namespace CodeRefactor
             {
                 var document = PluginBase.MainForm.CurrentDocument;
                 var curFileName = document != null ? document.FileName : string.Empty;
-                this.refactorMainMenu.DelegateMenuItem.Enabled = false;
-                this.refactorContextMenu.DelegateMenuItem.Enabled = false;
                 var langIsValid = RefactoringHelper.GetLanguageIsValid();
                 var isValid = langIsValid && resolved != null && resolved.Position >= 0;
                 var result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
+                    // Rename
                     var validator = CommandFactoryProvider.GetFactory(result)?.GetValidator(typeof(Rename))
                                  ?? CommandFactoryProvider.DefaultFactory.GetValidator(typeof(Rename));
-                    var isRenameable = validator(result);
-                    this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
-                    this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
-                    var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
+                    var enabled = validator(result);
+                    this.refactorContextMenu.RenameMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.RenameMenuItem.Enabled = enabled;
+                    // Find All References
+                    enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
                     this.editorReferencesItem.Enabled = enabled;
                     this.viewReferencesItem.Enabled = enabled;
-                    if (result.InFile != null && result.InClass != null && (result.InClass.Flags & FlagType.Interface) == 0 && result.Member != null && result.Type != null)
-                    {
-                        FlagType flags = result.Member.Flags;
-                        if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
-                        {
-                            this.refactorContextMenu.DelegateMenuItem.Enabled = true;
-                            this.refactorMainMenu.DelegateMenuItem.Enabled = true;
-                        }
-                    }
+                    // Generate Delegate Methods
+                    validator = CommandFactoryProvider.GetFactoryForCurrentDocument().GetValidator(typeof(DelegateMethods))
+                             ?? CommandFactoryProvider.DefaultFactory.GetValidator(typeof(DelegateMethods));
+                    enabled = validator(result);
+                    this.refactorContextMenu.DelegateMenuItem.Enabled = enabled;
+                    this.refactorMainMenu.DelegateMenuItem.Enabled = enabled;
                 }
                 else
                 {
@@ -356,6 +353,8 @@ namespace CodeRefactor
                     this.refactorContextMenu.RenameMenuItem.Enabled = false;
                     this.editorReferencesItem.Enabled = false;
                     this.viewReferencesItem.Enabled = false;
+                    this.refactorMainMenu.DelegateMenuItem.Enabled = false;
+                    this.refactorContextMenu.DelegateMenuItem.Enabled = false;
                 }
                 var context = ASContext.Context;
                 if (context?.CurrentModel != null)
