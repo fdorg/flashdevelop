@@ -3840,8 +3840,14 @@ namespace ASCompletion.Completion
                     }
                     else if (features.ArithmeticOperators.Contains(c))
                     {
-                        expression.SeparatorPosition = position;
                         var p = position - 1;
+                        // for example: 5e-324, 1.79e+308
+                        if ((c == '-' || c == '+') && p > minPos && sci.CharAt(p) == 'e')
+                        {
+                            sb.Insert(0, c);
+                            continue;
+                        }
+                        expression.SeparatorPosition = position;
                         var curOp = c.ToString();
                         foreach (var op in features.IncrementDecrementOperators)
                         {
@@ -4706,7 +4712,11 @@ namespace ASCompletion.Completion
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            if (result.Type != null && result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+            if (result.Type != null)
+            {
+                if (result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+                return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
+            }
             return null;
         }
 

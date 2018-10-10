@@ -1,7 +1,7 @@
 ﻿package;
 public class Main {
 	public function new() {
-		new Fo$(EntryPoint)o(1, 2);
+		new Fo$(EntryPoint)o(1.0, 2);
 	}
 }
 

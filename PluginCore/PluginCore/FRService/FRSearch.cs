@@ -508,7 +508,6 @@ namespace PluginCore.FRService
             List<int> lineStart = new List<int>();
             for (int i = 0; i < startLine; i++) lineStart.Add(startIndex);
             char c = ' ';
-            bool hadNL = false;
 
             int matchIndex = 0;
             int matchCount = matches.Count;
@@ -530,7 +529,7 @@ namespace PluginCore.FRService
                 c = src[++pos];
 
                 // counting lines
-                hadNL = false;
+                var hadNL = false;
                 if (c == '\n')
                 {
                     line++;
@@ -583,11 +582,11 @@ namespace PluginCore.FRService
                         else if (pos > 1)
                             if (literalMatch == 1)
                             {
-                                if (src[pos - 1] != '\\' && c == '"') literalMatch = 0;
+                                if (c == '"' && !IsEscapedCharacter(src, pos)) literalMatch = 0;
                             }
                             else if (literalMatch == 2)
                             {
-                                if (src[pos - 1] != '\\' && c == '\'') literalMatch = 0;
+                                if (c == '\'' && !IsEscapedCharacter(src, pos)) literalMatch = 0;
                             }
                         if ((inLiterals && literalMatch == 0) || (outLiterals && literalMatch > 0))
                             continue;
@@ -697,6 +696,17 @@ namespace PluginCore.FRService
         }
 
         #endregion
+
+        static bool IsEscapedCharacter(string src, int position, char escapeChar = '\\')
+        {
+            var result = false;
+            for (var i = position - 1; i >= 0; i--)
+            {
+                if (src[i] != escapeChar) break;
+                result = !result;
+            }
+            return result;
+        }
 
     }
 }

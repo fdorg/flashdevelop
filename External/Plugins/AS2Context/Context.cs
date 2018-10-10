@@ -557,7 +557,12 @@ namespace AS2Context
             {
                 if (token == "true" || token == "false") return ResolveType(features.booleanKey, inFile);
                 var first = token[0];
-                if (char.IsDigit(token, 0) || (tokenLength > 1 && first == '-' && char.IsDigit(token, 1))) return ResolveType(features.numberKey, inFile);
+                if (char.IsDigit(token, 0) || (tokenLength > 1 && first == '-' && char.IsDigit(token, 1)))
+                {
+                    if (features.IntegerKey == null) return ResolveType(features.numberKey, inFile);
+                    if (token.Contains('.') || token.Contains('e')) return ResolveType(features.numberKey, inFile);
+                    return ResolveType(features.IntegerKey, inFile);
+                }
                 var last = token[tokenLength - 1];
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);

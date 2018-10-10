@@ -737,11 +737,14 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13"))
                                 .SetName("Issue103. Case 13")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
-                                .SetName("Issue103. Case 14")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
+                            .SetName("Issue103. Case 14")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14_1"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1"))
+                            .SetName("Issue103. Case 14.1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_15"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_15"))
@@ -895,41 +898,38 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
-                                .SetName("Issue103. Case 13")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
-                                .SetName("Issue103. Case 14")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_18"))
-                                .SetName("Issue103. Case 18")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_19"))
-                                .SetName("Issue103. Case 19")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_20"))
-                                .SetName("Issue103. Case 20")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_21"))
-                                .SetName("Issue103. Case 21")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645_2"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645_2"))
-                                .SetName("Issue1645. Case 2")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
+                            .SetName("Issue103. Case 13")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
+                            .SetName("Issue103. Case 14")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14_1"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14_1"))
+                            .SetName("Issue103. Case 14.1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_18"))
+                            .SetName("Issue103. Case 18")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_19"))
+                            .SetName("Issue103. Case 19")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_20"))
+                            .SetName("Issue103. Case 20")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_21"))
+                            .SetName("Issue103. Case 21")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645_2"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645_2"))
+                            .SetName("Issue1645. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
                     }
                 }
 
@@ -2403,58 +2403,49 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfStringInitializer"))
-                                .Returns(new ClassModel {Name = "String", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of \"\"");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit"))
-                                .Returns(new ClassModel {Name = "Number", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of 1");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfObjectInitializer"))
-                                .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of {}");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewArray"))
-                                .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new Array()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayInitializer"))
-                                .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of []");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewVector"))
-                                .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new Vector.<int>()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfVectorInitializer"))
-                                .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new <int>[]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfTwoDimensionalVectorInitializer"))
-                                .Returns(new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new new <Vector.<int>>[new <int>[0]]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfVector"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of vector[0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfTwoDimensionalVector"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of vector[0][0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfMultidimensionalVector"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of vector[0][0][0][0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayAccess"))
-                                .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of v[0][0].length");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewObject"))
-                                .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
-                                .SetName("Get statement return type of new Object");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfStringInitializer"))
+                            .Returns(new ClassModel {Name = "String", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of \"\"");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of 1");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit_2"))
+                            .Ignore("")
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of 1.0");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfObjectInitializer"))
+                            .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of {}");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewArray"))
+                            .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new Array()");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayInitializer"))
+                            .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of []");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewVector"))
+                            .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new Vector.<int>()");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfVectorInitializer"))
+                            .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new <int>[]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfTwoDimensionalVectorInitializer"))
+                            .Returns(new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new new <Vector.<int>>[new <int>[0]]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfVector"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of vector[0]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfTwoDimensionalVector"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of vector[0][0]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfMultidimensionalVector"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of vector[0][0][0][0]");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayAccess"))
+                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of v[0][0].length");
+                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewObject"))
+                            .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
+                            .SetName("Get statement return type of new Object");
                     }
                 }
 
@@ -2494,8 +2485,11 @@ namespace ASCompletion.Completion
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(false)");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
-                            .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit_2"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1.0)");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Array())");
@@ -2576,10 +2570,12 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean_false"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(false)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Int", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit_2"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1)");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Array"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
@@ -2670,46 +2666,39 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_String")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_String"))
-                                .SetName("new Foo(\"\") -> function Foo(string:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_String2")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_String2"))
-                                .SetName("new Foo(\"\", \"\") -> function Foo(string:String, string1:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Digit"))
-                                .SetName("new Foo(1) -> function Foo(number:Number)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Boolean"))
-                                .SetName("new Foo(true) -> function Foo(boolean:Boolean)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_ObjectInitializer")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ObjectInitializer"))
-                                .SetName("new Foo({}) -> function Foo(object:Object)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_ArrayInitializer")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ArrayInitializer"))
-                                .SetName("new Foo([]) -> function Foo(array:Array)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_VectorInitializer")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_VectorInitializer"))
-                                .SetName("new Foo(new <int>[]) -> function Foo(vector:Vector.<int>)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_TwoDimensionalVectorInitializer")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_TwoDimensionalVectorInitializer"))
-                                .SetName("new Foo(new <Vector.<Vector.<int>>[new <int>[]]) -> function Foo(vector:Vector.<Vector.<int>>)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer"))
-                                .SetName("new Foo(strings[0][0]) -> function Foo(string:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Function")
-                                .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Function"))
-                                .SetName("new Foo(function():void {}) -> function Foo(functionValue:Function)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_String"))
+                            .SetName("new Foo(\"\") -> function Foo(string:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String2")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_String2"))
+                            .SetName("new Foo(\"\", \"\") -> function Foo(string:String, string1:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Digit"))
+                            .SetName("new Foo(1) -> function Foo(intValue:int)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit_2")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Digit_2"))
+                            .SetName("new Foo(1.0) -> function Foo(number:Number)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Boolean"))
+                            .SetName("new Foo(true) -> function Foo(boolean:Boolean)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_ObjectInitializer")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ObjectInitializer"))
+                            .SetName("new Foo({}) -> function Foo(object:Object)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_ArrayInitializer")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ArrayInitializer"))
+                            .SetName("new Foo([]) -> function Foo(array:Array)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_VectorInitializer")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_VectorInitializer"))
+                            .SetName("new Foo(new <int>[]) -> function Foo(vector:Vector.<int>)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_TwoDimensionalVectorInitializer")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_TwoDimensionalVectorInitializer"))
+                            .SetName("new Foo(new <Vector.<Vector.<int>>[new <int>[]]) -> function Foo(vector:Vector.<Vector.<int>>)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer"))
+                            .SetName("new Foo(strings[0][0]) -> function Foo(string:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Function")
+                            .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Function"))
+                            .SetName("new Foo(function():void {}) -> function Foo(functionValue:Function)");
                     }
                 }
 
@@ -2720,40 +2709,35 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_String")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String"))
-                                .SetName("new Foo(\"\") -> function new(string:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_String2")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String2"))
-                                .SetName("new Foo(\"\", \"\") -> function new(string:String, string1:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit"))
-                                .SetName("new Foo(1) -> function new(float:Float)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Boolean"))
-                                .SetName("new Foo(true) -> function new(bool:Bool)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
-                                .SetName("new Foo(strings[0][0]) -> function new(string:String)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
-                                .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_1"))
-                                .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
-                        yield return
-                            new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
-                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_2"))
-                                .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String"))
+                            .SetName("new Foo(\"\") -> function new(string:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String2")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String2"))
+                            .SetName("new Foo(\"\", \"\") -> function new(string:String, string1:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit"))
+                            .SetName("new Foo(1) -> function new(int:Int)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit_2")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit_2"))
+                            .SetName("new Foo(1.0) -> function new(float:Float)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Boolean"))
+                            .SetName("new Foo(true) -> function new(bool:Bool)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
+                            .SetName("new Foo(strings[0][0]) -> function new(string:String)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
+                            .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_1"))
+                            .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
+                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_2"))
+                            .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
                     }
                 }
 
@@ -2985,6 +2969,8 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("set").Returns("setValue");
                         yield return new TestCaseData("class").Returns("classValue");
                         yield return new TestCaseData("interface").Returns("interfaceValue");
+                        yield return new TestCaseData("int").Returns("intValue");
+                        yield return new TestCaseData("uint").Returns("uintValue");
                     }
                 }
 
@@ -3175,6 +3161,10 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateFunction_1", GeneratorJobType.Function, true)
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_1"))
                             .SetName("Generate function. case 1");
+                        yield return new TestCaseData("BeforeGenerateFunction_2", GeneratorJobType.Function, true)
+                            .Ignore("")
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_2"))
+                            .SetName("Generate function. case 2");
                         yield return new TestCaseData("BeforeImplementInterfaceMethods", GeneratorJobType.ImplementInterface, true)
                             .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
                             .SetName("Implement interface methods. Issue 1684")

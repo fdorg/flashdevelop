@@ -14,18 +14,57 @@ namespace AS3Context.Completion
             {
                 var ctx = ASContext.Context;
                 var features = ctx.Features;
-                if (context.SubExpressions != null && context.SubExpressions.Count > 0)
+                // for example: 1.0.<complete>, -1.<complete>, 5e-324.<complete>
+                if (char.IsDigit(expression, 0) || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1)))
                 {
-                    var count = context.SubExpressions.Count;
+                    int p;
+                    int pe1;
+                    var pe2 = -1;
+                    if ((pe1 = expression.IndexOfOrdinal("e-")) != -1 || (pe2 = expression.IndexOfOrdinal("e+")) != -1)
+                    {
+                        p = expression.IndexOf('.');
+                        if (p == -1) p = expression.Length - 1;
+                        else if (p < pe1 || p < pe2)
+                        {
+                            var p2 = expression.IndexOf('.', p + 1);
+                            p = p2 != -1 ? p2 : expression.Length - 1;
+                        }
+                    }
+                    else
+                    {
+                        p = expression.IndexOf('.');
+                        if (p == expression.Length - 1) p = -1;
+                        else if (p != -1)
+                        {
+                            // for example: 1.0.<complete>
+                            if (char.IsDigit(expression[p + 1]))
+                            {
+                                var p2 = expression.IndexOf('.', p + 1);
+                                p = p2 != -1 ? p2 : expression.Length - 1;
+                            }
+                            // for example: -1.valueOf().<complete>
+                            else p = -1;
+                        }
+                    }
+                    if (p != -1)
+                    {
+                        expression = "Number.#." + expression.Substring(p + 1);
+                        return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                    }
+                }
+                if (context.SubExpressions != null)
+                {
+                    var count = context.SubExpressions.Count - 1;
                     // transform #2~.#1~.#0~ to #2~.[].[]
-                    for (var i = 0; i < count; i++)
+                    for (var i = 0; i <= count; i++)
                     {
                         var subExpression = context.SubExpressions[i];
                         if (subExpression.Length < 2 || subExpression[0] != '[') continue;
                         // for example: [].<complete>
-                        if (expression[0] == '#' && i == count - 1)
+                        if (expression[0] == '#' && i == count)
                         {
                             var type = ctx.ResolveType(features.arrayKey, inFile);
+                            if (type.IsVoid()) break;
                             expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
                             context.SubExpressions.RemoveAt(i);
                             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
@@ -34,8 +73,7 @@ namespace AS3Context.Completion
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
                 }
-                var c = expression[0];
-                if (c == '"' || c == '\'')
+                if (expression.Length > 1 && expression[0] is char c && (c == '"' || c == '\''))
                 {
                     var type = ctx.ResolveType(features.stringKey, inFile);
                     // for example: ""|, ''|

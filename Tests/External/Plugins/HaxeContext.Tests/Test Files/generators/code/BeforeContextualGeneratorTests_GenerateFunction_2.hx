@@ -9,6 +9,6 @@ class EFoo {
 				.concat(["1", "2", "/", "\\"])
 				.toString(),
 			(v:String)
-		], 1, "123", {x:Int, y:Int});
+		], 1, 1.0, "123", {x:Int, y:Int});
 	}
 }

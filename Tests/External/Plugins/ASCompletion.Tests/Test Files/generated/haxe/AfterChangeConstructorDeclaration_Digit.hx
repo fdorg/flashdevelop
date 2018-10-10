@@ -6,7 +6,7 @@ class Main {
 }
 
 class Some {
-	public function new(float:Float) {
+	public function new(int:Int) {
 		
 	}
 }

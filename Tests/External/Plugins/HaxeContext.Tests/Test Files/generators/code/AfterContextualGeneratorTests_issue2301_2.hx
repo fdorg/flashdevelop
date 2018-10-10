@@ -1,7 +1,7 @@
 ﻿package;
 class EFoo {
 	public function new() {
-		Enum.Foo(1, "", true)
+		Enum.Foo(1.0, "", true)
 	}
 }
 
