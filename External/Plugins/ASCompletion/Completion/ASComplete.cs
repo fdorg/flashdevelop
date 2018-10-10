@@ -4712,7 +4712,11 @@ namespace ASCompletion.Completion
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            if (result.Type != null && result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+            if (result.Type != null)
+            {
+                if (result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+                return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
+            }
             return null;
         }
 

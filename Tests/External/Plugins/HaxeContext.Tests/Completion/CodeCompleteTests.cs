@@ -241,7 +241,21 @@ namespace HaXeContext.Completion
             }
         }
 
-        [Test, TestCaseSource(nameof(GetToolTipTextTestCases))]
+        static IEnumerable<TestCaseData> GetToolTipTextIssue2439TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetToolTipText_issue2439_1")
+                    .SetName("var type:Class|Issue2439_1. Issue 2439. Case 1")
+                    .Returns("public class ClassIssue2439_1");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(GetToolTipTextTestCases)),
+            TestCaseSource(nameof(GetToolTipTextIssue2439TestCases)),
+        ]
         public string GetToolTipText(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
