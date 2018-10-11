@@ -847,6 +847,14 @@
     <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_3.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_4.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\DelegateMethodsValidator_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_issue2444_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_issue2444_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_issue2444_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_issue2444_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_issue2444_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_issue2444_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_issue2444_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_issue2444_4.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

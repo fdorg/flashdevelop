@@ -4575,6 +4575,7 @@ namespace ASCompletion.Completion
             var arrCount = 0;
             var hadWS = false;
             var stop = false;
+            var exprStarted = false;
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
@@ -4590,7 +4591,11 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
-                if (c == '(' && arrCount == 0) parCount++;
+                if (c == '(' && arrCount == 0)
+                {
+                    parCount++;
+                    exprStarted = true;
+                }
                 else if (c == ')' && arrCount == 0)
                 {
                     parCount--;
@@ -4601,6 +4606,7 @@ namespace ASCompletion.Completion
                 {
                     if (stop) break;
                     brCount++;
+                    exprStarted = true;
                 }
                 else if (c == '}' && parCount == 0 && arrCount == 0)
                 {
@@ -4608,7 +4614,11 @@ namespace ASCompletion.Completion
                     if (brCount == 0) result = statementEnd;
                     if (brCount < 0) break;
                 }
-                else if (c == '[' && parCount == 0) arrCount++;
+                else if (c == '[' && parCount == 0)
+                {
+                    arrCount++;
+                    exprStarted = true;
+                }
                 else if (c == ']' && parCount == 0)
                 {
                     arrCount--;
@@ -4627,8 +4637,24 @@ namespace ASCompletion.Completion
                         else if (hadWS) break;
                         stop = true;
                         result = statementEnd;
+                        exprStarted = true;
                     }
                     else if (c <= ' ') hadWS = true;
+                    else if (c == '.')
+                    {
+                        // for example: 0.0
+                        if (!exprStarted) break;
+                        if (statementEnd >= endPos || !char.IsDigit((char) sci.CharAt(statementEnd))) break;
+                        var p = statementEnd - 2;
+                        if (p < 0 || !char.IsDigit((char) sci.CharAt(p))) break;
+                    }
+                    else if ((c == '-' || c == '+'))
+                    {
+                        if (!exprStarted) continue;
+                        var p = statementEnd - 2;
+                        // for example: 5e-324
+                        if (p < 1 || (sci.CharAt(p) != 'e' && !char.IsDigit((char) sci.CharAt(p - 1)))) break;
+                    }
                     else break;
                 }
             }
