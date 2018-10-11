@@ -1,6 +1,6 @@
 ﻿package;
-class Issue2444_4 {
-	var v = 2.225e-308;
+class Issue2444_5 {
+	var v = ++1;
 	public function new() {
 		v;$(EntryPoint)
 	}
