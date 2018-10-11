@@ -2921,11 +2921,7 @@ namespace ASCompletion.Completion
                     if (features.hasInference)
                     {
                         var member = result.Member;
-                        if (member != null && member.Flags.HasFlag(FlagType.Variable) && member.Type == null)
-                        {
-                            context.CodeComplete.InferVariableType(local, member);
-                            if (string.IsNullOrEmpty(member.Type)) member.Type = context.ResolveType(features.dynamicKey, null).Name;
-                        }
+                        if (member != null && member.Type == null) context.CodeComplete.InferVariableType(local, member);
                     }
                     return result;
                 }
@@ -3064,6 +3060,7 @@ namespace ASCompletion.Completion
 
         protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
+            if (!var.Flags.HasFlag(FlagType.Variable) && !var.Flags.HasFlag(FlagType.ParameterVar)) return;
             var p = declarationLine.IndexOf(';');
             var text = declarationLine.TrimEnd();
             if (p < 0) p = text.Length;
@@ -3071,7 +3068,8 @@ namespace ASCompletion.Completion
             // resolve expression
             var expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
             if (string.IsNullOrEmpty(expr.Value)) return;
-            var result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
+            var ctx = ASContext.Context;
+            var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, false);
             if (result.IsNull()) return;
             if (result.Type != null && !result.Type.IsVoid())
             {
@@ -3081,6 +3079,7 @@ namespace ASCompletion.Completion
             else if (result.Member != null)
             {
                 var.Type = result.Member.Type;
+                if (string.IsNullOrEmpty(var.Type)) var.Type = ctx.ResolveType(ctx.Features.objectKey, null).Name;
                 var.Flags |= FlagType.Inferred;
             }
         }
