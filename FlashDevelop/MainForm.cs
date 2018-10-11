@@ -3288,11 +3288,13 @@ namespace FlashDevelop
                 ErrorManager.ShowError(ex);
             }
         }
-        private Boolean DirIsImportant(String dir)
+        
+        private bool DirIsImportant(string dir)
         {
-            String full = Path.GetDirectoryName(dir);
-            String[] importants = new String[3] { PathHelper.UserPluginDir, PathHelper.UserLibraryDir, PathHelper.UserProjectsDir };
-            return Array.IndexOf(importants, full) > -1;
+            var full = Path.GetDirectoryName(dir);
+            return full == PathHelper.UserPluginDir
+                || full == PathHelper.UserLibraryDir
+                || full == PathHelper.UserProjectsDir;
         }
 
         /// <summary>
