@@ -3360,16 +3360,19 @@ namespace FlashDevelop
         /// <summary>
         /// Moves the user to the matching brace
         /// </summary>
-        public void GoToMatchingBrace(Object sender, System.EventArgs e)
+        public void GoToMatchingBrace(object sender, EventArgs e)
         {
-            ScintillaControl sci = Globals.SciControl;
-            Int32 curPos = sci.CurrentPos;
-            Char brace = (Char)sci.CharAt(curPos);
-            if (brace != '{' && brace != '[' && brace != '(' && brace != '}' && brace != ']' && brace != ')')
+            var sci = CurrentDocument.SciControl;
+            var curPos = sci.CurrentPos;
+            char c;
+            if (curPos > 0)
             {
-                curPos = sci.CurrentPos - 1;
+                c = (char) sci.CharAt(curPos - 1);
+                if (c  == '{' || c == '[' || c == '(' || c == ')' || c == ']' || c == '}') curPos--;
             }
-            Int32 bracePosEnd = sci.BraceMatch(curPos);
+            c = (char)sci.CharAt(curPos);
+            if (c != '{' && c != '[' && c != '(' && c != '}' && c != ']' && c != ')') curPos--;
+            var bracePosEnd = sci.BraceMatch(curPos);
             if (bracePosEnd != -1) sci.GotoPos(bracePosEnd + 1);
         }
 
