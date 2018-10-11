@@ -1812,6 +1812,18 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("'${1$(EntryPoint)2345}'; //")
                         .Ignore("")
                         .Returns("'${12345".Length);
+                    yield return new TestCaseData("-1; //")
+                        .Returns("-1".Length);
+                    yield return new TestCaseData("--1; //")
+                        .Returns("--1".Length);
+                    yield return new TestCaseData("+1; //")
+                        .Returns("+1".Length);
+                    yield return new TestCaseData("++1; //")
+                        .Returns("++1".Length);
+                    yield return new TestCaseData("5e-324; //")
+                        .Returns("5e-324".Length);
+                    yield return new TestCaseData("2.225e-308; //")
+                        .Returns("2.225e-308".Length);
                 }
             }
 

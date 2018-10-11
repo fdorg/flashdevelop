@@ -451,8 +451,12 @@ namespace HaXeContext.Completion
             {
                 var ctx = ASContext.Context;
                 var features = ctx.Features;
-                // for example: 1.0.<complete>, -1.<complete>, 5e-324.<complete>
-                if (char.IsDigit(expression, 0) || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1)))
+                // for example: 1.0.<complete>, 5e-324.<complete>
+                if (char.IsDigit(expression, 0)
+                    // for example: -1.<complete>
+                    || (expression.Length > 1 && expression[0] == '-' && char.IsDigit(expression, 1))
+                    // for example: --1.<complete>
+                    || (expression.Length > 2 && expression[0] == '-' && expression[1] == '-' && char.IsDigit(expression, 2)))
                 {
                     int p;
                     int pe1;
