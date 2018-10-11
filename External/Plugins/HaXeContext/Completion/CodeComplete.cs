@@ -139,14 +139,20 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
+            var ctx = ASContext.Context;
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
             if (!m.Success)
             {
                 base.InferVariableType(sci, local, var);
+                if (string.IsNullOrEmpty(var.Type) && (var.Flags.HasFlag(FlagType.Variable) ||
+                                                       var.Flags.HasFlag(FlagType.Getter) ||
+                                                       var.Flags.HasFlag(FlagType.Setter)))
+                {
+                    var.Type = ctx.ResolveType(ctx.Features.dynamicKey, null).Name;
+                }
                 return;
             }
-            var ctx = ASContext.Context;
             var currentModel = ctx.CurrentModel;
             var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
             var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
@@ -302,7 +308,7 @@ namespace HaXeContext.Completion
                 InferLocalVariableType(sci, declarationLine, rvalueStart, local, var);
                 return;
             }
-            if (var.Flags.HasFlag(FlagType.Variable))
+            if (var.Flags.HasFlag(FlagType.Variable) || var.Flags.HasFlag(FlagType.Getter) || var.Flags.HasFlag(FlagType.Setter))
             {
                 var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, true);
                 var expr = GetExpressionType(sci, rvalueEnd, false, true);
@@ -324,9 +330,10 @@ namespace HaXeContext.Completion
 
         void InferLocalVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
+            var ctx = ASContext.Context;
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
+            var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
             var arrCount = 0;
             var parCount = 0;
             var genCount = 0;
