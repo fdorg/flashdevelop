@@ -21,13 +21,12 @@ namespace PluginCore.BBCode
 
             String outStr = "";
             List<IndexTree> flat = IndexTree.flattenTree(tree);
-            int idxA, idxB;
             int i = -1;
             int l = flat.Count;
             while (++i < l)
             {
-                idxA = flat[i].indexA + flat[i].offsetA;
-                idxB = flat[i].indexB + flat[i].offsetB;
+                var idxA = flat[i].indexA + flat[i].offsetA;
+                var idxB = flat[i].indexB + flat[i].offsetB;
 
                 if (idxA > idxB)
                     return input;
@@ -104,9 +103,9 @@ namespace PluginCore.BBCode
 
 
             if (style.fontSize > 0)
-                fontSize = (float)style.fontSize;
+                fontSize = style.fontSize;
             else if (style.fontSize < 0)
-                fontSize += (float)style.fontSize;
+                fontSize += style.fontSize;
 
             if (!string.IsNullOrEmpty(style.fontName))
                 fontName = style.fontName;
@@ -160,22 +159,18 @@ namespace PluginCore.BBCode
             if (flatText == input)
                 return;
 
-            String currText;
-            String currCorrText;
             int offsetA = 0;
-            int offsetB = 0;
-            int idxA, idxB;
             int i = -1;
             int l = flatTree.Count;
             while (++i < l)
             {
-                idxA = flatTree[i].indexA;
-                idxB = flatTree[i].indexB;
+                var idxA = flatTree[i].indexA;
+                var idxB = flatTree[i].indexB;
 
-                currText = flatText.Substring(idxA, idxB - idxA);
-                currCorrText = _replaceEnclosures(currText);
+                var currText = flatText.Substring(idxA, idxB - idxA);
+                var currCorrText = _replaceEnclosures(currText);
 
-                offsetB = currCorrText.Length + idxA - idxB;
+                var offsetB = currCorrText.Length + idxA - idxB;
 
                 applyStyleToTextbox(getCascadedNodeStyle(flatTree[i]),
                                     tf,

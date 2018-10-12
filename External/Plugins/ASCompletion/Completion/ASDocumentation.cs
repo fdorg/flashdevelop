@@ -28,35 +28,35 @@ namespace ASCompletion.Completion
     
     public class ASDocumentation
     {
-        static private List<ICompletionListItem> docVariables;
+        private static List<ICompletionListItem> docVariables;
         
         #region regular_expressions
-        static private Regex re_tags = new Regex("<[/]?(p|br)[/]?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex re_tags = new Regex("<[/]?(p|br)[/]?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         #endregion
         
         #region Comment generation
-        static public bool OnChar(ScintillaControl Sci, int Value, int position, int style)
+        static public bool OnChar(ScintillaControl sci, int value, int position, int style)
         {
             if (style == 3 || style == 124)
             {
-                switch (Value)
+                switch (value)
                 {
                     // documentation tag
-                    case '@': return HandleDocTagCompletion(Sci);
+                    case '@': return HandleDocTagCompletion(sci);
                     
                     // documentation bloc
-                    case '*': return ASContext.Context.DocumentationGenerator.ContextualGenerator(Sci, position, new List<ICompletionListItem>());
+                    case '*': return ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, position, new List<ICompletionListItem>());
                 }
             }
             return false;
         }
 
-        static private bool HandleDocTagCompletion(ScintillaControl Sci)
+        static private bool HandleDocTagCompletion(ScintillaControl sci)
         {
             if (ASContext.CommonSettings.JavadocTags == null || ASContext.CommonSettings.JavadocTags.Length == 0)
                 return false;
 
-            string txt = Sci.GetLine(Sci.CurrentLine).TrimStart();
+            string txt = sci.GetLine(sci.CurrentLine).TrimStart();
             if (!Regex.IsMatch(txt, "^\\*[\\s]*\\@"))
                 return false;
             
@@ -106,12 +106,12 @@ namespace ASCompletion.Completion
         
         #region Tooltips
 
-        static private Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
-        static private Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
+        private static readonly Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
+        private static readonly Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
 
         static public CommentBlock ParseComment(string comment)
         {
@@ -133,14 +133,18 @@ namespace ASCompletion.Completion
             });
             comment = reStripTags.Replace(comment, "");
             string[] lines = reNewLine.Split(comment);
-            char[] trim = new char[] { ' ', '\t', '*' };
+            char[] trim = { ' ', '\t', '*' };
             bool addNL = false;
             comment = "";
             foreach (string line in lines)
             {
                 string temp = line.Trim(trim);
                 if (addNL) comment += '\n' + temp;
-                else { comment += temp; addNL = true; }
+                else
+                {
+                    comment += temp;
+                    addNL = true;
+                }
             }
             // extraction
             CommentBlock cb = new CommentBlock();
@@ -156,11 +160,10 @@ namespace ASCompletion.Completion
             else cb.Description = "";
             cb.TagName = new ArrayList();
             cb.TagDesc = new ArrayList();
-            
-            Group gTag;
-            for(int i=0; i<tags.Count; i++)
+
+            for(int i = 0; i < tags.Count; i++)
             {
-                gTag = tags[i].Groups["tag"];
+                var gTag = tags[i].Groups["tag"];
                 string tag = gTag.Value;
                 int start = gTag.Index+gTag.Length;
                 int end = (i<tags.Count-1) ? tags[i+1].Index : comment.Length;
@@ -210,11 +213,8 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public string RemoveHTMLTags(string tip)
-        {
-            return re_tags.Replace(tip, "");
-        }
-        
+        static public string RemoveHTMLTags(string tip) => re_tags.Replace(tip, "");
+
         /// <summary>
         /// Short contextual details to display in tips
         /// </summary>
@@ -279,10 +279,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Split multiline text and return 2 lines or less of text
         /// </summary>
-        static public string Get2LinesOf(string text)
-        {
-            return Get2LinesOf(text, false);
-        }
+        static public string Get2LinesOf(string text) => Get2LinesOf(text, false);
 
         static public string Get2LinesOf(string text, bool alwaysAddShortcutDocs)
         {
