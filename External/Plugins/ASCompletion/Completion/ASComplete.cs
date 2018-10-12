@@ -3394,43 +3394,47 @@ namespace ASCompletion.Completion
             expression.Position = position;
             expression.Separator = " ";
 
-            // file's member declared at this position
-            expression.ContextMember = context.CurrentMember;
             int minPos = 0;
-            if (expression.ContextMember != null)
+            // file's member declared at this position
+            if (context.CurrentMember is MemberModel currentMember
+                && position >= sci.PositionFromLine(currentMember.LineFrom)
+                && position <= sci.LineEndPosition(currentMember.LineTo))
             {
-                minPos = sci.PositionFromLine(expression.ContextMember.LineFrom);
-                StringBuilder sbBody = new StringBuilder();
-                for (int i = expression.ContextMember.LineFrom; i <= expression.ContextMember.LineTo; i++)
+                expression.ContextMember = currentMember;
+                minPos = sci.PositionFromLine(currentMember.LineFrom);
+                var sbBody = new StringBuilder();
+                for (int i = currentMember.LineFrom; i <= currentMember.LineTo; i++)
                     sbBody.Append(sci.GetLine(i));
                 var body = sbBody.ToString();
-
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
-
-                if ((expression.ContextMember.Flags & hasBody) > 0)
+                if ((currentMember.Flags & hasBody) > 0)
                 {
-                    expression.ContextFunction = expression.ContextMember;
-                    expression.FunctionOffset = expression.ContextMember.LineFrom;
-
-                    Match mStart = Regex.Match(body, "(\\)|[a-z0-9*.,-<>])\\s*{", RegexOptions.IgnoreCase);
-                    if (mStart.Success)
+                    expression.ContextFunction = currentMember;
+                    expression.FunctionOffset = currentMember.LineFrom;
+                    var m = Regex.Match(body, "(\\)|[a-z0-9*.,-<>])\\s*{", RegexOptions.IgnoreCase);
+                    if (m.Success)
                     {
                         // cleanup function body & offset
-                        int pos = mStart.Index + mStart.Length - 1;
-                        expression.BeforeBody = (position < sci.PositionFromLine(expression.ContextMember.LineFrom) + pos);
+                        int pos = m.Index + m.Length - 1;
+                        expression.BeforeBody = (position < sci.PositionFromLine(currentMember.LineFrom) + pos);
                         string pre = body.Substring(0, pos);
                         for (int i = 0; i < pre.Length - 1; i++)
-                            if (pre[i] == '\r') { expression.FunctionOffset++; if (pre[i + 1] == '\n') i++; }
+                            if (pre[i] == '\r')
+                            {
+                                expression.FunctionOffset++;
+                                if (pre[i + 1] == '\n') i++;
+                            }
                             else if (pre[i] == '\n') expression.FunctionOffset++;
+
                         body = body.Substring(pos);
                     }
                     expression.FunctionBody = body;
                 }
                 else
                 {
-                    int eqPos = body.IndexOf('=');
-                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(expression.ContextMember.LineFrom) + eqPos);
+                    var eqPos = body.IndexOf('=');
+                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(currentMember.LineFrom) +eqPos);
                 }
             }
 
@@ -3441,22 +3445,22 @@ namespace ASCompletion.Completion
             var features = context.Features;
             var sb = new StringBuilder();
             var sbSub = new StringBuilder();
-            int subCount = 0;
-            char c = ' ';
+            var subCount = 0;
+            var c = ' ';
             var startPosition = position;
-            int positionExpression = position;
-            int arrCount = 0;
-            int parCount = 0;
-            int genCount = 0;
+            var positionExpression = position;
+            var arrCount = 0;
+            var parCount = 0;
+            var genCount = 0;
             var braCount = 0;
             var dQuotes = 0;
             var sQuotes = 0;
-            bool hasGenerics = features.hasGenerics;
-            bool hadWS = false;
-            bool hadDot = ignoreWhiteSpace;
-            int dotCount = 0;
-            bool inRegex = false;
-            char dot = features.dot[features.dot.Length - 1];
+            var hasGenerics = features.hasGenerics;
+            var hadWS = false;
+            var hadDot = ignoreWhiteSpace;
+            var dotCount = 0;
+            var inRegex = false;
+            var dot = features.dot[features.dot.Length - 1];
             while (position > minPos)
             {
                 position--;
