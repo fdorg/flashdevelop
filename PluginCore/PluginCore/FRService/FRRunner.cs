@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft;
 
 namespace PluginCore.FRService
 {
@@ -28,6 +31,8 @@ namespace PluginCore.FRService
         /// Properties of the class
         /// </summary>
         private BackgroundWorker backgroundWorker;
+
+        CancellationTokenSource cancellationToken;
 
         /// <summary>
         /// Events of the class
@@ -121,6 +126,38 @@ namespace PluginCore.FRService
             backgroundWorker.RunWorkerAsync(configuration);
         }
 
+        public async Task SearchAsync2(FRConfiguration configuration)
+        {
+            var files = configuration?.GetFiles();
+            if (files == null || files.Count == 0) return;
+            IProgress<int> progress = null;
+            if (ProgressReport != null) progress = new Progress<int>(value => ProgressReport?.Invoke(value));
+            cancellationToken = new CancellationTokenSource();
+            var results = new FRResults();
+            await Task.Factory.StartNew(() =>
+            {
+                var search = configuration.GetSearch();
+                var count = 0;
+                var total = files.Count;
+                var lastPercent = 0;
+                foreach (var file in files)
+                {
+                    var src = configuration.GetSource(file);
+                    search.SourceFile = file;
+                    var matches = search.Matches(src);
+                    results[file] = matches;
+                    if (matches.Count > 0) FRSearch.ExtractResultsLineText(matches, src);
+                    if (progress != null)
+                    {
+                        count++;
+                        var percent = (100 * count) / total;
+                        if (lastPercent != percent) progress.Report(percent);
+                    }
+                }
+            }, cancellationToken.Token);
+            Finished?.Invoke(results);
+        }
+
         /// <summary>
         /// Do a background text search/replace
         /// NOTE: You need to listen to the runner's events
@@ -137,6 +174,7 @@ namespace PluginCore.FRService
         /// </summary>
         public void CancelAsync()
         {
+            cancellationToken?.Cancel();
             backgroundWorker?.CancelAsync();
         }
 
@@ -199,7 +237,6 @@ namespace PluginCore.FRService
                     return;
                 }
                 // get files
-                Int32 count = 0;
                 List<string> files = configuration.GetFiles();
                 if (files == null || files.Count == 0)
                 {
@@ -207,6 +244,7 @@ namespace PluginCore.FRService
                     return;
                 }
 
+                Int32 count = 0;
                 FRResults results = new FRResults();
                 FRSearch search = configuration.GetSearch();
                 string replacement = configuration.Replacement;

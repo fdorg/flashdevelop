@@ -4,6 +4,7 @@ using System.ComponentModel;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace CodeRefactor.Controls
 {
@@ -106,6 +107,7 @@ namespace CodeRefactor.Controls
         /// </summary>
         public void UpdateStatusMessage(String message)
         {
+            TraceManager.Add(message);
             this.labelStatus.Text = TextHelper.GetString("Info.Status") + " " + message;
             this.labelStatus.Update();
         }

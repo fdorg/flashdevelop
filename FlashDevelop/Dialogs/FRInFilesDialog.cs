@@ -570,7 +570,7 @@ namespace FlashDevelop.Dialogs
                     this.runner = new FRRunner();
                     this.runner.ProgressReport += this.RunnerProgress;
                     this.runner.Finished += this.FindFinished;
-                    this.runner.SearchAsync(config);
+                    this.runner.SearchAsync2(config);
                     FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
                     FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
