@@ -287,6 +287,11 @@ namespace HaXeContext.Completion
             var word = sci.GetWordRight(rvalueStart, true);
             // for example: var v = v;
             if (word == local.Value) return;
+            if (word == "new")
+            {
+                rvalueStart = sci.WordEndPosition(rvalueStart, false) + 1;
+                word = sci.GetWordRight(rvalueStart, true);
+            }
             var ctx = ASContext.Context;
             /**
              * for example:
@@ -305,41 +310,30 @@ namespace HaXeContext.Completion
             }
             if (var.Flags.HasFlag(FlagType.LocalVar))
             {
-                InferLocalVariableType(sci, declarationLine, rvalueStart, local, var);
+                if (!InferVariableType(sci, rvalueStart, var)) base.InferVariableType(sci, declarationLine, rvalueStart, local, var);
                 return;
             }
             if (var.Flags.HasFlag(FlagType.Variable) || var.Flags.HasFlag(FlagType.Getter) || var.Flags.HasFlag(FlagType.Setter))
             {
-                var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, true);
-                var expr = GetExpressionType(sci, rvalueEnd, false, true);
-                var type = expr.Type;
-                if (type == null || type.IsVoid())
-                {
-                    if (expr.Member != null) type = ctx.ResolveType(expr.Member.Type, ctx.CurrentModel);
-                    else
-                    {
-                        var token = sci.GetTextRange(rvalueStart, rvalueEnd);
-                        type = ctx.ResolveToken(token, ctx.CurrentModel);
-                    }
-                }
-                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
-                var.Type = type.QualifiedName;
-                var.Flags |= FlagType.Inferred;
+                InferVariableType(sci, rvalueStart, var);
             }
         }
 
-        void InferLocalVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
+        bool InferVariableType(ScintillaControl sci, int rvalueStart, MemberModel var)
         {
             var ctx = ASContext.Context;
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
             var arrCount = 0;
             var parCount = 0;
             var genCount = 0;
             var hadDot = false;
             var isInExpr = false;
-            for (var i = rvalueEnd; i < methodEndPosition; i++)
+            var lineTo = var.Flags.HasFlag(FlagType.LocalVar) || var.Flags.HasFlag(FlagType.ParameterVar)
+                ? ctx.CurrentMember.LineTo
+                : ctx.CurrentClass.LineTo;
+            var endPosition = sci.LineEndPosition(lineTo);
+            for (var i = rvalueEnd; i < endPosition; i++)
             {
                 if (arrCount == 0 && parCount == 0 && genCount == 0)
                 {
@@ -395,7 +389,7 @@ namespace HaXeContext.Completion
                 if (c == '.')
                 {
                     hadDot = true;
-                    rvalueEnd = ExpressionEndPosition(sci, i + 1, methodEndPosition);
+                    rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
                 }
                 isInExpr = true;
             }
@@ -404,15 +398,15 @@ namespace HaXeContext.Completion
             {
                 var.Type = expr.Type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
-                return;
+                return true;
             }
             if (expr.Member != null)
             {
                 var.Type = expr.Member.Type;
                 var.Flags |= FlagType.Inferred;
-                return;
+                return true;
             }
-            base.InferVariableType(sci, declarationLine, rvalueStart, local, var);
+            return false;
         }
 
         static ClassModel InferTypedefType(ScintillaControl sci, MemberModel expr)

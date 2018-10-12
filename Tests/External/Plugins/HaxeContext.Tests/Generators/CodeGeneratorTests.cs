@@ -897,6 +897,25 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarInferVarIssue2450TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2450_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2450_1"))
+                    .SetName("Infer var type. Issue 2450. Case 1.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2450_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2450_2"))
+                    .SetName("Infer var type. Issue 2450. Case 2.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2450_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2450_3"))
+                    .SetName("Infer var type. Issue 2450. Case 3.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_issue2450_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_issue2450_4"))
+                    .SetName("Infer var type. Issue 2450. Case 4.");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue220TestCases
         {
             get
@@ -1324,6 +1343,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarInferVarIssue2385TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferVarIssue2444TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferVarIssue2447TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarInferVarIssue2450TestCases)),
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(AddToInterfaceIssue1733TestCases)),
