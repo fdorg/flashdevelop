@@ -56,7 +56,7 @@ namespace AppMan
 
         /**
         * Static type and state constants
-        */ 
+        */
         public static String TYPE_LINK = "Link";
         public static String TYPE_EXECUTABLE = "Executable";
         public static String TYPE_ARCHIVE = "Archive";
@@ -178,6 +178,9 @@ namespace AppMan
         /// </summary>
         private void InitializeWebClient()
         {
+            // Use TLS v1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolTypeExtensions.Tls12;
+
             this.webClient = new WebClient();
             this.webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.DownloadProgressChanged);
             this.webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(this.DownloadFileCompleted);
@@ -344,13 +347,13 @@ namespace AppMan
         /// </summary>
         private void MainFormHelpRequested(Object sender, HelpEventArgs e)
         {
-            try 
-            { 
-                Process.Start(PathHelper.HELP_ADR); 
+            try
+            {
+                Process.Start(PathHelper.HELP_ADR);
             }
-            catch (Exception ex) 
-            { 
-                DialogHelper.ShowError(ex.ToString()); 
+            catch (Exception ex)
+            {
+                DialogHelper.ShowError(ex.ToString());
             }
         }
 
@@ -724,7 +727,7 @@ namespace AppMan
             {
                 e.Graphics.FillRectangle(SystemBrushes.Highlight, e.Bounds);
             }
-            else e.DrawDefault = true; 
+            else e.DrawDefault = true;
         }
         private void ListViewDrawColumnHeader(Object sender, DrawListViewColumnHeaderEventArgs e)
         {
@@ -948,7 +951,7 @@ namespace AppMan
         /// </summary>
         private void RunExecutableProcess(String file, Boolean wait)
         {
-            try 
+            try
             {
                 #if FLASHDEVELOP
                 if (file.ToLower().EndsWith(".fdz"))
@@ -1079,7 +1082,7 @@ namespace AppMan
                 this.progressBar.Value = 0;
             }
             catch (Exception ex)
-            { 
+            {
                 DialogHelper.ShowError(ex.ToString());
             }
             finally
@@ -1327,7 +1330,7 @@ namespace AppMan
         {
             try
             {
-                
+
                 this.progressBar.Style = ProgressBarStyle.Continuous;
                 TaskbarProgress.SetState(this.Handle, TaskbarProgress.TaskbarStates.Normal);
                 if (this.fileQueue.Count > 0)
@@ -1515,7 +1518,7 @@ namespace AppMan
         /// </summary>
         private Boolean VerifyFile(String checksum, String file)
         {
-            try 
+            try
             {
                 using (MD5 md5 = MD5.Create())
                 {

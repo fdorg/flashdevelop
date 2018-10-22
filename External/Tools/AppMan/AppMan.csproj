@@ -72,6 +72,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityProtocolTypeExtensions.cs" />
+    <Compile Include="SslProtocolsExtensions.cs" />
     <Compile Include="Utilities\ArgProcessor.cs" />
     <Compile Include="Utilities\PathHelper.cs" />
     <Compile Include="Utilities\TaskbarProgress.cs" />
