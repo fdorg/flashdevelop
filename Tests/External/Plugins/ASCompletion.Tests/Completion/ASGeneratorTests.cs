@@ -2463,7 +2463,7 @@ namespace ASCompletion.Completion
                     SetSrc(sci, sourceText);
                     var currentLine = sci.CurrentLine;
                     var returnType = ASGenerator.GetStatementReturnType(sci, ASContext.Context.CurrentClass, sci.GetLine(currentLine), sci.PositionFromLine(currentLine));
-                    var result = returnType.resolve.Type;
+                    var result = returnType.Resolve.Type;
                     return result;
                 }
             }
