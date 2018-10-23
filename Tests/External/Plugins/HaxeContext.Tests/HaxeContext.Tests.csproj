@@ -872,6 +872,9 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2456_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2456_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2456_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2455_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2455_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2455_3.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

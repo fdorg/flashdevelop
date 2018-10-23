@@ -45,6 +45,13 @@ namespace HaXeContext.Generators
             base.ContextualGenerator(sci, position, expr, options);
         }
 
+        protected override bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
+        {
+            return base.CanShowAssignStatementToVariable(sci, expr)
+                && ((expr.Context.WordBefore != "cast" || expr.Context.WordBefore != "untyped")
+                    && sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return");
+        }
+
         /// <inheritdoc />
         protected override bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
