@@ -1317,6 +1317,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateGetterSetter_issue2456_1"))
                     .SetName("Generate getter and setter. Issue 2456. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2456");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2456_2", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2456_1"))
+                    .SetName("Generate getter and setter. Issue 2456. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2456");
             }
         }
 

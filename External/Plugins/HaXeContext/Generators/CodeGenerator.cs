@@ -7,6 +7,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -266,6 +267,19 @@ namespace HaXeContext.Generators
             {
                 sci.EndUndoAction();
             }
+        }
+
+        protected override FoundDeclaration GetDeclarationAtLine(int line)
+        {
+            var result = base.GetDeclarationAtLine(line);
+            if (result.Member is MemberModel member
+                && string.IsNullOrEmpty(member.Type)
+                && member.Flags.HasFlag(FlagType.Variable)
+                && member.Flags.HasFlag(FlagType.Getter | FlagType.Setter))
+            {
+                ((CodeComplete)ASContext.Context.CodeComplete).InferVariableType(ASContext.CurSciControl, member);
+            }
+            return result;
         }
 
         static void MakeProperty(ScintillaControl sci, MemberModel member, string args)
