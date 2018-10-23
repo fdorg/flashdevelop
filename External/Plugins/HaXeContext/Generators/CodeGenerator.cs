@@ -274,8 +274,9 @@ namespace HaXeContext.Generators
             var result = base.GetDeclarationAtLine(line);
             if (result.Member is MemberModel member
                 && string.IsNullOrEmpty(member.Type)
-                && member.Flags.HasFlag(FlagType.Variable)
-                && member.Flags.HasFlag(FlagType.Getter | FlagType.Setter))
+                && (member.Flags.HasFlag(FlagType.Variable)
+                    || member.Flags.HasFlag(FlagType.Getter)
+                    || member.Flags.HasFlag(FlagType.Setter)))
             {
                 ((CodeComplete)ASContext.Context.CodeComplete).InferVariableType(ASContext.CurSciControl, member);
             }
