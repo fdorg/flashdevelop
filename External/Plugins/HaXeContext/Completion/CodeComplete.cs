@@ -136,6 +136,11 @@ namespace HaXeContext.Completion
             return false;
         }
 
+        public void InferVariableType(ScintillaControl sci, MemberModel member)
+        {
+            InferVariableType(sci, new ASExpr(), member);
+        }
+
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
@@ -145,9 +150,10 @@ namespace HaXeContext.Completion
             if (!m.Success)
             {
                 base.InferVariableType(sci, local, var);
-                if (string.IsNullOrEmpty(var.Type) && (var.Flags.HasFlag(FlagType.Variable)
-                                                       || var.Flags.HasFlag(FlagType.Getter)
-                                                       || var.Flags.HasFlag(FlagType.Setter)))
+                if (string.IsNullOrEmpty(var.Type)
+                    && (var.Flags.HasFlag(FlagType.Variable)
+                        || var.Flags.HasFlag(FlagType.Getter)
+                        || var.Flags.HasFlag(FlagType.Setter)))
                 {
                     var.Type = ctx.ResolveType(ctx.Features.dynamicKey, null).Name;
                 }

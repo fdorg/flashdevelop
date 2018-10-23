@@ -679,42 +679,26 @@ namespace ASCompletion.Completion
             position = sci.WordEndPosition(position + 1, true);
             sci.SetSel(position, position);
             c = (char)sci.CharAt(position);
-            if (c <= 32) if (closeBrace) sci.ReplaceSel(");"); else sci.ReplaceSel(";");
+            if (c <= 32) sci.ReplaceSel(closeBrace ? ");" : ";");
 
             sci.SetSel(position, position);
         }
 
-        protected static FoundDeclaration GetDeclarationAtLine(int line)
+        protected virtual FoundDeclaration GetDeclarationAtLine(int line)
         {
-            FoundDeclaration result = new FoundDeclaration();
-            FileModel model = ASContext.Context.CurrentModel;
-
-            foreach (MemberModel member in model.Members)
+            var result = new FoundDeclaration();
+            var model = ASContext.Context.CurrentModel;
+            result.Member = GetMemberAtLine(model.Members.Items);
+            if (result.Member == null)
             {
-                if (member.LineFrom <= line && member.LineTo >= line)
-                {
-                    result.Member = member;
-                    return result;
-                }
-            }
-
-            foreach (ClassModel aClass in model.Classes)
-            {
-                if (aClass.LineFrom <= line && aClass.LineTo >= line)
-                {
-                    result.InClass = aClass;
-                    foreach (MemberModel member in aClass.Members)
-                    {
-                        if (member.LineFrom <= line && member.LineTo >= line)
-                        {
-                            result.Member = member;
-                            return result;
-                        }
-                    }
-                    return result;
-                }
+                result.InClass = (ClassModel) GetMemberAtLine(model.Classes);
+                if (result.InClass != null) result.Member = GetMemberAtLine(result.InClass.Members.Items);
             }
             return result;
+
+            // Utils
+            MemberModel GetMemberAtLine(IEnumerable<MemberModel> list) =>
+                list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
         }
 
         protected bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
@@ -3080,8 +3064,9 @@ namespace ASCompletion.Completion
             }
             InsertCode(sci.CurrentPos, template, sci);
 
-            ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
-            FoundDeclaration found = GetDeclarationAtLine(lineStart);
+            var ctx = ASContext.Context;
+            ctx.GetCodeModel(ctx.CurrentModel, sci.Text);
+            var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(lineStart);
             if (found.Member == null) return;
 
             lookupPosition = sci.CurrentPos;
@@ -3104,7 +3089,7 @@ namespace ASCompletion.Completion
                 flags |= FlagType.Static;
             }
 
-            MemberModel m = new MemberModel(newName, ASContext.Context.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
+            MemberModel m = new MemberModel(newName, ctx.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
 
             template = NewLine + TemplateUtils.GetTemplate("Function");
             template = TemplateUtils.ToDeclarationWithModifiersString(m, template);
