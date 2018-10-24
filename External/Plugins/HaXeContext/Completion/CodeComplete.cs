@@ -670,6 +670,7 @@ namespace HaXeContext.Completion
                         var list = GetCompletionList(expr);
                         if (list != null)
                         {
+                            if (expr.Member.Type.StartsWithOrdinal("Null<")) list.Insert(0, new DeclarationItem("null"));
                             list.Add(new DeclarationItem("_"));
                             CompletionList.Show(list, autoHide);
                             return true;
@@ -683,9 +684,14 @@ namespace HaXeContext.Completion
             // Utils
             List<ICompletionListItem> GetCompletionList(ASResult expr)
             {
-                if (expr.Member is MemberModel m && m.Type != null)
+                if (expr.Member is MemberModel m && m.Type is string typeName)
                 {
-                    if (m.Type == ctx.Features.booleanKey)
+                    while (typeName.StartsWithOrdinal("Null<"))
+                    {
+                        typeName = typeName.Substring(5);
+                        typeName = typeName.Substring(0, typeName.Length - 1);
+                    }
+                    if (typeName == ctx.Features.booleanKey)
                     {
                         return new List<ICompletionListItem>
                         {
@@ -693,7 +699,7 @@ namespace HaXeContext.Completion
                             new DeclarationItem("false"),
                         };
                     }
-                    var type = ctx.ResolveType(m.Type, ctx.CurrentModel);
+                    var type = ctx.ResolveType(typeName, ctx.CurrentModel);
                     if (type.Members.Count == 0) return null;
                     if ((type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(tag => tag.Name == ":enum")))
                     {

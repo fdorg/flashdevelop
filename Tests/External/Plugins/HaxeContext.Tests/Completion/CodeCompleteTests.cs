@@ -587,6 +587,10 @@ namespace HaXeContext.Completion
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_3"))
                     .SetName("case | Issue 589. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue589_4", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_4"))
+                    .SetName("case | Issue 589. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
             }
         }
 
