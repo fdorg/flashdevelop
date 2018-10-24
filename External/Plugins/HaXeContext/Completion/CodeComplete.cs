@@ -63,22 +63,11 @@ namespace HaXeContext.Completion
         {
             if (string.IsNullOrEmpty(wordLeft)) return false;
             var currentClass = ASContext.Context.CurrentClass;
-            if (currentClass.Flags.HasFlag(FlagType.Abstract))
+            if (currentClass.Flags.HasFlag(FlagType.Abstract) && (wordLeft == "from" || wordLeft == "to"))
             {
-                switch (wordLeft)
-                {
-                    case "from":
-                    case "to":
-                        return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
-                }
+                return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
             }
-            switch (wordLeft)
-            {
-                case "case":
-                case "default":
-                    return HandleSwitchCaseCompletion(sci, position, autoHide);
-            }
-            return false;
+            return wordLeft == "case" && HandleSwitchCaseCompletion(sci, position, autoHide);
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)

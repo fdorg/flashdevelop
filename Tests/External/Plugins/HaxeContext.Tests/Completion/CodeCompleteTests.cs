@@ -226,6 +226,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue589_3", ' ', false, true)
                     .SetName("case | Issue 589. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_4", ' ', false, false)
+                    .SetName("case | Issue 589. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
             }
         }
 
