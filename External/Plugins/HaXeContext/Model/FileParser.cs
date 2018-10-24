@@ -757,7 +757,7 @@ namespace HaXeContext.Model
                         addChar = true;
                         if (!inValue && context == FlagType.Variable && !foundColon)
                         {
-                            var keepContext = inParams && (length == 0 || buffer[0] == '.');
+                            var keepContext = inParams && buffer[0] == '.';
                             if (!keepContext) context = 0;
                         }
                     }

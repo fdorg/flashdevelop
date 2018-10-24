@@ -511,7 +511,7 @@ namespace HaXeContext.Generators
                 var c = (char) sci.CharAt(i);
                 if (c <= ' ') continue;
                 if (c == '.') return false;
-                if (c > ' ') break;
+                break;
             }
             var type = ctx.ResolveType(member.Type, expr.InFile);
             return (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)

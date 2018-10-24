@@ -913,7 +913,7 @@ namespace AS2Context
                     string cname = pClass.Name;
                     if (prevPackage != package || prevCname != cname)
                     {
-                        if (package.Length > 0) cname = package + "." + cname;
+                        cname = package + "." + cname;
                         var filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
                         if (!cFile.FileName.ToUpper().EndsWithOrdinal(filename.ToUpper()))
                         {
