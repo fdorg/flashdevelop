@@ -670,6 +670,7 @@ namespace HaXeContext.Completion
                         var list = GetCompletionList(expr);
                         if (list != null)
                         {
+                            list.Add(new DeclarationItem("_"));
                             CompletionList.Show(list, autoHide);
                             return true;
                         }
