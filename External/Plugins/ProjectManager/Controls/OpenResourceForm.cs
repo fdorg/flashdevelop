@@ -240,10 +240,10 @@ namespace ProjectManager.Controls
             List<String> matchedFiles;
             if (this.textBox.Text.Length > 0)
             {
-                String searchText = this.textBox.Text.Replace("\\", "/");
-                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, searchText, "/", 0);
+                String searchText = this.textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, searchText, Path.DirectorySeparatorChar, 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
-                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, searchText, "/", this.MAX_ITEMS));
+                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, searchText, Path.DirectorySeparatorChar, this.MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
             foreach (String file in matchedFiles)
@@ -489,6 +489,11 @@ namespace ProjectManager.Controls
     {
         public static List<string> getMatchedItems(List<string> source, string searchText, string pathSeparator, int limit)
         {
+            return getMatchedItems(source, searchText, pathSeparator[0], limit);
+        }
+
+        public static List<string> getMatchedItems(List<string> source, string searchText, char pathSeparator, int limit)
+        {
             var i = 0;
             var matchedItems = new List<SearchResult>();
             string searchFile;
@@ -513,7 +518,7 @@ namespace ProjectManager.Controls
                 if (AdvancedSearchMatch(file, searchFile))
                     score = 1000.0;
                 else
-                    score = Score(file, searchFile, pathSeparator[0]);
+                    score = Score(file, searchFile, pathSeparator);
 
                 //score /= file.Length; //divide by length to prefer shorter results
 
@@ -522,7 +527,7 @@ namespace ProjectManager.Controls
                 //score folder path
                 var folderScore = 0.0;
                 if (!string.IsNullOrEmpty(searchDir))
-                    folderScore = ScoreWithoutNormalize(dir, searchDir, pathSeparator[0]); //do not divide by length here, because short folders should not be favoured too much
+                    folderScore = ScoreWithoutNormalize(dir, searchDir, pathSeparator); //do not divide by length here, because short folders should not be favoured too much
 
                 var result = new SearchResult
                 {
