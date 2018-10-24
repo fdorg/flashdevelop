@@ -61,6 +61,7 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
         {
+            if (string.IsNullOrEmpty(wordLeft)) return false;
             var currentClass = ASContext.Context.CurrentClass;
             if (currentClass.Flags.HasFlag(FlagType.Abstract))
             {
@@ -71,7 +72,13 @@ namespace HaXeContext.Completion
                         return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
                 }
             }
-            return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
+            switch (wordLeft)
+            {
+                case "case":
+                case "default":
+                    return HandleSwitchCaseCompletion(sci, position, autoHide);
+            }
+            return false;
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
@@ -633,6 +640,85 @@ namespace HaXeContext.Completion
                     return new MemberModel {Type = voidKey};
             }
             return FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
+        }
+
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="position">Current cursor position</param>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Auto-completion has been handled</returns>
+        bool HandleSwitchCaseCompletion(ScintillaControl sci, int position, bool autoHide)
+        {
+            var ctx = ASContext.Context;
+            var member = ctx.CurrentMember ?? ctx.CurrentClass;
+            var endPosition = member != null ? sci.PositionFromLine(member.LineFrom) : 0;
+            var braCount = 0;
+            while (endPosition < position)
+            {
+                if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position))
+                {
+                    position--;
+                    continue;
+                }
+                var c = (char)sci.CharAt(position);
+                if (c == '}') braCount++;
+                else if (c == '{')
+                {
+                    braCount--;
+                    if (braCount < 0)
+                    {
+                        var expr = GetExpressionType(sci, position, false, true);
+                        var list = GetCompletionList(expr);
+                        if (list != null)
+                        {
+                            CompletionList.Show(list, autoHide);
+                            return true;
+                        }
+                        break;
+                    }
+                }
+                position--;
+            }
+            return false;
+            // Utils
+            List<ICompletionListItem> GetCompletionList(ASResult expr)
+            {
+                if (expr.Member is MemberModel m && m.Type != null)
+                {
+                    if (m.Type == ctx.Features.booleanKey)
+                    {
+                        return new List<ICompletionListItem>
+                        {
+                            new DeclarationItem("true"),
+                            new DeclarationItem("false"),
+                        };
+                    }
+                    var type = ctx.ResolveType(m.Type, ctx.CurrentModel);
+                    if (type.Members.Count == 0) return null;
+                    if ((type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(tag => tag.Name == ":enum")))
+                    {
+                        return type.Members.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>();
+                    }
+                    if (type.Flags.HasFlag(FlagType.Enum))
+                    {
+                        return type.Members.Items.Select(it =>
+                        {
+                            var pattern = it.Name;
+                            if (it.Parameters != null)
+                            {
+                                pattern += "(";
+                                for (var j = 0; j < it.Parameters.Count; j++)
+                                {
+                                    if (j > 0) pattern += ", ";
+                                    pattern += it.Parameters[j].Name.TrimStart('?');
+                                }
+                                pattern += ")";
+                            }
+                            return new DeclarationItem(pattern);
+                        }).ToList<ICompletionListItem>();
+                    }
+                }
+                return null;
+            }
         }
     }
 }
