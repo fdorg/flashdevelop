@@ -452,8 +452,9 @@ namespace ASCompletion.Completion
         /// <returns>true, if can show "Assign statement to variable" list</returns>
         protected virtual bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
         {
-            return expr.Context.WordBefore != "return"
-                && expr.Member?.Type != ASContext.Context.Features.voidKey;
+            // for example: return expr<generator>
+            if (expr.Context.WordBefore == "return") return false;
+            return (expr.Member?.Type is string t && t != ASContext.Context.Features.voidKey) || expr.Type != ClassModel.VoidClass;
         }
 
         /// <summary>

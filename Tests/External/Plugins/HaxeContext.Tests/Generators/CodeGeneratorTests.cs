@@ -1080,16 +1080,31 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2455_1", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
-                    .SetName("Assign statement to var. Issue 2455. Case 1.")
+                    .SetName("return 10;|. Assign statement to var. Issue 2455. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2455");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2455_2", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
-                    .SetName("Assign statement to var. Issue 2455. Case 2.")
+                    .SetName("return cast 10;|. Assign statement to var. Issue 2455. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2455");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2455_3", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
-                    .SetName("Assign statement to var. Issue 2455. Case 3.")
+                    .SetName("return untyped 10;|. Assign statement to var. Issue 2455. Case 3.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2455");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2457TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2457_1", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Assign statement to var. Issue 2457. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2457");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2457_2", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Assign statement to var. Issue 2457. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2457");
             }
         }
 
@@ -1371,6 +1386,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2198TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2306TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2455TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2457TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2350TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2371TestCases)),

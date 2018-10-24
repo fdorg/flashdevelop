@@ -1,9 +1,3 @@
-/*
- * 
- * User: Philippe Elsass
- * Date: 18/03/2006
- * Time: 19:03
- */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2095,7 +2089,7 @@ namespace HaXeContext.Model
             return false;
         }
 
-        private void AddClass(FileModel model, ClassModel curClass)
+        static void AddClass(FileModel model, ClassModel curClass)
         {
             // avoid empty duplicates due to Haxe directives
             for (int i = 0, count = model.Classes.Count; i < count; i++)
@@ -2115,7 +2109,7 @@ namespace HaXeContext.Model
         QType QualifiedName(FileModel inFile, string name) 
         {
             var qt = new QType();
-            var type = name;
+            string type;
             if (inFile.Package == "") type = name;
             else if (inFile.Module == "" || inFile.Module == name) type = inFile.Package + "." + name;
             else type = inFile.Package + "." + inFile.Module + "." + name;
