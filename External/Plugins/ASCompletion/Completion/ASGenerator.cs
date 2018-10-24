@@ -1367,7 +1367,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        if (data is StatementReturnType) AssignStatementToVar(sci, inClass, (StatementReturnType)data);
+                        if (data is StatementReturnType returnType) AssignStatementToVar(sci, inClass, returnType);
                         else AssignStatementToVar(sci, inClass);
                     }
                     finally
@@ -1705,7 +1705,7 @@ namespace ASCompletion.Completion
             var parameters = ParseFunctionParameters(sci, wordPos);
 
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            if (funcResult == null || funcResult.Member == null) return;
+            if (funcResult?.Member == null) return;
             if (funcResult.InClass != null && !funcResult.InClass.Equals(inClass))
             {
                 AddLookupPosition();
@@ -1750,7 +1750,7 @@ namespace ASCompletion.Completion
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass, IList<FunctionParameter> parameters)
         {
             var funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            if (funcResult == null || funcResult.Type == null) return;
+            if (funcResult?.Type == null) return;
             if (!funcResult.Type.Equals(inClass))
             {
                 AddLookupPosition();
