@@ -242,8 +242,7 @@ namespace PluginCore.Controls
         private Rectangle GetWindowBounds(Control ctrl)
         {
             while (ctrl.Parent != null && !(ctrl is DockWindow)) ctrl = ctrl.Parent;
-            if (ctrl != null) return ctrl.Bounds;
-            else return new Rectangle();
+            return ctrl.Bounds;
         }
 
         private Point GetMousePosIn(Control ctrl)

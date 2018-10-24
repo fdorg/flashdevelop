@@ -213,11 +213,34 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue589TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue589_1", ' ', false, true)
+                    .SetName("case | Issue 589. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_2", ' ', false, true)
+                    .SetName("case | Issue 589. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_3", ' ', false, true)
+                    .SetName("case | Issue 589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_4", ' ', false, false)
+                    .SetName("case | Issue 589. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_5", ' ', false, false)
+                    .SetName("case | Issue 589. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
             TestCaseSource(nameof(OnCharIssue2358TestCases)),
             TestCaseSource(nameof(OnCharIssue2396TestCases)),
+            TestCaseSource(nameof(OnCharIssue589TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {
@@ -554,6 +577,33 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue589TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue589_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_1"))
+                    .SetName("case | Issue 589. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue589_2", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_2"))
+                    .SetName("case | Issue 589. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue589_3", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_3"))
+                    .SetName("case | Issue 589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue589_4", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_4"))
+                    .SetName("case | Issue 589. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue589_5", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue589_5"))
+                    .SetName("case | Issue 589. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -562,6 +612,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
             //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)), // TODO: That tests pass without other tests.
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2415TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue589TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {

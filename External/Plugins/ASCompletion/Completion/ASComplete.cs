@@ -2519,6 +2519,7 @@ namespace ASCompletion.Completion
             var features = ctx.Features;
             var pos = position - 1;
             var word = GetWordLeft(sci, ref pos);
+            if (HandleWhiteSpaceCompletion(sci, position, word, autoHide)) return true;
             if (word.Length == 0)
             {
                 var c = (char)sci.CharAt(pos);
@@ -2560,7 +2561,7 @@ namespace ASCompletion.Completion
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
             // public/internal/private/protected/static
             if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, "", autoHide);
-            return HandleWhiteSpaceCompletion(sci, position, word, autoHide);
+            return false;
         }
 
         /// <summary>
@@ -3109,8 +3110,8 @@ namespace ASCompletion.Completion
         /// <param name="inFile">In given file</param>
         /// <param name="result">Class/Member struct</param>
         /// <param name="mask">Flags mask</param>
-        /// <param name="acc">Visibility mask</param>
-        public static void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility acc)
+        /// <param name="access">Visibility mask</param>
+        public static void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token))
                 return;
@@ -3180,12 +3181,12 @@ namespace ASCompletion.Completion
             }
 
             // variable
-            var found = inFile.Members.Search(token, mask, acc);
+            var found = inFile.Members.Search(token, mask, access);
             // ignore setters
             if (found != null && (found.Flags & FlagType.Setter) > 0)
             {
                 found = null;
-                MemberList matches = inFile.Members.MultipleSearch(token, mask, acc);
+                MemberList matches = inFile.Members.MultipleSearch(token, mask, access);
                 foreach (MemberModel member in matches)
                 {
                     found = member;
@@ -3209,7 +3210,7 @@ namespace ASCompletion.Completion
         /// <param name="inClass">In given class</param>
         /// <param name="result">Class/Member struct</param>
         /// <param name="mask">Flags mask</param>
-        /// <param name="acc">Visibility mask</param>
+        /// <param name="access">Visibility mask</param>
         public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             ASContext.Context.CodeComplete.FindMemberEx(token, inClass, result, mask, access);

@@ -877,6 +877,23 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2455_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2457_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2457_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue589_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue589_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue589_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue589_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue589_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue589_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue589_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue589_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue589_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue589_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_5.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
