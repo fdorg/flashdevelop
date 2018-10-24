@@ -686,11 +686,7 @@ namespace HaXeContext.Completion
             {
                 if (expr.Member is MemberModel m && m.Type is string typeName)
                 {
-                    while (typeName.StartsWithOrdinal("Null<"))
-                    {
-                        typeName = typeName.Substring(5);
-                        typeName = typeName.Substring(0, typeName.Length - 1);
-                    }
+                    typeName = CleanNullableType(typeName);
                     if (typeName == ctx.Features.booleanKey)
                     {
                         return new List<ICompletionListItem>
@@ -725,6 +721,18 @@ namespace HaXeContext.Completion
                     }
                 }
                 return null;
+                // Utils
+                string CleanNullableType(string s)
+                {
+                    var startIndex = s.IndexOfOrdinal("Null<");
+                    if (startIndex == -1) return s;
+                    startIndex += 5;
+                    while (s.IndexOfOrdinal("Null<", startIndex) is int p && p != -1)
+                    {
+                        startIndex = p + 5;
+                    }
+                    return s.Substring(startIndex, s.Length - (startIndex + startIndex / 5));
+                }
             }
         }
     }

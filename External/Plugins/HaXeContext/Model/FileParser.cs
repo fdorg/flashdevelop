@@ -1667,10 +1667,10 @@ namespace HaXeContext.Model
                 curMember = null;
                 return true;
             }
-            // when not in a class, parse if/for/while blocks
+            // when not in a class, parse if/for/while/switch/try...catch blocks
             if (ScriptMode)
             {
-                if (token == "catch" || token == "for" || token == "switch")
+                if (token == "catch" || token == "for" || token == "case")
                 {
                     curModifiers = 0;
                     foundKeyword = FlagType.Variable;
