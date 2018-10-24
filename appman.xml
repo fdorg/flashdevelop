@@ -48,8 +48,8 @@
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex SDK + AIR SDK</Name>
-		<Version>4.6.0+30.0.0</Version>
-		<Build>23201B+107</Build>
+		<Version>4.6.0+31.0.0</Version>
+		<Build>23201B+96</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -58,15 +58,15 @@
 		</Bundles>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/30.0/AdobeAIRSDK.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-30.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/31.0/AdobeAIRSDK.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-31.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>30.0.0</Version>
-		<Build>107</Build>
+		<Version>31.0.0</Version>
+		<Build>96</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -74,14 +74,14 @@
 			<Bundle>AIR</Bundle>
 		</Bundles>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/30.0/AIRSDK_Compiler.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-30.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/31.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-31.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>aflexsdk</Id>
 		<Name>Apache Flex SDK</Name>
-		<Version>3.3.1</Version>
+		<Version>3.3.2</Version>
 		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>Compilers</Group>
@@ -91,7 +91,7 @@
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/</Info>
 		<Urls>
-			<Url>http://ftp.byfly.by/pub/apache.org/flex/installer/3.3.1/binaries/apache-flex-sdk-installer-3.3.1-bin.exe</Url>
+			<Url>http://ftp.byfly.by/pub/apache.org/flex/installer/3.3.2/binaries/apache-flex-sdk-installer-3.3.2-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -109,8 +109,8 @@
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>30.0.0</Version>
-		<Build>107</Build>
+		<Version>31.0.0</Version>
+		<Build>96</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -119,14 +119,14 @@
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/30.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/31.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
-		<Version>30.0.0</Version>
-		<Build>113</Build>
+		<Version>31.0.0</Version>
+		<Build>108</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -137,52 +137,52 @@
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/30/flashplayer_30_sa_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/31/flashplayer_31_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
-		<Version>30.0.0</Version>
-		<Build>113</Build>
+		<Version>31.0.0</Version>
+		<Build>108</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer - ActiveX</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/30/flashplayer_30_ax_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/31/flashplayer_31_ax_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashnpapi</Id>
 		<Name>Flash Player (NPAPI)</Name>
-		<Version>30.0.0</Version>
-		<Build>113</Build>
+		<Version>31.0.0</Version>
+		<Build>108</Build>
 		<Desc>Debug Flash Player plugin for Firefox - NPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/30/flashplayer_30_plugin_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/31/flashplayer_31_plugin_debug.exe</Url>
 	</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashppapi</Id>
 		<Name>Flash Player (PPAPI)</Name>
-		<Version>30.0.0</Version>
-		<Build>113</Build>
+		<Version>31.0.0</Version>
+		<Build>108</Build>
 		<Desc>Debug Flash Player plugin for Opera and Chromium based applications - PPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/30/flashplayer_30_ppapi_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/31/flashplayer_31_ppapi_debug.exe</Url>
 	</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>2.6.0</Version>
+		<Version>2.7.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -192,13 +192,13 @@
 		<Type>Executable</Type>
 		<Info>https://tortoisegit.org/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/2.6.0.0/TortoiseGit-2.6.0.0-32bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.7.0.0/TortoiseGit-2.7.0.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>2.6.0</Version>
+		<Version>2.7.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,13 +208,13 @@
 		<Type>Executable</Type>
 		<Info>https://tortoisegit.org/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/2.6.0.0/TortoiseGit-2.6.0.0-64bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.7.0.0/TortoiseGit-2.7.0.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x86)</Name>
-		<Version>2.17.1</Version>
+		<Version>2.19.0</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -224,13 +224,13 @@
 		<Type>Executable</Type>
 		<Info>https://git-for-windows.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.17.1.windows.1/Git-2.17.1-32-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.19.0.windows.1/Git-2.19.0-32-bit.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win64</Id>
 		<Name>Git For Windows (x64)</Name>
-		<Version>2.17.1</Version>
+		<Version>2.19.0</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -240,7 +240,7 @@
 		<Type>Executable</Type>
 		<Info>https://git-for-windows.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.17.1.windows.1/Git-2.17.1-64-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.19.0.windows.1/Git-2.19.0-64-bit.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -310,7 +310,7 @@
 	<Entry>
 		<Id>torhg</Id>
 		<Name>TortoiseHg (x86)</Name>
-		<Version>4.6</Version>
+		<Version>4.7</Version>
 		<Build>1</Build>
 		<Desc>TortoiseHg (including Mercurial) 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -320,13 +320,13 @@
 		<Type>Executable</Type>
 		<Info>https://www.mercurial-scm.org/downloads</Info>
 		<Urls>
-			<Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.6.exe</Url>
+			<Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.7.1.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torhg64</Id>
 		<Name>TortoiseHg (x64)</Name>
-		<Version>4.6</Version>
+		<Version>4.7</Version>
 		<Build>1</Build>
 		<Desc>TortoiseHg (including Mercurial) 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -336,7 +336,7 @@
 		<Type>Executable</Type>
 		<Info>https://www.mercurial-scm.org/downloads</Info>
 		<Urls>
-      <Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.6-x64.exe</Url>
+      <Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.7.1-x64.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
