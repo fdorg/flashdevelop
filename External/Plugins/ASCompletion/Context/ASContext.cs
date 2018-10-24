@@ -101,6 +101,7 @@ namespace ASCompletion.Context
                 {
                     item.Enabled = isValid;
                 }
+                ClassModel.VoidClass.Name = context.Features.voidKey;
             }
         }
 

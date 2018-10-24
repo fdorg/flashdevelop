@@ -452,8 +452,9 @@ namespace ASCompletion.Completion
         /// <returns>true, if can show "Assign statement to variable" list</returns>
         protected virtual bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
         {
-            return expr.Context.WordBefore != "return"
-                && expr.Member?.Type != ASContext.Context.Features.voidKey;
+            // for example: return expr<generator>
+            if (expr.Context.WordBefore == "return") return false;
+            return (expr.Member?.Type is string t && t != ASContext.Context.Features.voidKey) || expr.Type != ClassModel.VoidClass;
         }
 
         /// <summary>
@@ -1366,7 +1367,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        if (data is StatementReturnType) AssignStatementToVar(sci, inClass, (StatementReturnType)data);
+                        if (data is StatementReturnType returnType) AssignStatementToVar(sci, inClass, returnType);
                         else AssignStatementToVar(sci, inClass);
                     }
                     finally
@@ -1704,7 +1705,7 @@ namespace ASCompletion.Completion
             var parameters = ParseFunctionParameters(sci, wordPos);
 
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            if (funcResult == null || funcResult.Member == null) return;
+            if (funcResult?.Member == null) return;
             if (funcResult.InClass != null && !funcResult.InClass.Equals(inClass))
             {
                 AddLookupPosition();
@@ -1749,7 +1750,7 @@ namespace ASCompletion.Completion
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass, IList<FunctionParameter> parameters)
         {
             var funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            if (funcResult == null || funcResult.Type == null) return;
+            if (funcResult?.Type == null) return;
             if (!funcResult.Type.Equals(inClass))
             {
                 AddLookupPosition();
