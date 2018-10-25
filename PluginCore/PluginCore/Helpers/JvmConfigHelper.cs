@@ -19,7 +19,7 @@ namespace PluginCore.Helpers
             if (Cache.ContainsKey(hash)) return Cache[hash];
             if (Directory.Exists(configPath))
             {
-                var jvmconfig = Path.Combine(configPath,Path.Combine("bin", "jvm.config"));
+                var jvmconfig = Path.Combine(configPath, "bin", "jvm.config");
                 var buildproperties = Path.Combine(configPath, "build.properties");
 
                 if (File.Exists(jvmconfig))
@@ -33,7 +33,7 @@ namespace PluginCore.Helpers
 
             // default values
             if (!config.ContainsKey("java.home")) config["java.home"] = "";
-            else config["java.home"] = config["java.home"].Trim(new char[] { '"', '\'', ' ', '\t' });
+            else config["java.home"] = config["java.home"].Trim('"', '\'', ' ', '\t');
 
             string args = "-Dsun.io.useCanonCaches=false -Xms32m -Xmx512m";
             if (config.ContainsKey("java.args")) args = config["java.args"];
@@ -42,13 +42,13 @@ namespace PluginCore.Helpers
             args = ExpandArguments(args, config, 0);
 
             // add language if not specified
-            if (args.IndexOf("-Duser.language", StringComparison.Ordinal) < 0)
+            if (!args.Contains("-Duser.language"))
             {
                 args += " -Duser.language=en -Duser.region=US";
             }
 
             // flex needs old Java 6 sort
-            if (args.IndexOf("-Djava.util.Arrays.useLegacyMergeSort", StringComparison.Ordinal) < 0)
+            if (!args.Contains("-Djava.util.Arrays.useLegacyMergeSort"))
             {
                 args += " -Djava.util.Arrays.useLegacyMergeSort=true";
             }
@@ -86,7 +86,7 @@ namespace PluginCore.Helpers
             string home = GetJavaHome(jvmConfig, flexSdkPath);
             if (!String.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
-                return Path.Combine(home, Path.Combine("bin","java"));
+                return Path.Combine(home, "bin","java");
             }
             return defaultExe;
         }

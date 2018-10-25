@@ -130,6 +130,9 @@ namespace ProjectManager.Controls
         {
             TargetBuildSelector.Text = "";
             EnableTargetBuildSelector(false);
+            TestMovie.Enabled = false;
+            BuildProject.Enabled = false;
+            ProjectMenu.ProjectItemsEnabled = false;
         }
 
         public void ProjectChanged(Project project)

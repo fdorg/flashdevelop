@@ -219,7 +219,6 @@ namespace ASCompletion.Completion
                 {
                     MemberModel latest = new MemberModel();
                     latest.LineFrom = lineNum;
-                    latest.LineTo = lineNum;
                     latest.LineTo = lineNum + lineCount;
                     return latest;
                 }
@@ -233,9 +232,8 @@ namespace ASCompletion.Completion
         /// </summary>
         public static string GetTemplate(string name, string altName)
         {
-            string tmp = GetTemplate(name);
-            if (tmp == "") return GetTemplate(altName);
-            else return tmp;
+            var tmp = GetTemplate(name);
+            return tmp == "" ? GetTemplate(altName) : tmp;
         }
 
         /// <summary>
@@ -243,40 +241,34 @@ namespace ASCompletion.Completion
         /// </summary>
         public static string GetTemplate(string name)
         {
-            string lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
-            string path = Path.Combine(PathHelper.SnippetDir, lang);
-            path = Path.Combine(path, generators_folder);
-            path = Path.Combine(path, name + ".fds");
+            var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
+            var path = Path.Combine(PathHelper.SnippetDir, lang, generators_folder, name + ".fds");
             if (!File.Exists(path)) return "";
-
-            Stream src = File.OpenRead(path);
-            if (src == null) return "";
-
-            String content;
-            using (StreamReader sr = new StreamReader(src))
+            string content;
+            using (Stream src = File.OpenRead(path))
             {
-                content = sr.ReadToEnd();
-                sr.Close();
+                using (var sr = new StreamReader(src))
+                {
+                    content = sr.ReadToEnd();
+                    sr.Close();
+                }
             }
             return "$(Boundary)" + content.Replace("\r\n", "\n") + "$(Boundary)";
         }
 
         public static string GetBoundary(string name)
         {
-            string lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
-            string path = Path.Combine(PathHelper.SnippetDir, lang);
-            path = Path.Combine(path, boundaries_folder);
-            path = Path.Combine(path, name + ".fds");
+            var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
+            var path = Path.Combine(PathHelper.SnippetDir, lang, boundaries_folder, name + ".fds");
             if (!File.Exists(path)) return "";
-
-            Stream src = File.OpenRead(path);
-            if (src == null) return "";
-
-            String content;
-            using (StreamReader sr = new StreamReader(src))
+            string content;
+            using (Stream src = File.OpenRead(path))
             {
-                content = sr.ReadToEnd();
-                sr.Close();
+                using (var sr = new StreamReader(src))
+                {
+                    content = sr.ReadToEnd();
+                    sr.Close();
+                }
             }
             return content;
         }

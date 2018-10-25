@@ -1,6 +1,6 @@
 ﻿package;
 public class Main {
-	var test;
+	var test:Null<Dynamic>;
 	public function new(?test) {
 		this.test = test;
 		

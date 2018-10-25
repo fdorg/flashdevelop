@@ -6265,4 +6265,16 @@ AND - All conditions are met.</value>
     <value>Remember, don't ask again</value>
     <comment>Added after 5.3.0</comment>
   </data>
+  <data name="ProjectManager.Description.ShowExternalLibraries" xml:space="preserve">
+    <value>Sets whether or not to include external libraries directories in the project tree.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Info.GenerateSwitch" xml:space="preserve">
+    <value>Generate switch</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.PeekDefinition" xml:space="preserve">
+    <value>Peek Definition</value>
+    <comment>Added after 5.3.4</comment>
+  </data>
 </root>

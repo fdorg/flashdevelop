@@ -202,7 +202,8 @@ namespace ASCompletion.Model
                 if (FileName != "" && File.Exists(FileName) && LastWriteTime < File.GetLastWriteTime(FileName))
                     try
                     {
-                        ASFileParser.ParseFile(this);
+                        if (Context != null) Context.GetCodeModel(this);
+                        else ASFileParser.ParseFile(this);
                         OnFileUpdate?.Invoke(this);
                     }
                     catch

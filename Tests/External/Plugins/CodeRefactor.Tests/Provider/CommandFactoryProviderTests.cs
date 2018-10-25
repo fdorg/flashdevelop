@@ -15,10 +15,6 @@ namespace CodeRefactor.Provider
         [TestFixtureSetUp]
         public void Setup() => SetAs3Features(sci);
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
-
-        static string GetFullPath(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.rename.as3.{fileName}.as";
-
         static IEnumerable<TestCaseData> RenameValidatorTestCases
         {
             get
@@ -72,6 +68,63 @@ namespace CodeRefactor.Provider
             var target = RefactoringHelper.GetDefaultRefactorTarget();
             if (target.Member != null) target.Member.InFile = ASContext.Context.CurrentModel;
             return validator(target);
+            // utils
+            string ReadAllText(string path) => TestFile.ReadAllText(GetFullPath(path));
+            string GetFullPath(string path) => $"{nameof(CodeRefactor)}.Test_Files.{nameof(CodeRefactor).ToLower()}.{nameof(Rename).ToLower()}.as3.{path}.as";
+        }
+
+        static IEnumerable<TestCaseData> DelegateMethodsValidatorTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("DelegateMethodsValidator_1")
+                    .Returns(true)
+                    .SetName("Issue 2412. case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+                yield return new TestCaseData("DelegateMethodsValidator_2")
+                    .Returns(false)
+                    .SetName("Issue 2412. case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+                yield return new TestCaseData("DelegateMethodsValidator_3")
+                    .Returns(false)
+                    .SetName("Issue 2412. case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+                yield return new TestCaseData("DelegateMethodsValidator_4")
+                    .Returns(false)
+                    .SetName("Issue 2412. case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+                yield return new TestCaseData("DelegateMethodsValidator_5")
+                    .Returns(false)
+                    .SetName("Issue 2412. case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+                yield return new TestCaseData("DelegateMethodsValidator_6")
+                    .Returns(false)
+                    .SetName("Issue 2412. case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+                yield return new TestCaseData("DelegateMethodsValidator_7")
+                    .Returns(false)
+                    .SetName("Issue 2412. case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(DelegateMethodsValidatorTestCases))]
+        public bool DelegateMethodsValidator(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            fileName = GetFullPath(fileName);
+            fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
+            fileName = Path.GetFullPath(fileName);
+            fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\");
+            ASContext.Context.CurrentModel.FileName = fileName;
+            PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+            var validator = CommandFactoryProvider.DefaultFactory.GetValidator(typeof(DelegateMethods));
+            var target = RefactoringHelper.GetDefaultRefactorTarget();
+            if (target.Member != null) target.Member.InFile = ASContext.Context.CurrentModel;
+            return validator(target);
+            // utils
+            string ReadAllText(string path) => TestFile.ReadAllText(GetFullPath(path));
+            string GetFullPath(string path) => $"{nameof(CodeRefactor)}.Test_Files.{nameof(CodeRefactor).ToLower()}.{nameof(DelegateMethods).ToLower()}.as3.{path}.as";
         }
     }
 }

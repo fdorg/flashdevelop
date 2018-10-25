@@ -566,34 +566,31 @@ namespace ResultsPanel
             return false;
         }
 
+        static readonly Regex re_lineColumn = new Regex("([0-9]+),\\s*([0-9]+)", RegexOptions.Compiled);
+
         /// <summary>
         /// Adds the log entries to the list view
         /// </summary>
         internal void AddLogEntries()
         {
             int count = TraceManager.TraceLog.Count;
-            if (count <= this.logCount)
+            if (count <= logCount)
             {
-                this.logCount = count;
+                logCount = count;
                 return;
             }
-            bool newResult = false;
-            TraceItem entry; Match match; String description;
-            string fileTest; bool inExec; int icon; int state;
-            IProject project = PluginBase.CurrentProject;
-            string projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
-            int limit = Math.Min(count, this.logCount + 1000);
-            for (int i = this.logCount; i < limit; i++)
+            var newResult = false;
+            var project = PluginBase.CurrentProject;
+            var projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
+            var limit = Math.Min(count, logCount + 1000);
+            for (var i = logCount; i < limit; i++)
             {
-                entry = TraceManager.TraceLog[i];
-                if (entry.GroupData != this.GroupData)
-                {
-                    continue;
-                }
+                var entry = TraceManager.TraceLog[i];
+                if (entry.GroupData != GroupData) continue;
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)
                 {
-                    fileTest = entry.Message.TrimStart();
-                    inExec = false;
+                    var fileTest = entry.Message.TrimStart();
+                    var inExec = false;
                     if (fileTest.StartsWithOrdinal("[mxmlc]") || fileTest.StartsWithOrdinal("[compc]") || fileTest.StartsWithOrdinal("[exec]") || fileTest.StartsWithOrdinal("[haxe") || fileTest.StartsWithOrdinal("[java]"))
                     {
                         inExec = true;
@@ -601,11 +598,11 @@ namespace ResultsPanel
                     }
                     // relative to project root (Haxe)
                     if (fileTest.StartsWithOrdinal("~/")) fileTest = fileTest.Substring(2);
-                    match = fileEntry.Match(fileTest);
+                    var match = fileEntry.Match(fileTest);
                     if (!match.Success) match = fileEntry2.Match(fileTest);
-                    if (match.Success && !this.ignoredEntries.ContainsKey(match.Value))
+                    if (match.Success && !ignoredEntries.ContainsKey(match.Value))
                     {
-                        string filename = match.Groups["filename"].Value;
+                        var filename = match.Groups["filename"].Value;
                         if (filename.Length < 3 || badCharacters.IsMatch(filename)) continue;
                         if (project != null && filename[0] != '/' && filename[1] != ':') // relative to project root
                         {
@@ -613,32 +610,30 @@ namespace ResultsPanel
                             if (filename == null) continue;
                         }
                         else if (!File.Exists(filename)) continue;
-                        FileInfo fileInfo = new FileInfo(filename);
-                        description = match.Groups["description"].Value.Trim();
-                        state = (inExec) ? -3 : entry.State;
+                        var fileInfo = new FileInfo(filename);
+                        var description = match.Groups["description"].Value.Trim();
+                        var state = inExec ? -3 : entry.State;
                         // automatic state from message
                         // ie. "2:message" -> state = 2
-                        if (state == 1 && description.Length > 2)
+                        if (state == 1 && description.Length > 2
+                            && description[1] == ':' && char.IsDigit(description[0])
+                            && int.TryParse(description[0].ToString(), out state))
                         {
-                            if (description[1] == ':' && Char.IsDigit(description[0]))
-                            {
-                                if (int.TryParse(description[0].ToString(), out state))
-                                {
-                                    description = description.Substring(2);
-                                }
-                            }
+                            description = description.Substring(2);
                         }
+
+                        int icon;
                         if (state > 2) icon = 1;
                         else if (state == 2) icon = 2;
-                        else if (state == -3) icon = (description.IndexOfOrdinal("Warning") >= 0) ? 2 : 1;
+                        else if (state == -3) icon = description.Contains("Warning") ? 2 : 1;
                         else if (description.StartsWith("error", StringComparison.OrdinalIgnoreCase)) icon = 1;
                         else icon = 0;
-                        ListViewItem item = new ListViewItem("", icon);
+                        var item = new ListViewItem("", icon);
                         item.Tag = match; // Save for later...
-                        String matchLine = match.Groups["line"].Value;
+                        var matchLine = match.Groups["line"].Value;
                         if (matchLine.IndexOf(',') > 0)
                         {
-                            Match split = Regex.Match(matchLine, "([0-9]+),\\s*([0-9]+)");
+                            var split = re_lineColumn.Match(matchLine);
                             if (!split.Success) continue; // invalid line
                             matchLine = split.Groups[1].Value;
                             description = "col: " + split.Groups[2].Value + " " + description;
@@ -648,9 +643,9 @@ namespace ResultsPanel
                         item.SubItems.Add(fileInfo.Name);
                         item.SubItems.Add(fileInfo.Directory.ToString());
                         newResult = true;
-                        if (icon == 0) this.messageCount++;
-                        else if (icon == 1) this.errorCount++;
-                        else if (icon == 2) this.warningCount++;
+                        if (icon == 0) messageCount++;
+                        else if (icon == 1) errorCount++;
+                        else if (icon == 2) warningCount++;
                         allListViewItems.Add(item);
                     }
                 }

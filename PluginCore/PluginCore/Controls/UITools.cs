@@ -20,7 +20,8 @@ namespace PluginCore.Controls
 
         static public UITools Manager
         {
-            get {
+            get
+            {
                 if (manager == null)
                 {
                     manager = new UITools();
@@ -118,7 +119,7 @@ namespace PluginCore.Controls
             //
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
-            PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
+            PluginBase.MainForm.DockPanel.ActivePaneChanged += DockPanel_ActivePaneChanged;
             EventManager.AddEventHandler(this, eventMask);
         }
         #endregion
@@ -180,12 +181,12 @@ namespace PluginCore.Controls
         {
             // hook scintilla events
             sci.MouseDwellTime = PluginBase.MainForm.Settings.HoverDelay;
-            sci.DwellStart += new DwellStartHandler(HandleDwellStart);
-            sci.DwellEnd += new DwellEndHandler(HandleDwellEnd);
-            sci.CharAdded += new ScintillaNet.CharAddedHandler(OnChar);
-            sci.UpdateUI += new UpdateUIHandler(OnUIRefresh);
-            sci.TextInserted += new TextInsertedHandler(OnTextInserted);
-            sci.TextDeleted += new TextDeletedHandler(OnTextDeleted);
+            sci.DwellStart += HandleDwellStart;
+            sci.DwellEnd += HandleDwellEnd;
+            sci.CharAdded += OnChar;
+            sci.UpdateUI += OnUIRefresh;
+            sci.TextInserted += OnTextInserted;
+            sci.TextDeleted += OnTextDeleted;
         }
 
         /// <summary>
@@ -241,8 +242,7 @@ namespace PluginCore.Controls
         private Rectangle GetWindowBounds(Control ctrl)
         {
             while (ctrl.Parent != null && !(ctrl is DockWindow)) ctrl = ctrl.Parent;
-            if (ctrl != null) return ctrl.Bounds;
-            else return new Rectangle();
+            return ctrl.Bounds;
         }
 
         private Point GetMousePosIn(Control ctrl)

@@ -69,23 +69,24 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Writes a text file to the specified location (if Unicode, with BOM)
         /// </summary>
-        public static void WriteFile(String file, String text, Encoding encoding)
-        {
-            WriteFile(file, text, encoding, true);
-        }
+        public static void WriteFile(string file, string text, Encoding encoding) => WriteFile(file, text, encoding, true);
 
         /// <summary>
         /// Writes a text file to the specified location (if Unicode, with or without BOM)
         /// </summary>
-        public static void WriteFile(String file, String text, Encoding encoding, Boolean saveBOM)
+        public static void WriteFile(string file, string text, Encoding encoding, bool saveBOM)
         {
-            Boolean useSkipBomWriter = (encoding == Encoding.UTF8 && !saveBOM);
+            var useSkipBomWriter = (encoding == Encoding.UTF8 && !saveBOM);
             if (encoding == Encoding.UTF7) encoding = new UTF7EncodingFixed();
-            using (FileStream fs = new FileStream(file, File.Exists(file) ? FileMode.Truncate : FileMode.CreateNew))
-            using (StreamWriter sw = useSkipBomWriter ? new StreamWriter(fs) : new StreamWriter(fs, encoding))
+            if (!File.Exists(file) && Path.GetDirectoryName(file) is var dir && !Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            using (var fs = new FileStream(file, File.Exists(file) ? FileMode.Truncate : FileMode.CreateNew))
             {
-                sw.Write(text);
-                sw.Close();
+                using (var sw = useSkipBomWriter ? new StreamWriter(fs) : new StreamWriter(fs, encoding))
+                {
+                    sw.Write(text);
+                    sw.Close();
+                }
             }
         }
 
@@ -160,8 +161,7 @@ namespace PluginCore.Helpers
             {
                 if (!File.Exists(file)) return false;
                 FileAttributes fileAttr = File.GetAttributes(file);
-                if ((fileAttr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly) return true;
-                else return false;
+                return (fileAttr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
             }
             catch (Exception)
             {

@@ -40,10 +40,15 @@ namespace ASCompletion.TestUtils
             mock.CurrentModel.Returns(context.CurrentModel);
             var visibleExternalElements = context.GetVisibleExternalElements();
             mock.GetVisibleExternalElements().Returns(visibleExternalElements);
-            mock.GetCodeModel(null).ReturnsForAnyArgs(x =>
+            mock.GetCodeModel((string)null).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+            });
+            mock.GetCodeModel((FileModel)null).ReturnsForAnyArgs(x =>
+            {
+                var src = x[0] as FileModel;
+                return src == null ? null : context.GetCodeModel(src);
             });
             mock.GetCodeModel(Arg.Any<string>(), Arg.Any<bool>()).ReturnsForAnyArgs(x =>
             {
@@ -70,6 +75,7 @@ namespace ASCompletion.TestUtils
                 var member = it.ArgAt<MemberModel>(0) ?? ClassModel.VoidClass;
                 return context.IsImported(member, it.ArgAt<int>(1));
             });
+            mock.ResolveImports(null).ReturnsForAnyArgs(it => context.ResolveImports(it.ArgAt<FileModel>(0)));
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.ResolveToken(null, null).ReturnsForAnyArgs(x => context.ResolveToken(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>
@@ -77,6 +83,8 @@ namespace ASCompletion.TestUtils
                 var expr = it.ArgAt<ASExpr>(1);
                 return expr == null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
             });
+            mock.When(it => it.ResolveDotContext(Arg.Any<ScintillaControl>(), Arg.Any<ASExpr>(), Arg.Any<MemberList>()))
+                .Do(it => context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), it.ArgAt<ASExpr>(1), it.ArgAt<MemberList>(2)));
             mock.ResolvePackage(null, false).ReturnsForAnyArgs(it => context.ResolvePackage(it.ArgAt<string>(0), it.ArgAt<bool>(1)));
             mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
                 .Do(it => context.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1)));
@@ -123,12 +131,14 @@ namespace ASCompletion.TestUtils
 
         static void BuildClassPath(HaXeContext.Context context)
         {
-            var platformsFile = Path.Combine("Settings", "Platforms");
-            PlatformData.Load(Path.Combine(PathHelper.AppDir, platformsFile));
-            PluginBase.CurrentProject = new HaxeProject("haxe")
+            PlatformData.Load(Path.Combine(PathHelper.AppDir, "Settings", "Platforms"));
+            if (PluginBase.CurrentProject == null)
             {
-                CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")
-            };
+                PluginBase.CurrentProject = new HaxeProject("haxe")
+                {
+                    CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")?.TrimEnd('\\', '/')
+                };
+            }
             context.BuildClassPath();
             foreach (var it in context.Classpath)
             {

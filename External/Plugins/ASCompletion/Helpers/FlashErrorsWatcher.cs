@@ -35,14 +35,18 @@ namespace ASCompletion.Helpers
         {
             try
             {
-                string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string logLocation;
                 if (BridgeManager.Active && BridgeManager.Settings.TargetRemoteIDE)
                 {
                     logLocation = Path.Combine(BridgeManager.Settings.SharedDrive, ".FlashDevelop\\flashide");
                     Directory.CreateDirectory(logLocation);
                 }
-                else logLocation = Path.Combine(appData, Path.Combine("Adobe", "FlashDevelop"));
+                else
+                {
+                    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    logLocation = Path.Combine(appData, Path.Combine("Adobe", "FlashDevelop"));
+                }
+
                 Directory.CreateDirectory(logLocation);
 
                 logFile = Path.Combine(logLocation, "FlashErrors.log");

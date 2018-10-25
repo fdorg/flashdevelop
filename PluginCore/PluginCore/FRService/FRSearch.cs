@@ -98,7 +98,7 @@ namespace PluginCore.FRService
         /// <param name="match">Search result (for reinjecting groups)</param>
         static public string ExpandGroups(string text, SearchMatch match)
         {
-            if (text.IndexOf('$') < 0) return text;
+            if (!text.Contains('$')) return text;
             for (int i = 0; i < match.Groups.Length; i++)
                 text = text.Replace("$" + i, match.Groups[i].Value);
             return text;
@@ -115,11 +115,10 @@ namespace PluginCore.FRService
         {
             int linesDiff = CountNewLines(replacement) - CountNewLines(found);
             int charsDiff = replacement.Length - found.Length;
-            SearchMatch match;
             if (charsDiff != 0 || linesDiff != 0)
                 for (int i = fromMatchIndex; i < matches.Count; i++)
                 {
-                    match = matches[i];
+                    var match = matches[i];
                     match.Index += charsDiff;
                     match.LineStart += charsDiff;
                     match.LineEnd += charsDiff;
@@ -130,11 +129,10 @@ namespace PluginCore.FRService
         static private int CountNewLines(string src)
         {
             int lines = 0;
-            char c1;
             char c2 = ' ';
             for (int i = 0; i < src.Length; i++)
             {
-                c1 = src[i];
+                var c1 = src[i];
                 if (c1 == '\r') lines++;
                 else if (c1 == '\n' && c2 != '\r') lines++;
                 c2 = c1;
@@ -510,7 +508,6 @@ namespace PluginCore.FRService
             List<int> lineStart = new List<int>();
             for (int i = 0; i < startLine; i++) lineStart.Add(startIndex);
             char c = ' ';
-            bool hadNL = false;
 
             int matchIndex = 0;
             int matchCount = matches.Count;
@@ -532,7 +529,7 @@ namespace PluginCore.FRService
                 c = src[++pos];
 
                 // counting lines
-                hadNL = false;
+                var hadNL = false;
                 if (c == '\n')
                 {
                     line++;
@@ -585,11 +582,11 @@ namespace PluginCore.FRService
                         else if (pos > 1)
                             if (literalMatch == 1)
                             {
-                                if (src[pos - 1] != '\\' && c == '"') literalMatch = 0;
+                                if (c == '"' && !IsEscapedCharacter(src, pos)) literalMatch = 0;
                             }
                             else if (literalMatch == 2)
                             {
-                                if (src[pos - 1] != '\\' && c == '\'') literalMatch = 0;
+                                if (c == '\'' && !IsEscapedCharacter(src, pos)) literalMatch = 0;
                             }
                         if ((inLiterals && literalMatch == 0) || (outLiterals && literalMatch > 0))
                             continue;
@@ -699,6 +696,17 @@ namespace PluginCore.FRService
         }
 
         #endregion
+
+        static bool IsEscapedCharacter(string src, int position, char escapeChar = '\\')
+        {
+            var result = false;
+            for (var i = position - 1; i >= 0; i--)
+            {
+                if (src[i] != escapeChar) break;
+                result = !result;
+            }
+            return result;
+        }
 
     }
 }

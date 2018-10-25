@@ -74,7 +74,7 @@ namespace ProjectManager.Actions
                 string fileName = Path.GetFileNameWithoutExtension(templatePath);
                 string caption = TextHelper.GetString("Label.AddNew") + " ";
 
-                if (fileName.IndexOf('.') > -1)
+                if (fileName.Contains('.'))
                 {
                     // it's something like Class.as.fdt
                     extension = Path.GetExtension(fileName); // .as
@@ -452,6 +452,7 @@ namespace ProjectManager.Actions
 
                 string oldDir = Path.GetDirectoryName(oldPath);
                 string newPath = Path.Combine(oldDir, newName);
+                string originalOld = oldPath;
 
                 OnFileCreated(newPath);
 
@@ -490,7 +491,7 @@ namespace ProjectManager.Actions
                     }
                     else return false;
                 }
-                OnFileMoved(oldPath, newPath);
+                OnFileMoved(originalOld, newPath);
             }
             catch (Exception exception)
             {

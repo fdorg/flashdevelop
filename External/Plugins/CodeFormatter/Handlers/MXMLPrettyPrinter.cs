@@ -192,7 +192,7 @@ namespace CodeFormatter.Handlers
 
         public String print(int startIndent)
         {
-            if (mSource.IndexOfOrdinal(ASPrettyPrinter.mIgnoreFileProcessing) >= 0)
+            if (mSource.Contains(ASPrettyPrinter.mIgnoreFileProcessing))
             {
                 mParseErrors = new List<Exception>();
                 mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> " + ASPrettyPrinter.mIgnoreFileProcessing));
@@ -1079,7 +1079,7 @@ namespace CodeFormatter.Handlers
                 if (lines.Length == 0 && token.Text == "\n")
                     lines = new String[] { "", "" };
                 //if all whitespace but no carriage returns, then we don't want to go through the loop
-                else if (token.Text.IndexOf('\n') < 0 && AntlrUtilities.asTrim(token.Text).Length == 0)
+                else if (!token.Text.Contains('\n') && AntlrUtilities.asTrim(token.Text).Length == 0)
                     lines = new String[] { };
                 for (int k = 0; k < lines.Length; k++)
                 {
@@ -2063,7 +2063,7 @@ namespace CodeFormatter.Handlers
                                 mASPrinter.setDoFormat(mDoFormat);
                                 mASPrinter.setData(data);
                                 String newValue = mASPrinter.print(0);
-                                if ((mASPrinter.getParseErrors() == null || mASPrinter.getParseErrors().Count == 0) && newValue != null && newValue.Length > 0 && newValue.IndexOf('\n') < 0) //I don't really want to add carriage returns
+                                if ((mASPrinter.getParseErrors() == null || mASPrinter.getParseErrors().Count == 0) && newValue != null && newValue.Length > 0 && !newValue.Contains('\n')) //I don't really want to add carriage returns
                                 {
                                     data = AntlrUtilities.asTrim(newValue); //we don't want to keep any whitespace on the ends; only internal whitespace
                                 }

@@ -10,7 +10,7 @@ using PluginCore;
 namespace ASCompletion.Model
 {
     /// <summary>
-    /// Object representation of an Actionscript MemberModel
+    /// Object representation of an ActionScript MemberModel
     /// </summary>
     [Serializable]
     public class MemberModel: ICloneable, IComparable
@@ -30,6 +30,7 @@ namespace ASCompletion.Model
         public string Template;
         public string Comments;
         public string Value;
+        public int ValueEndPosition = -1;
         public int LineFrom;
         public int LineTo;
         public List<ASMetaData> MetaDatas;
@@ -77,6 +78,7 @@ namespace ASCompletion.Model
             copy.Type = Type;
             copy.Comments = Comments;
             copy.Value = Value;
+            copy.ValueEndPosition = ValueEndPosition;
             copy.LineFrom = LineFrom;
             copy.LineTo = LineTo;
             return copy;
@@ -120,10 +122,8 @@ namespace ASCompletion.Model
             return res;
         }
 
-        public string ToDeclarationString()
-        {
-            return ToDeclarationString(true, false);
-        }
+        public string ToDeclarationString() => ToDeclarationString(true, false);
+
         public string ToDeclarationString(bool wrapWithSpaces, bool concatValue)
         {
             string colon = wrapWithSpaces ? " : " : ":";
@@ -155,10 +155,8 @@ namespace ASCompletion.Model
             if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(Type))
                 type = FormatType(Type);
 
-            if ((Flags & FlagType.Constructor) > 0)
-                return res;
-            else if (!string.IsNullOrEmpty(type))
-                res += colon + type;
+            if ((Flags & FlagType.Constructor) > 0) return res;
+            if (!string.IsNullOrEmpty(type)) res += colon + type;
 
             res += comment;
 
@@ -168,10 +166,7 @@ namespace ASCompletion.Model
             return res;
         }
 
-        public string ParametersString()
-        {
-            return ParametersString(false);
-        }
+        public string ParametersString() => ParametersString(false);
 
         public string ParametersString(bool formated)
         {
@@ -216,17 +211,14 @@ namespace ASCompletion.Model
                 throw new InvalidCastException("This object is not of type MemberModel");
             MemberModel to = (MemberModel)obj;
             if (Name == to.Name) return (int)Flags - (int)to.Flags;
-            else return string.Compare(Name, to.Name, false);
+            return string.Compare(Name, to.Name, false);
         }
 
-        static public string FormatType(string type)
+        public static string FormatType(string type) => FormatType(type, false);
+
+        public static string FormatType(string type, bool allowBBCode)
         {
-            return FormatType(type, false);
-        }
-        static public string FormatType(string type, bool allowBBCode)
-        {
-            if (string.IsNullOrEmpty(type))
-                return null;
+            if (string.IsNullOrEmpty(type)) return null;
             int p = type.IndexOf('@');
             if (p > 0)
             {
@@ -235,10 +227,9 @@ namespace ASCompletion.Model
 
                 if (type.Substring(0, p) == "Array")
                     return type.Substring(0, p) + bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose;
-                else if (type.IndexOfOrdinal("<T>") > 0)
+                if (type.IndexOfOrdinal("<T>") > 0)
                     return type.Substring(0, type.IndexOfOrdinal("<T>")) + bbCodeOpen + "<" + type.Substring(p + 1) + ">" + bbCodeClose;
-                else
-                    return bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose + type.Substring(0, p);
+                return bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose + type.Substring(0, p);
             }
             return type;
         }
@@ -250,96 +241,81 @@ namespace ASCompletion.Model
     [Serializable]
     public class MemberList: IEnumerable
     {
-        private List<MemberModel> items;
-        private bool Sorted;
+        private bool sorted;
         
-        public IEnumerator GetEnumerator()
-        {
-            return items.GetEnumerator();
-        }
-        
-        public List<MemberModel> Items 
-        {
-            get {
-                return items;
-            }
-        }
+        public IEnumerator GetEnumerator() => items.GetEnumerator();
 
-        public int Count
-        {
-            get {
-                return items.Count;
-            }
-        }
-        
+        readonly List<MemberModel> items = new List<MemberModel>();
+
+        public List<MemberModel> Items => items;
+
+        public int Count => items.Count;
+
         public MemberList()
         {
-            items = new List<MemberModel>();
         }
         
         public MemberModel this[int index]
         {
-            get {
-                return items[index];
-            }
-            set {
-                Sorted = false;
+            get => items[index];
+            set
+            {
+                sorted = false;
                 items[index] = value;
             }
         }
         
         public int Add(MemberModel value)
         {
-            Sorted = false;
+            sorted = false;
             items.Add(value);
             return items.Count;
         }
 
         public int Add(MemberList list)
         {
-            Sorted = false;
+            sorted = false;
             items.AddRange(list.Items);
             return items.Count;
         }
 
         public void Insert(int index, MemberModel value)
         {
-            Sorted = false;
+            sorted = false;
             items.Insert(index, value);
         }
         
-        public void Remove(MemberModel value)
-        {
-            items.Remove(value);
-        }
+        public void Remove(MemberModel value) => items.Remove(value);
 
         public void Remove(string name)
         {
-            MemberModel member = Search(name, 0, 0);
+            var member = Search(name, 0, 0);
             if (member != null) items.Remove(member);
         }
 
         public void Clear()
         {
-            Sorted = true;
+            sorted = true;
             items.Clear();
         }
+
+        public bool Contains(string name, FlagType mask, Visibility access) => Search(name, mask, access) != null;
 
         /// <summary>
         /// Return the first MemberModel instance match in the MemberList
         /// </summary>
         /// <param name="name">Member name to mach</param>
         /// <param name="mask">Flags mask</param>
-        /// <param name="acc">Visibility mask</param>
+        /// <param name="access">Visibility mask</param>
         /// <returns>First match</returns>
-        public MemberModel Search(string name, FlagType mask, Visibility acc)
+        public MemberModel Search(string name, FlagType mask, Visibility access)
         {
             var count = items.Count;
             for (var i = 0; i < count; i++)
             {
                 var m = items[i];
                 if (((m.Flags & mask) == mask)
-                    && (acc == 0 || (m.Access & acc) > 0)
+                    && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) return m;
             }
             return null;
@@ -350,30 +326,25 @@ namespace ASCompletion.Model
         /// </summary>
         /// <param name="name">Member name to match</param>
         /// <param name="mask">Flags mask</param>
-        /// <param name="acc">Visibility mask</param>
+        /// <param name="access">Visibility mask</param>
         /// <returns>All matches</returns>
-        public MemberList MultipleSearch(string name, FlagType mask, Visibility acc) 
+        public MemberList MultipleSearch(string name, FlagType mask, Visibility access) 
         {
-            MemberList result = new MemberList();
-            foreach (MemberModel m in items)
+            var result = new MemberList();
+            foreach (var m in items)
                 if (((m.Flags & mask) == mask)
-                    && (acc == 0 || (m.Access & acc) > 0)
+                    && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) result.Add(m);
             return result;
         }
         
-        public void Sort()
-        {
-            this.Sort(null);
-        }
+        public void Sort() => Sort(null);
 
         public void Sort(IComparer<MemberModel> comparer)
         {
-            if (!Sorted)
-            {
-                items.Sort(comparer);
-                Sorted = true;
-            }
+            if (sorted) return;
+            items.Sort(comparer);
+            sorted = true;
         }
 
         /// <summary>
@@ -383,7 +354,7 @@ namespace ASCompletion.Model
         public void Merge(MemberModel item)
         {
             if (item == null) return;
-            MemberList list = new MemberList();
+            var list = new MemberList();
             list.Add(item);
             Merge(list);
         }
@@ -396,16 +367,16 @@ namespace ASCompletion.Model
         {
             if (list == null) return;
             int index = 0;
-            bool added;
             foreach (MemberModel m in list)
             {
-                added = false;
+                var added = false;
                 while (index < items.Count)
                 {
-                    if (m.Name.CompareTo(items[index].Name) <= 0)
+                    var item = items[index];
+                    if (m.Name.CompareTo(item.Name) <= 0)
                     {
-                        if (m.Name != items[index].Name) items.Insert(index, m);
-                        else if ((items[index].Flags & FlagType.Setter) > 0)
+                        if (m.Name != item.Name) items.Insert(index, m);
+                        else if ((item.Flags & FlagType.Setter) > 0)
                         {
                             items.RemoveAt(index);
                             items.Insert(index, m);
@@ -417,6 +388,24 @@ namespace ASCompletion.Model
                 }
                 if (!added) items.Add(m);
             }
+        }
+
+        public void MergeByLine(MemberModel item)
+        {
+            if (item == null) return;
+            var index = 0;
+            var added = false;
+            while (index < items.Count)
+            {
+                if (item.LineFrom <= items[index].LineFrom)
+                {
+                    items.Insert(index, item);
+                    added = true;
+                    break;
+                }
+                index++;
+            }
+            if (!added) items.Add(item);
         }
 
         /// <summary>
@@ -426,22 +415,21 @@ namespace ASCompletion.Model
         public void MergeByLine(MemberList list)
         {
             if (list == null) return;
-            int index = 0;
-            bool added;
-            foreach (MemberModel m in list)
+            var index = 0;
+            foreach (MemberModel item in list)
             {
-                added = false;
+                var added = false;
                 while (index < items.Count)
                 {
-                    if (m.LineFrom <= items[index].LineFrom)
+                    if (item.LineFrom <= items[index].LineFrom)
                     {
-                        items.Insert(index, m);
+                        items.Insert(index, item);
                         added = true;
                         break;
                     }
                     index++;
                 }
-                if (!added) items.Add(m);
+                if (!added) items.Add(item);
             }
         }
 
@@ -449,21 +437,21 @@ namespace ASCompletion.Model
         /// Merge selected items from the SORTED lists without duplicate values
         /// </summary>
         /// <param name="list">Items to merge</param>
-        public void Merge(MemberList list, FlagType mask, Visibility acc)
+        public void Merge(MemberList list, FlagType mask, Visibility access)
         {
             if (list == null) return;
             int index = 0;
-            bool added;
             foreach (MemberModel m in list)
-            if ((m.Flags & mask) == mask && (m.Access & acc) > 0)
+            if ((m.Flags & mask) == mask && (m.Access & access) > 0)
             {
-                added = false;
+                var added = false;
                 while (index < items.Count)
                 {
-                    if (m.Name.CompareTo(items[index].Name) <= 0)
+                    var item = items[index];
+                    if (m.Name.CompareTo(item.Name) <= 0)
                     {
-                        if (m.Name != items[index].Name) items.Insert(index, m);
-                        else if ((items[index].Flags & FlagType.Setter) > 0)
+                        if (m.Name != item.Name) Items.Insert(index, m);
+                        else if ((item.Flags & FlagType.Setter) > 0)
                         {
                             items.RemoveAt(index);
                             items.Insert(index, m);
@@ -477,15 +465,9 @@ namespace ASCompletion.Model
             }
         }
 
-        public void RemoveAllWithFlag(FlagType flag)
-        {
-            items.RemoveAll(m => (m.Flags & flag) > 0);   
-        }
+        public void RemoveAllWithFlag(FlagType flag) => Items.RemoveAll(m => (m.Flags & flag) > 0);
 
-        public void RemoveAllWithoutFlag(FlagType flag)
-        {
-            items.RemoveAll(m => (m.Flags & flag) == 0);
-        }
+        public void RemoveAllWithoutFlag(FlagType flag) => Items.RemoveAll(m => (m.Flags & flag) == 0);
     }
 
     public class ByKindMemberComparer : IComparer<MemberModel>
@@ -499,9 +481,9 @@ namespace ASCompletion.Model
         private uint getPriority(FlagType flag)
         {
             if ((flag & FlagType.Constant) > 0) return 4;
-            else if ((flag & FlagType.Variable) > 0) return 3;
-            else if ((flag & (FlagType.Getter | FlagType.Setter)) > 0) return 2;
-            else return 1;
+            if ((flag & FlagType.Variable) > 0) return 3;
+            if ((flag & (FlagType.Getter | FlagType.Setter)) > 0) return 2;
+            return 1;
         }
 
     }
@@ -536,12 +518,7 @@ namespace ASCompletion.Model
 
     public class ByDeclarationPositionMemberComparer : IComparer<MemberModel>
     {
-
-        public int Compare(MemberModel a, MemberModel b)
-        {
-            return a.LineFrom - b.LineFrom;
-        }
-
+        public int Compare(MemberModel a, MemberModel b) => a.LineFrom - b.LineFrom;
     }
 
     /// <summary>
@@ -549,21 +526,21 @@ namespace ASCompletion.Model
     /// </summary>
     public class CaseSensitiveImportComparer : IComparer<MemberModel>
     {
-        static Int32 GetPackageTypeSeparation(string import)
+        static int GetPackageTypeSeparation(string import)
         {
             var dot = import.IndexOf('.');
             var lastDot = -1;
             var max = import.Length - 1;
             while (dot > 0 && dot < max)
             {
-                if (Char.IsUpper(import[dot + 1]))
+                if (char.IsUpper(import[dot + 1]))
                     return dot;
                 lastDot = dot;
                 dot = import.IndexOf('.', dot + 1);
             }
             if (dot < 0 || dot >= max) return lastDot;
-            else if (dot == 0) return -1;
-            else return dot;
+            if (dot == 0) return -1;
+            return dot;
         }
 
         public static Int32 CompareImports(string import1, string import2)
@@ -575,12 +552,12 @@ namespace ASCompletion.Model
             if (d1 < 0) 
             {
                 if (d2 > 0) return -1;
-                else return cmp.Compare(import1, import2);
+                return cmp.Compare(import1, import2);
             }
-            else if (d2 < 0) 
+            if (d2 < 0) 
             {
                 if (d1 > 0) return 1;
-                else return cmp.Compare(import1, import2);
+                return cmp.Compare(import1, import2);
             }
             // compare package
             var pkg1 = import1.Substring(0, d1);
@@ -627,12 +604,12 @@ namespace ASCompletion.Model
         }
 #endif
 
-        public Int32 Compare(string import1, string import2)
+        public int Compare(string import1, string import2)
         {
             return CompareImports(import1, import2);
         }
 
-        public Int32 Compare(MemberModel item1, MemberModel item2)
+        public int Compare(MemberModel item1, MemberModel item2)
         {
             return CompareImports(item1.Type, item2.Type);
         }

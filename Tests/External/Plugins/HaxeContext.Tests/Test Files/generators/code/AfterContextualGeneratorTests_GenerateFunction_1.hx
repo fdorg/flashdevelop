@@ -1,10 +1,10 @@
 ﻿package;
 class EFoo {
 	public function new() {
-		foo(1, (v is String))
+		foo(1, 1.0, (v is String))
 	}
 	
-	function foo(float:Float, bool:Bool) {
+	function foo(int:Int, float:Float, bool:Bool) {
 		
 	}
 }

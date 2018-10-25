@@ -33,7 +33,7 @@ namespace CodeRefactor.Controls
         {
             var files = new List<string>();
 
-            string specific = Path.Combine(Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage), SurroundWithCommand.SurroundFolder);
+            string specific = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage, SurroundWithCommand.SurroundFolder);
             if (Directory.Exists(specific))
             {
                 var walker = new PathWalker(specific, "*" + SurroundWithCommand.SurroundExt, false);
@@ -54,7 +54,7 @@ namespace CodeRefactor.Controls
                 foreach (string file in files)
                 {
                     string content = File.ReadAllText(file);
-                    if (content.IndexOfOrdinal("{0}") >= 0)
+                    if (content.Contains("{0}"))
                     {
                         items.Add(new SurroundWithItem(Path.GetFileNameWithoutExtension(file)));
                     }

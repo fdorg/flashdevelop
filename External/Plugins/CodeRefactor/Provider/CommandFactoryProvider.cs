@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ASCompletion.Completion;
+using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
 using PluginCore;
@@ -38,6 +38,13 @@ namespace CodeRefactor.Provider
                     || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
                     || expr.IsPackage;
             });
+            DefaultFactory.RegisterValidator(typeof(OrganizeImports), expr => expr.InFile.Imports.Count > 0);
+            DefaultFactory.RegisterValidator(typeof(DelegateMethods), expr => expr != null && !expr.IsNull() && expr.InFile != null && expr.InClass != null
+                                                                              && expr.Type is ClassModel type && !type.IsVoid()
+                                                                              && expr.Member is MemberModel member && member.Flags is FlagType flags
+                                                                              && flags.HasFlag(FlagType.Variable)
+                                                                              && !flags.HasFlag(FlagType.LocalVar) && !flags.HasFlag(FlagType.ParameterVar)
+                                                                              && expr.Type != ASContext.Context.CurrentClass);
         }
 
         public static void Register(string language, ICommandFactory factory)

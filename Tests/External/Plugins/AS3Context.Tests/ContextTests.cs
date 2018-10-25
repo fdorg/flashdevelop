@@ -52,7 +52,7 @@ namespace AS3Context
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("IsImported_case1"))
+                yield return new TestCaseData("IsImported_case1")
                     .Returns(true);
                 yield return new TestCaseData(null)
                     .Returns(false)
@@ -62,14 +62,20 @@ namespace AS3Context
         }
 
         [Test, TestCaseSource(nameof(IsImportedTestCases))]
-        public bool IsImported(string sourceText)
+        public bool IsImported(string fileName)
         {
             MemberModel member;
-            if (sourceText != null)
+            if (fileName != null)
             {
+                var sourceText = ReadAllText(fileName);
                 SetSrc(sci, sourceText);
-                var type = sci.GetWordFromPosition(sci.CurrentPos);
-                member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                var expr = ASComplete.GetExpressionType(sci, ASComplete.ExpressionEndPosition(sci, sci.CurrentPos), false, true);
+                if (expr.Type != null) member = expr.Type;
+                else
+                {
+                    var type = sci.GetWordFromPosition(sci.CurrentPos);
+                    member = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+                }
             }
             else member = ClassModel.VoidClass;
             return ASContext.Context.IsImported(member, sci.CurrentLine);
@@ -88,24 +94,34 @@ namespace AS3Context
                 yield return new TestCaseData("{}")
                     .Returns(new ClassModel {Name = "Object", Type = "Object", InFile = FileModel.Ignore});
                 yield return new TestCaseData("10")
-                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "int", Type = "int", InFile = FileModel.Ignore});
                 yield return new TestCaseData("-10")
+                    .Returns(new ClassModel {Name = "int", Type = "int", InFile = FileModel.Ignore});
+                yield return new TestCaseData("10.0")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
+                yield return new TestCaseData("-10.0")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
+                yield return new TestCaseData("5e-324")
                     .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"\"")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("\"")
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("''")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("'")
+                    .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("</>")
                     .Returns(new ClassModel {Name = "XML", Type = "XML", InFile = FileModel.Ignore});
                 yield return new TestCaseData("0xFF0000")
                     .Returns(new ClassModel {Name = "uint", Type = "uint", InFile = FileModel.Ignore});
-                yield return new TestCaseData("(' 1 '   is String)")
-                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
-                yield return new TestCaseData("(' 1 '   as String)")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("new Sprite().addChild(new Sprite())")
                     .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("new String")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' 1 '   is String)")
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' 1 '   as String)")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }

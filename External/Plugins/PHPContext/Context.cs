@@ -149,7 +149,7 @@ namespace PHPContext
         /// <summary>
         /// Build the file DOM
         /// </summary>
-        /// <param name="filename">File path</param>
+        /// <param name="fileName">File path</param>
         protected override void GetCurrentFileModel(string fileName)
         {
             string ext = Path.GetExtension(fileName);
@@ -223,27 +223,6 @@ namespace PHPContext
                 return Visibility.Public;
         }
 
-
-        /// <summary>
-        /// Return the full project classes list
-        /// </summary>
-        /// <returns></returns>
-        public override MemberList GetAllProjectClasses()
-        {
-            return base.GetAllProjectClasses();
-        }
-
-        /// <summary>
-        /// Retrieves a class model from its name
-        /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
-        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public override ClassModel ResolveType(string cname, FileModel inFile)
-        {
-            return base.ResolveType(cname, inFile);
-        }
-
         /// <summary>
         /// Prepare intrinsic known vars/methods/classes
         /// </summary>
@@ -254,12 +233,15 @@ namespace PHPContext
 
             // search top-level declaration
             foreach (PathModel aPath in classPath)
-                if (File.Exists(Path.Combine(aPath.Path, filename)))
+            {
+                var path = Path.Combine(aPath.Path, filename);
+                if (File.Exists(path))
                 {
-                    filename = Path.Combine(aPath.Path, filename);
+                    filename = path;
                     topLevel = GetCachedFileModel(filename);
                     break;
                 }
+            }
 
             if (File.Exists(filename))
             {
@@ -301,8 +283,7 @@ namespace PHPContext
         /// </summary>
         protected override void UpdateTopLevelElements()
         {
-            MemberModel special;
-            special = topLevel.Members.Search("$this", 0, 0);
+            var special = topLevel.Members.Search("$this", 0, 0);
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.Name;
@@ -318,7 +299,7 @@ namespace PHPContext
             if (special != null)
             {
                 cClass.ResolveExtends();
-                ClassModel extends = cClass.Extends;
+                var extends = cClass.Extends;
                 if (!extends.IsVoid()) special.Type = extends.Name;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
             }

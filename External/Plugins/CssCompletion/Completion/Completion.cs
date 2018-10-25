@@ -56,7 +56,7 @@ namespace CssCompletion
             bool autoInsert = false;
 
             char c = (char)value;
-            if (wordChars.IndexOf(c) < 0)
+            if (!wordChars.Contains(c))
             {
                 if (c == ':')
                 {
@@ -538,7 +538,7 @@ namespace CssCompletion
                     {
                         prevLine = prevLine.Trim();
                         if (prevLine.StartsWithOrdinal("//")) break;
-                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.IndexOfOrdinal("/*") >= 0) break;
+                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.Contains("/*")) break;
                     }
                     prevLine = c + prevLine;
                 }

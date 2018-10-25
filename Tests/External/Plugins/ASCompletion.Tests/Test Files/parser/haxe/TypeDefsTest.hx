@@ -28,3 +28,8 @@ typedef ShortDef = {
     aliases:Array<String>,
     processFunction:Dynamic
 }
+
+typedef WindowSettings = {
+	>ShortDef,
+	var level(default, never):Null<Int>;
+}

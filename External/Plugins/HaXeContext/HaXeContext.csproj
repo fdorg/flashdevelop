@@ -123,6 +123,7 @@
     <Compile Include="CodeRefactor\Commands\HaxeOrganizeImports.cs" />
     <Compile Include="CodeRefactor\Provider\HaxeCommandFactory.cs" />
     <Compile Include="Completion\CodeComplete.cs" />
+    <Compile Include="Completion\HaxeComplete400.cs" />
     <Compile Include="Generators\CodeGenerator.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Completion\HaxeComplete.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Helpers\FlagEnumEditor.cs" />
     <Compile Include="Helpers\ProcessExtensions.cs" />
     <Compile Include="Linters\DiagnosticsLinter.cs" />
+    <Compile Include="Model\FileParser.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

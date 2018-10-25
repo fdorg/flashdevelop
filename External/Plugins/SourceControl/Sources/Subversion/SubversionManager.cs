@@ -24,8 +24,8 @@ namespace SourceControl.Sources.Subversion
         public bool IsPathUnderVC(string path)
         {
             if (Directory.Exists(Path.Combine(path, ".svn"))) return true;
-            else if (Directory.Exists(Path.Combine(path, "_svn"))) return true;
-            else return false;
+            if (Directory.Exists(Path.Combine(path, "_svn"))) return true;
+            return false;
         }
 
         public VCItemStatus GetOverlay(string path, string rootPath)

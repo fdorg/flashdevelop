@@ -153,9 +153,9 @@ namespace ProjectManager.Helpers
 
         private string ReplaceKeywords(string line)
         {
-            if (line.IndexOfOrdinal("$") < 0) return line;
+            if (!line.Contains('$')) return line;
             if (packageName == "") line = line.Replace(" $(PackageName)", "");
-            return line = reArgs.Replace(line, new MatchEvaluator(ReplaceVars));
+            return reArgs.Replace(line, ReplaceVars);
         }
 
         private string ReplaceVars(Match match)

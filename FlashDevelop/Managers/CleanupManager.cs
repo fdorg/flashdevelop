@@ -18,8 +18,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void RevertConfiguration(Boolean everything)
         {
-            String appSettingDir = Path.Combine(PathHelper.AppDir, "Settings");
-            String appLanguageDir = Path.Combine(appSettingDir, "Languages");
+            String appLanguageDir = Path.Combine(PathHelper.AppDir, "Settings", "Languages");
             String userLanguageDir = Path.Combine(PathHelper.SettingDir, "Languages");
             if (everything) FolderHelper.CopyFolder(appLanguageDir, userLanguageDir);
             else

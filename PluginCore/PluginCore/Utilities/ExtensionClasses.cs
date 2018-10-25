@@ -4,6 +4,8 @@ namespace PluginCore
 {
     public static class StringExtensions
     {
+        public static bool Contains(this string @this, char value) => @this.IndexOf(value) >= 0;
+
         /// <summary>
         /// Determines whether the beginning of this <see cref="string"/> instance matches the specified Unicode character.
         /// <para/>

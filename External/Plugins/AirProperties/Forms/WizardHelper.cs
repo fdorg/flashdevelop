@@ -64,7 +64,7 @@ namespace AirProperties.Forms
                     foreach (object item in value)
                     {
                         string val = item as string;
-                        if (item == null) continue;
+                        if (val == null) continue;
 
                         if (val.Trim() == listItem.Value)
                         {

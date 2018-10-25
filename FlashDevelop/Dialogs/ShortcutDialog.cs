@@ -414,7 +414,19 @@ namespace FlashDevelop.Dialogs
             var item = (ShortcutListItem) this.listView.SelectedItems[0];
             this.AssignNewShortcut(item, e.KeyData);
             // Don't trigger list view default shortcuts like Ctrl+Add
-            if (e.KeyData != Keys.Up && e.KeyData != Keys.Down) e.Handled = true;
+            switch (e.KeyData) {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.PageDown:
+                case Keys.PageUp:
+                case Keys.Home:
+                case Keys.End:
+                    break;
+
+                default:
+                    e.Handled = true;
+                    break;
+            }
         }
 
         /// <summary>

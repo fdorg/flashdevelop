@@ -147,8 +147,8 @@ namespace AS3Context
                 }
                 else
                 {
-                    string parentType = ResolveType(mxmlContext, parentTag.Name);
-                    ClassModel parentClass = context.ResolveType(parentType, mxmlContext.model);
+                    var parentType = ResolveType(mxmlContext, parentTag.Name);
+                    var parentClass = context.ResolveType(parentType, mxmlContext.model);
                     if (!parentClass.IsVoid())
                     {
                         parentClass.ResolveExtends();
@@ -273,7 +273,6 @@ namespace AS3Context
             if (tagClass.IsVoid()) return true;
             tagClass.ResolveExtends();
 
-            string currentAttribute;
             StringBuilder caBuilder = new StringBuilder();
             bool possibleStartFound = false, startFound = false;
             for (int i = tagContext.Tag.Length - 1; i >= 0; i--)
@@ -297,7 +296,7 @@ namespace AS3Context
                 }
             }
 
-            currentAttribute = caBuilder.ToString();
+            var currentAttribute = caBuilder.ToString();
 
             List<ICompletionListItem> mix = GetTagAttributeValues(tagClass, null, currentAttribute);
 
@@ -366,7 +365,7 @@ namespace AS3Context
                 ExploreMetadatas(tmpClass, mix, excludes, ns, tagClass == tmpClass);
 
                 tmpClass = tmpClass.Extends;
-                if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
+                if (tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
                     break;
                 // members visibility
                 acc = context.TypesAffinity(curClass, tmpClass);
@@ -435,7 +434,7 @@ namespace AS3Context
                     return retVal;
 
                 tmpClass = tmpClass.Extends;
-                if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
+                if (tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
                     break;
                 // members visibility
                 acc = context.TypesAffinity(curClass, tmpClass);
@@ -540,7 +539,7 @@ namespace AS3Context
 
             List<ICompletionListItem> result = null;
             var validTypes = new Dictionary<string, bool>();
-            while (tmpClass != null && !tmpClass.IsVoid())
+            while (!tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
                     if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && member.Parameters != null && member.Parameters.Count > 0)
@@ -577,7 +576,7 @@ namespace AS3Context
                     }
 
                 tmpClass = tmpClass.Extends;
-                if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
+                if (tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
                     break;
                 // members visibility
                 // TODO: Take into account namespaces!
@@ -604,29 +603,26 @@ namespace AS3Context
             }
             else if (type == "Function")
             {
-                ClassModel tmpClass = mxmlContext.model.GetPublicClass();
-                Visibility acc = Visibility.Default | Visibility.Internal | Visibility.Private | Visibility.Protected | Visibility.Public;
-
+                var tmpClass = mxmlContext.model.GetPublicClass();
+                var access = Visibility.Default | Visibility.Internal | Visibility.Private | Visibility.Protected | Visibility.Public;
                 tmpClass.ResolveExtends();
-
                 List<ICompletionListItem> result = null;
-                while (tmpClass != null && !tmpClass.IsVoid())
+                while (!tmpClass.IsVoid())
                 {
                     foreach (MemberModel member in tmpClass.Members)
-                        if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0)
+                        if ((member.Flags & FlagType.Function) > 0 && (member.Access & access) > 0)
                         {
                             if (result == null) result = new List<ICompletionListItem>();
                             result.Add(new MemberItem(member));
                         }
 
                     tmpClass = tmpClass.Extends;
-                    if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
+                    if (tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
                         break;
                     // members visibility
                     // TODO: Take into account namespaces!
-                    acc = Visibility.Protected | Visibility.Public;
+                    access = Visibility.Protected | Visibility.Public;
                 }
-
                 return result;
             }
             return null;
@@ -694,7 +690,7 @@ namespace AS3Context
                 // parse & cache
                 if (!File.Exists(fileName)) return null;
                 string src = File.ReadAllText(fileName);
-                if (src.IndexOfOrdinal("package") < 0) src = "package {" + src + "}";
+                if (!src.Contains("package")) src = "package {" + src + "}";
                 ASFileParser parser = new ASFileParser();
                 FileModel model = new FileModel(path);
                 parser.ParseSrc(model, src);
@@ -825,13 +821,12 @@ namespace AS3Context
 
         private static ASResult ResolveAttribute(ClassModel model, string word)
         {
-            ASResult result = new ASResult();
-            ClassModel curClass = mxmlContext.model.GetPublicClass();
-            ClassModel tmpClass = model;
-            Visibility acc = context.TypesAffinity(curClass, tmpClass);
+            var result = new ASResult();
+            var curClass = mxmlContext.model.GetPublicClass();
+            var tmpClass = model;
+            var acc = context.TypesAffinity(curClass, tmpClass);
             tmpClass.ResolveExtends();
-
-            while (tmpClass != null && !tmpClass.IsVoid())
+            while (!tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
                     if ((member.Flags & FlagType.Dynamic) > 0 && (member.Access & acc) > 0
@@ -855,7 +850,7 @@ namespace AS3Context
                 // TODO inspect metadata & includes
 
                 tmpClass = tmpClass.Extends;
-                if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
+                if (tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
                     break;
                 // members visibility
                 acc = context.TypesAffinity(curClass, tmpClass);
@@ -867,7 +862,6 @@ namespace AS3Context
 
     class MXMLListItemComparer : IComparer<ICompletionListItem>
     {
-
         public int Compare(ICompletionListItem a, ICompletionListItem b)
         {
             string a1;
@@ -875,7 +869,7 @@ namespace AS3Context
             if (a.Label.Equals(b.Label, StringComparison.OrdinalIgnoreCase))
             {
                 if (a is HtmlAttributeItem && b is HtmlTagItem) return 1;
-                else if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
+                if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
             }
             if (a is IHtmlCompletionListItem)
             {

@@ -10,16 +10,16 @@ using PluginCore.Managers;
 
 namespace CodeRefactor.Commands
 {
-    class RenameFile : RefactorCommand<IDictionary<String, List<SearchMatch>>>
+    class RenameFile : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
         private string oldPath;
         private string newPath;
 
-        public RenameFile(String oldPath, String newPath) : this(oldPath, newPath, true)
+        public RenameFile(string oldPath, string newPath) : this(oldPath, newPath, true)
         {
         }
 
-        public RenameFile(String oldPath, String newPath, Boolean outputResults)
+        public RenameFile(string oldPath, string newPath, bool outputResults)
         {
             this.oldPath = oldPath;
             this.newPath = newPath;
@@ -30,10 +30,10 @@ namespace CodeRefactor.Commands
 
         protected override void ExecutionImplementation()
         {
-            String oldFileName = Path.GetFileNameWithoutExtension(oldPath);
-            String newFileName = Path.GetFileNameWithoutExtension(newPath);
-            String msg = TextHelper.GetString("Info.RenamingFile");
-            String title = String.Format(TextHelper.GetString("Title.RenameDialog"), oldFileName);
+            string oldFileName = Path.GetFileNameWithoutExtension(oldPath);
+            string newFileName = Path.GetFileNameWithoutExtension(newPath);
+            string msg = TextHelper.GetString("Info.RenamingFile");
+            string title = string.Format(TextHelper.GetString("Title.RenameDialog"), oldFileName);
             if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
@@ -44,6 +44,8 @@ namespace CodeRefactor.Commands
                     return;
                 }
             }
+
+            string originalOld = oldPath;
             // refactor failed or was refused
             if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
             {
@@ -57,15 +59,12 @@ namespace CodeRefactor.Commands
             if (FileHelper.ConfirmOverwrite(newPath))
             {
                 FileHelper.ForceMove(oldPath, newPath);
-                DocumentManager.MoveDocuments(oldPath, newPath);
-                RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
+                DocumentManager.MoveDocuments(originalOld, newPath);
+                RefactoringHelper.RaiseMoveEvent(originalOld, newPath);
             }
         }
 
-        public override Boolean IsValid()
-        {
-            return true;
-        }
+        public override bool IsValid() => true;
 
         #endregion
 

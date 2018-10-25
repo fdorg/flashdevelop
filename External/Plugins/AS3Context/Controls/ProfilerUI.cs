@@ -220,7 +220,7 @@ namespace AS3Context.Controls
             defaultToolStripMenuItem.Click += new EventHandler(changeProfiler_Click);
 
             profilerSWF = null; // default
-            string active = Path.Combine(Path.Combine(PathHelper.DataDir, "AS3Context"), "activeProfiler.txt");
+            string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
             if (File.Exists(active))
             {
                 string src = File.ReadAllText(active).Trim();
@@ -273,7 +273,7 @@ namespace AS3Context.Controls
             item.Checked = true;
             profilerSWF = item.Tag as String;
 
-            string active = Path.Combine(Path.Combine(PathHelper.DataDir, "AS3Context"), "activeProfiler.txt");
+            string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
             File.WriteAllText(active, profilerSWF ?? "");
         }
 
@@ -381,8 +381,7 @@ namespace AS3Context.Controls
 
         static private string CheckResource(string fileName, string resName)
         {
-            string path = Path.Combine(PathHelper.DataDir, "AS3Context");
-            string fullPath = Path.Combine(path, fileName);
+            string fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
             if (!File.Exists(fullPath))
             {
                 string id = "AS3Context.Resources." + resName;

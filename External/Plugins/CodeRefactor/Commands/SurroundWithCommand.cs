@@ -34,21 +34,12 @@ namespace CodeRefactor.Commands
             try
             {
                 string selection = sci.SelText;
-                if (string.IsNullOrEmpty(selection))
-                {
-                    return;
-                }
+                if (string.IsNullOrEmpty(selection)) return;
+                if (selection.TrimStart().Length == 0) return;
 
-                if (selection.TrimStart().Length == 0)
-                {
-                    return;
-                }
-
-                sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length,
-                    sci.SelectionEnd);
+                sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length, sci.SelectionEnd);
                 sci.CurrentPos = sci.SelectionEnd;
-                selection = sci.SelText;
-
+                
                 int lineStart = sci.LineFromPosition(sci.SelectionStart);
                 int lineEnd = sci.LineFromPosition(sci.SelectionEnd);
                 int firstLineIndent = sci.GetLineIndentation(lineStart);
@@ -97,8 +88,8 @@ namespace CodeRefactor.Commands
 
         public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            string specific = Path.Combine(Path.Combine(Path.Combine(PathHelper.SnippetDir, syntax), SurroundFolder), word + SurroundExt);
-            string global = Path.Combine(Path.Combine(PathHelper.SnippetDir, SurroundFolder), word + SurroundExt);
+            string specific = Path.Combine(PathHelper.SnippetDir, syntax, SurroundFolder, word + SurroundExt);
+            string global = Path.Combine(PathHelper.SnippetDir, SurroundFolder, word + SurroundExt);
             if (File.Exists(specific))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);

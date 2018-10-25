@@ -153,10 +153,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public override bool IsValid()
-        {
-            return OldPathToNewPath != null;
-        }
+        public override bool IsValid() => OldPathToNewPath != null;
 
         #endregion
 
@@ -166,10 +163,10 @@ namespace CodeRefactor.Commands
         {
             targets = new List<MoveTargetHelper>();
             filesToReopen = new List<string>();
-            IProject project = PluginBase.CurrentProject;
+            var project = PluginBase.CurrentProject;
             if (project == null) return;
-            string filterMask = project.DefaultSearchFilter;
-            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
+            var filterMask = project.DefaultSearchFilter;
+            foreach (var item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
@@ -278,6 +275,7 @@ namespace CodeRefactor.Commands
                 string newPath = target.NewFilePath;
                 if (File.Exists(oldPath))
                 {
+                    // TODO: Is it necessary to check for "name casing changed" case? In which circumstances is it possible?
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed
@@ -300,34 +298,37 @@ namespace CodeRefactor.Commands
         private void MoveTargets()
         {
             MessageBar.Locked = true;
-            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
+            foreach (var item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
+                string originalOld = oldPath;
                 string newPath = item.Value;
+                // TODO: Is it necessary to check for "name casing changed" cases? In which circumstances are they possible?
                 if (File.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
+                    var oldFileName = Path.GetFileName(oldPath);
+                    newPath = Path.Combine(newPath, oldFileName);
                     // refactor failed or was refused
-                    if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                    if (oldFileName.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed
                         string tmpPath = oldPath + "$renaming$";
-                        RefactoringHelper.Move(oldPath, tmpPath);
+                        File.Move(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                    RefactoringHelper.Move(oldPath, newPath, true);
+                    RefactoringHelper.Move(oldPath, newPath, true, originalOld);
                 }
                 else if (Directory.Exists(oldPath))
                 {
                     if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed
-                        string tmpPath = oldPath + "$renaming$";
-                        RefactoringHelper.Move(oldPath, tmpPath);
+                        var tmpPath = oldPath + "$renaming$";
+                        Directory.Move(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
-                    RefactoringHelper.Move(oldPath, newPath, renaming);
+                    RefactoringHelper.Move(oldPath, newPath, renaming, originalOld);
                 }
             }
             MessageBar.Locked = false;
@@ -370,30 +371,26 @@ namespace CodeRefactor.Commands
             if (currentTargetIndex < targets.Count)
             {
                 var currentTarget = targets[currentTargetIndex];
-                FileModel oldFileModel = currentTarget.OldFileModel;
+                var oldFileModel = currentTarget.OldFileModel;
                 FRSearch search;
-                string oldType;
                 if (string.IsNullOrEmpty(oldFileModel.Package))
                 {
                     search = new FRSearch("package");
                     search.WholeWord = true;
-                    oldType = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 else
                 {
                     search = new FRSearch("package\\s+(" + oldFileModel.Package + ")");
-                    oldType = oldFileModel.Package + "." + Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 search.IsRegex = true;
                 search.Filter = SearchFilter.None;
-                oldType = oldType.Trim('.');
                 MessageBar.Locked = true;
                 string newFilePath = currentTarget.NewFilePath;
                 var doc = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
-                ScintillaControl sci = doc.SciControl;
+                var sci = doc.SciControl;
                 search.SourceFile = sci.FileName;
-                List<SearchMatch> matches = search.Matches(sci.Text);
-                string packageReplacement = "package";
+                var matches = search.Matches(sci.Text);
+                var packageReplacement = "package";
                 if (currentTarget.NewPackage != "")
                     packageReplacement += " " + currentTarget.NewPackage;
                 RefactoringHelper.ReplaceMatches(matches, sci, packageReplacement);
@@ -459,15 +456,24 @@ namespace CodeRefactor.Commands
                     RefactoringHelper.RaiseMoveEvent(target.OldFilePath, target.NewFilePath);
             }
             // Move non-source files and whole folders
-            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
+            foreach (var item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
+                // TODO: Is it necessary to check for "name casing changed" cases? In which circumstances are they possible?
                 if (File.Exists(oldPath))
                 {
+                    string originalOld = oldPath;
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
+                    if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // name casing changed
+                        string tmpPath = oldPath + "$renaming$";
+                        File.Move(oldPath, tmpPath);
+                        oldPath = tmpPath;
+                    }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                    RefactoringHelper.Move(oldPath, newPath, true);
+                    RefactoringHelper.Move(oldPath, newPath, true, originalOld);
                 }
                 else if (Directory.Exists(oldPath))
                 {
@@ -491,25 +497,26 @@ namespace CodeRefactor.Commands
                         if (newDocumentClass != null) break;
                     }
 
+                    string originalOld = oldPath;
+
                     // Check if this is a name casing change
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         string tmpPath = oldPath + "$renaming$";
                         FileHelper.ForceMoveDirectory(oldPath, tmpPath);
-                        DocumentManager.MoveDocuments(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
 
                     // Move directory contents to final location
                     FileHelper.ForceMoveDirectory(oldPath, newPath);
-                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    DocumentManager.MoveDocuments(originalOld, newPath);
 
                     if (!string.IsNullOrEmpty(newDocumentClass))
                     {
                         project.SetDocumentClass(newDocumentClass, true);
                         project.Save();
                     }
-                    RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
+                    RefactoringHelper.RaiseMoveEvent(originalOld, newPath);
                 }
             }
 
@@ -543,7 +550,6 @@ namespace CodeRefactor.Commands
                     entry.Key == currentTarget.NewFilePath) continue;
                 string file = entry.Key;
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + file + "\"");
-                ITabbedDocument doc;
                 ScintillaControl sci;
                 var actualMatches = new List<SearchMatch>();
                 foreach (SearchMatch match in entry.Value)
@@ -558,16 +564,14 @@ namespace CodeRefactor.Commands
                 }
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
-                doc = AssociatedDocumentHelper.LoadDocument(file);
+                var doc = AssociatedDocumentHelper.LoadDocument(file);
                 sci = doc.SciControl;
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file
                 // directory != currentTarget.OwnerPath -> renamed owner directory, so both files in the same place
-                bool needsImport = directory != Path.GetDirectoryName(currentTarget.NewFilePath) &&
-                                   directory != currentTarget.OwnerPath &&
-                                   ASContext.Context.CurrentModel.Imports.Search(targetName,
-                                                                                 FlagType.Class & FlagType.Function &
-                                                                                 FlagType.Namespace, 0) == null;
+                bool needsImport = directory != Path.GetDirectoryName(currentTarget.NewFilePath)
+                                   && directory != currentTarget.OwnerPath
+                                   && !ASContext.Context.CurrentModel.Imports.Contains(targetName, FlagType.Class & FlagType.Function & FlagType.Namespace, 0);
 
                 // Replace matches
                 int typeDiff = sci.MBSafeTextLength(oldType) - sci.MBSafeTextLength(targetName);

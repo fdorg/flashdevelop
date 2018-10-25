@@ -295,7 +295,7 @@ namespace ASCompletion.Model
             public void ParseFile_TypeDefs()
             {
                 var model = ASContext.Context.GetCodeModel(ReadAllText("TypeDefsTest"));
-                Assert.AreEqual(7, model.Classes.Count);
+                Assert.AreEqual(8, model.Classes.Count);
 
                 var aliasTypeDef = model.Classes[0];
                 Assert.AreEqual(2, aliasTypeDef.LineFrom);
@@ -419,6 +419,11 @@ namespace ASCompletion.Model
                 Assert.AreEqual(28, member.LineTo);
                 Assert.AreEqual("Dynamic", member.Type);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+
+                //issue: https://github.com/fdorg/flashdevelop/issues/2209
+                var typedef = model.Classes[7];
+                Assert.AreEqual("ShortDef", typedef.ExtendsType);
+                Assert.AreEqual(1, typedef.Members.Count);
             }
 
             [Test]
@@ -1077,14 +1082,19 @@ namespace ASCompletion.Model
                 Assert.AreEqual(2, member.LineFrom);
                 Assert.AreEqual(2, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("Dynamic->Dynamic", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("Dynamic", member.Parameters[0].Type);
+                Assert.AreEqual("Dynamic", member.Type);
 
                 member = model.Members[2];
                 Assert.AreEqual("functionType2", member.Name);
                 Assert.AreEqual(3, member.LineFrom);
                 Assert.AreEqual(3, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("Int->Int->Int", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("Int", member.Parameters[0].Type);
+                Assert.AreEqual("Int", member.Parameters[1].Type);
+                Assert.AreEqual("Int", member.Type);
             }
 
             static IEnumerable<TestCaseData> FunctionTypesTestCases
@@ -1092,23 +1102,87 @@ namespace ASCompletion.Model
                 get
                 {
                     yield return new TestCaseData("var functionType:String->Void;")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->Void"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private)
+                            }
+                        }, "Void"));
                     yield return new TestCaseData("var functionType:(Int->String)->Void;")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "(Int->String)->Void"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "Int->String", FlagType.ParameterVar, Visibility.Private)
+                            }
+                        }, "Void"));
                     yield return new TestCaseData("var functionType:String->(Int->String);")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->(Int->String)"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private)
+                            }
+                        }, "(Int->String)"));
                     yield return new TestCaseData("var functionType:String->(Int->String)->Void;")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->(Int->String)->Void"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter1", "Int->String", FlagType.ParameterVar, Visibility.Private),
+                            }
+                        }, "Void"));
                     yield return new TestCaseData("var functionType:String->{c:Int->String};")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->String}"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private),
+                            }
+                        }, "{c:Int->String}"));
                     yield return new TestCaseData("var functionType:{c:Int->String}->Void;")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:Int->String}->Void"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "{c:Int->String}", FlagType.ParameterVar, Visibility.Private),
+                            }
+                        }, "Void"));
                     yield return new TestCaseData("var functionType:{c:(Int->String)->String}->Void;")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:(Int->String)->String}->Void"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "{c:(Int->String)->String}", FlagType.ParameterVar, Visibility.Private),
+                            }
+                        }, "Void"));
                     yield return new TestCaseData("var functionType:String->{c:Int->Array<String>};")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->Array<String>}"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private),
+                            }
+                        }, "{c:Int->Array<String>}"));
                     yield return new TestCaseData("var functionType:String->{c:Int->Array<{x:Int, y:Int}>};")
-                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->Array<{x:Int, y:Int}>}"));
+                        .Returns(new MemberWithType(new MemberModel
+                        {
+                            Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Function,
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private),
+                            }
+                        }, "{c:Int->Array<{x:Int, y:Int}>}"));
                 }
             }
 
@@ -1235,28 +1309,36 @@ namespace ASCompletion.Model
                 Assert.AreEqual(2, member.LineFrom);
                 Assert.AreEqual(2, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("(Dynamic->Dynamic)->Dynamic", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("(Dynamic->Dynamic)", member.Parameters[0].Type);
+                Assert.AreEqual("Dynamic", member.Type);
 
                 member = model.Members[2];
                 Assert.AreEqual("functionType2", member.Name);
                 Assert.AreEqual(3, member.LineFrom);
                 Assert.AreEqual(3, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("((Dynamic->Dynamic)->Int)->Int", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("((Dynamic->Dynamic)->Int)", member.Parameters[0].Type);
+                Assert.AreEqual("Int", member.Type);
 
                 member = model.Members[3];
                 Assert.AreEqual("functionType3", member.Name);
                 Assert.AreEqual(4, member.LineFrom);
                 Assert.AreEqual(4, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("(Dynamic->Dynamic)->(Int->Int)", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("(Dynamic->Dynamic)", member.Parameters[0].Type);
+                Assert.AreEqual("(Int->Int)", member.Type);
 
                 member = model.Members[4];
                 Assert.AreEqual("functionType4", member.Name);
                 Assert.AreEqual(5, member.LineFrom);
                 Assert.AreEqual(5, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("Void->(Void->Array<Int>)", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.IsEmpty(member.Parameters);
+                Assert.AreEqual("(Void->Array<Int>)", member.Type);
             }
 
             [Test]
@@ -1278,7 +1360,9 @@ namespace ASCompletion.Model
                 Assert.AreEqual(2, member.LineFrom);
                 Assert.AreEqual(2, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("(Dynamic->Dynamic)->(Int->Int)", member.Type);
+                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("(Dynamic->Dynamic)", member.Parameters[0].Type);
+                Assert.AreEqual("(Int->Int)", member.Type);
 
                 member = model.Members[3];
                 Assert.AreEqual("var3", member.Name);

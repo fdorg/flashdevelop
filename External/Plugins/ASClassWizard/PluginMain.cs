@@ -20,78 +20,51 @@ namespace ASClassWizard
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "ASClassWizard";
-        private String pluginGuid = "a2c159c1-7d21-4483-aeb1-38d9fdc4c7f3";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Provides an ActionScript class wizard for FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-
         private AS3ClassOptions lastFileOptions;
-        private String lastFileFromTemplate;
+        private string lastFileFromTemplate;
         private IASContext processContext;
-        private String processOnSwitch;
-        private String constructorArgs;
-        private List<String> constructorArgTypes;
+        private string processOnSwitch;
+        private string constructorArgs;
+        private List<string> constructorArgTypes;
 
         #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name => "ASClassWizard";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid => "a2c159c1-7d21-4483-aeb1-38d9fdc4c7f3";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author => "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; private set; } = "Provides an ActionScript class wizard for FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help => "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return null; }
-        }
-        
+        public object Settings => null;
+
         #endregion
         
         #region Required Methods
@@ -107,7 +80,7 @@ namespace ASClassWizard
             // Nothing here...
         }
         
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             Project project;
             switch (e.Type)
@@ -131,7 +104,7 @@ namespace ASClassWizard
                     if (PluginBase.MainForm.CurrentDocument.FileName == processOnSwitch)
                     {
                         processOnSwitch = null;
-                        if (lastFileOptions == null || lastFileOptions.interfaces == null) return;
+                        if (lastFileOptions?.interfaces == null) return;
                         foreach (String cname in lastFileOptions.interfaces)
                         {
                             ASContext.Context.CurrentModel.Check();
@@ -144,10 +117,10 @@ namespace ASClassWizard
                     break;
 
                 case EventType.ProcessArgs:
-                    TextEvent te = e as TextEvent;
                     project = PluginBase.CurrentProject as Project;
                     if (lastFileFromTemplate != null && project != null && (project.Language.StartsWithOrdinal("as") || project.Language == "haxe"))
                     {
+                        var te = (TextEvent) e;
                         te.Value = ProcessArgs(project, te.Value);
                     }
                     break;
@@ -163,59 +136,59 @@ namespace ASClassWizard
 
         #region Custom Methods
 
-        public static IMainForm MainForm { get { return PluginBase.MainForm; } }
-
-        public void AddEventHandlers()
+        private void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.Command | EventType.ProcessArgs);
             EventManager.AddEventHandler(this, EventType.FileSwitch, HandlingPriority.Low);
         }
 
-        public void InitLocalization()
-        {
-            this.pluginDesc = TextHelper.GetString("Info.Description");
-        }
+        private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
-        private void DisplayClassWizard(String inDirectory, String templateFile, String className, String constructorArgs, List<String> constructorArgTypes)
+        private void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
-            Project project = PluginBase.CurrentProject as Project;
-            String classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
-            String package;
+            var project = (Project) PluginBase.CurrentProject;
+            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
+            string package;
             try
             {
                 package = GetPackage(classpath, inDirectory);
+                if (string.IsNullOrEmpty(package) && project.AdditionalPaths != null && project.AdditionalPaths.Length > 0)
+                {
+                    var closest = "";
+                    foreach (var it in project.AdditionalPaths)
+                        if ((classpath.StartsWithOrdinal(it) || it == ".") && it.Length > closest.Length)
+                            closest = it;
+                    if (closest.Length > 0) package = GetPackage(closest, inDirectory);
+                }
                 if (package == "")
                 {
                     // search in Global classpath
-                    Hashtable info = new Hashtable();
+                    var info = new Hashtable();
                     info["language"] = project.Language;
-                    DataEvent de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
+                    var de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
                     EventManager.DispatchEvent(this, de);
                     if (de.Handled && info.ContainsKey("cp"))
                     {
-                        List<string> cps = info["cp"] as List<string>;
+                        var cps = info["cp"] as List<string>;
                         if (cps != null)
                         {
-                            foreach (string cp in cps)
+                            foreach (var cp in cps)
                             {
                                 package = GetPackage(cp, inDirectory);
-                                if (package != "")
-                                {
-                                    classpath = cp;
-                                    break;
-                                }
+                                if (package == "") continue;
+                                classpath = cp;
+                                break;
                             }
                         }
                     }
                 }
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 package = "";
             }
-            using (AS3ClassWizard dialog = new AS3ClassWizard())
+            using (var dialog = new AS3ClassWizard())
             {
-                bool isHaxe = project.Language == "haxe";
                 dialog.Project = project;
                 dialog.Directory = inDirectory;
                 dialog.StartupClassName = className;
@@ -224,15 +197,16 @@ namespace ASClassWizard
                     package = package.Replace(Path.DirectorySeparatorChar, '.');
                     dialog.StartupPackage = package;
                 }
-                DialogResult conflictResult = DialogResult.OK;
-                string cPackage, path, newFilePath;
+                var conflictResult = DialogResult.OK;
+                string path, newFilePath;
+                var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
+                if (ext.Length > 0) ext = ext.TrimStart('*');
                 do
                 {
                     if (dialog.ShowDialog() != DialogResult.OK) return;
-                    cPackage = dialog.getPackage();
+                    var cPackage = dialog.getPackage();
                     path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
-                    newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.getClassName()),
-                                                              isHaxe ? ".hx" : ".as");
+                    newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.getClassName()), ext);
                     if (File.Exists(newFilePath))
                     {
                         string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
@@ -263,7 +237,7 @@ namespace ASClassWizard
                 try
                 {
                     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    MainForm.FileFromTemplate(templatePath, newFilePath);
+                    PluginBase.MainForm.FileFromTemplate(templatePath, newFilePath);
                 }
                 catch (Exception ex)
                 {
@@ -276,11 +250,11 @@ namespace ASClassWizard
         {
             if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase))
                 return "";
-            string subPath = path.Substring(classpath.Length).Trim(new char[] { '/', '\\', ' ', '.' });
+            string subPath = path.Substring(classpath.Length).Trim('/', '\\', ' ', '.');
             return subPath.Replace(Path.DirectorySeparatorChar, '.');
         }
 
-        public string ProcessArgs(Project project, string args)
+        private string ProcessArgs(Project project, string args)
         {
             if (lastFileFromTemplate != null)
             {
@@ -306,7 +280,7 @@ namespace ASClassWizard
 
         private string ProcessFileTemplate(string args)
         {
-            Int32 eolMode = (Int32)MainForm.Settings.EOLMode;
+            Int32 eolMode = (Int32)PluginBase.MainForm.Settings.EOLMode;
             String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
             List<String> imports = new List<string>();
             string extends = "";
@@ -363,6 +337,7 @@ namespace ASClassWizard
                         if ((cmodel.Flags & FlagType.TypeDef) != 0)
                         {
                             var tmp = cmodel;
+                            tmp.ResolveExtends();
                             while (!tmp.IsVoid())
                             {
                                 if (!string.IsNullOrEmpty(tmp.Constructor))
@@ -370,7 +345,6 @@ namespace ASClassWizard
                                     cmodel = tmp;
                                     break;
                                 }
-                                tmp.ResolveExtends();
                                 tmp = tmp.Extends;
                             }
                         }
@@ -383,13 +357,13 @@ namespace ASClassWizard
                                 superConstructor = "super(";
                                 index = 0;
                                 if (member.Parameters != null)
-                                foreach (MemberModel param in member.Parameters)
-                                {
-                                    if (param.Name.StartsWith('.')) break;
-                                    var pname = TemplateUtils.GetParamName(param);
-                                    superConstructor += (index > 0 ? ", " : "") + pname;
-                                    index++;
-                                }
+                                    foreach (MemberModel param in member.Parameters)
+                                    {
+                                        if (param.Name.StartsWith('.')) break;
+                                        var pname = TemplateUtils.GetParamName(param);
+                                        superConstructor += (index > 0 ? ", " : "") + pname;
+                                        index++;
+                                    }
                                 superConstructor += ");\n" + (lastFileOptions.Language == "as3" ? "\t\t\t" : "\t\t");
                                 break;
                             }
@@ -453,22 +427,26 @@ namespace ASClassWizard
             return args;
         }
 
-        private void AddImports(List<String> imports, MemberModel member, ClassModel inClass)
+        private void AddImports(ICollection<string> imports, MemberModel member, ClassModel inClass)
         {
             AddImport(imports, member.Type, inClass);
             if (member.Parameters != null)
             {
-                foreach (MemberModel item in member.Parameters)
+                foreach (var item in member.Parameters)
                 {
-                    AddImport(imports, item.Type, inClass);
+                    var types = ASContext.Context.DecomposeTypes(new[] {item.Type});
+                    foreach (var type in types)
+                    {
+                        AddImport(imports, type, inClass);
+                    }
                 }
             }
         }
 
-        private void AddImport(List<string> imports, String cname, ClassModel inClass)
+        private void AddImport(ICollection<string> imports, string cname, ClassModel inClass)
         {
-            ClassModel aClass = processContext.ResolveType(cname, inClass.InFile);
-            if (aClass != null && !aClass.IsVoid() && aClass.InFile.Package != "")
+            var aClass = processContext.ResolveType(cname, inClass.InFile);
+            if (!aClass.IsVoid() && aClass.InFile.Package != "")
             {
                 imports.Add(aClass.QualifiedName);
             }

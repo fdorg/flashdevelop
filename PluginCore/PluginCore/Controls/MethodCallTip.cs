@@ -72,10 +72,8 @@ namespace PluginCore.Controls
             return position == currentPos;
         }
 
-        public void CallTipShow(ScintillaControl sci, int position, string text)
-        {
-            CallTipShow(sci, position, text, true);
-        }
+        public void CallTipShow(ScintillaControl sci, int position, string text) => CallTipShow(sci, position, text, true);
+
         public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
         {
             if (toolTip.Visible && position == memberPos && text == currentText)
@@ -115,14 +113,11 @@ namespace PluginCore.Controls
             toolTip.BringToFront();
         }
 
-        public void CallTipSetHlt(int start, int end)
-        {
-            CallTipSetHlt(start, end, true);
-        }
+        public void CallTipSetHlt(int start, int end) => CallTipSetHlt(start, end, true);
+
         public void CallTipSetHlt(int start, int end, bool forceRedraw)
         {
-            if (currentHLStart == start && currentHLEnd == end)
-                return;
+            if (!forceRedraw && currentHLStart == start && currentHLEnd == end) return;
 
             currentHLStart = start;
             currentHLEnd = end;

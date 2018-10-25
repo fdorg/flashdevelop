@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -12,6 +13,22 @@ namespace HaXeContext.CodeRefactor.Provider
 
     internal class HaxeCommandFactory : CommandFactory
     {
+        public HaxeCommandFactory()
+        {
+            RegisterValidator(typeof(OrganizeImports), expr =>
+            {
+                var inFile = expr.InFile;
+                return Path.GetFileName(inFile.FileName) != "import.hx" && inFile.Imports.Count > 0;
+            });
+            RegisterValidator(typeof(DelegateMethods), expr =>
+            {
+                var validator = CommandFactoryProvider.DefaultFactory.GetValidator(typeof(DelegateMethods));
+                return validator != null && validator(expr)
+                    && !expr.InClass.Flags.HasFlag(FlagType.Interface)
+                    && !expr.InClass.Flags.HasFlag(FlagType.TypeDef);
+            });
+        }
+
         public override Command CreateOrganizeImportsCommand() => new Commands.HaxeOrganizeImports();
 
         public override Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)

@@ -77,12 +77,5 @@ namespace ProjectManager.Building.Haxe
 
             return pr.ToArray();
         }*/
-
-        string Quote(string s)
-        {
-            if (s.IndexOf(' ') >= 0)
-                return "\"" + s + "\"";
-            return s;
-        }
     }
 }

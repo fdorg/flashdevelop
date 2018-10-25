@@ -70,8 +70,7 @@ namespace PluginCore.Controls
         {
             get
             {
-                String settingDir = PathHelper.SettingDir;
-                String formStatesDir = Path.Combine(settingDir, "FormStates");
+                String formStatesDir = Path.Combine(PathHelper.SettingDir, "FormStates");
                 if (!Directory.Exists(formStatesDir)) Directory.CreateDirectory(formStatesDir);
                 return formStatesDir;
             }

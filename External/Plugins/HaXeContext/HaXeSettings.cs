@@ -19,7 +19,7 @@ namespace HaXeContext
 
         #region IContextSettings Documentation
 
-        const string DEFAULT_DOC_COMMAND = "http://www.google.com/search?q=$(ItmTypPkg)+$(ItmTypName)+$(ItmName)+site:http://api.haxe.org/";
+        const string DEFAULT_DOC_COMMAND = "http://www.google.com/search?q=$(ItmTypPkg)+$(ItmTypName)+$(ItmName)+Haxe";
         protected string documentationCommandLine = DEFAULT_DOC_COMMAND;
 
         [DisplayName("Documentation Command Line")]
@@ -29,7 +29,18 @@ namespace HaXeContext
             get { return documentationCommandLine; }
             set { documentationCommandLine = value; }
         }
+        
 
+        bool disableTypeDeclaration = false;
+
+        [DisplayName("Disable type declaration for variables")]
+        [Category("Code Generator")]
+        [DefaultValue(false)]
+        public bool DisableTypeDeclaration
+        {
+            get { return disableTypeDeclaration; }
+            set { disableTypeDeclaration = value; }
+        }
 
         private bool enableLeadingAsterisks = true;
 

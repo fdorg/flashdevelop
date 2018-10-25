@@ -49,8 +49,7 @@ namespace FlashDebugger
 
         private string GetBreakpointsFile(string path)
         {
-            String dataDir = Path.Combine(PathHelper.DataDir, "FlashDebugger");
-            String cacheDir = Path.Combine(dataDir, "Breakpoints");
+            String cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Breakpoints");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
             String hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");

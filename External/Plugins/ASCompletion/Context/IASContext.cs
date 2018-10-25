@@ -121,6 +121,13 @@ namespace ASCompletion.Context
         FileModel GetCodeModel(string src, bool scriptMode);
 
         /// <summary>
+        /// Rebuild a file model
+        /// </summary>
+        /// <param name="result">File model</param>
+        /// <returns></returns>
+        FileModel GetCodeModel(FileModel result);
+
+        /// <summary>
         /// Rebuild a file model with the source provided
         /// </summary>
         /// <param name="result">File model</param>
@@ -333,6 +340,14 @@ namespace ASCompletion.Context
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
         MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide);
+
+        /// <summary>
+        /// Let contexts handle code completion
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="expression">Completion context</param>
+        /// <param name="result">Response structure</param>
+        void ResolveDotContext(ScintillaControl sci, ASExpr expression, MemberList result);
 
         /// <summary>
         /// Let contexts resolve function at give position
