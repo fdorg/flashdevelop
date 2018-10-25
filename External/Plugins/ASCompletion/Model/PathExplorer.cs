@@ -326,9 +326,9 @@ namespace ASCompletion.Model
                 filename = foundFiles[i];
                 if (!File.Exists(filename))
                     continue;
-                if (pathModel.HasFile(filename))
+                FileModel cachedModel;
+                if (pathModel.TryGetFile(filename, out cachedModel))
                 {
-                    FileModel cachedModel = pathModel.GetFile(filename);
                     if (cachedModel.OutOfDate)
                     {
                         cachedModel.Check();
@@ -344,7 +344,6 @@ namespace ASCompletion.Model
                 // store model
                 if (aFile.Context.IsModelValid(aFile, pathModel))
                     pathModel.AddFile(aFile);
-                aFile = null;
                 cpt++;
                 // update status
                 if (stopExploration) return writeCache;

@@ -23,7 +23,6 @@ namespace ASCompletion.Context
         static protected List<RegisteredContext> allContexts = new List<RegisteredContext>();
         static protected int currentLine;
         static protected IASContext context;
-        static protected bool hasContext;
         static protected List<IASContext> validContexts;
         static protected ASContext defaultContext;
         static protected PluginMain plugin;
@@ -76,19 +75,9 @@ namespace ASCompletion.Context
             get { return PluginBase.MainForm; }
         }
 
-        static public ScintillaControl CurSciControl
-        {
-            get 
-            {
-                ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                return doc != null ? doc.SciControl : null; 
-            }
-        }
+        static public ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
 
-        static public PluginUI Panel
-        {
-            get { return (plugin != null) ? plugin.Panel : null; }
-        }
+        static public PluginUI Panel => plugin?.Panel;
 
         static public GeneralSettings CommonSettings
         {
@@ -124,10 +113,7 @@ namespace ASCompletion.Context
             }
         }
 
-        static public bool HasContext
-        {
-            get { return hasContext; }
-        }
+        public static bool HasContext { get; protected internal set; }
         #endregion
 
         #region context properties
@@ -402,13 +388,13 @@ namespace ASCompletion.Context
             ScintillaControl sci = CurSciControl;
             if (validContexts.Count == 0 || sci == null)
             {
-                hasContext = false;
+                HasContext = false;
                 return;
             }
             if (line != currentLine)
             {
                 // reevaluate active context
-                hasContext = false;
+                HasContext = false;
                 string needSyntax = null;
                 currentLine = line;
                 foreach (IASContext context in validContexts)
@@ -426,12 +412,12 @@ namespace ASCompletion.Context
                             if (start > range.Start && end < range.End)
                             {
                                 needSyntax = range.Syntax;
-                                hasContext = true;
+                                HasContext = true;
                                 break;
                             }
                         }
                     }
-                    else hasContext = true;
+                    else HasContext = true;
                 }
                 if (needSyntax != null)
                 {
@@ -833,9 +819,8 @@ namespace ASCompletion.Context
                 // check if in cache
                 foreach (PathModel aPath in classPath)
                 {
-                    if (aPath.HasFile(fileName))
+                    if (aPath.TryGetFile(fileName, out nFile))
                     {
-                        nFile = aPath.GetFile(fileName);
                         nFile.Check();
                         return nFile;
                     }

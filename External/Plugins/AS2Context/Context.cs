@@ -771,9 +771,9 @@ namespace AS2Context
             {
                 string path = Path.Combine(aPath.Path, fileName);
                 // cached file
-                if (aPath.HasFile(path))
+                FileModel nFile;
+                if (aPath.TryGetFile(path, out nFile))
                 {
-                    FileModel nFile = aPath.GetFile(path);
                     if (nFile.Context != this)
                     {
                         // not associated with this context -> refresh
@@ -785,7 +785,7 @@ namespace AS2Context
                 // non-cached existing file
                 else if (File.Exists(path))
                 {
-                    FileModel nFile = GetFileModel(path);
+                    nFile = GetFileModel(path);
                     if (nFile != null)
                     {
                         aPath.AddFile(nFile);

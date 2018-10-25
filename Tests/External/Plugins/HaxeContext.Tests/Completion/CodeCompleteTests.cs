@@ -143,5 +143,21 @@ namespace HaXeContext.Completion
             SetSrc(sci, ReadAllText(fileName));
             return ASContext.Context.CodeComplete.ResolveFunction(sci, sci.CurrentPos - 1, true);
         }
+
+        static IEnumerable<TestCaseData> OnCharIssue2105TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("OnCharIssue2105_1", '.', false, false)
+                    .SetName("'.|' Issue2105. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                yield return new TestCaseData("OnCharIssue2105_2", '.', false, false)
+                    .SetName("\".|\" Issue2105. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
+        public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
     }
 }
