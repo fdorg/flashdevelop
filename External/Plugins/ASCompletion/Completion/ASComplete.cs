@@ -1756,7 +1756,16 @@ namespace ASCompletion.Completion
                         position--;
                         continue;
                     }
-                    if (c == ';' && braCount == 0)
+                    if (parCount < 0)
+                    {
+                        if (characterClass.Contains(c) || c == '>' || c == ']')
+                        {
+                            position++;
+                            break; // function start found
+                        }
+                        if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
+                    }
+                    else if (c == ';' && braCount == 0)
                     {
                         position = -1;
                         break;
@@ -1783,7 +1792,6 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
-
                         genCount++;
                     }
                     else if (c == '<')
@@ -1802,15 +1810,6 @@ namespace ASCompletion.Completion
                         parCount = 0;
                         if (genCount == 0) comaCount++;
                         hasChar = false;
-                    }
-                    else if (parCount < 0)
-                    {
-                        if (characterClass.Contains(c))
-                        {
-                            position++;
-                            break; // function start found 
-                        }
-                        if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
                     }
                     else if (characterClass.Contains(c)) hasChar = true;
                 }
