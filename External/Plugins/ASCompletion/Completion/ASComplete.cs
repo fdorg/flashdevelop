@@ -1932,7 +1932,7 @@ namespace ASCompletion.Completion
                 }
                 // type
                 else if (features.hasEcmaTyping && expr.Separator == ":"
-                                                && HandleColonCompletion(Sci, expr.Value, autoHide))
+                         && HandleColonCompletion(Sci, expr.Value, autoHide))
                     return true;
 
                 // no completion
