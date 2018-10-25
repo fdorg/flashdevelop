@@ -1903,16 +1903,16 @@ namespace ASCompletion.Completion
             if (autoHide && DeclarationSectionOnly()) return false;
 
             // get expression at cursor position
-            int position = Sci.CurrentPos;
+            var position = Sci.CurrentPos;
             var expr = GetExpression(Sci, position);
             if (expr.Value == null) return true;
             var ctx = ASContext.Context;
             var features = ctx.Features;
-            int dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
+            var dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
             if (dotIndex == 0 && expr.Separator != "\"") return true;
 
             // complete keyword
-            string word = expr.WordBefore;
+            var word = expr.WordBefore;
             if (word != null && features.declKeywords.Contains(word)) return false;
             ClassModel argumentType = null;
             if (dotIndex < 0)
@@ -1932,7 +1932,7 @@ namespace ASCompletion.Completion
                 }
                 // type
                 else if (features.hasEcmaTyping && expr.Separator == ":"
-                    && HandleColonCompletion(Sci, expr.Value, autoHide))
+                         && HandleColonCompletion(Sci, expr.Value, autoHide))
                     return true;
 
                 // no completion
@@ -1972,13 +1972,10 @@ namespace ASCompletion.Completion
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                 }
             }
-            else
-            {
-                if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) 
-                    return false;
-            }
+            else if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\."))
+                return false;
 
-            string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
+            var tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
             // custom completion
             var items = ctx.ResolveDotContext(Sci, expr, autoHide);
@@ -1987,39 +1984,35 @@ namespace ASCompletion.Completion
                 DotContextResolved(Sci, expr, items, autoHide);
                 return true;
             }
-            var mix = new MemberList();
-            ctx.ResolveDotContext(Sci, expr, mix);
-
-            // Context
-            ASResult result;
-            ClassModel tmpClass;
-            bool outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
-            var cFile = ctx.CurrentModel;
+            
+            var outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
             var cClass = ctx.CurrentClass;
 
-            expr.LocalVars = ParseLocalVars(expr);
+            ASResult result;
+            ClassModel tmpClass;
             if (argumentType != null)
             {
-                result = new ASResult();
                 tmpClass = argumentType;
                 expr.LocalVars.Clear();
+                result = new ASResult {Context = expr};
             }
             else if (dotIndex > 0)
             {
+                expr.LocalVars = ParseLocalVars(expr);
                 // Expression before cursor
-                result = EvalExpression(expr.Value, expr, cFile, cClass, false, false);
+                result = EvalExpression(expr.Value, expr, ctx.CurrentModel, cClass, false, false);
                 if (result.IsNull())
                 {
                     if (outOfDate) ctx.SetOutOfDate();
                     return true;
                 }
-                if (autoHide && features.hasE4X && IsXmlType(result.Type))
-                    return true;
+                if (autoHide && features.hasE4X && IsXmlType(result.Type)) return true;
                 tmpClass = result.Type;
             }
             else
             {
-                result = new ASResult();
+                expr.LocalVars = ParseLocalVars(expr);
+                result = new ASResult {Context = expr};
                 if (expr.Separator == "\"")
                 {
                     tmpClass = ctx.ResolveType(ctx.Features.stringKey, null);
@@ -2028,8 +2021,10 @@ namespace ASCompletion.Completion
                 }
                 else tmpClass = cClass;
             }
+            var mix = new MemberList();
+            ctx.ResolveDotContext(Sci, result, mix);
 
-            //stores a reference to our current class.  tmpClass gets overwritten later, so we need to store the current class separately
+            //stores a reference to our current class. tmpClass gets overwritten later, so we need to store the current class separately
             var classScope = tmpClass;
             // local vars are the first thing to try
             if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
@@ -2087,7 +2082,7 @@ namespace ASCompletion.Completion
                         else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
                         tmpClass = tmpClass.Extends;
                         // hide Object class members
-                        if (limitMembers && tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 
+                        if (limitMembers && !tmpClass.IsVoid() && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 
                             break;
                         // members visibility
                         acc = ctx.TypesAffinity(curClass, tmpClass);
@@ -2097,7 +2092,7 @@ namespace ASCompletion.Completion
             // known classes / toplevel vars/methods
             if (argumentType == null && (result.IsNull() || (dotIndex < 0)))
             {
-                mix.Merge(cFile.GetSortedMembersList());
+                mix.Merge(ctx.CurrentModel.GetSortedMembersList());
                 mix.Merge(ctx.GetTopLevelElements());
                 mix.Merge(ctx.GetVisibleExternalElements());
                 mix.Merge(GetKeywords());
@@ -2171,25 +2166,25 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public void DotContextResolved(ScintillaControl Sci, ASExpr expr, MemberList items, bool autoHide)
+        public static void DotContextResolved(ScintillaControl sci, ASExpr expr, MemberList items, bool autoHide)
         {
             // still valid context and position?
-            if (Sci != ASContext.CurSciControl) return;
-            int position = Sci.CurrentPos;
-            ContextFeatures features = ASContext.Context.Features;
-            ASExpr local = GetExpression(Sci, position);
+            if (sci != ASContext.CurSciControl) return;
+            var features = ASContext.Context.Features;
+            var position = sci.CurrentPos;
+            var local = GetExpression(sci, position);
             if (!local.Value.StartsWithOrdinal(expr.Value) 
                 || expr.Value.LastIndexOfOrdinal(features.dot) != local.Value.LastIndexOfOrdinal(features.dot))
                 return;
-            string word = Sci.GetWordLeft(position-1, false);
+            var word = sci.GetWordLeft(position - 1, false);
 
             // current list
             string reSelect = null;
             if (CompletionList.Active) reSelect = CompletionList.SelectedLabel;
 
             // show completion
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
-            bool testActive = !CompletionList.Active && expr.Position != position;
+            var list = new List<ICompletionListItem>();
+            var testActive = !CompletionList.Active && expr.Position != position;
             foreach (MemberModel member in items)
             {
                 if (testActive && member.Name == word)

@@ -1643,23 +1643,6 @@ namespace HaXeContext
             return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
-        public override void ResolveDotContext(ScintillaControl sci, ASExpr expression, MemberList result)
-        {
-            var exprValue = expression.Value;
-            if (exprValue.Length >= 3)
-            {
-                var first = exprValue[0];
-                if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
-                {
-                    var s = exprValue.Replace(".#0~.", string.Empty);
-                    if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
-                    {
-                        result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
-                    }
-                }
-            }
-        }
-
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             resolvingDot = false;
@@ -1679,6 +1662,48 @@ namespace HaXeContext
                     // eg. Int
                     break;
             }
+        }
+
+        public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
+        {
+            if (expression.IsStatic && expression.Type is ClassModel type 
+                && type.InFile is FileModel file && file.Classes.Count > 1
+                && type == GetPublicClass(file))
+            {
+                // add sub-types
+                foreach (var it in file.Classes)
+                {
+                    if (it != type) result.Add(it);
+                }
+                return;
+            }
+            var exprValue = expression.Context.Value;
+            if (exprValue.Length >= 3)
+            {
+                var first = exprValue[0];
+                if ((first == '\"' || first == '\'') && expression.Context.SubExpressions != null && expression.Context.SubExpressions.Count == 1)
+                {
+                    var s = exprValue.Replace(".#0~.", string.Empty);
+                    if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
+                    {
+                        result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
+                    }
+                }
+            }
+        }
+
+        ClassModel GetPublicClass(FileModel file)
+        {
+            if (file?.Classes != null)
+            {
+                var module = file.Module == "" ? Path.GetFileNameWithoutExtension(file.FileName) : file.Module;
+                foreach (var model in file.Classes)
+                    if ((model.Flags & (FlagType.Class | FlagType.Interface | FlagType.Enum)) != 0 && model.Name == module)
+                    {
+                        return model;
+                    }
+            }
+            return ClassModel.VoidClass;
         }
 
         /// <summary>
