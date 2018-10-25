@@ -1,6 +1,6 @@
 ﻿package;
-class Bar {
+class BeforeOnCharAndReplaceText_6 {
 	static function main() {
-		'${String.fromCharCode }'
+		'${BeforeOnCharAndReplaceText_6.main }'
 	}
 }

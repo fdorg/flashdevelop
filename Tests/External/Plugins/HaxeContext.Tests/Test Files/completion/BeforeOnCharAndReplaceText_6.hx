@@ -1,6 +1,6 @@
 ﻿package;
-class Bar {
+class BeforeOnCharAndReplaceText_6 {
 	static function main() {
-		'${String.$(EntryPoint) }'
+		'${BeforeOnCharAndReplaceText_6.$(EntryPoint) }'
 	}
 }

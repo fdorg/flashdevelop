@@ -894,6 +894,11 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_4.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_5.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnChar_issue589_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_4.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_5.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

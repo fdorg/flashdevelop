@@ -484,7 +484,7 @@ namespace HaXeContext.Completion
                     .SetName("'${\"123\".| }'");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_6", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_6"))
-                    .SetName("'${String.| }'");
+                    .SetName("'${BeforeOnCharAndReplaceText_6.| }'");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_7", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_7"))
                     .SetName("'${String.fromCharCode(1).| }'");

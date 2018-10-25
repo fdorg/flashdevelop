@@ -1645,6 +1645,17 @@ namespace HaXeContext
 
         public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
+            if (expression.IsStatic && expression.Type is ClassModel type 
+                && type.InFile is FileModel file && file.Classes.Count > 1
+                && type == file.GetPublicClass())
+            {
+                // add sub-types
+                foreach (var it in file.Classes)
+                {
+                    if (it != type) result.Add(it);
+                }
+                return;
+            }
             var exprValue = expression.Context.Value;
             if (exprValue.Length >= 3)
             {
