@@ -149,6 +149,18 @@ namespace HaXeContext
                 yield return new TestCaseData("ResolveDotContext_issue2467_5", false)
                     .SetName("SubType.<complete> ResolveDotContext. Issue 2467. Case 5")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2467");
+                yield return new TestCaseData("ResolveDotContext_issue2467_6", true)
+                    .SetName("CurrentAbstract.<complete> ResolveDotContext. Issue 2467. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2467");
+                yield return new TestCaseData("ResolveDotContext_issue2467_7", true)
+                    .SetName("CurrentInterface.<complete> ResolveDotContext. Issue 2467. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2467");
+                yield return new TestCaseData("ResolveDotContext_issue2467_8", true)
+                    .SetName("CurrentEnum.<complete> ResolveDotContext. Issue 2467. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2467");
+                yield return new TestCaseData("ResolveDotContext_issue2467_9", true)
+                    .SetName("CurrentTypedef.<complete> ResolveDotContext. Issue 2467. Case 9")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2467");
             }
         }
 

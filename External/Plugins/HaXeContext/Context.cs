@@ -1643,11 +1643,32 @@ namespace HaXeContext
             return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
+        internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
+        {
+            resolvingDot = false;
+
+            switch (status)
+            {
+                case HaxeCompleteStatus.ERROR:
+                    TraceManager.AddAsync(hc.Errors, -3);
+                    break;
+
+                case HaxeCompleteStatus.MEMBERS:
+                    if (result.Members != null && result.Members.Count > 0)
+                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
+                    break;
+
+                case HaxeCompleteStatus.TYPE:
+                    // eg. Int
+                    break;
+            }
+        }
+
         public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
             if (expression.IsStatic && expression.Type is ClassModel type 
                 && type.InFile is FileModel file && file.Classes.Count > 1
-                && type == file.GetPublicClass())
+                && type == GetPublicClass(file))
             {
                 // add sub-types
                 foreach (var it in file.Classes)
@@ -1671,25 +1692,18 @@ namespace HaXeContext
             }
         }
 
-        internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
+        ClassModel GetPublicClass(FileModel file)
         {
-            resolvingDot = false;
-
-            switch (status)
+            if (file?.Classes != null)
             {
-                case HaxeCompleteStatus.ERROR:
-                    TraceManager.AddAsync(hc.Errors, -3);
-                    break;
-
-                case HaxeCompleteStatus.MEMBERS:
-                    if (result.Members != null && result.Members.Count > 0)
-                        ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
-                    break;
-
-                case HaxeCompleteStatus.TYPE:
-                    // eg. Int
-                    break;
+                var module = file.Module == "" ? Path.GetFileNameWithoutExtension(file.FileName) : file.Module;
+                foreach (var model in file.Classes)
+                    if ((model.Flags & (FlagType.Class | FlagType.Interface | FlagType.Enum)) != 0 && model.Name == module)
+                    {
+                        return model;
+                    }
             }
+            return ClassModel.VoidClass;
         }
 
         /// <summary>
