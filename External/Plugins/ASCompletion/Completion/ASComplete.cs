@@ -1736,7 +1736,7 @@ namespace ASCompletion.Completion
             var comaCount = 0;
             var arrCount = 0;
             var genCount = 0;
-            var hasComma = false;
+            var hasChar = false;
             while (position >= 0)
             {
                 if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
@@ -1775,22 +1775,30 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '(') --parCount;
                     else if (c == '?' && genCount > 0) genCount = 0;
-                    else if (c == '>') genCount++;
-                    else if (c == '<' && genCount > 0)
+                    else if (c == '>')
                     {
-                        genCount--;
-                        hasComma = false;
+                        if (hasChar)
+                        {
+                            position--;
+                            continue;
+                        }
+                        genCount++;
+                    }
+                    else if (c == '<')
+                    {
+                        if (hasChar)
+                        {
+                            position--;
+                            continue;
+                        }
+                        if (genCount > 0) genCount--;
                     }
                     // new parameter reached
                     else if (c == ',')
                     {
                         parCount = 0;
-                        if (genCount == 0)
-                        {
-                            comaCount++;
-                            hasComma = false;
-                        }
-                        else hasComma = true;
+                        if (genCount == 0) comaCount++;
+                        hasChar = false;
                     }
                     else if (parCount < 0)
                     {
@@ -1801,10 +1809,10 @@ namespace ASCompletion.Completion
                         }
                         if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
                     }
+                    else if (characterClass.Contains(c) || c == '_') hasChar = true;
                 }
                 position--;
             }
-            if (hasComma) comaCount++;
             return comaCount;
         }
 
