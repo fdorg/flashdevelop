@@ -1586,7 +1586,7 @@ namespace ASCompletion.Completion
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
             var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, true);
-            if (!result.IsNull() && result.Member == null && result.Type != null)
+            if (result.Member == null && result.Type != null)
             {
                 foreach (MemberModel member in result.Type.Members)
                     if (member.Name == result.Type.Constructor)
@@ -1737,7 +1737,6 @@ namespace ASCompletion.Completion
             var arrCount = 0;
             var genCount = 0;
             var hasChar = false;
-            var p = position;
             while (position >= 0)
             {
                 if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
