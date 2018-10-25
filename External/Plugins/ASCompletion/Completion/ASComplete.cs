@@ -1586,6 +1586,15 @@ namespace ASCompletion.Completion
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
             var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, true);
+            if (!result.IsNull() && result.Member == null && result.Type != null)
+            {
+                foreach (MemberModel member in result.Type.Members)
+                    if (member.Name == result.Type.Constructor)
+                    {
+                        result.Member = member;
+                        break;
+                    }
+            }
             return ResolveFunction(sci, position, result, autoHide);
         }
 
@@ -1599,15 +1608,6 @@ namespace ASCompletion.Completion
         /// <returns>Function successfully resolved</returns>
         protected virtual bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
-            if (!expr.IsNull() && expr.Member == null && expr.Type != null)
-            {
-                foreach (MemberModel member in expr.Type.Members)
-                    if (member.Name == expr.Type.Constructor)
-                    {
-                        expr.Member = member;
-                        break;
-                    }
-            }
             var ctx = ASContext.Context;
             if (expr.IsNull() || (expr.Member != null && (expr.Member.Flags & FlagType.Function) == 0))
             {
@@ -1737,6 +1737,7 @@ namespace ASCompletion.Completion
             var arrCount = 0;
             var genCount = 0;
             var hasChar = false;
+            var p = position;
             while (position >= 0)
             {
                 if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
@@ -1782,6 +1783,7 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
+
                         genCount++;
                     }
                     else if (c == '<')
@@ -1791,6 +1793,7 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
+
                         if (genCount > 0) genCount--;
                     }
                     // new parameter reached
@@ -1802,14 +1805,14 @@ namespace ASCompletion.Completion
                     }
                     else if (parCount < 0)
                     {
-                        if (characterClass.Contains(c) || c == '_')
+                        if (characterClass.Contains(c))
                         {
                             position++;
                             break; // function start found 
                         }
                         if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
                     }
-                    else if (characterClass.Contains(c) || c == '_') hasChar = true;
+                    else if (characterClass.Contains(c)) hasChar = true;
                 }
                 position--;
             }

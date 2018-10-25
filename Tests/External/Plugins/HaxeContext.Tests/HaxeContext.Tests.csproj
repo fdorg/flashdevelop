@@ -903,6 +903,7 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_7.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_8.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_issue2467_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2468_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
