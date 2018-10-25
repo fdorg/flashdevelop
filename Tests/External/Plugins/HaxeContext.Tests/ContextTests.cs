@@ -126,7 +126,7 @@ namespace HaXeContext
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             SetSrc(sci, sourceText);
             var mix = new MemberList();
-            var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
             ASContext.Context.ResolveDotContext(sci, expr, mix);
             Assert.AreEqual(code, mix.Items.FirstOrDefault());
         }

@@ -88,7 +88,6 @@ namespace AS3Context.Completion
                         var pattern = c + ".#" + (context.SubExpressions.Count - 1) + "~";
                         var startIndex = expression.IndexOfOrdinal(pattern) + pattern.Length;
                         expression = type.Name + ".#" + expression.Substring(startIndex);
-                        if (context.SubExpressions.Count == 1) context.SubExpressions = null;
                     }
                 }
                 // for example: new <T>[].<complete>

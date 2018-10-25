@@ -1992,9 +1992,9 @@ namespace ASCompletion.Completion
             ClassModel tmpClass;
             if (argumentType != null)
             {
-                result = new ASResult();
                 tmpClass = argumentType;
                 expr.LocalVars.Clear();
+                result = new ASResult {Context = expr};
             }
             else if (dotIndex > 0)
             {
@@ -2012,7 +2012,7 @@ namespace ASCompletion.Completion
             else
             {
                 expr.LocalVars = ParseLocalVars(expr);
-                result = new ASResult();
+                result = new ASResult {Context = expr};
                 if (expr.Separator == "\"")
                 {
                     tmpClass = ctx.ResolveType(ctx.Features.stringKey, null);
@@ -2022,7 +2022,7 @@ namespace ASCompletion.Completion
                 else tmpClass = cClass;
             }
             var mix = new MemberList();
-            ctx.ResolveDotContext(Sci, expr, mix);
+            ctx.ResolveDotContext(Sci, result, mix);
 
             //stores a reference to our current class. tmpClass gets overwritten later, so we need to store the current class separately
             var classScope = tmpClass;

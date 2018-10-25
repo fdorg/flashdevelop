@@ -1643,13 +1643,13 @@ namespace HaXeContext
             return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
-        public override void ResolveDotContext(ScintillaControl sci, ASExpr expression, MemberList result)
+        public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
-            var exprValue = expression.Value;
+            var exprValue = expression.Context.Value;
             if (exprValue.Length >= 3)
             {
                 var first = exprValue[0];
-                if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
+                if ((first == '\"' || first == '\'') && expression.Context.SubExpressions != null && expression.Context.SubExpressions.Count == 1)
                 {
                     var s = exprValue.Replace(".#0~.", string.Empty);
                     if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
