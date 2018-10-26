@@ -1260,6 +1260,19 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ArrayAccess_issue2471_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ArrayAccess_issue2471_3.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ArrayAccess_issue2471_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorGetterSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorGetterSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorGetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorGetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorSetter_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorFunction_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorFunction_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorAutoImport_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_8.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_9.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

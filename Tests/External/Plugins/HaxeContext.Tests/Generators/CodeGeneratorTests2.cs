@@ -215,12 +215,24 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> InterfaceContextualGeneratorTestCases
+        {
+            get 
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_6", GeneratorJobType.IVariable, true)
+                    .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateGetterSetter_issue2473_6"))
+                    .SetName("Generate Variable. Issue 2473. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(Issue2301TestCases)),
             TestCaseSource(nameof(GenerateSwitchLabelsIssue1759TestCases)),
             TestCaseSource(nameof(GenerateSwitchLabelsIssue2285TestCases)),
             TestCaseSource(nameof(GenerateSwitchIssue2409TestCases)),
+            TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

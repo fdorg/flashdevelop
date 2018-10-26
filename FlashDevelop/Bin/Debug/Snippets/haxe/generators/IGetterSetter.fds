@@ -1,1 +1,1 @@
-$(BlankLine)var $(Name)(get_$(Name), set_$(Name)):$(Type);$(EntryPoint)
+$(BlankLine)var $(Name)(get, set):$(Type);$(EntryPoint)

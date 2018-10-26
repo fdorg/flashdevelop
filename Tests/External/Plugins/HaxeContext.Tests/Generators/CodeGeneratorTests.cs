@@ -1373,6 +1373,33 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> InterfaceContextualGeneratorTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_1", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2473_1"))
+                    .SetName("Generate Getter and Setter. Issue 2473. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_2", GeneratorJobType.Getter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2473_2"))
+                    .SetName("Generate Getter. Issue 2473. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_3", GeneratorJobType.Setter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2473_3"))
+                    .SetName("Generate Setter. Issue 2473. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_4", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2473_4"))
+                    .SetName("Generate Function. Issue 2473. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_5", -1, false)
+                    .Returns(null)
+                    .SetName("Issue 2473. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -1425,6 +1452,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInferVar2456TestCases)),
+            TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

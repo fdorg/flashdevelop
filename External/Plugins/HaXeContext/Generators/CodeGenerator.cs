@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using HaXeContext.Completion;
@@ -21,10 +22,20 @@ namespace HaXeContext.Generators
     {
         EnumConstructor,
         Switch,
+        IVariable,
     }
 
     internal class CodeGenerator : ASGenerator
     {
+        readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
+
+        protected override ICodeGeneratorStrategy GetCodeGeneratorStrategy()
+        {
+            if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
+                return codeGeneratorInterfaceStrategy;
+            return base.GetCodeGeneratorStrategy();
+        }
+
         /// <inheritdoc />
         protected override void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
@@ -32,7 +43,7 @@ namespace HaXeContext.Generators
             if (expr.Context.Separator == ":" && expr.Context.SeparatorPosition > 0 && sci.CharAt(expr.Context.SeparatorPosition - 1) == '@') return;
             var ctx = ASContext.Context;
             var currentClass = ctx.CurrentClass;
-            if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || currentClass.Flags.HasFlag(FlagType.Interface))
+            if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
                 if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
@@ -45,6 +56,7 @@ namespace HaXeContext.Generators
             base.ContextualGenerator(sci, position, expr, options);
         }
 
+        /// <inheritdoc />
         protected override bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
         {
             if (!base.CanShowAssignStatementToVariable(sci, expr)) return false;
@@ -277,7 +289,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        protected override FoundDeclaration GetDeclarationAtLine(int line)
+        public override FoundDeclaration GetDeclarationAtLine(int line)
         {
             var result = base.GetDeclarationAtLine(line);
             if (result.Member is MemberModel member
@@ -349,8 +361,8 @@ namespace HaXeContext.Generators
                 var parameters = member.Parameters;
                 if (parameters != null)
                 {
-                    if (parameters.Count > 0) template = template.Replace("get_$(Name)", parameters[0].Name);
-                    if (parameters.Count > 1) template = template.Replace("set_$(Name)", parameters[1].Name);
+                    if (parameters.Count > 0) template = template.Replace("get", parameters[0].Name);
+                    if (parameters.Count > 1) template = template.Replace("set", parameters[1].Name);
                 }
                 return template;
             }
@@ -607,7 +619,7 @@ namespace HaXeContext.Generators
         }
     }
 
-    class GeneratorItem : ICompletionListItem
+    internal class GeneratorItem : ICompletionListItem
     {
         internal GeneratorJob Job { get; }
         readonly Action action;
