@@ -360,8 +360,8 @@ namespace HaXeContext.Generators
                 var parameters = member.Parameters;
                 if (parameters != null)
                 {
-                    if (parameters.Count > 0) template = template.Replace("get_$(Name)", parameters[0].Name);
-                    if (parameters.Count > 1) template = template.Replace("set_$(Name)", parameters[1].Name);
+                    if (parameters.Count > 0) template = template.Replace("get", parameters[0].Name);
+                    if (parameters.Count > 1) template = template.Replace("set", parameters[1].Name);
                 }
                 return template;
             }

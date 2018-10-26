@@ -64,7 +64,7 @@ namespace ASCompletion.Generators
 
         static void GenerateGetterSetter(ScintillaControl sci, MemberModel member, string template)
         {
-            if (template != null)
+            if (!string.IsNullOrEmpty(template))
             {
                 GenerateAccessor(sci, member, template);
                 return;
