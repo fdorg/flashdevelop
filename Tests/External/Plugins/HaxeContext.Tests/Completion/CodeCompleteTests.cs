@@ -414,12 +414,23 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue2475TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2475_1")
+                    .Returns("a.[0] : Function<[BGCOLOR=#2F90:NORMAL](parameter0:String):Void[/BGCOLOR]>")
+                    .SetName("a[0](|. Issue 2475. Case 1");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(CalltipDefIssue2356TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2364TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2368TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2468TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue2475TestCases)),
         ]
         public string CalltipDef(string fileName)
         {
