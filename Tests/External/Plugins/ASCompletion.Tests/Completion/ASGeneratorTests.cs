@@ -3370,6 +3370,29 @@ namespace ASCompletion.Completion
                     }
                 }
 
+                static IEnumerable<TestCaseData> InterfaceContextualGeneratorTestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeInterfaceContextualGeneratorGetterSetter_issue2473_1", GeneratorJobType.GetterSetter, true)
+                            .Returns(ReadAllTextAS3("AfterInterfaceContextualGeneratorGetterSetter_issue2473_1"))
+                            .SetName("Generate Getter and Setter. Issue 2473. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGeneratorGetter_issue2473_1", GeneratorJobType.Getter, true)
+                            .Returns(ReadAllTextAS3("AfterInterfaceContextualGeneratorGetter_issue2473_1"))
+                            .SetName("Generate Getter. Issue 2473. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGeneratorSetter_issue2473_1", GeneratorJobType.Setter, true)
+                            .Returns(ReadAllTextAS3("AfterInterfaceContextualGeneratorSetter_issue2473_1"))
+                            .SetName("Generate Setter. Issue 2473. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGeneratorFunction_issue2473_1", GeneratorJobType.FunctionPublic, true)
+                            .Returns(ReadAllTextAS3("AfterInterfaceContextualGeneratorFunction_issue2473_1"))
+                            .SetName("Generate Function. Issue 2473. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                    }
+                }
+
                 [
                     Test, 
                     TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -3377,6 +3400,7 @@ namespace ASCompletion.Completion
                     TestCaseSource(nameof(Issue2346TestCases)),
                     TestCaseSource(nameof(GenerateEventHandlerIssue2421TestCases)),
                     TestCaseSource(nameof(ConvertToConstIssue2406TestCases)),
+                    TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
                 ]
                 public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => Common(sci, fileName, job, hasGenerator);
 

@@ -851,49 +851,40 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+
+            var textAtCursor = sci.GetWordFromPosition(currentPos);
             string label;
-            /*
-            if ((expr?.RelClass != null && (expr.RelClass.Flags & FlagType.Interface) > 0)
-                || (found.InClass != null && (found.InClass.Flags & FlagType.Interface) > 0))
+            if (textAtCursor != null && textAtCursor.ToUpper().Equals(textAtCursor))
             {
-                label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
+                label = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
+                options.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.Member, found.InClass));
             }
-            else*/
+
+            bool genProtectedDecl = GetDefaultVisibility(found.InClass) == Visibility.Protected;
+            if (expr == null && exprLeft == null)
             {
-                var textAtCursor = sci.GetWordFromPosition(currentPos);
-                if (textAtCursor != null && textAtCursor.ToUpper().Equals(textAtCursor))
-                {
-                    label = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.Member, found.InClass));
-                }
+                if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedVar");
+                else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
+                options.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.Member, found.InClass));
+            }
 
-                bool genProtectedDecl = GetDefaultVisibility(found.InClass) == Visibility.Protected;
-                if (expr == null && exprLeft == null)
-                {
-                    if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedVar");
-                    else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.Member, found.InClass));
-                }
+            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
+            options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.Member, found.InClass));
 
-                label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
-                options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.Member, found.InClass));
+            if (expr == null && exprLeft == null)
+            {
+                if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
+                else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
+                options.Add(new GeneratorItem(label, GeneratorJobType.Function, found.Member, found.InClass));
+            }
 
-                if (expr == null && exprLeft == null)
-                {
-                    if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
-                    else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Function, found.Member, found.InClass));
-                }
+            label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
+            options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
 
-                label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
-
-                if (generateClass)
-                {
-                    label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.Member, found.InClass));
-                }
+            if (generateClass)
+            {
+                label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
+                options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.Member, found.InClass));
             }
         }
 
@@ -1387,14 +1378,14 @@ namespace ASCompletion.Completion
 
         protected virtual void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
+            // Interface mode
             var ctx = ASContext.Context;
             if (ctx.CurrentClass.Flags.HasFlag(FlagType.Interface))
             {
-                if (job == GeneratorJobType.GetterSetter) interfaceCodeGenerator.GenerateGetterSetter(sci, member);
-                else if (job == GeneratorJobType.Setter) interfaceCodeGenerator.GenerateSetter(sci, member);
-                else if (job == GeneratorJobType.Getter) interfaceCodeGenerator.GenerateGetter(sci, member);
+                interfaceCodeGenerator.GenerateProperty(job, sci, member, inClass);
                 return;
             }
+            // Normal mode
             var name = GetPropertyNameFor(member);
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
@@ -4542,6 +4533,7 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
+            // TODO: if(CanShowGenerateNewInterface) ShowGenerateNewInterface(sci, expr, found, options);
             if (CanShowGenerateNewMethod(sci, position, expr, found))
             {
                 ShowGenerateGetterSetter(sci, expr, found, options);
@@ -4573,7 +4565,15 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
         }
 
-        public void GenerateGetterSetter(ScintillaControl sci, MemberModel member)
+        public void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
+        {
+            
+            if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(sci, member);
+            else if (job == GeneratorJobType.Setter) GenerateSetter(sci, member);
+            else if (job == GeneratorJobType.Getter) GenerateGetter(sci, member);
+        }
+
+        void GenerateGetterSetter(ScintillaControl sci, MemberModel member)
         {
             GenerateGetter(sci, member);
             var pos = sci.LineEndPosition(sci.CurrentLine);
@@ -4582,7 +4582,7 @@ namespace ASCompletion.Completion
             GenerateSetter(sci, member);
         }
 
-        public void GenerateGetter(ScintillaControl sci, MemberModel member)
+        void GenerateGetter(ScintillaControl sci, MemberModel member)
         {
             var ctx = ASContext.Context;
             var template = TemplateUtils.GetTemplate("IGetter");
@@ -4595,7 +4595,7 @@ namespace ASCompletion.Completion
             ASGenerator.InsertCode(sci.SelectionStart, template, sci);
         }
 
-        public void GenerateSetter(ScintillaControl sci, MemberModel member)
+        void GenerateSetter(ScintillaControl sci, MemberModel member)
         {
             var ctx = ASContext.Context;
             var template = TemplateUtils.GetTemplate("ISetter");
