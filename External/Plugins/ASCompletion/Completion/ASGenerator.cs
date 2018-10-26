@@ -44,7 +44,7 @@ namespace ASCompletion.Completion
         internal static MemberModel contextMember;
         private static bool firstVar;
 
-        CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
+        readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
 
         protected virtual ICodeGeneratorStrategy GetCodeGeneratorStrategy()
         {
@@ -81,13 +81,13 @@ namespace ASCompletion.Completion
             contextMatch = null;
             contextToken = sci.GetWordFromPosition(position);
             var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(position, true));
+            contextResolved = expr;
             ContextualGenerator(sci, position, expr, options);
             return true;
         }
 
         protected virtual void ContextualGenerator(ScintillaControl sci, int position, ASResult resolve, List<ICompletionListItem> options)
         {
-            contextResolved = resolve;
             var suggestItemDeclaration = false;
             var ctx = ASContext.Context;
             var line = sci.LineFromPosition(position);

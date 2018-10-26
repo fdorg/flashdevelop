@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using HaXeContext.Completion;
@@ -25,6 +26,15 @@ namespace HaXeContext.Generators
 
     internal class CodeGenerator : ASGenerator
     {
+        readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
+
+        protected override ICodeGeneratorStrategy GetCodeGeneratorStrategy()
+        {
+            if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
+                return codeGeneratorInterfaceStrategy;
+            return base.GetCodeGeneratorStrategy();
+        }
+
         /// <inheritdoc />
         protected override void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
@@ -32,7 +42,7 @@ namespace HaXeContext.Generators
             if (expr.Context.Separator == ":" && expr.Context.SeparatorPosition > 0 && sci.CharAt(expr.Context.SeparatorPosition - 1) == '@') return;
             var ctx = ASContext.Context;
             var currentClass = ctx.CurrentClass;
-            if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || currentClass.Flags.HasFlag(FlagType.Interface))
+            if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
                 if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
