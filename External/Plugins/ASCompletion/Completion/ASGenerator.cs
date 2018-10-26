@@ -80,16 +80,31 @@ namespace ASCompletion.Completion
         protected virtual void ContextualGenerator(ScintillaControl sci, int position, ASResult resolve, List<ICompletionListItem> options)
         {
             contextResolved = resolve;
+            var suggestItemDeclaration = false;
             var ctx = ASContext.Context;
+            var line = sci.LineFromPosition(position);
+            var found = GetDeclarationAtLine(line);
+            if (contextToken != null && resolve.Member == null && sci.BaseStyleAt(position) != 5)
+            {
+                // import declaration
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !ctx.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
+                if (resolve.Type == null)
+                {
+                    if (CanShowCreateNewClass(sci, position, resolve, found))
+                    {
+                        ShowNewClassList(found, resolve.Context, options);
+                        return;
+                    }
+                    suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
+                }
+            }
+
             if ((ctx.CurrentClass.Flags & FlagType.Interface) != 0)
             {
                 interfaceCodeGenerator.ContextualGenerator(sci, position, resolve, options);
                 return;
             }
-
-            var isNotInterface = (ctx.CurrentClass.Flags & FlagType.Interface) == 0;
-            var line = sci.LineFromPosition(position);
-            var found = GetDeclarationAtLine(line);
+            
             if (CanShowConvertToConst(sci, position, resolve, found))
             {
                 ShowConvertToConst(found, options);
@@ -97,15 +112,13 @@ namespace ASCompletion.Completion
             }
 
             // ignore automatic vars (MovieClip members)
-            if (isNotInterface
-                && resolve.Member != null
-                && (((resolve.Member.Flags & FlagType.AutomaticVar) > 0) || (resolve.InClass?.QualifiedName == "Object")))
+            if (resolve.Member != null && ((resolve.Member.Flags & FlagType.AutomaticVar) > 0 || resolve.InClass?.QualifiedName == "Object"))
             {
                 resolve.Member = null;
                 resolve.Type = null;
             }
 
-            if (isNotInterface && !found.InClass.IsVoid() && contextToken != null)
+            if (!found.InClass.IsVoid() && contextToken != null)
             {
                 // implement interface
                 if (CanShowImplementInterfaceList(sci, position, resolve, found))
@@ -122,23 +135,8 @@ namespace ASCompletion.Completion
                     return;
                 }
             }
-
-            var suggestItemDeclaration = false;
-            if (contextToken != null && resolve.Member == null && sci.BaseStyleAt(position) != 5)
-            {
-                // import declaration
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ctx.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
-                if (resolve.Type == null)
-                {
-                    if (CanShowCreateNewClass(sci, position, resolve, found))
-                    {
-                        ShowNewClassList(found, resolve.Context, options);
-                        return;
-                    }
-                    suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
-                }
-            }
-            if (isNotInterface && found.Member != null)
+           
+            if (found.Member != null)
             {
                 // private var -> property
                 if ((found.Member.Flags & FlagType.Variable) > 0 && (found.Member.Flags & FlagType.LocalVar) == 0)
@@ -332,8 +330,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (isNotInterface
-                && resolve.Member != null
+            if (resolve.Member != null
                 && resolve.Type != null
                 && resolve.Type.QualifiedName == ctx.Features.stringKey
                 && !found.InClass.IsVoid())
@@ -3739,7 +3736,7 @@ namespace ASCompletion.Completion
             return ASContext.Context.Features.privateKey ?? "private";
         }
 
-        internal static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility access, MemberModel isStatic)
+        private static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility access, MemberModel isStatic)
         {
             MemberModel latest = null;
             if (isStatic != null && (isStatic.Flags & FlagType.Static) > 0)
@@ -4545,7 +4542,8 @@ namespace ASCompletion.Completion
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
-                   && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
+                   && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
+                   && expr.IsNull();
         }
 
         void ShowGenerateGetterSetter(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)

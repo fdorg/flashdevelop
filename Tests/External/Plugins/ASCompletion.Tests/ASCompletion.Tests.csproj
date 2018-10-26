@@ -1268,6 +1268,11 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorSetter_issue2473_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGeneratorFunction_issue2473_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorFunction_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGeneratorAutoImport_issue2473_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_8.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_9.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

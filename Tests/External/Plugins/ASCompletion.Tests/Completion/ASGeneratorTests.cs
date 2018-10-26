@@ -3390,6 +3390,26 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterInterfaceContextualGeneratorFunction_issue2473_1"))
                             .SetName("Generate Function. Issue 2473. Case 4")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGeneratorAutoImport_issue2473_1", -1, false)
+                            .Returns(null)
+                            .SetName("Auto import. Issue 2473. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_6", -1, false)
+                            .Returns(null)
+                            .SetName("Issue 2473. Case 6")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_7", -1, false)
+                            .Returns(null)
+                            .SetName("Issue 2473. Case 7")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_8", -1, false)
+                            .Returns(null)
+                            .SetName("Issue 2473. Case 8")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_9", GeneratorJobType.FunctionPublic, false)
+                            .Returns(null)
+                            .SetName("Issue 2473. Case 9")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
                     }
                 }
 
