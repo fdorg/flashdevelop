@@ -76,7 +76,7 @@ namespace ASCompletion.Generators
             GenerateAccessor(sci, member, TemplateUtils.GetTemplate("ISetter"));
         }
 
-        static void GenerateAccessor(ScintillaControl sci, MemberModel member, string template)
+        protected static void GenerateAccessor(ScintillaControl sci, MemberModel member, string template)
         {
             var features = ASContext.Context.Features;
             template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);

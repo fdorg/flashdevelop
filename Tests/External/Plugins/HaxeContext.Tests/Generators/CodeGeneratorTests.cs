@@ -1395,7 +1395,7 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
                 yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_5", -1, false)
                     .Returns(null)
-                    .SetName("Issue 2473. Case 4")
+                    .SetName("Issue 2473. Case 5")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
             }
         }

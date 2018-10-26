@@ -22,6 +22,7 @@ namespace HaXeContext.Generators
     {
         EnumConstructor,
         Switch,
+        IVariable,
     }
 
     internal class CodeGenerator : ASGenerator
@@ -618,7 +619,7 @@ namespace HaXeContext.Generators
         }
     }
 
-    class GeneratorItem : ICompletionListItem
+    internal class GeneratorItem : ICompletionListItem
     {
         internal GeneratorJob Job { get; }
         readonly Action action;
