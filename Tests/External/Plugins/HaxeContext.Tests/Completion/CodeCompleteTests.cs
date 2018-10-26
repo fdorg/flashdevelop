@@ -404,11 +404,22 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue2468TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2468_1")
+                    .Returns("CalltipDef_issue2468_1 (v1:Int)")
+                    .SetName("new CalltipDef_issue2468_1<Foo>(|). Case 1");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(CalltipDefIssue2356TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2364TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2368TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue2468TestCases)),
         ]
         public string CalltipDef(string fileName)
         {

@@ -1749,7 +1749,24 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource(nameof(FindParameterIndexTestCases))]
+            static IEnumerable<TestCaseData> FindParameterIndexIssue2468TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("new Vector<Foo>(1, bar(1, 2), 1 < 2$(EntryPoint)")
+                        .Returns(2)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2468");
+                    yield return new TestCaseData("new Vector<Foo>(1, bar(1, 2), 1 > 2$(EntryPoint)")
+                        .Returns(2)
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2468");
+                }
+            }
+
+            [
+                Test, 
+                TestCaseSource(nameof(FindParameterIndexTestCases)),
+                TestCaseSource(nameof(FindParameterIndexIssue2468TestCases)),
+            ]
             public int FindParameterIndex(string sourceText) => FindParameterIndex(sci, sourceText);
 
             static IEnumerable<TestCaseData> ParseClass_Issue104TestCases
