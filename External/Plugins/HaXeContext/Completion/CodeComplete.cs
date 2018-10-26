@@ -598,22 +598,30 @@ namespace HaXeContext.Completion
 
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
-            if (!string.IsNullOrEmpty(token) && token.Length > 1 && token[0] == '[' && token.Last() == ']'
-                && inClass != null && result.Type != null && (result.Type.Flags & FlagType.TypeDef) != 0
-                && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
+            if (!string.IsNullOrEmpty(token) && token.Length > 1 && token[0] == '[' && token.Last() == ']' && inClass != null && result.Type != null)
             {
-                /**
-                 * for example:
-                 * typedef Ints = Array<Int>;
-                 * var ints:Ints;
-                 * ints[0].<complete>
-                 */
-                var type = result.Type;
-                while (!type.IsVoid() && string.IsNullOrEmpty(type.IndexType))
+                if ((result.Type.Flags & FlagType.TypeDef) != 0 && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
                 {
-                    type = ASContext.Context.ResolveType(type.ExtendsType, result.InFile);
+                    /**
+                     * for example:
+                     * typedef Ints = Array<Int>;
+                     * var ints:Ints;
+                     * ints[0].<complete>
+                     */
+                    var type = result.Type;
+                    while (!type.IsVoid() && string.IsNullOrEmpty(type.IndexType))
+                    {
+                        type = ASContext.Context.ResolveType(type.ExtendsType, result.InFile);
+                    }
+                    result.Type = type;
                 }
-                result.Type = type;
+                else if (result.Type.IndexType is string indexType && indexType.Contains("->"))
+                {
+                    result.Type = (ClassModel) Context.stubFunctionClass.Clone();
+                    FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Type);
+                    result.Member = result.Type;
+                    return;
+                }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
         }

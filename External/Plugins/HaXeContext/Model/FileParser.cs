@@ -1430,10 +1430,14 @@ namespace HaXeContext.Model
                 {
                     var member = members[i];
                     if (((member.Flags & FlagType.Variable) != 0)
-                        && member.Type != null && member.Type.Contains("->"))
+                        && member.Type is string type
+                        && type.IndexOfOrdinal("->") is var arrowIndex && arrowIndex != -1)
                     {
+                        // for example: Array<String->String>
+                        if (type.IndexOf('<') is var p1 && p1 != -1 && p1 < arrowIndex && arrowIndex < type.LastIndexOf('>'))
+                            continue;
                         member.Flags |= FlagType.Function;
-                        FunctionTypeToMemberModel(member.Type, member, features);
+                        FunctionTypeToMemberModel(type, features, member);
                     }
                 }
             }
@@ -2133,9 +2137,9 @@ namespace HaXeContext.Model
 
         #endregion
 
-        public static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features) => FunctionTypeToMemberModel(type, new MemberModel(), features);
+        public static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features) => FunctionTypeToMemberModel(type, features, new MemberModel());
 
-        static MemberModel FunctionTypeToMemberModel(string type, MemberModel result, ContextFeatures features)
+        internal static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features, MemberModel result)
         {
             var voidKey = features.voidKey;
             if (result.Parameters == null) result.Parameters = new List<MemberModel>();

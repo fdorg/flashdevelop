@@ -61,8 +61,7 @@ namespace ASCompletion.Completion
 
         public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
-            var context = ASContext.Context;
-            if (context is ASContext) ((ASContext)context).UpdateCurrentFile(false); // update model
+            if (ASContext.Context is ASContext ctx) ctx.UpdateCurrentFile(false);
 
             lookupPosition = -1;
             if (sci.PositionIsOnComment(position)) return false;
@@ -93,7 +92,7 @@ namespace ASCompletion.Completion
             // ignore automatic vars (MovieClip members)
             if (isNotInterface
                 && resolve.Member != null
-                && (((resolve.Member.Flags & FlagType.AutomaticVar) > 0) || (resolve.InClass != null && resolve.InClass.QualifiedName == "Object")))
+                && (((resolve.Member.Flags & FlagType.AutomaticVar) > 0) || (resolve.InClass?.QualifiedName == "Object")))
             {
                 resolve.Member = null;
                 resolve.Type = null;
@@ -4624,9 +4623,9 @@ namespace ASCompletion.Completion
 
     class StatementReturnType
     {
-        public ASResult Resolve;
-        public int Position;
-        public string Word;
+        public readonly ASResult Resolve;
+        public readonly int Position;
+        public readonly string Word;
 
         public StatementReturnType(ASResult resolve, int position, string word)
         {

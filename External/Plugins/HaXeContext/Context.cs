@@ -49,7 +49,15 @@ namespace HaXeContext
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
-        ClassModel stubFunctionClass;
+
+        internal static readonly ClassModel stubFunctionClass = new ClassModel
+        {
+            Name = "Function",
+            Type = "Function",
+            Flags = FlagType.Class,
+            Access = Visibility.Public,
+            InFile = new FileModel {Package = "haxe", Module = "Constraints"},
+        };
 
         public Context(HaXeSettings initSettings) : this(initSettings, path => null)
         {
@@ -66,13 +74,7 @@ namespace HaXeContext
             hasLevels = false;
             docType = "Void"; // "flash.display.MovieClip";
 
-            stubFunctionClass = new ClassModel();
-            stubFunctionClass.Name = stubFunctionClass.Type = "Function";
-            stubFunctionClass.Flags = FlagType.Class;
-            stubFunctionClass.Access = Visibility.Public;
-            var funFile = new FileModel{Package = "haxe", Module = "Constraints"};
-            funFile.Classes.Add(stubFunctionClass);
-            stubFunctionClass.InFile = funFile;
+            stubFunctionClass.InFile.Classes.Add(stubFunctionClass);
 
             /* DESCRIBE LANGUAGE FEATURES */
 
@@ -1089,19 +1091,18 @@ namespace HaXeContext
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
-
+            
             // handle generic types
-            if (cname.IndexOf('<') > 0)
+            if (cname.Contains('<'))
             {
                 var genType = re_genericType.Match(cname);
                 if (genType.Success)
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                 return ClassModel.VoidClass;
             }
-
+            
             // typed array
-            if (cname.IndexOf('@') > 0)
-                return ResolveTypeIndex(cname, inFile);
+            if (cname.Contains('@')) return ResolveTypeIndex(cname, inFile);
 
             var package = "";
             var inPackage = (features.hasPackages && inFile != null) ? inFile.Package : "";

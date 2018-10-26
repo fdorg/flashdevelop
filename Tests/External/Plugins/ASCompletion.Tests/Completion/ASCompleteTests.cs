@@ -1387,6 +1387,21 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_ArrayAccess_issue2471_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ArrayAccess_issue2471_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("a[0].<complete> Issue 2471. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ArrayAccess_issue2471_2"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("a[0].<complete> Issue 2471. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1399,6 +1414,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2362TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2373TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2401TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_ArrayAccess_issue2471_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
