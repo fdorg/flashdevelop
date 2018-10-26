@@ -35,6 +35,7 @@ namespace ASCompletion.TestUtils
 
         static void SetFeatures(IASContext mock, IASContext context)
         {
+            ClassModel.VoidClass.Name = context.Features.voidKey;
             mock.Settings.Returns(context.Settings);
             mock.Features.Returns(context.Features);
             mock.CurrentModel.Returns(context.CurrentModel);

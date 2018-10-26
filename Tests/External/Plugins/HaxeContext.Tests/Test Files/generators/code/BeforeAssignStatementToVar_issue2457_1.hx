@@ -1,5 +1,5 @@
 ﻿package;
-class Issue2455_1 {
+class Issue2457_1 {
 	static function main() {
 		function foo() {}
 		foo();$(EntryPoint)

@@ -401,12 +401,9 @@ namespace ASCompletion.Model
             return sb.ToString();
         }
 
-        static public string ClassDeclaration(ClassModel ofClass)
-        {
-            return ClassDeclaration(ofClass, true);
-        }
+        public static string ClassDeclaration(ClassModel ofClass) => ClassDeclaration(ofClass, true);
 
-        static public string ClassDeclaration(ClassModel ofClass, bool qualified)
+        public static string ClassDeclaration(ClassModel ofClass, bool qualified)
         {
             // package
             if (ofClass.Flags == FlagType.Package)
