@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,7 +33,7 @@ namespace ASCompletion.Completion
         const string patternMethodDecl = @"function\s+{0}\s*\(";
         const string patternClass = @"new\s*{0}";
         const string BlankLine = "$(Boundary)\n\n";
-        protected const string NewLine = "$(Boundary)\n";
+        protected internal const string NewLine = "$(Boundary)\n";
         private static readonly Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
         private static readonly Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
@@ -1088,7 +1089,7 @@ namespace ASCompletion.Completion
 
         public static void GenerateJob(GeneratorJobType job, MemberModel member, ClassModel inClass, string itemLabel, Object data)
         {
-            ScintillaControl sci = ASContext.CurSciControl;
+            var sci = ASContext.CurSciControl;
             lookupPosition = sci.CurrentPos;
 
             int position;
@@ -1386,6 +1387,14 @@ namespace ASCompletion.Completion
 
         protected virtual void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
+            var ctx = ASContext.Context;
+            if (ctx.CurrentClass.Flags.HasFlag(FlagType.Interface))
+            {
+                if (job == GeneratorJobType.GetterSetter) interfaceCodeGenerator.GenerateGetterSetter(sci, member);
+                else if (job == GeneratorJobType.Setter) interfaceCodeGenerator.GenerateSetter(sci, member);
+                else if (job == GeneratorJobType.Getter) interfaceCodeGenerator.GenerateGetter(sci, member);
+                return;
+            }
             var name = GetPropertyNameFor(member);
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
@@ -1429,7 +1438,7 @@ namespace ASCompletion.Completion
                 if ((member.Flags & FlagType.Function) != 0)
                 {
                     member = (MemberModel) member.Clone();
-                    member.Type = ((ASGenerator) ASContext.Context.CodeGenerator).GetFunctionType(member);
+                    member.Type = ((ASGenerator) ctx.CodeGenerator).GetFunctionType(member);
                 }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
                 else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
@@ -3739,7 +3748,7 @@ namespace ASCompletion.Completion
             return ASContext.Context.Features.privateKey ?? "private";
         }
 
-        private static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility access, MemberModel isStatic)
+        internal static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility access, MemberModel isStatic)
         {
             MemberModel latest = null;
             if (isStatic != null && (isStatic.Flags & FlagType.Static) > 0)
@@ -4534,20 +4543,69 @@ namespace ASCompletion.Completion
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
             if (CanShowGenerateNewMethod(sci, position, expr, found))
+            {
+                ShowGenerateGetterSetter(sci, expr, found, options);
                 ShowGenerateNewMethod(sci, expr, found, options);
+            }
         }
 
         bool CanShowGenerateNewMethod(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
-                   && !ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
+                   && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
                    && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
         }
 
-        void ShowGenerateNewMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
+        void ShowGenerateGetterSetter(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var member = new MemberModel {Name = expr.Context.Value};
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, member, found.InClass));
+            label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, member, found.InClass));
+            label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, member, found.InClass));
+        }
+
+        void ShowGenerateNewMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
+        }
+
+        public void GenerateGetterSetter(ScintillaControl sci, MemberModel member)
+        {
+            GenerateGetter(sci, member);
+            var pos = sci.LineEndPosition(sci.CurrentLine);
+            sci.SetSel(pos, pos);
+            sci.NewLine();
+            GenerateSetter(sci, member);
+        }
+
+        public void GenerateGetter(ScintillaControl sci, MemberModel member)
+        {
+            var ctx = ASContext.Context;
+            var template = TemplateUtils.GetTemplate("IGetter");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", "$(EntryPoint)*$(ExitPoint)");
+            template = TemplateUtils.ToDeclarationString(member, template);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", string.Empty);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ctx.Features.voidKey);
+            sci.SelectWord();
+            ASGenerator.InsertCode(sci.SelectionStart, template, sci);
+        }
+
+        public void GenerateSetter(ScintillaControl sci, MemberModel member)
+        {
+            var ctx = ASContext.Context;
+            var template = TemplateUtils.GetTemplate("ISetter");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", "$(EntryPoint)*$(ExitPoint)");
+            template = TemplateUtils.ToDeclarationString(member, template);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", string.Empty);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ctx.Features.voidKey);
+            sci.SelectWord();
+            ASGenerator.InsertCode(sci.SelectionStart, template, sci);
         }
     }
 
