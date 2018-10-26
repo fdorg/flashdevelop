@@ -615,12 +615,17 @@ namespace HaXeContext.Completion
                     }
                     result.Type = type;
                 }
-                else if (result.Type.IndexType is string indexType && indexType.Contains("->"))
+                else if (result.Type.IndexType is string indexType && indexType.IndexOfOrdinal("->") is var arrowIndex && arrowIndex != -1)
                 {
-                    result.Type = (ClassModel) Context.stubFunctionClass.Clone();
-                    FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Type);
-                    result.Member = result.Type;
-                    return;
+                    // for example: Array<String->String>
+                    if (indexType.IndexOf('<') is var p1 && p1 != -1 && p1 < arrowIndex && arrowIndex < indexType.LastIndexOf('>')) {}
+                    else
+                    {
+                        result.Type = (ClassModel) Context.stubFunctionClass.Clone();
+                        FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Type);
+                        result.Member = result.Type;
+                        return;
+                    }
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);

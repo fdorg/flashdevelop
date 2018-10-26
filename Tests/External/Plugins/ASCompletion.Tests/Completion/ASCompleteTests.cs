@@ -1399,6 +1399,14 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
                         .SetName("a[0].<complete> Issue 2471. Case 2")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ArrayAccess_issue2471_3"))
+                        .Returns(new ClassModel {Name = "Array<String->String>", Flags = FlagType.Class})
+                        .SetName("a[0].<complete> Issue 2471. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ArrayAccess_issue2471_4"))
+                        .Returns(new ClassModel {Name = "Array<Array<String->String>->String>", Flags = FlagType.Class})
+                        .SetName("a[0].<complete> Issue 2471. Case 4")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
                 }
             }
 
