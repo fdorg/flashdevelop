@@ -43,7 +43,15 @@ namespace ASCompletion.Completion
         internal static ASResult contextResolved;
         internal static MemberModel contextMember;
         private static bool firstVar;
-        InterfaceCodeGenerator interfaceCodeGenerator = new InterfaceCodeGenerator();
+
+        CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
+
+        protected virtual ICodeGeneratorStrategy GetCodeGeneratorStrategy()
+        {
+            if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
+                return codeGeneratorInterfaceStrategy;
+            return null;
+        }
 
         private static bool IsHaxe => ASContext.Context.CurrentModel.haXe;
 
@@ -99,9 +107,10 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if ((ctx.CurrentClass.Flags & FlagType.Interface) != 0)
+            var strategy = GetCodeGeneratorStrategy();
+            if (strategy != null)
             {
-                interfaceCodeGenerator.ContextualGenerator(sci, position, resolve, options);
+                strategy.ContextualGenerator(sci, position, resolve, options);
                 return;
             }
             
@@ -1075,7 +1084,7 @@ namespace ASCompletion.Completion
             ASGenerator.contextMatch = contextMatch;
         }
 
-        public static void GenerateJob(GeneratorJobType job, MemberModel member, ClassModel inClass, string itemLabel, Object data)
+        public static void GenerateJob(GeneratorJobType job, MemberModel member, ClassModel inClass, string itemLabel, object data)
         {
             var sci = ASContext.CurSciControl;
             lookupPosition = sci.CurrentPos;
@@ -1088,7 +1097,15 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.Getter:
                 case GeneratorJobType.Setter:
                 case GeneratorJobType.GetterSetter:
-                    ((ASGenerator) ASContext.Context.CodeGenerator).GenerateProperty(job, member, inClass, sci);
+                    var generator = ((ASGenerator) ASContext.Context.CodeGenerator);
+                    var strategy = generator.GetCodeGeneratorStrategy();
+                    if (strategy != null)
+                    {
+                        ((CodeGeneratorInterfaceStrategy) strategy).GenerateProperty(job, sci, member, inClass);
+                        return;
+                    }
+                    // default behavior
+                    generator.GenerateProperty(job, member, inClass, sci);
                     break;
 
                 case GeneratorJobType.BasicEvent:
@@ -1375,14 +1392,7 @@ namespace ASCompletion.Completion
 
         protected virtual void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
-            // Interface mode
             var ctx = ASContext.Context;
-            if (ctx.CurrentClass.Flags.HasFlag(FlagType.Interface))
-            {
-                interfaceCodeGenerator.GenerateProperty(job, sci, member, inClass);
-                return;
-            }
-            // Normal mode
             var name = GetPropertyNameFor(member);
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
@@ -4521,90 +4531,6 @@ namespace ASCompletion.Completion
         }
 
         #endregion
-    }
-
-    class InterfaceCodeGenerator
-    {
-        public void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
-        {
-            var ctx = ASContext.Context;
-            var line = sci.LineFromPosition(position);
-            var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
-            // TODO: if(CanShowGenerateNewInterface) ShowGenerateNewInterface(sci, expr, found, options);
-            if (CanShowGenerateNewMethod(sci, position, expr, found))
-            {
-                ShowGenerateGetterSetter(sci, expr, found, options);
-                ShowGenerateNewMethod(sci, expr, found, options);
-            }
-        }
-
-        bool CanShowGenerateNewMethod(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
-        {
-            return ASGenerator.contextToken != null
-                   && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
-                   && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
-                   && expr.IsNull();
-        }
-
-        void ShowGenerateGetterSetter(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-            var member = new MemberModel {Name = expr.Context.Value};
-            var label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, member, found.InClass));
-            label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, member, found.InClass));
-            label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, member, found.InClass));
-        }
-
-        void ShowGenerateNewMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-            var label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-            options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
-        }
-
-        public void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
-        {
-            
-            if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(sci, member);
-            else if (job == GeneratorJobType.Setter) GenerateSetter(sci, member);
-            else if (job == GeneratorJobType.Getter) GenerateGetter(sci, member);
-        }
-
-        void GenerateGetterSetter(ScintillaControl sci, MemberModel member)
-        {
-            GenerateGetter(sci, member);
-            var pos = sci.LineEndPosition(sci.CurrentLine);
-            sci.SetSel(pos, pos);
-            sci.NewLine();
-            GenerateSetter(sci, member);
-        }
-
-        void GenerateGetter(ScintillaControl sci, MemberModel member)
-        {
-            var ctx = ASContext.Context;
-            var template = TemplateUtils.GetTemplate("IGetter");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", "$(EntryPoint)*$(ExitPoint)");
-            template = TemplateUtils.ToDeclarationString(member, template);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", string.Empty);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ctx.Features.voidKey);
-            sci.SelectWord();
-            ASGenerator.InsertCode(sci.SelectionStart, template, sci);
-        }
-
-        void GenerateSetter(ScintillaControl sci, MemberModel member)
-        {
-            var ctx = ASContext.Context;
-            var template = TemplateUtils.GetTemplate("ISetter");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", "$(EntryPoint)*$(ExitPoint)");
-            template = TemplateUtils.ToDeclarationString(member, template);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", string.Empty);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ctx.Features.voidKey);
-            sci.SelectWord();
-            ASGenerator.InsertCode(sci.SelectionStart, template, sci);
-        }
     }
 
     #region related structures
