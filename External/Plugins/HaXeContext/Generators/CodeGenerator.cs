@@ -45,6 +45,7 @@ namespace HaXeContext.Generators
             base.ContextualGenerator(sci, position, expr, options);
         }
 
+        /// <inheritdoc />
         protected override bool CanShowAssignStatementToVariable(ScintillaControl sci, ASResult expr)
         {
             if (!base.CanShowAssignStatementToVariable(sci, expr)) return false;
@@ -277,7 +278,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        protected override FoundDeclaration GetDeclarationAtLine(int line)
+        public override FoundDeclaration GetDeclarationAtLine(int line)
         {
             var result = base.GetDeclarationAtLine(line);
             if (result.Member is MemberModel member
