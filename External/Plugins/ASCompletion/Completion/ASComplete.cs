@@ -612,7 +612,7 @@ namespace ASCompletion.Completion
                 && sci.GetWordFromPosition(position) == ctx.Features.overrideKey)
             {
                 var member = ctx.CurrentMember;
-                if ((member.Flags & FlagType.Override) > 0 && ctx.CurrentClass != null)
+                if ((member.Flags & FlagType.Override) > 0)
                 {
                     ctx.CurrentClass.ResolveExtends();
                     var tmpClass = ctx.CurrentClass.Extends;
