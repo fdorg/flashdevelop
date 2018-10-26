@@ -3408,7 +3408,7 @@ namespace ASCompletion.Completion
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
                         yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_9", GeneratorJobType.FunctionPublic, false)
                             .Returns(null)
-                            .SetName("Issue 2473. Case 9")
+                            .SetName("Generate new class. Issue 2473. Case 9")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
                     }
                 }

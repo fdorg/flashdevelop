@@ -1575,7 +1575,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        public static string AvoidKeyword(string word)
+        internal static string AvoidKeyword(string word)
         {
             var features = ASContext.Context.Features;
             return features.accessKeywords.Contains(word)
