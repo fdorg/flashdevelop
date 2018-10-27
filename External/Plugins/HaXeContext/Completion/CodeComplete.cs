@@ -632,7 +632,7 @@ namespace HaXeContext.Completion
                     }
                 }
             }
-            // fox example: (foo<T>("string"):T).<complete>
+            // for example: (foo<T>("string"):T).<complete>
             else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function)
                      && member.Template is string template && member.Type is string returnType
                      && member.Parameters is List<MemberModel> parameters

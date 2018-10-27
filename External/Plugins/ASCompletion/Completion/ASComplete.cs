@@ -2662,7 +2662,7 @@ namespace ASCompletion.Completion
                     var space = subExpr.LastIndexOf(' ');
                     if (space > 0) subExpr = subExpr.Substring(space + 1);
                     // eval sub expression
-                    head = EvalExpression(subExpr, subContext, inFile, inClass, true, false, false);
+                    head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
                     if (head.Member != null)
                         head.Type = ctx.ResolveType(head.Member.Type, head.Type.InFile);
                 }
