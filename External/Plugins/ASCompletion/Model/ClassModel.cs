@@ -14,7 +14,7 @@ namespace ASCompletion.Model
     [Serializable]
     public class ClassModel: MemberModel
     {
-        static public ClassModel VoidClass;
+        public static readonly ClassModel VoidClass;
 
         static private Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -249,29 +249,21 @@ namespace ASCompletion.Model
 
         #region Sorting
 
-        public void Sort()
-        {
-            Members.Sort();
-        }
+        public void Sort() => Members.Sort();
 
         public override bool Equals(object obj)
         {
             if (!(obj is ClassModel)) return false;
             return Name.Equals(((ClassModel)obj).Name);
         }
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
+
+        public override int GetHashCode() => Name.GetHashCode();
 
         #endregion
 
         #region Text output
 
-        public override string ToString()
-        {
-            return ClassDeclaration(this);
-        }
+        public override string ToString() => ClassDeclaration(this);
 
         public string GenerateIntrinsic(bool caching)
         {
@@ -340,8 +332,6 @@ namespace ASCompletion.Model
                 }
 
             // MEMBERS
-            string decl;
-            MemberModel temp;
             string prevProperty = null;
             foreach (MemberModel property in Members)
                 if ((property.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
@@ -352,6 +342,7 @@ namespace ASCompletion.Model
                     sb.Append(CommentDeclaration(property.Comments, tab));
                     FlagType flags = (property.Flags & ~(FlagType.Setter | FlagType.Getter)) | FlagType.Function;
 
+                    MemberModel temp;
                     if ((property.Flags & FlagType.Getter) > 0)
                     {
                         temp = (MemberModel)property.Clone();
@@ -388,7 +379,7 @@ namespace ASCompletion.Model
             foreach (MemberModel method in Members)
                 if ((method.Flags & FlagType.Function) > 0 && (method.Flags & FlagType.Variable) == 0 && (method.Flags & FlagType.Getter) == 0)
                 {
-                    decl = MemberDeclaration(method, preventVis);
+                    var decl = MemberDeclaration(method, preventVis);
                     if (InFile.haXe && (method.Flags & FlagType.Constructor) > 0)
                         decl = decl.Replace("function " + method.Name, "function new");
                     ASMetaData.GenerateIntrinsic(method.MetaDatas, sb, nl, tab);
@@ -529,19 +520,15 @@ namespace ASCompletion.Model
             return $"{modifiers}type {member.Type}";
         }
 
-        static public string CommentDeclaration(string comment, string tab)
+        public static string CommentDeclaration(string comment, string tab)
         {
             if (comment == null) return "";
             comment = comment.Trim();
             if (comment.Length == 0) return "";
-            Boolean indent = tab != "";
-            String space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
-            Boolean startWithStar = comment.StartsWith('*');
+            var startWithStar = comment.StartsWith('*');
             if (startWithStar || comment.IndexOf('\n') > 0 || comment.IndexOf('\r') > 0)
             {
-                if (!startWithStar)
-                    comment = "* " + comment;
-
+                if (!startWithStar) comment = "* " + comment;
                 comment = reEOLAndStar.Replace(comment, "\n");
                 comment = comment.Replace("\r\n", "\n");
                 comment = comment.Replace("\r", "\n");
@@ -549,22 +536,23 @@ namespace ASCompletion.Model
                 comment = reMultiSpacedEOL.Replace(comment, "\n\n  ");
                 comment = reAsdocWordSpace.Replace(comment, "\n");
                 comment = GetCorrectComment(comment, "\n", "\n  ");
-                if (indent)
+                if (tab != "")
                 {
+                    var space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
                     comment = comment.Replace("\n", "\r\n" + tab + space + "* ");
                     return tab + "/**\r\n" + tab + space + comment + "\r\n" + tab + space + "*/\r\n";
                 }
                 return tab + "/**\r\n" + tab + comment + "\r\n" + tab + "*/\r\n";
             }
+
             return tab + "/// " + comment + "\r\n";
         }
 
-        static public string GetCorrectComment(string comment, string eolSrc, string eolRepl)
+        static string GetCorrectComment(string comment, string eolSrc, string eolRepl)
         {
             MatchCollection mc = reAsdocWord.Matches(comment);
 
             string outComment = "";
-            string s;
 
             int j0 = 0;
             int j1 = 0;
@@ -576,7 +564,7 @@ namespace ASCompletion.Model
                 else
                     j1 = comment.Length;
 
-                s = comment.Substring(j0, j1 - j0);
+                var s = comment.Substring(j0, j1 - j0);
 
                 if (i > 0)
                     s = s.Replace(eolSrc, eolRepl);

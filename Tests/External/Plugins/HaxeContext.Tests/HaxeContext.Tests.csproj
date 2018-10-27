@@ -920,6 +920,11 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2473_6.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2473_6.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2475_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2471_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2475_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2475_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2475_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2475_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
