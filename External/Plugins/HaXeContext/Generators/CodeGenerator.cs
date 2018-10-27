@@ -383,13 +383,14 @@ namespace HaXeContext.Generators
         protected override string GetFunctionType(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
+            var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
             var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
             parameters.Add(member.Type ?? voidKey);
             var qualifiedName = string.Empty;
             for (var i = 0; i < parameters.Count; i++)
             {
                 if (i > 0) qualifiedName += "->";
-                var t = parameters[i];
+                var t = parameters[i] ?? dynamicTypeName;
                 if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
                 qualifiedName += t;
             }

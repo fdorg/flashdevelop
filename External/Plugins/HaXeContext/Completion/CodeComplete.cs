@@ -636,7 +636,8 @@ namespace HaXeContext.Completion
             else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function)
                      && member.Template is string template && member.Type is string returnType
                      && member.Parameters is List<MemberModel> parameters
-                     && template.Substring(1, template.Length - 2).Split(',').Contains(returnType))
+                     && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
+                     && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
             {
                 for (int i = 0, count = parameters.Count; i < count; i++)
                 {
@@ -656,6 +657,20 @@ namespace HaXeContext.Completion
                             if (i != paramIndex++) continue;
                             var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
                             result.Type = expr.Type;
+                            result.Member = (MemberModel) result.Member.Clone();
+                            var type = expr.Type.Name;
+                            result.Member.Type = type;
+                            templates[templateIndex] = type;
+                            result.Member.Template = $"<{string.Join(", ", templates)}>";
+                            parameters = result.Member.Parameters;
+                            for (var k = 0; k < parameters.Count; k++)
+                            {
+                                parameter = parameters[k];
+                                if (parameter.Type != returnType) continue;
+                                parameters[k] = (MemberModel) parameter.Clone();
+                                parameters[k].Type = type;
+                            }
+                            return;
                         }
                     }
                     return;
