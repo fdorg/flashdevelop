@@ -1418,6 +1418,10 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("foo<T>('string').<complete> Issue 2203. Case 1")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2203_2"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("foo<T>(_, bool, ?_, ?_).<complete> Issue 2203. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
                 }
             }
 

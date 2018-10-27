@@ -638,14 +638,26 @@ namespace HaXeContext.Completion
                      && member.Parameters is List<MemberModel> parameters
                      && template.Substring(1, template.Length - 2).Split(',').Contains(returnType))
             {
-                for (var i = 0; i < parameters.Count && i < result.Context.SubExpressions.Count; i++)
+                for (int i = 0, count = parameters.Count; i < count; i++)
                 {
                     var parameter = parameters[i];
                     if (parameter.Type != returnType) continue;
-                    var subExpression = result.Context.SubExpressions[i];
+                    var subExpression = result.Context.SubExpressions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
-                    var model = ASContext.Context.ResolveToken(subExpression, null);
-                    if (!model.IsVoid()) result.Type = model;
+                    var groupCount = 0;
+                    var paramIndex = 0;
+                    for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
+                    {
+                        var c = subExpression[j];
+                        if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
+                        else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
+                        else if (groupCount == 0 && c == ',' || j == length)
+                        {
+                            if (i != paramIndex++) continue;
+                            var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
+                            result.Type = expr.Type;
+                        }
+                    }
                     return;
                 }
             }
@@ -758,4 +770,4 @@ namespace HaXeContext.Completion
             }
         }
     }
-}
+} 
