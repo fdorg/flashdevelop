@@ -1150,6 +1150,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2203_2"))
                     .SetName("(foo<T>(a):T).<generate> Assign statement to var. Issue 2203. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2203_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2203_3"))
+                    .SetName("(foo<T>(a):T).<generate> Assign statement to var. Inference the type of variable. Issue 2203. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
             }
         }
 
