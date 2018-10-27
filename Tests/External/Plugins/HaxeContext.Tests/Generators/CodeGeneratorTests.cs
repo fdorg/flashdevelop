@@ -1114,12 +1114,27 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2471_1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2471_1"))
-                    .SetName("[0].<generate> Assign statement to var. Issue 2471. Case 1.")
+                    .SetName("a[0].<generate> Assign statement to var. Issue 2471. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2471_2", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2471_2"))
-                    .SetName("[0].<generate> Assign statement to var. Issue 2471. Case 2.")
+                    .SetName("a[0].<generate> Assign statement to var. Issue 2471. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2471");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2475TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2475_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2475_1"))
+                    .SetName("a[0]().<generate> Assign statement to var. Issue 2451. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2475");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2475_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2475_2"))
+                    .SetName("a[0][0]().<generate> Assign statement to var. Issue 2451. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2475");
             }
         }
 
@@ -1430,6 +1445,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2455TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2457TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2471TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2475TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2350TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2371TestCases)),

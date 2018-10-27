@@ -719,11 +719,11 @@ namespace ASCompletion.Completion
                 result.InClass = (ClassModel) GetMemberAtLine(model.Classes);
                 if (result.InClass != null) result.Member = GetMemberAtLine(result.InClass.Members.Items);
             }
+            if (result.InClass == null) result.InClass = ClassModel.VoidClass;
             return result;
 
             // Utils
-            MemberModel GetMemberAtLine(IEnumerable<MemberModel> list) =>
-                list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
+            MemberModel GetMemberAtLine(IEnumerable<MemberModel> list) => list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
         }
 
         protected bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)

@@ -202,7 +202,7 @@ namespace ASCompletion.Model
         
         public override int GetHashCode() 
         {
-            return (Name+Flags).GetHashCode();
+            return (Name + Flags).GetHashCode();
         }
         
         public int CompareTo(object obj)

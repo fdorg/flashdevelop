@@ -621,9 +621,12 @@ namespace HaXeContext.Completion
                     if (indexType.IndexOf('<') is var p1 && p1 != -1 && p1 < arrowIndex && arrowIndex < indexType.LastIndexOf('>')) {}
                     else
                     {
+                        result.Member = (MemberModel) result.Member.Clone();
+                        FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
+                        result.Member.Name = "item";
+                        result.Member.Flags |= FlagType.Function;
                         result.Type = (ClassModel) Context.stubFunctionClass.Clone();
-                        FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Type);
-                        result.Member = result.Type;
+                        result.Type.Parameters = result.Member.Parameters;
                         return;
                     }
                 }
