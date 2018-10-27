@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -386,15 +387,21 @@ namespace HaXeContext.Generators
             var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
             var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
             parameters.Add(member.Type ?? voidKey);
-            var qualifiedName = string.Empty;
+            var sb = new StringBuilder();
             for (var i = 0; i < parameters.Count; i++)
             {
-                if (i > 0) qualifiedName += "->";
-                var t = parameters[i] ?? dynamicTypeName;
-                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                qualifiedName += t;
+                if (i > 0) sb.Append("->");
+                var t = parameters[i];
+                if (t == null) sb.Append(dynamicTypeName);
+                else if (t.Contains("->") && !t.StartsWith('('))
+                {
+                    sb.Append('(');
+                    sb.Append(t);
+                    sb.Append(')');
+                }
+                else sb.Append(t);
             }
-            return qualifiedName;
+            return sb.ToString();
         }
 
         protected override string GetGetterImplementationTemplate(MemberModel method)
