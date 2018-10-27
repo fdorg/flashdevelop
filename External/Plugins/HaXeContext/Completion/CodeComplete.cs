@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
@@ -629,6 +630,23 @@ namespace HaXeContext.Completion
                         result.Type.Parameters = result.Member.Parameters;
                         return;
                     }
+                }
+            }
+            // fox example: (foo<T>("string"):T).<complete>
+            else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function)
+                     && member.Template is string template && member.Type is string returnType
+                     && member.Parameters is List<MemberModel> parameters
+                     && template.Substring(1, template.Length - 2).Split(',').Contains(returnType))
+            {
+                for (var i = 0; i < parameters.Count && i < result.Context.SubExpressions.Count; i++)
+                {
+                    var parameter = parameters[i];
+                    if (parameter.Type != returnType) continue;
+                    var subExpression = result.Context.SubExpressions[i];
+                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
+                    var model = ASContext.Context.ResolveToken(subExpression, null);
+                    if (!model.IsVoid()) result.Type = model;
+                    return;
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
