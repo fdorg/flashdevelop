@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -383,17 +384,24 @@ namespace HaXeContext.Generators
         protected override string GetFunctionType(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
+            var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
             var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
             parameters.Add(member.Type ?? voidKey);
-            var qualifiedName = string.Empty;
+            var sb = new StringBuilder();
             for (var i = 0; i < parameters.Count; i++)
             {
-                if (i > 0) qualifiedName += "->";
+                if (i > 0) sb.Append("->");
                 var t = parameters[i];
-                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                qualifiedName += t;
+                if (t == null) sb.Append(dynamicTypeName);
+                else if (t.Contains("->") && !t.StartsWith('('))
+                {
+                    sb.Append('(');
+                    sb.Append(t);
+                    sb.Append(')');
+                }
+                else sb.Append(t);
             }
-            return qualifiedName;
+            return sb.ToString();
         }
 
         protected override string GetGetterImplementationTemplate(MemberModel method)
@@ -594,27 +602,32 @@ namespace HaXeContext.Generators
             var template = TemplateUtils.GetTemplate("Switch");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
             template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
-            var body = string.Empty;
+            var sb = new StringBuilder();
             for (var i = 0; i < inClass.Members.Count; i++)
             {
                 var it = inClass.Members[i];
-                body += SnippetHelper.BOUNDARY;
-                if (i > 0) body += "\n";
-                body += "\tcase " + it.Name;
+                sb.Append(SnippetHelper.BOUNDARY);
+                if (i > 0) sb.Append('\n');
+                sb.Append("\tcase ");
+                sb.Append(it.Name);
                 if (it.Parameters != null)
                 {
-                    body += "(";
+                    sb.Append('(');
                     for (var j = 0; j < it.Parameters.Count; j++)
                     {
-                        if (j > 0) body += ", ";
-                        body += it.Parameters[j].Name.TrimStart('?');
+                        if (j > 0) sb.Append(", ");
+                        sb.Append(it.Parameters[j].Name.TrimStart('?'));
                     }
-                    body += ")";
+                    sb.Append(')');
                 }
-                body += ":";
-                if (i == 0) body += ' ' + SnippetHelper.ENTRYPOINT;
+                sb.Append(':');
+                if (i == 0)
+                {
+                    sb.Append(' ');
+                    sb.Append(SnippetHelper.ENTRYPOINT);
+                }
             }
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", sb.ToString());
             InsertCode(start, template, sci);
         }
     }

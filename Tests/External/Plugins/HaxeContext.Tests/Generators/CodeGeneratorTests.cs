@@ -1138,6 +1138,25 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2203TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2203_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2203_1"))
+                    .SetName("(foo<T>(a):T).<generate> Assign statement to var. Issue 2203. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2203_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2203_2"))
+                    .SetName("(foo<T>(a):T).<generate> Assign statement to var. Issue 2203. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2203_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2203_3"))
+                    .SetName("(foo<T>(a):T).<generate> Assign statement to var. Inference the type of variable. Issue 2203. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarTestCases
         {
             get
@@ -1446,6 +1465,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2457TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2471TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2475TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2203TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2350TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarIssue2371TestCases)),
