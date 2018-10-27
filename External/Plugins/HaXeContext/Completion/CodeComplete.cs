@@ -623,7 +623,7 @@ namespace HaXeContext.Completion
                     {
                         result.Member = (MemberModel) result.Member.Clone();
                         FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
-                        result.Member.Name = result.Path;
+                        result.Member.Name = "item";
                         result.Member.Flags |= FlagType.Function;
                         result.Type = (ClassModel) Context.stubFunctionClass.Clone();
                         result.Type.Parameters = result.Member.Parameters;

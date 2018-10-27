@@ -419,7 +419,7 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("CalltipDef_issue2475_1")
-                    .Returns("a.[0] : Function<[BGCOLOR=#2F90:NORMAL](parameter0:String):Void[/BGCOLOR]>")
+                    .Returns("item : Function<[BGCOLOR=#2F90:NORMAL](parameter0:String):Void[/BGCOLOR]>")
                     .SetName("a[0](|. Issue 2475. Case 1");
             }
         }
