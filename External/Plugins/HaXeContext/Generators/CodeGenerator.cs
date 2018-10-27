@@ -602,27 +602,32 @@ namespace HaXeContext.Generators
             var template = TemplateUtils.GetTemplate("Switch");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
             template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
-            var body = string.Empty;
+            var sb = new StringBuilder();
             for (var i = 0; i < inClass.Members.Count; i++)
             {
                 var it = inClass.Members[i];
-                body += SnippetHelper.BOUNDARY;
-                if (i > 0) body += "\n";
-                body += "\tcase " + it.Name;
+                sb.Append(SnippetHelper.BOUNDARY);
+                if (i > 0) sb.Append('\n');
+                sb.Append("\tcase ");
+                sb.Append(it.Name);
                 if (it.Parameters != null)
                 {
-                    body += "(";
+                    sb.Append('(');
                     for (var j = 0; j < it.Parameters.Count; j++)
                     {
-                        if (j > 0) body += ", ";
-                        body += it.Parameters[j].Name.TrimStart('?');
+                        if (j > 0) sb.Append(", ");
+                        sb.Append(it.Parameters[j].Name.TrimStart('?'));
                     }
-                    body += ")";
+                    sb.Append(')');
                 }
-                body += ":";
-                if (i == 0) body += ' ' + SnippetHelper.ENTRYPOINT;
+                sb.Append(':');
+                if (i == 0)
+                {
+                    sb.Append(' ');
+                    sb.Append(SnippetHelper.ENTRYPOINT);
+                }
             }
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", sb.ToString());
             InsertCode(start, template, sci);
         }
     }
