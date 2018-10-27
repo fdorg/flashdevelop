@@ -1276,6 +1276,7 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedFunction_issue2203_1.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedFunction_issue2203_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedFunction_issue2203_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedFunction_issue2203_4.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

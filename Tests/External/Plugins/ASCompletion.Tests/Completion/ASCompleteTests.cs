@@ -1423,8 +1423,12 @@ namespace ASCompletion.Completion
                         .SetName("foo<T>(_, bool, ?_, ?_).<complete> Issue 2203. Case 2")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2203_3"))
-                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .Returns(new ClassModel {Name = "Float", Flags = FlagType.Class})
                         .SetName("foo<K, T, R1, R2>(_, 1.0, ?_, ?_).<complete> Issue 2203. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2203_4"))
+                        .Returns(new ClassModel {Name = "Float", Flags = FlagType.Class})
+                        .SetName("foo<K, T, R1, R2>(_, localVar, ?_, ?_).<complete> Issue 2203. Case 4")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2203");
                 }
             }
