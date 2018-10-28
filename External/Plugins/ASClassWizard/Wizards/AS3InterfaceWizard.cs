@@ -13,7 +13,7 @@ using ProjectManager.Projects;
 
 namespace ASClassWizard.Wizards
 {
-    public partial class AS3InterfaceWizard : SmartForm, IThemeHandler
+    public partial class AS3InterfaceWizard : SmartForm, IThemeHandler, IWizard
     {
         private string directoryPath;
         private Project project;

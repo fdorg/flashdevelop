@@ -160,41 +160,10 @@ namespace ASClassWizard
         void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
             var project = (Project) PluginBase.CurrentProject;
-            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
-            var package = GetPackage(project, ref classpath, inDirectory);
             using (var dialog = new AS3ClassWizard())
             {
-                dialog.Project = project;
-                dialog.Directory = inDirectory;
-                dialog.StartupClassName = className;
-                if (package != null)
-                {
-                    package = package.Replace(Path.DirectorySeparatorChar, '.');
-                    dialog.StartupPackage = package;
-                }
-                var conflictResult = DialogResult.OK;
-                string path;
-                string newFilePath;
-                var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
-                if (ext.Length > 0) ext = ext.TrimStart('*');
-                do
-                {
-                    if (dialog.ShowDialog() != DialogResult.OK) return;
-                    var cPackage = dialog.GetPackage();
-                    path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
-                    newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.GetClassName()), ext);
-                    if (File.Exists(newFilePath))
-                    {
-                        string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                        string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
-                        conflictResult = MessageBox.Show(PluginBase.MainForm,
-                            string.Format(message, newFilePath, "\n"), title,
-                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                        if (conflictResult == DialogResult.No) return;
-                    }
-                } while (conflictResult == DialogResult.Cancel);
-
-                this.lastFileFromTemplate = newFilePath;
+                if (ProcessWizard(inDirectory, templateFile, className, project, dialog, out var newFilePath)) return;
+                lastFileFromTemplate = newFilePath;
                 this.constructorArgs = constructorArgs;
                 this.constructorArgTypes = constructorArgTypes;
                 lastFileOptions = new AS3ClassOptions(
@@ -208,57 +177,15 @@ namespace ASClassWizard
                     dialog.getGenerateInheritedMethods(),
                     dialog.getGenerateConstructor()
                 );
-
-                try
-                {
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowError(ex);
-                }
             }
         }
 
         void DisplayInterfaceWizard(string inDirectory, string templateFile, string name)
         {
             var project = (Project) PluginBase.CurrentProject;
-            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
-            var package = GetPackage(project, ref classpath, inDirectory);
             using (var dialog = new AS3InterfaceWizard())
             {
-                dialog.Project = project;
-                dialog.Directory = inDirectory;
-                dialog.StartupClassName = name;
-                if (package != null)
-                {
-                    package = package.Replace(Path.DirectorySeparatorChar, '.');
-                    dialog.StartupPackage = package;
-                }
-                var conflictResult = DialogResult.OK;
-                string path;
-                string newFilePath;
-                var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
-                if (ext.Length > 0) ext = ext.TrimStart('*');
-                do
-                {
-                    if (dialog.ShowDialog() != DialogResult.OK) return;
-                    var cPackage = dialog.GetPackage();
-                    path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
-                    newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.GetClassName()), ext);
-                    if (File.Exists(newFilePath))
-                    {
-                        string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                        string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
-                        conflictResult = MessageBox.Show(PluginBase.MainForm,
-                            string.Format(message, newFilePath, "\n"), title,
-                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                        if (conflictResult == DialogResult.No) return;
-                    }
-                } while (conflictResult == DialogResult.Cancel);
-
-
+                if (ProcessWizard(inDirectory, templateFile, name, project, dialog, out var newFilePath)) return;
                 lastFileFromTemplate = newFilePath;
                 lastFileOptions = new AS3ClassOptions(
                     project.Language,
@@ -271,17 +198,56 @@ namespace ASClassWizard
                     create_inherited: false,
                     create_constructor: false
                 );
-                
-                try
-                {
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowError(ex);
-                }
             }
+        }
+
+        bool ProcessWizard(string inDirectory, string templateFile, string name, Project project, IWizard dialog, out string newFilePath)
+        {
+            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
+            var package = GetPackage(project, ref classpath, inDirectory);
+            dialog.Project = project;
+            dialog.Directory = inDirectory;
+            dialog.StartupClassName = name;
+            if (package != null)
+            {
+                package = package.Replace(Path.DirectorySeparatorChar, '.');
+                dialog.StartupPackage = package;
+            }
+
+            var conflictResult = DialogResult.OK;
+            string path;
+            var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
+            if (ext.Length > 0) ext = ext.TrimStart('*');
+            do
+            {
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    newFilePath = null;
+                    return true;
+                }
+                var cPackage = dialog.GetPackage();
+                path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
+                newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.GetClassName()), ext);
+                if (File.Exists(newFilePath))
+                {
+                    var title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    var message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
+                    conflictResult = MessageBox.Show(PluginBase.MainForm, 
+                        string.Format(message, newFilePath, "\n"), title,
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (conflictResult == DialogResult.No) return true;
+                }
+            } while (conflictResult == DialogResult.Cancel);
+            try
+            {
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+            return false;
         }
 
         string GetPackage(Project project, ref string classpath, string inDirectory)

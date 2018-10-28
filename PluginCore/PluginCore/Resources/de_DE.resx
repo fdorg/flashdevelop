@@ -6287,4 +6287,8 @@ AND - All conditions are met.</value>
     <value>Base Interface:</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="ASClassWizard.Wizard.Label.NewInterface" xml:space="preserve">
+    <value>INewInterface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

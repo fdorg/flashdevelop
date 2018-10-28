@@ -15,7 +15,7 @@ using PluginCore.Controls;
 
 namespace ASClassWizard.Wizards
 {
-    public partial class AS3ClassWizard : SmartForm, IThemeHandler
+    public partial class AS3ClassWizard : SmartForm, IThemeHandler, IWizard
     {
         private string directoryPath;
         private Project project;
