@@ -60,6 +60,24 @@ namespace HaXeContext.Completion
         }
 
         /// <inheritdoc />
+        protected override bool OnChar(ScintillaControl sci, int value, char prevValue, bool autoHide)
+        {
+            switch (value)
+            {
+                case '>':
+                    if (prevValue == '-' && IsType(sci.CurrentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                    break;
+                case '(':
+                    if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
+                        return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                    break;
+            }
+            return false;
+            // Utils
+            bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is ClassModel t && !t.IsVoid();
+        }
+
+        /// <inheritdoc />
         protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
         {
             if (string.IsNullOrEmpty(wordLeft)) return false;
