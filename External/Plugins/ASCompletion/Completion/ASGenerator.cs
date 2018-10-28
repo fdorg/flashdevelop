@@ -45,7 +45,7 @@ namespace ASCompletion.Completion
 
         readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
 
-        protected virtual ICodeGeneratorStrategy GetCodeGeneratorStrategy()
+        protected virtual ICodeGeneratorStrategy GetCodeGeneratorBehavior()
         {
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
                 return codeGeneratorInterfaceStrategy;
@@ -97,19 +97,19 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !ctx.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
-                    if (CanShowCreateNewClass(sci, position, resolve, found))
+                    if (CanShowGenerateClass(sci, position, resolve, found))
                     {
-                        ShowNewClassList(found, resolve.Context, options);
+                        ShowGenerateClassList(found, resolve.Context, options);
                         return;
                     }
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
 
-            var strategy = GetCodeGeneratorStrategy();
-            if (strategy != null)
+            var behavior = GetCodeGeneratorBehavior();
+            if (behavior != null)
             {
-                strategy.ContextualGenerator(sci, position, resolve, options);
+                behavior.ContextualGenerator(sci, position, resolve, options);
                 return;
             }
             
@@ -310,7 +310,7 @@ namespace ASCompletion.Completion
                 {
                     var returnType = GetStatementReturnType(sci, found.InClass, curLine, positionFromLine);
                     if (!CanShowAssignStatementToVariable(sci, returnType.Resolve)) return;
-                    if (returnType.Resolve.Type == null && returnType.Resolve.Context?.WordBefore == "new") ShowNewClassList(found, returnType.Resolve.Context, options);
+                    if (returnType.Resolve.Type == null && returnType.Resolve.Context?.WordBefore == "new") ShowGenerateClassList(found, returnType.Resolve.Context, options);
                     else if (returnType.Resolve.Type == null && returnType.Resolve.Member == null) return;
                     else ShowAssignStatementToVarList(found, returnType, options);
                     return;
@@ -379,7 +379,7 @@ namespace ASCompletion.Completion
                     if (m.Success)
                     {
                         contextMatch = m;
-                        ShowNewClassList(found, options);
+                        ShowGenerateClassList(found, options);
                     }
                     else if (!found.InClass.IsVoid())
                     {
@@ -392,7 +392,11 @@ namespace ASCompletion.Completion
                                 ((ASGenerator) ctx.CodeGenerator).ShowNewMethodList(sci, resolve, found, options);
                             }
                         }
-                        else if (CanShowNewVarList(sci, position, resolve, found)) ((ASGenerator) ctx.CodeGenerator).ShowNewVarList(sci, resolve, found, options);
+                        else
+                        {
+                            if (CanShowNewVarList(sci, position, resolve, found)) ((ASGenerator) ctx.CodeGenerator).ShowNewVarList(sci, resolve, found, options);
+                            if (CanShowGenerateInterface(sci, position, resolve, found)) ShowGenerateInterfaceList(resolve, found, options);
+                        }
                     }
                 }
                 else
@@ -612,10 +616,28 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Create new class" list</returns>
-        protected virtual bool CanShowCreateNewClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected virtual bool CanShowGenerateClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             // for example: public var foo : Fo|o
             return expr.Context.Separator == ":";
+        }
+
+        /// <summary>
+        /// Check if "Create new interface" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show "Create new interface" list</returns>
+        protected virtual bool CanShowGenerateInterface(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return contextToken != null
+                   && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
+                   // fox example: implements IFoo<generator>
+                   && ((expr.Context.WordBefore == "implements" && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass))
+                       // for example: public var foo : Fo|o
+                       || (expr.Context.Separator == ":"));
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
@@ -932,12 +954,18 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.Member, found.InClass, data));
         }
 
-        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, null, options);
+        private static void ShowGenerateClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowGenerateClassList(found, null, options);
 
-        private static void ShowNewClassList(FoundDeclaration found, ASExpr expr, ICollection<ICompletionListItem> options)
+        private static void ShowGenerateClassList(FoundDeclaration found, ASExpr expr, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
             options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.Member, found.InClass, expr));
+        }
+
+        private static void ShowGenerateInterfaceList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateInterface");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
         }
 
         private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString, ICollection<ICompletionListItem> options)
@@ -1097,7 +1125,7 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.Setter:
                 case GeneratorJobType.GetterSetter:
                     var generator = ((ASGenerator) ASContext.Context.CodeGenerator);
-                    var strategy = generator.GetCodeGeneratorStrategy();
+                    var strategy = generator.GetCodeGeneratorBehavior();
                     if (strategy != null)
                     {
                         ((CodeGeneratorInterfaceStrategy) strategy).GenerateProperty(job, sci, member, inClass);
@@ -4529,7 +4557,7 @@ namespace ASCompletion.Completion
     /// <summary>
     /// Available generators
     /// </summary>
-    public enum GeneratorJobType:int
+    public enum GeneratorJobType
     {
         GetterSetter,
         Getter,
@@ -4557,6 +4585,7 @@ namespace ASCompletion.Completion
         EventMetatag,
         AssignStatementToVar,
         ChangeConstructorDecl,
+        Interface,
     }
 
     /// <summary>

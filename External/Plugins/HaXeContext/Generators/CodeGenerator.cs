@@ -30,11 +30,11 @@ namespace HaXeContext.Generators
     {
         readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
 
-        protected override ICodeGeneratorStrategy GetCodeGeneratorStrategy()
+        protected override ICodeGeneratorStrategy GetCodeGeneratorBehavior()
         {
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
                 return codeGeneratorInterfaceStrategy;
-            return base.GetCodeGeneratorStrategy();
+            return base.GetCodeGeneratorBehavior();
         }
 
         /// <inheritdoc />
