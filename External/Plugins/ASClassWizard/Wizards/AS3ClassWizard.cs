@@ -304,7 +304,7 @@ namespace ASClassWizard.Wizards
             return this.publicRadio.Checked;
         }
 
-        public string getSuperClass()
+        public string GetExtends()
         {
             return this.baseBox.Text;
         }

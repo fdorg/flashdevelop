@@ -217,6 +217,11 @@ namespace ASClassWizard.Wizards
             return this.classBox.Text;
         }
 
+        public string GetExtends()
+        {
+            return this.baseBox.Text;
+        }
+
         #endregion
 
     }

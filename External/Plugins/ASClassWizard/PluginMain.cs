@@ -167,15 +167,15 @@ namespace ASClassWizard
                 this.constructorArgs = constructorArgs;
                 this.constructorArgTypes = constructorArgTypes;
                 lastFileOptions = new AS3ClassOptions(
-                    project.Language,
-                    dialog.GetPackage(),
-                    dialog.getSuperClass(),
-                    dialog.hasInterfaces() ? dialog.getInterfaces() : null,
-                    dialog.isPublic(),
-                    dialog.isDynamic(),
-                    dialog.isFinal(),
-                    dialog.getGenerateInheritedMethods(),
-                    dialog.getGenerateConstructor()
+                    language: project.Language,
+                    package: dialog.GetPackage(),
+                    super_class: dialog.GetExtends(),
+                    Interfaces: dialog.hasInterfaces() ? dialog.getInterfaces() : null,
+                    is_public: dialog.isPublic(),
+                    is_dynamic: dialog.isDynamic(),
+                    is_final: dialog.isFinal(),
+                    create_inherited: dialog.getGenerateInheritedMethods(),
+                    create_constructor: dialog.getGenerateConstructor()
                 );
                 try
                 {
@@ -199,9 +199,9 @@ namespace ASClassWizard
                 constructorArgs = null;
                 constructorArgTypes = null;
                 lastFileOptions = new AS3ClassOptions(
-                    project.Language,
-                    dialog.GetPackage(),
-                    super_class: string.Empty,
+                    language: project.Language,
+                    package: dialog.GetPackage(),
+                    super_class: dialog.GetExtends(),
                     Interfaces: null,
                     is_public: true,
                     is_dynamic: false,
