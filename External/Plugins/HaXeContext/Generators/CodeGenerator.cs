@@ -28,12 +28,12 @@ namespace HaXeContext.Generators
 
     internal class CodeGenerator : ASGenerator
     {
-        readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
+        readonly CodeGeneratorInterfaceBehavior codeGeneratorInterfaceBehavior = new CodeGeneratorInterfaceBehavior();
 
-        protected override ICodeGeneratorStrategy GetCodeGeneratorBehavior()
+        protected override ICodeGeneratorBehavior GetCodeGeneratorBehavior()
         {
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
-                return codeGeneratorInterfaceStrategy;
+                return codeGeneratorInterfaceBehavior;
             return base.GetCodeGeneratorBehavior();
         }
 

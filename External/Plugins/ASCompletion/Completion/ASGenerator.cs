@@ -43,12 +43,12 @@ namespace ASCompletion.Completion
         internal static MemberModel contextMember;
         private static bool firstVar;
 
-        readonly CodeGeneratorInterfaceStrategy codeGeneratorInterfaceStrategy = new CodeGeneratorInterfaceStrategy();
+        readonly CodeGeneratorInterfaceBehavior codeGeneratorInterfaceBehavior = new CodeGeneratorInterfaceBehavior();
 
-        protected virtual ICodeGeneratorStrategy GetCodeGeneratorBehavior()
+        protected virtual ICodeGeneratorBehavior GetCodeGeneratorBehavior()
         {
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
-                return codeGeneratorInterfaceStrategy;
+                return codeGeneratorInterfaceBehavior;
             return null;
         }
 
@@ -1128,7 +1128,7 @@ namespace ASCompletion.Completion
                     var strategy = generator.GetCodeGeneratorBehavior();
                     if (strategy != null)
                     {
-                        ((CodeGeneratorInterfaceStrategy) strategy).GenerateProperty(job, sci, member, inClass);
+                        ((CodeGeneratorInterfaceBehavior) strategy).GenerateProperty(job, sci, member, inClass);
                         return;
                     }
                     // default behavior

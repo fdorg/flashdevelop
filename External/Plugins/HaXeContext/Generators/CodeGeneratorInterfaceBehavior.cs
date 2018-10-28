@@ -7,7 +7,7 @@ using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
-    class CodeGeneratorInterfaceStrategy : ASCompletion.Generators.CodeGeneratorInterfaceStrategy
+    class CodeGeneratorInterfaceBehavior : ASCompletion.Generators.CodeGeneratorInterfaceBehavior
     {
         protected override void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {

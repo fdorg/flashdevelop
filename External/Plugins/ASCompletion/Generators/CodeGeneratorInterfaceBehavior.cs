@@ -8,21 +8,28 @@ using ScintillaNet;
 
 namespace ASCompletion.Generators
 {
-    public class CodeGeneratorInterfaceStrategy : ICodeGeneratorStrategy
+    public class CodeGeneratorInterfaceBehavior : ICodeGeneratorBehavior
     {
         public void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
             var ctx = ASContext.Context;
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
-            // TODO: interface IFoo implements IBa$(EntryPoint)r
-            // if(CanShowGenerateNewInterface) ShowGenerateNewInterface(sci, expr, found, options);
+            if (CanShowGenerateNewInterface(sci, position, expr, found)) ShowGenerateNewInterface(sci, expr, found, options);
             if (CanShowGenerateNewMethod(sci, position, expr, found))
             {
                 ShowCustomGenerators(sci, expr, found, options);
                 ShowGenerateGetterSetter(sci, expr, found, options);
                 ShowGenerateNewMethod(sci, expr, found, options);
             }
+        }
+
+        static bool CanShowGenerateNewInterface(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return ASGenerator.contextToken != null
+                   && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
+                   && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
+                   && (expr.Context.WordBefore == "extends" || expr.Context.Separator == ":");
         }
 
         static bool CanShowGenerateNewMethod(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
@@ -35,6 +42,12 @@ namespace ASCompletion.Generators
 
         protected virtual void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
+        }
+
+        static void ShowGenerateNewInterface(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateInterface");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
         }
 
         static void ShowGenerateGetterSetter(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)

@@ -80,9 +80,9 @@
     <Compile Include="Completion\ASGenerator.cs" />
     <Compile Include="Completion\Brace.cs" />
     <Compile Include="Completion\CodeUtils.cs" />
-    <Compile Include="Generators\CodeGeneratorInterfaceStrategy.cs" />
+    <Compile Include="Generators\CodeGeneratorInterfaceBehavior.cs" />
     <Compile Include="Generators\DocumenattionGenerator.cs" />
-    <Compile Include="Generators\ICodeGeneratorStrategy.cs" />
+    <Compile Include="Generators\ICodeGeneratorBehavior.cs" />
     <Compile Include="Generators\IContextualGenerator.cs" />
     <Compile Include="Completion\Reformater.cs" />
     <Compile Include="Completion\TemplateUtils.cs" />
