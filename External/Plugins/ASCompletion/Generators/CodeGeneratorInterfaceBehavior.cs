@@ -24,7 +24,7 @@ namespace ASCompletion.Generators
             }
         }
 
-        static bool CanShowGenerateNewInterface(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected virtual bool CanShowGenerateNewInterface(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))

@@ -12,7 +12,6 @@ using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
 using PluginCore.Managers;
-using ProjectManager.Projects.AS3;
 
 // TODO: Tests with different formatting options using parameterized tests
 
