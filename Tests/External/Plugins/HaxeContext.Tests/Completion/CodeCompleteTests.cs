@@ -420,7 +420,16 @@ namespace HaXeContext.Completion
             {
                 yield return new TestCaseData("CalltipDef_issue2475_1")
                     .Returns("item : Function<[BGCOLOR=#2F90:NORMAL](parameter0:String):Void[/BGCOLOR]>")
-                    .SetName("a[0](|. Issue 2475. Case 1");
+                    .SetName("a[0](<complete>. Issue 2475. Case 1");
+                yield return new TestCaseData("CalltipDef_issue2475_2")
+                    .Returns("item : Function<[BGCOLOR=#2F90:NORMAL](parameter0:String):Void[/BGCOLOR]>")
+                    .SetName("a[0](<complete>). Issue 2475. Case 2");
+                yield return new TestCaseData("CalltipDef_issue2475_3")
+                    .Returns("item : Function<[BGCOLOR=#2F90:NORMAL](parameter0:String):Void[/BGCOLOR]>")
+                    .SetName("trace(a[0](<complete>)). Issue 2475. Case 3");
+                yield return new TestCaseData("CalltipDef_issue2475_4")
+                    .Returns("item : Function<[BGCOLOR=#2F90:NORMAL](parameter0:A):B[/BGCOLOR]>")
+                    .SetName("trace(a[0](<complete>)). Issue 2475. Case 4");
             }
         }
 

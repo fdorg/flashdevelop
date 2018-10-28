@@ -2554,10 +2554,7 @@ namespace ASCompletion.Completion
                 ASResult result;
                 if (c == '(' && !isFuncStarted)
                 {
-                    if (sb.ToString().Trim(charsToTrim).Length == 0)
-                    {
-                        isFuncStarted = true;
-                    }
+                    if (sb.ToString().Trim(charsToTrim).Length == 0) isFuncStarted = true;
                     else break;
                 }
                 else if (c == ';' && !isFuncStarted) break;
@@ -2580,21 +2577,17 @@ namespace ASCompletion.Completion
                     sb.Append(c);
                     if (subClosuresCount == 0)
                     {
-                        if (c == ']')
+                        if (c == ']' && arrCount == 0)
                         {
-                            if (arrCount == 0)
+                            var cNext = sci.CharAt(p);
+                            if (cNext != '[' && cNext != '.' && cNext != '(')
                             {
-                                var cNext = sci.CharAt(p);
-                                if (cNext != '[' && cNext != '.')
+                                if (!sb.ToString().Contains("<"))
                                 {
-                                    if (!sb.ToString().Contains("<"))
-                                    {
-                                        result = ASComplete.GetExpressionType(sci, p);
-                                        if (result.Type != null) result.Member = null;
-                                        else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
-                                        types.Insert(0, result);
-                                    }
-                                    writeParam = true;
+                                    result = ASComplete.GetExpressionType(sci, p);
+                                    if (result.Type != null) result.Member = null;
+                                    else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
+                                    types.Insert(0, result);
                                 }
                             }
                         }

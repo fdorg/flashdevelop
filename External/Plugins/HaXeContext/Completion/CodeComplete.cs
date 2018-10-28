@@ -628,6 +628,7 @@ namespace HaXeContext.Completion
                         result.Member.Flags |= FlagType.Function;
                         result.Type = (ClassModel) Context.stubFunctionClass.Clone();
                         result.Type.Parameters = result.Member.Parameters;
+                        result.Type.Type = result.Member.Type;
                         return;
                     }
                 }
