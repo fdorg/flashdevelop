@@ -1330,6 +1330,10 @@ namespace ASCompletion.Completion
                     else GenerateClass(sci, inClass, sci.GetWordFromPosition(sci.CurrentPos));
                     break;
 
+                case GeneratorJobType.Interface:
+                    GenerateInterface(inClass, contextToken);
+                    break;
+
                 case GeneratorJobType.ToString:
                     sci.BeginUndoAction();
                     try
@@ -2969,32 +2973,40 @@ namespace ASCompletion.Completion
             GenerateClass(inClass, className, parameters);
         }
 
-        private static void GenerateClass(ClassModel inClass, string className, IList<FunctionParameter> parameters)
+        private static void GenerateClass(ClassModel inClass, string className, IEnumerable<FunctionParameter> parameters)
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
 
-            List<MemberModel> constructorArgs = new List<MemberModel>();
-            List<String> constructorArgTypes = new List<String>();
-            MemberModel paramMember = new MemberModel();
-            for (int i = 0; i < parameters.Count; i++)
+            var constructorArgs = new List<MemberModel>();
+            var constructorArgTypes = new List<string>();
+            var paramMember = new MemberModel();
+            foreach (var p in parameters)
             {
-                FunctionParameter p = parameters[i];
                 constructorArgs.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                 constructorArgTypes.Add(CleanType(GetQualifiedType(p.paramQualType, inClass)));
             }
             
             paramMember.Parameters = constructorArgs;
 
-            IProject project = PluginBase.CurrentProject;
-            if (String.IsNullOrEmpty(className)) className = "Class";
-            string paramsString = TemplateUtils.ParametersString(paramMember, true);
-            Hashtable info = new Hashtable();
-            info["className"] = className;
-            info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", project.GetType().Name, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
+            var paramsString = TemplateUtils.ParametersString(paramMember, true);
+            var info = new Hashtable();
+            info["className"] = string.IsNullOrEmpty(className) ? "Class" : className;
+            info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", PluginBase.CurrentProject.GetType().Name, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
             info["constructorArgs"] = paramsString.Length > 0 ? paramsString : null;
             info["constructorArgTypes"] = constructorArgTypes;
-            DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
+            var de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
+            EventManager.DispatchEvent(null, de);
+        }
+
+        static void GenerateInterface(ClassModel inClass, string name)
+        {
+            AddLookupPosition(); // remember last cursor position for Shift+F4
+            var info = new Hashtable();
+            info["interfaceName"] = string.IsNullOrEmpty(name) ? "IInterface" : name;
+            info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", PluginBase.CurrentProject.GetType().Name, $"Interface{ASContext.Context.Settings.DefaultExtension}.fdt");
+            info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
+            var de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
             EventManager.DispatchEvent(null, de);
         }
 

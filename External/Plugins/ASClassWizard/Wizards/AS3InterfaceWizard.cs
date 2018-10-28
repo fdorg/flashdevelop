@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
+using System.Reflection;
 using System.Text.RegularExpressions;
-using PluginCore;
-using PluginCore.Localization;
-using ProjectManager.Projects;
+using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using System.Reflection;
-using System.Diagnostics;
+using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Localization;
+using ProjectManager.Projects;
 
 namespace ASClassWizard.Wizards
 {
-    public partial class AS3ClassWizard : SmartForm, IThemeHandler
+    public partial class AS3InterfaceWizard : SmartForm, IThemeHandler
     {
         private string directoryPath;
         private Project project;
@@ -23,12 +21,12 @@ namespace ASClassWizard.Wizards
         // $ is not a valid char in haxe class names
         public const string REG_IDENTIFIER_HAXE = "^[a-zA-Z_][a-zA-Z0-9_]*$";
 
-        public AS3ClassWizard()
+        public AS3InterfaceWizard()
         {
             InitializeComponent();
             LocalizeText();
             CenterToParent();
-            this.FormGuid = "eb444130-58ea-47bd-9751-ad78a59c711f";
+            this.FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
             this.Font = PluginBase.Settings.DefaultFont;
             this.errorIcon.Image = PluginBase.MainForm.FindImage("197");
         }
@@ -45,14 +43,7 @@ namespace ASClassWizard.Wizards
         private void LocalizeText()
         {
             this.classLabel.Text = TextHelper.GetString("Wizard.Label.Name");
-            this.accessLabel.Text = TextHelper.GetString("Wizard.Label.Modifiers");
             this.baseLabel.Text = TextHelper.GetString("Wizard.Label.SuperClass");
-            this.implementLabel.Text = TextHelper.GetString("Wizard.Label.Interfaces");
-            this.generationLabel.Text = TextHelper.GetString("Wizard.Label.CodeGeneration");
-            this.implementBrowse.Text = TextHelper.GetString("Wizard.Button.Add");
-            this.implementRemove.Text = TextHelper.GetString("Wizard.Button.Remove");
-            this.constructorCheck.Text = TextHelper.GetString("Wizard.Label.GenerateConstructor");
-            this.superCheck.Text = TextHelper.GetString("Wizard.Label.GenerateInherited");
             this.packageLabel.Text = TextHelper.GetString("Wizard.Label.Package");
             this.packageBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
             this.baseBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
@@ -82,18 +73,13 @@ namespace ASClassWizard.Wizards
             set 
             { 
                 this.project = value;
-                this.internalRadio.Text = "internal";
                 if (project.Language == "as2")
                 {
-                    this.publicRadio.Enabled = false;
-                    this.internalRadio.Enabled = false;
-                    this.finalCheck.Enabled = false;
                     this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
                     this.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
                 }
                 if (project.Language == "haxe")
                 {
-                    this.internalRadio.Text = "private";
                     this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
                     this.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
                 }
@@ -136,7 +122,6 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void packageBrowse_Click(object sender, EventArgs e)
         {
-
             using (PackageBrowser browser = new PackageBrowser())
             {
                 browser.Project = this.Project;
@@ -192,62 +177,6 @@ namespace ASClassWizard.Wizards
             }
         }
 
-        /// <summary>
-        /// Added interface
-        /// </summary>
-        private void implementBrowse_Click(object sender, EventArgs e)
-        {
-            using (ClassBrowser browser = new ClassBrowser())
-            {
-                MemberList known = null;
-                browser.IncludeFlag = FlagType.Interface;
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    known = context.GetAllProjectClasses();
-                    known.Merge(ASContext.Context.GetVisibleExternalElements());
-                }
-                catch (Exception error)
-                {
-                    Debug.WriteLine(error.StackTrace);
-                }
-                browser.ClassList = known;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    if (browser.SelectedClass != null)
-                    {
-                        foreach (string item in this.implementList.Items)
-                        {
-                            if (item == browser.SelectedClass) return;
-                        }
-                        this.implementList.Items.Add(browser.SelectedClass);
-                    }
-                }
-                this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-                this.superCheck.Enabled = this.implementList.Items.Count > 0;
-                ValidateClass();
-            }
-        }
-
-        /// <summary>
-        /// Remove interface
-        /// </summary>
-        private void interfaceRemove_Click(object sender, EventArgs e)
-        {
-            if (this.implementList.SelectedItem != null)
-            {
-                this.implementList.Items.Remove(this.implementList.SelectedItem);
-            }
-            if (this.implementList.Items.Count > 0)
-            {
-                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-            }
-            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-            this.superCheck.Enabled = this.implementList.Items.Count > 0;
-            ValidateClass();
-        }
-
         private void packageBox_TextChanged(object sender, EventArgs e)
         {
             ValidateClass();
@@ -260,7 +189,6 @@ namespace ASClassWizard.Wizards
 
         private void baseBox_TextChanged(object sender, EventArgs e)
         {
-            this.constructorCheck.Enabled = this.baseBox.Text != "";
             ValidateClass();
         }
 
@@ -269,7 +197,7 @@ namespace ASClassWizard.Wizards
         public static Image GetResource(string resourceID)
         {
             resourceID = "ASClassWizard." + resourceID;
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
             Image image = new Bitmap(assembly.GetManifestResourceStream(resourceID));
             return image;
         }
@@ -284,51 +212,6 @@ namespace ASClassWizard.Wizards
         public string GetClassName()
         {
             return this.classBox.Text;
-        }
-
-        public bool isDynamic()
-        {
-            return this.dynamicCheck.Checked;
-        }
-
-        public bool isFinal()
-        {
-            return this.finalCheck.Checked;
-        }
-
-        public bool isPublic()
-        {
-            return this.publicRadio.Checked;
-        }
-
-        public string getSuperClass()
-        {
-            return this.baseBox.Text;
-        }
-
-        public List<string> getInterfaces()
-        {
-            List<string> _interfaces = new List<string>(this.implementList.Items.Count);
-            foreach (string item in this.implementList.Items)
-            {
-                _interfaces.Add(item);
-            }
-            return _interfaces;
-        }
-
-        public bool hasInterfaces()
-        {
-            return this.implementList.Items.Count > 0;
-        }
-
-        public bool getGenerateConstructor()
-        {
-            return this.constructorCheck.Checked;
-        }
-
-        public bool getGenerateInheritedMethods()
-        {
-            return this.superCheck.Checked;
         }
 
         #endregion
