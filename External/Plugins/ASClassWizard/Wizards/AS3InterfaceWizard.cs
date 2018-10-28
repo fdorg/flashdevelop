@@ -43,7 +43,7 @@ namespace ASClassWizard.Wizards
         private void LocalizeText()
         {
             this.classLabel.Text = TextHelper.GetString("Wizard.Label.Name");
-            this.baseLabel.Text = TextHelper.GetString("Wizard.Label.SuperClass");
+            this.baseLabel.Text = TextHelper.GetString("Wizard.Label.ExtendsInterface");
             this.packageLabel.Text = TextHelper.GetString("Wizard.Label.Package");
             this.packageBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
             this.baseBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
@@ -75,18 +75,21 @@ namespace ASClassWizard.Wizards
                 this.project = value;
                 if (project.Language == "as2")
                 {
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
+                    var label = TextHelper.GetString("Wizard.Label.NewAs2Interface");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
                 if (project.Language == "haxe")
                 {
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
+                    var label = TextHelper.GetString("Wizard.Label.NewHaxeInterface");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
                 else
                 {
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs3Class");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewAs3Class");
+                    var label = TextHelper.GetString("Wizard.Label.NewAs3Interface");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
             }
         }
@@ -159,16 +162,16 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            using (ClassBrowser browser = new ClassBrowser())
+            using (var browser = new ClassBrowser())
             {
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
                 try
                 {
                     browser.ClassList = context.GetAllProjectClasses();
                 }
                 catch { }
-                browser.ExcludeFlag = FlagType.Interface;
-                browser.IncludeFlag = FlagType.Class;
+                //browser.ExcludeFlag = FlagType.Interface;
+                browser.IncludeFlag = FlagType.Interface;
                 if (browser.ShowDialog(this) == DialogResult.OK)
                 {
                     this.baseBox.Text = browser.SelectedClass;

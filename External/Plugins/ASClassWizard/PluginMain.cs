@@ -157,7 +157,7 @@ namespace ASClassWizard
 
         private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
-        private void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
+        void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
             var project = (Project) PluginBase.CurrentProject;
             var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
@@ -263,13 +263,13 @@ namespace ASClassWizard
                 lastFileOptions = new AS3ClassOptions(
                     project.Language,
                     dialog.GetPackage(),
-                    null,
-                    null,
-                    true,
-                    false,
-                    false,
-                    false,
-                    false
+                    super_class: string.Empty,
+                    Interfaces: null,
+                    is_public: true,
+                    is_dynamic: false,
+                    is_final: false,
+                    create_inherited: false,
+                    create_constructor: false
                 );
                 
                 try
@@ -359,11 +359,9 @@ namespace ASClassWizard
             List<String> imports = new List<string>();
             string extends = "";
             string implements = "";
-            string access = "";
             string inheritedMethods = "";
             string paramString = "";
             string superConstructor = "";
-            string classMetadata = "";
             int index;
             // resolve imports
             if (lastFileOptions.interfaces != null && lastFileOptions.interfaces.Count > 0)
@@ -394,7 +392,7 @@ namespace ASClassWizard
                     index++;
                 }
             }
-            if (lastFileOptions.superClass != "")
+            if (!string.IsNullOrEmpty(lastFileOptions.superClass))
             {
                 var superClassFullName = lastFileOptions.superClass;
                 if (superClassFullName.Contains(".")) imports.Add(superClassFullName);
@@ -457,6 +455,8 @@ namespace ASClassWizard
                     }
                 }
             }
+            string access = "";
+            string classMetadata = "";
             if (lastFileOptions.Language == "as3")
             {
                 access = lastFileOptions.isPublic ? "public " : "internal ";

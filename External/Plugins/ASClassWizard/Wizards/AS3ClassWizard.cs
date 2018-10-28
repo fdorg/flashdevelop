@@ -88,19 +88,22 @@ namespace ASClassWizard.Wizards
                     this.publicRadio.Enabled = false;
                     this.internalRadio.Enabled = false;
                     this.finalCheck.Enabled = false;
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewAs2Class");
+                    var label = TextHelper.GetString("Wizard.Label.NewAs2Class");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
                 if (project.Language == "haxe")
                 {
                     this.internalRadio.Text = "private";
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewHaxeClass");
+                    var label = TextHelper.GetString("Wizard.Label.NewHaxeClass");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
                 else
                 {
-                    this.titleLabel.Text = TextHelper.GetString("Wizard.Label.NewAs3Class");
-                    this.Text = TextHelper.GetString("Wizard.Label.NewAs3Class");
+                    var label = TextHelper.GetString("Wizard.Label.NewAs3Class");
+                    this.titleLabel.Text = label;
+                    this.Text = label;
                 }
             }
         }
@@ -197,11 +200,11 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void implementBrowse_Click(object sender, EventArgs e)
         {
-            using (ClassBrowser browser = new ClassBrowser())
+            using (var browser = new ClassBrowser())
             {
                 MemberList known = null;
                 browser.IncludeFlag = FlagType.Interface;
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
                 try
                 {
                     known = context.GetAllProjectClasses();
