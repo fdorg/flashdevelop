@@ -937,6 +937,7 @@
     <EmbeddedResource Include="Test Files\generators\code\ParseFunctionParameters_issue2478_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateFunction_issue2478_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateFunction_issue2478_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2475_4.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
