@@ -1608,5 +1608,28 @@ namespace HaXeContext.Generators
             ((HaXeSettings) ASContext.Context.Settings).DisableTypeDeclaration = false;
             return result;
         }
+
+        static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ParseFunctionParameters_issue2478_1")
+                    .Returns(1)
+                    .SetName("test(a[0]()). Parse function parameters. Issue2478. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2478");
+                yield return new TestCaseData("ParseFunctionParameters_issue2478_2")
+                    .Returns(2)
+                    .SetName("test(a[0](), a[1]()). Parse function parameters. Issue2478. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2478");
+            }
+        }
+        
+        [Test, TestCaseSource(nameof(ParseFunctionParametersTestCases))]
+        public int ParseFunctionParameters(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFile(fileName);
+            return ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Count;
+        }
     }
 }
