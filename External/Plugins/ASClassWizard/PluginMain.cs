@@ -162,7 +162,7 @@ namespace ASClassWizard
             var project = (Project) PluginBase.CurrentProject;
             using (var dialog = new AS3ClassWizard())
             {
-                if (ProcessWizard(inDirectory, templateFile, className, project, dialog, out var newFilePath)) return;
+                if (ProcessWizard(inDirectory, className, project, dialog, out var path, out var newFilePath)) return;
                 lastFileFromTemplate = newFilePath;
                 this.constructorArgs = constructorArgs;
                 this.constructorArgTypes = constructorArgTypes;
@@ -177,6 +177,15 @@ namespace ASClassWizard
                     dialog.getGenerateInheritedMethods(),
                     dialog.getGenerateConstructor()
                 );
+                try
+                {
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
             }
         }
 
@@ -185,8 +194,10 @@ namespace ASClassWizard
             var project = (Project) PluginBase.CurrentProject;
             using (var dialog = new AS3InterfaceWizard())
             {
-                if (ProcessWizard(inDirectory, templateFile, name, project, dialog, out var newFilePath)) return;
+                if (ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
                 lastFileFromTemplate = newFilePath;
+                constructorArgs = null;
+                constructorArgTypes = null;
                 lastFileOptions = new AS3ClassOptions(
                     project.Language,
                     dialog.GetPackage(),
@@ -198,10 +209,19 @@ namespace ASClassWizard
                     create_inherited: false,
                     create_constructor: false
                 );
+                try
+                {
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
             }
         }
 
-        bool ProcessWizard(string inDirectory, string templateFile, string name, Project project, IWizard dialog, out string newFilePath)
+        bool ProcessWizard(string inDirectory, string name, Project project, IWizard dialog, out string path, out string newFilePath)
         {
             var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
             var package = GetPackage(project, ref classpath, inDirectory);
@@ -215,13 +235,13 @@ namespace ASClassWizard
             }
 
             var conflictResult = DialogResult.OK;
-            string path;
             var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
             if (ext.Length > 0) ext = ext.TrimStart('*');
             do
             {
                 if (dialog.ShowDialog() != DialogResult.OK)
                 {
+                    path = null;
                     newFilePath = null;
                     return true;
                 }
@@ -238,15 +258,6 @@ namespace ASClassWizard
                     if (conflictResult == DialogResult.No) return true;
                 }
             } while (conflictResult == DialogResult.Cancel);
-            try
-            {
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-            }
             return false;
         }
 
