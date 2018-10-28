@@ -6277,4 +6277,40 @@ AND - All conditions are met.</value>
     <value>Peek Definition</value>
     <comment>Added after 5.3.4</comment>
   </data>
+  <data name="ASCompletion.Label.GenerateInterface" xml:space="preserve">
+    <value>Create new interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewAs2Interface" xml:space="preserve">
+    <value>New ActionScript 2 Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewAs3Interface" xml:space="preserve">
+    <value>New ActionScript 3 Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewHaxeInterface" xml:space="preserve">
+    <value>New Haxe Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.ExtendsInterface" xml:space="preserve">
+    <value>Base Interface:</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewInterface" xml:space="preserve">
+    <value>INewInterface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyInterfaceName" xml:space="preserve">
+    <value>Interface name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.InvalidInterfaceName" xml:space="preserve">
+    <value>Interface name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseInterfaceName" xml:space="preserve">
+    <value>Interface name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

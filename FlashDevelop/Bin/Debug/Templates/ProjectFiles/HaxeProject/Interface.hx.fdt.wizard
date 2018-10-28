@@ -1,8 +1,8 @@
 package $(Package);
 
-/**
+$(Import)/**
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-interface $(FileName) $(CSLB){
+interface $(FileName)$(Extends) $(CSLB){
 	$(EntryPoint)
 }

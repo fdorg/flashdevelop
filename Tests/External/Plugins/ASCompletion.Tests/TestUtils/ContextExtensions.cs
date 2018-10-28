@@ -8,6 +8,7 @@ using ASCompletion.Model;
 using NSubstitute;
 using PluginCore;
 using PluginCore.Helpers;
+using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;
 using ScintillaNet;
 
@@ -109,6 +110,8 @@ namespace ASCompletion.TestUtils
 
         static void BuildClassPath(AS3Context.Context context)
         {
+            PlatformData.Load(Path.Combine(PathHelper.AppDir, "Settings", "Platforms"));
+            if (!(PluginBase.CurrentProject is AS3Project)) PluginBase.CurrentProject = new AS3Project("as3");
             context.BuildClassPath();
             var intrinsicPath = $"{PathHelper.LibraryDir}{Path.DirectorySeparatorChar}AS3{Path.DirectorySeparatorChar}intrinsic";
             context.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(it => new PathModel(it, context)));
@@ -133,7 +136,7 @@ namespace ASCompletion.TestUtils
         static void BuildClassPath(HaXeContext.Context context)
         {
             PlatformData.Load(Path.Combine(PathHelper.AppDir, "Settings", "Platforms"));
-            if (PluginBase.CurrentProject == null)
+            if (!(PluginBase.CurrentProject is HaxeProject))
             {
                 PluginBase.CurrentProject = new HaxeProject("haxe")
                 {

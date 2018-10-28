@@ -1435,6 +1435,18 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Issue 2473. Case 5")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_7", GeneratorJobType.Interface, false)
+                    .Returns(null)
+                    .SetName("interface A extends b<generate>. Issue 2473. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_8", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("interface A extends B<generate>. Issue 2473. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2473_9", GeneratorJobType.Interface, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2473_9"))
+                    .SetName("interface A extends B<generate>. Issue 2473. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
             }
         }
 

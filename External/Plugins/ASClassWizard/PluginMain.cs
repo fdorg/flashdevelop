@@ -89,13 +89,29 @@ namespace ASClassWizard
                     DataEvent evt = (DataEvent)e;
                     if (evt.Action == "ProjectManager.CreateNewFile")
                     {
-                        Hashtable table = evt.Data as Hashtable;
-                        project = PluginBase.CurrentProject as Project;
-                        if ((project.Language.StartsWithOrdinal("as") || project.Language == "haxe") && IsWizardTemplate(table["templatePath"] as String))
+                        project = (Project) PluginBase.CurrentProject;
+                        if (project.Language.StartsWithOrdinal("as") || project.Language == "haxe")
                         {
-                            evt.Handled = true;
-                            String className = table.ContainsKey("className") ? table["className"] as String : TextHelper.GetString("Wizard.Label.NewClass");
-                            DisplayClassWizard(table["inDirectory"] as String, table["templatePath"] as String, className, table["constructorArgs"] as String, table["constructorArgTypes"] as List<String>);
+                            var table = (Hashtable) evt.Data;
+                            var templateFile = table["templatePath"] as string;
+                            if (IsWizardTemplate(templateFile))
+                            {
+                                evt.Handled = true;
+                                var fileName = Path.GetFileName(templateFile);
+                                var templateType = !string.IsNullOrEmpty(fileName) && fileName.IndexOf('.') is int p && p != -1
+                                                 ? fileName.Substring(0, p)
+                                                 : "class";
+                                if (templateType.Equals("class", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var className = table.ContainsKey("className") ? (string) table["className"] : TextHelper.GetString("Wizard.Label.NewClass");
+                                    DisplayClassWizard((string) table["inDirectory"], templateFile, className, table["constructorArgs"] as String, table["constructorArgTypes"] as List<String>);
+                                }
+                                else if (templateType.Equals("interface", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var name = table.ContainsKey("interfaceName") ? (string) table["interfaceName"] : TextHelper.GetString("Wizard.Label.NewInterface");
+                                    DisplayInterfaceWizard((string) table["inDirectory"], templateFile, name);
+                                }
+                            }
                         }
                     }
                     break;
@@ -121,17 +137,14 @@ namespace ASClassWizard
                     if (lastFileFromTemplate != null && project != null && (project.Language.StartsWithOrdinal("as") || project.Language == "haxe"))
                     {
                         var te = (TextEvent) e;
-                        te.Value = ProcessArgs(project, te.Value);
+                        te.Value = ProcessArgs(te.Value);
                     }
                     break;
             }
         }
 
-        private bool IsWizardTemplate(string templateFile)
-        {
-            return templateFile != null && File.Exists(templateFile + ".wizard");
-        }
-        
+        private bool IsWizardTemplate(string templateFile) => templateFile != null && File.Exists(templateFile + ".wizard");
+
         #endregion
 
         #region Custom Methods
@@ -144,100 +157,30 @@ namespace ASClassWizard
 
         private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
-        private void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
+        void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
             var project = (Project) PluginBase.CurrentProject;
-            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
-            string package;
-            try
-            {
-                package = GetPackage(classpath, inDirectory);
-                if (string.IsNullOrEmpty(package) && project.AdditionalPaths != null && project.AdditionalPaths.Length > 0)
-                {
-                    var closest = "";
-                    foreach (var it in project.AdditionalPaths)
-                        if ((classpath.StartsWithOrdinal(it) || it == ".") && it.Length > closest.Length)
-                            closest = it;
-                    if (closest.Length > 0) package = GetPackage(closest, inDirectory);
-                }
-                if (package == "")
-                {
-                    // search in Global classpath
-                    var info = new Hashtable();
-                    info["language"] = project.Language;
-                    var de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
-                    EventManager.DispatchEvent(this, de);
-                    if (de.Handled && info.ContainsKey("cp"))
-                    {
-                        var cps = info["cp"] as List<string>;
-                        if (cps != null)
-                        {
-                            foreach (var cp in cps)
-                            {
-                                package = GetPackage(cp, inDirectory);
-                                if (package == "") continue;
-                                classpath = cp;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                package = "";
-            }
             using (var dialog = new AS3ClassWizard())
             {
-                dialog.Project = project;
-                dialog.Directory = inDirectory;
-                dialog.StartupClassName = className;
-                if (package != null)
-                {
-                    package = package.Replace(Path.DirectorySeparatorChar, '.');
-                    dialog.StartupPackage = package;
-                }
-                var conflictResult = DialogResult.OK;
-                string path, newFilePath;
-                var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
-                if (ext.Length > 0) ext = ext.TrimStart('*');
-                do
-                {
-                    if (dialog.ShowDialog() != DialogResult.OK) return;
-                    var cPackage = dialog.getPackage();
-                    path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
-                    newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.getClassName()), ext);
-                    if (File.Exists(newFilePath))
-                    {
-                        string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                        string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
-                        conflictResult = MessageBox.Show(PluginBase.MainForm,
-                            string.Format(message, newFilePath, "\n"), title,
-                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                        if (conflictResult == DialogResult.No) return;
-                    }
-                } while (conflictResult == DialogResult.Cancel);
-
-                string templatePath = templateFile + ".wizard";
-                this.lastFileFromTemplate = newFilePath;
+                if (ProcessWizard(inDirectory, className, project, dialog, out var path, out var newFilePath)) return;
+                lastFileFromTemplate = newFilePath;
                 this.constructorArgs = constructorArgs;
                 this.constructorArgTypes = constructorArgTypes;
                 lastFileOptions = new AS3ClassOptions(
-                    project.Language,
-                    dialog.getPackage(),
-                    dialog.getSuperClass(),
-                    dialog.hasInterfaces() ? dialog.getInterfaces() : null,
-                    dialog.isPublic(),
-                    dialog.isDynamic(),
-                    dialog.isFinal(),
-                    dialog.getGenerateInheritedMethods(),
-                    dialog.getGenerateConstructor()
+                    language: project.Language,
+                    package: dialog.GetPackage(),
+                    super_class: dialog.GetExtends(),
+                    Interfaces: dialog.hasInterfaces() ? dialog.getInterfaces() : null,
+                    is_public: dialog.isPublic(),
+                    is_dynamic: dialog.isDynamic(),
+                    is_final: dialog.isFinal(),
+                    create_inherited: dialog.getGenerateInheritedMethods(),
+                    create_constructor: dialog.getGenerateConstructor()
                 );
-
                 try
                 {
                     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    PluginBase.MainForm.FileFromTemplate(templatePath, newFilePath);
+                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
                 }
                 catch (Exception ex)
                 {
@@ -246,15 +189,123 @@ namespace ASClassWizard
             }
         }
 
+        void DisplayInterfaceWizard(string inDirectory, string templateFile, string name)
+        {
+            var project = (Project) PluginBase.CurrentProject;
+            using (var dialog = new AS3InterfaceWizard())
+            {
+                if (ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
+                lastFileFromTemplate = newFilePath;
+                constructorArgs = null;
+                constructorArgTypes = null;
+                lastFileOptions = new AS3ClassOptions(
+                    language: project.Language,
+                    package: dialog.GetPackage(),
+                    super_class: dialog.GetExtends(),
+                    Interfaces: null,
+                    is_public: true,
+                    is_dynamic: false,
+                    is_final: false,
+                    create_inherited: false,
+                    create_constructor: false
+                );
+                try
+                {
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
+            }
+        }
+
+        bool ProcessWizard(string inDirectory, string name, Project project, IWizard dialog, out string path, out string newFilePath)
+        {
+            var classpath = project.AbsoluteClasspaths.GetClosestParent(inDirectory) ?? inDirectory;
+            var package = GetPackage(project, ref classpath, inDirectory);
+            dialog.Project = project;
+            dialog.Directory = inDirectory;
+            dialog.StartupClassName = name;
+            if (package != null)
+            {
+                package = package.Replace(Path.DirectorySeparatorChar, '.');
+                dialog.StartupPackage = package;
+            }
+
+            var conflictResult = DialogResult.OK;
+            var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;
+            if (ext.Length > 0) ext = ext.TrimStart('*');
+            do
+            {
+                if (dialog.ShowDialog() != DialogResult.OK)
+                {
+                    path = null;
+                    newFilePath = null;
+                    return true;
+                }
+                var cPackage = dialog.GetPackage();
+                path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
+                newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.GetName()), ext);
+                if (File.Exists(newFilePath))
+                {
+                    var title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    var message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
+                    conflictResult = MessageBox.Show(PluginBase.MainForm, 
+                        string.Format(message, newFilePath, "\n"), title,
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (conflictResult == DialogResult.No) return true;
+                }
+            } while (conflictResult == DialogResult.Cancel);
+            return false;
+        }
+
+        string GetPackage(Project project, ref string classpath, string inDirectory)
+        {
+            try
+            {
+                var package = GetPackage(classpath, inDirectory);
+                if (string.IsNullOrEmpty(package) && project.AdditionalPaths != null && project.AdditionalPaths.Length > 0)
+                {
+                    var closest = "";
+                    foreach (var it in project.AdditionalPaths)
+                        if ((classpath.StartsWithOrdinal(it) || it == ".") && it.Length > closest.Length)
+                            closest = it;
+                    if (closest.Length > 0) package = GetPackage(closest, inDirectory);
+                }
+                if (package != "") return package;
+                // search in Global classpath
+                var info = new Hashtable();
+                info["language"] = project.Language;
+                var de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
+                EventManager.DispatchEvent(this, de);
+                if (de.Handled && info.ContainsKey("cp") && info["cp"] is List<string> cps)
+                {
+                    foreach (var cp in cps)
+                    {
+                        package = GetPackage(cp, inDirectory);
+                        if (package == "") continue;
+                        classpath = cp;
+                        break;
+                    }
+                }
+                return package;
+            }
+            catch (NullReferenceException)
+            {
+                return "";
+            }
+        }
+
         private string GetPackage(string classpath, string path)
         {
-            if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase))
-                return "";
-            string subPath = path.Substring(classpath.Length).Trim('/', '\\', ' ', '.');
+            if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase)) return "";
+            var subPath = path.Substring(classpath.Length).Trim('/', '\\', ' ', '.');
             return subPath.Replace(Path.DirectorySeparatorChar, '.');
         }
 
-        private string ProcessArgs(Project project, string args)
+        private string ProcessArgs(string args)
         {
             if (lastFileFromTemplate != null)
             {
@@ -285,11 +336,9 @@ namespace ASClassWizard
             List<String> imports = new List<string>();
             string extends = "";
             string implements = "";
-            string access = "";
             string inheritedMethods = "";
             string paramString = "";
             string superConstructor = "";
-            string classMetadata = "";
             int index;
             // resolve imports
             if (lastFileOptions.interfaces != null && lastFileOptions.interfaces.Count > 0)
@@ -320,7 +369,7 @@ namespace ASClassWizard
                     index++;
                 }
             }
-            if (lastFileOptions.superClass != "")
+            if (!string.IsNullOrEmpty(lastFileOptions.superClass))
             {
                 var superClassFullName = lastFileOptions.superClass;
                 if (superClassFullName.Contains(".")) imports.Add(superClassFullName);
@@ -383,6 +432,8 @@ namespace ASClassWizard
                     }
                 }
             }
+            string access = "";
+            string classMetadata = "";
             if (lastFileOptions.Language == "as3")
             {
                 access = lastFileOptions.isPublic ? "public " : "internal ";

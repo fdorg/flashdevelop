@@ -3145,6 +3145,65 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class GenerateInterfaceTests : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void Setup() => SetAs3Features(sci);
+
+                static IEnumerable<TestCaseData> TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeGenerateInterface_issue2481_1", true)
+                            .SetName("implements IFoo<generator>. Generate interface. case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2481");
+                        yield return new TestCaseData("BeforeGenerateInterface_issue2481_2", false)
+                            .SetName("extends IFoo<generator>, Generate interface. case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2481");
+                        yield return new TestCaseData("BeforeGenerateInterface_issue2481_3", false)
+                            .SetName("foo(v:IFoo<generator>), Generate interface. case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2481");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(TestCases))]
+                public void Common(string fileName, bool hasGenerator)
+                {
+                    var handler = Substitute.For<IEventHandler>();
+                    handler
+                        .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                        .Do(it =>
+                        {
+                            var e = it.ArgAt<NotifyEvent>(1);
+                            switch (e.Type)
+                            {
+                                case EventType.Command:
+                                    EventManager.RemoveEventHandler(handler);
+                                    e.Handled = true;
+                                    //var de = (DataEvent) e;
+                                    //var info = (Hashtable) de.Data;
+                                    //var actualArgs = (string) info[nameof(constructorArgs)];
+                                    //Assert.AreEqual(constructorArgs, actualArgs);
+                                    break;
+                            }
+                        });
+                    EventManager.AddEventHandler(handler, EventType.Command);
+                    SetCurrentFileName(GetFullPathAS3(fileName));
+                    SetSrc(sci, ReadAllTextAS3(fileName));
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Interface);
+                    if (hasGenerator)
+                    {
+                        Assert.IsNotNull(item);
+                        var value = item.Value;
+                        return;
+                    }
+                    Assert.IsNull(item);
+                }
+            }
+
+            [TestFixture]
             public class ContextualGeneratorTests : GenerateJob
             {
                 [TestFixtureSetUp]
@@ -3410,6 +3469,14 @@ namespace ASCompletion.Completion
                             .Returns(null)
                             .SetName("Generate new class. Issue 2473. Case 9")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_10", GeneratorJobType.Class, false)
+                            .Returns(null)
+                            .SetName("interface A extends B<generate>. Issue 2473. Case 10")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_11", GeneratorJobType.Interface, true)
+                            .Returns(ReadAllTextAS3("AfterInterfaceContextualGenerator_issue2473_11"))
+                            .SetName("interface A extends B<generate>. Issue 2473. Case 11")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
                     }
                 }
 
@@ -3442,6 +3509,13 @@ namespace ASCompletion.Completion
                                     {
                                         EventManager.RemoveEventHandler(handler);
                                         e.Handled = true;
+                                    }
+                                    else if (de.Action == "ProjectManager.CreateNewFile")
+                                    {
+                                        EventManager.RemoveEventHandler(handler);
+                                        e.Handled = true;
+                                        var info = (Hashtable) de.Data;
+                                        Assert.IsNotNullOrEmpty((string) info["interfaceName"]);
                                     }
                                     break;
                             }

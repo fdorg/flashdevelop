@@ -5,7 +5,7 @@ using ScintillaNet;
 
 namespace ASCompletion.Generators
 {
-    public interface ICodeGeneratorStrategy
+    public interface ICodeGeneratorBehavior
     {
         void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options);
     }
