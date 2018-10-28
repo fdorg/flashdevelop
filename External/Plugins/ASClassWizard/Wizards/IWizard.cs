@@ -10,7 +10,7 @@ namespace ASClassWizard.Wizards
         string StartupClassName { set; }
         string StartupPackage { set; }
         string GetPackage();
-        string GetClassName();
+        string GetName();
         DialogResult ShowDialog();
     }
 }

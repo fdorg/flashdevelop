@@ -247,7 +247,7 @@ namespace ASClassWizard
                 }
                 var cPackage = dialog.GetPackage();
                 path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
-                newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.GetClassName()), ext);
+                newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.GetName()), ext);
                 if (File.Exists(newFilePath))
                 {
                     var title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");

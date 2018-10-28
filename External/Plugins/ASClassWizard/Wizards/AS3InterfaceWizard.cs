@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Context;
@@ -15,7 +14,6 @@ namespace ASClassWizard.Wizards
 {
     public partial class AS3InterfaceWizard : SmartForm, IThemeHandler, IWizard
     {
-        private string directoryPath;
         private Project project;
         public const string REG_IDENTIFIER_AS = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         // $ is not a valid char in haxe class names
@@ -60,12 +58,8 @@ namespace ASClassWizard.Wizards
         {
             set { classBox.Text = value; }
         }
-        
-        public string Directory
-        {
-            get { return this.directoryPath; }
-            set { this.directoryPath = value; }
-        }
+
+        public string Directory { get; set; }
 
         public Project Project
         {
@@ -98,11 +92,11 @@ namespace ASClassWizard.Wizards
         {
             string errorMessage = "";
             string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
-            if (GetClassName() == "")
+            if (GetName() == "")
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
-            else if (!Regex.Match(GetClassName(), regex, RegexOptions.Singleline).Success)
+            else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-            else if (project.Language == "haxe" && Char.IsLower(GetClassName()[0]))
+            else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
 
             if (errorMessage != "")
@@ -140,14 +134,14 @@ namespace ASClassWizard.Wizards
                         string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
                         if (package != null)
                         {
-                            directoryPath = browser.Package;
+                            Directory = browser.Package;
                             package = package.Replace(Path.DirectorySeparatorChar, '.');
                             this.packageBox.Text = package;
                         }
                     }
                     else
                     {
-                        this.directoryPath = browser.Project.Directory;
+                        this.Directory = browser.Project.Directory;
                         this.packageBox.Text = "";
                     }
                 }
@@ -197,30 +191,13 @@ namespace ASClassWizard.Wizards
 
         #endregion
 
-        public static Image GetResource(string resourceID)
-        {
-            resourceID = "ASClassWizard." + resourceID;
-            var assembly = Assembly.GetExecutingAssembly();
-            Image image = new Bitmap(assembly.GetManifestResourceStream(resourceID));
-            return image;
-        }
-
         #region user_options
 
-        public string GetPackage()
-        {
-            return this.packageBox.Text;
-        }
+        public string GetPackage() => packageBox.Text;
 
-        public string GetClassName()
-        {
-            return this.classBox.Text;
-        }
+        public string GetName() => classBox.Text;
 
-        public string GetExtends()
-        {
-            return this.baseBox.Text;
-        }
+        public string GetExtends() => baseBox.Text;
 
         #endregion
 

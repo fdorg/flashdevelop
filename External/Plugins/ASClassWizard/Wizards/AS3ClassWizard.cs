@@ -17,7 +17,6 @@ namespace ASClassWizard.Wizards
 {
     public partial class AS3ClassWizard : SmartForm, IThemeHandler, IWizard
     {
-        private string directoryPath;
         private Project project;
         public const string REG_IDENTIFIER_AS = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         // $ is not a valid char in haxe class names
@@ -69,12 +68,8 @@ namespace ASClassWizard.Wizards
         {
             set { classBox.Text = value; }
         }
-        
-        public string Directory
-        {
-            get { return this.directoryPath; }
-            set { this.directoryPath = value; }
-        }
+
+        public string Directory { get; set; }
 
         public Project Project
         {
@@ -112,11 +107,11 @@ namespace ASClassWizard.Wizards
         {
             string errorMessage = "";
             string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
-            if (GetClassName() == "")
+            if (GetName() == "")
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
-            else if (!Regex.Match(GetClassName(), regex, RegexOptions.Singleline).Success)
+            else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-            else if (project.Language == "haxe" && Char.IsLower(GetClassName()[0]))
+            else if (project.Language == "haxe" && Char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
 
             if (errorMessage != "")
@@ -155,14 +150,14 @@ namespace ASClassWizard.Wizards
                         string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
                         if (package != null)
                         {
-                            directoryPath = browser.Package;
+                            Directory = browser.Package;
                             package = package.Replace(Path.DirectorySeparatorChar, '.');
                             this.packageBox.Text = package;
                         }
                     }
                     else
                     {
-                        this.directoryPath = browser.Project.Directory;
+                        this.Directory = browser.Project.Directory;
                         this.packageBox.Text = "";
                     }
                 }
@@ -279,35 +274,17 @@ namespace ASClassWizard.Wizards
 
         #region user_options
 
-        public string GetPackage()
-        {
-            return this.packageBox.Text;
-        }
+        public string GetPackage() => this.packageBox.Text;
 
-        public string GetClassName()
-        {
-            return this.classBox.Text;
-        }
+        public string GetName() => this.classBox.Text;
 
-        public bool isDynamic()
-        {
-            return this.dynamicCheck.Checked;
-        }
+        public bool isDynamic() => this.dynamicCheck.Checked;
 
-        public bool isFinal()
-        {
-            return this.finalCheck.Checked;
-        }
+        public bool isFinal() => this.finalCheck.Checked;
 
-        public bool isPublic()
-        {
-            return this.publicRadio.Checked;
-        }
+        public bool isPublic() => this.publicRadio.Checked;
 
-        public string GetExtends()
-        {
-            return this.baseBox.Text;
-        }
+        public string GetExtends() => this.baseBox.Text;
 
         public List<string> getInterfaces()
         {
@@ -319,20 +296,11 @@ namespace ASClassWizard.Wizards
             return _interfaces;
         }
 
-        public bool hasInterfaces()
-        {
-            return this.implementList.Items.Count > 0;
-        }
+        public bool hasInterfaces() => this.implementList.Items.Count > 0;
 
-        public bool getGenerateConstructor()
-        {
-            return this.constructorCheck.Checked;
-        }
+        public bool getGenerateConstructor() => this.constructorCheck.Checked;
 
-        public bool getGenerateInheritedMethods()
-        {
-            return this.superCheck.Checked;
-        }
+        public bool getGenerateInheritedMethods() => this.superCheck.Checked;
 
         #endregion
 
