@@ -151,7 +151,7 @@ namespace ASCompletion.Completion
                             break;
 
                         case ':':
-                            if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide);
+                            if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide); // TODO slavara: move to HaxeContext.Completion.CodeComplete.OnChar
                             if (features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
                             break;
 
@@ -170,6 +170,8 @@ namespace ASCompletion.Completion
                             AutoStartCompletion(sci, position);
                             break;
                     }
+                    // Custom completion
+                    if (ASContext.Context.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
                 }
                 switch (value)
                 {
@@ -200,6 +202,16 @@ namespace ASCompletion.Completion
             if (!CompletionList.Active) LastExpression = null;
             return false;
         }
+
+        /// <summary>
+        /// Character written in editor
+        /// </summary>
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="value">Character inserted</param>
+        /// <param name="prevValue">Character before inserted character</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
+        /// <returns>Auto-completion has been handled</returns>
+        protected virtual bool OnChar(ScintillaControl sci, int value, char prevValue, bool autoHide) => false;
 
         /// <summary>
         /// Returns true if completion is available
