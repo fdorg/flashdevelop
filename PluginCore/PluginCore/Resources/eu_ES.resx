@@ -6264,4 +6264,8 @@ AND - All conditions are met.</value>
     <value>Peek Definition</value>
     <comment>Added after 5.3.4</comment>
   </data>
+  <data name="ASCompletion.Label.GenerateInterface" xml:space="preserve">
+    <value>Create new interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>
