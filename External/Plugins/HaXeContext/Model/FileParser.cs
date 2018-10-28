@@ -719,6 +719,7 @@ namespace HaXeContext.Model
                         curMember.Type = param;
                         length = 0;
                         inType = false;
+                        if (c1 == ';') curMember = null;
                     }
                     // method parameter's default value 
                     else if ((curMember.Flags & FlagType.Variable) > 0)
@@ -2190,7 +2191,7 @@ namespace HaXeContext.Model
                 }
                 if (parameterType == null)
                 {
-                    if (i == typeLength - 1 && i > startPosition) result.Type = type.Substring(startPosition);
+                    if (i == typeLength - 1 && i >= startPosition) result.Type = type.Substring(startPosition);
                     continue;
                 }
                 var parameterName = $"parameter{result.Parameters.Count}";
