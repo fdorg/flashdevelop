@@ -6349,4 +6349,16 @@ AND - All conditions are met.</value>
     <value>INewInterface</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyInterfaceName" xml:space="preserve">
+    <value>Interface name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.InvalidInterfaceName" xml:space="preserve">
+    <value>Interface name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseInterfaceName" xml:space="preserve">
+    <value>Interface name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

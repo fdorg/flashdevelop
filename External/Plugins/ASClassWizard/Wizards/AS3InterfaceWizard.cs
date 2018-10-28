@@ -93,11 +93,11 @@ namespace ASClassWizard.Wizards
             string errorMessage = "";
             string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
             if (GetName() == "")
-                errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
+                errorMessage = TextHelper.GetString("Wizard.Error.EmptyInterfaceName");
             else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
-                errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
+                errorMessage = TextHelper.GetString("Wizard.Error.InvalidInterfaceName");
             else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
-                errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
+                errorMessage = TextHelper.GetString("Wizard.Error.LowercaseInterfaceName");
 
             if (errorMessage != "")
             {

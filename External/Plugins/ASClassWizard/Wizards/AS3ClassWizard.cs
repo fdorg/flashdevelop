@@ -9,7 +9,6 @@ using PluginCore.Localization;
 using ProjectManager.Projects;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using System.Reflection;
 using System.Diagnostics;
 using PluginCore.Controls;
 
@@ -263,14 +262,6 @@ namespace ASClassWizard.Wizards
         }
 
         #endregion
-
-        public static Image GetResource(string resourceID)
-        {
-            resourceID = "ASClassWizard." + resourceID;
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Image image = new Bitmap(assembly.GetManifestResourceStream(resourceID));
-            return image;
-        }
 
         #region user_options
 
