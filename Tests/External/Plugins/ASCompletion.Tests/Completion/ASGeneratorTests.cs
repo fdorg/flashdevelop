@@ -12,6 +12,7 @@ using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
 using PluginCore.Managers;
+using ProjectManager.Projects.AS3;
 
 // TODO: Tests with different formatting options using parameterized tests
 
@@ -3469,6 +3470,14 @@ namespace ASCompletion.Completion
                             .Returns(null)
                             .SetName("Generate new class. Issue 2473. Case 9")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_10", GeneratorJobType.Class, false)
+                            .Returns(null)
+                            .SetName("interface A extends B<generate>. Issue 2473. Case 10")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
+                        yield return new TestCaseData("BeforeInterfaceContextualGenerator_issue2473_11", GeneratorJobType.Interface, true)
+                            .Returns(ReadAllTextAS3("AfterInterfaceContextualGenerator_issue2473_11"))
+                            .SetName("interface A extends B<generate>. Issue 2473. Case 11")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
                     }
                 }
 
@@ -3501,6 +3510,13 @@ namespace ASCompletion.Completion
                                     {
                                         EventManager.RemoveEventHandler(handler);
                                         e.Handled = true;
+                                    }
+                                    else if (de.Action == "ProjectManager.CreateNewFile")
+                                    {
+                                        EventManager.RemoveEventHandler(handler);
+                                        e.Handled = true;
+                                        var info = (Hashtable) de.Data;
+                                        Assert.IsNotNullOrEmpty((string) info["interfaceName"]);
                                     }
                                     break;
                             }

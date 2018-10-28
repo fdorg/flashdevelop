@@ -1280,6 +1280,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateInterface_issue2481_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateInterface_issue2481_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateInterface_issue2481_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_10.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_11.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGenerator_issue2473_11.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
