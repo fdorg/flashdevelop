@@ -65,11 +65,16 @@ namespace HaXeContext.Completion
             switch (value)
             {
                 case '>':
-                    if (prevValue == '-' && GetExpressionType(sci, sci.CurrentPos - 2, false, true).Type is ClassModel t && !t.IsVoid())
+                    if (prevValue == '-' && IsType(sci.CurrentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                    break;
+                case '(':
+                    if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
             }
             return false;
+            // Utils
+            bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is ClassModel t && !t.IsVoid();
         }
 
         /// <inheritdoc />
