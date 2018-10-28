@@ -2580,7 +2580,7 @@ namespace ASCompletion.Completion
                         if (c == ']' && arrCount == 0)
                         {
                             var cNext = sci.CharAt(p);
-                            if (cNext != '[' && cNext != '.')
+                            if (cNext != '[' && cNext != '.' && cNext != '(')
                             {
                                 if (!sb.ToString().Contains("<"))
                                 {
@@ -2589,7 +2589,6 @@ namespace ASCompletion.Completion
                                     else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
                                     types.Insert(0, result);
                                 }
-                                //writeParam = true;
                             }
                         }
                     }
