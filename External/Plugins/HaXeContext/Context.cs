@@ -1091,10 +1091,9 @@ namespace HaXeContext
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
-            var genIndex = cname.IndexOf('<');
             
             // handle generic types
-            if (genIndex != -1)
+            if (cname.Contains('<'))
             {
                 var genType = re_genericType.Match(cname);
                 if (genType.Success)
