@@ -1769,7 +1769,7 @@ namespace ASCompletion.Completion
                     }
                     if (parCount < 0)
                     {
-                        if (characterClass.Contains(c) || c == '>' || c == ']')
+                        if (characterClass.Contains(c) || c == '>' || c == ']' || c ==')')
                         {
                             position++;
                             break; // function start found
@@ -3028,7 +3028,7 @@ namespace ASCompletion.Completion
             return ClassModel.VoidClass;
         }
 
-        private static ClassModel ResolveType(string qname, FileModel inFile)
+        protected static ClassModel ResolveType(string qname, FileModel inFile)
         {
             if (qname == null) return ClassModel.VoidClass;
             var context = ASContext.Context;
@@ -3243,7 +3243,7 @@ namespace ASCompletion.Completion
             var context = ASContext.Context;
             result.RelClass = inClass;
             // previous member accessed as an array
-            if (token.Length >= 2 && token.First() == '[' && token.Last() == ']')
+            if (token.Length >= 2 && token[0] == '[' && token[token.Length - 1] == ']')
             {
                 result.IsStatic = false;
                 if (result.Type?.IndexType == null)

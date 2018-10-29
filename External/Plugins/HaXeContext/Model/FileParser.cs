@@ -2142,6 +2142,7 @@ namespace HaXeContext.Model
 
         internal static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features, MemberModel result)
         {
+            type = CleanType(type);
             var voidKey = features.voidKey;
             if (result.Parameters == null) result.Parameters = new List<MemberModel>();
             var parCount = 0;
@@ -2200,12 +2201,19 @@ namespace HaXeContext.Model
                     parameterName = $"?{parameterName}";
                     parameterType = parameterType.TrimStart('?');
                 }
+                parameterType = CleanType(parameterType);
                 if (i == typeLength - 1) result.Type = parameterType;
                 else result.Parameters.Add(new MemberModel(parameterName, parameterType, FlagType.ParameterVar, 0));
             }
             if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey)
                 result.Parameters.Clear();
             return result;
+            //Utils
+            string CleanType(string s)
+            {
+                while (s[0] == '(' && s[s.Length - 1] == ')' && s.IndexOf(')') == s.Length - 1) s = s.Substring(1, s.Length - 2);
+                return s;
+            }
         }
     }
 
