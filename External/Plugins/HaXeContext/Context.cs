@@ -1092,12 +1092,7 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
             var genIndex = cname.IndexOf('<');
-            // handle function type
-            //if (cname.IndexOfOrdinal("->") is int arrowIndex && arrowIndex != -1 && (genIndex == -1 || arrowIndex < genIndex))
-            //{
-            //    var model = (ClassModel) FileParser.FunctionTypeToMemberModel(cname, features, (ClassModel) stubFunctionClass.Clone());
-            //    return model;
-            //}
+            
             // handle generic types
             if (genIndex != -1)
             {
