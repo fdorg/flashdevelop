@@ -617,7 +617,9 @@ namespace HaXeContext.Completion
 
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
-            if (!string.IsNullOrEmpty(token) && token.Length > 1 && token[0] == '[' && token.Last() == ']' && inClass != null && result.Type != null)
+            if (string.IsNullOrEmpty(token)) return;
+            // previous member accessed as an array
+            if (token.Length > 1 && token[0] == '[' && token.Last() == ']' && inClass != null && result.Type != null)
             {
                 if ((result.Type.Flags & FlagType.TypeDef) != 0 && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
                 {
@@ -651,48 +653,85 @@ namespace HaXeContext.Completion
                     }
                 }
             }
-            // for example: (foo<T>("string"):T).<complete>
-            else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function)
-                     && member.Template is string template && member.Type is string returnType
-                     && member.Parameters is List<MemberModel> parameters
-                     && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
-                     && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
+            else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function))
             {
-                for (int i = 0, count = parameters.Count; i < count; i++)
+                var returnType = member.Type;
+                // previous member called as a method
+                /*if (token[0] == '#' && !string.IsNullOrEmpty(returnType))
                 {
-                    var parameter = parameters[i];
-                    if (parameter.Type != returnType) continue;
-                    var subExpression = result.Context.SubExpressions.Last();
-                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
-                    var groupCount = 0;
-                    var paramIndex = 0;
-                    for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
+                    var type = ResolveType(returnType, result.InFile);
+                    if (type.Name == "Function" && !string.IsNullOrEmpty(type.Type))
                     {
-                        var c = subExpression[j];
-                        if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
-                        else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
-                        else if (groupCount == 0 && c == ',' || j == length)
+                        result.Member = new MemberModel
                         {
-                            if (i != paramIndex++) continue;
-                            var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
-                            result.Type = expr.Type;
-                            result.Member = (MemberModel) result.Member.Clone();
-                            var type = expr.Type.Name;
-                            result.Member.Type = type;
-                            templates[templateIndex] = type;
-                            result.Member.Template = $"<{string.Join(", ", templates)}>";
-                            parameters = result.Member.Parameters;
-                            for (var k = 0; k < parameters.Count; k++)
-                            {
-                                parameter = parameters[k];
-                                if (parameter.Type != returnType) continue;
-                                parameters[k] = (MemberModel) parameter.Clone();
-                                parameters[k].Type = type;
-                            }
-                            return;
-                        }
+                            Name = "function",
+                            Flags = FlagType.Function,
+                            Parameters = type.Parameters,
+                            Type = type.Type,
+                        };
+                        result.Type = ResolveType(type.Type, result.InFile);
+                        return;
                     }
-                    return;
+                }
+                // for example: (foo<T>("string"):T).<complete>
+                else*/ if (!string.IsNullOrEmpty(returnType) && member.Template is string template
+                         && member.Parameters is List<MemberModel> parameters
+                         && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
+                         && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
+                {
+                    for (int i = 0, count = parameters.Count; i < count; i++)
+                    {
+                        var parameter = parameters[i];
+                        if (parameter.Type != returnType) continue;
+                        var subExpression = result.Context.SubExpressions.Last();
+                        subExpression = subExpression.Substring(1, subExpression.Length - 2);
+                        var groupCount = 0;
+                        var paramIndex = 0;
+                        for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
+                        {
+                            var c = subExpression[j];
+                            if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
+                            else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
+                            else if (groupCount == 0 && c == ',' || j == length)
+                            {
+                                if (i != paramIndex++) continue;
+                                var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
+                                result.Type = expr.Type;
+                                result.Member = (MemberModel) result.Member.Clone();
+                                var type = expr.Type.Name;
+                                result.Member.Type = type;
+                                templates[templateIndex] = type;
+                                result.Member.Template = $"<{string.Join(", ", templates)}>";
+                                parameters = result.Member.Parameters;
+                                for (var k = 0; k < parameters.Count; k++)
+                                {
+                                    parameter = parameters[k];
+                                    if (parameter.Type != returnType) continue;
+                                    parameters[k] = (MemberModel) parameter.Clone();
+                                    parameters[k].Type = type;
+                                }
+                                return;
+                            }
+                        }
+                        return;
+                    }
+                }
+                // previous member called as a method
+                if (token[0] == '#' && !string.IsNullOrEmpty(returnType))
+                {
+                    var type = ResolveType(returnType, result.InFile);
+                    if (type.Name == "Function" && !string.IsNullOrEmpty(type.Type))
+                    {
+                        result.Member = new MemberModel
+                        {
+                            Name = "function",
+                            Flags = FlagType.Function,
+                            Parameters = type.Parameters,
+                            Type = type.Type,
+                        };
+                        result.Type = ResolveType(type.Type, result.InFile);
+                        return;
+                    }
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
