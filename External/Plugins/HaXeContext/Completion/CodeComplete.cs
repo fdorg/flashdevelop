@@ -639,7 +639,7 @@ namespace HaXeContext.Completion
         {
             if (string.IsNullOrEmpty(token)) return;
             // previous member accessed as an array
-            if (token.Length > 1 && token[0] == '[' && token.Last() == ']' && inClass != null && result.Type != null)
+            if (token.Length > 1 && token[0] == '[' && token[token.Length - 1] == ']' && inClass != null && result.Type != null)
             {
                 if ((result.Type.Flags & FlagType.TypeDef) != 0 && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
                 {
