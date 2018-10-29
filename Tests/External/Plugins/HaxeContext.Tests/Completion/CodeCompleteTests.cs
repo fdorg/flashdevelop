@@ -453,6 +453,12 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("CalltipDef_issue2475_4")
                     .Returns("item : Function<[BGCOLOR=#2F90:NORMAL](parameter0:A):B[/BGCOLOR]>")
                     .SetName("trace(a[0](<complete>)). Issue 2475. Case 4");
+                yield return new TestCaseData("CalltipDef_issue2475_5")
+                    .Returns("callback : Function<[BGCOLOR=#2F90:NORMAL](parameter0:A):B[/BGCOLOR]>")
+                    .SetName("trace(a[0]()(<complete>)). Issue 2475. Case 5");
+                yield return new TestCaseData("CalltipDef_issue2475_6")
+                    .Returns("callback : Function<[BGCOLOR=#2F90:NORMAL](parameter0:A):B[/BGCOLOR]>")
+                    .SetName("trace(a[0]()()(<complete>)). Issue 2475. Case 6");
             }
         }
 

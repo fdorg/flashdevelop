@@ -393,7 +393,7 @@ namespace HaXeContext.Generators
                 if (i > 0) sb.Append("->");
                 var t = parameters[i];
                 if (t == null) sb.Append(dynamicTypeName);
-                else if (t.Contains("->") && !t.StartsWith('('))
+                else if (t.Contains("->") && !t.StartsWith('(') && !t.StartsWith('{'))
                 {
                     sb.Append('(');
                     sb.Append(t);

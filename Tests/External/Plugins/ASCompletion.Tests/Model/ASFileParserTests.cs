@@ -1127,7 +1127,7 @@ namespace ASCompletion.Model
                             {
                                 new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private)
                             }
-                        }, "(Int->String)"));
+                        }, "Int->String"));
                     yield return new TestCaseData("var functionType:String->(Int->String)->Void;")
                         .Returns(new MemberWithType(new MemberModel
                         {
@@ -1310,7 +1310,7 @@ namespace ASCompletion.Model
                 Assert.AreEqual(2, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                 Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual("(Dynamic->Dynamic)", member.Parameters[0].Type);
+                Assert.AreEqual("Dynamic->Dynamic", member.Parameters[0].Type);
                 Assert.AreEqual("Dynamic", member.Type);
 
                 member = model.Members[2];
@@ -1319,7 +1319,7 @@ namespace ASCompletion.Model
                 Assert.AreEqual(3, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                 Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual("((Dynamic->Dynamic)->Int)", member.Parameters[0].Type);
+                Assert.AreEqual("(Dynamic->Dynamic)->Int", member.Parameters[0].Type);
                 Assert.AreEqual("Int", member.Type);
 
                 member = model.Members[3];
@@ -1328,8 +1328,8 @@ namespace ASCompletion.Model
                 Assert.AreEqual(4, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                 Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual("(Dynamic->Dynamic)", member.Parameters[0].Type);
-                Assert.AreEqual("(Int->Int)", member.Type);
+                Assert.AreEqual("Dynamic->Dynamic", member.Parameters[0].Type);
+                Assert.AreEqual("Int->Int", member.Type);
 
                 member = model.Members[4];
                 Assert.AreEqual("functionType4", member.Name);
@@ -1338,7 +1338,7 @@ namespace ASCompletion.Model
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                 Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
                 Assert.IsEmpty(member.Parameters);
-                Assert.AreEqual("(Void->Array<Int>)", member.Type);
+                Assert.AreEqual("Void->Array<Int>", member.Type);
             }
 
             [Test]
@@ -1361,8 +1361,8 @@ namespace ASCompletion.Model
                 Assert.AreEqual(2, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                 Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual("(Dynamic->Dynamic)", member.Parameters[0].Type);
-                Assert.AreEqual("(Int->Int)", member.Type);
+                Assert.AreEqual("Dynamic->Dynamic", member.Parameters[0].Type);
+                Assert.AreEqual("Int->Int", member.Type);
 
                 member = model.Members[3];
                 Assert.AreEqual("var3", member.Name);

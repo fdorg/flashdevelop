@@ -38,7 +38,7 @@ namespace ASCompletion.Completion
         static private readonly Regex re_balancedParenthesis = new Regex("\\([^()]*(((?<Open>\\()[^()]*)+((?<Close-Open>\\))[^()]*)+)*(?(Open)(?!))\\)",
                                                                          ASFileParserRegexOptions.SinglelineComment);
         // expressions
-        static private readonly Regex re_sub = new Regex("^#(?<index>[0-9]+)~$", ASFileParserRegexOptions.SinglelineComment);
+        private static readonly Regex re_sub = new Regex("^#(?<index>[0-9]+)~$", ASFileParserRegexOptions.SinglelineComment);
         #endregion
 
         #region fields
@@ -136,6 +136,8 @@ namespace ASCompletion.Completion
 
                 if (ctx.CodeComplete.IsAvailable(ctx, autoHide))
                 {
+                    // Custom completion
+                    if (ASContext.Context.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
                     switch (value)
                     {
                         case '.':
@@ -151,7 +153,6 @@ namespace ASCompletion.Completion
                             break;
 
                         case ':':
-                            if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide); // TODO slavara: move to HaxeContext.Completion.CodeComplete.OnChar
                             if (features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
                             break;
 
@@ -170,8 +171,6 @@ namespace ASCompletion.Completion
                             AutoStartCompletion(sci, position);
                             break;
                     }
-                    // Custom completion
-                    if (ASContext.Context.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
                 }
                 switch (value)
                 {
@@ -1769,7 +1768,7 @@ namespace ASCompletion.Completion
                     }
                     if (parCount < 0)
                     {
-                        if (characterClass.Contains(c) || c == '>' || c == ']')
+                        if (characterClass.Contains(c) || c == '>' || c == ']' || c ==')')
                         {
                             position++;
                             break; // function start found
@@ -2507,21 +2506,6 @@ namespace ASCompletion.Completion
         }
         #endregion
 
-        private static bool HandleMetadataCompletion(bool autoHide)
-        {
-            var list = new List<ICompletionListItem>();
-            foreach (var meta in ASContext.Context.Features.metadata)
-            {
-                var member = new MemberModel();
-                member.Name = meta.Key;
-                member.Comments = meta.Value;
-                member.Type = "Compiler Metadata";
-                list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide);
-            }
-            return true;
-        }
-
         /// <summary>
         /// Handle completion after inserting a space character
         /// </summary>
@@ -3028,7 +3012,7 @@ namespace ASCompletion.Completion
             return ClassModel.VoidClass;
         }
 
-        private static ClassModel ResolveType(string qname, FileModel inFile)
+        protected static ClassModel ResolveType(string qname, FileModel inFile)
         {
             if (qname == null) return ClassModel.VoidClass;
             var context = ASContext.Context;
@@ -3243,7 +3227,7 @@ namespace ASCompletion.Completion
             var context = ASContext.Context;
             result.RelClass = inClass;
             // previous member accessed as an array
-            if (token.Length >= 2 && token.First() == '[' && token.Last() == ']')
+            if (token.Length >= 2 && token[0] == '[' && token[token.Length - 1] == ']')
             {
                 result.IsStatic = false;
                 if (result.Type?.IndexType == null)

@@ -64,10 +64,15 @@ namespace HaXeContext.Completion
         {
             switch (value)
             {
+                case ':':
+                    if (prevValue == '@') return HandleMetadataCompletion(autoHide);
+                    break;
                 case '>':
+                    // for example: SomeType-><complete>
                     if (prevValue == '-' && IsType(sci.CurrentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
                 case '(':
+                    // for example: SomeType->(<complete>
                     if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
@@ -75,6 +80,21 @@ namespace HaXeContext.Completion
             return false;
             // Utils
             bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is ClassModel t && !t.IsVoid();
+        }
+
+        static bool HandleMetadataCompletion(bool autoHide)
+        {
+            var list = new List<ICompletionListItem>();
+            foreach (var meta in ASContext.Context.Features.metadata)
+            {
+                var member = new MemberModel();
+                member.Name = meta.Key;
+                member.Comments = meta.Value;
+                member.Type = "Compiler Metadata";
+                list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide);
+            }
+            return true;
         }
 
         /// <inheritdoc />
@@ -617,7 +637,9 @@ namespace HaXeContext.Completion
 
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
-            if (!string.IsNullOrEmpty(token) && token.Length > 1 && token[0] == '[' && token.Last() == ']' && inClass != null && result.Type != null)
+            if (string.IsNullOrEmpty(token)) return;
+            // previous member accessed as an array
+            if (token.Length > 1 && token[0] == '[' && token[token.Length - 1] == ']' && inClass != null && result.Type != null)
             {
                 if ((result.Type.Flags & FlagType.TypeDef) != 0 && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
                 {
@@ -634,68 +656,125 @@ namespace HaXeContext.Completion
                     }
                     result.Type = type;
                 }
-                else if (result.Type.IndexType is string indexType && indexType.IndexOfOrdinal("->") is var arrowIndex && arrowIndex != -1)
+                else if (result.Type.IndexType is string indexType && IsFunction(indexType))
                 {
-                    // for example: Array<String->String>
-                    if (indexType.IndexOf('<') is var p1 && p1 != -1 && p1 < arrowIndex && arrowIndex < indexType.LastIndexOf('>')) {}
-                    else
-                    {
-                        result.Member = (MemberModel) result.Member.Clone();
-                        FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
-                        result.Member.Name = "item";
-                        result.Member.Flags |= FlagType.Function;
-                        result.Type = (ClassModel) Context.stubFunctionClass.Clone();
-                        result.Type.Parameters = result.Member.Parameters;
-                        result.Type.Type = result.Member.Type;
-                        return;
-                    }
+                    result.Member = (MemberModel) result.Member.Clone();
+                    FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
+                    result.Member.Name = "item";
+                    result.Member.Flags |= FlagType.Function;
+                    result.Type = (ClassModel) Context.stubFunctionClass.Clone();
+                    result.Type.Parameters = result.Member.Parameters;
+                    result.Type.Type = result.Member.Type;
+                    return;
                 }
             }
-            // for example: (foo<T>("string"):T).<complete>
-            else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function)
-                     && member.Template is string template && member.Type is string returnType
-                     && member.Parameters is List<MemberModel> parameters
-                     && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
-                     && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
+            else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
+                     // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
+                     || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunction(member.Type)))
             {
-                for (int i = 0, count = parameters.Count; i < count; i++)
+                var returnType = member.Type;
+                if (!string.IsNullOrEmpty(returnType) && member.Template is string template
+                    && member.Parameters is List<MemberModel> parameters
+                    && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
+                    && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
                 {
-                    var parameter = parameters[i];
-                    if (parameter.Type != returnType) continue;
-                    var subExpression = result.Context.SubExpressions.Last();
-                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
-                    var groupCount = 0;
-                    var paramIndex = 0;
-                    for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
+                    for (int i = 0, count = parameters.Count; i < count; i++)
                     {
-                        var c = subExpression[j];
-                        if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
-                        else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
-                        else if (groupCount == 0 && c == ',' || j == length)
+                        var parameter = parameters[i];
+                        if (parameter.Type != returnType) continue;
+                        var subExpression = result.Context.SubExpressions.Last();
+                        subExpression = subExpression.Substring(1, subExpression.Length - 2);
+                        var groupCount = 0;
+                        var paramIndex = 0;
+                        for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
                         {
-                            if (i != paramIndex++) continue;
-                            var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
-                            result.Type = expr.Type;
-                            result.Member = (MemberModel) result.Member.Clone();
-                            var type = expr.Type.Name;
-                            result.Member.Type = type;
-                            templates[templateIndex] = type;
-                            result.Member.Template = $"<{string.Join(", ", templates)}>";
-                            parameters = result.Member.Parameters;
-                            for (var k = 0; k < parameters.Count; k++)
+                            var c = subExpression[j];
+                            if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
+                            else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
+                            else if (groupCount == 0 && c == ',' || j == length)
                             {
-                                parameter = parameters[k];
-                                if (parameter.Type != returnType) continue;
-                                parameters[k] = (MemberModel) parameter.Clone();
-                                parameters[k].Type = type;
+                                if (i != paramIndex++) continue;
+                                var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
+                                result.Type = expr.Type;
+                                result.Member = (MemberModel) result.Member.Clone();
+                                var type = expr.Type.Name;
+                                result.Member.Type = type;
+                                templates[templateIndex] = type;
+                                result.Member.Template = $"<{string.Join(", ", templates)}>";
+                                parameters = result.Member.Parameters;
+                                for (var k = 0; k < parameters.Count; k++)
+                                {
+                                    parameter = parameters[k];
+                                    if (parameter.Type != returnType) continue;
+                                    parameters[k] = (MemberModel) parameter.Clone();
+                                    parameters[k].Type = type;
+                                }
+                                return;
                             }
-                            return;
                         }
                     }
                     return;
                 }
+                // previous member called as a method
+                if (token[0] == '#' && IsFunction(returnType)
+                    // for example: (foo():Void->(Void->String))()
+                    && result.Context.SubExpressions is List<string> l && l.Count > 1)
+                {
+                    var type = (ClassModel) Context.stubFunctionClass.Clone();
+                    FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
+                    result.Member = new MemberModel
+                    {
+                        Name = "callback",
+                        Flags = FlagType.Variable | FlagType.Function,
+                        Parameters = type.Parameters,
+                        Type = type.Type,
+                    };
+                    result.Type = type;
+                    return;
+                }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
+            // Utils
+            bool IsFunction(string s)
+            {
+                if (string.IsNullOrEmpty(s)) return false;
+                s = CleanType(s);
+                var genCount = 0;
+                var groupCount = 0;
+                var length = s.Length - 1;
+                for (var i = 0; i < length; i++)
+                {
+                    var c = s[i];
+                    if (c == '(' || c == '[' || c == '{') groupCount++;
+                    else if (c == ')' || c == ']' || c == '}') groupCount--;
+                    else if (groupCount == 0)
+                    {
+                        if (c == '<') genCount++;
+                        else if (c == '>' && s[i - 1] != '-') genCount--;
+                        else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && s[p] == '>')
+                            return true;
+                    }
+                }
+                return false;
+            }
+            string CleanType(string s)
+            {
+                if (!string.IsNullOrEmpty(s))
+                {
+                    var parCount = 0;
+                    while (s[0] == '(' && s[s.Length - 1] == ')')
+                    {
+                        foreach (var c in s)
+                        {
+                            if (c == '(') parCount++;
+                            else if (c == ')') parCount--;
+                            else if (parCount == 0) return s;
+                        }
+                        s = s.Substring(1, s.Length - 2);
+                    }
+                }
+                return s;
+            }
         }
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
