@@ -653,31 +653,15 @@ namespace HaXeContext.Completion
                     }
                 }
             }
-            else if (result.Member is MemberModel member && member.Flags.HasFlag(FlagType.Function))
+            else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
+                     // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
+                     || member.Flags.HasFlag(FlagType.ParameterVar) && member.Type.Contains("->")))
             {
                 var returnType = member.Type;
-                // previous member called as a method
-                /*if (token[0] == '#' && !string.IsNullOrEmpty(returnType))
-                {
-                    var type = ResolveType(returnType, result.InFile);
-                    if (type.Name == "Function" && !string.IsNullOrEmpty(type.Type))
-                    {
-                        result.Member = new MemberModel
-                        {
-                            Name = "function",
-                            Flags = FlagType.Function,
-                            Parameters = type.Parameters,
-                            Type = type.Type,
-                        };
-                        result.Type = ResolveType(type.Type, result.InFile);
-                        return;
-                    }
-                }
-                // for example: (foo<T>("string"):T).<complete>
-                else*/ if (!string.IsNullOrEmpty(returnType) && member.Template is string template
-                         && member.Parameters is List<MemberModel> parameters
-                         && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
-                         && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
+                if (!string.IsNullOrEmpty(returnType) && member.Template is string template
+                    && member.Parameters is List<MemberModel> parameters
+                    && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
+                    && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
                 {
                     for (int i = 0, count = parameters.Count; i < count; i++)
                     {
@@ -717,21 +701,36 @@ namespace HaXeContext.Completion
                     }
                 }
                 // previous member called as a method
-                if (token[0] == '#' && !string.IsNullOrEmpty(returnType))
+                if (token[0] == '#' && !string.IsNullOrEmpty(returnType)
+                    // for example: (foo():Void->(Void->String))()
+                    && result.Context.SubExpressions != null)
                 {
-                    var type = ResolveType(returnType, result.InFile);
-                    if (type.Name == "Function" && !string.IsNullOrEmpty(type.Type))
-                    {
-                        result.Member = new MemberModel
-                        {
-                            Name = "function",
-                            Flags = FlagType.Function,
-                            Parameters = type.Parameters,
-                            Type = type.Type,
-                        };
-                        result.Type = ResolveType(type.Type, result.InFile);
-                        return;
-                    }
+                    //for (var i = 0; i < result.Context.SubExpressions.Count; i++)
+                    //{
+                    //    var type = ResolveType(returnType, result.InFile);
+                    //    result.Member = new MemberModel
+                    //    {
+                    //        Name = "function",
+                    //        Flags = FlagType.Function,
+                    //        Parameters = type.Parameters,
+                    //        Type = type.Type,
+                    //    };
+                    //    result.Type = type;
+                    //    returnType = type.Type;
+                    //    //if (type.Name == "Function" && !string.IsNullOrEmpty(type.Type))
+                    //    //{
+                    //    //    result.Member = new MemberModel
+                    //    //    {
+                    //    //        Name = "function",
+                    //    //        Flags = FlagType.Function,
+                    //    //        Parameters = type.Parameters,
+                    //    //        Type = type.Type,
+                    //    //    };
+                    //    //    result.Type = ResolveType(type.Type, result.InFile);
+                    //    //    return;
+                    //    //}
+                    //}
+                    //return;
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
