@@ -636,21 +636,16 @@ namespace HaXeContext.Completion
                     }
                     result.Type = type;
                 }
-                else if (result.Type.IndexType is string indexType && indexType.IndexOfOrdinal("->") is var arrowIndex && arrowIndex != -1)
+                else if (result.Type.IndexType is string indexType && IsFunction(indexType))
                 {
-                    // for example: Array<String->String>
-                    if (indexType.IndexOf('<') is var p1 && p1 != -1 && p1 < arrowIndex && arrowIndex < indexType.LastIndexOf('>')) {}
-                    else
-                    {
-                        result.Member = (MemberModel) result.Member.Clone();
-                        FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
-                        result.Member.Name = "item";
-                        result.Member.Flags |= FlagType.Function;
-                        result.Type = (ClassModel) Context.stubFunctionClass.Clone();
-                        result.Type.Parameters = result.Member.Parameters;
-                        result.Type.Type = result.Member.Type;
-                        return;
-                    }
+                    result.Member = (MemberModel) result.Member.Clone();
+                    FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
+                    result.Member.Name = "item";
+                    result.Member.Flags |= FlagType.Function;
+                    result.Type = (ClassModel) Context.stubFunctionClass.Clone();
+                    result.Type.Parameters = result.Member.Parameters;
+                    result.Type.Type = result.Member.Type;
+                    return;
                 }
             }
             else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
@@ -701,7 +696,7 @@ namespace HaXeContext.Completion
                     return;
                 }
                 // previous member called as a method
-                if (token[0] == '#' && returnType != null && returnType.Contains("->")
+                if (token[0] == '#' && IsFunction(returnType)
                     // for example: (foo():Void->(Void->String))()
                     && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
@@ -719,6 +714,28 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
+            // Utils
+            bool IsFunction(string s)
+            {
+                if (string.IsNullOrEmpty(s)) return false;
+                var genCount = 0;
+                var groupCount = 0;
+                var length = s.Length - 1;
+                for (var i = 0; i < length; i++)
+                {
+                    var c = s[i];
+                    if (c == '(' || c == '[' || c == '{') groupCount++;
+                    else if (c == ')' || c == ']' || c == '}') groupCount--;
+                    else if (groupCount == 0)
+                    {
+                        if (c == '<') genCount++;
+                        else if (c == '>' && s[i - 1] != '-') genCount--;
+                        else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && s[p] == '>')
+                            return true;
+                    }
+                }
+                return false;
+            }
         }
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
