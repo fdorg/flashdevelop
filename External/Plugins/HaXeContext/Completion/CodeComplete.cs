@@ -650,7 +650,7 @@ namespace HaXeContext.Completion
             }
             else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
-                     || member.Flags.HasFlag(FlagType.ParameterVar) && member.Type.Contains("->")))
+                     || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunction(member.Type)))
             {
                 var returnType = member.Type;
                 if (!string.IsNullOrEmpty(returnType) && member.Template is string template
@@ -700,21 +700,16 @@ namespace HaXeContext.Completion
                     // for example: (foo():Void->(Void->String))()
                     && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
-                    var index = Convert.ToInt16(re_sub.Match(token).Groups["index"].Value);
                     var type = (ClassModel) Context.stubFunctionClass.Clone();
-                    //for (var i = 0; i < index + 1; i++)
+                    FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
+                    result.Member = new MemberModel
                     {
-                        FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
-                        result.Member = new MemberModel
-                        {
-                            Name = "callback",
-                            Flags = FlagType.Variable | FlagType.Function,
-                            Parameters = type.Parameters,
-                            Type = type.Type,
-                        };
-                        result.Type = type;
-                        returnType = type.Type;
-                    }
+                        Name = "callback",
+                        Flags = FlagType.Variable | FlagType.Function,
+                        Parameters = type.Parameters,
+                        Type = type.Type,
+                    };
+                    result.Type = type;
                     return;
                 }
             }
