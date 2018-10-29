@@ -1319,7 +1319,7 @@ namespace ASCompletion.Model
                 Assert.AreEqual(3, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                 Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
-                Assert.AreEqual("((Dynamic->Dynamic)->Int)", member.Parameters[0].Type);
+                Assert.AreEqual("(Dynamic->Dynamic)->Int", member.Parameters[0].Type);
                 Assert.AreEqual("Int", member.Type);
 
                 member = model.Members[3];

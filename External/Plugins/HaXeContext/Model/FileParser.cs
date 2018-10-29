@@ -2211,7 +2211,20 @@ namespace HaXeContext.Model
             //Utils
             string CleanType(string s)
             {
-                while (s[0] == '(' && s[s.Length - 1] == ')' && s.IndexOf(')') == s.Length - 1) s = s.Substring(1, s.Length - 2);
+                if (!string.IsNullOrEmpty(s))
+                {
+                    var pCount = 0;
+                    while (s[0] == '(' && s[s.Length - 1] == ')')
+                    {
+                        foreach (var c in s)
+                        {
+                            if (c == '(') pCount++;
+                            else if (c == ')') pCount--;
+                            else if (pCount == 0) return s;
+                        }
+                        s = s.Substring(1, s.Length - 2);
+                    }
+                }
                 return s;
             }
         }

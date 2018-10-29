@@ -700,16 +700,21 @@ namespace HaXeContext.Completion
                     // for example: (foo():Void->(Void->String))()
                     && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
+                    var index = Convert.ToInt16(re_sub.Match(token).Groups["index"].Value);
                     var type = (ClassModel) Context.stubFunctionClass.Clone();
-                    FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
-                    result.Member = result.Member = new MemberModel
+                    //for (var i = 0; i < index + 1; i++)
                     {
-                        Name = "callback",
-                        Flags = FlagType.Variable | FlagType.Function,
-                        Parameters = type.Parameters,
-                        Type = type.Type,
-                    };
-                    result.Type = type;
+                        FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
+                        result.Member = new MemberModel
+                        {
+                            Name = "callback",
+                            Flags = FlagType.Variable | FlagType.Function,
+                            Parameters = type.Parameters,
+                            Type = type.Type,
+                        };
+                        result.Type = type;
+                        returnType = type.Type;
+                    }
                     return;
                 }
             }
@@ -718,6 +723,7 @@ namespace HaXeContext.Completion
             bool IsFunction(string s)
             {
                 if (string.IsNullOrEmpty(s)) return false;
+                s = CleanType(s);
                 var genCount = 0;
                 var groupCount = 0;
                 var length = s.Length - 1;
@@ -735,6 +741,24 @@ namespace HaXeContext.Completion
                     }
                 }
                 return false;
+            }
+            string CleanType(string s)
+            {
+                if (!string.IsNullOrEmpty(s))
+                {
+                    var parCount = 0;
+                    while (s[0] == '(' && s[s.Length - 1] == ')')
+                    {
+                        foreach (var c in s)
+                        {
+                            if (c == '(') parCount++;
+                            else if (c == ')') parCount--;
+                            else if (parCount == 0) return s;
+                        }
+                        s = s.Substring(1, s.Length - 2);
+                    }
+                }
+                return s;
             }
         }
 
