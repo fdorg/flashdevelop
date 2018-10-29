@@ -697,40 +697,25 @@ namespace HaXeContext.Completion
                                 return;
                             }
                         }
-                        return;
                     }
+                    return;
                 }
                 // previous member called as a method
-                if (token[0] == '#' && !string.IsNullOrEmpty(returnType)
+                if (token[0] == '#' && returnType != null && returnType.Contains("->")
                     // for example: (foo():Void->(Void->String))()
-                    && result.Context.SubExpressions != null)
+                    && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
-                    //for (var i = 0; i < result.Context.SubExpressions.Count; i++)
-                    //{
-                    //    var type = ResolveType(returnType, result.InFile);
-                    //    result.Member = new MemberModel
-                    //    {
-                    //        Name = "function",
-                    //        Flags = FlagType.Function,
-                    //        Parameters = type.Parameters,
-                    //        Type = type.Type,
-                    //    };
-                    //    result.Type = type;
-                    //    returnType = type.Type;
-                    //    //if (type.Name == "Function" && !string.IsNullOrEmpty(type.Type))
-                    //    //{
-                    //    //    result.Member = new MemberModel
-                    //    //    {
-                    //    //        Name = "function",
-                    //    //        Flags = FlagType.Function,
-                    //    //        Parameters = type.Parameters,
-                    //    //        Type = type.Type,
-                    //    //    };
-                    //    //    result.Type = ResolveType(type.Type, result.InFile);
-                    //    //    return;
-                    //    //}
-                    //}
-                    //return;
+                    var type = (ClassModel) Context.stubFunctionClass.Clone();
+                    FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
+                    result.Member = result.Member = new MemberModel
+                    {
+                        Name = "callback",
+                        Flags = FlagType.Variable | FlagType.Function,
+                        Parameters = type.Parameters,
+                        Type = type.Type,
+                    };
+                    result.Type = type;
+                    return;
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
