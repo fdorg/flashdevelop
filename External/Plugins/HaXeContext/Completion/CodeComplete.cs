@@ -64,10 +64,15 @@ namespace HaXeContext.Completion
         {
             switch (value)
             {
+                case ':':
+                    if (prevValue == '@') return HandleMetadataCompletion(autoHide);
+                    break;
                 case '>':
+                    // for example: SomeType-><complete>
                     if (prevValue == '-' && IsType(sci.CurrentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
                 case '(':
+                    // for example: SomeType->(<complete>
                     if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
@@ -75,6 +80,21 @@ namespace HaXeContext.Completion
             return false;
             // Utils
             bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is ClassModel t && !t.IsVoid();
+        }
+
+        static bool HandleMetadataCompletion(bool autoHide)
+        {
+            var list = new List<ICompletionListItem>();
+            foreach (var meta in ASContext.Context.Features.metadata)
+            {
+                var member = new MemberModel();
+                member.Name = meta.Key;
+                member.Comments = meta.Value;
+                member.Type = "Compiler Metadata";
+                list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide);
+            }
+            return true;
         }
 
         /// <inheritdoc />

@@ -136,6 +136,8 @@ namespace ASCompletion.Completion
 
                 if (ctx.CodeComplete.IsAvailable(ctx, autoHide))
                 {
+                    // Custom completion
+                    if (ASContext.Context.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
                     switch (value)
                     {
                         case '.':
@@ -151,7 +153,6 @@ namespace ASCompletion.Completion
                             break;
 
                         case ':':
-                            if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide); // TODO slavara: move to HaxeContext.Completion.CodeComplete.OnChar
                             if (features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
                             break;
 
@@ -170,8 +171,6 @@ namespace ASCompletion.Completion
                             AutoStartCompletion(sci, position);
                             break;
                     }
-                    // Custom completion
-                    if (ASContext.Context.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
                 }
                 switch (value)
                 {
@@ -2506,21 +2505,6 @@ namespace ASCompletion.Completion
             return true;
         }
         #endregion
-
-        private static bool HandleMetadataCompletion(bool autoHide)
-        {
-            var list = new List<ICompletionListItem>();
-            foreach (var meta in ASContext.Context.Features.metadata)
-            {
-                var member = new MemberModel();
-                member.Name = meta.Key;
-                member.Comments = meta.Value;
-                member.Type = "Compiler Metadata";
-                list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide);
-            }
-            return true;
-        }
 
         /// <summary>
         /// Handle completion after inserting a space character
