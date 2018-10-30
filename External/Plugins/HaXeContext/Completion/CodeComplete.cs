@@ -139,8 +139,7 @@ namespace HaXeContext.Completion
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
             var member = expr.Member;
-            if (member != null && (member.Flags & FlagType.Variable) != 0 &&
-                !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            if (member != null && (member.Flags & FlagType.Variable) != 0 && IsFunctionType(member.Type))
             {
                 FunctionContextResolved(sci, expr.Context, member, expr.RelClass, false);
                 return true;
