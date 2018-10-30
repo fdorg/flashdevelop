@@ -139,8 +139,7 @@ namespace HaXeContext.Completion
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
             var member = expr.Member;
-            if (member != null && (member.Flags & FlagType.Variable) != 0 &&
-                !string.IsNullOrEmpty(member.Type) && member.Type.Contains("->"))
+            if (member != null && (member.Flags & FlagType.Variable) != 0 && IsFunctionType(member.Type))
             {
                 FunctionContextResolved(sci, expr.Context, member, expr.RelClass, false);
                 return true;
@@ -625,7 +624,7 @@ namespace HaXeContext.Completion
 
         protected override string GetCalltipDef(MemberModel member)
         {
-            if ((member.Flags & FlagType.ParameterVar) != 0 && member.Type != null && member.Type.Contains("->"))
+            if ((member.Flags & FlagType.ParameterVar) != 0 && IsFunctionType(member.Type))
             {
                 var tmp = FileParser.FunctionTypeToMemberModel(member.Type, ASContext.Context.Features);
                 tmp.Name = member.Name;
@@ -656,7 +655,7 @@ namespace HaXeContext.Completion
                     }
                     result.Type = type;
                 }
-                else if (result.Type.IndexType is string indexType && IsFunction(indexType))
+                else if (result.Type.IndexType is string indexType && IsFunctionType(indexType))
                 {
                     result.Member = (MemberModel) result.Member.Clone();
                     FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
@@ -670,53 +669,63 @@ namespace HaXeContext.Completion
             }
             else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
-                     || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunction(member.Type)))
+                     || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
-                if (!string.IsNullOrEmpty(returnType) && member.Template is string template
-                    && member.Parameters is List<MemberModel> parameters
-                    && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
-                    && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
+                if (member.Template is string template && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
                 {
-                    for (int i = 0, count = parameters.Count; i < count; i++)
+                    var subExpressionPosition = result.Context.SubExpressionPositions.Last();
+                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
+                    var expressions = new List<ASResult>();
+                    var groupCount = 0;
+                    for (int i = 0, length = subExpression.Length - 1; i <= length; i++)
                     {
-                        var parameter = parameters[i];
-                        if (parameter.Type != returnType) continue;
-                        var subExpression = result.Context.SubExpressions.Last();
-                        subExpression = subExpression.Substring(1, subExpression.Length - 2);
-                        var groupCount = 0;
-                        var paramIndex = 0;
-                        for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
+                        var c = subExpression[i];
+                        if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
+                        else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
+                        else if (groupCount == 0 && c == ',' || i == length)
                         {
-                            var c = subExpression[j];
-                            if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
-                            else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
-                            else if (groupCount == 0 && c == ',' || j == length)
-                            {
-                                if (i != paramIndex++) continue;
-                                var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
-                                result.Type = expr.Type;
-                                result.Member = (MemberModel) result.Member.Clone();
-                                var type = expr.Type.Name;
-                                result.Member.Type = type;
-                                templates[templateIndex] = type;
-                                result.Member.Template = $"<{string.Join(", ", templates)}>";
-                                parameters = result.Member.Parameters;
-                                for (var k = 0; k < parameters.Count; k++)
-                                {
-                                    parameter = parameters[k];
-                                    if (parameter.Type != returnType) continue;
-                                    parameters[k] = (MemberModel) parameter.Clone();
-                                    parameters[k].Type = type;
-                                }
-                                return;
-                            }
+                            var expr = GetExpressionType(ASContext.CurSciControl, subExpressionPosition + (i + 1), false, true);
+                            if (expr.Type == null) expr.Type = ClassModel.VoidClass;
+                            expressions.Add(expr);
                         }
                     }
-                    return;
+                    var templates = template.Substring(1, template.Length - 2).Split(',');
+                    for (var i = 0; i < templates.Length; i++)
+                    {
+                        string newType = null;
+                        var templateType = templates[i];
+                        if (member.Parameters is List<MemberModel> parameters)
+                        {
+                            for (var j = 0; j < parameters.Count && j < expressions.Count; j++)
+                            {
+                                var parameter = parameters[j];
+                                if (parameter.Type != templateType) continue;
+                                if (string.IsNullOrEmpty(newType))
+                                {
+                                    var expr = expressions[j];
+                                    if (expr.Type.IsVoid()) break;
+                                    newType = expr.Type.Name;
+                                }
+                                if (string.IsNullOrEmpty(newType)) continue;
+                                parameters[j] = (MemberModel) parameter.Clone();
+                                parameters[j].Type = newType;
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(newType))
+                        {
+                            var r = new Regex($"\\b{templateType}\\b");
+                            if (!string.IsNullOrEmpty(returnType) && r.IsMatch(returnType))
+                            {
+                                returnType = r.Replace(returnType, newType);
+                                member.Type = returnType;
+                            }
+                            templates[i] = newType;
+                        }
+                    }
                 }
                 // previous member called as a method
-                if (token[0] == '#' && IsFunction(returnType)
+                if (token[0] == '#' && IsFunctionType(returnType)
                     // for example: (foo():Void->(Void->String))()
                     && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
@@ -734,47 +743,6 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
-            // Utils
-            bool IsFunction(string s)
-            {
-                if (string.IsNullOrEmpty(s)) return false;
-                s = CleanType(s);
-                var genCount = 0;
-                var groupCount = 0;
-                var length = s.Length - 1;
-                for (var i = 0; i < length; i++)
-                {
-                    var c = s[i];
-                    if (c == '(' || c == '[' || c == '{') groupCount++;
-                    else if (c == ')' || c == ']' || c == '}') groupCount--;
-                    else if (groupCount == 0)
-                    {
-                        if (c == '<') genCount++;
-                        else if (c == '>' && s[i - 1] != '-') genCount--;
-                        else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && s[p] == '>')
-                            return true;
-                    }
-                }
-                return false;
-            }
-            string CleanType(string s)
-            {
-                if (!string.IsNullOrEmpty(s))
-                {
-                    var parCount = 0;
-                    while (s[0] == '(' && s[s.Length - 1] == ')')
-                    {
-                        foreach (var c in s)
-                        {
-                            if (c == '(') parCount++;
-                            else if (c == ')') parCount--;
-                            else if (parCount == 0) return s;
-                        }
-                        s = s.Substring(1, s.Length - 2);
-                    }
-                }
-                return s;
-            }
         }
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
@@ -881,6 +849,48 @@ namespace HaXeContext.Completion
                     return s.Substring(startIndex, s.Length - (startIndex + startIndex / 5));
                 }
             }
+        }
+
+        static bool IsFunctionType(string type)
+        {
+            if (string.IsNullOrEmpty(type)) return false;
+            type = CleanFunctionType(type);
+            var genCount = 0;
+            var groupCount = 0;
+            var length = type.Length - 1;
+            for (var i = 0; i < length; i++)
+            {
+                var c = type[i];
+                if (c == '(' || c == '[' || c == '{') groupCount++;
+                else if (c == ')' || c == ']' || c == '}') groupCount--;
+                else if (groupCount == 0)
+                {
+                    if (c == '<') genCount++;
+                    else if (c == '>' && type[i - 1] != '-') genCount--;
+                    else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && type[p] == '>')
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        static string CleanFunctionType(string s)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                var parCount = 0;
+                while (s[0] == '(' && s[s.Length - 1] == ')')
+                {
+                    foreach (var c in s)
+                    {
+                        if (c == '(') parCount++;
+                        else if (c == ')') parCount--;
+                        else if (parCount == 0) return s;
+                    }
+                    s = s.Substring(1, s.Length - 2);
+                }
+            }
+            return s;
         }
     }
 } 

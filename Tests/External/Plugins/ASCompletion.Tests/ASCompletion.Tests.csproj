@@ -1283,6 +1283,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_10.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeInterfaceContextualGenerator_issue2473_11.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterInterfaceContextualGenerator_issue2473_11.as" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedFunction_issue2487_1.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
