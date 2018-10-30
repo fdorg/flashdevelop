@@ -949,6 +949,8 @@
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2483_5.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2475_5.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2475_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2489_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2489_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

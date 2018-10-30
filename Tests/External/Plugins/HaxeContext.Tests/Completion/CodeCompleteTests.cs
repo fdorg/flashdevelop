@@ -462,6 +462,19 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue2489TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2489_1")
+                    .Returns("test<String> (v:String) : String")
+                    .SetName("(test<T>(v:T):T)(<complete>. Issue 2489. Case 1");
+                yield return new TestCaseData("CalltipDef_issue2489_2")
+                    .Returns("test<String, Int> (v:String, v2:Int) : Int")
+                    .SetName("(test<T, K>(v:T, v1:K):K)(<complete>. Issue 2489. Case 2");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(CalltipDefIssue2356TestCases)),
@@ -469,6 +482,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(CalltipDefIssue2368TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2468TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2475TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue2489TestCases)),
         ]
         public string CalltipDef(string fileName)
         {

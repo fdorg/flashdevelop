@@ -170,10 +170,7 @@ namespace HaXeContext.Completion
             return false;
         }
 
-        public void InferVariableType(ScintillaControl sci, MemberModel member)
-        {
-            InferVariableType(sci, new ASExpr(), member);
-        }
+        public void InferVariableType(ScintillaControl sci, MemberModel member) => InferVariableType(sci, new ASExpr(), member);
 
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
@@ -685,11 +682,13 @@ namespace HaXeContext.Completion
                         else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
                         else if (groupCount == 0 && c == ',' || i == length)
                         {
-                            var expr = GetExpressionType(ASContext.CurSciControl, subExpressionPosition + (i + 1), false, true);
+                            if (i == length) i++;
+                            var expr = GetExpressionType(ASContext.CurSciControl, subExpressionPosition + i, false, true);
                             if (expr.Type == null) expr.Type = ClassModel.VoidClass;
                             expressions.Add(expr);
                         }
                     }
+                    member = (MemberModel) member.Clone();
                     var templates = template.Substring(1, template.Length - 2).Split(',');
                     for (var i = 0; i < templates.Length; i++)
                     {
@@ -723,6 +722,8 @@ namespace HaXeContext.Completion
                             templates[i] = newType;
                         }
                     }
+                    member.Template = $"<{string.Join(", ", templates)}>";
+                    result.Member = member;
                 }
                 // previous member called as a method
                 if (token[0] == '#' && IsFunctionType(returnType)
