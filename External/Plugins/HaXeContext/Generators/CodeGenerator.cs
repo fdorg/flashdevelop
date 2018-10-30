@@ -341,7 +341,7 @@ namespace HaXeContext.Generators
             if (handler?.Parameters is List<MemberModel> parameters && parameters.Count > 1 && parameters[1]?.Type is string type)
             {
                 if (type == "haxe.Constraints.Function") return string.Empty;
-                if (type.Contains("->"))
+                if (FileParser.IsFunctionType(type))
                 {
                     var member = FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
                     if (member.Parameters.Count > 0 && member.Parameters[0].Type is string result)
@@ -393,7 +393,7 @@ namespace HaXeContext.Generators
                 if (i > 0) sb.Append("->");
                 var t = parameters[i];
                 if (t == null) sb.Append(dynamicTypeName);
-                else if (t.Contains("->") && !t.StartsWith('(') && !t.StartsWith('{'))
+                else if (FileParser.IsFunctionType(t))
                 {
                     sb.Append('(');
                     sb.Append(t);
