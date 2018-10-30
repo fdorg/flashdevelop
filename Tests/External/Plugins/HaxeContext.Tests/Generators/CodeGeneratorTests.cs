@@ -195,6 +195,18 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateFunction_issue2478_1"))
                     .SetName("test(a[0]()). Generate function. Issue2478. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2478");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2493_1", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2493_1"))
+                    .SetName("var s<generate> = new Sprite(). Generate getter and setter. Issue2493. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2493");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2493_1", GeneratorJobType.Getter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2493_2"))
+                    .SetName("var s<generate> = new Sprite(). Generate getter. Issue2493. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2493");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2493_1", GeneratorJobType.Setter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2493_3"))
+                    .SetName("var s<generate> = new Sprite(). Generate setter. Issue2493. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2493");
             }
         }
 
