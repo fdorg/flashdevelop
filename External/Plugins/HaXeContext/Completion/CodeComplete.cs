@@ -97,16 +97,51 @@ namespace HaXeContext.Completion
             return true;
         }
 
+
         /// <inheritdoc />
         protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
         {
-            if (string.IsNullOrEmpty(wordLeft)) return false;
+            if (string.IsNullOrEmpty(wordLeft))
+            {
+                var pos = position - 1;
+                wordLeft = GetWordLeft(sci, ref pos);
+                if (string.IsNullOrEmpty(wordLeft))
+                {
+                    var c = (char) sci.CharAt(pos);
+                    if (c == '=') return HandleAssignCompletion(sci, pos - 1, autoHide);
+                }
+                return false;
+            }
             var currentClass = ASContext.Context.CurrentClass;
             if (currentClass.Flags.HasFlag(FlagType.Abstract) && (wordLeft == "from" || wordLeft == "to"))
             {
                 return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
             }
             return wordLeft == "case" && HandleSwitchCaseCompletion(sci, position, autoHide);
+        }
+
+        static bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
+        {
+            var expr = GetExpressionType(sci, position, false, true);
+            if (expr.Type != null && expr.Type.Flags.HasFlag(FlagType.Abstract)
+                && expr.Type.Members is MemberList members && members.Count > 0
+                && expr.Type.MetaDatas != null && expr.Type.MetaDatas.Any(it => it.Name == ":enum"))
+            {
+                var list = new List<ICompletionListItem>();
+                foreach (MemberModel member in members)
+                {
+                    if (member.Flags.HasFlag(FlagType.Variable) && !member.Access.HasFlag(Visibility.Private))
+                    {
+                        list.Add(new MemberItem(member));
+                    }
+                }
+                if (list.Count > 0)
+                {
+                    CompletionList.Show(list, autoHide);
+                    return true;
+                }
+            }
+            return false;
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
