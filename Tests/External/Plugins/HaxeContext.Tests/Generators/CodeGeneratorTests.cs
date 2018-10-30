@@ -1167,13 +1167,16 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_unsafe_cast_1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_unsafe_cast_1"))
-                    .SetName("cast v|");
+                    .SetName("cast v<generate>");
                 yield return new TestCaseData("BeforeAssignStatementToVar_unsafe_cast_2", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_unsafe_cast_2"))
-                    .SetName("cast v.length|");
+                    .SetName("cast v.length<generate>");
                 yield return new TestCaseData("BeforeAssignStatementToVar_unsafe_cast_3", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_unsafe_cast_3"))
-                    .SetName("cast []|");
+                    .SetName("cast []<generate>");
+                yield return new TestCaseData("BeforeAssignStatementToVar_ParameterizedFunction_case1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_ParameterizedFunction_case1"))
+                    .SetName("(foo<T>(stringValue):Array<T>)<generate>");
             }
         }
 

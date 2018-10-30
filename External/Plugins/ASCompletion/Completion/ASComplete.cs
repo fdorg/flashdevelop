@@ -2922,7 +2922,11 @@ namespace ASCompletion.Completion
                     if (features.hasInference)
                     {
                         var member = result.Member;
-                        if (member != null && member.Type == null) context.CodeComplete.InferVariableType(local, member);
+                        if (member != null && member.Type == null)
+                        {
+                            context.CodeComplete.InferVariableType(local, member);
+                            if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
+                        }
                     }
                     return result;
                 }
