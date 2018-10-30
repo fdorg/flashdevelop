@@ -625,7 +625,7 @@ namespace HaXeContext.Completion
 
         protected override string GetCalltipDef(MemberModel member)
         {
-            if ((member.Flags & FlagType.ParameterVar) != 0 && member.Type != null && member.Type.Contains("->"))
+            if ((member.Flags & FlagType.ParameterVar) != 0 && IsFunctionType(member.Type))
             {
                 var tmp = FileParser.FunctionTypeToMemberModel(member.Type, ASContext.Context.Features);
                 tmp.Name = member.Name;
@@ -656,7 +656,7 @@ namespace HaXeContext.Completion
                     }
                     result.Type = type;
                 }
-                else if (result.Type.IndexType is string indexType && IsFunction(indexType))
+                else if (result.Type.IndexType is string indexType && IsFunctionType(indexType))
                 {
                     result.Member = (MemberModel) result.Member.Clone();
                     FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
@@ -670,7 +670,7 @@ namespace HaXeContext.Completion
             }
             else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
-                     || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunction(member.Type)))
+                     || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
                 if (member.Template is string template && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
@@ -726,7 +726,7 @@ namespace HaXeContext.Completion
                     }
                 }
                 // previous member called as a method
-                if (token[0] == '#' && IsFunction(returnType)
+                if (token[0] == '#' && IsFunctionType(returnType)
                     // for example: (foo():Void->(Void->String))()
                     && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
@@ -744,47 +744,6 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
-            // Utils
-            bool IsFunction(string s)
-            {
-                if (string.IsNullOrEmpty(s)) return false;
-                s = CleanType(s);
-                var genCount = 0;
-                var groupCount = 0;
-                var length = s.Length - 1;
-                for (var i = 0; i < length; i++)
-                {
-                    var c = s[i];
-                    if (c == '(' || c == '[' || c == '{') groupCount++;
-                    else if (c == ')' || c == ']' || c == '}') groupCount--;
-                    else if (groupCount == 0)
-                    {
-                        if (c == '<') genCount++;
-                        else if (c == '>' && s[i - 1] != '-') genCount--;
-                        else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && s[p] == '>')
-                            return true;
-                    }
-                }
-                return false;
-            }
-            string CleanType(string s)
-            {
-                if (!string.IsNullOrEmpty(s))
-                {
-                    var parCount = 0;
-                    while (s[0] == '(' && s[s.Length - 1] == ')')
-                    {
-                        foreach (var c in s)
-                        {
-                            if (c == '(') parCount++;
-                            else if (c == ')') parCount--;
-                            else if (parCount == 0) return s;
-                        }
-                        s = s.Substring(1, s.Length - 2);
-                    }
-                }
-                return s;
-            }
         }
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
@@ -891,6 +850,48 @@ namespace HaXeContext.Completion
                     return s.Substring(startIndex, s.Length - (startIndex + startIndex / 5));
                 }
             }
+        }
+
+        static bool IsFunctionType(string type)
+        {
+            if (string.IsNullOrEmpty(type)) return false;
+            type = CleanFunctionType(type);
+            var genCount = 0;
+            var groupCount = 0;
+            var length = type.Length - 1;
+            for (var i = 0; i < length; i++)
+            {
+                var c = type[i];
+                if (c == '(' || c == '[' || c == '{') groupCount++;
+                else if (c == ')' || c == ']' || c == '}') groupCount--;
+                else if (groupCount == 0)
+                {
+                    if (c == '<') genCount++;
+                    else if (c == '>' && type[i - 1] != '-') genCount--;
+                    else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && type[p] == '>')
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        static string CleanFunctionType(string s)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                var parCount = 0;
+                while (s[0] == '(' && s[s.Length - 1] == ')')
+                {
+                    foreach (var c in s)
+                    {
+                        if (c == '(') parCount++;
+                        else if (c == ')') parCount--;
+                        else if (parCount == 0) return s;
+                    }
+                    s = s.Substring(1, s.Length - 2);
+                }
+            }
+            return s;
         }
     }
 } 
