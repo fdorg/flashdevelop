@@ -63,23 +63,23 @@ namespace HaXeContext.CodeRefactor.Provider
             {
                 yield return new TestCaseData("DelegateMethodsValidator_1")
                     .Returns(true)
-                    .SetName("Issue 2412. case 1")
+                    .SetName("Delegate methods. Issue 2412. case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
                 yield return new TestCaseData("DelegateMethodsValidator_2")
                     .Returns(false)
-                    .SetName("Issue 2412. case 2")
+                    .SetName("Delegate methods. Issue 2412. case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
                 yield return new TestCaseData("DelegateMethodsValidator_3")
                     .Returns(false)
-                    .SetName("Issue 2412. case 3")
+                    .SetName("Delegate methods. Issue 2412. case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
                 yield return new TestCaseData("DelegateMethodsValidator_4")
                     .Returns(false)
-                    .SetName("Issue 2412. case 4")
+                    .SetName("Delegate methods. Issue 2412. case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
                 yield return new TestCaseData("DelegateMethodsValidator_5")
-                    .Returns(false)
-                    .SetName("Issue 2412. case 5")
+                    .Returns(true)
+                    .SetName("var value<generate> = 1. Delegate methods. Issue 2412. case 5")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2412");
             }
         }
