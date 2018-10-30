@@ -1430,13 +1430,8 @@ namespace HaXeContext.Model
                 for (var i = members.Count - 1; i >= 0; i--)
                 {
                     var member = members[i];
-                    if (((member.Flags & FlagType.Variable) != 0)
-                        && member.Type is string type
-                        && type.IndexOfOrdinal("->") is var arrowIndex && arrowIndex != -1)
+                    if ((member.Flags & FlagType.Variable) != 0 && member.Type is string type && IsFunctionType(type))
                     {
-                        // for example: Array<String->String>
-                        if (type.IndexOf('<') is var p1 && p1 != -1 && p1 < arrowIndex && arrowIndex < type.LastIndexOf('>'))
-                            continue;
                         member.Flags |= FlagType.Function;
                         FunctionTypeToMemberModel(type, features, member);
                     }
@@ -2142,7 +2137,7 @@ namespace HaXeContext.Model
 
         internal static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features, MemberModel result)
         {
-            type = CleanType(type);
+            type = CleanFunctionType(type);
             var voidKey = features.voidKey;
             if (result.Parameters == null) result.Parameters = new List<MemberModel>();
             var parCount = 0;
@@ -2201,32 +2196,54 @@ namespace HaXeContext.Model
                     parameterName = $"?{parameterName}";
                     parameterType = parameterType.TrimStart('?');
                 }
-                parameterType = CleanType(parameterType);
+                parameterType = CleanFunctionType(parameterType);
                 if (i == typeLength - 1) result.Type = parameterType;
                 else result.Parameters.Add(new MemberModel(parameterName, parameterType, FlagType.ParameterVar, 0));
             }
-            if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey)
-                result.Parameters.Clear();
+            if (result.Parameters.Count == 1 && result.Parameters[0].Type == voidKey) result.Parameters.Clear();
             return result;
-            //Utils
-            string CleanType(string s)
+        }
+
+        internal static bool IsFunctionType(string type)
+        {
+            if (string.IsNullOrEmpty(type)) return false;
+            type = CleanFunctionType(type);
+            var genCount = 0;
+            var groupCount = 0;
+            var length = type.Length - 1;
+            for (var i = 0; i < length; i++)
             {
-                if (!string.IsNullOrEmpty(s))
+                var c = type[i];
+                if (c == '(' || c == '[' || c == '{') groupCount++;
+                else if (c == ')' || c == ']' || c == '}') groupCount--;
+                else if (groupCount == 0)
                 {
-                    var pCount = 0;
-                    while (s[0] == '(' && s[s.Length - 1] == ')')
-                    {
-                        foreach (var c in s)
-                        {
-                            if (c == '(') pCount++;
-                            else if (c == ')') pCount--;
-                            else if (pCount == 0) return s;
-                        }
-                        s = s.Substring(1, s.Length - 2);
-                    }
+                    if (c == '<') genCount++;
+                    else if (c == '>' && type[i - 1] != '-') genCount--;
+                    else if (genCount == 0 && c == '-' && i + 1 is int p && p < length && type[p] == '>')
+                        return true;
                 }
-                return s;
             }
+            return false;
+        }
+
+        static string CleanFunctionType(string type)
+        {
+            if (!string.IsNullOrEmpty(type))
+            {
+                var parCount = 0;
+                while (type[0] == '(' && type[type.Length - 1] == ')')
+                {
+                    foreach (var c in type)
+                    {
+                        if (c == '(') parCount++;
+                        else if (c == ')') parCount--;
+                        else if (parCount == 0) return type;
+                    }
+                    type = type.Substring(1, type.Length - 2);
+                }
+            }
+            return type;
         }
     }
 
