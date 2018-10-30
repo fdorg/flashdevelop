@@ -107,8 +107,8 @@ namespace HaXeContext.Completion
                 wordLeft = GetWordLeft(sci, ref pos);
                 if (string.IsNullOrEmpty(wordLeft))
                 {
-                    var c = (char) sci.CharAt(pos);
-                    if (c == '=') return HandleAssignCompletion(sci, pos - 1, autoHide);
+                    var c = (char) sci.CharAt(pos--);
+                    if (c == '=') return HandleAssignCompletion(sci, pos, autoHide);
                 }
                 return false;
             }
@@ -122,21 +122,23 @@ namespace HaXeContext.Completion
 
         static bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
         {
-            var expr = GetExpressionType(sci, position, false, true);
-            if (expr.Type != null && expr.Type.Flags.HasFlag(FlagType.Abstract)
-                && expr.Type.Members is MemberList members && members.Count > 0
-                && expr.Type.MetaDatas != null && expr.Type.MetaDatas.Any(it => it.Name == ":enum"))
+            // for example: v = <complete>, v != <complete>, v == <complete>
+            if ((char) sci.CharAt(position) is char c && (c == ' ' || c == '!' || c == '='))
             {
-                var list = new List<ICompletionListItem>();
-                foreach (MemberModel member in members)
+                var expr = GetExpressionType(sci, position, false, true);
+                if (expr.Type != null && expr.Type.Flags.HasFlag(FlagType.Abstract)
+                    && expr.Type.Members is MemberList members && members.Count > 0
+                    && expr.Type.MetaDatas != null && expr.Type.MetaDatas.Any(it => it.Name == ":enum"))
                 {
-                    if (member.Flags.HasFlag(FlagType.Variable) && !member.Access.HasFlag(Visibility.Private))
+                    var list = new List<ICompletionListItem>();
+                    foreach (MemberModel member in members)
                     {
-                        list.Add(new MemberItem(member));
+                        if (member.Flags.HasFlag(FlagType.Variable) && !member.Access.HasFlag(Visibility.Private))
+                        {
+                            list.Add(new MemberItem(member));
+                        }
                     }
-                }
-                if (list.Count > 0)
-                {
+                    if (list.Count <= 0) return false;
                     CompletionList.Show(list, autoHide);
                     return true;
                 }
