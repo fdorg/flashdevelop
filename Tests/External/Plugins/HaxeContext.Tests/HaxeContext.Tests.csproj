@@ -953,6 +953,11 @@
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2489_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_ParameterizedFunction_case1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_ParameterizedFunction_case1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2493_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2493_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2493_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2493_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2493_3.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

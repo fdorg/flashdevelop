@@ -3704,7 +3704,7 @@ namespace ASCompletion.Completion
             var newMember = new MemberModel
             {
                 Name = name,
-                Type = MemberModel.FormatType(member.Type),
+                Type = MemberModel.FormatType(GetShortType(member.Type)),
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
@@ -3723,7 +3723,7 @@ namespace ASCompletion.Completion
             var newMember = new MemberModel
             {
                 Name = name,
-                Type = MemberModel.FormatType(member.Type),
+                Type = GetShortType(GetShortType(member.Type)),
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
@@ -3748,7 +3748,7 @@ namespace ASCompletion.Completion
             var newMember = new MemberModel
             {
                 Name = name,
-                Type = MemberModel.FormatType(member.Type),
+                Type = MemberModel.FormatType(GetShortType(member.Type)),
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
