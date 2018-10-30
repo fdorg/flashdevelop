@@ -257,6 +257,16 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue2497TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2497_1", ' ', false, false)
+                    .SetName("(v:EnumValue) += <complete> Issue 2497. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2497");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
@@ -264,6 +274,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharIssue2396TestCases)),
             TestCaseSource(nameof(OnCharIssue589TestCases)),
             TestCaseSource(nameof(OnCharIssue2483TestCases)),
+            TestCaseSource(nameof(OnCharIssue2497TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {
@@ -678,6 +689,25 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2497TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2497_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2497_1"))
+                    .SetName("var v:EnumAbstract = <complete> Issue 2497. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2497");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2497_2", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2497_2"))
+                    .SetName("if ((v:EnumAbstract) != <complete>) Issue 2497. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2497");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2497_3", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2497_3"))
+                    .SetName("if ((v:EnumAbstract) == <complete>) Issue 2497. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2497");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -687,6 +717,7 @@ namespace HaXeContext.Completion
             //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)), // TODO: That tests pass without other tests.
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2415TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue589TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2497TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
