@@ -3480,10 +3480,10 @@ namespace ASCompletion.Completion
                         if (expression.SubExpressions == null)
                         {
                             expression.SubExpressions = new List<string>();
-                            expression.SubExpressionPosition = new List<int>();
+                            expression.SubExpressionPositions = new List<int>();
                         }
                         expression.SubExpressions.Add("");
-                        expression.SubExpressionPosition.Add(position + 1);
+                        expression.SubExpressionPositions.Add(position + 1);
                         sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
                         expression.Separator = ";";
                         break;
@@ -3497,7 +3497,7 @@ namespace ASCompletion.Completion
                             sb.Clear();
                             positionExpression = expression.Position;
                             expression.SubExpressions = null;
-                            expression.SubExpressionPosition = null;
+                            expression.SubExpressionPositions = null;
                             break;
                         }
                         sbSub.Insert(0, c);
@@ -3522,7 +3522,7 @@ namespace ASCompletion.Completion
                             if (expression.SubExpressions == null)
                             {
                                 expression.SubExpressions = new List<string>();
-                                expression.SubExpressionPosition = new List<int>();
+                                expression.SubExpressionPositions = new List<int>();
                             }
                             sbSub.Clear();
                         }
@@ -3536,7 +3536,7 @@ namespace ASCompletion.Completion
                             positionExpression = position;
                             sbSub.Insert(0, c);
                             expression.SubExpressions.Add(sbSub.ToString());
-                            expression.SubExpressionPosition.Add(position + 1);
+                            expression.SubExpressionPositions.Add(position + 1);
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~");
                             var pos = position - 1;
@@ -3601,7 +3601,7 @@ namespace ASCompletion.Completion
                             positionExpression = position;
                             sbSub.Insert(0, c);
                             expression.SubExpressions.Add(sbSub.ToString());
-                            expression.SubExpressionPosition.Add(position + 1);
+                            expression.SubExpressionPositions.Add(position + 1);
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
                             var pos = position - 1;
@@ -3651,7 +3651,7 @@ namespace ASCompletion.Completion
                             if (expression.SubExpressions == null)
                             {
                                 expression.SubExpressions = new List<string>();
-                                expression.SubExpressionPosition = new List<int>();
+                                expression.SubExpressionPositions = new List<int>();
                             }
                             sbSub.Clear();
                         }
@@ -3724,10 +3724,10 @@ namespace ASCompletion.Completion
                                     if (expression.SubExpressions == null)
                                     {
                                         expression.SubExpressions = new List<string>();
-                                        expression.SubExpressionPosition = new List<int>();
+                                        expression.SubExpressionPositions = new List<int>();
                                     }
                                     expression.SubExpressions.Add(string.Empty);
-                                    expression.SubExpressionPosition.Add(position + 1);
+                                    expression.SubExpressionPositions.Add(position + 1);
                                     sb.Insert(0, ".#" + (subCount++) + "~");
                                 }
                                 ignoreWhiteSpace = false;
@@ -3761,10 +3761,10 @@ namespace ASCompletion.Completion
                                     if (expression.SubExpressions == null)
                                     {
                                         expression.SubExpressions = new List<string>();
-                                        expression.SubExpressionPosition = new List<int>();
+                                        expression.SubExpressionPositions = new List<int>();
                                     }
                                     expression.SubExpressions.Add(string.Empty);
-                                    expression.SubExpressionPosition.Add(position + 1);
+                                    expression.SubExpressionPositions.Add(position + 1);
                                     sb.Insert(0, ".#" + (subCount++) + "~");
                                 }
                                 ignoreWhiteSpace = false;
@@ -5389,7 +5389,7 @@ namespace ASCompletion.Completion
         public int PositionExpression;
         public string Value;
         public List<string> SubExpressions;
-        public List<int> SubExpressionPosition;
+        public List<int> SubExpressionPositions;
         public string Separator;
         public int SeparatorPosition;
         public string WordBefore;

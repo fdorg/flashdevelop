@@ -673,47 +673,57 @@ namespace HaXeContext.Completion
                      || member.Flags.HasFlag(FlagType.ParameterVar) && IsFunction(member.Type)))
             {
                 var returnType = member.Type;
-                if (!string.IsNullOrEmpty(returnType) && member.Template is string template
-                    && member.Parameters is List<MemberModel> parameters
-                    && template.Substring(1, template.Length - 2).Split(',') is string[] templates 
-                    && Array.IndexOf(templates, returnType) is int templateIndex && templateIndex != -1)
+                if (member.Template is string template && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
                 {
-                    for (int i = 0, count = parameters.Count; i < count; i++)
+                    var subExpressionPosition = result.Context.SubExpressionPositions.Last();
+                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
+                    var expressions = new List<ASResult>();
+                    var groupCount = 0;
+                    for (int i = 0, length = subExpression.Length - 1; i <= length; i++)
                     {
-                        var parameter = parameters[i];
-                        if (parameter.Type != returnType) continue;
-                        var subExpression = result.Context.SubExpressions.Last();
-                        subExpression = subExpression.Substring(1, subExpression.Length - 2);
-                        var groupCount = 0;
-                        var paramIndex = 0;
-                        for (int j = 0, length = subExpression.Length - 1; j <= length; j++)
+                        var c = subExpression[i];
+                        if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
+                        else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
+                        else if (groupCount == 0 && c == ',' || i == length)
                         {
-                            var c = subExpression[j];
-                            if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
-                            else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
-                            else if (groupCount == 0 && c == ',' || j == length)
-                            {
-                                if (i != paramIndex++) continue;
-                                var expr = GetExpressionType(ASContext.CurSciControl, result.Context.SubExpressionPosition.Last() + subExpression.Length, false, true);
-                                result.Type = expr.Type;
-                                result.Member = (MemberModel) result.Member.Clone();
-                                var type = expr.Type.Name;
-                                result.Member.Type = type;
-                                templates[templateIndex] = type;
-                                result.Member.Template = $"<{string.Join(", ", templates)}>";
-                                parameters = result.Member.Parameters;
-                                for (var k = 0; k < parameters.Count; k++)
-                                {
-                                    parameter = parameters[k];
-                                    if (parameter.Type != returnType) continue;
-                                    parameters[k] = (MemberModel) parameter.Clone();
-                                    parameters[k].Type = type;
-                                }
-                                return;
-                            }
+                            var expr = GetExpressionType(ASContext.CurSciControl, subExpressionPosition + (i + 1), false, true);
+                            if (expr.Type == null) expr.Type = ClassModel.VoidClass;
+                            expressions.Add(expr);
                         }
                     }
-                    return;
+                    var templates = template.Substring(1, template.Length - 2).Split(',');
+                    for (var i = 0; i < templates.Length; i++)
+                    {
+                        string newType = null;
+                        var templateType = templates[i];
+                        if (member.Parameters is List<MemberModel> parameters)
+                        {
+                            for (var j = 0; j < parameters.Count && j < expressions.Count; j++)
+                            {
+                                var parameter = parameters[j];
+                                if (parameter.Type != templateType) continue;
+                                if (string.IsNullOrEmpty(newType))
+                                {
+                                    var expr = expressions[j];
+                                    if (expr.Type.IsVoid()) break;
+                                    newType = expr.Type.Name;
+                                }
+                                if (string.IsNullOrEmpty(newType)) continue;
+                                parameters[j] = (MemberModel) parameter.Clone();
+                                parameters[j].Type = newType;
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(newType))
+                        {
+                            var r = new Regex($"\\b{templateType}\\b");
+                            if (!string.IsNullOrEmpty(returnType) && r.IsMatch(returnType))
+                            {
+                                returnType = r.Replace(returnType, newType);
+                                member.Type = returnType;
+                            }
+                            templates[i] = newType;
+                        }
+                    }
                 }
                 // previous member called as a method
                 if (token[0] == '#' && IsFunction(returnType)
