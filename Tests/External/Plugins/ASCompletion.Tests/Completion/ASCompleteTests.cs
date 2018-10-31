@@ -1444,6 +1444,25 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_ParameterizedFunction_issue2499_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2499_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(foo<T>((String:Null<T>)):<T>).<complete> Issue 2499. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2499_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(foo<T>((String:Dynamic<T>)):<T>).<complete> Issue 2499. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2499_3"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(foo<T>((String:Class<T>)):<T>).<complete> Issue 2499. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1459,6 +1478,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_ArrayAccess_issue2471_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2203_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2487_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2499_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {

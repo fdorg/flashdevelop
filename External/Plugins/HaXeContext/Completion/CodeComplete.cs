@@ -731,12 +731,23 @@ namespace HaXeContext.Completion
                     {
                         string newType = null;
                         var templateType = templates[i];
+                        var reTemplateType = new Regex($"\\b{templateType}\\b");
                         if (member.Parameters is List<MemberModel> parameters)
                         {
                             for (var j = 0; j < parameters.Count && j < expressions.Count; j++)
                             {
                                 var parameter = parameters[j];
-                                if (parameter.Type != templateType) continue;
+                                var parameterType = parameter.Type;
+                                if (parameterType != templateType)
+                                {
+                                    // for example: typedef Null<T> = T, abstract Null<T> from T to T
+                                    if (reTemplateType.IsMatch(parameterType)
+                                        && ResolveType(parameterType, result.InFile) is ClassModel expr && !expr.IsVoid()
+                                        && (expr.Flags & (FlagType.Abstract | FlagType.TypeDef)) != 0)
+                                    {
+                                    }
+                                    else continue;
+                                }
                                 if (string.IsNullOrEmpty(newType))
                                 {
                                     var expr = expressions[j];
@@ -745,19 +756,16 @@ namespace HaXeContext.Completion
                                 }
                                 if (string.IsNullOrEmpty(newType)) continue;
                                 parameters[j] = (MemberModel) parameter.Clone();
-                                parameters[j].Type = newType;
+                                parameters[j].Type = reTemplateType.Replace(parameterType, newType);
                             }
                         }
-                        if (!string.IsNullOrEmpty(newType))
+                        if (string.IsNullOrEmpty(newType)) continue;
+                        if (!string.IsNullOrEmpty(returnType) && reTemplateType.IsMatch(returnType))
                         {
-                            var r = new Regex($"\\b{templateType}\\b");
-                            if (!string.IsNullOrEmpty(returnType) && r.IsMatch(returnType))
-                            {
-                                returnType = r.Replace(returnType, newType);
-                                member.Type = returnType;
-                            }
-                            templates[i] = newType;
+                            returnType = reTemplateType.Replace(returnType, newType);
+                            member.Type = returnType;
                         }
+                        templates[i] = newType;
                     }
                     member.Template = $"<{string.Join(", ", templates)}>";
                     result.Member = member;

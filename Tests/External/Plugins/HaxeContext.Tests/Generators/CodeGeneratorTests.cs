@@ -193,7 +193,7 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
                 yield return new TestCaseData("BeforeGenerateFunction_issue2478_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_issue2478_1"))
-                    .SetName("test(a[0]()). Generate function. Issue2478. Case 1")
+                    .SetName("test(a[0]()).<generate> Generate function. Issue2478. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2478");
                 yield return new TestCaseData("BeforeGenerateGetterSetter_issue2493_1", GeneratorJobType.GetterSetter, true)
                     .Returns(ReadAllText("AfterGenerateGetterSetter_issue2493_1"))
@@ -207,6 +207,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateGetterSetter_issue2493_3"))
                     .SetName("var s<generate> = new Sprite(). Generate setter. Issue2493. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2493");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2499_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2499_1"))
+                    .SetName("(foo<T>(String:Class<T>):T).<generate> Assign statement to variable. Issue2499. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
             }
         }
 
