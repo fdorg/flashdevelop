@@ -211,6 +211,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateGetterSetter_issue2499_1"))
                     .SetName("(foo<T>(String:Class<T>):T).<generate> Assign statement to variable. Issue2499. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2499_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2499_2"))
+                    .SetName("(foo<T:{}>(String:Class<T>):T).<generate> Assign statement to variable. Issue2499. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
             }
         }
 
