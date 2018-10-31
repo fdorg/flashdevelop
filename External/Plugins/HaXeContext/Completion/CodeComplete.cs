@@ -706,7 +706,7 @@ namespace HaXeContext.Completion
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
-                if (member.Template is string template && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
+                if (!string.IsNullOrEmpty(member.Template) && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
                 {
                     var subExpressionPosition = result.Context.SubExpressionPositions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
@@ -726,19 +726,21 @@ namespace HaXeContext.Completion
                         }
                     }
                     member = (MemberModel) member.Clone();
-                    var templates = template.Substring(1, template.Length - 2).Split(',');
+                    var templates = member.Template.Substring(1, member.Template.Length - 2).Split(',');
                     for (var i = 0; i < templates.Length; i++)
                     {
                         string newType = null;
-                        var templateType = templates[i];
-                        var reTemplateType = new Regex($"\\b{templateType}\\b");
+                        var template = templates[i];
+                        // try transform T:{} to T
+                        if (template.IndexOf(':') is int p && p != -1) template = template.Substring(0, p);
+                        var reTemplateType = new Regex($"\\b{template}\\b");
                         if (member.Parameters is List<MemberModel> parameters)
                         {
                             for (var j = 0; j < parameters.Count && j < expressions.Count; j++)
                             {
                                 var parameter = parameters[j];
                                 var parameterType = parameter.Type;
-                                if (parameterType != templateType)
+                                if (parameterType != template)
                                 {
                                     // for example: typedef Null<T> = T, abstract Null<T> from T to T
                                     if (reTemplateType.IsMatch(parameterType)
