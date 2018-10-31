@@ -212,6 +212,7 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
+            if (TryInferGenericType(var)) return;
             if (var.Flags.HasFlag(FlagType.ParameterVar))
             {
                 if (FileParser.IsFunctionType(var.Type)) return;
@@ -489,6 +490,23 @@ namespace HaXeContext.Completion
         void InferParameterType(MemberModel var)
         {
             var ctx = ASContext.Context;
+            var value = var.Value;
+            var type = ctx.ResolveToken(value, ctx.CurrentModel);
+            if (type.IsVoid())
+            {
+                if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
+                    && char.IsLetter(value[0]) &&
+                    (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
+                    type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ??
+                           ClassModel.VoidClass;
+                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+            }
+            var.Type = type.Name;
+        }
+
+        bool TryInferGenericType(MemberModel var)
+        {
+            var ctx = ASContext.Context;
             if (ctx.CurrentMember is MemberModel member && !string.IsNullOrEmpty(member.Template)
                 && !string.IsNullOrEmpty(var.Type) && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
             {
@@ -500,22 +518,10 @@ namespace HaXeContext.Completion
                     var type = ResolveType(parts[1], ctx.CurrentModel);
                     var.Type = type.Name;
                     var.Flags |= FlagType.Inferred;
-                    return;
+                    return true;
                 }
             }
-            else
-            {
-                var value = var.Value;
-                var type = ctx.ResolveToken(value, ctx.CurrentModel);
-                if (type.IsVoid())
-                {
-                    if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
-                        && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
-                        type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
-                    if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
-                }
-                var.Type = type.Name;
-            }
+            return false;
         }
 
         static ClassModel InferTypedefType(ScintillaControl sci, MemberModel expr)
