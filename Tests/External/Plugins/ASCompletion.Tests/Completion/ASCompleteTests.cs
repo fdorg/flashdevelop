@@ -1482,6 +1482,21 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_ParameterizedFunction_issue2505_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2505_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(v:T).<complete> Issue 2505. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2505");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2505_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(v:T).<complete> Issue 2505. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2505");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1499,6 +1514,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2487_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2499_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2503_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2505_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {

@@ -2863,15 +2863,15 @@ namespace ASCompletion.Completion
         {
             var result = new ASResult();
             if (local.coma == ComaExpression.AnonymousObjectParam) return result;
-            var context = ASContext.Context;
-            var features = context.Features;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
             var p = token.IndexOf('(');
             if (p > 0) token = token.Substring(0, p);
 
             // top-level elements resolution
-            context.ResolveTopLevelElement(token, result);
+            ctx.ResolveTopLevelElement(token, result);
             if (!result.IsNull())
             {
                 if (result.Member != null && (result.Member.Flags & FlagType.Function) > 0 && p < 0)
@@ -2910,13 +2910,12 @@ namespace ASCompletion.Completion
                                 result.Member = var;
                                 result.InFile = inFile;
                                 result.InClass = inClass;
-                                if (features.hasInference && var.Type == null)
+                                if (features.hasInference && (var.Type == null || ResolveType(var.Type, inFile).IsVoid()))
                                 {
-                                    if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
-                                    else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
+                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferVariableType(local, var);
                                 }
-                                if (string.IsNullOrEmpty(var.Type)) result.Type = context.ResolveType(features.objectKey, null);
-                                else if (var.Flags.HasFlag(FlagType.Function)) result.Type = context.ResolveType("Function", null);
+                                if (string.IsNullOrEmpty(var.Type)) result.Type = ctx.ResolveType(features.objectKey, null);
+                                else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ctx.ResolveType("Function", null);
                                 else result.Type = ResolveType(var.Type, inFile);
                                 return result;
                             }
@@ -2946,7 +2945,7 @@ namespace ASCompletion.Completion
                         var member = result.Member;
                         if (member != null && member.Type == null)
                         {
-                            context.CodeComplete.InferVariableType(local, member);
+                            ctx.CodeComplete.InferVariableType(local, member);
                             if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
                         }
                     }
@@ -2962,19 +2961,19 @@ namespace ASCompletion.Completion
             // current file types
             foreach(var aClass in inFile.Classes)
             {
-                if (aClass.Name != token || (context.InPrivateSection && aClass.Access != Visibility.Private)) continue;
+                if (aClass.Name != token || (ctx.InPrivateSection && aClass.Access != Visibility.Private)) continue;
                 result.Type = aClass;
                 result.IsStatic = p < 0;
                 return result;
             }
             // visible types & declarations
-            var visible = context.GetVisibleExternalElements();
+            var visible = ctx.GetVisibleExternalElements();
             foreach (MemberModel aDecl in visible)
             {
                 if (aDecl.Name != token) continue;
                 if ((aDecl.Flags & FlagType.Package) > 0)
                 {
-                    var package = context.ResolvePackage(token, false);
+                    var package = ctx.ResolvePackage(token, false);
                     if (package != null)
                     {
                         result.InFile = package;
@@ -2995,7 +2994,7 @@ namespace ASCompletion.Completion
                                 break;
                             }
                     }
-                    if (friendClass == null) friendClass = context.ResolveType(aDecl.Type, inFile);
+                    if (friendClass == null) friendClass = ctx.ResolveType(aDecl.Type, inFile);
                     if (!friendClass.IsVoid())
                     {
                         result.Type = friendClass;
@@ -3009,8 +3008,8 @@ namespace ASCompletion.Completion
                     result.RelClass = ClassModel.VoidClass;
                     result.InClass = FindClassOf(aDecl);
                     result.Type = (p < 0)
-                        ? context.ResolveType("Function", null)
-                        : context.ResolveType(aDecl.Type, aDecl.InFile);
+                        ? ctx.ResolveType("Function", null)
+                        : ctx.ResolveType(aDecl.Type, aDecl.InFile);
                     result.InFile = aDecl.InFile;
                     return result;
                 }
@@ -3019,7 +3018,7 @@ namespace ASCompletion.Completion
                     result.Member = aDecl;
                     result.RelClass = ClassModel.VoidClass;
                     result.InClass = FindClassOf(aDecl);
-                    result.Type = context.ResolveType(aDecl.Type, aDecl.InFile);
+                    result.Type = ctx.ResolveType(aDecl.Type, aDecl.InFile);
                     result.InFile = aDecl.InFile;
                     return result;
                 }
@@ -3109,24 +3108,6 @@ namespace ASCompletion.Completion
                 if (string.IsNullOrEmpty(var.Type)) var.Type = ctx.ResolveType(ctx.Features.objectKey, null).Name;
                 var.Flags |= FlagType.Inferred;
             }
-        }
-
-        /// <summary>
-        /// Infer very simple cases: function foo(value = {expression})
-        /// </summary>
-        protected void InferParameterVarType(MemberModel var)
-        {
-            var ctx = ASContext.Context;
-            var value = var.Value;
-            var type = ctx.ResolveToken(value, ctx.CurrentModel);
-            if (type.IsVoid())
-            {
-                if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
-                    && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
-                    type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
-                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
-            }
-            var.Type = type.Name;
         }
 
         /// <summary>

@@ -160,7 +160,7 @@ namespace HaXeContext.Completion
                 if (name[0] == '?')
                 {
                     if (string.IsNullOrEmpty(item.Type) && (expression.Separator != "=" || item.Value != expression.Value))
-                        InferParameterVarType(item);
+                        InferParameterType(item);
                     var type = item.Type;
                     if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
                     else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
@@ -212,19 +212,21 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
+            if (TryInferGenericType(var)) return;
+            if (var.Flags.HasFlag(FlagType.ParameterVar))
+            {
+                if (FileParser.IsFunctionType(var.Type)) return;
+                InferParameterType(var);
+                return;
+            }
             var ctx = ASContext.Context;
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
             if (!m.Success)
             {
                 base.InferVariableType(sci, local, var);
-                if (string.IsNullOrEmpty(var.Type)
-                    && (var.Flags.HasFlag(FlagType.Variable)
-                        || var.Flags.HasFlag(FlagType.Getter)
-                        || var.Flags.HasFlag(FlagType.Setter)))
-                {
+                if (string.IsNullOrEmpty(var.Type) && (var.Flags & (FlagType.Variable | FlagType.Getter | FlagType.Setter)) != 0)
                     var.Type = ctx.ResolveType(ctx.Features.dynamicKey, null).Name;
-                }
                 return;
             }
             var currentModel = ctx.CurrentModel;
@@ -479,6 +481,41 @@ namespace HaXeContext.Completion
                 var.Type = expr.Member.Type;
                 var.Flags |= FlagType.Inferred;
                 return true;
+            }
+            return false;
+        }
+
+        void InferParameterType(MemberModel var)
+        {
+            var ctx = ASContext.Context;
+            var value = var.Value;
+            var type = ctx.ResolveToken(value, ctx.CurrentModel);
+            if (type.IsVoid())
+            {
+                if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
+                    && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
+                    type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
+                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+            }
+            var.Type = type.Name;
+        }
+
+        bool TryInferGenericType(MemberModel var)
+        {
+            var ctx = ASContext.Context;
+            if (ctx.CurrentMember is MemberModel member && !string.IsNullOrEmpty(member.Template)
+                && !string.IsNullOrEmpty(var.Type) && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
+            {
+                var templates = member.Template.Substring(1, member.Template.Length - 2).Split(',');
+                foreach (var template in templates)
+                {
+                    var parts = template.Split(':');
+                    if (parts.Length == 1 || parts[0] != var.Type) continue;
+                    var type = ResolveType(parts[1], ctx.CurrentModel);
+                    var.Type = type.Name;
+                    var.Flags |= FlagType.Inferred;
+                    return true;
+                }
             }
             return false;
         }
