@@ -2631,14 +2631,12 @@ namespace ASCompletion.Completion
                 else return notFound;
             }
 
-            var ctx = ASContext.Context;
-            var features = ctx.Features;
-            var tokens = Regex.Split(expression, Regex.Escape(features.dot));
-
-            // eval first token
+            var tokens = Split(expression);
             var token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             ASResult head = null;
             if (token[0] == '#')
             {
@@ -2703,6 +2701,30 @@ namespace ASCompletion.Completion
                 }
             }
             return result ?? notFound;
+            // Utils
+            string[] Split(string expr)
+            {
+                var list = new List<string>();
+                var groupCount = 0;
+                var prevStartIndex = 0;
+                var length = expr.Length - 1;
+                for (var i = 0; i <= length; i++)
+                {
+                    var c = expr[i];
+                    if (c == '[' || c == '(' || c == '{') groupCount++;
+                    else if (c == ']' || c == ')' || c == '}') groupCount--;
+                    if (groupCount == 0 && (c == '.' || i == length))
+                    {
+                        var len = i - prevStartIndex;
+                        if (c != '.' && i == length) len++;
+                        list.Add(expr.Substring(prevStartIndex, len));
+                        prevStartIndex = i + 1;
+                        if (c == '.' && i == length) list.Add(string.Empty);
+                    }
+                }
+                if (list.Count == 0) list.Add(expr);
+                return list.ToArray();
+            }
         }
 
         static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, IList<string> tokens, bool complete, bool filterVisibility)
