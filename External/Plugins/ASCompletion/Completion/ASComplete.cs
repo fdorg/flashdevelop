@@ -4102,10 +4102,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                else if (c == '}')
-                {
-                    braceCount++;
-                }
+                else if (c == '}') braceCount++;
                 else if (c == '?')
                 {
                     //TODO: Change to ASContext.Context.CurrentModel
@@ -4129,7 +4126,6 @@ namespace ASCompletion.Completion
 
                     return ComaExpression.AnonymousObject;
                 }
-
                 position--;
             }
             return ComaExpression.None;
