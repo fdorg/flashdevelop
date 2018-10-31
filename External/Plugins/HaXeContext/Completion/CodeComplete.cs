@@ -226,9 +226,7 @@ namespace HaXeContext.Completion
             {
                 base.InferVariableType(sci, local, var);
                 if (string.IsNullOrEmpty(var.Type) && (var.Flags & (FlagType.Variable | FlagType.Getter | FlagType.Setter)) != 0)
-                {
                     var.Type = ctx.ResolveType(ctx.Features.dynamicKey, null).Name;
-                }
                 return;
             }
             var currentModel = ctx.CurrentModel;

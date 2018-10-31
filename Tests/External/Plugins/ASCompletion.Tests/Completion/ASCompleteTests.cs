@@ -1490,6 +1490,10 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                         .SetName("(v:T).<complete> Issue 2505. Case 1")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2505");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2505_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(v:T).<complete> Issue 2505. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2505");
                 }
             }
 
