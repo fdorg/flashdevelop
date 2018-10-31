@@ -214,6 +214,7 @@ namespace HaXeContext.Completion
         {
             if (var.Flags.HasFlag(FlagType.ParameterVar))
             {
+                if (FileParser.IsFunctionType(var.Type)) return;
                 InferParameterType(var);
                 return;
             }
@@ -490,7 +491,6 @@ namespace HaXeContext.Completion
 
         void InferParameterType(MemberModel var)
         {
-            if (var.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(var.Type)) return;
             var ctx = ASContext.Context;
             if (ctx.CurrentMember is MemberModel member && !string.IsNullOrEmpty(member.Template)
                 && !string.IsNullOrEmpty(var.Type) && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
