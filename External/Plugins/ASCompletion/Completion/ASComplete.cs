@@ -1741,16 +1741,17 @@ namespace ASCompletion.Completion
         internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var context = ASContext.Context;
+            var ctx = ASContext.Context;
             var parCount = 0;
             var braCount = 0;
             var comaCount = 0;
             var arrCount = 0;
             var genCount = 0;
             var hasChar = false;
-            while (position >= 0)
+            var endPosition = ctx.CurrentMember != null ? sci.LineEndPosition(ctx.CurrentMember.LineFrom) : 0;
+            while (position >= endPosition)
             {
-                if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
+                if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     var c = (char)sci.CharAt(position);
                     if (c <= ' ')
