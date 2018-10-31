@@ -3116,17 +3116,6 @@ namespace ASCompletion.Completion
         /// </summary>
         protected virtual void InferParameterVarType(MemberModel var)
         {
-            var ctx = ASContext.Context;
-            var value = var.Value;
-            var type = ctx.ResolveToken(value, ctx.CurrentModel);
-            if (type.IsVoid())
-            {
-                if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
-                    && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
-                    type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
-                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
-            }
-            var.Type = type.Name;
         }
 
         /// <summary>
