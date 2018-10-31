@@ -483,6 +483,27 @@ namespace HaXeContext.Completion
             return false;
         }
 
+        protected override void InferParameterVarType(MemberModel var)
+        {
+            if (var.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(var.Type)) return;
+            var ctx = ASContext.Context;
+            if (ctx.CurrentMember is MemberModel member && !string.IsNullOrEmpty(member.Template)
+                && !string.IsNullOrEmpty(var.Type) && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
+            {
+                var templates = member.Template.Substring(1, member.Template.Length - 2).Split(',');
+                foreach (var template in templates)
+                {
+                    var parts = template.Split(':');
+                    if (parts.Length == 1 || parts[0] != var.Type) continue;
+                    var type = ResolveType(parts[1], ctx.CurrentModel);
+                    var.Type = type.Name;
+                    var.Flags |= FlagType.Inferred;
+                    return;
+                }
+            }
+            base.InferParameterVarType(var);
+        }
+
         static ClassModel InferTypedefType(ScintillaControl sci, MemberModel expr)
         {
             var text = sci.GetLine(expr.LineFrom);
