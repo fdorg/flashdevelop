@@ -250,6 +250,15 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue589_11", ' ', false, false)
                     .SetName("case Node(1 , <complete>) Issue 589. Case 11")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_12", ' ', false, false)
+                    .SetName("case [_, <complete>] Issue 589. Case 12")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_13", ' ', false, true)
+                    .SetName("case EnumValue0 | EnumValue1 | <complete> Issue 589. Case 13")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_14", ' ', false, true)
+                    .SetName("case EnumValue0, EnumValue1, <complete> Issue 589. Case 14")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
             }
         }
 

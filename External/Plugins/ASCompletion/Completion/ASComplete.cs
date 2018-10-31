@@ -3867,7 +3867,8 @@ namespace ASCompletion.Completion
                     else if (c == ',')
                     {
                         expression.coma = DisambiguateComa(sci, position, minPos);
-                        expression.Separator = (expression.coma == ComaExpression.None) ? ";" : ",";
+                        expression.Separator = ",";
+                        expression.SeparatorPosition = position;
                         break;
                     }
                     else if (c == ':')
@@ -4018,18 +4019,14 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 var c = (char)sci.CharAt(position);
-                if (c == ';')
-                {
-                    return ComaExpression.None;
-                }
-                // var declaration
-                else if (c == ':')
+                if (c == ';') return ComaExpression.None;
+                if (c == ':')
                 {
                     position--;
                     string word = GetWordLeft(sci, ref position);
                     word = GetWordLeft(sci, ref position);
                     if (word == features.varKey) return ComaExpression.VarDeclaration;
-                    else continue;
+                    continue;
                 }
                 // Array values
                 else if (c == '[')
@@ -4060,9 +4057,12 @@ namespace ASCompletion.Completion
                                 else if (")}]>".Contains(c)) groupCount++;
                                 position--;
                             }
+
                             word1 = GetWordLeft(sci, ref position);
                         }
-                        if (word1 == features.functionKey) return ComaExpression.FunctionDeclaration; // anonymous function
+
+                        if (word1 == features.functionKey)
+                            return ComaExpression.FunctionDeclaration; // anonymous function
                         var word2 = GetWordLeft(sci, ref position);
                         if (word2 == features.functionKey || word2 == features.setKey || word2 == features.getKey)
                             return ComaExpression.FunctionDeclaration; // function declaration
@@ -4094,8 +4094,10 @@ namespace ASCompletion.Completion
                                     return ComaExpression.VarDeclaration;
                                 }
                             }
+
                             return ComaExpression.AnonymousObjectParam;
                         }
+
                         if (c != ')' && c != '}' && !char.IsLetterOrDigit(c)) return ComaExpression.AnonymousObject;
                         break;
                     }
@@ -4124,8 +4126,10 @@ namespace ASCompletion.Completion
                             if (c == ',' || c == '{') return coma;
                         }
                     }
+
                     return ComaExpression.AnonymousObject;
                 }
+
                 position--;
             }
             return ComaExpression.None;
