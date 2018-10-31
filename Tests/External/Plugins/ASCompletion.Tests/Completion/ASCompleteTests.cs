@@ -1460,6 +1460,14 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
                         .SetName("(foo<T>((String:Class<T>)):<T>).<complete> Issue 2499. Case 3")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2499_4"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("(foo<T:{}>((String:Class<T>)):<T>).<complete> Issue 2499. Case 4")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_ParameterizedFunction_issue2499_5"))
+                        .Returns(new ClassModel {Name = "Class<String>", Flags = FlagType.Class | FlagType.Abstract, InFile = FileModel.Ignore})
+                        .SetName("Type.getClass(String).<complete> Issue 2499. Case 5")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2499");
                 }
             }
 

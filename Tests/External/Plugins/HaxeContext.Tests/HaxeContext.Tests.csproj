@@ -969,6 +969,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2499_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2499_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2499_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2499_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2499_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
