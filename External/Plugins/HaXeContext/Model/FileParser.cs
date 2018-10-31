@@ -1670,7 +1670,8 @@ namespace HaXeContext.Model
             // when not in a class, parse if/for/while/switch/try...catch blocks
             if (ScriptMode)
             {
-                if (token == "catch" || token == "for" || token == "case")
+                if (token == "case") curModifiers = 0;
+                else if (token == "catch" || token == "for")
                 {
                     curModifiers = 0;
                     foundKeyword = FlagType.Variable;
