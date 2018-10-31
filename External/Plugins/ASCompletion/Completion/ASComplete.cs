@@ -2912,8 +2912,7 @@ namespace ASCompletion.Completion
                                 result.InClass = inClass;
                                 if (features.hasInference && (var.Type == null || ResolveType(var.Type, inFile).IsVoid()))
                                 {
-                                    if (var.Flags.HasFlag(FlagType.LocalVar)) ctx.CodeComplete.InferVariableType(local, var);
-                                    else if (var.Flags.HasFlag(FlagType.ParameterVar)) ctx.CodeComplete.InferParameterVarType(var);
+                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferVariableType(local, var);
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = ctx.ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ctx.ResolveType("Function", null);
@@ -3109,13 +3108,6 @@ namespace ASCompletion.Completion
                 if (string.IsNullOrEmpty(var.Type)) var.Type = ctx.ResolveType(ctx.Features.objectKey, null).Name;
                 var.Flags |= FlagType.Inferred;
             }
-        }
-
-        /// <summary>
-        /// Infer very simple cases: function foo(value = {expression})
-        /// </summary>
-        protected virtual void InferParameterVarType(MemberModel var)
-        {
         }
 
         /// <summary>

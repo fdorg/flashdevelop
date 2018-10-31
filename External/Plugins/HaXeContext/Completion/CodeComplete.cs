@@ -160,7 +160,7 @@ namespace HaXeContext.Completion
                 if (name[0] == '?')
                 {
                     if (string.IsNullOrEmpty(item.Type) && (expression.Separator != "=" || item.Value != expression.Value))
-                        InferParameterVarType(item);
+                        InferParameterType(item);
                     var type = item.Type;
                     if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
                     else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
@@ -212,6 +212,11 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
+            if (var.Flags.HasFlag(FlagType.ParameterVar))
+            {
+                InferParameterType(var);
+                return;
+            }
             var ctx = ASContext.Context;
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
@@ -483,7 +488,7 @@ namespace HaXeContext.Completion
             return false;
         }
 
-        protected override void InferParameterVarType(MemberModel var)
+        void InferParameterType(MemberModel var)
         {
             if (var.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(var.Type)) return;
             var ctx = ASContext.Context;
