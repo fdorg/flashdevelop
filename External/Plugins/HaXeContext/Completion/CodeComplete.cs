@@ -685,7 +685,7 @@ namespace HaXeContext.Completion
                     var type = result.Type;
                     while (!type.IsVoid() && string.IsNullOrEmpty(type.IndexType))
                     {
-                        type = ASContext.Context.ResolveType(type.ExtendsType, result.InFile);
+                        type = ResolveType(type.ExtendsType, ASContext.Context.CurrentModel);
                     }
                     result.Type = type;
                 }
@@ -771,6 +771,8 @@ namespace HaXeContext.Completion
                     }
                     member.Template = $"<{string.Join(", ", templates)}>";
                     result.Member = member;
+                    result.Type = ResolveType(returnType, ASContext.Context.CurrentModel);
+                    return;
                 }
                 // previous member called as a method
                 if (token[0] == '#' && FileParser.IsFunctionType(returnType)
