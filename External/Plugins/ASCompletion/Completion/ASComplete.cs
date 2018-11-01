@@ -1748,7 +1748,7 @@ namespace ASCompletion.Completion
             var arrCount = 0;
             var genCount = 0;
             var hasChar = false;
-            var endPosition = ctx.CurrentMember != null ? sci.LineEndPosition(ctx.CurrentMember.LineFrom) : 0;
+            var endPosition = ctx.CurrentMember != null ? sci.LineEndPosition(ctx.CurrentMember.LineFrom - 1) : 0;
             while (position >= endPosition)
             {
                 if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || ctx.CodeComplete.IsStringInterpolationStyle(sci, position))

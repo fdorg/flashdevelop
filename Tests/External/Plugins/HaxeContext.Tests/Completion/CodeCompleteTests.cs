@@ -523,6 +523,16 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_1")
+                    .Returns("PCalltipDef_1 (a, b, c, d)")
+                    .SetName("private var _value = new SomeType(<complete>. CalltipDef. Case 1");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(CalltipDefIssue2356TestCases)),
@@ -532,6 +542,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(CalltipDefIssue2475TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2489TestCases)),
             TestCaseSource(nameof(CalltipDefIssue589TestCases)),
+            TestCaseSource(nameof(CalltipDefTestCases)),
         ]
         public string CalltipDef(string fileName)
         {
