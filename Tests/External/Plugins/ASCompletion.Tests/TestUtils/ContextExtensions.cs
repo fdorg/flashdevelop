@@ -23,6 +23,8 @@ namespace ASCompletion.TestUtils
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 3};
             SetFeatures(mock, context);
+            mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it => context.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1)));
         }
 
         public static void SetHaxeFeatures(this IASContext mock)
@@ -32,6 +34,13 @@ namespace ASCompletion.TestUtils
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
             SetFeatures(mock, context);
+            mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it =>
+                {
+                    context.completionCache.IsDirty = true;
+                    context.GetTopLevelElements();
+                    context.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
+                });
         }
 
         static void SetFeatures(IASContext mock, IASContext context)
@@ -88,8 +97,6 @@ namespace ASCompletion.TestUtils
             mock.When(it => it.ResolveDotContext(Arg.Any<ScintillaControl>(), Arg.Any<ASResult>(), Arg.Any<MemberList>()))
                 .Do(it => context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), it.ArgAt<ASResult>(1), it.ArgAt<MemberList>(2)));
             mock.ResolvePackage(null, false).ReturnsForAnyArgs(it => context.ResolvePackage(it.ArgAt<string>(0), it.ArgAt<bool>(1)));
-            mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
-                .Do(it => context.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1)));
             mock.TypesAffinity(null, null).ReturnsForAnyArgs(it =>
             {
                 var inClass = it.ArgAt<ClassModel>(0);

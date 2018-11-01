@@ -513,6 +513,16 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue589TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue589_1")
+                    .Returns("EValue (v1:String, v2:Int) : EType")
+                    .SetName("case EType(<complete>. Issue 589. Case 1");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(CalltipDefIssue2356TestCases)),
@@ -521,6 +531,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(CalltipDefIssue2468TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2475TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2489TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue589TestCases)),
         ]
         public string CalltipDef(string fileName)
         {
@@ -761,18 +772,6 @@ namespace HaXeContext.Completion
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
             ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
-            //{TODO slavara: quick hack
-            ASContext.Context
-                .When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
-                .Do(it =>
-                {
-                    var ctx = (Context) ASContext.GetLanguageContext("haxe");
-                    ctx.GetCodeModel(ctx.CurrentModel, sci.Text);
-                    ctx.completionCache.IsDirty = true;
-                    ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
-                });
-            //}
-            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
     }

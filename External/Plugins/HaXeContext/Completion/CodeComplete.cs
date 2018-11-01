@@ -720,6 +720,23 @@ namespace HaXeContext.Completion
             return base.GetCalltipDef(member);
         }
 
+        protected override void FindMemberEx(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
+        {
+            base.FindMemberEx(token, inFile, result, mask, access);
+            if (result.Type != null && !result.Type.IsVoid()) return;
+            var list = ASContext.Context.GetTopLevelElements();
+            if (list == null || list.Count == 0) return;
+            foreach (MemberModel it in list)
+            {
+                if (it.Name != token || !it.Flags.HasFlag(FlagType.Enum)) continue;
+                var type = ResolveType(it.Type, inFile);
+                result.Type = type;
+                result.InClass = type;
+                result.IsStatic = false;
+                return;
+            }
+        }
+
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token)) return;
