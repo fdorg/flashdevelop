@@ -4056,12 +4056,9 @@ namespace ASCompletion.Completion
                                 else if (")}]>".Contains(c)) groupCount++;
                                 position--;
                             }
-
                             word1 = GetWordLeft(sci, ref position);
                         }
-
-                        if (word1 == features.functionKey)
-                            return ComaExpression.FunctionDeclaration; // anonymous function
+                        if (word1 == features.functionKey) return ComaExpression.FunctionDeclaration; // anonymous function
                         var word2 = GetWordLeft(sci, ref position);
                         if (word2 == features.functionKey || word2 == features.setKey || word2 == features.getKey)
                             return ComaExpression.FunctionDeclaration; // function declaration
@@ -4093,10 +4090,8 @@ namespace ASCompletion.Completion
                                     return ComaExpression.VarDeclaration;
                                 }
                             }
-
                             return ComaExpression.AnonymousObjectParam;
                         }
-
                         if (c != ')' && c != '}' && !char.IsLetterOrDigit(c)) return ComaExpression.AnonymousObject;
                         break;
                     }
@@ -4113,7 +4108,7 @@ namespace ASCompletion.Completion
                             // Function optional argument
                             return coma;
                         }
-                        else if (coma == ComaExpression.VarDeclaration)
+                        if (coma == ComaExpression.VarDeclaration)
                         {
                             // Possible anonymous structure optional field. Check we are not in a ternary operator
                             position--;
@@ -4122,7 +4117,6 @@ namespace ASCompletion.Completion
                             if (c == ',' || c == '{') return coma;
                         }
                     }
-
                     return ComaExpression.AnonymousObject;
                 }
                 position--;
