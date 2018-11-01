@@ -971,6 +971,15 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2499_2.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2499_1.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2499_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_10.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_11.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_12.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_13.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_14.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

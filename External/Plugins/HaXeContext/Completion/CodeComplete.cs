@@ -108,7 +108,22 @@ namespace HaXeContext.Completion
                 if (string.IsNullOrEmpty(wordLeft))
                 {
                     var c = (char) sci.CharAt(pos--);
-                    if (c == '=') return HandleAssignCompletion(sci, pos, autoHide);
+                    if (c == '=')
+                    {
+                        HandleAssignCompletion(sci, pos, autoHide);
+                        return false;
+                    }
+                    // for example: case EnumValue | <complete> or case EnumValue, <complete>
+                    if (c == '|' || c == ',')
+                    {
+                        while (GetExpressionType(sci, pos + 1, false, true) is ASResult expr && expr.Type != null && !expr.Type.IsVoid())
+                        {
+                            if (expr.Context.WordBefore == "case") return HandleSwitchCaseCompletion(sci, pos, autoHide);
+                            if (expr.Context.Separator is string separator && (separator == "|" || separator == ","))
+                                pos = expr.Context.SeparatorPosition - 1;
+                            else break;
+                        }
+                    }
                 }
                 return false;
             }

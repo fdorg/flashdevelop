@@ -218,19 +218,46 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("BeforeOnChar_issue589_1", ' ', false, true)
-                    .SetName("case | Issue 589. Case 1")
+                    .SetName("case <complete> Issue 589. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
                 yield return new TestCaseData("BeforeOnChar_issue589_2", ' ', false, true)
-                    .SetName("case | Issue 589. Case 2")
+                    .SetName("case <complete> Issue 589. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
                 yield return new TestCaseData("BeforeOnChar_issue589_3", ' ', false, true)
-                    .SetName("case | Issue 589. Case 3")
+                    .SetName("case <complete> Issue 589. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
                 yield return new TestCaseData("BeforeOnChar_issue589_4", ' ', false, false)
-                    .SetName("case | Issue 589. Case 4")
+                    .SetName("case <complete> Issue 589. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
                 yield return new TestCaseData("BeforeOnChar_issue589_5", ' ', false, false)
-                    .SetName("case | Issue 589. Case 5")
+                    .SetName("case <complete> Issue 589. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_6", ' ', false, true)
+                    .SetName("case EnumValue0 | <complete> Issue 589. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_7", ' ', false, true)
+                    .SetName("case EnumValue0, <complete> Issue 589. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_8", ' ', false, false)
+                    .SetName("trace(1 | <complete>) Issue 589. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_9", ' ', false, false)
+                    .SetName("trace(1 , <complete>) Issue 589. Case 9")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_10", ' ', false, false)
+                    .SetName("case Node(1 | <complete>) Issue 589. Case 10")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_11", ' ', false, false)
+                    .SetName("case Node(1 , <complete>) Issue 589. Case 11")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_12", ' ', false, false)
+                    .SetName("case [_, <complete>] Issue 589. Case 12")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_13", ' ', false, true)
+                    .SetName("case EnumValue0 | EnumValue1 | <complete> Issue 589. Case 13")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
+                yield return new TestCaseData("BeforeOnChar_issue589_14", ' ', false, true)
+                    .SetName("case EnumValue0, EnumValue1, <complete> Issue 589. Case 14")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/589");
             }
         }

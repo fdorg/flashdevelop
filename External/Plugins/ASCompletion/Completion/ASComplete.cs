@@ -1741,16 +1741,17 @@ namespace ASCompletion.Completion
         internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var context = ASContext.Context;
+            var ctx = ASContext.Context;
             var parCount = 0;
             var braCount = 0;
             var comaCount = 0;
             var arrCount = 0;
             var genCount = 0;
             var hasChar = false;
-            while (position >= 0)
+            var endPosition = ctx.CurrentMember != null ? sci.LineEndPosition(ctx.CurrentMember.LineFrom) : 0;
+            while (position >= endPosition)
             {
-                if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
+                if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     var c = (char)sci.CharAt(position);
                     if (c <= ' ')
@@ -1911,10 +1912,10 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Complete object member
         /// </summary>
-        /// <param name="Sci">Scintilla control</param>
+        /// <param name="sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        private static bool HandleDotCompletion(ScintillaControl Sci, bool autoHide)
+        private static bool HandleDotCompletion(ScintillaControl sci, bool autoHide)
         {
             //this method can exit at multiple points, so reset the current class now rather than later
             currentClassHash = null;
@@ -1923,8 +1924,8 @@ namespace ASCompletion.Completion
             if (autoHide && DeclarationSectionOnly()) return false;
 
             // get expression at cursor position
-            var position = Sci.CurrentPos;
-            var expr = GetExpression(Sci, position);
+            var position = sci.CurrentPos;
+            var expr = GetExpression(sci, position);
             if (expr.Value == null) return true;
             var ctx = ASContext.Context;
             var features = ctx.Features;
@@ -1945,14 +1946,13 @@ namespace ASCompletion.Completion
                         return false;
                     // new/extends/implements
                     if (features.HasTypePreKey(word))
-                        return HandleNewCompletion(Sci, expr.Value, autoHide, word);
+                        return HandleNewCompletion(sci, expr.Value, autoHide, word);
                     // import
                     if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
-                        return HandleImportCompletion(Sci, expr.Value, autoHide);
+                        return HandleImportCompletion(sci, expr.Value, autoHide);
                 }
                 // type
-                else if (features.hasEcmaTyping && expr.Separator == ":"
-                         && HandleColonCompletion(Sci, expr.Value, autoHide))
+                else if (features.hasEcmaTyping && expr.Separator == ":" && HandleColonCompletion(sci, expr.Value, autoHide))
                     return true;
 
                 // no completion
@@ -1963,9 +1963,9 @@ namespace ASCompletion.Completion
 
                 if (expr.coma == ComaExpression.AnonymousObjectParam)
                 {
-                    int cpos = Sci.CurrentPos - 1;
-                    int paramIndex = FindParameterIndex(Sci, ref cpos);
-                    if (calltipPos != cpos) ctx.CodeComplete.ResolveFunction(Sci, cpos, autoHide);
+                    int cpos = sci.CurrentPos - 1;
+                    int paramIndex = FindParameterIndex(sci, ref cpos);
+                    if (calltipPos != cpos) ctx.CodeComplete.ResolveFunction(sci, cpos, autoHide);
                     if (calltipMember == null) return false;
                     argumentType = ResolveParameterType(paramIndex, true);
                     if (argumentType.IsVoid()) return false;
@@ -1973,23 +1973,23 @@ namespace ASCompletion.Completion
 
                 // complete declaration
                 MemberModel cMember = ctx.CurrentMember;
-                int line = Sci.LineFromPosition(position);
+                int line = sci.LineFromPosition(position);
                 if (cMember == null && !ctx.CurrentClass.IsVoid())
                 {
                     if (!string.IsNullOrEmpty(expr.Value))
-                        return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
+                        return HandleDeclarationCompletion(sci, expr.Value, autoHide);
                     if (ctx.CurrentModel.Version >= 2)
-                        return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, features.overrideKey);
+                        return ASGenerator.HandleGeneratorCompletion(sci, autoHide, features.overrideKey);
                 }
                 else if (cMember != null && line == cMember.LineFrom)
                 {
-                    string text = Sci.GetLine(line);
+                    string text = sci.GetLine(line);
                     int p;
                     if ((cMember.Flags & FlagType.Constructor) != 0 && !string.IsNullOrEmpty(features.ConstructorKey))
                         p = text.IndexOfOrdinal(features.ConstructorKey);
                     else p = text.IndexOfOrdinal(cMember.Name);
-                    if (p < 0 || position < Sci.PositionFromLine(line) + p)
-                        return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
+                    if (p < 0 || position < sci.PositionFromLine(line) + p)
+                        return HandleDeclarationCompletion(sci, expr.Value, autoHide);
                 }
             }
             else if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\."))
@@ -1998,10 +1998,10 @@ namespace ASCompletion.Completion
             var tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
             // custom completion
-            var items = ctx.ResolveDotContext(Sci, expr, autoHide);
+            var items = ctx.ResolveDotContext(sci, expr, autoHide);
             if (items != null)
             {
-                DotContextResolved(Sci, expr, items, autoHide);
+                DotContextResolved(sci, expr, items, autoHide);
                 return true;
             }
             
@@ -2042,7 +2042,7 @@ namespace ASCompletion.Completion
                 else tmpClass = cClass;
             }
             var mix = new MemberList();
-            ctx.ResolveDotContext(Sci, result, mix);
+            ctx.ResolveDotContext(sci, result, mix);
 
             //stores a reference to our current class. tmpClass gets overwritten later, so we need to store the current class separately
             var classScope = tmpClass;
@@ -3866,7 +3866,8 @@ namespace ASCompletion.Completion
                     else if (c == ',')
                     {
                         expression.coma = DisambiguateComa(sci, position, minPos);
-                        expression.Separator = (expression.coma == ComaExpression.None) ? ";" : ",";
+                        expression.Separator = ",";
+                        expression.SeparatorPosition = position;
                         break;
                     }
                     else if (c == ':')
@@ -4017,18 +4018,14 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 var c = (char)sci.CharAt(position);
-                if (c == ';')
-                {
-                    return ComaExpression.None;
-                }
-                // var declaration
-                else if (c == ':')
+                if (c == ';') return ComaExpression.None;
+                if (c == ':')
                 {
                     position--;
                     string word = GetWordLeft(sci, ref position);
                     word = GetWordLeft(sci, ref position);
                     if (word == features.varKey) return ComaExpression.VarDeclaration;
-                    else continue;
+                    continue;
                 }
                 // Array values
                 else if (c == '[')
@@ -4099,10 +4096,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                else if (c == '}')
-                {
-                    braceCount++;
-                }
+                else if (c == '}') braceCount++;
                 else if (c == '?')
                 {
                     //TODO: Change to ASContext.Context.CurrentModel
@@ -4114,7 +4108,7 @@ namespace ASCompletion.Completion
                             // Function optional argument
                             return coma;
                         }
-                        else if (coma == ComaExpression.VarDeclaration)
+                        if (coma == ComaExpression.VarDeclaration)
                         {
                             // Possible anonymous structure optional field. Check we are not in a ternary operator
                             position--;
