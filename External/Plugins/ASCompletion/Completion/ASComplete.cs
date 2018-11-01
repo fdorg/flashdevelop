@@ -3120,8 +3120,12 @@ namespace ASCompletion.Completion
         /// <param name="access">Visibility mask</param>
         public static void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
         {
-            if (string.IsNullOrEmpty(token))
-                return;
+            ASContext.Context.CodeComplete.FindMemberEx(token, inFile, result, mask, access);
+        }
+
+        protected virtual void FindMemberEx(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
+        {
+            if (string.IsNullOrEmpty(token)) return;
 
             // package
             if (result.IsPackage)
@@ -3151,19 +3155,15 @@ namespace ASCompletion.Completion
                         }
                         return;
                     }
-                    else
+                    if (mPack.Name.IndexOf('<') is int p && p > 0)
                     {
-                        int p;
-                        if ((p = mPack.Name.IndexOf('<')) > 0)
+                        if (p > 1 && mPack.Name[p - 1] == '.') p--;
+                        if (mPack.Name.Substring(0, p) == token)
                         {
-                            if (p > 1 && mPack.Name[p - 1] == '.') p--;
-                            if (mPack.Name.Substring(0, p) == token)
-                            {
-                                result.IsPackage = false;
-                                result.Type = ResolveType(fullName + mPack.Name.Substring(p), ASContext.Context.CurrentModel);
-                                result.InFile = result.Type.InFile;
-                                return;
-                            }
+                            result.IsPackage = false;
+                            result.Type = ResolveType(fullName + mPack.Name.Substring(p), ASContext.Context.CurrentModel);
+                            result.InFile = result.Type.InFile;
+                            return;
                         }
                     }
                 }

@@ -980,6 +980,7 @@
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_12.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_13.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue589_14.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue589_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
