@@ -510,6 +510,10 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("CalltipDef_issue2489_2")
                     .Returns("test<String, Int> (v:String, v2:Int) : Int")
                     .SetName("(test<T, K>(v:T, v1:K):K)(<complete>. Issue 2489. Case 2");
+                yield return new TestCaseData("CalltipDef_issue2510_1")
+                    .Returns("charAt (index:Int) : String")
+                    .SetName("SomeType.(foo<T>('string'):T).charAt(<complete>. Issue 2510. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2510");
             }
         }
 

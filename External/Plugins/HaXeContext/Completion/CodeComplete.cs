@@ -841,10 +841,10 @@ namespace HaXeContext.Completion
                     member.Template = $"<{string.Join(", ", templates)}>";
                     result.Member = member;
                     result.Type = ResolveType(returnType, ASContext.Context.CurrentModel);
-                    return;
+                    result.InClass = result.Type;
                 }
                 // previous member called as a method
-                if (token[0] == '#' && FileParser.IsFunctionType(returnType)
+                else if (token[0] == '#' && FileParser.IsFunctionType(returnType)
                     // for example: (foo():Void->(Void->String))()
                     && result.Context.SubExpressions is List<string> l && l.Count > 1)
                 {
