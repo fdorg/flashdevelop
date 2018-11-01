@@ -108,7 +108,11 @@ namespace HaXeContext.Completion
                 if (string.IsNullOrEmpty(wordLeft))
                 {
                     var c = (char) sci.CharAt(pos--);
-                    if (c == '=') return HandleAssignCompletion(sci, pos, autoHide);
+                    if (c == '=')
+                    {
+                        HandleAssignCompletion(sci, pos, autoHide);
+                        return false;
+                    }
                     // for example: case EnumValue | <complete> or case EnumValue, <complete>
                     if (c == '|' || c == ',')
                     {
