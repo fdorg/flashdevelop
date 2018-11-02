@@ -136,27 +136,30 @@ namespace HaXeContext.Completion
             if ((char) sci.CharAt(position) is char c && (c == ' ' || c == '!' || c == '='))
             {
                 var expr = GetExpressionType(sci, position, false, true);
-                if (expr.Type is ClassModel type && type.Flags.HasFlag(FlagType.Abstract)
-                    && type.Members is MemberList members && members.Count > 0
-                    && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum"))
+                if (expr.Type is ClassModel type)
                 {
-                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    if (type.Flags.HasFlag(FlagType.Enum)
+                        || (type.Flags.HasFlag(FlagType.Abstract) && type.Members is MemberList members && members.Count > 0
+                            && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum")))
                     {
-                        var aMember = (a as MemberItem)?.Member;
-                        var bMember = (b as MemberItem)?.Member;
-                        var aType = aMember?.Type;
-                        var bType = bMember?.Type;
-                        if (aType == type.Name && IsEnumValue(aMember.Flags)
-                            && bType == type.Name && IsEnumValue(bMember.Flags))
+                        return HandleDotCompletion(sci, autoHide, null, (a, b) =>
                         {
-                            return aMember.Name.CompareTo(bMember.Name);
-                        }
-                        if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
-                        if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
-                        return 0;
-                        // Utils
-                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
-                    });
+                            var aMember = (a as MemberItem)?.Member;
+                            var bMember = (b as MemberItem)?.Member;
+                            var aType = aMember?.Type;
+                            var bType = bMember?.Type;
+                            if (aType == type.Name && IsEnumValue(aMember.Flags)
+                                                   && bType == type.Name && IsEnumValue(bMember.Flags))
+                            {
+                                return aMember.Name.CompareTo(bMember.Name);
+                            }
+                            if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
+                            if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
+                            return 0;
+                            // Utils
+                            bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                        });
+                    }
                 }
             }
             return false;
