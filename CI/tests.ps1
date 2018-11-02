@@ -16,7 +16,7 @@ If ($env:HAXEPATH -eq $null)
 {
 	# https://help.appveyor.com/discussions/problems/5616-not-able-to-build-due-to-problem-in-chocolateyinstallps1
 	Set-Service wuauserv -StartupType Manual
-	cinst.exe haxe --version 3.4.7 -y --no-progress
+	cinst.exe haxe --version 3.4.3 -y --no-progress
 	$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
 	RefreshEnv
 }
