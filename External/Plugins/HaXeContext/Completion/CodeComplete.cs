@@ -107,11 +107,7 @@ namespace HaXeContext.Completion
                 if (string.IsNullOrEmpty(wordLeft))
                 {
                     var c = (char) sci.CharAt(pos--);
-                    if (c == '=')
-                    {
-                        HandleAssignCompletion(sci, pos, autoHide);
-                        return false;
-                    }
+                    if (c == '=') return HandleAssignCompletion(sci, pos, autoHide);
                     // for example: case EnumValue | <complete> or case EnumValue, <complete>
                     if (c == '|' || c == ',')
                     {
@@ -134,27 +130,33 @@ namespace HaXeContext.Completion
             return wordLeft == "case" && HandleSwitchCaseCompletion(sci, position, autoHide);
         }
 
-        static bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
+        bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
         {
             // for example: v = <complete>, v != <complete>, v == <complete>
             if ((char) sci.CharAt(position) is char c && (c == ' ' || c == '!' || c == '='))
             {
                 var expr = GetExpressionType(sci, position, false, true);
-                if (expr.Type != null && expr.Type.Flags.HasFlag(FlagType.Abstract)
-                    && expr.Type.Members is MemberList members && members.Count > 0
-                    && expr.Type.MetaDatas != null && expr.Type.MetaDatas.Any(it => it.Name == ":enum"))
+                if (expr.Type is ClassModel type && type.Flags.HasFlag(FlagType.Abstract)
+                    && type.Members is MemberList members && members.Count > 0
+                    && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum"))
                 {
-                    var list = new List<ICompletionListItem>();
-                    foreach (MemberModel member in members)
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
                     {
-                        if (member.Flags.HasFlag(FlagType.Variable) && !member.Access.HasFlag(Visibility.Private))
+                        var aMember = (a as MemberItem)?.Member;
+                        var bMember = (b as MemberItem)?.Member;
+                        var aType = aMember?.Type;
+                        var bType = bMember?.Type;
+                        if (aType == type.Name && IsEnumValue(aMember.Flags)
+                            && bType == type.Name && IsEnumValue(bMember.Flags))
                         {
-                            list.Add(new MemberItem(member));
+                            return aMember.Name.CompareTo(bMember.Name);
                         }
-                    }
-                    if (list.Count <= 0) return false;
-                    CompletionList.Show(list, autoHide);
-                    return true;
+                        if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
+                        if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
+                        return 0;
+                        // Utils
+                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                    });
                 }
             }
             return false;

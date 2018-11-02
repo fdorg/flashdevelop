@@ -34,6 +34,11 @@ namespace ASCompletion.TestUtils
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
             SetFeatures(mock, context);
+            mock.GetTopLevelElements().Returns(it =>
+            {
+                context.completionCache.IsDirty = true;
+                return context.GetTopLevelElements();
+            });
             mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
                 .Do(it =>
                 {

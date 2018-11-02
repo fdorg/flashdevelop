@@ -1915,7 +1915,20 @@ namespace ASCompletion.Completion
         /// <param name="sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        private static bool HandleDotCompletion(ScintillaControl sci, bool autoHide)
+        static bool HandleDotCompletion(ScintillaControl sci, bool autoHide)
+        {
+            return ASContext.Context.CodeComplete.HandleDotCompletion(sci, autoHide, null, null);
+        }
+
+        /// <summary>
+        /// Complete object member
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <param name="list"></param>
+        /// <param name="comparison"></param>
+        /// <returns>Auto-completion has been handled</returns>
+        protected bool HandleDotCompletion(ScintillaControl sci, bool autoHide, List<ICompletionListItem> list, Comparison<ICompletionListItem> comparison)
         {
             //this method can exit at multiple points, so reset the current class now rather than later
             currentClassHash = null;
@@ -2119,7 +2132,7 @@ namespace ASCompletion.Completion
             }
 
             // show
-            var list = new List<ICompletionListItem>();
+            if (list == null) list = new List<ICompletionListItem>();
             foreach (MemberModel member in mix)
             {
                 if ((member.Flags & FlagType.Template) > 0)
@@ -2127,6 +2140,7 @@ namespace ASCompletion.Completion
                 else
                     list.Add(new MemberItem(member));
             }
+            if (comparison != null) list.Sort(comparison);
             EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
             CompletionList.Show(list, autoHide, tail);
 
@@ -5140,52 +5154,36 @@ namespace ASCompletion.Completion
     /// </summary>
     public class MemberItem : ICompletionListItem
     {
-        protected MemberModel member;
-        private int icon;
+        public MemberModel Member { get; }
+        readonly int icon;
 
         public MemberItem(MemberModel oMember)
         {
-            member = oMember;
-            icon = PluginUI.GetIcon(member.Flags, member.Access); 
+            Member = oMember;
+            icon = PluginUI.GetIcon(Member.Flags, Member.Access);
         }
 
-        public string Label
-        {
-            get { return member.FullName; }
-        }
+        public string Label => Member.FullName;
 
-        public virtual string Description
-        {
-            get
-            {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
-            }
-        }
+        public virtual string Description => ClassModel.MemberDeclaration(Member) + ASDocumentation.GetTipDetails(Member, null);
 
-        public Bitmap Icon
-        {
-            get { return (Bitmap)ASContext.Panel.GetIcon(icon); }
-        }
+        public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(icon);
 
         public string Value
         {
             get 
             {
-                if (member.Name.IndexOf('<') > 0 && member.Template != null)
-                {
-                    if (member.Name.IndexOfOrdinal(".<") > 0)
-                        return member.Name.Substring(0, member.Name.IndexOfOrdinal(".<"));
+                if (Member.Name.IndexOf('<') is int p1 && p1 <= 0 || Member.Template == null) return Member.Name;
 
-                    return member.Name.Substring(0, member.Name.IndexOf('<'));
-                }
-                return member.Name;
+                // ActionScript3: Vector.<int>
+                if (Member.Name.IndexOfOrdinal(".<") is int p2 && p2 > 0)
+                    return Member.Name.Substring(0, p2);
+
+                return Member.Name.Substring(0, p1);
             }
         }
 
-        public override string ToString()
-        {
-            return Label;
-        }
+        public override string ToString() => Label;
     }
 
     /// <summary>
@@ -5255,8 +5253,8 @@ namespace ASCompletion.Completion
         {
             get
             {
-                if (ASComplete.HasSnippet(member.Name))
-                    member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
+                if (ASComplete.HasSnippet(Member.Name))
+                    Member.Comments = "[i](" + TextHelper.GetString("Info.InsertKeywordSnippet") + ")[/i]";
                 return base.Description;
             }
         }
