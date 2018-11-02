@@ -1197,6 +1197,14 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeAssignStatementToVar_ParameterizedFunction_case1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_ParameterizedFunction_case1"))
                     .SetName("(foo<T>(stringValue):Array<T>)<generate>");
+                yield return new TestCaseData("BeforeAssignStatementToVar_ParameterizedFunction_issue2510_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_ParameterizedFunction_issue2510_1"))
+                    .SetName("SomeType.(foo<T>(value):T).foo<generate>. Assign statement to variable. Issue 2510")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2510");
+                yield return new TestCaseData("BeforeAssignStatementToVar_ParameterizedFunction_issue2510_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_ParameterizedFunction_issue2510_2"))
+                    .SetName("SomeType.(foo<T>('string'):T).charAt<generate>. Assign statement to variable. Issue 2510")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2510");
             }
         }
 
