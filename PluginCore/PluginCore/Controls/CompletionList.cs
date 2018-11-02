@@ -27,7 +27,7 @@ namespace PluginCore.Controls
 
         private static bool disableSmartMatch;
         private static ICompletionListItem currentItem;
-        private static List<ICompletionListItem> allItems;
+        private static IList<ICompletionListItem> allItems;
         private static Boolean exactMatchInList;
         private static Boolean smartMatchInList;
         private static Boolean autoHideList;
@@ -116,21 +116,19 @@ namespace PluginCore.Controls
         /// <summary>
         /// Checks if the position is valid
         /// </summary> 
-        public static Boolean CheckPosition(Int32 position)
-        {
-            return position == currentPos;
-        }
+        public static bool CheckPosition(int position) => position == currentPos;
 
         /// <summary>
         /// Shows the completion list
         /// </summary> 
-        public static void Show(List<ICompletionListItem> itemList, Boolean autoHide, String select)
+        public static void Show(IList<ICompletionListItem> itemList, bool autoHide, string select)
         {
             if (!string.IsNullOrEmpty(select))
             {
                 int maxLen = 0;
-                foreach (ICompletionListItem item in itemList)
-                    if (item.Label.Length > maxLen) maxLen = item.Label.Length;
+                foreach (var item in itemList)
+                    if (item.Label.Length > maxLen)
+                        maxLen = item.Label.Length;
                 maxLen = Math.Min(256, maxLen);
                 if (select.Length > maxLen) select = select.Substring(0, maxLen);
                 currentWord = select;
@@ -142,11 +140,11 @@ namespace PluginCore.Controls
         /// <summary>
         /// Shows the completion list
         /// </summary>
-        public static void Show(List<ICompletionListItem> itemList, bool autoHide)
+        public static void Show(IList<ICompletionListItem> itemList, bool autoHide)
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            var doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable) return;
-            ScintillaControl sci = doc.SciControl;
+            var sci = doc.SciControl;
             try
             {
                 if ((itemList == null) || (itemList.Count == 0))
@@ -203,7 +201,7 @@ namespace PluginCore.Controls
         /// </summary>
         public static void SelectItem(String name)
         {
-            string pname = !name.Contains('.') ? "." + name : null;
+            var pname = !name.Contains('.') ? "." + name : null;
             ICompletionListItem found = null;
             foreach (ICompletionListItem item in completionList.Items)
             {
@@ -448,7 +446,7 @@ namespace PluginCore.Controls
             /// </summary>
             if (PluginBase.MainForm.Settings.AutoFilterList || fullList)
             {
-                List<ICompletionListItem> found;
+                IList<ICompletionListItem> found;
                 if (len == 0) 
                 {
                     found = allItems;
@@ -458,19 +456,17 @@ namespace PluginCore.Controls
                 }
                 else
                 {
-                    List<ItemMatch> temp = new List<ItemMatch>(allItems.Count);
-                    Int32 n = allItems.Count;
-                    Int32 i = 0;
-                    Int32 score;
+                    var temp = new List<ItemMatch>(allItems.Count);
+                    var n = allItems.Count;
+                    var i = 0;
                     lastScore = 99;
-                    ICompletionListItem item;
                     exactMatchInList = false;
                     smartMatchInList = false;
                     while (i < n)
                     {
-                        item = allItems[i];
+                        var item = allItems[i];
                         // compare item's label with the searched word
-                        score = SmartMatch(item.Label, word, len);
+                        var score = SmartMatch(item.Label, word, len);
                         if (score > 0)
                         {
                             // first match found
@@ -559,7 +555,7 @@ namespace PluginCore.Controls
                 {
                     completionList.BeginUpdate();
                     completionList.Items.Clear();
-                    foreach (ICompletionListItem item in found) 
+                    foreach (var item in found)
                     {
                         completionList.Items.Add(item);
                         if (item.Label.Length > maxLen)
@@ -568,7 +564,7 @@ namespace PluginCore.Controls
                             maxLen = widestLabel.Length;
                         }
                     }
-                    Int32 topIndex = lastIndex;
+                    var topIndex = lastIndex;
                     if (defaultItem != null)
                     {
                         if (lastScore > 3 || (lastScore > 2 && defaultItem.Label.StartsWith(word, StringComparison.OrdinalIgnoreCase)))
