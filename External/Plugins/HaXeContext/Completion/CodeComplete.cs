@@ -140,57 +140,64 @@ namespace HaXeContext.Completion
             var c = (char) sci.CharAt(position);
             var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
-            // for example: var v:Void->Void = <complete>
-            if (c == ' ' && expr.Context.Separator == "->")
+            // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
+            if (c == ' ' && (expr.Context.Separator == "->" || (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function))))
             {
-                var functionType = expr.Type.Name;
-                while (expr.Context.Separator == "->")
+                // for example: function(v:Void->Void = <complete>
+                if (expr.Context.ContextFunction != null && expr.Context.BeforeBody)
                 {
-                    expr = GetExpressionType(sci, expr.Context.SeparatorPosition, false, true);
-                    if (expr.Type == null)
+                    CompletionList.Show(new List<ICompletionListItem> {new DeclarationItem("null")}, autoHide);
+                    return true;
+                }
+                var ctx = ASContext.Context;
+                MemberModel member;
+                // for example: (v:Void->Void) = <complete>
+                if (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function)) member = expr.Member;
+                // for example: var v:Void->Void = <complete>
+                else
+                {
+                    var functionType = type.Name;
+                    while (expr.Context.Separator == "->")
                     {
-                        functionType = null;
-                        break;
+                        expr = GetExpressionType(sci, expr.Context.SeparatorPosition, false, true);
+                        if (expr.Type == null) return false;
+                        functionType = expr.Type.Name + "->" + functionType;
                     }
-                    functionType = expr.Type.Name + "->" + functionType;
+                    member =  FileParser.FunctionTypeToMemberModel(functionType, ctx.Features);
                 }
-                if (!string.IsNullOrEmpty(functionType))
+                if (member == null) return false;
+                var list = new List<ICompletionListItem>
                 {
-                    var ctx = ASContext.Context;
-                    var list = new List<ICompletionListItem>
+                    new AnonymousFunctionGeneratorItem("function() {}", () =>
                     {
-                        new AnonymousFunctionGeneratorItem("function() {}", () =>
+                        string body = null;
+                        switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
                         {
-                            var member = FileParser.FunctionTypeToMemberModel(functionType, ctx.Features);
-                            string body = null;
-                            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
-                            {
-                                case GeneratedMemberBodyStyle.ReturnDefaultValue:
-                                    var returnTypeName = member.Type;
-                                    var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
-                                    if ((returnType.Flags & FlagType.Abstract) != 0
-                                        && !string.IsNullOrEmpty(returnType.ExtendsType)
-                                        && returnType.ExtendsType != ctx.Features.dynamicKey)
-                                        returnTypeName = returnType.ExtendsType;
-                                    var defaultValue = ctx.GetDefaultValue(returnTypeName);
-                                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
-                                    break;
-                            }
-                            var template = TemplateUtils.GetTemplate("AnonymousFunction");
-                            template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
-                            sci.SelectWord();
-                            ASGenerator.InsertCode(sci.CurrentPos, template);
-                        })
-                    };
-                    var word = sci.GetWordFromPosition(sci.CurrentPos);
-                    if (string.IsNullOrEmpty(word) || "function".StartsWithOrdinal(word))
-                        completionHistory[ctx.CurrentClass.QualifiedName] = "function() {}";
-                    return HandleDotCompletion(sci, autoHide, list, null);
-                }
+                            case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                                var returnTypeName = member.Type;
+                                var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                                if ((returnType.Flags & FlagType.Abstract) != 0
+                                    && !string.IsNullOrEmpty(returnType.ExtendsType)
+                                    && returnType.ExtendsType != ctx.Features.dynamicKey)
+                                    returnTypeName = returnType.ExtendsType;
+                                var defaultValue = ctx.GetDefaultValue(returnTypeName);
+                                if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                                break;
+                        }
+                        var template = TemplateUtils.GetTemplate("AnonymousFunction");
+                        template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                        template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+                        sci.SelectWord();
+                        ASGenerator.InsertCode(sci.CurrentPos, template);
+                    })
+                };
+                var word = sci.GetWordFromPosition(sci.CurrentPos);
+                if (string.IsNullOrEmpty(word) || "function".StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = "function() {}";
+                return HandleDotCompletion(sci, autoHide, list, null);
             }
             // for example: v = <complete>, v != <complete>, v == <complete>
-            else if ((c == ' ' || c == '!' || c == '=') && IsEnum(type))
+            if ((c == ' ' || c == '!' || c == '=') && IsEnum(type))
             {
                 return HandleDotCompletion(sci, autoHide, null, (a, b) =>
                 {
