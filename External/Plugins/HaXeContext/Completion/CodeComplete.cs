@@ -141,7 +141,7 @@ namespace HaXeContext.Completion
             var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
-            if (c == ' ' && (expr.Context.Separator == "->" || (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function))))
+            if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
             {
                 // for example: function(v:Void->Void = <complete>
                 if (expr.Context.ContextFunction != null && expr.Context.BeforeBody)
@@ -152,7 +152,7 @@ namespace HaXeContext.Completion
                 var ctx = ASContext.Context;
                 MemberModel member;
                 // for example: (v:Void->Void) = <complete>
-                if (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function)) member = expr.Member;
+                if (IsFunction(expr.Member)) member = expr.Member;
                 // for example: var v:Void->Void = <complete>
                 else
                 {
@@ -166,34 +166,16 @@ namespace HaXeContext.Completion
                     member =  FileParser.FunctionTypeToMemberModel(functionType, ctx.Features);
                 }
                 if (member == null) return false;
-                var list = new List<ICompletionListItem>
+                var functionName = "function() {}";
+                var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
+                if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
                 {
-                    new AnonymousFunctionGeneratorItem("function() {}", () =>
-                    {
-                        string body = null;
-                        switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
-                        {
-                            case GeneratedMemberBodyStyle.ReturnDefaultValue:
-                                var returnTypeName = member.Type;
-                                var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
-                                if ((returnType.Flags & FlagType.Abstract) != 0
-                                    && !string.IsNullOrEmpty(returnType.ExtendsType)
-                                    && returnType.ExtendsType != ctx.Features.dynamicKey)
-                                    returnTypeName = returnType.ExtendsType;
-                                var defaultValue = ctx.GetDefaultValue(returnTypeName);
-                                if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
-                                break;
-                        }
-                        var template = TemplateUtils.GetTemplate("AnonymousFunction");
-                        template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                        template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
-                        sci.SelectWord();
-                        ASGenerator.InsertCode(sci.CurrentPos, template);
-                    })
-                };
+                    functionName = "() -> {}";
+                    list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
+                }
                 var word = sci.GetWordFromPosition(sci.CurrentPos);
-                if (string.IsNullOrEmpty(word) || "function".StartsWithOrdinal(word))
-                    completionHistory[ctx.CurrentClass.QualifiedName] = "function() {}";
+                if (string.IsNullOrEmpty(word) || functionName.StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = functionName;
                 return HandleDotCompletion(sci, autoHide, list, null);
             }
             // for example: v = <complete>, v != <complete>, v == <complete>
@@ -222,6 +204,8 @@ namespace HaXeContext.Completion
             bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
                                          || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
+
+            bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
@@ -1031,6 +1015,29 @@ namespace HaXeContext.Completion
                     return s.Substring(startIndex, s.Length - (startIndex + startIndex / 5));
                 }
             }
+        }
+
+        static void GenerateAnonymousFunction(ScintillaControl sci, MemberModel member, string template)
+        {
+            string body = null;
+            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+            {
+                case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                    var ctx = ASContext.Context;
+                    var returnTypeName = member.Type;
+                    var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                    if ((returnType.Flags & FlagType.Abstract) != 0
+                        && !string.IsNullOrEmpty(returnType.ExtendsType)
+                        && returnType.ExtendsType != ctx.Features.dynamicKey)
+                        returnTypeName = returnType.ExtendsType;
+                    var defaultValue = ctx.GetDefaultValue(returnTypeName);
+                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                    break;
+            }
+            template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            sci.SelectWord();
+            ASGenerator.InsertCode(sci.CurrentPos, template);
         }
     }
 
