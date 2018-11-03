@@ -182,18 +182,14 @@ namespace ASCompletion.Model
             if (Parameters != null)
             {
                 copy.Parameters = new List<MemberModel>();
-                foreach (MemberModel param in Parameters)
+                foreach (var param in Parameters)
                     copy.Parameters.Add(param.Clone() as MemberModel);
             }
             copy.Type = Type;
             copy.Comments = Comments;
             copy.InFile = InFile;
             copy.Constructor = Constructor;
-            if (Implements != null)
-            {
-                copy.Implements = new List<string>();
-                foreach (string cname in Implements) copy.Implements.Add(cname);
-            }
+            if (Implements != null) copy.Implements = new List<string>(Implements);
             copy.ExtendsType = ExtendsType;
             copy.IndexType = IndexType;
             copy.Members = new MemberList();
@@ -201,7 +197,22 @@ namespace ASCompletion.Model
                 copy.Members.Add(item.Clone() as MemberModel);
             copy.LineFrom = LineFrom;
             copy.LineTo = LineTo;
-
+            if (MetaDatas != null)
+            {
+                copy.MetaDatas = new List<ASMetaData>();
+                foreach (var meta in MetaDatas)
+                {
+                    copy.MetaDatas.Add(new ASMetaData(meta.Name)
+                    {
+                        LineFrom = meta.LineFrom,
+                        LineTo = meta.LineTo,
+                        Params = meta.Params != null ? new Dictionary<string, string>(meta.Params) : null,
+                        RawParams =  meta.RawParams,
+                        Comments = meta.Comments,
+                        Kind = meta.Kind,
+                    });
+                }
+            }
             return copy;
         }
 
