@@ -2072,55 +2072,17 @@ namespace ASCompletion.Completion
             // list instance members
             else if (expr.ContextFunction != null || expr.Separator != ":" || (dotIndex > 0 && !result.IsNull()))
             {
-                // user setting may ask to hide some members
+                // static or instance members?
+                FlagType mask = 0;
+                if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
+                else if (IsStatic(expr.ContextFunction)) mask = FlagType.Static;
+                else mask = 0;
+                if (argumentType != null) mask |= FlagType.Variable;
                 var limitMembers = autoHide;
                 if (!limitMembers || result.IsStatic || tmpClass.Name != features.objectKey)
-                {
-                    // static or instance members?
-                    FlagType mask = 0;
-                    if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
-                    else if (IsStatic(expr.ContextFunction)) mask = FlagType.Static;
-                    else mask = 0;
-                    if (argumentType != null) mask |= FlagType.Variable;
-
-                    // members visibility
-                    var curClass = cClass;
-                    curClass.ResolveExtends();
-                    var access = ctx.TypesAffinity(curClass, tmpClass);
-
-                    // explore members
-                    tmpClass.ResolveExtends();
-                    if (!string.IsNullOrEmpty(tmpClass.ExtendsType) && tmpClass.ExtendsType != features.objectKey && tmpClass.Extends.IsVoid()
-                        && !string.IsNullOrEmpty(tmpClass.Template) && !string.IsNullOrEmpty(tmpClass.IndexType))
-                    {
-                        /**
-                         * Temporary fix:
-                         * If `tmpClass` is generic type with the concrete type explicit definition, like `Null<UserType>`,
-                         * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
-                         */
-                        tmpClass = (ClassModel) tmpClass.Clone();
-                        tmpClass.InFile = result.InFile ?? ctx.CurrentModel;
-                        tmpClass.ResolveExtends();
-                    }
-                    while (!tmpClass.IsVoid())
-                    {
-                        mix.Merge(tmpClass.GetSortedMembersList(), mask, access);
-                        // static inheritance
-                        if ((mask & FlagType.Static) > 0)
-                        {
-                            if ((!features.hasStaticInheritance || dotIndex > 0) && (tmpClass.Flags & FlagType.TypeDef) == 0)
-                                break;
-                        }
-                        else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
-                        tmpClass = tmpClass.Extends;
-                        // hide Object class members
-                        if (limitMembers && !tmpClass.IsVoid() && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 
-                            break;
-                        // members visibility
-                        access = ctx.TypesAffinity(curClass, tmpClass);
-                    }
-                }
+                    GetInstanceMembers(autoHide, result, tmpClass, mask, dotIndex, mix);
             }
+
             // known classes / toplevel vars/methods
             if (argumentType == null && (result.IsNull() || (dotIndex < 0)))
             {
@@ -2149,6 +2111,48 @@ namespace ASCompletion.Completion
 
             if (outOfDate) ctx.SetOutOfDate();
             return true;
+        }
+
+        protected virtual void GetInstanceMembers(bool autoHide, ASResult expr, ClassModel tmpClass, FlagType mask, int dotIndex, MemberList result)
+        {
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
+            var currentClass = ctx.CurrentClass;
+
+            currentClass.ResolveExtends();
+            var access = ctx.TypesAffinity(currentClass, tmpClass);
+
+            // explore members
+            tmpClass.ResolveExtends();
+            if (!string.IsNullOrEmpty(tmpClass.ExtendsType) && tmpClass.ExtendsType != features.objectKey
+                && tmpClass.Extends.IsVoid() && !string.IsNullOrEmpty(tmpClass.Template) && !string.IsNullOrEmpty(tmpClass.IndexType))
+            {
+                /**
+                 * Temporary fix:
+                 * If `tmpClass` is generic type with the concrete type explicit definition, like `Null<UserType>`,
+                 * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
+                 */
+                tmpClass = (ClassModel) tmpClass.Clone();
+                tmpClass.InFile = expr.InFile ?? ctx.CurrentModel;
+                tmpClass.ResolveExtends();
+            }
+            while (!tmpClass.IsVoid())
+            {
+                result.Merge(tmpClass.GetSortedMembersList(), mask, access);
+                // static inheritance
+                if ((mask & FlagType.Static) > 0)
+                {
+                    if ((!features.hasStaticInheritance || dotIndex > 0) && (tmpClass.Flags & FlagType.TypeDef) == 0)
+                        break;
+                }
+                else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
+                tmpClass = tmpClass.Extends;
+                // hide Object class members
+                if (autoHide && !tmpClass.IsVoid() && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey)
+                    break;
+                // members visibility
+                access = ctx.TypesAffinity(currentClass, tmpClass);
+            }
         }
 
         private static MemberList GetKeywords()
