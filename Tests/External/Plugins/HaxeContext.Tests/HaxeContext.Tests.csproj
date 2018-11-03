@@ -995,6 +995,11 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2516_2.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2516_3.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2516_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2518_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2518_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2518_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2518_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2518_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

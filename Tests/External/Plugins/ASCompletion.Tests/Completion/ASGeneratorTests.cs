@@ -1614,50 +1614,43 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateVariable_generateExplicitScopeIsFalse"))
-                                .SetName("Generate private variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticVariable"))
-                                .SetName("Generate private static variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_generateExplicitScopeIsFalse"))
-                                .SetName("Generate public variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse"))
-                                .SetName("Generate public static variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forSomeType"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forSomeType"))
-                                .SetName("From SomeType.foo|");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType"))
-                                .SetName("From CurrentType.foo|");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_1"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_1"))
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_2"))
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant"), GeneratorJobType.Constant)
-                                .Returns(ReadAllTextHaxe("AfterGenerateConstant"))
-                                .SetName("Generate constant");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
-                                .Returns(ReadAllTextHaxe("AfterGenerateConstant_issue1460"))
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.Variable)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateVariable_generateExplicitScopeIsFalse"))
+                            .SetName("Generate private variable");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.Variable)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticVariable"))
+                            .SetName("Generate private static variable");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.VariablePublic)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_generateExplicitScopeIsFalse"))
+                            .SetName("Generate public variable");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.VariablePublic)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse"))
+                            .SetName("Generate public static variable");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forSomeType"), GeneratorJobType.VariablePublic)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forSomeType"))
+                            .SetName("From SomeType.foo|");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType"), GeneratorJobType.VariablePublic)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType"))
+                            .SetName("From CurrentType.foo|");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_1"), GeneratorJobType.Variable)
+                            .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_1"))
+                            .SetName("Generate Variable. Issue 1460. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
+                            .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_2"))
+                            .SetName("Generate Variable. Issue 1460. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
+                            .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
+                            .SetName("Generate Variable. Issue 1460. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant"), GeneratorJobType.Constant)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstant"))
+                            .SetName("Generate constant");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstant_issue1460"))
+                            .SetName("Generate Constant. Issue 1460. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
 

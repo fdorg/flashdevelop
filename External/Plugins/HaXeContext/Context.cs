@@ -1425,10 +1425,10 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
             switch (type)
             {
-                case "Float":
                 case "Int":
-                case "UInt":
-                case "Bool": return null;
+                case "UInt": return "0";
+                case "Float": return "Math.NaN";
+                case "Bool": return "false";
                 default: return "null";
             }
         }

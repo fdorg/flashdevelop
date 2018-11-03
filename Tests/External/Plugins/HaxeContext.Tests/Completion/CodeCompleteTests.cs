@@ -3,6 +3,7 @@ using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using ASCompletion.Settings;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
@@ -294,6 +295,22 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue2518TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2518_1", ' ', false, false)
+                    .SetName("(v:Void->Void) == <complete> Issue 2518. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2518");
+                yield return new TestCaseData("BeforeOnChar_issue2518_2", ' ', false, false)
+                    .SetName("(v:Void->Void) != <complete> Issue 2518. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2518");
+                yield return new TestCaseData("BeforeOnChar_issue2518_3", ' ', false, false)
+                    .SetName("(v:Void->Void) += <complete> Issue 2518. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2518");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
@@ -302,6 +319,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharIssue589TestCases)),
             TestCaseSource(nameof(OnCharIssue2483TestCases)),
             TestCaseSource(nameof(OnCharIssue2497TestCases)),
+            TestCaseSource(nameof(OnCharIssue2518TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {
@@ -573,7 +591,11 @@ namespace HaXeContext.Completion
     class CodeCompleteTests2 : ASCompleteTests
     {
         [TestFixtureSetUp]
-        public void Setup() => SetHaxeFeatures(sci);
+        public void Setup()
+        {
+            ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.ReturnDefaultValue;
+            SetHaxeFeatures(sci);
+        }
 
         static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2134TestCases
         {
@@ -791,6 +813,17 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2518TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2518_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2518_1"))
+                    .SetName("var v:String->Float = <complete> Issue 2518. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2518");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -803,6 +836,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2497TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2499TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2516TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2518TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
