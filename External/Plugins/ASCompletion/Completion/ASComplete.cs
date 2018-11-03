@@ -45,9 +45,9 @@ namespace ASCompletion.Completion
         static public Keys HelpKeys = Keys.F1;
 
         //stores the currently used class namespace and name
-        static private String currentClassHash = null;
+        private static string currentClassHash = null;
         //stores the last completed member for each class
-        static private IDictionary<String, String> completionHistory = new Dictionary<String, String>();
+        protected static IDictionary<string, string> completionHistory = new Dictionary<string, string>();
 
         static public ResolvedContext CurrentResolvedContext;
         static public event ResolvedContextChangeHandler OnResolvedContextChanged;

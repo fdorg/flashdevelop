@@ -1,0 +1,3 @@
+function($(Arguments))<<:$(Type)>> $(CSLB){
+	<<$(Body)>>$(EntryPoint)
+}

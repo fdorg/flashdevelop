@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using ASCompletion.Settings;
+using HaXeContext.Generators;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Localization;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
@@ -132,37 +137,91 @@ namespace HaXeContext.Completion
 
         bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
         {
-            // for example: v = <complete>, v != <complete>, v == <complete>
-            if ((char) sci.CharAt(position) is char c && (c == ' ' || c == '!' || c == '='))
+            var c = (char) sci.CharAt(position);
+            var expr = GetExpressionType(sci, position, false, true);
+            if (!(expr.Type is ClassModel type)) return false;
+            // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
+            if (c == ' ' && (expr.Context.Separator == "->" || (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function))))
             {
-                var expr = GetExpressionType(sci, position, false, true);
-                if (expr.Type is ClassModel type)
+                // for example: function(v:Void->Void = <complete>
+                if (expr.Context.ContextFunction != null && expr.Context.BeforeBody)
                 {
-                    if (type.Flags.HasFlag(FlagType.Enum)
-                        || (type.Flags.HasFlag(FlagType.Abstract) && type.Members is MemberList members && members.Count > 0
-                            && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum")))
-                    {
-                        return HandleDotCompletion(sci, autoHide, null, (a, b) =>
-                        {
-                            var aMember = (a as MemberItem)?.Member;
-                            var bMember = (b as MemberItem)?.Member;
-                            var aType = aMember?.Type;
-                            var bType = bMember?.Type;
-                            if (aType == type.Name && IsEnumValue(aMember.Flags)
-                                                   && bType == type.Name && IsEnumValue(bMember.Flags))
-                            {
-                                return aMember.Name.CompareTo(bMember.Name);
-                            }
-                            if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
-                            if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
-                            return 0;
-                            // Utils
-                            bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
-                        });
-                    }
+                    CompletionList.Show(new List<ICompletionListItem> {new DeclarationItem("null")}, autoHide);
+                    return true;
                 }
+                var ctx = ASContext.Context;
+                MemberModel member;
+                // for example: (v:Void->Void) = <complete>
+                if (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function)) member = expr.Member;
+                // for example: var v:Void->Void = <complete>
+                else
+                {
+                    var functionType = type.Name;
+                    while (expr.Context.Separator == "->")
+                    {
+                        expr = GetExpressionType(sci, expr.Context.SeparatorPosition, false, true);
+                        if (expr.Type == null) return false;
+                        functionType = expr.Type.Name + "->" + functionType;
+                    }
+                    member =  FileParser.FunctionTypeToMemberModel(functionType, ctx.Features);
+                }
+                if (member == null) return false;
+                var list = new List<ICompletionListItem>
+                {
+                    new AnonymousFunctionGeneratorItem("function() {}", () =>
+                    {
+                        string body = null;
+                        switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+                        {
+                            case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                                var returnTypeName = member.Type;
+                                var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                                if ((returnType.Flags & FlagType.Abstract) != 0
+                                    && !string.IsNullOrEmpty(returnType.ExtendsType)
+                                    && returnType.ExtendsType != ctx.Features.dynamicKey)
+                                    returnTypeName = returnType.ExtendsType;
+                                var defaultValue = ctx.GetDefaultValue(returnTypeName);
+                                if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                                break;
+                        }
+                        var template = TemplateUtils.GetTemplate("AnonymousFunction");
+                        template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                        template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+                        sci.SelectWord();
+                        ASGenerator.InsertCode(sci.CurrentPos, template);
+                    })
+                };
+                var word = sci.GetWordFromPosition(sci.CurrentPos);
+                if (string.IsNullOrEmpty(word) || "function".StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = "function() {}";
+                return HandleDotCompletion(sci, autoHide, list, null);
+            }
+            // for example: v = <complete>, v != <complete>, v == <complete>
+            if ((c == ' ' || c == '!' || c == '=') && IsEnum(type))
+            {
+                return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                {
+                    var aMember = (a as MemberItem)?.Member;
+                    var bMember = (b as MemberItem)?.Member;
+                    var aType = aMember?.Type;
+                    var bType = bMember?.Type;
+                    if (aType == type.Name && IsEnumValue(aMember.Flags)
+                        && bType == type.Name && IsEnumValue(bMember.Flags))
+                    {
+                        return aMember.Name.CompareTo(bMember.Name);
+                    }
+                    if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
+                    if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
+                    return 0;
+                    // Utils
+                    bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                });
             }
             return false;
+            // Utils
+            bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
+                                         || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
+                                             && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
@@ -974,4 +1033,28 @@ namespace HaXeContext.Completion
             }
         }
     }
-} 
+
+    class AnonymousFunctionGeneratorItem : ICompletionListItem
+    {
+        readonly Action action;
+
+        public AnonymousFunctionGeneratorItem(string label, Action action)
+        {
+            Label = label;
+            this.action = action;
+        }
+
+        public string Label { get; }
+        public string Description => TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");
+        public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(34);
+
+        public string Value
+        {
+            get
+            {
+                action();
+                return null;
+            }
+        }
+    }
+}
