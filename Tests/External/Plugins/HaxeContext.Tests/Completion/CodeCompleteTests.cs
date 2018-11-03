@@ -581,17 +581,6 @@ namespace HaXeContext.Completion
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(GetFullPath(fileName));
-            ASContext.Context
-                .When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
-                .Do(it =>
-                {
-                    var topLevel = new FileModel();
-                    topLevel.Members.Add(new MemberModel("this", ASContext.Context.CurrentClass.Name, FlagType.Variable, Visibility.Public) {InFile = ASContext.Context.CurrentModel});
-                    topLevel.Members.Add(new MemberModel("super", ASContext.Context.CurrentClass.ExtendsType, FlagType.Variable, Visibility.Public) {InFile = ASContext.Context.CurrentModel});
-                    var ctx = (ASContext) ASContext.GetLanguageContext("haxe");
-                    ctx.TopLevel = topLevel;
-                    ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
-                });
             var manager = UITools.Manager;
             ASComplete.HandleFunctionCompletion(sci, false);
             Assert.IsTrue(UITools.CallTip.CallTipActive);
@@ -865,6 +854,30 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_1", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_1"))
                     .SetName("(v:Abstract<Array>).<complete> Issue 1909. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_2"))
+                    .SetName("(v:Abstract<Array>).<complete> Issue 1909. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_3"))
+                    .SetName("(v:Abstract<Array>).<complete> Issue 1909. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_4", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_4"))
+                    .SetName("(v:String).<complete> Issue 1909. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_5"))
+                    .SetName("(v:String).<complete> Issue 1909. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_6"))
+                    .SetName("(v:CustomType).<complete> Issue 1909. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue1909_7", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue1909_7"))
+                    .SetName("(this:Abstract<Array>).<complete> Issue 1909. Case 7")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1909");
             }
         }
