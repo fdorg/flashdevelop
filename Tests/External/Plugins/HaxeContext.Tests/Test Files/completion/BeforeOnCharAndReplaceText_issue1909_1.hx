@@ -7,5 +7,5 @@ class Issue1909_1 {
 
 abstract AIssue1909_1<T>(Array<T>) {
 	public function new() this = [];
-	public function test(){};
+	public function test() {}
 }

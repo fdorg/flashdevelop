@@ -789,6 +789,31 @@ namespace HaXeContext.Completion
             return base.GetCalltipDef(member);
         }
 
+        protected override void GetInstanceMembers(bool autoHide, ASResult expr, ClassModel tmpClass, FlagType mask, int dotIndex, MemberList result)
+        {
+            if (tmpClass.Flags.HasFlag(FlagType.Abstract) && !string.IsNullOrEmpty(tmpClass.ExtendsType)
+                // for example: @:enum abstract
+                && tmpClass.MetaDatas is var metaDatas && (metaDatas == null || metaDatas.All(it => it.Name != ":enum"))
+                // for example: abstract Null<T> from T to T
+                && (string.IsNullOrEmpty(tmpClass.Template) || tmpClass.ExtendsType != tmpClass.IndexType))
+            {
+                ASMetaData meta = null;
+                if (metaDatas != null)
+                {
+                    meta = mask.HasFlag(FlagType.Static)
+                         ? metaDatas.Find(it => it.Name == ":forwardStatic")
+                         : metaDatas.Find(it => it.Name == ":forward");
+                }
+                if (meta == null)
+                {
+                    var access = ASContext.Context.TypesAffinity(ASContext.Context.CurrentClass, tmpClass);
+                    result.Merge(tmpClass.GetSortedMembersList(), mask, access);
+                    return;
+                }
+            }
+            base.GetInstanceMembers(autoHide, expr, tmpClass, mask, dotIndex, result);
+        }
+
         protected override void FindMemberEx(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
         {
             base.FindMemberEx(token, inFile, result, mask, access);
