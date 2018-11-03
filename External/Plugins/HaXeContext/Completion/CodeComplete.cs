@@ -7,7 +7,6 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using HaXeContext.Generators;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -140,16 +139,39 @@ namespace HaXeContext.Completion
             var c = (char) sci.CharAt(position);
             var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
+            var ctx = ASContext.Context;
+            // for example: function(v:Type = <complete>
+            if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
+            {
+                // for example: function(v:Bool = <complete>
+                if (type.Name == ctx.Features.booleanKey)
+                {
+                    var word = sci.GetWordFromPosition(sci.CurrentPos);
+                    if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word))
+                        completionHistory[ctx.CurrentClass.QualifiedName] = "true";
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    {
+                        var aLabel = (a as TemplateItem)?.Label;
+                        var bLabel = (b as TemplateItem)?.Label;
+                        if (IsBool(aLabel) && IsBool(bLabel))
+                        {
+                            if (aLabel == "true") return -1;
+                            return 1;
+                        }
+                        if (IsBool(aLabel)) return -1;
+                        if (IsBool(bLabel)) return 1;
+                        return 0;
+                        // Utils
+                        bool IsBool(string s) => s == "true" || s == "false";
+                    });
+                }
+                if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
+                CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
+                return true;
+            }
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
             if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
             {
-                // for example: function(v:Void->Void = <complete>
-                if (expr.Context.ContextFunction != null && expr.Context.BeforeBody)
-                {
-                    CompletionList.Show(new List<ICompletionListItem> {new DeclarationItem("null")}, autoHide);
-                    return true;
-                }
-                var ctx = ASContext.Context;
                 MemberModel member;
                 // for example: (v:Void->Void) = <complete>
                 if (IsFunction(expr.Member)) member = expr.Member;
