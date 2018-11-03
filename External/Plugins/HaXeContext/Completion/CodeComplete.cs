@@ -7,7 +7,6 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using HaXeContext.Generators;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -150,11 +149,24 @@ namespace HaXeContext.Completion
                     var word = sci.GetWordFromPosition(sci.CurrentPos);
                     if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word))
                         completionHistory[ctx.CurrentClass.QualifiedName] = "true";
-                    var list = new List<ICompletionListItem> {new DeclarationItem("true"), new DeclarationItem("false")};
-                    return HandleDotCompletion(sci, autoHide, list, null);
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    {
+                        var aLabel = (a as TemplateItem)?.Label;
+                        var bLabel = (b as TemplateItem)?.Label;
+                        if (IsBool(aLabel) && IsBool(bLabel))
+                        {
+                            if (aLabel == "true") return -1;
+                            return 1;
+                        }
+                        if (IsBool(aLabel)) return -1;
+                        if (IsBool(bLabel)) return 1;
+                        return 0;
+                        // Utils
+                        bool IsBool(string s) => s == "true" || s == "false";
+                    });
                 }
                 if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
-                CompletionList.Show(new List<ICompletionListItem> {new DeclarationItem("null")}, autoHide);
+                CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
                 return true;
             }
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
