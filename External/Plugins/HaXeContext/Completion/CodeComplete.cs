@@ -166,34 +166,19 @@ namespace HaXeContext.Completion
                     member =  FileParser.FunctionTypeToMemberModel(functionType, ctx.Features);
                 }
                 if (member == null) return false;
+                var functionName = "function() {}";
                 var list = new List<ICompletionListItem>
                 {
-                    new AnonymousFunctionGeneratorItem("function() {}", () =>
-                    {
-                        string body = null;
-                        switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
-                        {
-                            case GeneratedMemberBodyStyle.ReturnDefaultValue:
-                                var returnTypeName = member.Type;
-                                var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
-                                if ((returnType.Flags & FlagType.Abstract) != 0
-                                    && !string.IsNullOrEmpty(returnType.ExtendsType)
-                                    && returnType.ExtendsType != ctx.Features.dynamicKey)
-                                    returnTypeName = returnType.ExtendsType;
-                                var defaultValue = ctx.GetDefaultValue(returnTypeName);
-                                if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
-                                break;
-                        }
-                        var template = TemplateUtils.GetTemplate("AnonymousFunction");
-                        template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                        template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
-                        sci.SelectWord();
-                        ASGenerator.InsertCode(sci.CurrentPos, template);
-                    })
+                    new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))
                 };
+                if (((Context) ctx).GetCurrentSDKVersion() >= "4.0.0")
+                {
+                    functionName = "() -> {}";
+                    list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
+                }
                 var word = sci.GetWordFromPosition(sci.CurrentPos);
-                if (string.IsNullOrEmpty(word) || "function".StartsWithOrdinal(word))
-                    completionHistory[ctx.CurrentClass.QualifiedName] = "function() {}";
+                if (string.IsNullOrEmpty(word) || functionName.StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = functionName;
                 return HandleDotCompletion(sci, autoHide, list, null);
             }
             // for example: v = <complete>, v != <complete>, v == <complete>
@@ -1031,6 +1016,29 @@ namespace HaXeContext.Completion
                     return s.Substring(startIndex, s.Length - (startIndex + startIndex / 5));
                 }
             }
+        }
+
+        static void GenerateAnonymousFunction(ScintillaControl sci, MemberModel member, string template)
+        {
+            string body = null;
+            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+            {
+                case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                    var ctx = ASContext.Context;
+                    var returnTypeName = member.Type;
+                    var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                    if ((returnType.Flags & FlagType.Abstract) != 0
+                        && !string.IsNullOrEmpty(returnType.ExtendsType)
+                        && returnType.ExtendsType != ctx.Features.dynamicKey)
+                        returnTypeName = returnType.ExtendsType;
+                    var defaultValue = ctx.GetDefaultValue(returnTypeName);
+                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                    break;
+            }
+            template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            sci.SelectWord();
+            ASGenerator.InsertCode(sci.CurrentPos, template);
         }
     }
 

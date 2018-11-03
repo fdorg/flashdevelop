@@ -1,0 +1,3 @@
+($(Arguments)) -> $(CSLB){
+	<<$(Body)>>$(EntryPoint)
+}
