@@ -2063,11 +2063,6 @@ namespace ASCompletion.Completion
             if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
                 mix.Merge(expr.LocalVars);
 
-            // members visibility
-            var curClass = cClass;
-            curClass.ResolveExtends();
-            var acc = ctx.TypesAffinity(curClass, tmpClass);
-
             // list package elements
             if (result.IsPackage)
             {
@@ -2078,17 +2073,21 @@ namespace ASCompletion.Completion
             else if (expr.ContextFunction != null || expr.Separator != ":" || (dotIndex > 0 && !result.IsNull()))
             {
                 // user setting may ask to hide some members
-                bool limitMembers = autoHide; // ASContext.Context.HideIntrinsicMembers || (autoHide && !ASContext.Context.AlwaysShowIntrinsicMembers);
-
-                // static or instance members?
-                FlagType mask = 0;
-                if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
-                else if (IsStatic(expr.ContextFunction)) mask = FlagType.Static;
-                else mask = 0;
-                if (argumentType != null) mask |= FlagType.Variable;
-
+                var limitMembers = autoHide;
                 if (!limitMembers || result.IsStatic || tmpClass.Name != features.objectKey)
                 {
+                    // static or instance members?
+                    FlagType mask = 0;
+                    if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
+                    else if (IsStatic(expr.ContextFunction)) mask = FlagType.Static;
+                    else mask = 0;
+                    if (argumentType != null) mask |= FlagType.Variable;
+
+                    // members visibility
+                    var curClass = cClass;
+                    curClass.ResolveExtends();
+                    var access = ctx.TypesAffinity(curClass, tmpClass);
+
                     // explore members
                     tmpClass.ResolveExtends();
                     if (!string.IsNullOrEmpty(tmpClass.ExtendsType) && tmpClass.ExtendsType != features.objectKey && tmpClass.Extends.IsVoid()
@@ -2105,7 +2104,7 @@ namespace ASCompletion.Completion
                     }
                     while (!tmpClass.IsVoid())
                     {
-                        mix.Merge(tmpClass.GetSortedMembersList(), mask, acc);
+                        mix.Merge(tmpClass.GetSortedMembersList(), mask, access);
                         // static inheritance
                         if ((mask & FlagType.Static) > 0)
                         {
@@ -2118,7 +2117,7 @@ namespace ASCompletion.Completion
                         if (limitMembers && !tmpClass.IsVoid() && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 
                             break;
                         // members visibility
-                        acc = ctx.TypesAffinity(curClass, tmpClass);
+                        access = ctx.TypesAffinity(curClass, tmpClass);
                     }
                 }
             }
