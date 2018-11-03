@@ -138,7 +138,7 @@ namespace HaXeContext.Completion
         bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
         {
             var c = (char) sci.CharAt(position);
-var expr = GetExpressionType(sci, position, false, true);
+            var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
             if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
