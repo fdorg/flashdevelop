@@ -140,16 +140,26 @@ namespace HaXeContext.Completion
             var c = (char) sci.CharAt(position);
             var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
+            var ctx = ASContext.Context;
+            // for example: function(v:Type = <complete>
+            if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
+            {
+                // for example: function(v:Bool = <complete>
+                if (type.Name == ctx.Features.booleanKey)
+                {
+                    var word = sci.GetWordFromPosition(sci.CurrentPos);
+                    if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word))
+                        completionHistory[ctx.CurrentClass.QualifiedName] = "true";
+                    var list = new List<ICompletionListItem> {new DeclarationItem("true"), new DeclarationItem("false")};
+                    return HandleDotCompletion(sci, autoHide, list, null);
+                }
+                if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
+                CompletionList.Show(new List<ICompletionListItem> {new DeclarationItem("null")}, autoHide);
+                return true;
+            }
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
             if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
             {
-                // for example: function(v:Void->Void = <complete>
-                if (expr.Context.ContextFunction != null && expr.Context.BeforeBody)
-                {
-                    CompletionList.Show(new List<ICompletionListItem> {new DeclarationItem("null")}, autoHide);
-                    return true;
-                }
-                var ctx = ASContext.Context;
                 MemberModel member;
                 // for example: (v:Void->Void) = <complete>
                 if (IsFunction(expr.Member)) member = expr.Member;
