@@ -138,10 +138,10 @@ namespace HaXeContext.Completion
         bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
         {
             var c = (char) sci.CharAt(position);
-            var expr = GetExpressionType(sci, position, false, true);
+var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
             // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
-            if (c == ' ' && (expr.Context.Separator == "->" || (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function))))
+            if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
             {
                 // for example: function(v:Void->Void = <complete>
                 if (expr.Context.ContextFunction != null && expr.Context.BeforeBody)
@@ -152,7 +152,7 @@ namespace HaXeContext.Completion
                 var ctx = ASContext.Context;
                 MemberModel member;
                 // for example: (v:Void->Void) = <complete>
-                if (expr.Member != null && expr.Member.Flags.HasFlag(FlagType.Function)) member = expr.Member;
+                if (IsFunction(expr.Member)) member = expr.Member;
                 // for example: var v:Void->Void = <complete>
                 else
                 {
@@ -167,10 +167,7 @@ namespace HaXeContext.Completion
                 }
                 if (member == null) return false;
                 var functionName = "function() {}";
-                var list = new List<ICompletionListItem>
-                {
-                    new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))
-                };
+                var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
                 if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
                 {
                     functionName = "() -> {}";
@@ -207,6 +204,8 @@ namespace HaXeContext.Completion
             bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
                                          || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
+
+            bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
