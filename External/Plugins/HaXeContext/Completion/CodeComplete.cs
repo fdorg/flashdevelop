@@ -171,7 +171,7 @@ namespace HaXeContext.Completion
                 {
                     new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))
                 };
-                if (((Context) ctx).GetCurrentSDKVersion() >= "4.0.0")
+                if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
                 {
                     functionName = "() -> {}";
                     list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
