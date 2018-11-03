@@ -1023,6 +1023,8 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue1909_6.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue1909_7.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue1909_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue1909_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue1909_8.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

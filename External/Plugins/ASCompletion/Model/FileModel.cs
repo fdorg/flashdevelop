@@ -69,7 +69,7 @@ namespace ASCompletion.Model
         {
             if (!(obj is ASMetaData))
                 throw new InvalidCastException("This object is not of type ASMetaData");
-            ASMetaData meta = obj as ASMetaData;
+            var meta = (ASMetaData) obj;
             if (Kind == ASMetaKind.Event && meta.Kind == ASMetaKind.Event)
                 return Params["type"].CompareTo(meta.Params["type"]);
             return Name.CompareTo(meta.Name);
@@ -98,8 +98,8 @@ namespace ASCompletion.Model
     [Serializable]
     public class FileModel
     {
-        static public FileModel Ignore = new FileModel();
-        static internal event Action<FileModel> OnFileUpdate;
+        public static readonly FileModel Ignore = new FileModel();
+        internal static event Action<FileModel> OnFileUpdate;
 
         [NonSerialized]
         public TreeState OutlineState;

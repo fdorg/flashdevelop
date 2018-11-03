@@ -829,9 +829,10 @@ namespace HaXeContext.Completion
                     }
                     var tmp = new MemberList();
                     base.GetInstanceMembers(autoHide, expr, extends, mask, dotIndex, tmp);
-                    foreach (var param in  @params.Values)
+                    var names = @params["Default"].Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var param in names)
                     {
-                        var member = tmp.Search(param, 0, 0);
+                        var member = tmp.Search(param.Trim(), 0, 0);
                         if (member != null) result.Merge(member);
                     }
                     return;
