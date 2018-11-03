@@ -215,9 +215,9 @@ namespace ASCompletion.Model
             return result;
         }
 
-        internal MemberList GetSortedMembersList()
+        public MemberList GetSortedMembersList()
         {
-            MemberList items = new MemberList();
+            var items = new MemberList();
             foreach (MemberModel item in Members)
                 if ((item.Flags & FlagType.Constructor) == 0) items.Add(item);
             items.Sort();

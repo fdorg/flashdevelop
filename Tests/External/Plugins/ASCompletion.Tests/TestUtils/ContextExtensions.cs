@@ -42,6 +42,10 @@ namespace ASCompletion.TestUtils
             mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
                 .Do(it =>
                 {
+                    var topLevel = new FileModel();
+                    topLevel.Members.Add(new MemberModel("this", mock.CurrentClass.Name, FlagType.Variable, Visibility.Public) {InFile = mock.CurrentModel});
+                    topLevel.Members.Add(new MemberModel("super", mock.CurrentClass.ExtendsType, FlagType.Variable, Visibility.Public) {InFile = mock.CurrentModel});
+                    context.TopLevel = topLevel;
                     context.completionCache.IsDirty = true;
                     context.GetTopLevelElements();
                     context.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
