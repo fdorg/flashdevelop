@@ -1722,7 +1722,6 @@ namespace HaXeContext.Model
                 return true;
             }
 
-
             /* EVAL DECLARATION */
 
             if (foundColon && curMember != null)
@@ -1999,7 +1998,7 @@ namespace HaXeContext.Model
                             // class member
                             else if (curClass != null)
                             {
-                                FlagType forcePublic = FlagType.Interface;
+                                var forcePublic = FlagType.Interface;
                                 forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
                                 if ((curClass.Flags & forcePublic) > 0)
                                     member.Access = Visibility.Public;
@@ -2032,7 +2031,7 @@ namespace HaXeContext.Model
                         member = new MemberModel();
                         member.Comments = curComment;
 
-                        int t = token.IndexOf('<');
+                        var t = token.IndexOf('<');
                         if (t > 0)
                         {
                             member.Template = token.Substring(t);
