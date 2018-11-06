@@ -1751,79 +1751,81 @@ namespace ASCompletion.Completion
             var endPosition = ctx.CurrentMember != null ? sci.LineEndPosition(ctx.CurrentMember.LineFrom - 1) : 0;
             while (position >= endPosition)
             {
-                if (!sci.PositionIsOnComment(position) && !sci.PositionIsInString(position) || ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
+                if (sci.PositionIsOnComment(position))
                 {
-                    var c = (char)sci.CharAt(position);
-                    if (c <= ' ')
-                    {
-                        position--;
-                        continue;
-                    }
-                    // skip {} () [] blocks
-                    if ((braCount > 0 && c != '{' && c != '}')
-                        || (parCount > 0 && c != '(' && c != ')')
-                        || (arrCount > 0 && c != '[' && c != ']'))
-                    {
-                        position--;
-                        continue;
-                    }
-                    if (parCount < 0)
-                    {
-                        if (characterClass.Contains(c) || c == '>' || c == ']' || c ==')')
-                        {
-                            position++;
-                            break; // function start found
-                        }
-                        if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
-                    }
-                    else if (c == ';' && braCount == 0)
-                    {
-                        position = -1;
-                        break;
-                    }
-                    if (c == '}') braCount++;
-                    else if (c == ']') arrCount++;
-                    else if (c == ')') parCount++;
-                    else if (c == '{')
-                    {
-                        if (braCount == 0) comaCount = 0;
-                        else braCount--;
-                    }
-                    else if (c == '[')
-                    {
-                        if (arrCount == 0) comaCount = 0;
-                        else arrCount--;
-                    }
-                    else if (c == '(') --parCount;
-                    else if (c == '?' && genCount > 0) genCount = 0;
-                    else if (c == '>')
-                    {
-                        if (hasChar)
-                        {
-                            position--;
-                            continue;
-                        }
-                        genCount++;
-                    }
-                    else if (c == '<')
-                    {
-                        if (hasChar)
-                        {
-                            position--;
-                            continue;
-                        }
-
-                        if (genCount > 0) genCount--;
-                    }
-                    // new parameter reached
-                    else if (c == ',')
-                    {
-                        parCount = 0;
-                        if (genCount == 0) comaCount++;
-                        hasChar = false;
-                    }
-                    else if (characterClass.Contains(c)) hasChar = true;
+                    position--;
+                    continue;
                 }
+                var c = (char) sci.CharAt(position);
+                // skip {} () [] "" '' blocks
+                if (((braCount > 0 && c != '{' && c != '}')
+                     || (parCount > 0 && c != '(' && c != ')')
+                     || (arrCount > 0 && c != '[' && c != ']'))
+                    || (sci.PositionIsInString(position) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, position)))
+                {
+                    position--;
+                    continue;
+                }
+                if (c <= ' ')
+                {
+                    position--;
+                    continue;
+                }
+                if (parCount < 0)
+                {
+                    if (characterClass.Contains(c) || c == '>' || c == ']' || c == ')')
+                    {
+                        position++;
+                        break; // function start found
+                    }
+                    if (char.IsPunctuation(c) || char.IsSymbol(c)) parCount = 0;
+                }
+                else if (c == ';' && braCount == 0)
+                {
+                    position = -1;
+                    break;
+                }
+                if (c == '}') braCount++;
+                else if (c == ']') arrCount++;
+                else if (c == ')') parCount++;
+                else if (c == '{')
+                {
+                    if (braCount == 0) comaCount = 0;
+                    else braCount--;
+                }
+                else if (c == '[')
+                {
+                    if (arrCount == 0) comaCount = 0;
+                    else arrCount--;
+                }
+                else if (c == '(') --parCount;
+                else if (c == '?' && genCount > 0) genCount = 0;
+                else if (c == '>')
+                {
+                    if (hasChar)
+                    {
+                        position--;
+                        continue;
+                    }
+                    genCount++;
+                }
+                else if (c == '<')
+                {
+                    if (hasChar)
+                    {
+                        position--;
+                        continue;
+                    }
+                    if (genCount > 0) genCount--;
+                }
+                // new parameter reached
+                else if (c == ',')
+                {
+                    parCount = 0;
+                    if (genCount == 0) comaCount++;
+                    hasChar = false;
+                }
+                else if (characterClass.Contains(c)) hasChar = true;
                 position--;
             }
             return comaCount;
