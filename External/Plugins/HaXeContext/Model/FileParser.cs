@@ -559,7 +559,22 @@ namespace HaXeContext.Model
                     }
                     else if (c1 == '{')
                     {
-                        if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0 || paramTempCount > 0)
+                        // for example: function(v:String):{v<cursor>String {
+                        if (inAnonType && inType && valueLength > 0
+                            && valueBuffer[valueLength - 1] != ':'
+                            && valueBuffer[valueLength - 1] != '>'
+                            && valueBuffer[valueLength - 1] != '<'
+                            && valueBuffer[valueLength - 1] != '(')
+                        {
+                            inType = false;
+                            inValue = false;
+                            hadValue = false;
+                            inGeneric = false;
+                            valueLength = 0;
+                            length = 0;
+                            context = 0;
+                        }
+                        else if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0 || paramTempCount > 0)
                         {
                             paramBraceCount++;
                             stopParser = true;
@@ -645,12 +660,7 @@ namespace HaXeContext.Model
                     // in params, store the default value
                     else if ((inParams || inType) && valueLength < VALUE_BUFFER)
                     {
-                        if (c1 <= 32)
-                        {
-                            if (valueLength > 0 && valueBuffer[valueLength - 1] != ' ')
-                                valueBuffer[valueLength++] = ' ';
-                        }
-                        else valueBuffer[valueLength++] = c1;
+                        if (c1 > 32) valueBuffer[valueLength++] = c1;
                     }
 
                     // detect keywords
