@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Settings;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
@@ -35,6 +36,7 @@ namespace HaXeContext.Generators
         public void Setup()
         {
             ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};
+            ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.ReturnDefaultValue;
             ASContext.Context.Settings.GenerateImports.Returns(true);
             SetHaxeFeatures(sci);
         }
@@ -1382,6 +1384,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> ImplementInterfaceIssue2531TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeImplementInterface_issue2531_1", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue2531_1"))
+                    .SetName("Implement interface methods. Issue 2531. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2531");
+            }
+        }
+
         static IEnumerable<TestCaseData> GenerateEventHandlerIssue751TestCases
         {
             get
@@ -1531,6 +1544,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
+            TestCaseSource(nameof(ImplementInterfaceIssue2531TestCases)),
             TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
             TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),

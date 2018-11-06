@@ -131,7 +131,20 @@ namespace ASCompletion.Completion
                 // implement interface
                 if (CanShowImplementInterfaceList(sci, position, resolve, found))
                 {
-                    contextParam = resolve.Type.Type;
+                    if (ctx.Features.hasGenerics && resolve.RelClass?.Implements != null)
+                    {
+                        var name = resolve.Type.Name;
+                        foreach (var it in resolve.RelClass.Implements)
+                        {
+                            string interfaceName;
+                            if (it.IndexOf('<') is int p && p != -1) interfaceName = it.Substring(0, p);
+                            else interfaceName = it;
+                            if (interfaceName != name) continue;
+                            contextParam = it;
+                            break;
+                        }
+                    }
+                    else contextParam = resolve.Type.Type;
                     ShowImplementInterface(found, options);
                     return;
                 }
@@ -2916,42 +2929,46 @@ namespace ASCompletion.Completion
         protected virtual void GenerateFunction(ScintillaControl sci, MemberModel member, int position, ClassModel inClass, bool detach)
         {
             string template;
-            string decl;
             if ((inClass.Flags & FlagType.Interface) > 0)
             {
                 template = TemplateUtils.GetTemplate("IFunction");
-                decl = TemplateUtils.ToDeclarationString(member, template);
+                template = TemplateUtils.ToDeclarationString(member, template);
             }
             else if ((member.Flags & FlagType.Constructor) > 0)
             {
                 template = TemplateUtils.GetTemplate("Constructor");
-                decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
                 var line = sci.LineFromPosition(position);
-                if (GetDeclarationAtLine(line).Member != null) decl += $"{NewLine}{NewLine}{NewLine}";
-                else if (GetDeclarationAtLine(line + 1).Member != null) decl += $"{NewLine}{NewLine}";
+                if (GetDeclarationAtLine(line).Member != null) template += $"{NewLine}{NewLine}{NewLine}";
+                else if (GetDeclarationAtLine(line + 1).Member != null) template += $"{NewLine}{NewLine}";
             }
             else
             {
-                string body = null;
-                switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
-                {
-                    case GeneratedMemberBodyStyle.ReturnDefaultValue:
-                        var type = member.Type;
-                        if (inClass.InFile.haXe)
-                        {
-                            var expr = inClass.InFile.Context.ResolveType(type, inClass.InFile);
-                            if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
-                                type = expr.ExtendsType;
-                        }
-                        var defaultValue = inClass.InFile.Context.GetDefaultValue(type);
-                        if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
-                        break;
-                }
+                var body = GetFunctionBody(member, inClass);
                 template = TemplateUtils.GetTemplate("Function");
-                decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", body);
+                template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
             }
-            GenerateFunction(position, decl, detach);
+            GenerateFunction(position, template, detach);
+        }
+
+        protected string GetFunctionBody(MemberModel member, ClassModel inClass)
+        {
+            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+            {
+                case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                    var type = member.Type;
+                    if (inClass.InFile.haXe)
+                    {
+                        var expr = ASContext.Context.ResolveType(type, inClass.InFile);
+                        if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
+                            type = expr.ExtendsType;
+                    }
+                    var defaultValue = ASContext.Context.GetDefaultValue(type);
+                    if (!string.IsNullOrEmpty(defaultValue)) return $"return {defaultValue};";
+                    break;
+            }
+            return null;
         }
 
         protected void GenerateFunction(int position, string declaration, bool detach)
@@ -3382,7 +3399,7 @@ namespace ASCompletion.Completion
 
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", "_" + method.Name);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", features.voidKey);
-                    decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
+                    decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", codeGenerator.GetFunctionBody(method, inClass));
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
 
                     if (!entry) decl = TemplateUtils.ReplaceTemplateVariable(decl, "EntryPoint", null);
@@ -3396,7 +3413,7 @@ namespace ASCompletion.Completion
                             typesUsed.Add(param.Type);
                 }
 
-                if (ASContext.Context.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
+                if (ctx.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
                 // interface inheritance
                 iType = iType.Extends;
             }
@@ -3405,7 +3422,7 @@ namespace ASCompletion.Completion
             try
             {
                 var position = sci.CurrentPos;
-                if (ASContext.Context.Settings.GenerateImports && typesUsed.Count > 0)
+                if (ctx.Settings.GenerateImports && typesUsed.Count > 0)
                 {
                     position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
                     sci.SetSel(position, position);
