@@ -131,7 +131,20 @@ namespace ASCompletion.Completion
                 // implement interface
                 if (CanShowImplementInterfaceList(sci, position, resolve, found))
                 {
-                    contextParam = resolve.Type.Type;
+                    if (ctx.Features.hasGenerics && resolve.RelClass?.Implements != null)
+                    {
+                        var name = resolve.Type.Name;
+                        foreach (var it in resolve.RelClass.Implements)
+                        {
+                            string interfaceName;
+                            if (it.IndexOf('<') is int p && p != -1) interfaceName = it.Substring(0, p);
+                            else interfaceName = it;
+                            if (interfaceName != name) continue;
+                            contextParam = it;
+                            break;
+                        }
+                    }
+                    else contextParam = resolve.Type.Type;
                     ShowImplementInterface(found, options);
                     return;
                 }
