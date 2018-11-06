@@ -10,7 +10,7 @@ class Main implements IFoo {
 	/* INTERFACE IFoo */
 	
 	public function foo():haxe.ds.Vector<haxe.Timer->Type.ValueType> {
-		
+		return null;
 	}
 }
 

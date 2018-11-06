@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Settings;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
@@ -35,6 +36,7 @@ namespace HaXeContext.Generators
         public void Setup()
         {
             ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};
+            ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.ReturnDefaultValue;
             ASContext.Context.Settings.GenerateImports.Returns(true);
             SetHaxeFeatures(sci);
         }
