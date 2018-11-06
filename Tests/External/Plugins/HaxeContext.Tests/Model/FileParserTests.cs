@@ -392,6 +392,37 @@ namespace HaXeContext.Model
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2527TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2527_1")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("container", "Element", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public),
+                        new MemberModel("session", "AceSession", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("modePath", "String", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Private),
+                        new MemberModel("lambdaList", " Array<String>", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("lambdaMap", "Dictionary<String>", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("lambdas", "Dictionary<GmlExtLambda>", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("Issue2525_1", "", FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public),
+                        new MemberModel("ready", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("stateLoad", "", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("stateSave", "", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("focusGain", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("canImport", "", FlagType.Static | FlagType.Function, Visibility.Private),
+                        new MemberModel("canLambda", "", FlagType.Static | FlagType.Function, Visibility.Private),
+                        new MemberModel("load", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("postpImport", null, FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public),
+                        new MemberModel("postpNormal", "String", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public),
+                        new MemberModel("save", "Bool", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("checkChanges", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                    })
+                    .SetName("Issue 2527. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2527");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(Issue163TestCases)),
@@ -400,6 +431,7 @@ namespace HaXeContext.Model
             TestCaseSource(nameof(Issue2381TestCases)),
             TestCaseSource(nameof(Issue2387TestCases)),
             TestCaseSource(nameof(Issue2425TestCases)),
+            TestCaseSource(nameof(Issue2527TestCases)),
         ]
         public List<MemberModel> ParseFile(string fileName)
         {
