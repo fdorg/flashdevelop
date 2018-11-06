@@ -566,6 +566,8 @@ namespace HaXeContext.Model
                             && valueBuffer[valueLength - 1] != '<'
                             && valueBuffer[valueLength - 1] != '(')
                         {
+                            foundColon = false;
+                            inAnonType = false;
                             inType = false;
                             inValue = false;
                             hadValue = false;
@@ -573,6 +575,7 @@ namespace HaXeContext.Model
                             valueLength = 0;
                             length = 0;
                             context = 0;
+                            paramBraceCount = 0;
                         }
                         else if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0 || paramTempCount > 0)
                         {

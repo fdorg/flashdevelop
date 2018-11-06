@@ -413,11 +413,10 @@ namespace HaXeContext.Model
                         new MemberModel("canImport", "", FlagType.Static | FlagType.Function, Visibility.Private),
                         new MemberModel("canLambda", "", FlagType.Static | FlagType.Function, Visibility.Private),
                         new MemberModel("load", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
-                        new MemberModel("postpImport", "varval_preImport=val;varpath=file.path;val=GmlExtImport.post(val, path);if(val==null){Main.window.alert(GmlExtImport.errorText);returnnull;}", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public),
-                        new MemberModel("data", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private),
-                        //new MemberModel("postpNormal", "String", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public),
-                        //new MemberModel("save", "Bool", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
-                        //new MemberModel("checkChanges", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("postpImport", null, FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public),
+                        new MemberModel("postpNormal", "String", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public),
+                        new MemberModel("save", "Bool", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
+                        new MemberModel("checkChanges", "Void", FlagType.Access | FlagType.Dynamic | FlagType.Override | FlagType.Function, Visibility.Public),
                     })
                     .SetName("Issue 2527. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2527");
