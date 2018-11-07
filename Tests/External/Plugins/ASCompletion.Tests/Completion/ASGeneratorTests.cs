@@ -2403,8 +2403,7 @@ namespace ASCompletion.Completion
                             .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of 1");
                         yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit_2"))
-                            .Ignore("")
-                            .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
+                            .Returns(new ClassModel {Name = "Number", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of 1.0");
                         yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfObjectInitializer"))
                             .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
