@@ -2,7 +2,6 @@
 using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
-using ASCompletion.Model;
 using ASCompletion.Settings;
 using HaXeContext.TestUtils;
 using NSubstitute;
@@ -361,8 +360,8 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue2526_12", ' ', false, false)
                     .SetName("@:forwardStatics() <complete> Issue 2526. Case 12")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
-                yield return new TestCaseData("BeforeOnChar_issue2526_13", ' ', false, false)
-                    .SetName("@:forwardStatics(fromCharCode) <complete> Issue 2526. Case 13")
+                yield return new TestCaseData("BeforeOnChar_issue2526_13", ' ', false, true)
+                    .SetName("@:forwardStatics(fromCharCode, <complete>) Issue 2526. Case 13")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
             }
         }
@@ -933,6 +932,25 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2526TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2526_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2526_1"))
+                    .SetName("@:forward(<complete> Issue 2526. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2526_2", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2526_2"))
+                    .SetName("@:forward(charAt, <complete> Issue 2526. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2526_3", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2526_3"))
+                    .SetName("@:forwardStatics(<complete> Issue 2526. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -948,6 +966,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2518TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2522TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue1909TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2526TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
@@ -1008,9 +1027,6 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_15", ' ', true)
                     .SetName("to | ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceText_16", ' ', true)
-                    .SetName("public | ")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_1", '.', true)
                     .SetName("EnumType.| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
@@ -1047,6 +1063,9 @@ namespace HaXeContext.Completion
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
                 yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', true)
                     .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_16", ' ', true)
+                    .SetName("public | ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
             }
         }
