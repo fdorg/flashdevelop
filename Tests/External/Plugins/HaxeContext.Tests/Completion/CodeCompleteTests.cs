@@ -361,6 +361,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue2526_12", ' ', false, false)
                     .SetName("@:forwardStatics() <complete> Issue 2526. Case 12")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_13", ' ', false, false)
+                    .SetName("@:forwardStatics(fromCharCode) <complete> Issue 2526. Case 13")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
             }
         }
 
