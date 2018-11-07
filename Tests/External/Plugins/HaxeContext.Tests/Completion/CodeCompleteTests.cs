@@ -951,6 +951,17 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2536TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2536_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2536_1"))
+                    .SetName("class Foo<T:String>() { (v:T).<complete> Issue 2536. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2536");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -967,6 +978,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2522TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue1909TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2526TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2536TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {

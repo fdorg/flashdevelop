@@ -635,19 +635,17 @@ namespace HaXeContext.Completion
         bool TryInferGenericType(MemberModel var)
         {
             var ctx = ASContext.Context;
-            if (ctx.CurrentMember is MemberModel member && !string.IsNullOrEmpty(member.Template)
-                && !string.IsNullOrEmpty(var.Type) && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
+            var template = ctx.CurrentMember?.Template ?? ctx.CurrentClass?.Template;
+            if (string.IsNullOrEmpty(template) || string.IsNullOrEmpty(var.Type) || !ResolveType(var.Type, ctx.CurrentModel).IsVoid()) return false;
+            var templates = template.Substring(1, template.Length - 2).Split(',');
+            foreach (var it in templates)
             {
-                var templates = member.Template.Substring(1, member.Template.Length - 2).Split(',');
-                foreach (var template in templates)
-                {
-                    var parts = template.Split(':');
-                    if (parts.Length == 1 || parts[0] != var.Type) continue;
-                    var type = ResolveType(parts[1], ctx.CurrentModel);
-                    var.Type = type.Name;
-                    var.Flags |= FlagType.Inferred;
-                    return true;
-                }
+                var parts = it.Split(':');
+                if (parts.Length == 1 || parts[0] != var.Type) continue;
+                var type = ResolveType(parts[1], ctx.CurrentModel);
+                var.Type = type.Name;
+                var.Flags |= FlagType.Inferred;
+                return true;
             }
             return false;
         }
