@@ -1,4 +1,4 @@
 ﻿package;
-@:enum abtrsact Bar_16(Int) {
+@:enum abstract BeforeOnCharAndReplaceText_16(Int) {
 	public $(EntryPoint)
 }

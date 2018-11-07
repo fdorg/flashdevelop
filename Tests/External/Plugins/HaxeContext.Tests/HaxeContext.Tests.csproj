@@ -1028,6 +1028,25 @@
     <EmbeddedResource Include="Test Files\parser\Issue2527_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2531_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue2531_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_12.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_10.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_11.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_13.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2526_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2526_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2526_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2526_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2526_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2526_3.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -381,7 +381,23 @@ namespace HaXeContext.Generators
             return paramType;
         }
 
-        protected override string GetFunctionType(MemberModel member)
+        protected override string GetFunctionBody(MemberModel member, ClassModel inClass)
+        {
+            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+            {
+                case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                    var type = member.Type;
+                    var expr = ASContext.Context.ResolveType(type, inClass.InFile);
+                    if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
+                        type = expr.ExtendsType;
+                    var defaultValue = ASContext.Context.GetDefaultValue(type);
+                    if (!string.IsNullOrEmpty(defaultValue)) return $"return {defaultValue};";
+                    break;
+            }
+            return null;
+        }
+
+        protected override string FunctionToString(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
             var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;

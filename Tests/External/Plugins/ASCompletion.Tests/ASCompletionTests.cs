@@ -108,10 +108,9 @@ namespace ASCompletion
             var currentModel = ASContext.Context.CurrentModel;
             ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
-            var currentClass = currentModel.Classes.FirstOrDefault(line);
-            if (currentClass == null && currentModel.Classes.Count > 0) currentClass = currentModel.Classes[0];
+            var currentClass = currentModel.Classes.FirstOrDefault(line) ?? ClassModel.VoidClass;
             ASContext.Context.CurrentClass.Returns(currentClass);
-            var currentMember = currentClass?.Members.FirstOrDefault(line);
+            var currentMember = currentClass.Members.FirstOrDefault(line);
             ASContext.Context.CurrentMember.Returns(currentMember);
             ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
         }
@@ -122,7 +121,7 @@ public static class CollectionExtensions
 {
     public static MemberModel FirstOrDefault(this MemberList list, int line) => list.Items.FirstOrDefault(line);
 
-    public static TSource FirstOrDefault<TSource>(this ICollection<TSource> items, int line) where TSource : MemberModel
+    public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> items, int line) where TSource : MemberModel
     {
         return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
     }
