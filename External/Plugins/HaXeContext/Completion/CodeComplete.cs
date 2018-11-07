@@ -601,7 +601,10 @@ namespace HaXeContext.Completion
             var expr = GetExpressionType(sci, rvalueEnd, false, true);
             if (expr.Type != null)
             {
-                var.Type = expr.Type.QualifiedName;
+                // for example: var v = ClassType;
+                if (expr.Type.Flags == FlagType.Class && expr.IsStatic)
+                    var.Type = $"Class<{expr.Type.QualifiedName}>";
+                else var.Type = expr.Type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
                 return true;
             }
