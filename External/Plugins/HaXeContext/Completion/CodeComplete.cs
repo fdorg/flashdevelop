@@ -78,7 +78,8 @@ namespace HaXeContext.Completion
                     // for example: SomeType->(<complete>
                     if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
-                    break;
+                    // for example: @:forward(<complete> or @:forwardStatics(<complete>
+                    return HandleForwardCompletion(sci, autoHide);
             }
             return false;
             // Utils
@@ -99,7 +100,6 @@ namespace HaXeContext.Completion
             }
             return true;
         }
-
 
         /// <inheritdoc />
         protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
@@ -123,6 +123,8 @@ namespace HaXeContext.Completion
                             else break;
                         }
                     }
+                    // for example: @:forward(methodName, <complete> or @:forwardStatics(methodName, <complete>
+                    return HandleForwardCompletion(sci, autoHide);
                 }
                 return false;
             }
@@ -228,6 +230,49 @@ namespace HaXeContext.Completion
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
 
             bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
+        }
+
+        bool HandleForwardCompletion(ScintillaControl sci, bool autoHide)
+        {
+            var ctx = ASContext.Context;
+            if (!ctx.CurrentClass.IsVoid()) return false;
+            var currentLine = sci.CurrentLine;
+            var line = sci.GetLine(currentLine);
+            // for example: @:forward() <complete>
+            if (line.LastIndexOf(')') is int p && (p != -1 && (sci.PositionFromLine(currentLine) + p) < sci.CurrentPos)) return false;
+            string metaName;
+            FlagType mask;
+            if (line.StartsWithOrdinal("@:forward("))
+            {
+                metaName = ":forward";
+                mask = FlagType.Dynamic;
+            }
+            else if (line.StartsWithOrdinal("@:forwardStatics("))
+            {
+                metaName = ":forwardStatics";
+                mask = FlagType.Static;
+            }
+            else return false;
+            if (ctx.CurrentModel.Classes.Find(it => it.LineFrom > currentLine) is ClassModel @class && @class.Flags.HasFlag(FlagType.Abstract))
+            {
+                var extends = @class.Extends;
+                if (!extends.IsVoid()) return false;
+                extends = ResolveType(@class.ExtendsType, ctx.CurrentModel);
+                if (extends.IsVoid()) return false;
+                var list = new MemberList();
+                base.GetInstanceMembers(autoHide, new ASResult(), extends, mask, -1, list);
+                var @params = @class.MetaDatas?.Find(it => it.Name == metaName)?.Params;
+                if (@params != null)
+                {
+                    var names = @params["Default"]
+                        .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(it => it.Trim()).ToArray();
+                    if (names.Length != 0) list.Items.RemoveAll(it => Array.IndexOf(names, it.Name) != -1);
+                }
+                if (list.Count > 0) CompletionList.Show(list.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
+                return true;
+            }
+            return false;
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)

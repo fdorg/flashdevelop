@@ -321,6 +321,28 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue2526TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2526_1", ' ', false, false)
+                    .SetName("@:forward <complete> Issue 2526. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_2", ' ', false, false)
+                    .SetName("@:forward(<complete> . Before class. Issue 2526. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_3", ' ', false, false)
+                    .SetName("@:forward(<complete> . Before enum. Issue 2526. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_4", ' ', false, false)
+                    .SetName("@:forward(<complete> . Before interface. Issue 2526. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_5", ' ', false, false)
+                    .SetName("@:forward(<complete> . Before typedef. Issue 2526. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
@@ -331,6 +353,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharIssue2497TestCases)),
             TestCaseSource(nameof(OnCharIssue2518TestCases)),
             TestCaseSource(nameof(OnCharIssue2522TestCases)),
+            TestCaseSource(nameof(OnCharIssue2526TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {

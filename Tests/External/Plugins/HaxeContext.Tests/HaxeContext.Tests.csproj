@@ -1028,6 +1028,11 @@
     <EmbeddedResource Include="Test Files\parser\Issue2527_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2531_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue2531_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2526_5.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
