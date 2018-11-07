@@ -343,6 +343,24 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue2526_6", ' ', false, false)
                     .SetName("@:forward() <complete> Issue 2526. Case 6")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_7", ' ', false, false)
+                    .SetName("@:forwardStatics <complete> Issue 2526. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_8", ' ', false, false)
+                    .SetName("@:forwardStatics(<complete> . Before class. Issue 2526. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_9", ' ', false, false)
+                    .SetName("@:forwardStatics(<complete> . Before enum. Issue 2526. Case 9")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_10", ' ', false, false)
+                    .SetName("@:forwardStatics(<complete> . Before interface. Issue 2526. Case 10")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_11", ' ', false, false)
+                    .SetName("@:forwardStatics(<complete> . Before typedef. Issue 2526. Case 11")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_12", ' ', false, false)
+                    .SetName("@:forwardStatics() <complete> Issue 2526. Case 12")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
             }
         }
 
