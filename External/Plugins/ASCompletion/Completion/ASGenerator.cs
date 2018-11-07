@@ -4315,7 +4315,7 @@ namespace ASCompletion.Completion
         {
             string args = "";
             if (member.Parameters != null)
-                foreach (MemberModel param in member.Parameters)
+                foreach (var param in member.Parameters)
                 {
                     if (param.Name.StartsWith('.')) break;
                     args += ", " + TemplateUtils.GetParamName(param);
