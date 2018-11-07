@@ -340,6 +340,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue2526_5", ' ', false, false)
                     .SetName("@:forward(<complete> . Before typedef. Issue 2526. Case 5")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
+                yield return new TestCaseData("BeforeOnChar_issue2526_6", ' ', false, false)
+                    .SetName("@:forward() <complete> Issue 2526. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2526");
             }
         }
 
