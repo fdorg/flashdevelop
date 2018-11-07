@@ -397,7 +397,7 @@ namespace HaXeContext.Generators
             return null;
         }
 
-        protected override string GetFunctionType(MemberModel member)
+        protected override string FunctionToString(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
             var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;

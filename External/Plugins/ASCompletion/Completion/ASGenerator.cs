@@ -2484,7 +2484,7 @@ namespace ASCompletion.Completion
                 if (returnType.Member != null)
                 {
                     if ((returnType.Member.Flags & FlagType.Function) != 0)
-                        returnTypeStr = ((ASGenerator) ASContext.Context.CodeGenerator).FunctionToString(returnType);
+                        returnTypeStr = ((ASGenerator) ASContext.Context.CodeGenerator).FunctionToString(returnType.Member);
                     else if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                         returnTypeStr = returnType.Member.Type;
                 }
@@ -2694,7 +2694,7 @@ namespace ASCompletion.Completion
                                 if ((flags & FlagType.Function) != 0 && (flags & FlagType.Getter) == 0 && (flags & FlagType.Setter) == 0
                                     && !result.Path.EndsWith('~'))
                                 {
-                                    paramType = ((ASGenerator) ctx.CodeGenerator).FunctionToString(result);
+                                    paramType = ((ASGenerator) ctx.CodeGenerator).FunctionToString(result.Member);
                                 }
                                 else paramType = MemberModel.FormatType(GetShortType(result.Member.Type));
                                 if (result.InClass == null) paramQualType = result.Type.QualifiedName;
@@ -3268,7 +3268,7 @@ namespace ASCompletion.Completion
             {
                 if (resolve.Type.Name == "Function")
                 {
-                    var type = ((ASGenerator) ctx.CodeGenerator).FunctionToString(expr);
+                    var type = ((ASGenerator) ctx.CodeGenerator).FunctionToString(expr.Member);
                     resolve = new ASResult {Type = new ClassModel {Name = type, InFile = FileModel.Ignore}, Context =  expr.Context};
                 }
                 else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
@@ -3282,8 +3282,6 @@ namespace ASCompletion.Completion
             }
             return new StatementReturnType(resolve, pos, word);
         }
-
-        private string FunctionToString(ASResult expr) => FunctionToString(expr.Member);
 
         protected virtual string FunctionToString(MemberModel member) => member != null ? $"Function/*({member.ParametersString()}):{member.Type}*/" : "Function";
 
