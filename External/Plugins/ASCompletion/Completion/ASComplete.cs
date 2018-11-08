@@ -2122,7 +2122,7 @@ namespace ASCompletion.Completion
             var currentClass = ctx.CurrentClass;
 
             currentClass.ResolveExtends();
-            var access = ctx.TypesAffinity(currentClass, tmpClass);
+            var access = TypesAffinity(expr.Context, currentClass, tmpClass);
 
             // explore members
             tmpClass.ResolveExtends();
@@ -2156,6 +2156,8 @@ namespace ASCompletion.Completion
                 access = ctx.TypesAffinity(currentClass, tmpClass);
             }
         }
+
+        protected virtual Visibility TypesAffinity(ASExpr context, ClassModel inClass, ClassModel withClass) => ASContext.Context.TypesAffinity(inClass, withClass);
 
         private static MemberList GetKeywords()
         {
@@ -2752,15 +2754,15 @@ namespace ASCompletion.Completion
             int n = tokens.Count;
             if (!complete) n--;
             // context
-            IASContext ctx = ASContext.Context;
-            ContextFeatures features = ctx.Features;
-            ASResult step = head;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
+            var step = head;
             // look for static or dynamic members?
-            FlagType mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
+            var mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
             // members visibility
-            ClassModel curClass = ctx.CurrentClass;
+            var curClass = ctx.CurrentClass;
             curClass.ResolveExtends();
-            Visibility acc = ctx.TypesAffinity(curClass, step.Type);
+            var acc = ctx.CodeComplete.TypesAffinity(context, curClass, step.Type);
 
             // explore
             var inE4X = false;

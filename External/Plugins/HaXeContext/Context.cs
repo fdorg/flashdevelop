@@ -785,10 +785,10 @@ namespace HaXeContext
         public override Visibility TypesAffinity(ClassModel inClass, ClassModel withClass)
         {
             // same file
-            if (withClass != null && inClass.InFile == withClass.InFile)
+            if (withClass != null && inClass.InFile == withClass.InFile && inClass.BaseType == withClass.BaseType)
                 return Visibility.Public | Visibility.Private;
             // inheritance affinity
-            ClassModel tmp = inClass;
+            var tmp = inClass;
             while (!tmp.IsVoid())
             {
                 if (tmp == withClass)
