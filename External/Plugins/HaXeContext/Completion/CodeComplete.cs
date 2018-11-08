@@ -341,7 +341,7 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
-            if (TryInferGenericType(var)) return;
+            if (!TryInferGenericType(var).IsVoid()) return;
             if (var.Flags.HasFlag(FlagType.ParameterVar))
             {
                 if (FileParser.IsFunctionType(var.Type)) return;
@@ -632,24 +632,25 @@ namespace HaXeContext.Completion
             var.Type = type.Name;
         }
 
-        bool TryInferGenericType(MemberModel var)
+        static ClassModel TryInferGenericType(MemberModel var)
         {
             var ctx = ASContext.Context;
-            if (ctx.CurrentMember is MemberModel member && !string.IsNullOrEmpty(member.Template)
-                && !string.IsNullOrEmpty(var.Type) && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
+            var template = ctx.CurrentMember?.Template ?? ctx.CurrentClass?.Template;
+            if (!string.IsNullOrEmpty(template) && !string.IsNullOrEmpty(var.Type) &&
+                ResolveType(var.Type, ctx.CurrentModel).IsVoid())
             {
-                var templates = member.Template.Substring(1, member.Template.Length - 2).Split(',');
-                foreach (var template in templates)
+                var templates = template.Substring(1, template.Length - 2).Split(',');
+                foreach (var it in templates)
                 {
-                    var parts = template.Split(':');
+                    var parts = it.Split(':');
                     if (parts.Length == 1 || parts[0] != var.Type) continue;
                     var type = ResolveType(parts[1], ctx.CurrentModel);
                     var.Type = type.Name;
                     var.Flags |= FlagType.Inferred;
-                    return true;
+                    return type;
                 }
             }
-            return false;
+            return ClassModel.VoidClass;
         }
 
         static ClassModel InferTypedefType(ScintillaControl sci, MemberModel expr)
@@ -1031,6 +1032,25 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
+            /**
+             * for example:
+             * class Some<T:String> {
+             *     var v:T;
+             *     function test() {
+             *         v.<complete>
+             *     }
+             * }
+             */
+            if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
+            {
+                var clone = (MemberModel)result.Member.Clone();
+                if (TryInferGenericType(clone) is ClassModel type && !type.IsVoid())
+                {
+                    result.Member = clone;
+                    result.Type = type;
+                    return;
+                }
+            }
         }
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
