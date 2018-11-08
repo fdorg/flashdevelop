@@ -959,6 +959,10 @@ namespace HaXeContext.Completion
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2536_1"))
                     .SetName("class Foo<T:String>() { (v:T).<complete> Issue 2536. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2536");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2536_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2536_2"))
+                    .SetName("class Foo<T:String>() { (v:T).<complete> Issue 2536. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2536");
             }
         }
 
