@@ -1053,6 +1053,16 @@ namespace HaXeContext.Completion
             }
         }
 
+        protected override Visibility TypesAffinity(ASExpr context, ClassModel inClass, ClassModel withClass)
+        {
+            var result = base.TypesAffinity(context, inClass, withClass);
+            if (context != null
+                && ASContext.CurSciControl is ScintillaControl sci
+                && context.WordBefore == "privateAccess" && context.WordBeforePosition is int p
+                && sci.CharAt(p - 2) == '@' && sci.CharAt(p - 1) == ':') result |= Visibility.Private;
+            return result;
+        }
+
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
         {
             var voidKey = ASContext.Context.Features.voidKey;
