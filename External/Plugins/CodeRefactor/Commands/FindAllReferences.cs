@@ -18,7 +18,7 @@ namespace CodeRefactor.Commands
     {
         internal const string TraceGroup = "CodeRefactor.FindAllReferences";
 
-        protected bool IgnoreDeclarationSource { get; private set; }
+        protected bool IgnoreDeclarationSource { get; }
 
         /// <summary>
         /// Gets or sets if searching is only performed on user defined classpaths
@@ -192,7 +192,7 @@ namespace CodeRefactor.Commands
         private void ReportResults()
         {
             var groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
+            PluginBase.MainForm.CallCommand("PluginCommand", $"ResultsPanel.ClearResults;{groupData}");
             foreach (var entry in Results)
             {
                 // Outputs the lines as they change
@@ -202,7 +202,7 @@ namespace CodeRefactor.Commands
                     TraceManager.Add(message, (int) TraceType.Info, groupData);
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
+            PluginBase.MainForm.CallCommand("PluginCommand", $"ResultsPanel.ShowResults;{groupData}");
         }
 
         #endregion
