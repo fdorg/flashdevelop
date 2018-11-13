@@ -640,11 +640,11 @@ namespace AS3Context
         {
             if (!IsFileValid) return;
 
-            ScintillaControl sci = CurSciControl;
+            var sci = CurSciControl;
             if (sci == null) return;
             ClearSquiggles(sci);
 
-            string src = CurSciControl.Text;
+            string src = sci.Text;
             string sdk = PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3"
                     ? PluginBase.CurrentProject.CurrentSDK
                     : as3settings.GetDefaultSDK().Path;

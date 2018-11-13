@@ -968,9 +968,9 @@ namespace ASCompletion.Context
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else if (CurSciControl != null)
+            else if (CurSciControl is ScintillaControl sci)
             {
-                cLine = CurSciControl.CurrentLine;
+                cLine = sci.CurrentLine;
                 UpdateContext(cLine);
             }
             // completion need refresh
@@ -983,9 +983,9 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile == null || CurSciControl == null) return;
-            GetCodeModel(cFile, CurSciControl.Text);
-            cLine = CurSciControl.CurrentLine;
+            if (cFile == null || !(CurSciControl is ScintillaControl sci)) return;
+            GetCodeModel(cFile, sci.Text);
+            cLine = sci.CurrentLine;
             UpdateContext(cLine);
 
             // update outline
@@ -1456,8 +1456,7 @@ namespace ASCompletion.Context
             if (dest == null)
             {
                 MainForm.CallCommand("New", null);
-                ScintillaControl sci = CurSciControl;
-                if (sci != null)
+                if (CurSciControl is ScintillaControl sci)
                 {
                     sci.CurrentPos = 0;
                     sci.Text = code;

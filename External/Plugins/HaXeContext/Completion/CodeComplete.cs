@@ -795,7 +795,7 @@ namespace HaXeContext.Completion
                  * }
                  */
                 if (string.IsNullOrEmpty(context.WordBefore) && context.PositionExpression > 0 &&
-                    ASContext.CurSciControl != null && ASContext.CurSciControl.CharAt(context.PositionExpression - 1) == '$')
+                    ASContext.CurSciControl is ScintillaControl sci && sci.CharAt(context.PositionExpression - 1) == '$')
                 {
                     context.PositionExpression -= 1;
                     context.Value = $"${context.Value}";

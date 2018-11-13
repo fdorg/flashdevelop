@@ -1827,12 +1827,12 @@ namespace HaXeContext
                 completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl != null)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is ScintillaControl sci)
                 {
                     try
                     {
-                        CurSciControl.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
-                        CurSciControl.Colourise(0, -1); // re-colorize the editor
+                        sci.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
+                        sci.Colourise(0, -1); // re-colorize the editor
                     }
                     catch (AccessViolationException) { } // catch memory errors
                 }
