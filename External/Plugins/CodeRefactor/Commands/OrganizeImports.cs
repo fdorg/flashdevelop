@@ -19,7 +19,7 @@ namespace CodeRefactor.Commands
         public ScintillaControl SciControl;
         public bool TruncateImports = false;
         public bool SeparatePackages = false;
-        private readonly List<KeyValuePair<MemberModel, int>> ImportIndents = new List<KeyValuePair<MemberModel, int>>();
+        readonly List<KeyValuePair<MemberModel, int>> importIndents = new List<KeyValuePair<MemberModel, int>>();
 
         /// <summary>
         /// The actual process implementation
@@ -72,7 +72,7 @@ namespace CodeRefactor.Commands
                 foreach (var import in imports)
                 {
                     sci.GotoLine(import.LineFrom);
-                    ImportIndents.Add(new KeyValuePair<MemberModel, int>(import, sci.GetLineIndentation(import.LineFrom)));
+                    importIndents.Add(new KeyValuePair<MemberModel, int>(import, sci.GetLineIndentation(import.LineFrom)));
                     sci.LineDelete();
                 }
                 if (context.Features.hasModules)
@@ -192,7 +192,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private int GetLineIndentFor(MemberModel import)
         {
-            foreach (var kvp in ImportIndents)
+            foreach (var kvp in importIndents)
             {
                 if (kvp.Key == import) return kvp.Value;
             }
@@ -251,7 +251,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Checks if the member type is imported
         /// </summary>
-        protected bool MemberTypeImported(string type, string searchInText, string sourceFile)
+        protected virtual bool MemberTypeImported(string type, string searchInText, string sourceFile)
         {
             if (type == "*") return true;
             var search = new FRSearch(type);

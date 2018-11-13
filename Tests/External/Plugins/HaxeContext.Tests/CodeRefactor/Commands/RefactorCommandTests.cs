@@ -73,10 +73,24 @@ namespace HaXeContext.CodeRefactor.Commands
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2512TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_issue2512_1"), "BeforeOrganizeImports_issue2512_1.hx", false)
+                    .Returns(ReadAllText("BeforeOrganizeImports_issue2512_1"))
+                    .SetName("'${Json.stringify({x:1})}'. Issue2512. String interpolation");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_issue2512_2"), "BeforeOrganizeImports_issue2512_2.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_issue2512_2"))
+                    .SetName("\"${Json.stringify({x:1})}\". Issue2512. String interpolation");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(TestCases)),
             TestCaseSource(nameof(Issue1342TestCases)),
+            TestCaseSource(nameof(Issue2512TestCases)),
         ]
         public string OrganizeImports(string sourceText, string fileName, bool separatePackages) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImportsTests.OrganizeImports(sci, sourceText, fileName, separatePackages);
     }
