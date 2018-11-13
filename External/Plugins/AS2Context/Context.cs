@@ -11,6 +11,7 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using ScintillaNet;
 
 namespace AS2Context
 {
@@ -833,7 +834,7 @@ namespace AS2Context
                 var fullpath = Path.GetDirectoryName(cFile.FileName);
                 if (package.Length == 0 || !fullpath.EndsWithOrdinal(pathname))
                 {
-                    if (settings.FixPackageAutomatically && CurSciControl != null)
+                    if (settings.FixPackageAutomatically && CurSciControl is ScintillaControl sci)
                     {
                         Regex packagePattern = null;
                         if (cFile.Context.Settings.LanguageId == "AS2")
@@ -849,10 +850,10 @@ namespace AS2Context
                         var pos = -1;
                         var txt = "";
                         var p = 0;
-                        var counter = CurSciControl.Length;
+                        var counter = sci.Length;
                         while (p < counter)
                         {
-                            var c = (char) CurSciControl.CharAt(p++);
+                            var c = (char) sci.CharAt(p++);
                             txt += c;
                             if (txt.Length > 5 && c <= 32)
                             {
@@ -888,8 +889,8 @@ namespace AS2Context
                                 if (correctPath != null)
                                 {
                                     correctPath = correctPath.Replace(Path.DirectorySeparatorChar, '.');
-                                    CurSciControl.SetSel(pos, pos + cFile.Package.Length);
-                                    CurSciControl.ReplaceSel(correctPath);
+                                    sci.SetSel(pos, pos + cFile.Package.Length);
+                                    sci.ReplaceSel(correctPath);
                                     orgid = "Info.PackageDidntMatchFilePath";
                                 }
                             }
@@ -918,7 +919,7 @@ namespace AS2Context
                         if (!cFile.FileName.ToUpper().EndsWithOrdinal(filename.ToUpper()))
                         {
                             string org = TextHelper.GetString("Info.TypeDontMatchFileName");
-                            string msg = String.Format(org, cname) + "\n" + cFile.FileName;
+                            string msg = string.Format(org, cname) + "\n" + cFile.FileName;
                             MessageBar.ShowWarning(msg);
                         }
                         else MessageBar.HideWarning();
@@ -1224,12 +1225,12 @@ namespace AS2Context
                 completionCache = new CompletionCache(this, elements);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl != null)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is ScintillaControl sci)
                 {
                     try
                     {
-                        CurSciControl.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
-                        CurSciControl.Colourise(0, -1); // re-colorize the editor
+                        sci.KeyWords(1, completionCache.Keywords); // additional-keywords index = 1
+                        sci.Colourise(0, -1); // re-colorize the editor
                     } 
                     catch (AccessViolationException){} // catch memory errors
                 }

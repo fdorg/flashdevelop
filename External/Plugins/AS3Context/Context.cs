@@ -640,15 +640,14 @@ namespace AS3Context
         {
             if (!IsFileValid) return;
 
-            ScintillaControl sci = CurSciControl;
+            var sci = CurSciControl;
             if (sci == null) return;
             ClearSquiggles(sci);
 
-            string src = CurSciControl.Text;
-            string sdk = PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3"
+            var sdk = PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3"
                     ? PluginBase.CurrentProject.CurrentSDK
                     : as3settings.GetDefaultSDK().Path;
-            FlexShells.Instance.CheckAS3(CurrentFile, sdk, src);
+            FlexShells.Instance.CheckAS3(CurrentFile, sdk, sci.Text);
         }
 
         private void AddSquiggles(ScintillaControl sci, int line, int start, int end)
