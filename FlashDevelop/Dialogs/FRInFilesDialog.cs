@@ -169,7 +169,7 @@ namespace FlashDevelop.Dialogs
             this.commentsCheckBox.Name = "commentsCheckBox";
             this.commentsCheckBox.Size = new System.Drawing.Size(119, 18);
             this.commentsCheckBox.TabIndex = 6;
-            this.commentsCheckBox.Text = " Look in &comments";
+            this.commentsCheckBox.Text = " Look in c&omments";
             // 
             // escapedCheckBox
             // 
