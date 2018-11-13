@@ -3,6 +3,7 @@ using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
+using PluginCore.FRService;
 
 namespace HaXeContext.CodeRefactor.Commands
 {
@@ -25,6 +26,28 @@ namespace HaXeContext.CodeRefactor.Commands
                 }
             }
             return result.ToList();
+        }
+
+        protected override bool MemberTypeImported(string type, string searchInText, string sourceFile)
+        {
+            if (base.MemberTypeImported(type, searchInText, sourceFile)) return true;
+            // Support for String interpolation(https://haxe.org/manual/lf-string-interpolation.html)
+            var search = new FRSearch(type);
+            search.Filter = SearchFilter.InStringLiterals;
+            search.NoCase = false;
+            search.WholeWord = true;
+            search.SourceFile = sourceFile;
+            var matches = search.Matches(searchInText);
+            if (matches != null)
+            {
+                var ctx = ASContext.Context.CodeComplete;
+                var sci = ASContext.CurSciControl;
+                foreach (var m in matches)
+                {
+                    if (ctx.IsStringInterpolationStyle(sci, m.Index)) return true;
+                }
+            }
+            return false;
         }
     }
 }
