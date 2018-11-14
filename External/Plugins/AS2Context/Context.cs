@@ -40,7 +40,7 @@ namespace AS2Context
         protected bool hasLevels = true;
         protected string docType;
 
-        private AS2Settings as2settings;
+        private readonly AS2Settings as2settings;
 
         public override IContextSettings Settings
         {
@@ -104,15 +104,15 @@ namespace AS2Context
             features.arrayKey = "Array";
             features.dynamicKey = "*";
             features.importKey = "import";
-            features.typesPreKeys = new string[] { "import", "new", "instanceof", "extends", "implements" };
-            features.codeKeywords = new string[] { 
+            features.typesPreKeys = new[] { "import", "new", "instanceof", "extends", "implements" };
+            features.codeKeywords = new[] { 
                 "var", "function", "new", "delete", "instanceof", "return", "break", "continue",
                 "if", "else", "for", "in", "while", "do", "switch", "case", "default", "with",
                 "null", "undefined", "true", "false", "try", "catch", "finally", "throw"
             };
-            features.accessKeywords = new string[] { "override", "public", "private", "intrinsic", "static" };
-            features.declKeywords = new string[] { "var", "function" };
-            features.typesKeywords = new string[] { "import", "class", "interface" };
+            features.accessKeywords = new[] { "override", "public", "private", "intrinsic", "static" };
+            features.declKeywords = new[] { "var", "function" };
+            features.typesKeywords = new[] { "import", "class", "interface" };
             features.varKey = "var";
             features.functionKey = "function";
             features.getKey = "get";
@@ -208,7 +208,7 @@ namespace AS2Context
                     if (Directory.Exists(path))
                     {
                         PathModel aPath = new PathModel(path, this);
-                        ManualExploration(aPath, new string[] { "aso", "FP7", "FP8", "FP9" });
+                        ManualExploration(aPath, new[] { "aso", "FP7", "FP8", "FP9" });
                         AddPath(aPath);
                     }
                 }
@@ -351,7 +351,7 @@ namespace AS2Context
                     result.InFile = Context.CurrentModel;
                     return;
                 }
-                else if (token == "super")
+                if (token == "super")
                 {
                     if (inClass.IsVoid())
                     {
@@ -509,7 +509,7 @@ namespace AS2Context
                             package = import.Type.Substring(0, import.Type.Length - cname.Length - 1);
                         break;
                     }
-                    else if (features.hasImportsWildcard)
+                    if (features.hasImportsWildcard)
                     {
                         if (import.Name == "*" && import.Type.Length > 2)
                         {
@@ -774,8 +774,7 @@ namespace AS2Context
             {
                 string path = Path.Combine(aPath.Path, fileName);
                 // cached file
-                FileModel nFile;
-                if (aPath.TryGetFile(path, out nFile))
+                if (aPath.TryGetFile(path, out var nFile))
                 {
                     if (nFile.Context != this)
                     {
@@ -786,7 +785,7 @@ namespace AS2Context
                     return nFile.GetPublicClass();
                 }
                 // non-cached existing file
-                else if (File.Exists(path))
+                if (File.Exists(path))
                 {
                     nFile = GetFileModel(path);
                     if (nFile != null)
@@ -1280,19 +1279,12 @@ namespace AS2Context
         
         #region command line compiler
 
-        override public bool CanBuild
-        {
-            get { return cFile != null && cFile != FileModel.Ignore; }
-        }
+        override public bool CanBuild => cFile != null && cFile != FileModel.Ignore;
 
         /// <summary>
         /// Retrieve the context's default compiler path
         /// </summary>
-        public override string GetCompilerPath()
-        {
-            if (as2settings != null) return as2settings.GetDefaultSDK().Path;
-            else return null;
-        }
+        public override string GetCompilerPath() => as2settings?.GetDefaultSDK().Path;
 
         /// <summary>
         /// Check current file's syntax
@@ -1356,9 +1348,9 @@ namespace AS2Context
                     command += " -version "+majorVersion;
                 // classpathes
                 foreach(PathModel aPath in classPath)
-                if (aPath.Path != temporaryPath
-                    && !aPath.Path.StartsWith(mtascPath, StringComparison.OrdinalIgnoreCase))
-                    command += " -cp \"" + aPath.Path.TrimEnd('\\') + "\"";
+                    if (aPath.Path != temporaryPath
+                        && !aPath.Path.StartsWith(mtascPath, StringComparison.OrdinalIgnoreCase))
+                        command += " -cp \"" + aPath.Path.TrimEnd('\\') + "\"";
                 
                 // run
                 string filePath = NormalizePath(cFile.BasePath);
@@ -1425,10 +1417,9 @@ namespace AS2Context
                 bool noPlay = false;
                 if (mPar.Count > 0)
                 {
-                    string op;
                     for (int i = 0; i < mPar.Count; i++)
                     {
-                        op = mPar[i].Groups["switch"].Value;
+                        var op = mPar[i].Groups["switch"].Value;
                         int start = mPar[i].Index + mPar[i].Length;
                         int end = (mPar.Count > i + 1) ? mPar[i + 1].Index : start;
                         if ((op == "-swf") && (outputFile == null) && (mPlayIndex < 0))
