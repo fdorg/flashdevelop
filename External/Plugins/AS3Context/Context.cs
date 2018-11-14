@@ -34,11 +34,11 @@ namespace AS3Context
             new Regex("[/\\\\](playerglobal|airglobal|builtin)\\.swc", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         #region initialization
-        private AS3Settings as3settings;
+        private readonly AS3Settings as3settings;
         private bool hasAIRSupport;
         private bool hasMobileSupport;
         private MxmlFilterContext mxmlFilterContext; // extract inlined AS3 ranges & MXML tags
-        private Timer timerCheck;
+        private readonly Timer timerCheck;
         private string fileWithSquiggles;
         protected bool mxmlEnabled;
 
@@ -179,8 +179,9 @@ namespace AS3Context
             hasAIRSupport = platform == "AIR" || platform == "AIR Mobile";
             hasMobileSupport = platform == "AIR Mobile";
 
-            string cpCheck = contextSetup.Classpath != null ?
-                String.Join(";", contextSetup.Classpath).Replace('\\', '/') : "";
+            var cpCheck = contextSetup.Classpath != null
+                ? string.Join(";", contextSetup.Classpath).Replace('\\', '/')
+                : "";
 
             // check if CP contains a custom playerglobal.swc
             bool hasCustomAPI = re_customAPI.IsMatch(cpCheck);
@@ -443,22 +444,19 @@ namespace AS3Context
             string[] mask = as3settings.AS3FileTypes;
             if (mask == null || mask.Length == 0 || (mask.Length == 1 && mask[0] == ""))
             {
-                as3settings.AS3FileTypes = mask = new string[] { "*.as", "*.mxml" };
+                as3settings.AS3FileTypes = mask = new[] { "*.as", "*.mxml" };
                 return mask;
             }
-            else
+            var patterns = new List<string>();
+            foreach (var it in mask)
             {
-                List<string> patterns = new List<string>();
-                for (int i = 0; i < mask.Length; i++)
-                {
-                    string m = mask[i];
-                    if (string.IsNullOrEmpty(m)) continue;
-                    if (m[1] != '.' && m[0] != '.') m = '.' + m;
-                    if (m[0] != '*') m = '*' + m;
-                    patterns.Add(m);
-                }
-                return patterns.ToArray();
+                string m = it;
+                if (string.IsNullOrEmpty(m)) continue;
+                if (m[1] != '.' && m[0] != '.') m = '.' + m;
+                if (m[0] != '*') m = '*' + m;
+                patterns.Add(m);
             }
+            return patterns.ToArray();
         }
 
         /// <summary>
@@ -548,15 +546,6 @@ namespace AS3Context
         }
 
         /// <summary>
-        /// Build the file DOM
-        /// </summary>
-        /// <param name="filename">File path</param>
-        protected override void GetCurrentFileModel(string fileName)
-        {
-            base.GetCurrentFileModel(fileName);
-        }
-
-        /// <summary>
         /// Refresh the file model
         /// </summary>
         /// <param name="updateUI">Update outline view</param>
@@ -572,16 +561,6 @@ namespace AS3Context
                 MxmlComplete.mxmlContext = mxmlFilterContext;
                 MxmlComplete.context = this;
             }
-        }
-
-        /// <summary>
-        /// Update the class/member context for the given line number.
-        /// Be carefull to restore the context after calling it with a custom line number
-        /// </summary>
-        /// <param name="line"></param>
-        public override void UpdateContext(int line)
-        {
-            base.UpdateContext(line);
         }
 
         /// <summary>
@@ -674,23 +653,22 @@ namespace AS3Context
         private void FlexShell_SyntaxError(string error)
         {
             if (!IsFileValid) return;
-            Match m = re_syntaxError.Match(error);
+            var document = PluginBase.MainForm.CurrentDocument;
+            if (document == null || !document.IsEditable) return;
+            var m = re_syntaxError.Match(error);
             if (!m.Success) return;
 
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return;
-
-            ScintillaControl sci = document.SplitSci1;
-            ScintillaControl sci2 = document.SplitSci2;
+            var sci1 = document.SplitSci1;
+            var sci2 = document.SplitSci2;
 
             if (m.Groups["filename"].Value != CurrentFile) return;
             try
             {
                 int line = int.Parse(m.Groups["line"].Value) - 1;
-                if (sci.LineCount < line) return;
-                int start = MBSafeColumn(sci, line, int.Parse(m.Groups["col"].Value) - 1);
-                if (line == sci.LineCount && start == 0 && line > 0) start = -1;
-                AddSquiggles(sci, line, start, start + 1);
+                if (sci1.LineCount < line) return;
+                int start = MBSafeColumn(sci1, line, int.Parse(m.Groups["col"].Value) - 1);
+                if (line == sci1.LineCount && start == 0 && line > 0) start = -1;
+                AddSquiggles(sci1, line, start, start + 1);
                 AddSquiggles(sci2, line, start, start + 1);
             }
             catch { }
@@ -701,7 +679,7 @@ namespace AS3Context
         /// </summary>
         private int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
-            String text = sci.GetLine(line) ?? "";
+            var text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
             return sci.MBSafeTextLength(text.Substring(0, length));
         }
@@ -778,7 +756,7 @@ namespace AS3Context
                     {
                         foreach (MemberModel member in aFile.Members)
                         {
-                            item = member.Clone() as MemberModel;
+                            item = (MemberModel) member.Clone();
                             item.Name = aFile.Package + "." + item.Name;
                             fullList.Add(item);
                         }
@@ -787,8 +765,7 @@ namespace AS3Context
                     {
                         foreach (MemberModel member in aFile.Members)
                         {
-                            item = member.Clone() as MemberModel;
-                            fullList.Add(item);
+                            fullList.Add((MemberModel) member.Clone());
                         }
                     }
                     return true;
@@ -968,7 +945,7 @@ namespace AS3Context
                 if (otherClass.IndexType == indexType) return otherClass;
 
             // clone the type
-            ClassModel aClass = originalClass.Clone() as ClassModel;
+            var aClass = (ClassModel) originalClass.Clone();
 
             aClass.Name = baseType + ".<" + indexType + ">";
             aClass.IndexType = indexType;

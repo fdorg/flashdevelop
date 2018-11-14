@@ -42,9 +42,9 @@ namespace HaXeContext
         static private string currentEnv;
         static private string currentSDK;
         
-        private HaXeSettings hxsettings;
+        private readonly HaXeSettings haxeSettings;
+        private readonly Func<string, InstalledSDK> getCustomSDK;
         private Dictionary<string, List<string>> haxelibsCache;
-        private Func<string, InstalledSDK> getCustomSDK;
         private string haxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
@@ -65,8 +65,8 @@ namespace HaXeContext
         
         public Context(HaXeSettings initSettings, Func<string, InstalledSDK> getCustomSDK)
         {
-            hxsettings = initSettings;
-            hxsettings.Init();
+            haxeSettings = initSettings;
+            haxeSettings.Init();
             this.getCustomSDK = getCustomSDK;
 
             /* AS-LIKE OPTIONS */
@@ -145,7 +145,7 @@ namespace HaXeContext
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
-            features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, "new", features.ExtendsKey, features.ImplementsKey};
+            features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, features.ConstructorKey, features.ExtendsKey, features.ImplementsKey};
             features.codeKeywords = new[] {
                 "var", "function", "new", "cast", "return", "break",
                 "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
@@ -162,7 +162,7 @@ namespace HaXeContext
 
             settings = initSettings;
 
-            currentSDK = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path) ?? "";
+            currentSDK = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path) ?? "";
             initSettings.CompletionModeChanged += OnCompletionModeChange;
             initSettings.UseGenericsShortNotationChanged += UseGenericsShortNotationChange;
             //OnCompletionModeChange(); // defered to first use
@@ -311,8 +311,7 @@ namespace HaXeContext
         public override void UserRefreshRequest()
         {
             haxelibsCache.Clear();
-            var proj = PluginBase.CurrentProject as HaxeProject;
-            if (proj != null) proj.UpdateVars(false);
+            if (PluginBase.CurrentProject is HaxeProject project) project.UpdateVars(false);
         }
 
         /// <summary>
@@ -350,7 +349,7 @@ namespace HaXeContext
         private void UseGenericsShortNotationChange()
         {
             // We may want to create 2 different feature flags for this, but atm it's enough this way
-            features.HasGenericsShortNotation = GetCurrentSDKVersion() >= "3" && hxsettings.UseGenericsShortNotation;
+            features.HasGenericsShortNotation = GetCurrentSDKVersion() >= "3" && haxeSettings.UseGenericsShortNotation;
         }
 
         public void LoadMetadata()
@@ -385,7 +384,6 @@ namespace HaXeContext
         {
             ReleaseClasspath();
             started = true;
-            if (hxsettings == null) throw new Exception("BuildClassPath() must be overridden");
             if (contextSetup == null)
             {
                 contextSetup = new ContextSetupInfos();
@@ -397,7 +395,7 @@ namespace HaXeContext
 
             // external version definition
             platform = contextSetup.Platform;
-            majorVersion = hxsettings.DefaultFlashVersion;
+            majorVersion = haxeSettings.DefaultFlashVersion;
             minorVersion = 0;
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
@@ -435,7 +433,7 @@ namespace HaXeContext
             classPath = new List<PathModel>();
             // Haxe std
             var project = PluginBase.CurrentProject as HaxeProject;
-            var hxPath = project != null ? project.CurrentSDK : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
+            var hxPath = project != null ? project.CurrentSDK : PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
             if (hxPath != null)
             {
                 if (currentSDK != hxPath)
@@ -470,11 +468,15 @@ namespace HaXeContext
                     PathModel std = PathModel.GetModel(haxeCP, this);
                     if (!std.WasExplored && !Settings.LazyClasspathExploration)
                     {
-                        string[] keep = { "sys", "haxe", "libs" };
                         var hide = new List<string>();
                         foreach (var dir in Directory.GetDirectories(haxeCP))
-                            if (!keep.Contains(Path.GetFileName(dir)))
-                                hide.Add(Path.GetFileName(dir));
+                            if (Path.GetFileName(dir) is string dirName
+                                && dirName != "sys"
+                                && dirName != "haxe"
+                                && dirName != "libs")
+                            {
+                                hide.Add(dirName);
+                            }
                         ManualExploration(std, hide);
                     }
                     AddPath(std);
@@ -631,7 +633,7 @@ namespace HaXeContext
             {
                 if (File.Exists(path.Path))
                 {
-                    SwfOp.ContentParser parser = new SwfOp.ContentParser(path.Path);
+                    var parser = new SwfOp.ContentParser(path.Path);
                     parser.Run();
                     AbcConverter.Convert(parser, path, this);
                 }
@@ -655,8 +657,8 @@ namespace HaXeContext
         {
             if (!pathModel.ValidatePackage) return true;
             var path = Path.GetDirectoryName(aFile.FileName);
-            if (!path.StartsWith(pathModel.Path, StringComparison.OrdinalIgnoreCase)) return false;
-            string package = path.Length <= pathModel.Path.Length ? "" : path.Substring(pathModel.Path.Length + 1).Replace('/', '.').Replace('\\', '.');
+            if (path == null || !path.StartsWith(pathModel.Path, StringComparison.OrdinalIgnoreCase)) return false;
+            var package = path.Length <= pathModel.Path.Length ? "" : path.Substring(pathModel.Path.Length + 1).Replace('/', '.').Replace('\\', '.');
             return (aFile.Package == package);
         }
 
@@ -765,7 +767,7 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
+        private InstalledSDK GetCurrentSDK() => haxeSettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
         public SemVer GetCurrentSDKVersion()
         {
@@ -822,10 +824,9 @@ namespace HaXeContext
                     if (aFile.Classes.Count > 0 && !aFile.Classes[0].IsVoid())
                         foreach (ClassModel aClass in aFile.Classes)
                         {
-                            string tpackage = aClass.InFile.Package;
                             if (aClass.IndexType == null
                                 && (aClass.Access == Visibility.Public
-                                    || (aClass.Access == Visibility.Internal && tpackage == package)))
+                                    || (aClass.Access == Visibility.Internal && aClass.InFile.Package == package)))
                             {
                                 if (aClass.Name == module) needModule = false;
                                 item = aClass.ToMemberModel();
@@ -1031,9 +1032,8 @@ namespace HaXeContext
                 {
                     var path = aPath.Path + dirSeparator + fileName;
 
-                    FileModel file;
                     // cached file
-                    if (aPath.TryGetFile(path, out file))
+                    if (aPath.TryGetFile(path, out var file))
                     {
                         if (file.Context != this)
                         {
@@ -1409,8 +1409,7 @@ namespace HaXeContext
                 {
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
-                    FileModel model;
-                    if (!it.TryGetFile(path, out model)) continue;
+                    if (!it.TryGetFile(path, out var model)) continue;
                     result.Add(model.Imports);
                     break;
                 }
@@ -1547,7 +1546,6 @@ namespace HaXeContext
             SetHaxeEnvironment(currentSDK);
 
             // configure completion provider
-            var haxeSettings = (settings as HaXeSettings);
             features.externalCompletion = haxeSettings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop;
 
             switch (haxeSettings.CompletionMode)
@@ -1623,14 +1621,14 @@ namespace HaXeContext
         /// <returns>Null (not handled) or member list</returns>
         public override MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+            if (resolvingDot || haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
                 || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
-            if (autoHide && !hxsettings.DisableCompletionOnDemand) return null;
+            if (autoHide && !haxeSettings.DisableCompletionOnDemand) return null;
             var exprValue = expression.Value;
             // auto-started completion, can be ignored for performance (show default completion tooltip)
             if (!exprValue.Contains('.') || (autoHide && !exprValue.EndsWith('.')))
-                if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
+                if (haxeSettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
                 else return null;
 
             // empty expression
@@ -1641,7 +1639,7 @@ namespace HaXeContext
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
-            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
+            return haxeSettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
@@ -1881,11 +1879,11 @@ namespace HaXeContext
         /// <returns>Null (not handled) or function signature</returns>
         public override MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+            if (resolvingFunction || haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
                 || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
-            if (autoHide && !hxsettings.DisableCompletionOnDemand)
+            if (autoHide && !haxeSettings.DisableCompletionOnDemand)
                 return null;
 
             // Do not show error
@@ -1926,7 +1924,7 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion() < "3.2.0")
+            if (haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion() < "3.2.0")
                 return false;
 
             var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
@@ -1976,14 +1974,14 @@ namespace HaXeContext
         /// <summary>
         /// Retrieve the context's default compiler path
         /// </summary>
-        public override string GetCompilerPath() => GetCurrentSDK()?.Path ?? hxsettings.GetDefaultSDK().Path;
+        public override string GetCompilerPath() => GetCurrentSDK()?.Path ?? haxeSettings.GetDefaultSDK().Path;
 
         /// <summary>
         /// Check current file's syntax
         /// </summary>
         public override void CheckSyntax()
         {
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
+            if (haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
             var hc = GetHaxeComplete(CurSciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
@@ -2014,7 +2012,7 @@ namespace HaXeContext
             if (!IsFileValid || !File.Exists(CurrentFile))
                 return;
 
-            string haxePath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
+            string haxePath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
             if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
@@ -2040,15 +2038,15 @@ namespace HaXeContext
                 if (Path.GetExtension(command) == "") command = Path.Combine(command, "haxe.exe");
 
                 command += ";";
-                if (cFile.Package.Length > 0) command += cFile.Package+".";
+                if (cFile.Package.Length > 0) command += cFile.Package + ".";
                 string cname = cFile.GetPublicClass().Name;
-                if (cname.IndexOf('<') > 0) cname = cname.Substring(0, cname.IndexOf('<'));
+                if (cname.IndexOf('<') is var p && p > 0) cname = cname.Substring(0, p);
                 command += cname;
 
                 if (haxeTarget == "flash" && (append == null || !append.Contains("-swf-version")))
                     command += " -swf-version " + majorVersion;
                 // classpathes
-                string hxPath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
+                string hxPath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
                 foreach (PathModel aPath in classPath)
                     if (aPath.Path != temporaryPath && !aPath.Path.StartsWith(hxPath, StringComparison.OrdinalIgnoreCase))
                         command += " -cp \"" + aPath.Path.TrimEnd('\\') + "\"";
@@ -2234,9 +2232,9 @@ namespace HaXeContext
 
     class HaxeCompletionCache: CompletionCache
     {
-        public MemberList OtherElements;
+        public readonly MemberList OtherElements;
 
-        public HaxeCompletionCache(ASContext context, MemberList elements, MemberList otherElements)
+        public HaxeCompletionCache(IASContext context, MemberList elements, MemberList otherElements)
             : base(context, elements)
         {
             OtherElements = otherElements;
