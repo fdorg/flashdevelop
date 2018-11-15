@@ -1032,24 +1032,32 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
-            /**
-             * for example:
-             * class Some<T:String> {
-             *     var v:T;
-             *     function test() {
-             *         v.<complete>
-             *     }
-             * }
-             */
             if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
             {
-                var clone = (MemberModel)result.Member.Clone();
-                if (TryInferGenericType(clone) is ClassModel type && !type.IsVoid())
+                /**
+                 * for example:
+                 * class Some<T:String> {
+                 *     var v:T;
+                 *     function test() {
+                 *         v.<complete>
+                 *     }
+                 * }
+                 */
+                var clone = (MemberModel) result.Member.Clone();
+                var type = TryInferGenericType(clone);
+                if (!type.IsVoid())
                 {
                     result.Member = clone;
                     result.Type = type;
                     return;
                 }
+                /**
+                 * for example:
+                 * var v = (variable:IInterface).someMethod<T:{}>((param0:Class<T>): String):T;
+                 * v.<complete>
+                 */
+                type = ASContext.Context.ResolveType(result.Member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
+                if (!type.IsVoid()) result.Type = type;
             }
         }
 
