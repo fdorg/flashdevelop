@@ -24,9 +24,8 @@ namespace HaXeContext.Completion
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
         {
-            var result = base.IsRegexStyle(sci, position);
-            if (result) return true;
-            return sci.BaseStyleAt(position) == 10 && sci.CharAt(position) == '~' && sci.CharAt(position + 1) == '/';
+            return base.IsRegexStyle(sci, position)
+                   || (sci.BaseStyleAt(position) == 10 && sci.CharAt(position) == '~' && sci.CharAt(position + 1) == '/');
         }
 
         /// <summary>
@@ -355,7 +354,7 @@ namespace HaXeContext.Completion
             {
                 base.InferVariableType(sci, local, var);
                 if (string.IsNullOrEmpty(var.Type) && (var.Flags & (FlagType.Variable | FlagType.Getter | FlagType.Setter)) != 0)
-                    var.Type = ctx.ResolveType(ctx.Features.dynamicKey, null).Name;
+                    var.Type = ResolveType(ctx.Features.dynamicKey, null).Name;
                 return;
             }
             var currentModel = ctx.CurrentModel;
@@ -373,7 +372,7 @@ namespace HaXeContext.Completion
                 // for(i in 0...1)
                 else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
                 {
-                    var type = ctx.ResolveType("Int", null);
+                    var type = ResolveType("Int", null);
                     var.Type = type.QualifiedName;
                     var.Flags |= FlagType.Inferred;
                     return;
@@ -390,7 +389,7 @@ namespace HaXeContext.Completion
                      * var a = [1,2,3,4];
                      * for(a in a)
                      * {
-                     *     trace(a|); // | <-- cursor
+                     *     trace(a<cursor>);
                      * }
                      */
                     var wordLeft = sci.GetWordLeft(i - 1, false);
@@ -400,7 +399,7 @@ namespace HaXeContext.Completion
                         var vars = local.LocalVars;
                         vars.Items.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
                         var model = vars.Items.Find(it => it.LineFrom <= lineBefore);
-                        if (model != null) expr = new ASResult {Type = ctx.ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
+                        if (model != null) expr = new ASResult {Type = ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
                         // class members
                         else
                         {
@@ -432,7 +431,7 @@ namespace HaXeContext.Completion
                                 if (member != null) iteratorIndexType = member.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
-                            if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                            if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ResolveType(exprTypeIndexType, currentModel).IsVoid())
                             {
                                 exprType = expr.InClass;
                                 break;
@@ -441,7 +440,7 @@ namespace HaXeContext.Completion
                         }
                         else
                         {
-                            var type = ctx.ResolveType(member.Type, currentModel);
+                            var type = ResolveType(member.Type, currentModel);
                             iteratorIndexType = type.IndexType;
                             break;
                         }
@@ -477,7 +476,7 @@ namespace HaXeContext.Completion
                     }
                     if (var.Type == null)
                     {
-                        var type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+                        var type = ResolveType(ctx.Features.dynamicKey, null);
                         var.Type = type.QualifiedName;
                     }
                     var.Flags |= FlagType.Inferred;
@@ -497,18 +496,17 @@ namespace HaXeContext.Completion
                 rvalueStart = sci.WordEndPosition(rvalueStart, false) + 1;
                 word = sci.GetWordRight(rvalueStart, true);
             }
-            var ctx = ASContext.Context;
             /**
              * for example:
              * class Foo {
              *   function new() {
-             *     untyped __js__('value').<complete>
+             *     var v<complete> = untyped __js__('value')
              *   }
              * }
              */
             if (word == "untyped")
             {
-                var type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+                var type = ResolveType(ASContext.Context.Features.dynamicKey, null);
                 var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
                 return;
@@ -617,7 +615,7 @@ namespace HaXeContext.Completion
             return false;
         }
 
-        void InferParameterType(MemberModel var)
+        static void InferParameterType(MemberModel var)
         {
             var ctx = ASContext.Context;
             var value = var.Value;
@@ -627,7 +625,7 @@ namespace HaXeContext.Completion
                 if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
                     && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
                     type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
-                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+                if (type.IsVoid()) type = ResolveType(ctx.Features.dynamicKey, null);
             }
             var.Type = type.Name;
         }
@@ -636,8 +634,8 @@ namespace HaXeContext.Completion
         {
             var ctx = ASContext.Context;
             var template = ctx.CurrentMember?.Template ?? ctx.CurrentClass?.Template;
-            if (!string.IsNullOrEmpty(template) && !string.IsNullOrEmpty(var.Type) &&
-                ResolveType(var.Type, ctx.CurrentModel).IsVoid())
+            if (!string.IsNullOrEmpty(template) && !string.IsNullOrEmpty(var.Type)
+                && ResolveType(var.Type, ctx.CurrentModel).IsVoid())
             {
                 var templates = template.Substring(1, template.Length - 2).Split(',');
                 foreach (var it in templates)
@@ -659,7 +657,7 @@ namespace HaXeContext.Completion
             var m = Regex.Match(text, "\\s*typedef\\s+" + expr.Name + "\\s*=([^;]+)");
             if (!m.Success) return ClassModel.VoidClass;
             var rvalue = m.Groups[1].Value.TrimStart();
-            return ASContext.Context.ResolveType(rvalue, ASContext.Context.CurrentModel);
+            return ResolveType(rvalue, ASContext.Context.CurrentModel);
         }
 
         /// <inheritdoc />
@@ -695,7 +693,6 @@ namespace HaXeContext.Completion
             if (!string.IsNullOrEmpty(expression))
             {
                 var ctx = ASContext.Context;
-                var features = ctx.Features;
                 // for example: 1.0.<complete>, 5e-324.<complete>
                 if (char.IsDigit(expression, 0)
                     // for example: -1.<complete>
@@ -760,7 +757,7 @@ namespace HaXeContext.Completion
                 }
                 if (expression.Length > 1 && expression[0] is char c && (c == '\'' || c == '"'))
                 {
-                    var type = ctx.ResolveType(features.stringKey, inFile);
+                    var type = ResolveType(ctx.Features.stringKey, inFile);
                     // for example: ""|, ''|
                     if (context.SubExpressions == null) expression = type.Name + ".#.";
                     // for example: "".<complete>, ''.<complete>
@@ -847,7 +844,7 @@ namespace HaXeContext.Completion
                     var extends = tmpClass.Extends;
                     if (extends.IsVoid())
                     {
-                        extends = ASContext.Context.ResolveType(tmpClass.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
+                        extends = ResolveType(tmpClass.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
                         if (extends.IsVoid()) return;
                     }
                     base.GetInstanceMembers(autoHide, expr, extends, mask, dotIndex, result);
@@ -865,7 +862,7 @@ namespace HaXeContext.Completion
                     var extends = tmpClass.Extends;
                     if (extends.IsVoid())
                     {
-                        extends = ASContext.Context.ResolveType(tmpClass.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
+                        extends = ResolveType(tmpClass.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
                         if (extends.IsVoid()) return;
                     }
                     var @params = mask.HasFlag(FlagType.Static)
@@ -1032,24 +1029,32 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
-            /**
-             * for example:
-             * class Some<T:String> {
-             *     var v:T;
-             *     function test() {
-             *         v.<complete>
-             *     }
-             * }
-             */
             if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
             {
-                var clone = (MemberModel)result.Member.Clone();
-                if (TryInferGenericType(clone) is ClassModel type && !type.IsVoid())
+                /**
+                 * for example:
+                 * class Some<T:String> {
+                 *     var v:T;
+                 *     function test() {
+                 *         v.<complete>
+                 *     }
+                 * }
+                 */
+                var clone = (MemberModel) result.Member.Clone();
+                var type = TryInferGenericType(clone);
+                if (!type.IsVoid())
                 {
                     result.Member = clone;
                     result.Type = type;
                     return;
                 }
+                /**
+                 * for example:
+                 * var v = (variable:IInterface).someMethod<T:{}>((param0:Class<T>): String):T;
+                 * v.<complete>
+                 */
+                type = ResolveType(result.Member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
+                if (!type.IsVoid()) result.Type = type;
             }
         }
 
@@ -1065,14 +1070,8 @@ namespace HaXeContext.Completion
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
         {
-            var voidKey = ASContext.Context.Features.voidKey;
-            if (type == "Function")
-            {
-                var paramType = ASContext.Context.ResolveType(type, inFile);
-                if (paramType.InFile.Package == "haxe" && paramType.InFile.Module == "Constraints")
-                    return new MemberModel {Type = voidKey};
-            }
-            return FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
+            var result = FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
+            return result.Type != type ? result : null;
         }
 
         /// <param name="sci">Scintilla control</param>
@@ -1128,7 +1127,7 @@ namespace HaXeContext.Completion
                             new DeclarationItem("false"),
                         };
                     }
-                    var type = ctx.ResolveType(typeName, ctx.CurrentModel);
+                    var type = ResolveType(typeName, ctx.CurrentModel);
                     if (type.Members.Count == 0) return null;
                     if ((type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(tag => tag.Name == ":enum")))
                     {
@@ -1177,7 +1176,7 @@ namespace HaXeContext.Completion
                 case GeneratedMemberBodyStyle.ReturnDefaultValue:
                     var ctx = ASContext.Context;
                     var returnTypeName = member.Type;
-                    var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                    var returnType = ResolveType(returnTypeName, ctx.CurrentModel);
                     if ((returnType.Flags & FlagType.Abstract) != 0
                         && !string.IsNullOrEmpty(returnType.ExtendsType)
                         && returnType.ExtendsType != ctx.Features.dynamicKey)
