@@ -847,16 +847,15 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the word from the specified position
         /// </summary> 
-        private static string GetWordLeft(ScintillaControl sci, ref Int32 position)
+        private static string GetWordLeft(ScintillaControl sci, ref int position)
         {
-            Char c; String word = "";
-            String exclude = "(){};,+///\\=:.%\"<>";
+            var word = "";
+            const string exclude = "(){};,+///\\=:.%\"<>";
             while (position >= 0) 
             {
-                c = (Char)sci.CharAt(position);
-                if (c <= ' ') break;
-                else if (exclude.IndexOf(c) >= 0) break;
-                else word = c + word;
+                var c = (char)sci.CharAt(position);
+                if (c <= ' ' || exclude.Contains(c)) break;
+                word = c + word;
                 position--;
             }
             return word;

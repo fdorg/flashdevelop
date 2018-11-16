@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PluginCore;
 using PluginCore.Controls;
@@ -109,7 +110,7 @@ namespace CssCompletion
                     context.Position++;
                     mode = CompleteMode.Variable;
                 }
-                else if (context.Word.Length == 1 && "abcdefghijklmnopqrstuvwxyz".IndexOf(context.Word[0]) >= 0)
+                else if (context.Word.Length == 1 && "abcdefghijklmnopqrstuvwxyz".Contains(context.Word[0]))
                     mode = CompleteMode.Value;
             }
             else if (c == ':' && !context.IsVar) mode = CompleteMode.Pseudo;
@@ -227,7 +228,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     lastCharPos = i + 1;
                     if (inWord) word = c + word;
@@ -322,10 +323,7 @@ namespace CssCompletion
             return features.Pattern.IsMatch(text);
         }
 
-        private bool IsTag(string word)
-        {
-            return Array.IndexOf<string>(tags, word) >= 0;
-        }
+        private bool IsTag(string word) => tags.Contains(word);
 
         private string ReadWordLeft(ScintillaControl sci, int i)
         {
@@ -336,7 +334,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     inWord = true;
                     word = c + word;
@@ -355,7 +353,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     inWord = true;
                     word = c + word;
@@ -668,7 +666,7 @@ namespace CssCompletion
             int eolMode = Sci.EOLMode;
             string NL = LineEndDetector.GetNewLineMarker(eolMode);
 
-            if (txt.Length > 0 && ")]};,".IndexOf(txt[0]) >= 0)
+            if (txt.Length > 0 && ")]};,".Contains(txt[0]))
             {
                 Sci.BeginUndoAction();
                 try

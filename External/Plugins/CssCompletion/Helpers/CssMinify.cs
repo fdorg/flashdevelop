@@ -201,20 +201,11 @@ namespace CssCompletion
 
         private static bool IsTokenChar(char theChar)
         {
-            if(theChar >= 'a' && theChar <= 'z')
-                return true;
-
-            else if (theChar >= '0' && theChar <= '9')
-                return true;
-
-            else if(theChar >= 'A' && theChar <= 'Z')
-                return true;
-
-            else if ( AdditionalTokenChars.IndexOf(theChar) >= 0 )
-                return true;
-
-            else
-                return false;
+            if (theChar >= 'a' && theChar <= 'z') return true;
+            if (theChar >= '0' && theChar <= '9') return true;
+            if (theChar >= 'A' && theChar <= 'Z') return true;
+            if (AdditionalTokenChars.IndexOf(theChar) >= 0) return true;
+            return false;
         }
     }
 

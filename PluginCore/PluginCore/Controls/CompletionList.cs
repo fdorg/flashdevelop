@@ -822,14 +822,14 @@ namespace PluginCore.Controls
         {
             char c = (char)value;
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            if (characterClass.IndexOf(c) >= 0)
+            if (characterClass.Contains(c))
             {
                 word += c;
                 currentPos++;
                 FindWordStartingWith(word);
                 return;
             }
-            else if (noAutoInsert)
+            if (noAutoInsert)
             {
                 Hide('\0');
                 // handle this char

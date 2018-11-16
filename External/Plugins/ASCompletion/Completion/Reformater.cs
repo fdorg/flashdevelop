@@ -47,8 +47,8 @@ namespace ASCompletion.Completion
             {
                 c = c2 = txt[i++];
                 sb.Append(c);
-                if (options.SpacedChars.IndexOf(c) >= 0)
-                    while (i < n && options.SpacedChars.IndexOf(txt[i]) >= 0) sb.Append(txt[i++]);
+                if (options.SpacedChars.Contains(c))
+                    while (i < n && options.SpacedChars.Contains(txt[i])) sb.Append(txt[i++]);
             }
 
             // reformat line
@@ -182,7 +182,7 @@ namespace ASCompletion.Completion
                 }
 
                 // is a white space needed?
-                if (options.CompactChars.IndexOf(c) >= 0)
+                if (options.CompactChars.Contains(c))
                 {
                     if (c2 == '}' && (c == ';' || c == ','))
                         needSpace = false;
@@ -200,7 +200,7 @@ namespace ASCompletion.Completion
                             }
                     }
                 }
-                else if (options.SpacedChars.IndexOf(c) >= 0)
+                else if (options.SpacedChars.Contains(c))
                 {
                     if (c == '*')
                     {
@@ -237,7 +237,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c != '!' || (c2 != '(' && c2 != '[')) 
                     {
-                        if (options.Operators.IndexOf(c2) >= 0 && options.Operators.IndexOf(c) >= 0) needSpace = false;
+                        if (options.Operators.Contains(c2) && options.Operators.Contains(c)) needSpace = false;
                         else needSpace = (c != '!' || (c2 != '(' && c2 != '['));
                     }
 
@@ -538,7 +538,7 @@ namespace ASCompletion.Completion
                 c = txt[i--];
                 if (c == ' ' || c == '\t') continue;
                 if (c == '\r' || c == '\n') break;
-                if (Char.IsLetterOrDigit(c) || "_$])".IndexOf(c) >= 0) return false;
+                if (Char.IsLetterOrDigit(c) || "_$])".Contains(c)) return false;
                 break;
             }
             i = index;
@@ -564,7 +564,7 @@ namespace ASCompletion.Completion
         {
             string word = "";
             int i = sb.Length - 1;
-            while (i > 0 && wordChars.IndexOf(sb[i]) >= 0) word = sb[i--] + word;
+            while (i > 0 && wordChars.Contains(sb[i])) word = sb[i--] + word;
             return word;
         }
     }
