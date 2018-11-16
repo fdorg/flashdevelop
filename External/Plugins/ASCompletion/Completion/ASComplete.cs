@@ -578,7 +578,7 @@ namespace ASCompletion.Completion
             if (member == null || member.Flags.HasFlag(FlagType.AutomaticVar) || type == null) return false;
             if (member.Flags.HasFlag(FlagType.Function))
             {
-                type = ASContext.Context.ResolveType(result.Member.Type, result.InFile);
+                type = ResolveType(result.Member.Type, result.InFile);
                 if (type.IsVoid()) return false;
             }
             result.Member = null;
@@ -855,8 +855,7 @@ namespace ASCompletion.Completion
                     kind = GetKind(flags, features);
                     args.Add("MbrKind", kind);
 
-                    ClassModel aType = CurrentResolvedContext.TokenType
-                        = context.ResolveType(context.CurrentMember.Type, context.CurrentModel);
+                    var aType = CurrentResolvedContext.TokenType = ResolveType(context.CurrentMember.Type, context.CurrentModel);
                     package = aType.IsVoid() ? "" : aType.InFile.Package;
                     args.Add("MbrTypPkg", package);
                     args.Add("MbrTypName", MemberModel.FormatType(aType.Name));
@@ -1041,7 +1040,7 @@ namespace ASCompletion.Completion
                 if (closestList != null && m.LineFrom <= closestList.LineFrom)
                     continue;
 
-                ClassModel aType2 = ASContext.Context.ResolveType(m.Type, context.CurrentModel);
+                ClassModel aType2 = ResolveType(m.Type, context.CurrentModel);
                 string objType = ASContext.Context.Features.objectKey;
                 while (!aType2.IsVoid() && aType2.QualifiedName != objType)
                 {
@@ -4345,7 +4344,7 @@ namespace ASCompletion.Completion
         {
             MemberList retVal = null;
             string template = model.Template;
-            if (template != null && template.StartsWith("<"))
+            if (template != null && template.StartsWith('<'))
             {
                 var sb = new StringBuilder();
                 int groupCount = 0;
