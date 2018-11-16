@@ -303,7 +303,7 @@ namespace ProjectManager
             if (tree.SelectedNode is ProjectNode)
             {
                 string label = tree.SelectedNode.Text;
-                int index = label.IndexOf("(" + project.LanguageDisplayName + ")");
+                int index = label.IndexOfOrdinal("(" + project.LanguageDisplayName + ")");
                 if (index != -1) tree.SelectedNode.Text = label.Remove(index).Trim();
             }
             tree.ForceLabelEdit();

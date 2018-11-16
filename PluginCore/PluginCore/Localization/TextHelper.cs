@@ -90,10 +90,10 @@ namespace PluginCore.Localization
         /// Removes trailing ellipsis (...) from the specified string.
         /// </summary>
         /// <param name="text">A <see cref="String"/> instance to remove ellipsis from.</param>
-        public static String RemoveEllipsis(String text)
+        public static string RemoveEllipsis(string text)
         {
-            if (String.IsNullOrEmpty(text)) return String.Empty;
-            Int32 index = text.LastIndexOf("...", StringComparison.Ordinal);
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+            var index = text.LastIndexOfOrdinal("...");
             return index == -1 ? text : text.Remove(index, 3);
         }
 
