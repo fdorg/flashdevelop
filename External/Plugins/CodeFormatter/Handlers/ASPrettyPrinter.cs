@@ -313,10 +313,10 @@ namespace CodeFormatter.Handlers
         }
         public String print(int startIndent)
         {
-            if (mSourceData.IndexOfOrdinal(mIgnoreFileProcessing)>=0)
+            if (mSourceData.Contains(mIgnoreFileProcessing))
             {
-                mParseErrors=new List<Exception>();
-                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> "+mIgnoreFileProcessing));
+                mParseErrors = new List<Exception>();
+                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> " + mIgnoreFileProcessing));
                 return null;
             }
         
@@ -1099,11 +1099,11 @@ namespace CodeFormatter.Handlers
                     //be on a new line afterward
                 
                     /////////////////////// Handling of "exclude from formatting" tags //////////////////////
-                    if (t.Text.IndexOfOrdinal(mStartExcludeProcessing)>=0)
+                    if (t.Text.Contains(mStartExcludeProcessing))
                     {
                         pushFormatterOff();
                     }
-                    else if (t.Text.IndexOfOrdinal(mStopExcludeProcessing)>=0)
+                    else if (t.Text.Contains(mStopExcludeProcessing))
                     {
                         popFormatterOff();
                     }

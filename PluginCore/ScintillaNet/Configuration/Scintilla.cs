@@ -42,8 +42,8 @@ namespace ScintillaNet.Configuration
             string filemask = Path.GetExtension(file).ToLower().Substring(1);
             foreach (Language lang in this.AllLanguages)
             {
-                string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOfOrdinal(","+filemask+",") >- 1)
+                string extensions = "," + lang.fileextensions + ",";
+                if (extensions.Contains("," + filemask + ","))
                 {
                     return true;
                 }
