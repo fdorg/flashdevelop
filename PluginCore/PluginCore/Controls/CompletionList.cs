@@ -338,20 +338,20 @@ namespace PluginCore.Controls
         {
             ICompletionListItem item = completionList.Items[e.Index] as ICompletionListItem;
             e.DrawBackground();
-            Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
-            Color sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
-            bool selected = (e.State & DrawItemState.Selected) > 0;
-            Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
-            Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
-            Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
             if (item != null)
             {
+                Color fore = PluginBase.MainForm.GetThemeColor("CompletionList.ForeColor", SystemColors.WindowText);
+                Color sel = PluginBase.MainForm.GetThemeColor("CompletionList.SelectedTextColor", SystemColors.HighlightText);
+                bool selected = (e.State & DrawItemState.Selected) > 0;
+                Brush textBrush = (selected) ? new SolidBrush(sel) : new SolidBrush(fore);
+                Brush packageBrush = new SolidBrush(PluginBase.MainForm.GetThemeColor("CompletionList.PackageColor", Color.Gray));
+                Rectangle tbounds = new Rectangle(ScaleHelper.Scale(18), e.Bounds.Top, e.Bounds.Width, e.Bounds.Height);
                 Graphics g = e.Graphics;
                 float newHeight = e.Bounds.Height - 2;
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(item.Icon, 1, e.Bounds.Top + ((e.Bounds.Height - newHeight) / 2), newHeight, newHeight);
-                int p = item.Label.LastIndexOf('.');
-                if (p > 0 && !selected && !(item is ICompletionListSpecialItem))
+                if (!selected && !(item is ICompletionListSpecialItem)
+                    && item.Label.LastIndexOf('.') is var p && p > 0)
                 {
                     string package = item.Label.Substring(0, p + 1);
                     g.DrawString(package, e.Font, packageBrush, tbounds, StringFormat.GenericDefault);

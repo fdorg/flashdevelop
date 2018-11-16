@@ -18,7 +18,7 @@ namespace PluginCore.Helpers
                 {
                     dlgt.EndInvoke(ar);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Something wrong, handling for possible leaks
                 }
@@ -37,7 +37,7 @@ namespace PluginCore.Helpers
                 {
                     dlgt.EndInvoke(ar);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Something wrong, handling for possible leaks
                 }
@@ -49,14 +49,14 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void StartAsync(ProcessStartInfo psi)
         {
-            StartDelegate3 dlgt = new StartDelegate3(Start);
+            StartDelegate3 dlgt = Start;
             dlgt.BeginInvoke(psi, ar =>
                 {
                     try
                     {
                         dlgt.EndInvoke(ar);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Something wrong, handling for possible leaks
                     }

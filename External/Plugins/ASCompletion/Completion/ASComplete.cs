@@ -3447,7 +3447,7 @@ namespace ASCompletion.Completion
                 else
                 {
                     var eqPos = body.IndexOf('=');
-                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(currentMember.LineFrom) +eqPos);
+                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(currentMember.LineFrom) + eqPos);
                 }
             }
 

@@ -523,7 +523,7 @@ namespace XMLCompletion
                     {
                         if (InQuotes(ctag.Tag) || ctag.Tag.LastIndexOf('"') < ctag.Tag.LastIndexOf('=')) return;
                         // Allow another plugin to handle this
-                        Object[] obj = new Object[] { ctag, "" };
+                        object[] obj = { ctag, "" };
                         de = new DataEvent(EventType.Command, "XMLCompletion.Attribute", obj);
                         EventManager.DispatchEvent(PluginBase.MainForm, de);
                         if (de.Handled) return;
@@ -706,7 +706,7 @@ namespace XMLCompletion
                         position = sci.CurrentPos - 1;
                         word = GetWordLeft(sci, ref position);
 
-                        obj = new Object[] { ctag, word };
+                        obj = new object[] {ctag, word};
                         de = new DataEvent(EventType.Command, "XMLCompletion.AttributeValue", obj);
                         EventManager.DispatchEvent(PluginBase.MainForm, de);
 
@@ -718,7 +718,7 @@ namespace XMLCompletion
                     word = GetWordLeft(sci, ref position);
 
                     // Allow another plugin to handle this
-                    obj = new Object[]{ctag,word};
+                    obj = new object[] {ctag, word};
                     de = new DataEvent(EventType.Command, "XMLCompletion.Attribute", obj);
                     EventManager.DispatchEvent(PluginBase.MainForm, de);
                     if (de.Handled) return true;
@@ -802,9 +802,9 @@ namespace XMLCompletion
                 xtag.Name = mTag.Groups["name"].Value;
                 xtag.Closing = tag[1] == '/';
                 xtag.Closed = tag.EndsWithOrdinal("/>") || tag.EndsWithOrdinal("-->");
-                if (xtag.Name.IndexOf(':') > 0)
+                if (xtag.Name.IndexOf(':') is var p && p > 0)
                 {
-                    xtag.NameSpace = xtag.Name.Substring(0, xtag.Name.IndexOf(':'));
+                    xtag.NameSpace = xtag.Name.Substring(0, p);
                 }
             }
             else if (tag.StartsWithOrdinal("<!--"))

@@ -165,8 +165,8 @@ namespace SourceControl.Sources.Git
         {
             int p = path.IndexOf('/');
             if (p < 0) return AddChild(path, status, true);
-            else if (p == path.Length - 1) return AddChild(path.Substring(0, path.Length - 1), status, true);
-            else return AddChild(path.Substring(0, p), status, false)
+            if (p == path.Length - 1) return AddChild(path.Substring(0, path.Length - 1), status, true);
+            return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 

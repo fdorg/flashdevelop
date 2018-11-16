@@ -710,7 +710,7 @@ namespace ASCompletion.Completion
             }
             
             eventName = Camelize(eventName.Substring(eventName.LastIndexOf('.') + 1));
-            if (target != null) target = target.TrimStart('_');
+            target = target?.TrimStart('_');
 
             switch (ASContext.CommonSettings.HandlerNamingConvention)
             {

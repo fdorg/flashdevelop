@@ -794,7 +794,7 @@ namespace AS3Context
             if (tag == null || ctx == null) return "void";
             int p = tag.IndexOf(':');
             if (p < 0) return ResolveType(ctx, "*", tag);
-            else return ResolveType(ctx, tag.Substring(0, p), tag.Substring(p + 1));
+            return ResolveType(ctx, tag.Substring(0, p), tag.Substring(p + 1));
         }
 
         public static string ResolveType(MxmlFilterContext ctx, string ns, string name)

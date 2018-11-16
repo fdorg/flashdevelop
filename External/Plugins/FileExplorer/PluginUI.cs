@@ -849,7 +849,7 @@ namespace FileExplorer
                 DirectoryInfo info = new DirectoryInfo(file);
                 path = info.FullName;
                 trustFile = path.Replace('\\', '_').Remove(1, 1);
-                while ((trustFile.Length > 100) && (trustFile.IndexOf('_') > 0)) trustFile = trustFile.Substring(trustFile.IndexOf('_'));
+                while ((trustFile.Length > 100) && (trustFile.IndexOf('_') is var p && p > 0)) trustFile = trustFile.Substring(p);
                 trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
             }
             // add current folder
@@ -858,7 +858,7 @@ namespace FileExplorer
                 FileInfo info = new FileInfo(this.selectedPath.Text);
                 path = info.FullName;
                 trustFile = path.Replace('\\', '_').Remove(1, 1);
-                while ((trustFile.Length > 100) && (trustFile.IndexOf('_') > 0)) trustFile = trustFile.Substring(trustFile.IndexOf('_'));
+                while ((trustFile.Length > 100) && (trustFile.IndexOf('_') is var p && p > 0)) trustFile = trustFile.Substring(p);
                 trustParams = "FlashDevelop_" + trustFile + ".cfg;" + path;
             }
             // add to trusted files
