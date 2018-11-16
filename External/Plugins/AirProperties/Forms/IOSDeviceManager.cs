@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AirProperties.Controls;
@@ -106,7 +107,7 @@ namespace AirProperties.Forms
 
                 // Since we're still populating the tree, we cannot check here.
                 // We could make SelectedNodes a read/write property, and find the nodes by key after in the setter, but it just came out this way
-                if (selected != null && Array.IndexOf(selected, device.HardwareId) > -1) selectedNodes.Add(newNode);
+                if (selected != null && selected.Contains(device.HardwareId)) selectedNodes.Add(newNode);
 
                 if (device.SubClassifications != null && device.SubClassifications.Length > 0)
                     FillTree(device.SubClassifications, selected, newNode);
