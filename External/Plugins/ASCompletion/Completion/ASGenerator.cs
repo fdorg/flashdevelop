@@ -4543,7 +4543,7 @@ namespace ASCompletion.Completion
         private static string RemoveAndExtractModifier(string modifier, ref string modifiers)
         {
             modifier += " ";
-            int index = modifiers.IndexOf(modifier, StringComparison.Ordinal);
+            int index = modifiers.IndexOfOrdinal(modifier);
 
             if (index == -1) return null;
             modifiers = modifiers.Remove(index, modifier.Length);

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PluginCore;
 using ProjectManager.Projects;
@@ -124,7 +125,7 @@ namespace ProjectManager.Controls.TreeView
                 for (int i = parts.Length - 1; i > 0; --i)
                 {
                     String part = parts[i];
-                    if (part != "" && part != "." && part != ".." && Array.IndexOf(excludes, part.ToLower()) == -1)
+                    if (part != "" && part != "." && part != ".." && !excludes.Contains(part.ToLower()))
                     {
                         if (Char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
                         else if (part.Length == 40 && reSHAHash.IsMatch(part)) label.Add(part);

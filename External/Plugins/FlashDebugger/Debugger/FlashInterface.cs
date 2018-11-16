@@ -1286,7 +1286,7 @@ namespace FlashDebugger
                     o = text.IndexOfOrdinal("${", o + 2);
                     if (o == -1) break;
                 }
-                int c = text.IndexOfOrdinal("}", o);
+                int c = text.IndexOf('}', o);
                 if (c == -1)
                 {
                     return null; // FIXME

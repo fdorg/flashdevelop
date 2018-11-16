@@ -893,7 +893,7 @@ namespace AS3Context
                 }
                 if (char.IsLetter(first))
                 {
-                    var index = token.IndexOfOrdinal(" ");
+                    var index = token.IndexOf(' ');
                     if (index != -1)
                     {
                         var word = token.Substring(0, index);

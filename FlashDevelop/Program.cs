@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
@@ -10,14 +11,13 @@ namespace FlashDevelop
     static class Program
     {
         [STAThread]
-        static void Main(String[] arguments)
+        static void Main(string[] arguments)
         {
             if (Win32.ShouldUseWin32()) 
             {
                 if (SingleInstanceApp.AlreadyExists)
                 {
-                    Boolean reUse = Array.IndexOf(arguments, "-reuse") > -1;
-                    if (!MultiInstanceMode || reUse) SingleInstanceApp.NotifyExistingInstance(arguments);
+                    if (!MultiInstanceMode || arguments.Contains("-reuse")) SingleInstanceApp.NotifyExistingInstance(arguments);
                     else RunFlashDevelopWithErrorHandling(arguments, false);
                 }
                 else RunFlashDevelopWithErrorHandling(arguments, true);

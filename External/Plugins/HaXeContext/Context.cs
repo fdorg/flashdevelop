@@ -1225,7 +1225,7 @@ namespace HaXeContext
                     }
                     return ResolveType(sb.ToString(), inFile);
                 }
-                var index = token.IndexOfOrdinal(" ");
+                var index = token.IndexOf(' ');
                 if (index != -1)
                 {
                     var word = token.Substring(0, index);

@@ -307,7 +307,7 @@ namespace ProjectManager.Controls
                 if (doc.IsEditable && !doc.IsUntitled) 
                 {
                     String ext = Path.GetExtension(doc.FileName);
-                    if (Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, ext) == -1)
+                    if (!PluginMain.Settings.ExcludedFileTypes.Contains(ext))
                     {
                         open.Add(doc.FileName);
                     }
