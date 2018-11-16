@@ -137,7 +137,7 @@ namespace ProjectManager.Projects.AS3
                     if (!Directory.Exists(pathTmp) && !File.Exists(pathTmp))
                         pathTmp = reArgs.Replace(path, ReplaceVars);
                     
-                    if (pathTmp.Length > 0 && !pathTmp.StartsWith("$"))
+                    if (pathTmp.Length > 0 && !pathTmp.StartsWith('$'))
                         paths.Add(pathTmp);
 
                     Read();

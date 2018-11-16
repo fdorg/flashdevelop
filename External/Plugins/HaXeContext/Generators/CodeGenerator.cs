@@ -376,7 +376,7 @@ namespace HaXeContext.Generators
             {
                 paramName = paramName.Remove(0, 1);
                 if (string.IsNullOrEmpty(paramType)) return "Null<Dynamic>";
-                if (!paramType.StartsWith("Null<")) return $"Null<{paramType}>";
+                if (!paramType.StartsWithOrdinal("Null<")) return $"Null<{paramType}>";
             }
             return paramType;
         }

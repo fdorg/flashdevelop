@@ -431,7 +431,8 @@ namespace HaXeContext.Completion
                                 if (member != null) iteratorIndexType = member.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
-                            if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                            if (exprType.Name.StartsWithOrdinal("Iterator<")
+                                && !string.IsNullOrEmpty(exprTypeIndexType) && ResolveType(exprTypeIndexType, currentModel).IsVoid())
                             {
                                 exprType = expr.InClass;
                                 break;

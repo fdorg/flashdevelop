@@ -535,7 +535,7 @@ namespace ASCompletion
                         case EventType.Command:
                             de = e as DataEvent;
                             string command = de.Action ?? "";
-                            if (command.StartsWith("ASCompletion.", StringComparison.Ordinal))
+                            if (command.StartsWithOrdinal("ASCompletion."))
                             {
                                 string cmdData = de.Data as string;
                                 switch (command)

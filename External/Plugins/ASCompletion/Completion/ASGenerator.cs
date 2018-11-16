@@ -2873,7 +2873,7 @@ namespace ASCompletion.Completion
             }
             if (caller?.Parameters != null && caller.Parameters.Count > 0)
             {
-                string CleanType(string s) => s.StartsWith("(") && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
+                string CleanType(string s) => s.StartsWith('(') && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
                 var param = caller.Parameters[parameterIndex];
                 var parameterType = param.Type;
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
