@@ -109,7 +109,7 @@ namespace SourceControl.Sources.Mercurial
             else if (c0 == 'R' || c1 == 'R') s = VCItemStatus.Deleted;
 
             if (s == VCItemStatus.Unknown) return;
-            int p = line.IndexOfOrdinal(" ");
+            int p = line.IndexOf(' ');
             if (p > 0) line = line.Substring(p + 1);
             else line = line.Substring(fileIndex);
             temp.MapPath(line, s);

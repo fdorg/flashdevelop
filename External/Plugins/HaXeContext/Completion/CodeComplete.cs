@@ -266,7 +266,7 @@ namespace HaXeContext.Completion
                     var names = @params["Default"]
                         .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
                         .Select(it => it.Trim()).ToArray();
-                    if (names.Length != 0) list.Items.RemoveAll(it => Array.IndexOf(names, it.Name) != -1);
+                    if (names.Length != 0) list.Items.RemoveAll(it => names.Contains(it.Name));
                 }
                 if (list.Count > 0) CompletionList.Show(list.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
                 return true;
@@ -431,7 +431,8 @@ namespace HaXeContext.Completion
                                 if (member != null) iteratorIndexType = member.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
-                            if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                            if (exprType.Name.StartsWithOrdinal("Iterator<")
+                                && !string.IsNullOrEmpty(exprTypeIndexType) && ResolveType(exprTypeIndexType, currentModel).IsVoid())
                             {
                                 exprType = expr.InClass;
                                 break;

@@ -307,7 +307,7 @@ namespace ProjectManager.Controls
                 if (doc.IsEditable && !doc.IsUntitled) 
                 {
                     String ext = Path.GetExtension(doc.FileName);
-                    if (Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, ext) == -1)
+                    if (!PluginMain.Settings.ExcludedFileTypes.Contains(ext))
                     {
                         open.Add(doc.FileName);
                     }
@@ -339,16 +339,16 @@ namespace ProjectManager.Controls
             {
                 try
                 {
-                    String[] temp = Directory.GetFiles(folder, "*.*");
-                    foreach (String file in temp)
+                    var searchFilters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
+                    var temp = Directory.GetFiles(folder, "*.*");
+                    foreach (var file in temp)
                     {
-                        String extension = Path.GetExtension(file);
-                        String[] filters = PluginBase.CurrentProject.DefaultSearchFilter.Split(';');
-                        Boolean ignored = Array.IndexOf(PluginMain.Settings.ExcludedFileTypes, extension) > -1;
-                        if (ignored || (this.checkBox.Checked && Array.IndexOf(filters, "*" + extension) == -1)) continue;
+                        var extension = Path.GetExtension(file);
+                        var ignored = PluginMain.Settings.ExcludedFileTypes.Contains(extension);
+                        if (ignored || (checkBox.Checked && !searchFilters.Contains("*" + extension))) continue;
                         files.Add(file);
                     }
-                    foreach (string sub in Directory.GetDirectories(folder))
+                    foreach (var sub in Directory.GetDirectories(folder))
                     {
                         AddFilesInFolder(files, sub);
                     }

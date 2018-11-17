@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Bridge;
@@ -138,10 +139,9 @@ namespace ProjectManager
                 this.SaveSettings();
             }
             // add new filtered types if user has old settings
-            if (Array.IndexOf<string>(Settings.ExcludedDirectories, "node_modules") < 0)
+            if (!Settings.ExcludedDirectories.Contains("node_modules"))
             {
-                List<String> list = new List<string>(Settings.ExcludedDirectories);
-                list.Add("node_modules");
+                var list = new List<string>(Settings.ExcludedDirectories) {"node_modules"};
                 Settings.ExcludedDirectories = list.ToArray();
                 this.SaveSettings();
             }

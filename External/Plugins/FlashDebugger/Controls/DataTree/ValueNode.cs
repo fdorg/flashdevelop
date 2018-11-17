@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using flash.tools.debugger;
 using Double = java.lang.Double;
 using System.Text;
@@ -295,7 +296,7 @@ namespace FlashDebugger.Controls.DataTree
 
                 if (inPackage)
                 {
-                    if (Array.IndexOf(delims, c) < 0)
+                    if (!delims.Contains(c))
                         continue;
 
                     inPackage = false;

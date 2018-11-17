@@ -165,9 +165,7 @@ namespace PluginCore.Bridge
                 if (bytesReceived > 0)
                 {
                     String chunk = Encoding.UTF8.GetString(so.Buffer, 0, bytesReceived);
-
-                    int star = chunk.IndexOf('*');
-                    if (star >= 0)// .EndsWith("\0"))
+                    if (chunk.Contains('*'))
                     {
                         so.Data.Append(chunk);
                         string[] lines = so.Data.ToString().Split('*');
@@ -180,8 +178,7 @@ namespace PluginCore.Bridge
                     }
                     else so.Data.Append(chunk);
                     
-                    so.Client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, 
-                                           new AsyncCallback(this.OnReceivedData), so);
+                    so.Client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, OnReceivedData, so);
                 }
                 else
                 {

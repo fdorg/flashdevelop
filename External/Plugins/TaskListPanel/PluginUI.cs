@@ -351,7 +351,7 @@ namespace TaskListPanel
         private Boolean ShouldBeScanned(String path, string[] excludedPaths)
         {
             String name = Path.GetFileName(path);
-            if ("._- ".IndexOf(name[0]) >= 0) return false;
+            if ("._- ".Contains(name[0])) return false;
             foreach (String exclude in excludedPaths)
             {
                 if (!Directory.Exists(path) || path.StartsWith(exclude, StringComparison.OrdinalIgnoreCase)) return false;

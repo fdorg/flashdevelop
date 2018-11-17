@@ -47,7 +47,7 @@ namespace PluginCore.Controls
             int currW = 0;
             while (true)
             {
-                lastIdx = rtb.Text.IndexOfOrdinal("\n", lastIdx + 1);
+                lastIdx = rtb.Text.IndexOf('\n', lastIdx + 1);
                 if (lastIdx < 0)
                     break;
 
@@ -58,7 +58,6 @@ namespace PluginCore.Controls
 
             if (wordWrap)
             {
-                float delta;
                 float maxDelta = -1.0f;
                 int firstLineChars = 0;
                 int firstLineCount = 1;
@@ -90,7 +89,7 @@ namespace PluginCore.Controls
                         continue;
                     }
 
-                    delta = lerp(maxDelta, -0.1f * maxDelta, ((float)currW) / ((float)width));
+                    var delta = lerp(maxDelta, -0.1f * maxDelta, ((float)currW) / ((float)width));
 
                     if (delta < 1.0f)
                         delta = 1.0f;

@@ -11,6 +11,7 @@ using PluginCore.Localization;
 using PluginCore.Controls;
 using ProjectManager.Actions;
 using System.Collections.Generic;
+using System.Linq;
 using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
@@ -1019,7 +1020,7 @@ namespace ProjectManager.Controls
             }
 
             sdkComboBox.SelectedIndex = select;
-            if (sdk != InstalledSDK.INVALID_SDK && (sdks == null || Array.IndexOf(sdks, sdk) < 0)) 
+            if (sdk != InstalledSDK.INVALID_SDK && (sdks == null || !sdks.Contains(sdk)))
                 customTextBox.Text = sdk.Path;
             sdkChanged = false;
         }

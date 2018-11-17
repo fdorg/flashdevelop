@@ -566,11 +566,11 @@ namespace FlashDevelop.Dialogs
             if (this.insertComboBox.SelectedItem != null && this.insertComboBox.SelectedIndex != 0)
             {
                 this.contentsTextBox.Focus();
-                String data = this.insertComboBox.SelectedItem.ToString();
+                var data = this.insertComboBox.SelectedItem.ToString();
                 if (!data.StartsWith('-'))
                 {
-                    Int32 variableEnd = data.IndexOfOrdinal(")") + 1;
-                    String variable = data.Substring(0, variableEnd);
+                    var variableEnd = data.IndexOf(')') + 1;
+                    var variable = data.Substring(0, variableEnd);
                     this.InsertText(this.contentsTextBox, variable);
                 }
                 this.insertComboBox.SelectedIndex = 0;

@@ -57,11 +57,10 @@ namespace PluginCore.Helpers
             return config;
         }
 
-        private static string ExpandArguments(string value, Dictionary<string, string> config, int depth)
+        private static string ExpandArguments(string value, IDictionary<string, string> config, int depth)
         {
-            while (value.IndexOf("${", StringComparison.Ordinal) >= 0)
+            while (value.IndexOf("${", StringComparison.Ordinal) is int start && start >= 0)
             {
-                int start = value.IndexOf("${", StringComparison.Ordinal);
                 int end = value.IndexOf('}', start);
                 if (end < start) return value;
                 string key = value.Substring(start + 2, end - start - 2).Trim();

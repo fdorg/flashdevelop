@@ -48,7 +48,7 @@ namespace PluginCore.Helpers
                     }
                     else
                     {
-                        string[] entry = line.Split(new char[] { '=' }, 2);
+                        string[] entry = line.Split(new[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         config[entry[0].Trim()] = entry[1].Trim();
                     }

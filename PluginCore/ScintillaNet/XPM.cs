@@ -40,9 +40,9 @@ namespace ScintillaNet
                     {
                         index = colors.Add(col)+65;
                         if (index > 90) index += 6;
-                        c = Encoding.ASCII.GetChars(new byte[]{(byte)(index & 0xff)})[0];
+                        c = Encoding.ASCII.GetChars(new[] {(byte) (index & 0xff)})[0];
                         chars.Add(c);
-                        sb.Insert(colorsIndex, ",\""+c+" c "+col+"\"");
+                        sb.Insert(colorsIndex, ",\"" + c + " c " + col + "\"");
                         colorsIndex += 14;
                     }
                     else c = (char)chars[index];
@@ -52,8 +52,8 @@ namespace ScintillaNet
             }
             sb.Append("};");
             string result = sb.ToString();
-            int p = result.IndexOfOrdinal("?");
-            string finalColor = result.Substring(0, p)+colors.Count+result.Substring(p+1).Replace(tColor.ToUpper(), "None");
+            int p = result.IndexOf('?');
+            string finalColor = result.Substring(0, p) + colors.Count + result.Substring(p + 1).Replace(tColor.ToUpper(), "None");
             return finalColor;
         }
         

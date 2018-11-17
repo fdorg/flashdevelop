@@ -60,25 +60,22 @@ namespace ProjectManager.Projects.AS3
             string fileExt = Path.GetExtension(path).ToLower();
             if (export != null)
             {
-                if (export.IndexOf('(') > 0)
+                if (export.IndexOf('(') is var p && p > 0)
                 {
-                    string fontName = export.Substring(0, export.IndexOf('(')).Trim();
-                    return String.Format("{0}Embed(source=\"{1}\", fontFamily=\"{2}\"){3}", pre, relPath, fontName, post);
+                    var fontName = export.Substring(0, p).Trim();
+                    return $"{pre}Embed(source=\"{relPath}\", fontFamily=\"{fontName}\"){post}";
                 }
-                else return String.Format("{0}Embed(source=\"{1}\", symbol=\"{2}\"){3}", pre, relPath, export, post);
+                return $"{pre}Embed(source=\"{relPath}\", symbol=\"{export}\"){post}";
             }
-            else if (FileInspector.IsImage(relPath, fileExt) || IsText(fileExt) 
+            if (FileInspector.IsImage(relPath, fileExt) || IsText(fileExt) 
                 || FileInspector.IsFont(relPath, fileExt) || FileInspector.IsSound(relPath, fileExt))
             {
-                return String.Format("{0}Embed(source=\"{1}\"){2}", pre, relPath, post);
+                return $"{pre}Embed(source=\"{relPath}\"){post}";
             }
-            else return String.Format("{0}Embed(source=\"{1}\", mimeType=\"application/octet-stream\"){2}", pre, relPath, post);
+            return $"{pre}Embed(source=\"{relPath}\", mimeType=\"application/octet-stream\"){post}";
         }
 
-        private bool IsText(string ext)
-        {
-            return ext == ".txt" || ext == ".xml";
-        }
+        private bool IsText(string ext) => ext == ".txt" || ext == ".xml";
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
         {
@@ -92,10 +89,7 @@ namespace ProjectManager.Projects.AS3
             return CompileTargetType.DocumentClass; // can actually be outside of the classpath...
         }
 
-        public override bool IsDocumentClass(string path)
-        {
-            return IsCompileTarget(path);
-        }
+        public override bool IsDocumentClass(string path) => IsCompileTarget(path);
 
         public override void SetDocumentClass(string path, bool isMain)
         {

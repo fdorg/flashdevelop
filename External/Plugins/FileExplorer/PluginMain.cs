@@ -195,8 +195,8 @@ namespace FileExplorer
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("explorer")) config["explorer"] = explorerAction;
                 String explorer = PluginBase.MainForm.ProcessArgString(config["explorer"]);
-                int start = explorer.StartsWith('\"') ? explorer.IndexOfOrdinal("\"", 2) : 0;
-                int p = explorer.IndexOfOrdinal(" ", start);
+                int start = explorer.StartsWith('\"') ? explorer.IndexOf('\"', 2) : 0;
+                int p = explorer.IndexOf(' ', start);
                 if (!path.StartsWith('\"')) path = "\"" + path + "\"";
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(explorer.Substring(0, p));
@@ -241,8 +241,8 @@ namespace FileExplorer
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("cmd")) config["cmd"] = PluginBase.MainForm.CommandPromptExecutable;
                 String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
-                int start = cmd.StartsWith('\"') ? cmd.IndexOfOrdinal("\"", 2) : 0;
-                int p = cmd.IndexOfOrdinal(" ", start);
+                int start = cmd.StartsWith('\"') ? cmd.IndexOf('\"', 2) : 0;
+                int p = cmd.IndexOf(' ', start);
                 if (path.StartsWith('\"') && path.Length > 2) path = path.Substring(1, path.Length - 2);
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(p > 0 ? cmd.Substring(0, p) : cmd);

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -2107,19 +2108,14 @@ namespace FlashDevelop
         /// <summary>
         /// Processes the argument string variables
         /// </summary>
-        public String ProcessArgString(String args, bool dispatch)
-        {
-            return ArgsProcessor.ProcessString(args, dispatch);
-        }
-        public String ProcessArgString(String args)
-        {
-            return ArgsProcessor.ProcessString(args, true);
-        }
+        public string ProcessArgString(string args) => ArgsProcessor.ProcessString(args, true);
+
+        public string ProcessArgString(string args, bool dispatch) => ArgsProcessor.ProcessString(args, dispatch);
 
         /// <summary>
         /// Processes the incoming arguments 
         /// </summary> 
-        public void ProcessParameters(String[] args)
+        public void ProcessParameters(string[] args)
         {
             if (this.InvokeRequired)
             {
@@ -2129,10 +2125,10 @@ namespace FlashDevelop
             this.Activate(); this.Focus();
             if (args != null && args.Length != 0)
             {
-                Silent = Array.IndexOf(args, "-silent") != -1;
-                for (Int32 i = 0; i < args.Length; i++)
+                Silent = args.Contains("-silent");
+                foreach (var arg in args)
                 {
-                    OpenDocumentFromParameters(args[i]);
+                    OpenDocumentFromParameters(arg);
                 }
             }
             if (Win32.ShouldUseWin32()) Win32.RestoreWindow(this.Handle);

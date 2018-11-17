@@ -670,8 +670,8 @@ namespace PluginCore.FRService
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;:".IndexOf(c) >= 0) break; // ok
-                if (" \t".IndexOf(c) >= 0) continue;
+                if ("=(,[{;:".Contains(c)) break; // ok
+                if (" \t".Contains(c)) continue;
                 return false; // anything else isn't expected before a regex
             }
             i0 = i;
@@ -680,7 +680,7 @@ namespace PluginCore.FRService
                 c = ba[i0++];
                 if (c == '\\') { i0++; continue; } // escape next
                 if (c == '/') break; // end of regex
-                if ("\r\n".IndexOf(c) >= 0) return false;
+                if ("\r\n".Contains(c)) return false;
             }
             while (i0 < len)
             {

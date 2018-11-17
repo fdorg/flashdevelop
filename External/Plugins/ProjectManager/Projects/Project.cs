@@ -329,7 +329,7 @@ namespace ProjectManager.Projects
 
         public void UpdateVars(bool silent)
         {
-            if (!silent && ProjectUpdating != null) ProjectUpdating(this);
+            if (!silent) ProjectUpdating?.Invoke(this);
             vars = new BuildEventVars(this).GetVars();
         }
 

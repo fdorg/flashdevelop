@@ -603,8 +603,7 @@ namespace AS3Context
             {
                 p = qname.IndexOf('>', q);
                 if (p <= q) return qname;
-                else
-                    return qname.Substring(0, q + 1) + ImportType(qname.Substring(q + 1, p - q - 1)) + qname.Substring(p);
+                return qname.Substring(0, q + 1) + ImportType(qname.Substring(q + 1, p - q - 1)) + qname.Substring(p);
             }
             if (p < 0) return qname;
             if (imports.ContainsKey(qname)) return imports[qname];

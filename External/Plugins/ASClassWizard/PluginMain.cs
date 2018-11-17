@@ -455,13 +455,10 @@ namespace ASClassWizard
             imports.Sort();
             foreach (string import in imports)
             {
-                if (prevImport != import)
-                {
-                    prevImport = import;
-                    if (import.LastIndexOf('.') == -1) continue;
-                    if (import.Substring(0, import.LastIndexOf('.')) == lastFileOptions.Package) continue;
-                    importsSrc += (lastFileOptions.Language == "as3" ? "\t" : "") + "import " + import + ";" + lineBreak;
-                }
+                if (prevImport == import) continue;
+                prevImport = import;
+                if (import.LastIndexOf('.') is int p && (p == -1 || import.Substring(0, p) == lastFileOptions.Package)) continue;
+                importsSrc += (lastFileOptions.Language == "as3" ? "\t" : "") + "import " + import + ";" + lineBreak;
             }
             if (importsSrc.Length > 0)
             {

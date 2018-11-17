@@ -710,7 +710,7 @@ namespace ASCompletion.Completion
             }
             
             eventName = Camelize(eventName.Substring(eventName.LastIndexOf('.') + 1));
-            if (target != null) target = target.TrimStart('_');
+            target = target?.TrimStart('_');
 
             switch (ASContext.CommonSettings.HandlerNamingConvention)
             {
@@ -2873,7 +2873,7 @@ namespace ASCompletion.Completion
             }
             if (caller?.Parameters != null && caller.Parameters.Count > 0)
             {
-                string CleanType(string s) => s.StartsWith("(") && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
+                string CleanType(string s) => s.StartsWith('(') && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
                 var param = caller.Parameters[parameterIndex];
                 var parameterType = param.Type;
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
@@ -4543,7 +4543,7 @@ namespace ASCompletion.Completion
         private static string RemoveAndExtractModifier(string modifier, ref string modifiers)
         {
             modifier += " ";
-            int index = modifiers.IndexOf(modifier, StringComparison.Ordinal);
+            int index = modifiers.IndexOfOrdinal(modifier);
 
             if (index == -1) return null;
             modifiers = modifiers.Remove(index, modifier.Length);

@@ -32,12 +32,11 @@ namespace ProjectManager.Projects.AS3
                 project.MovieOptions.MinorVersion = 1;
             }
 
-            bool isAIR = project.MovieOptions.Platform.IndexOf("AIR", StringComparison.Ordinal) >= 0;
+            bool isAIR = project.MovieOptions.Platform.Contains("AIR");
             if (project.CompilerOptions.Additional != null)
             {
                 string add = String.Join("\n", project.CompilerOptions.Additional).Trim().Replace("\n\n", "\n");
-                bool airdef = add.IndexOf("configname=air", StringComparison.Ordinal) >= 0;
-                if (!isAIR && airdef)
+                if (!isAIR && add.Contains("configname=air"))
                 {
                     add = Regex.Replace(add, "(\\+)?configname=air", "");
                     project.CompilerOptions.Additional = add.Trim().Replace("\n\n", "\n").Split('\n');

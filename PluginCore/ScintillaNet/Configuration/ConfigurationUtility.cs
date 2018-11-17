@@ -36,11 +36,11 @@ namespace ScintillaNet.Configuration
             filename = filename.Replace("$(UserAppDir)", PathHelper.UserAppDir);
             filename = filename.Replace("$(BaseDir)", PathHelper.BaseDir);
             if (File.Exists(filename)) res = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            else res = _assembly.GetManifestResourceStream(String.Format( "{0}.{1}" , _assembly.GetName().Name, filename.Replace("\\" , "." )));
-            if (res == null && parent != null && parent.filename != null)
+            else res = _assembly.GetManifestResourceStream($"{_assembly.GetName().Name}.{filename.Replace("\\", ".")}");
+            if (res == null && parent?.filename != null)
             {
                 int p = parent.filename.LastIndexOf('\\');
-                if (p > 0) return OpenFile(String.Format( "{0}\\{1}", parent.filename.Substring(0, p), filename), null);
+                if (p > 0) return OpenFile($"{parent.filename.Substring(0, p)}\\{filename}", null);
             }
             return res;
         }
