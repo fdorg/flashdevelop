@@ -944,15 +944,15 @@ namespace HaXeContext.Completion
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
-                if (!string.IsNullOrEmpty(member.Template) && context.SubExpressions.Last() is string lastSubExpression && lastSubExpression.Length > 2)
+                if (!string.IsNullOrEmpty(member.Template) && context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
                 {
                     var subExpressionPosition = context.SubExpressionPositions.Last();
-                    lastSubExpression = lastSubExpression.Substring(1, lastSubExpression.Length - 2);
+                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
                     var expressions = new List<ASResult>();
                     var groupCount = 0;
-                    for (int i = 0, length = lastSubExpression.Length - 1; i <= length; i++)
+                    for (int i = 0, length = subExpression.Length - 1; i <= length; i++)
                     {
-                        var c = lastSubExpression[i];
+                        var c = subExpression[i];
                         if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
                         else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
                         else if (groupCount == 0 && c == ',' || i == length)
