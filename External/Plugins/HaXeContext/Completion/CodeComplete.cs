@@ -938,20 +938,21 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
+            else if (result.Context is ASExpr context
+                     && result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
-                if (!string.IsNullOrEmpty(member.Template) && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
+                if (!string.IsNullOrEmpty(member.Template) && context.SubExpressions.Last() is string lastSubExpression && lastSubExpression.Length > 2)
                 {
-                    var subExpressionPosition = result.Context.SubExpressionPositions.Last();
-                    subExpression = subExpression.Substring(1, subExpression.Length - 2);
+                    var subExpressionPosition = context.SubExpressionPositions.Last();
+                    lastSubExpression = lastSubExpression.Substring(1, lastSubExpression.Length - 2);
                     var expressions = new List<ASResult>();
                     var groupCount = 0;
-                    for (int i = 0, length = subExpression.Length - 1; i <= length; i++)
+                    for (int i = 0, length = lastSubExpression.Length - 1; i <= length; i++)
                     {
-                        var c = subExpression[i];
+                        var c = lastSubExpression[i];
                         if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
                         else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
                         else if (groupCount == 0 && c == ',' || i == length)
@@ -1014,7 +1015,7 @@ namespace HaXeContext.Completion
                 // previous member called as a method
                 else if (token[0] == '#' && FileParser.IsFunctionType(returnType)
                     // for example: (foo():Void->(Void->String))()
-                    && result.Context.SubExpressions is List<string> l && l.Count > 1)
+                    && context.SubExpressions is List<string> l && l.Count > 1)
                 {
                     var type = (ClassModel) Context.stubFunctionClass.Clone();
                     FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
