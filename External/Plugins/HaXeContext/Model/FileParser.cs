@@ -646,6 +646,28 @@ namespace HaXeContext.Model
                         }
                     }
                     else if ((c1 == ':' || c1 == ',') && paramBraceCount > 0) stopParser = true;
+                    /**
+                     * for example:
+                     * package;
+                     * class Foo {
+                     *     var v1 : {
+                     *     var v2 : String;
+                     * }
+                     */
+                    else if (c1 == ';' && paramBraceCount > 0 && inAnonType)
+                    {
+                        inType = false;
+                        inAnonType = false;
+                        inValue = false;
+                        inGeneric = false;
+                        length = 0;
+                        context = 0;
+                        curMember = null;
+                        foundColon = false;
+                        valueLength = 0;
+                        paramBraceCount = 0;
+                        continue;
+                    }
 
                     // end of value
                     if ((valueError || (!stopParser && paramBraceCount == 0 && paramParCount == 0 && paramSqCount == 0 && paramTempCount == 0))
