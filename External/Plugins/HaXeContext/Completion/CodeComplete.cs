@@ -938,14 +938,15 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            else if (result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
+            else if (result.Context is ASExpr context
+                     && result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
-                if (!string.IsNullOrEmpty(member.Template) && result.Context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
+                if (!string.IsNullOrEmpty(member.Template) && context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
                 {
-                    var subExpressionPosition = result.Context.SubExpressionPositions.Last();
+                    var subExpressionPosition = context.SubExpressionPositions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
                     var expressions = new List<ASResult>();
                     var groupCount = 0;
@@ -1014,7 +1015,7 @@ namespace HaXeContext.Completion
                 // previous member called as a method
                 else if (token[0] == '#' && FileParser.IsFunctionType(returnType)
                     // for example: (foo():Void->(Void->String))()
-                    && result.Context.SubExpressions is List<string> l && l.Count > 1)
+                    && context.SubExpressions is List<string> l && l.Count > 1)
                 {
                     var type = (ClassModel) Context.stubFunctionClass.Clone();
                     FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);

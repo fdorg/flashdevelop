@@ -1394,6 +1394,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> ImplementInterfaceIssue2553TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeImplementInterface_issue2553_1", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue2553_1"))
+                    .SetName("Implement interface methods. Issue 2553. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2553");
+            }
+        }
+
         static IEnumerable<TestCaseData> GenerateEventHandlerIssue751TestCases
         {
             get
@@ -1544,6 +1555,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2531TestCases)),
+            TestCaseSource(nameof(ImplementInterfaceIssue2553TestCases)),
             TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
             TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
