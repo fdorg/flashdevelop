@@ -1,7 +1,4 @@
-﻿
-using ASClassWizard.Resources;
-
-namespace ASClassWizard.Wizards
+﻿namespace ASClassWizard.Wizards
 {
     partial class AS3ClassWizard
     {
@@ -432,7 +429,8 @@ namespace ASClassWizard.Wizards
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.cancelButton);
