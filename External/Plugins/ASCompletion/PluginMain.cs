@@ -1215,10 +1215,7 @@ namespace ASCompletion
             var ctx = ASContext.Context;
             if (!ctx.IsFileValid) return;
             lastHoverPosition = position;
-
-            // get word at mouse position
-            var style = sci.BaseStyleAt(position);
-            if (!ASComplete.IsTextStyle(style) && (!ctx.Features.hasInterfaces || !ctx.CodeComplete.IsStringInterpolationStyle(sci, position))) return;
+            if (!ctx.CodeComplete.IsAvailableForToolTip(sci, position)) return;
             position = ASComplete.ExpressionEndPosition(sci, position);
             var result = ASComplete.GetExpressionType(sci, position, false, true);
 
