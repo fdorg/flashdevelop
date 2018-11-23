@@ -67,10 +67,27 @@ namespace HaXeContext
                 new MemberModel("expression", "Dynamic", FlagType.Variable | FlagType.ParameterVar, 0),
                 new MemberModel("type", "Class<TResult>", FlagType.Variable | FlagType.ParameterVar, 0),
             },
-            Comments = "\r\t * Attempts to convert an expression to a given type. If the conversion is not possible a run-time error is generated." +
+            Comments = "\r\t * Attempts to convert an <b>expression</b> to a given <b>type</b>. If the conversion is not possible a run-time error is generated." +
                        "\r\t * @param expression The expression for convert to a given type." +
                        "\r\t * @param type The type of the result." +
                        "\r\t * @return a value of type."
+        };
+
+        public static readonly MemberModel StubUnsafeCastFunction = new MemberModel("cast expr", null, FlagType.Declaration, 0)
+        {
+            Comments = "\r\t * Unsafe casts are useful to subvert the type system. The compiler types <b>expr</b> as usual and then wraps it in a monomorph. This allows the expression to be assigned to anything." +
+                       "\r\t * Unsafe casts do not introduce any dynamic types, as the following example shows:" +
+                       "\r\t * " +
+                       "\r\t * var i = 1;" +
+                       "\r\t * $type(i); // Int" +
+                       "\r\t * var s = cast i;" +
+                       "\r\t * $type(s); // Unknown<0>" +
+                       "\r\t * Std.parseInt(s);" +
+                       "\r\t * $type(s); // String" +
+                       "\r\t * " +
+                       "\r\t * Variable <b>i</b> is typed as <b>Int</b> and then assigned to variable <b>s</b> using the unsafe cast <b>cast i</b>. This causes s to be of an unknown type, a monomorph. Following the usual rules of unification, it can then be bound to any type, such as <b>String</b> in this example." +
+                       "\r\t * These casts are called <i>unsafe</i> because the runtime behavior for invalid casts is not defined. While most dynamic targets are likely to work, it might lead to undefined errors on static targets." +
+                       "\r\t * Unsafe casts have little to no runtime overhead."
         };
 
         public Context(HaXeSettings initSettings) : this(initSettings, path => null)
@@ -187,6 +204,7 @@ namespace HaXeContext
             CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
         }
+
         #endregion
 
         #region classpath management

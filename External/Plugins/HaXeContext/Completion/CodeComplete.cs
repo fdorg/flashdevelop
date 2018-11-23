@@ -817,15 +817,17 @@ namespace HaXeContext.Completion
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
 
-        protected override string GetToolTipTextEx(ASResult result)
+        protected override string GetToolTipTextEx(ASResult expr)
         {
-            if (result.Type != null && !result.Type.IsVoid()
-                // ca<cursor>st(expr, Type);
-                && result.Context is ASExpr context && context.WordBefore == "cast" && context.SubExpressions != null)
+            if (expr.Context is ASExpr context)
             {
-                result.Member = Context.StubSafeCastFunction;
+                // for example: cast<cursor>(expr, Type);
+                if (expr.Type != null && !expr.Type.IsVoid() && context.SubExpressions != null && context.WordBefore == "cast")
+                    expr.Member = Context.StubSafeCastFunction;
+                // for example: cast<cursor> expr;
+                else if (expr.Member == null && context.Value == "cast") expr.Member = Context.StubUnsafeCastFunction;
             }
-            return base.GetToolTipTextEx(result);
+            return base.GetToolTipTextEx(expr);
         }
 
         protected override string GetConstructorTooltipText(ClassModel type)

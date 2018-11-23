@@ -1218,23 +1218,17 @@ namespace ASCompletion
             if (!ctx.CodeComplete.IsAvailableForToolTip(sci, position)) return;
             position = ASComplete.ExpressionEndPosition(sci, position);
             var result = ASComplete.GetExpressionType(sci, position, false, true);
-
-            // set tooltip
-            if (!result.IsNull())
+            if (Control.ModifierKeys == Keys.Control)
             {
-                if (Control.ModifierKeys == Keys.Control)
-                {
-                    var code = ASComplete.GetCodeTipCode(result);
-                    if (code == null) return;
-                    UITools.CodeTip.Show(sci, position - result.Path.Length, code);
-                }
-                else
-                {
-                    var text = ASComplete.GetToolTipText(result);
-                    if (text == null) return;
-                    // show tooltip
-                    UITools.Tip.ShowAtMouseLocation(text);
-                }
+                var code = ASComplete.GetCodeTipCode(result);
+                if (code == null) return;
+                UITools.CodeTip.Show(sci, position - result.Path.Length, code);
+            }
+            else
+            {
+                var text = ASComplete.GetToolTipText(result);
+                if (text == null) return;
+                UITools.Tip.ShowAtMouseLocation(text);
             }
         }
 
