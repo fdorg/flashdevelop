@@ -4711,7 +4711,7 @@ namespace ASCompletion.Completion
         #endregion
 
         #region tooltips formatting
-        static public string GetCodeTipCode(ASResult result)
+        public static string GetCodeTipCode(ASResult result)
         {
             if (result.Member == null)
             {
@@ -4755,24 +4755,25 @@ namespace ASCompletion.Completion
 
         public static string GetToolTipText(ASResult expr) => ASContext.Context.CodeComplete.GetToolTipTextEx(expr);
 
-        protected virtual string GetToolTipTextEx(ASResult result)
+        protected virtual string GetToolTipTextEx(ASResult expr)
         {
-            if (result.Member != null && result.InClass != null)
+            if (expr.IsNull()) return null;
+            if (expr.Member != null && expr.InClass != null)
             {
-                return MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
+                return MemberTooltipText(expr.Member, expr.InClass) + GetToolTipDoc(expr.Member);
             }
-            if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
+            if (expr.Member != null && (expr.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
             {
-                return MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
+                return MemberTooltipText(expr.Member, ClassModel.VoidClass) + GetToolTipDoc(expr.Member);
             }
-            if (result.InClass != null)
+            if (expr.InClass != null)
             {
-                return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
+                return ClassModel.ClassDeclaration(expr.InClass) + GetToolTipDoc(expr.InClass);
             }
-            if (result.Type != null)
+            if (expr.Type != null)
             {
-                if (result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
-                return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
+                if (expr.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(expr.Type);
+                return ClassModel.ClassDeclaration(expr.Type) + GetToolTipDoc(expr.Type);
             }
             return null;
         }
