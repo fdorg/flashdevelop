@@ -1063,6 +1063,7 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2553_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue2553_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2550_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2559_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

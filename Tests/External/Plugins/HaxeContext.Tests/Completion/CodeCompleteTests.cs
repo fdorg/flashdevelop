@@ -602,6 +602,17 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue2559TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue2559_1")
+                    .Returns("cast<TResult> (expression:Dynamic, type:Class<TResult>) : TResult")
+                    .SetName("cast(<complete>. Issue 2559. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2559");
+            }
+        }
+
         static IEnumerable<TestCaseData> CalltipDefTestCases
         {
             get
@@ -621,6 +632,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(CalltipDefIssue2475TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2489TestCases)),
             TestCaseSource(nameof(CalltipDefIssue589TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue2559TestCases)),
             TestCaseSource(nameof(CalltipDefTestCases)),
         ]
         public string CalltipDef(string fileName)
