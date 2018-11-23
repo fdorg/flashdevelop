@@ -137,7 +137,7 @@ namespace ASCompletion.Completion
                 if (ctx.CodeComplete.IsAvailable(ctx, autoHide))
                 {
                     // Custom completion
-                    if (ASContext.Context.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
+                    if (ctx.CodeComplete.OnChar(sci, value, prevValue, autoHide)) return true;
                     switch (value)
                     {
                         case '.':
@@ -219,6 +219,18 @@ namespace ASCompletion.Completion
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
         /// <returns>true if completion is available</returns>
         protected virtual bool IsAvailable(IASContext ctx, bool autoHide) => ctx.Settings != null && ctx.Settings.CompletionEnabled;
+
+        /// <summary>
+        /// Returns true if position is available for tooltip
+        /// </summary>
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="position">Cursor position</param>
+        /// <returns>true if position is available for tooltip</returns>
+        protected internal virtual bool IsAvailableForToolTip(ScintillaControl sci, int position)
+        {
+            var style = sci.StyleAt(position);
+            return IsTextStyle(style) || (ASContext.Context.Features.hasInterfaces && IsStringInterpolationStyle(sci, position));
+        }
 
         /// <summary>
         /// Handle shortcuts
@@ -4724,7 +4736,7 @@ namespace ASCompletion.Completion
             return code.ToString();
         }
 
-        static private string GetFileContents(FileModel model)
+        private static string GetFileContents(FileModel model)
         {
             if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
             {
@@ -4741,7 +4753,9 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        public static string GetToolTipText(ASResult result)
+        public static string GetToolTipText(ASResult expr) => ASContext.Context.CodeComplete.GetToolTipTextEx(expr);
+
+        protected virtual string GetToolTipTextEx(ASResult result)
         {
             if (result.Member != null && result.InClass != null)
             {
@@ -5214,7 +5228,7 @@ namespace ASCompletion.Completion
     {
         public DeclarationItem(string label)
         {
-            this.Label = label;
+            Label = label;
         }
 
         public string Label { get; }

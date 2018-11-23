@@ -50,13 +50,27 @@ namespace HaXeContext
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
 
-        internal static readonly ClassModel stubFunctionClass = new ClassModel
+        internal static readonly ClassModel StubFunctionClass = new ClassModel
         {
             Name = "Function",
             Type = "Function",
             Flags = FlagType.Class,
             Access = Visibility.Public,
             InFile = new FileModel {Package = "haxe", Module = "Constraints"},
+        };
+
+        internal static readonly MemberModel StubSafeCastFunction = new MemberModel("cast", "TResult", FlagType.Dynamic | FlagType.Function, 0)
+        {
+            Template = "<TResult>",
+            Parameters = new List<MemberModel>
+            {
+                new MemberModel("expression", "Dynamic", FlagType.Variable | FlagType.ParameterVar, 0),
+                new MemberModel("type", "Class<TResult>", FlagType.Variable | FlagType.ParameterVar, 0),
+            },
+            Comments = "\r\t * Attempts to convert an expression to a given type. If the conversion is not possible a run-time error is generated." +
+                       "\r\t * @param expression The expression for convert to a given type." +
+                       "\r\t * @param type The type of the result." +
+                       "\r\t * @return a value of type."
         };
 
         public Context(HaXeSettings initSettings) : this(initSettings, path => null)
@@ -74,7 +88,7 @@ namespace HaXeContext
             hasLevels = false;
             docType = "Void"; // "flash.display.MovieClip";
 
-            stubFunctionClass.InFile.Classes.Add(stubFunctionClass);
+            StubFunctionClass.InFile.Classes.Add(StubFunctionClass);
 
             /* DESCRIBE LANGUAGE FEATURES */
 
@@ -1138,7 +1152,7 @@ namespace HaXeContext
                     found = true;
                     break;
                 }
-                if (!found && cname == "Function") return stubFunctionClass;
+                if (!found && cname == "Function") return StubFunctionClass;
             }
             return GetModel(package, cname, inPackage);
         }

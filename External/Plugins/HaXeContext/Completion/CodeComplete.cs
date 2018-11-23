@@ -22,6 +22,13 @@ namespace HaXeContext.Completion
             return base.IsAvailable(ctx, autoHide) && (!autoHide || ((HaXeSettings)ctx.Settings).DisableCompletionOnDemand);
         }
 
+        /// <inheritdoc />
+        protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
+        {
+            return base.IsAvailableForToolTip(sci, position)
+                   || (sci.GetWordFromPosition(position) is string word && word == "cast");
+        }
+
         public override bool IsRegexStyle(ScintillaControl sci, int position)
         {
             return base.IsRegexStyle(sci, position)
@@ -311,7 +318,15 @@ namespace HaXeContext.Completion
             }
             var type = expr.Type;
             if ((expr.Member != null && expr.Path != "super") || type == null)
+            {
+                // for example: cast(<complete>
+                if (expr.Context.Value == "cast")
+                {
+                    FunctionContextResolved(sci, expr.Context, Context.StubSafeCastFunction, ClassModel.VoidClass, false);
+                    return true;
+                }
                 return base.ResolveFunction(sci, position, expr, autoHide);
+            }
             var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
             type.ResolveExtends();
             while (!type.IsVoid())
@@ -802,6 +817,17 @@ namespace HaXeContext.Completion
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
 
+        protected override string GetToolTipTextEx(ASResult result)
+        {
+            if (result.Type != null && !result.Type.IsVoid()
+                // ca<cursor>st(expr, Type);
+                && result.Context is ASExpr context && context.WordBefore == "cast" && context.SubExpressions != null)
+            {
+                result.Member = Context.StubSafeCastFunction;
+            }
+            return base.GetToolTipTextEx(result);
+        }
+
         protected override string GetConstructorTooltipText(ClassModel type)
         {
             var inClass = type;
@@ -932,7 +958,7 @@ namespace HaXeContext.Completion
                     FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
                     result.Member.Name = "item";
                     result.Member.Flags |= FlagType.Function;
-                    result.Type = (ClassModel) Context.stubFunctionClass.Clone();
+                    result.Type = (ClassModel) Context.StubFunctionClass.Clone();
                     result.Type.Parameters = result.Member.Parameters;
                     result.Type.Type = result.Member.Type;
                     return;
@@ -1017,7 +1043,7 @@ namespace HaXeContext.Completion
                     // for example: (foo():Void->(Void->String))()
                     && context.SubExpressions is List<string> l && l.Count > 1)
                 {
-                    var type = (ClassModel) Context.stubFunctionClass.Clone();
+                    var type = (ClassModel) Context.StubFunctionClass.Clone();
                     FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);
                     result.Member = new MemberModel
                     {
