@@ -1101,7 +1101,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>&amp;Little Endian</value>
   </data>
   <data name="FlashDevelop.Label.LookInComments" xml:space="preserve">
-    <value>Look in &amp;comments</value>
+    <value>Look in c&amp;omments</value>
+    <comment>Modified after 5.3.3</comment>
   </data>
   <data name="FlashDevelop.Label.LookInStrings" xml:space="preserve">
     <value>Look in &amp;strings</value>
