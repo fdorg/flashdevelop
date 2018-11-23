@@ -821,10 +821,10 @@ namespace HaXeContext.Completion
         {
             if (expr.Context is ASExpr context)
             {
-                // for example: ca<cursor>st(expr, Type);
+                // for example: cast<cursor>(expr, Type);
                 if (expr.Type != null && !expr.Type.IsVoid() && context.SubExpressions != null && context.WordBefore == "cast")
                     expr.Member = Context.StubSafeCastFunction;
-                // for example: cas<cursor>e expr;
+                // for example: cast<cursor> expr;
                 else if (expr.Member == null && context.Value == "cast") expr.Member = Context.StubUnsafeCastFunction;
             }
             return base.GetToolTipTextEx(expr);
