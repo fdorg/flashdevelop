@@ -2483,7 +2483,7 @@ namespace ASCompletion.Completion
             {
                 if (returnType.Member != null)
                 {
-                    if ((returnType.Member.Flags & FlagType.Function) != 0)
+                    if ((returnType.Member.Flags & FlagType.Function) != 0 && returnType.Context.Value[returnType.Context.Value.Length - 1] != '~')
                         returnTypeStr = ((ASGenerator) ASContext.Context.CodeGenerator).FunctionToString(returnType.Member);
                     else if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                         returnTypeStr = returnType.Member.Type;
