@@ -834,13 +834,12 @@ namespace HaXeContext.Completion
 
         protected override string GetToolTipTextEx(ASResult expr)
         {
-            if (expr.Context is ASExpr context)
+            if (expr.Member == null && expr.Context is ASExpr context)
             {
                 // for example: cast<cursor>(expr, Type);
-                if (expr.Type != null && !expr.Type.IsVoid() && context.SubExpressions != null && context.WordBefore == "cast")
-                    expr.Member = Context.StubSafeCastFunction;
+                if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
                 // for example: cast<cursor> expr;
-                else if (expr.Member == null && context.Value == "cast") expr.Member = Context.StubUnsafeCastFunction;
+                else if (context.Value == "cast") expr.Member = Context.StubUnsafeCastFunction;
             }
             return base.GetToolTipTextEx(expr);
         }
