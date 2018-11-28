@@ -1485,6 +1485,11 @@ namespace HaXeContext
                         if (c == '.' || characterClass.Contains(c)) continue;
                         if (c <= ' ') pos++;
                         else if (c == '(') pos = i + 1;
+                        else if (c == ')')
+                        {
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
                         else if (c == '<')
                         {
                             genCount++;
@@ -1544,7 +1549,8 @@ namespace HaXeContext
                             if (braCount == 0 && genCount == 0 
                                 && type.IndexOf('{', pos) == -1
                                 && type.IndexOf('<', pos) == -1
-                                && type.IndexOf(',', pos) == -1)
+                                && type.IndexOf(',', pos) == -1
+                                && type.IndexOf('-', pos) == -1)
                             {
                                 result.Add(type.Substring(pos));
                                 break;

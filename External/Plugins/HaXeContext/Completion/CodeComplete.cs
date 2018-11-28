@@ -317,7 +317,7 @@ namespace HaXeContext.Completion
                 return true;
             }
             var type = expr.Type;
-            if ((expr.Member != null && expr.Path != "super") || type == null)
+            if ((member != null && expr.Path != "super") || type == null)
             {
                 // for example: cast(<complete>
                 if (expr.Context.Value == "cast")
@@ -814,7 +814,22 @@ namespace HaXeContext.Completion
                     context.Value = $"${context.Value}";
                 }
             }
-            return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+            var result = base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+            // for example: trace<complete>, trace<cursor>()
+            if (result.Member == null && result.Type == null
+                && (expression == "trace" || (expression != null && expression.StartsWith('#') && context.WordBefore == "trace")))
+            {
+                var type = ResolveType("haxe.Log", inFile);
+                if (!type.IsVoid())
+                {
+                    result.Member = type.Members.Search("trace", 0, 0);
+                    result.InClass = type;
+                    result.InFile = type.InFile;
+                    result.RelClass = inClass;
+                    result.Type = Context.StubFunctionClass;
+                }
+            }
+            return result;
         }
 
         protected override string GetToolTipTextEx(ASResult expr)
