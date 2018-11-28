@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using PluginCore;
 using PluginCore.Managers;
-using System.Linq;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -19,11 +18,9 @@ namespace ProjectManager.Controls.TreeView
     /// </summary>
     public class ProjectTreeView : DragDropTreeView, IEventHandler
     {
-        Dictionary<string, GenericNode> nodeMap;
+        readonly Dictionary<string, GenericNode> nodeMap;
         List<Project> projects = new List<Project>();
         Project activeProject;
-        string pathToSelect;
-
         public static ProjectTreeView Instance;
         public event DragPathEventHandler MovePath;
         public event DragPathEventHandler CopyPath;
@@ -56,9 +53,9 @@ namespace ProjectManager.Controls.TreeView
             EndUpdate();
         }
 
-        void RefreshNodeColors(TreeNodeCollection nodes, bool recursive)
+        void RefreshNodeColors(IEnumerable nodes, bool recursive)
         {
-            foreach (var node in nodes.Cast<GenericNode>())
+            foreach (GenericNode node in nodes)
             {
                 if (recursive) RefreshNodeColors(node.Nodes, recursive);
 
@@ -72,15 +69,15 @@ namespace ProjectManager.Controls.TreeView
         {
             foreach (GenericNode node in Nodes)
             {
-                if (node is ProjectNode && path.StartsWith(node.BackingPath, StringComparison.OrdinalIgnoreCase))
-                    return (node as ProjectNode).ProjectRef;
+                if (node is ProjectNode projectNode && path.StartsWith(projectNode.BackingPath, StringComparison.OrdinalIgnoreCase))
+                    return projectNode.ProjectRef;
             }
             return null;
         }
 
         public Project ProjectOf(GenericNode node)
         {
-            GenericNode p = node;
+            var p = node;
             while (p != null && !(p is ProjectNode))
                 p = p.Parent as GenericNode;
             if (p is ProjectNode) return (p as ProjectNode).ProjectRef;
@@ -95,13 +92,13 @@ namespace ProjectManager.Controls.TreeView
             }
             else
             {
-                Int32 index = 0;
-                String separator = Path.DirectorySeparatorChar.ToString();
+                var index = 0;
+                var separator = Path.DirectorySeparatorChar.ToString();
                 while (true)
                 {
                     index = path.IndexOfOrdinal(separator, index);
                     if (index == -1) break; // Stop, not found
-                    String subPath = path.Substring(0, index);
+                    var subPath = path.Substring(0, index);
                     if (nodeMap.ContainsKey(subPath)) nodeMap[subPath].Expand();
                     index++;
                 }
@@ -123,7 +120,7 @@ namespace ProjectManager.Controls.TreeView
         {
             if (Path.GetFileName(path).StartsWithOrdinal("~$")) return true;
             string ext = Path.GetExtension(path).ToLower();
-            foreach (string exclude in PluginMain.Settings.ExcludedFileTypes)
+            foreach (var exclude in PluginMain.Settings.ExcludedFileTypes)
                 if (ext == exclude) return true;
             return false;
         }
@@ -138,9 +135,8 @@ namespace ProjectManager.Controls.TreeView
             if (node == null) return;
             // if you refresh a SwfFileNode this way (by asking for it), you get
             // special feedback
-            SwfFileNode swfNode = node as SwfFileNode;
 
-            if (swfNode != null) swfNode.RefreshWithFeedback(true);
+            if (node is SwfFileNode swfNode) swfNode.RefreshWithFeedback(true);
             else node.Refresh(true);
         }
 
@@ -164,10 +160,7 @@ namespace ProjectManager.Controls.TreeView
 
         #region Properties
 
-        public IDictionary<string, GenericNode> NodeMap
-        {
-            get { return nodeMap; }
-        }
+        public IDictionary<string, GenericNode> NodeMap => nodeMap;
 
         public Project Project
         {
@@ -226,11 +219,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        public string PathToSelect
-        {
-            get { return pathToSelect; }
-            set { pathToSelect = value; }
-        }
+        public string PathToSelect { get; set; }
 
         public new GenericNode SelectedNode
         {
@@ -238,14 +227,7 @@ namespace ProjectManager.Controls.TreeView
             set { base.SelectedNode = value; }
         }
 
-        public string SelectedPath
-        {
-            get
-            {
-                if (SelectedNode != null) return SelectedNode.BackingPath;
-                else return null;
-            }
-        }
+        public string SelectedPath => SelectedNode?.BackingPath;
 
         public string[] SelectedPaths
         {
@@ -276,16 +258,13 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        public LibraryAsset SelectedAsset 
-        { 
-            get { return activeProject.GetAsset(SelectedPath); }
-        }
+        public LibraryAsset SelectedAsset => activeProject.GetAsset(SelectedPath);
 
         public List<string> ExpandedPaths
         {
             get
             {
-                List<string> expanded = new List<string>();
+                var expanded = new List<string>();
                 AddExpanded(Nodes, expanded); // add in the correct order - top-down
                 return expanded;
             }
@@ -305,7 +284,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void AddExpanded(TreeNodeCollection nodes, List<string> list)
+        private void AddExpanded(IEnumerable nodes, ICollection<string> list)
         {
             foreach (GenericNode node in nodes)
                 if (node.IsExpanded)
@@ -327,7 +306,7 @@ namespace ProjectManager.Controls.TreeView
             // store old tree state
             List<string> previouslyExpanded = ExpandedPaths;
             if (Win32.ShouldUseWin32()) scrollPos = Win32.GetScrollPos(this);
-            string currentPath = SelectedNode != null ? SelectedNode.BackingPath : null;
+            string currentPath = SelectedNode?.BackingPath;
 
             try
             {
@@ -377,22 +356,17 @@ namespace ProjectManager.Controls.TreeView
             activeProject = project;
 
             // create the top-level project node
-            ProjectNode projectNode = new ProjectNode(project);
+            var projectNode = new ProjectNode(project);
             Nodes.Add(projectNode);
             projectNode.Refresh(true);
             projectNode.Expand();
-
-            ReferencesNode refs = new ReferencesNode(project, "References");
-            projectNode.References = refs;
+            projectNode.References = new ReferencesNode(project, "References");
         }
 
         /// <summary>
         /// Refreshes all visible nodes in-place.
         /// </summary>
-        public void RefreshTree()
-        {
-            RefreshTree(null);
-        }
+        public void RefreshTree() => RefreshTree(null);
 
         /// <summary>
         /// Refreshes only the nodes representing the given paths, or all nodes if
@@ -434,8 +408,12 @@ namespace ProjectManager.Controls.TreeView
         protected override void OnBeforeExpand(TreeViewCancelEventArgs e)
         {
             // signal the node about to expand that the expansion is coming
-            GenericNode node = e.Node as GenericNode;
-            if (node != null) node.BeforeExpand();
+            if (e.Node is GenericNode node)
+            {
+                BeginUpdate();
+                node.BeforeExpand();
+                EndUpdate();
+            }
 
             base.OnBeforeExpand(e);
         }
@@ -443,12 +421,12 @@ namespace ProjectManager.Controls.TreeView
         protected override void OnBeforeLabelEdit(NodeLabelEditEventArgs e)
         {
             base.OnBeforeLabelEdit(e);
-            GenericNode node = e.Node as GenericNode;
+            var node = (GenericNode) e.Node;
 
-            if (pathToSelect == node.BackingPath)
+            if (PathToSelect == node.BackingPath)
             {
                 e.CancelEdit = false;
-                pathToSelect = null;
+                PathToSelect = null;
             }
 
             if (!node.IsRenamable)
@@ -463,7 +441,7 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnItemDrag(ItemDragEventArgs e)
         {
-            if (e.Item is GenericNode && (e.Item as GenericNode).IsDraggable)
+            if (e.Item is GenericNode node && node.IsDraggable)
                 base.OnItemDrag(e);
         }
 
@@ -473,7 +451,7 @@ namespace ProjectManager.Controls.TreeView
 
             // we also want to drag files, not just nodes, so that we can drop
             // them on explorer, etc.
-            StringCollection paths = new StringCollection();
+            var paths = new StringCollection();
 
             foreach (GenericNode node in nodes)
                 paths.Add(node.BackingPath);
@@ -484,10 +462,10 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnMoveNode(TreeNode node, TreeNode targetNode)
         {
-            if (MovePath != null && node is GenericNode)
+            if (MovePath != null && node is GenericNode genericNode)
             {
-                string fromPath = (node as GenericNode).BackingPath;
-                string toPath = (targetNode as GenericNode).BackingPath;
+                string fromPath = genericNode.BackingPath;
+                string toPath = ((GenericNode) targetNode).BackingPath;
 
                 MovePath(fromPath, toPath);
             }
@@ -495,10 +473,10 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnCopyNode(TreeNode node, TreeNode targetNode)
         {
-            if (CopyPath != null && node is GenericNode)
+            if (CopyPath != null && node is GenericNode genericNode)
             {
-                string fromPath = (node as GenericNode).BackingPath;
-                string toPath = (targetNode as GenericNode).BackingPath;
+                string fromPath = genericNode.BackingPath;
+                string toPath = ((GenericNode) targetNode).BackingPath;
 
                 CopyPath(fromPath, toPath);
             }
@@ -506,9 +484,9 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnFileDrop(string[] paths, TreeNode targetNode)
         {
-            if (CopyPath != null && targetNode is GenericNode)
+            if (CopyPath != null && targetNode is GenericNode node)
             {
-                string toPath = (targetNode as GenericNode).BackingPath;
+                string toPath = node.BackingPath;
                 foreach (string fromPath in paths)
                     CopyPath(fromPath, toPath);
             }
