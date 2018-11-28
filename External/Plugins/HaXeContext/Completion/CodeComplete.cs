@@ -26,7 +26,7 @@ namespace HaXeContext.Completion
         protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
         {
             return base.IsAvailableForToolTip(sci, position)
-                   || (sci.GetWordFromPosition(position) is string word && (word == "cast" || word == "trace"));
+                   || (sci.GetWordFromPosition(position) is string word && word == "cast");
         }
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
@@ -814,7 +814,21 @@ namespace HaXeContext.Completion
                     context.Value = $"${context.Value}";
                 }
             }
-            return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+            var result = base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+            // for example: trace<complete>
+            if (result.Member == null && result.Type == null && expression == "trace")
+            {
+                var type = ResolveType("haxe.Log", inFile);
+                if (!type.IsVoid())
+                {
+                    result.Member = type.Members.Search("trace", 0, 0);
+                    result.InClass = type;
+                    result.InFile = type.InFile;
+                    result.RelClass = inClass;
+                    result.Type = Context.StubFunctionClass;
+                }
+            }
+            return result;
         }
 
         protected override string GetToolTipTextEx(ASResult expr)
@@ -1059,12 +1073,6 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
-            // for example: trace<cursor>
-            if (result.Member == null && token == "trace")
-            {
-                result.Member = ResolveType("haxe.Log", ASContext.Context.CurrentModel).Members.Search("trace", 0, 0);
-                return;
-            }
             if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
             {
                 /**
