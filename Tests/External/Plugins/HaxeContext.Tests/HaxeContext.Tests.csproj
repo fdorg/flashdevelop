@@ -1064,6 +1064,12 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue2553_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2550_1.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2559_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeDeclareVariable_issue2558_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterDeclareVariable_issue2558_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeDeclareVariable_issue2558_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterDeclareVariable_issue2558_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeDeclareVariable_issue2558_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterDeclareVariable_issue2558_3.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

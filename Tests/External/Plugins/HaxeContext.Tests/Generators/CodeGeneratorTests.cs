@@ -1258,6 +1258,25 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> DeclareVariableIssue2558TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeDeclareVariable_issue2558_1", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterDeclareVariable_issue2558_1"))
+                    .SetName("char<generator> = ''.charAt(0). Declare private variable. Issue 2558. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2558");
+                yield return new TestCaseData("BeforeDeclareVariable_issue2558_2", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterDeclareVariable_issue2558_2"))
+                    .SetName("char<generator> = ''.charAt. Declare private variable. Issue 2558. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2558");
+                yield return new TestCaseData("BeforeDeclareVariable_issue2558_3", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterDeclareVariable_issue2558_3"))
+                    .SetName("length<generator> = ''.length. Declare private variable. Issue 2558. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2558");
+            }
+        }
+
         static IEnumerable<TestCaseData> GenerateFunctionTestCases
         {
             get
@@ -1547,6 +1566,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(AddToInterfaceIssue1733TestCases)),
+            TestCaseSource(nameof(DeclareVariableIssue2558TestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(GenerateFunctionIssue2200TestCases)),
             TestCaseSource(nameof(GenerateFunctionIssue394TestCases)),
