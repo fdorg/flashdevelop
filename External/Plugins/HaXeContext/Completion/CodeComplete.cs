@@ -26,7 +26,7 @@ namespace HaXeContext.Completion
         protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
         {
             return base.IsAvailableForToolTip(sci, position)
-                   || (sci.GetWordFromPosition(position) is string word && word == "cast");
+                   || (sci.GetWordFromPosition(position) is string word && (word == "cast" || word == "trace"));
         }
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
@@ -317,7 +317,7 @@ namespace HaXeContext.Completion
                 return true;
             }
             var type = expr.Type;
-            if ((expr.Member != null && expr.Path != "super") || type == null)
+            if ((member != null && expr.Path != "super") || type == null)
             {
                 // for example: cast(<complete>
                 if (expr.Context.Value == "cast")
@@ -1059,6 +1059,12 @@ namespace HaXeContext.Completion
                 }
             }
             base.FindMemberEx(token, inClass, result, mask, access);
+            // for example: trace<cursor>
+            if (result.Member == null && token == "trace")
+            {
+                result.Member = ResolveType("haxe.Log", ASContext.Context.CurrentModel).Members.Search("trace", 0, 0);
+                return;
+            }
             if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
             {
                 /**

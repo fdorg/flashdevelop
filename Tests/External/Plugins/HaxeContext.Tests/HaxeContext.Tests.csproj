@@ -1070,6 +1070,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterDeclareVariable_issue2558_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeDeclareVariable_issue2558_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterDeclareVariable_issue2558_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2569_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2569_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
