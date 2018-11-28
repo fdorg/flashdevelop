@@ -435,7 +435,12 @@ namespace ProjectManager.Controls.TreeView
         {
             // signal the node about to expand that the expansion is coming
             GenericNode node = e.Node as GenericNode;
-            if (node != null) node.BeforeExpand();
+            if (node != null)
+            {
+                BeginUpdate();
+                node.BeforeExpand();
+                EndUpdate();
+            }
 
             base.OnBeforeExpand(e);
         }
