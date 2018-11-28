@@ -163,8 +163,8 @@ namespace System.Windows.Forms
 
         #region MultiSelect
 
-        private bool IsCtrlDown { get { return (ModifierKeys & Keys.Control) > 0; } }
-        private bool IsShiftDown { get { return (ModifierKeys & Keys.Shift) > 0; } }
+        private bool IsCtrlDown => (ModifierKeys & Keys.Control) > 0;
+        private bool IsShiftDown => (ModifierKeys & Keys.Shift) > 0;
 
         protected override void OnBeforeSelect(TreeViewCancelEventArgs e)
         {
@@ -238,11 +238,10 @@ namespace System.Windows.Forms
             if (node1 == node2) return; // nice try
             bool found = false;
             bool finished = false;
-            SelectRange(base.Nodes,node1,node2,ref found,ref finished);
+            SelectRange(base.Nodes, node1, node2, ref found, ref finished);
         }
 
-        private void SelectRange(TreeNodeCollection nodes, TreeNode node1, 
-            TreeNode node2, ref bool found, ref bool finished)
+        private void SelectRange(IEnumerable nodes, TreeNode node1, TreeNode node2, ref bool found, ref bool finished)
         {
             foreach (TreeNode node in nodes)
             {
@@ -294,8 +293,7 @@ namespace System.Windows.Forms
                 originalColor[node] = node.ForeColor;
                 node.BackColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
                 node.ForeColor = PluginCore.PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
-                MultiSelectTreeNode mNode = node as MultiSelectTreeNode;
-                if (mNode != null) mNode.Painted = true;
+                if (node is MultiSelectTreeNode mNode) mNode.Painted = true;
             }
         }
 
