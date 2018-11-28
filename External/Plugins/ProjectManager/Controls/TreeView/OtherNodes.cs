@@ -217,7 +217,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 foreach (var it in project.ExternalLibraries)
                 {
-                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project,it,it);
+                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, it, it);
                     Nodes.Add(node);
                     node.Refresh(recursive);
                 }
@@ -226,8 +226,7 @@ namespace ProjectManager.Controls.TreeView
             // explore classpaths
             if (PluginMain.Settings.ShowProjectClasspaths)
             {
-                var projectClasspaths = new List<string>();
-                projectClasspaths.AddRange(project.Classpaths);
+                var projectClasspaths = new List<string>(project.Classpaths);
                 if (project.AdditionalPaths != null) projectClasspaths.AddRange(project.AdditionalPaths);
                 projectClasspaths.Sort();
                 // create references nodes
