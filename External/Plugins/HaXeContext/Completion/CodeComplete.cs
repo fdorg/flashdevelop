@@ -26,7 +26,7 @@ namespace HaXeContext.Completion
         protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
         {
             return base.IsAvailableForToolTip(sci, position)
-                   || (sci.GetWordFromPosition(position) is string word && word == "cast");
+                   || (sci.GetWordFromPosition(position) is string word && (word == "cast" || word == "new"));
         }
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
@@ -950,8 +950,13 @@ namespace HaXeContext.Completion
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token)) return;
+            if (token == "new" && result.Member != null)
+            {
+                result.IsStatic = false;
+                return;
+            }
             // previous member accessed as an array
-            if (token.Length > 1 && token[0] == '[' && token[token.Length - 1] == ']' && inClass != null && result.Type != null)
+            else if (token.Length > 1 && token[0] == '[' && token[token.Length - 1] == ']' && inClass != null && result.Type != null)
             {
                 if ((result.Type.Flags & FlagType.TypeDef) != 0 && result.Type.Extends.IsVoid() && !string.IsNullOrEmpty(result.Type.ExtendsType))
                 {
