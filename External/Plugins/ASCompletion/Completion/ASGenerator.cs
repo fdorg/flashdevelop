@@ -1975,8 +1975,7 @@ namespace ASCompletion.Completion
                 aType = cm;
                 break;
             }
-            var codeGenerator = (ASGenerator) ctx.CodeGenerator;
-            var template = codeGenerator.GetAddInterfaceDefTemplate(member);
+            var template = ((ASGenerator) ctx.CodeGenerator).GetAddInterfaceDefTemplate(member);
             ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             sci = ASContext.CurSciControl;
             var latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
