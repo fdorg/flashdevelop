@@ -1287,8 +1287,6 @@ namespace HaXeContext.Completion
             sci.SelectWord();
             ASGenerator.InsertCode(sci.CurrentPos, template);
         }
-
-
     }
 
     class AnonymousFunctionGeneratorItem : ICompletionListItem
