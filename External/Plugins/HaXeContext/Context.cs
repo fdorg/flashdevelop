@@ -73,7 +73,7 @@ namespace HaXeContext
                        "\r\t * @return a value of type."
         };
 
-        public static readonly MemberModel StubUnsafeCastFunction = new MemberModel("cast expr", null, FlagType.Declaration, 0)
+        internal static readonly MemberModel StubUnsafeCastFunction = new MemberModel("cast expr", null, FlagType.Declaration, 0)
         {
             Comments = "\r\t * Unsafe casts are useful to subvert the type system. The compiler types <b>expr</b> as usual and then wraps it in a monomorph. This allows the expression to be assigned to anything." +
                        "\r\t * Unsafe casts do not introduce any dynamic types, as the following example shows:" +
@@ -88,6 +88,11 @@ namespace HaXeContext
                        "\r\t * Variable <b>i</b> is typed as <b>Int</b> and then assigned to variable <b>s</b> using the unsafe cast <b>cast i</b>. This causes s to be of an unknown type, a monomorph. Following the usual rules of unification, it can then be bound to any type, such as <b>String</b> in this example." +
                        "\r\t * These casts are called <i>unsafe</i> because the runtime behavior for invalid casts is not defined. While most dynamic targets are likely to work, it might lead to undefined errors on static targets." +
                        "\r\t * Unsafe casts have little to no runtime overhead."
+        };
+
+        internal static readonly MemberModel StubStringCodeProperty = new MemberModel("code", "Int", FlagType.Getter, Visibility.Public)
+        {
+            Comments = "The character code of this character(inlined at compile-time)"
         };
 
         public Context(HaXeSettings initSettings) : this(initSettings, path => null)
@@ -1735,6 +1740,7 @@ namespace HaXeContext
                 }
             }
             var exprValue = expression.Context.Value;
+            // for example: '1'.<complete> or '\n'.<complete>
             if (exprValue.Length >= 3)
             {
                 var first = exprValue[0];
@@ -1742,9 +1748,7 @@ namespace HaXeContext
                 {
                     var s = exprValue.Replace(".#0~.", string.Empty);
                     if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
-                    {
-                        result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
-                    }
+                        result.Add(StubStringCodeProperty);
                 }
             }
         }
