@@ -633,8 +633,8 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("CalltipDef_issue2217_1")
-                    .Returns("CalltipDef_issue2217_1 (v1:Dynamic)")
-                    .SetName("CalltipDef_issue2217_1.new(<complete>. Issue 2217. Case 1")
+                    .Returns("newCallback : Function<[BGCOLOR=#2F90:NORMAL](parameter0:Dynamic):CalltipDef_issue2217_1[/BGCOLOR]>")
+                    .SetName("newCallback(<complete>. Issue 2217. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2217");
             }
         }
@@ -1025,6 +1025,25 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2217TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2217_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2217_1"))
+                    .SetName("Foo.<complete> Issue 2217. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2217");
+                yield return new TestCaseData("BeforeOnChar_issue2217_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2217_2"))
+                    .SetName("Foo.<complete> Issue 2217. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2217");
+                yield return new TestCaseData("BeforeOnChar_issue2217_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2217_3"))
+                    .SetName("Foo.<complete> Issue 2217. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2217");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
@@ -1043,6 +1062,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2526TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2536TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2538TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2217TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {

@@ -1077,6 +1077,15 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2569_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2569_2.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2217_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2217_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2217_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2217_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2217_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2217_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2217_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2217_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2217_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2217_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
