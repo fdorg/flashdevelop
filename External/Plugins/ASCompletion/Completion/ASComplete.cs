@@ -3631,7 +3631,7 @@ namespace ASCompletion.Completion
                             var pos = position - 1;
                             var word = GetWordLeft(sci, ref pos);
                             // AS3, AS2, Loom ex: return (a as B).<complete>
-                            if (context.Features.codeKeywords.Contains(word))
+                            if (word != "new" && context.Features.codeKeywords.Contains(word))
                             {
                                 expression.Separator = ";";
                                 expression.WordBefore = word;
@@ -5132,6 +5132,7 @@ namespace ASCompletion.Completion
 
         #endregion
 
+        protected internal virtual string ToFunctionDeclarationString(MemberModel member) => member != null ? $"Function/*({member.ParametersString()}):{member.Type}*/" : "Function";
     }
 
     #region completion list

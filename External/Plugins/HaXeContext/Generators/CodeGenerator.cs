@@ -397,29 +397,6 @@ namespace HaXeContext.Generators
             return null;
         }
 
-        protected override string FunctionToString(MemberModel member)
-        {
-            var voidKey = ASContext.Context.Features.voidKey;
-            var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
-            var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-            parameters.Add(member.Type ?? voidKey);
-            var sb = new StringBuilder();
-            for (var i = 0; i < parameters.Count; i++)
-            {
-                if (i > 0) sb.Append("->");
-                var t = parameters[i];
-                if (t == null) sb.Append(dynamicTypeName);
-                else if (FileParser.IsFunctionType(t))
-                {
-                    sb.Append('(');
-                    sb.Append(t);
-                    sb.Append(')');
-                }
-                else sb.Append(t);
-            }
-            return sb.ToString();
-        }
-
         protected override string GetGetterImplementationTemplate(MemberModel method)
         {
             var result = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -26,7 +27,7 @@ namespace HaXeContext.Completion
         protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
         {
             return base.IsAvailableForToolTip(sci, position)
-                   || (sci.GetWordFromPosition(position) is string word && word == "cast");
+                   || (sci.GetWordFromPosition(position) is string word && (word == "cast" || word == "new"));
         }
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
@@ -613,9 +614,9 @@ namespace HaXeContext.Completion
                 isInExpr = true;
             }
             var expr = GetExpressionType(sci, rvalueEnd, false, true);
-            if (expr.Type != null)
+            // for example: var v = ClassType;
+            if (expr.Type != null && expr.Type != Context.StubFunctionClass)
             {
-                // for example: var v = ClassType;
                 if (expr.Type.Flags == FlagType.Class && expr.IsStatic)
                     var.Type = $"Class<{expr.Type.QualifiedName}>";
                 else var.Type = expr.Type.QualifiedName;
@@ -624,7 +625,22 @@ namespace HaXeContext.Completion
             }
             if (expr.Member != null)
             {
-                var.Type = expr.Member.Type;
+                // for example: var v = someFunction;
+                if (expr.Type == Context.StubFunctionClass)
+                {
+                    var.Flags |= FlagType.Function;
+                    var.Comments = expr.Member.Comments;
+                    var.Parameters = expr.Member.Parameters;
+                    var.Type = expr.Member.Type;
+                }
+                // for example: var v = Class.new;
+                else if (FileParser.IsFunctionType(expr.Member.Type))
+                {
+                    FileParser.FunctionTypeToMemberModel(expr.Member.Type, ctx.Features, var);
+                    var.Comments = expr.Member.Comments;
+                    var.Flags |= FlagType.Function;
+                }
+                else var.Type = expr.Member.Type;
                 var.Flags |= FlagType.Inferred;
                 return true;
             }
@@ -950,6 +966,20 @@ namespace HaXeContext.Completion
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token)) return;
+            var context = result.Context;
+            var member = result.Member;
+            // for example: Class.new<complete>
+            if (token == "new" && member != null && context != null && context.SubExpressions == null)
+            {
+                result.IsStatic = false;
+                result.Member = new MemberModel("new", null, member.Flags & ~FlagType.Constructor & ~FlagType.Function, member.Access);
+                if (string.IsNullOrEmpty(result.Member.Type)) result.Member.Type = member.Name;
+                result.Member.Parameters = member.Parameters;
+                result.Member.Type = ToFunctionDeclarationString(result.Member);
+                result.Member.Comments = member.Comments;
+                result.Type = null;
+                return;
+            }
             // previous member accessed as an array
             if (token.Length > 1 && token[0] == '[' && token[token.Length - 1] == ']' && inClass != null && result.Type != null)
             {
@@ -980,8 +1010,8 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            else if (result.Context is ASExpr context
-                     && result.Member is MemberModel member && (member.Flags.HasFlag(FlagType.Function)
+            else if (context != null
+                     && member != null && (member.Flags.HasFlag(FlagType.Function)
                      // TODO slavara: temporary solution, because at the moment the function parameters are not converted to the function.
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
@@ -1110,6 +1140,29 @@ namespace HaXeContext.Completion
                 && context.WordBefore == "privateAccess" && context.WordBeforePosition is int p
                 && sci.CharAt(p - 2) == '@' && sci.CharAt(p - 1) == ':') result |= Visibility.Private;
             return result;
+        }
+
+        protected override string ToFunctionDeclarationString(MemberModel member)
+        {
+            var voidKey = ASContext.Context.Features.voidKey;
+            var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
+            var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+            parameters.Add(member.Type ?? voidKey);
+            var sb = new StringBuilder();
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                if (i > 0) sb.Append("->");
+                var t = parameters[i];
+                if (t == null) sb.Append(dynamicTypeName);
+                else if (FileParser.IsFunctionType(t))
+                {
+                    sb.Append('(');
+                    sb.Append(t);
+                    sb.Append(')');
+                }
+                else sb.Append(t);
+            }
+            return sb.ToString();
         }
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)

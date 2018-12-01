@@ -1703,16 +1703,36 @@ namespace HaXeContext
 
         public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
-            if (expression.IsStatic && expression.Type is ClassModel type 
-                && type.InFile is FileModel file && file.Classes.Count > 1
-                && type == GetPublicClass(file))
+            if (expression.IsStatic && expression.Type is ClassModel type)
             {
-                // add sub-types
-                foreach (var it in file.Classes)
+                if (type.Flags == FlagType.Class)
                 {
-                    if (it != type) result.Add(it);
+                    var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                    if (member == null)
+                    {
+                        type.ResolveExtends();
+                        while (!(type = type.Extends).IsVoid())
+                        {
+                            member = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                            if (member != null) break;
+                        }
+                    }
+                    if (member != null && (member.Access & TypesAffinity(Context.CurrentClass, type)) != 0)
+                    {
+                        member = (MemberModel) member.Clone();
+                        member.Name = "new";
+                        result.Add(member);
+                    }
                 }
-                return;
+                if (type.InFile is FileModel file && file.Classes.Count > 1 && type == GetPublicClass(file))
+                {
+                    // add sub-types
+                    foreach (var it in file.Classes)
+                    {
+                        if (it != type) result.Add(it);
+                    }
+                    return;
+                }
             }
             var exprValue = expression.Context.Value;
             if (exprValue.Length >= 3)
