@@ -832,8 +832,7 @@ namespace HaXeContext.Completion
             }
             var result = base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
             // for example: trace<complete>, trace<cursor>()
-            if (result.Member == null && result.Type == null
-                && (expression == "trace" || (expression != null && expression.StartsWith('#') && context.WordBefore == "trace")))
+            if (result.Member == null && result.Type == null && (expression == "trace.#0~" || expression == "trace"))
             {
                 var type = ResolveType("haxe.Log", inFile);
                 if (!type.IsVoid())
