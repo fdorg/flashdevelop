@@ -3631,7 +3631,7 @@ namespace ASCompletion.Completion
                             var pos = position - 1;
                             var word = GetWordLeft(sci, ref pos);
                             // AS3, AS2, Loom ex: return (a as B).<complete>
-                            if (word != "new" && context.Features.codeKeywords.Contains(word))
+                            if (word != "new" && word != "trace" && context.Features.codeKeywords.Contains(word))
                             {
                                 expression.Separator = ";";
                                 expression.WordBefore = word;
