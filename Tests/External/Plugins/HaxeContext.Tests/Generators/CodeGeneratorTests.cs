@@ -977,7 +977,11 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2574_1", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
-                    .SetName("Issue2217.trace()<generator>. Issue 2574. Case 1.")
+                    .SetName("Issue2574.trace()<generator>. Issue 2574. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2574");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2574_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2574_2"))
+                    .SetName("Issue2574.trace()<generator>. Issue 2574. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2574");
             }
         }
