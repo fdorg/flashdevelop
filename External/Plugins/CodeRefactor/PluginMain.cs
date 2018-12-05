@@ -439,7 +439,8 @@ namespace CodeRefactor
             if (InlineRename.InProgress) return;
             try
             {
-                CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameCommandAndExecute(true, settingObject.UseInlineRenaming);
+                var factory = CommandFactoryProvider.GetFactoryForCurrentDocument() ?? CommandFactoryProvider.DefaultFactory;
+                factory.CreateRenameCommandAndExecute(true, settingObject.UseInlineRenaming);
             }
             catch (Exception ex)
             {
@@ -471,7 +472,8 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
+                var factory = CommandFactoryProvider.GetFactoryForCurrentDocument() ?? CommandFactoryProvider.DefaultFactory;
+                var command = factory.CreateRenameFileCommand(oldPath, newPath);
                 command.Execute();
             }
             catch (Exception ex)
