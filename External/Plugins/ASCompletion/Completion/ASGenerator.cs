@@ -1375,7 +1375,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddInterfaceDefJob(sci, member, inClass, (string)data);
+                        AddInterfaceDefJob(member, inClass, (string)data);
                     }
                     finally
                     {
@@ -1963,7 +1963,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void AddInterfaceDefJob(ScintillaControl sci, MemberModel member, ClassModel inClass, string interf)
+        private static void AddInterfaceDefJob(MemberModel member, ClassModel inClass, string interf)
         {
             var ctx = ASContext.Context;
             var aType = ctx.ResolveType(interf, ctx.CurrentModel);
@@ -1977,7 +1977,7 @@ namespace ASCompletion.Completion
             }
             var template = ((ASGenerator) ctx.CodeGenerator).GetAddInterfaceDefTemplate(member);
             ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
-            sci = ASContext.CurSciControl;
+            var sci = ASContext.CurSciControl;
             var latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
             int position;
             if (latest == null) position = GetBodyStart(aType.LineFrom, aType.LineTo, sci);
