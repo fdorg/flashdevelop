@@ -568,15 +568,9 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.IsFileValid || sci == null) return false;
 
             // let the context handle goto declaration if we couldn't find anything
-            if (!InternalDeclarationLookup(sci))
-            {
-                var expression = GetExpression(sci, sci.CurrentPos);
-                if (expression != null)
-                {
-                    return ASContext.Context.HandleGotoDeclaration(sci, expression);
-                }
-            }
-            return true;
+            if (InternalDeclarationLookup(sci)) return true;
+            var expression = GetExpression(sci, sci.CurrentPos);
+            return ASContext.Context.HandleGotoDeclaration(sci, expression);
         }
 
         public static bool TypeDeclarationLookup(ScintillaControl sci)
@@ -4748,7 +4742,7 @@ namespace ASCompletion.Completion
                     }
                 }
                 var info = FileHelper.GetEncodingFileInfo(model.FileName);
-                return info?.Contents;
+                return info.Contents;
             }
             return null;
         }
