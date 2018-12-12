@@ -3614,7 +3614,7 @@ namespace ASCompletion.Completion
                     else if (c == '(' && arrCount == 0)
                     {
                         parCount--;
-                        if (parCount == 0 && arrCount == 0)
+                        if (parCount == 0)
                         {
                             positionExpression = position;
                             sbSub.Insert(0, c);
