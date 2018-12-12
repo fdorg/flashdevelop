@@ -1021,7 +1021,8 @@ namespace HaXeContext.Completion
                      || member.Flags.HasFlag(FlagType.ParameterVar) && FileParser.IsFunctionType(member.Type)))
             {
                 var returnType = member.Type;
-                if (!string.IsNullOrEmpty(member.Template) && context.SubExpressions.Last() is string subExpression && subExpression.Length > 2)
+                var subExpressions = context.SubExpressions;
+                if (!string.IsNullOrEmpty(member.Template) && subExpressions?.LastOrDefault() is string subExpression && subExpression.Length > 2)
                 {
                     var subExpressionPosition = context.SubExpressionPositions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
@@ -1092,7 +1093,7 @@ namespace HaXeContext.Completion
                 // previous member called as a method
                 else if (token[0] == '#' && FileParser.IsFunctionType(returnType)
                     // for example: (foo():Void->(Void->String))()
-                    && context.SubExpressions is List<string> l && l.Count > 1)
+                    && subExpressions != null && subExpressions.Count > 1)
                 {
                     var type = (ClassModel) Context.StubFunctionClass.Clone();
                     FileParser.FunctionTypeToMemberModel(returnType, ASContext.Context.Features, type);

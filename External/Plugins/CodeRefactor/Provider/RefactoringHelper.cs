@@ -215,7 +215,7 @@ namespace CodeRefactor.Provider
                     name = result.Member.Name;
                 }
                 // class declaration
-                else if (inClass.LineFrom > 0)
+                else if (inClass != null && inClass.LineFrom > 0)
                 {
                     line = inClass.LineFrom;
                     name = inClass.Name;
