@@ -228,11 +228,8 @@ namespace ASClassWizard
             dialog.Project = project;
             dialog.Directory = inDirectory;
             dialog.StartupClassName = name;
-            if (package != null)
-            {
-                package = package.Replace(Path.DirectorySeparatorChar, '.');
-                dialog.StartupPackage = package;
-            }
+            package = package.Replace(Path.DirectorySeparatorChar, '.');
+            dialog.StartupPackage = package;
 
             var conflictResult = DialogResult.OK;
             var ext = project.DefaultSearchFilter.Split(';').FirstOrDefault() ?? string.Empty;

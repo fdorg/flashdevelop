@@ -38,14 +38,11 @@ namespace HaXeContext.CodeRefactor.Commands
             search.WholeWord = true;
             search.SourceFile = sourceFile;
             var matches = search.Matches(searchInText);
-            if (matches != null)
+            var ctx = ASContext.Context.CodeComplete;
+            var sci = ASContext.CurSciControl;
+            foreach (var m in matches)
             {
-                var ctx = ASContext.Context.CodeComplete;
-                var sci = ASContext.CurSciControl;
-                foreach (var m in matches)
-                {
-                    if (ctx.IsStringInterpolationStyle(sci, m.Index)) return true;
-                }
+                if (ctx.IsStringInterpolationStyle(sci, m.Index)) return true;
             }
             return false;
         }

@@ -1789,20 +1789,17 @@ namespace HaXeContext
             if (list != null && list.Count > 0)
             {
                 var items = list.MultipleSearch(token, 0, 0);
-                if (items != null)
+                if (items.Count == 1)
                 {
-                    if (items.Count == 1)
-                    {
-                        var item = items[0];
-                        result.InClass = ClassModel.VoidClass;
-                        result.InFile = item.InFile;
-                        result.Member = item;
-                        result.Type = ResolveType(item.Type, item.InFile);
-                        result.IsStatic = false;
-                        result.IsPackage = false;
-                    }
-                    return;
+                    var item = items[0];
+                    result.InClass = ClassModel.VoidClass;
+                    result.InFile = item.InFile;
+                    result.Member = item;
+                    result.Type = ResolveType(item.Type, item.InFile);
+                    result.IsStatic = false;
+                    result.IsPackage = false;
                 }
+                return;
             }
             base.ResolveTopLevelElement(token, result);
         }

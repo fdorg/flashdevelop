@@ -568,15 +568,9 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.IsFileValid || sci == null) return false;
 
             // let the context handle goto declaration if we couldn't find anything
-            if (!InternalDeclarationLookup(sci))
-            {
-                var expression = GetExpression(sci, sci.CurrentPos);
-                if (expression != null)
-                {
-                    return ASContext.Context.HandleGotoDeclaration(sci, expression);
-                }
-            }
-            return true;
+            if (InternalDeclarationLookup(sci)) return true;
+            var expression = GetExpression(sci, sci.CurrentPos);
+            return ASContext.Context.HandleGotoDeclaration(sci, expression);
         }
 
         public static bool TypeDeclarationLookup(ScintillaControl sci)
@@ -826,7 +820,7 @@ namespace ASCompletion.Completion
 
                 // check context
                 var context = ASContext.Context;
-                if (context == null || context.CurrentModel == null)
+                if (context?.CurrentModel == null)
                 {
                     ClearResolvedContext();
                     return;
@@ -1225,7 +1219,6 @@ namespace ASCompletion.Completion
         /// If enabled, move the starting brace to a new line.
         /// </summary>
         /// <param name="Sci"></param>
-        /// <param name="txt"></param>
         /// <param name="line"></param>
         private static void AutoCloseBrace(ScintillaControl Sci, int line)
         {
@@ -2463,7 +2456,7 @@ namespace ASCompletion.Completion
                     if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
                         coma = ComaExpression.FunctionDeclaration;
                     else if (ASContext.Context.CurrentModel.haXe && keyword == features.varKey
-                             &&  (ASContext.Context.CurrentMember == null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
+                             && (ASContext.Context.CurrentMember == null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
                         coma = ComaExpression.VarDeclaration;  // Haxe Properties
                 }
             }
@@ -3620,7 +3613,7 @@ namespace ASCompletion.Completion
                     else if (c == '(' && arrCount == 0)
                     {
                         parCount--;
-                        if (parCount == 0 && arrCount == 0)
+                        if (parCount == 0)
                         {
                             positionExpression = position;
                             sbSub.Insert(0, c);
@@ -4748,7 +4741,7 @@ namespace ASCompletion.Completion
                     }
                 }
                 var info = FileHelper.GetEncodingFileInfo(model.FileName);
-                return info?.Contents;
+                return info.Contents;
             }
             return null;
         }

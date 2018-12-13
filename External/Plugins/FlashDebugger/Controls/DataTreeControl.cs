@@ -88,7 +88,7 @@ namespace FlashDebugger.Controls
             ValueNodeTextBox.EditorHided += ValueNodeTextBox_EditorHided;
             ValueNodeTextBox.LabelChanged += ValueNodeTextBox_LabelChanged;
             _contextMenuStrip = new ContextMenuStrip();
-            if (PluginBase.MainForm != null && PluginBase.Settings != null)
+            if (PluginBase.Settings != null)
             {
                 _contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
                 _contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
