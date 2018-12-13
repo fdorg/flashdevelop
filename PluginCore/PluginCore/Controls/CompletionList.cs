@@ -543,7 +543,7 @@ namespace PluginCore.Controls
                         {
                             if (lastScore > 3 || (lastScore > 2 && defaultItem.Label.StartsWith(word, StringComparison.OrdinalIgnoreCase)))
                             {
-                                lastIndex = lastIndex = TestDefaultItem(lastIndex, word, len);
+                                lastIndex = TestDefaultItem(lastIndex, word, len);
                             }
                         }
                         completionList.SelectedIndex = lastIndex;

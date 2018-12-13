@@ -13,19 +13,19 @@ namespace SourceControl.Actions
     {
         private static ToolStripMenuItem scItem;
 
-        static internal void SetMenu(ProjectTreeView tree, ProjectSelectionState state)
+        internal static void SetMenu(ProjectTreeView tree, ProjectSelectionState state)
         {
             if (tree == null || state.Manager == null) return;
-            
+
             IVCMenuItems menuItems = state.Manager.MenuItems;
-            menuItems.CurrentNodes = (TreeNode[])tree.SelectedNodes.ToArray(typeof(TreeNode));
+            menuItems.CurrentNodes = (TreeNode[]) tree.SelectedNodes.ToArray(typeof(TreeNode));
             menuItems.CurrentManager = state.Manager;
 
             AddSCMainItem(tree);
             scItem.DropDownItems.Clear();
-            
+
             // let a VC provide a completely custom items list
-            foreach (KeyValuePair<ToolStripItem, VCMenuItemProperties> item in menuItems.Items)
+            foreach (var item in menuItems.Items)
             {
                 if (item.Value.Show.Invoke(state))
                 {
@@ -36,40 +36,39 @@ namespace SourceControl.Actions
             }
 
             // classical VC menu items
-            if (menuItems != null)
+
+            var items = new List<ToolStripItem>();
+
+            // generic
+            items.Add(menuItems.Update);
+            items.Add(menuItems.Commit);
+            items.Add(menuItems.Push);
+            items.Add(menuItems.ShowLog);
+            int minLen = items.Count;
+
+            // specific
+            if (state.Files == 1 && state.Total == 1) items.Add(menuItems.Annotate);
+
+            if (state.Files == 2 && state.Total == 2) items.Add(menuItems.Diff);
+            if (state.Conflict == 1 && state.Total == 1) items.Add(menuItems.EditConflict);
+
+            if (state.Unknown + state.Ignored > 0 || state.Dirs > 0) items.Add(menuItems.Add);
+            if (state.Unknown + state.Ignored == state.Total) items.Add(menuItems.Ignore);
+
+            if (state.Unknown + state.Ignored < state.Total)
             {
-                List<ToolStripItem> items = new List<ToolStripItem>();
-
-                // generic
-                items.Add(menuItems.Update);
-                items.Add(menuItems.Commit);
-                items.Add(menuItems.Push);
-                items.Add(menuItems.ShowLog);
-                int minLen = items.Count;
-
-                // specific
-                if (state.Files == 1 && state.Total == 1) items.Add(menuItems.Annotate);
-
-                if (state.Files == 2 && state.Total == 2) items.Add(menuItems.Diff);
-                if (state.Conflict == 1 && state.Total == 1) items.Add(menuItems.EditConflict);
-
-                if (state.Unknown + state.Ignored > 0 || state.Dirs > 0) items.Add(menuItems.Add);
-                if (state.Unknown + state.Ignored == state.Total) items.Add(menuItems.Ignore);
-
-                if (state.Unknown + state.Ignored < state.Total)
+                if (state.Added > 0) items.Add(menuItems.UndoAdd);
+                else if (state.Revert > 0)
                 {
-                    if (state.Added > 0) items.Add(menuItems.UndoAdd);
-                    else if (state.Revert > 0)
-                    {
-                        if (state.Diff > 0) items.Add(menuItems.DiffChange);
-                        items.Add(menuItems.Revert);
-                    }
-                    else if (state.Total == 1) items.Add(menuItems.DiffChange);
+                    if (state.Diff > 0) items.Add(menuItems.DiffChange);
+                    items.Add(menuItems.Revert);
                 }
-                if (items.Count > minLen) items.Insert(minLen, menuItems.MidSeparator);
-                items.RemoveAll(item => item == null);
-                scItem.DropDownItems.AddRange(items.ToArray());
+                else if (state.Total == 1) items.Add(menuItems.DiffChange);
             }
+
+            if (items.Count > minLen) items.Insert(minLen, menuItems.MidSeparator);
+            items.RemoveAll(item => item == null);
+            scItem.DropDownItems.AddRange(items.ToArray());
         }
 
         private static void AddSCMainItem(ProjectTreeView tree)
