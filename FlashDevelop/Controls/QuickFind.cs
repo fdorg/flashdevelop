@@ -443,12 +443,12 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void HighlightAllCheckBoxClick(Object sender, EventArgs e)
         {
-            ScintillaControl sci = Globals.SciControl;
+            var sci = Globals.SciControl;
             if (this.highlightCheckBox.Checked)
             {
                 if (this.findTextBox.Text.Length == 0) return;
-                List<SearchMatch> matches = this.GetResults(sci, this.findTextBox.Text);
-                if (matches != null && matches.Count != 0)
+                var matches = this.GetResults(sci, this.findTextBox.Text);
+                if (matches.Count != 0)
                 {
                     sci.RemoveHighlights();
                     if (this.highlightTimer.Enabled) this.highlightTimer.Stop();
@@ -464,10 +464,10 @@ namespace FlashDevelop.Controls
         private void FindCorrect(String text, Boolean refreshHighlights)
         {
             if (string.IsNullOrEmpty(text)) return;
-            ScintillaControl sci = Globals.SciControl;
             this.findTextBox.BackColor = this.backColor;
-            List<SearchMatch> matches = this.GetResults(sci, text);
-            if (matches != null && matches.Count != 0)
+            var sci = Globals.SciControl;
+            var matches = this.GetResults(sci, text);
+            if (matches.Count != 0)
             {
                 SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, true);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
@@ -492,10 +492,10 @@ namespace FlashDevelop.Controls
         private void FindNext(String text, Boolean refreshHighlights)
         {
             if (text == "") return;
-            ScintillaControl sci = Globals.SciControl;
             this.findTextBox.BackColor = this.backColor;
-            List<SearchMatch> matches = this.GetResults(sci, text);
-            if (matches != null && matches.Count != 0)
+            var sci = Globals.SciControl;
+            var matches = this.GetResults(sci, text);
+            if (matches.Count != 0)
             {
                 SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, false);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
@@ -520,10 +520,10 @@ namespace FlashDevelop.Controls
         private void FindPrev(String text, Boolean refreshHighlights)
         {
             if (text == "") return;
-            ScintillaControl sci = Globals.SciControl;
             this.findTextBox.BackColor = this.backColor;
-            List<SearchMatch> matches = this.GetResults(sci, text);
-            if (matches != null && matches.Count != 0)
+            var sci = Globals.SciControl;
+            var matches = this.GetResults(sci, text);
+            if (matches.Count != 0)
             {
                 SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, false, false);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
