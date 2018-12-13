@@ -820,7 +820,7 @@ namespace ASCompletion.Completion
 
                 // check context
                 var context = ASContext.Context;
-                if (context == null || context.CurrentModel == null)
+                if (context?.CurrentModel == null)
                 {
                     ClearResolvedContext();
                     return;
@@ -1219,7 +1219,6 @@ namespace ASCompletion.Completion
         /// If enabled, move the starting brace to a new line.
         /// </summary>
         /// <param name="Sci"></param>
-        /// <param name="txt"></param>
         /// <param name="line"></param>
         private static void AutoCloseBrace(ScintillaControl Sci, int line)
         {
@@ -2457,7 +2456,7 @@ namespace ASCompletion.Completion
                     if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
                         coma = ComaExpression.FunctionDeclaration;
                     else if (ASContext.Context.CurrentModel.haXe && keyword == features.varKey
-                             &&  (ASContext.Context.CurrentMember == null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
+                             && (ASContext.Context.CurrentMember == null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
                         coma = ComaExpression.VarDeclaration;  // Haxe Properties
                 }
             }
