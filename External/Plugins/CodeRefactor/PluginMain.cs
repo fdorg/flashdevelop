@@ -398,7 +398,7 @@ namespace CodeRefactor
                         {
                             var declAtSelStart = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionStart));
                             var declAtSelEnd = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionEnd));
-                            if (declAtSelStart != null && declAtSelStart.Member != null && (declAtSelStart.Member.Flags & FlagType.Function) > 0
+                            if (declAtSelStart?.Member != null && (declAtSelStart.Member.Flags & FlagType.Function) > 0
                                 && declAtSelEnd != null && declAtSelStart.Member.Equals(declAtSelEnd.Member))
                             {
                                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;

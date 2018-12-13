@@ -252,10 +252,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static bool IsMatchTheTarget(ScintillaControl sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
-            if (sci == null || target == null || target.InFile == null || target.Member == null)
-            {
-                return false;
-            }
+            if (sci == null || target?.InFile == null || target.Member == null) return false;
             var originalFile = sci.FileName;
             // get type at match position
             var declaration = DeclarationLookupResult(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
