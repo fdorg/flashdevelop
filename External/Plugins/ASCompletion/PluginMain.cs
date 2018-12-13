@@ -697,7 +697,7 @@ namespace ASCompletion
             ToolStripMenuItem menu = (ToolStripMenuItem)mainForm.FindMenuItem("ViewMenu");
             if (menu != null)
             {
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, OpenPanel);
                 PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowOutline", item);
                 menu.DropDownItems.Add(item);
             }
@@ -711,14 +711,14 @@ namespace ASCompletion
 
                 // check actionscript
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.CheckSyntax"), image, new EventHandler(CheckSyntax), Keys.F7);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.CheckSyntax"), image, CheckSyntax, Keys.F7);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.CheckSyntax", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
                 // quick build
                 image = pluginUI.GetIcon(PluginUI.ICON_QUICK_BUILD);
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.QuickBuild"), image, new EventHandler(QuickBuild), Keys.Control | Keys.F8);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.QuickBuild"), image, QuickBuild, Keys.Control | Keys.F8);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.QuickBuild", item);
                 menu.DropDownItems.Add(item);
                 //menuItems.Add(item);
@@ -728,12 +728,12 @@ namespace ASCompletion
 
                 // model cleanup
                 image = mainForm.FindImage("153");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.RebuildClasspathCache"), image, new EventHandler(RebuildClasspath));
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.RebuildClasspathCache"), image, RebuildClasspath);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.RebuildClasspathCache", item);
                 menu.DropDownItems.Add(item);
 
                 // convert to intrinsic
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.ConvertToIntrinsic"), null, new EventHandler(MakeIntrinsic));
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.ConvertToIntrinsic"), null, MakeIntrinsic);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.ConvertToIntrinsic", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
@@ -823,12 +823,12 @@ namespace ASCompletion
         private void AddEventHandlers()
         {
             // scintilla controls listeners
-            UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(OnChar);
-            UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(OnMouseHover);
-            UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(OnTextChanged);
-            UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
-            UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
-            CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
+            UITools.Manager.OnCharAdded += OnChar;
+            UITools.Manager.OnMouseHover += OnMouseHover;
+            UITools.Manager.OnTextChanged += OnTextChanged;
+            UITools.CallTip.OnUpdateCallTip += OnUpdateCallTip;
+            UITools.Tip.OnUpdateSimpleTip += OnUpdateSimpleTip;
+            CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
             FileModel.OnFileUpdate += OnFileUpdate;
             PathModel.OnFileRemove += OnFileRemove;
             PathModel.OnFileAdded += OnFileUpdate;
