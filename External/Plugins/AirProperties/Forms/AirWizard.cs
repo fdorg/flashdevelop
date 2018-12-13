@@ -1046,10 +1046,9 @@ namespace AirProperties
         private void UpdateIcon(string fileName, ref TextBox fileNameTextBox, Point dimensions, Boolean isApplicationIcon)
         {
 
-            string projectPath = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
+            string projectPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             string iconFolder = this._pluginMain.Settings.ProjectIconsFolder;
             string destinationPath = projectPath + @"\" + iconFolder;
-            string destinationFileName;
             string packagedFileName = this._pluginMain.Settings.PackageIconsFolder;
             string filePrefix;
             if (isApplicationIcon) filePrefix = FileNameField.Text;
@@ -1058,6 +1057,7 @@ namespace AirProperties
             // first, check if the image is the correct size
             if (img.Width == dimensions.X && img.Height == dimensions.Y)
             {
+                string destinationFileName;
                 // now check if file is in path relative to project root folder
                 // and if not, save to icons folder as specified by plugin settings
                 if (!Path.GetDirectoryName(fileName).ToLower().Equals(destinationPath.ToLower()))
@@ -1096,14 +1096,13 @@ namespace AirProperties
         // adds the loaded file types to the list view
         private void InitializeFileTypesListView()
         {
-            ListViewItem fileTypeListItem;
             FileTypesListView.SmallImageList = ListViewStateImageList;
             ListViewStateImageList.Images.Add(ValidationErrorProvider.Icon);
             if (_fileTypes.Count > 0)
             {
-                foreach (PropertyManager.AirFileType fileType in _fileTypes)
+                foreach (var fileType in _fileTypes)
                 {
-                    fileTypeListItem = new ListViewItem(fileType.Name);
+                    var fileTypeListItem = new ListViewItem(fileType.Name);
                     fileTypeListItem.SubItems.Add(fileType.Extension);
                     if (fileType.IsValid)
                     {
@@ -1125,14 +1124,13 @@ namespace AirProperties
         //adds the loaded extensions to the list view
         private void InitializeExtensionsListView()
         {
-            ListViewItem extensionListItem;
             ExtensionsListView.SmallImageList = ListViewStateImageList;
             ListViewStateImageList.Images.Add(ValidationErrorProvider.Icon);
             if (_extensions.Count > 0)
             {
                 foreach (PropertyManager.AirExtension extension in _extensions)
                 {
-                    extensionListItem = new ListViewItem(extension.ExtensionId);
+                    var extensionListItem = new ListViewItem(extension.ExtensionId);
                     if (extension.IsValid)
                     {
                         extensionListItem.ToolTipText = String.Empty;
@@ -1858,8 +1856,7 @@ namespace AirProperties
         // be changed when System Chrome is Standard
         private void ValidateSystemChrome()
         {
-            ListItem item;
-            item = (ListItem)SystemChromeField.SelectedItem;
+            var item = (ListItem)SystemChromeField.SelectedItem;
             if (item != null && item.Value == "standard")
             {
                 TransparentField.Checked = false;
@@ -1871,8 +1868,7 @@ namespace AirProperties
         // validates that the supplied image URI is a PNG file
         private Boolean ValidateImageExtension(String imageURI)
         {
-            if (imageURI.ToLower().EndsWithOrdinal(".png")) return true;
-            else return false;
+            return imageURI.ToLower().EndsWithOrdinal(".png");
         }
 
         // loops through each loaded file type and sets initial validity flags
