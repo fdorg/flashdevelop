@@ -2453,7 +2453,9 @@ namespace ASCompletion.Completion
             var latest = GetLatestMemberForVariable(job, inClass, visibility, isStatic);
             var position = 0;
             // if we generate variable in current class..
-            if (!isOtherClass && member == null)
+            if (!isOtherClass && (member == null
+                                  // TODO slavara: temporary solution for #2477
+                                  || (member.Name == null && member.Type == null && member.Access == 0 && member.Flags == FlagType.Static)))
             {
                 detach = false;
                 lookupPosition = -1;
