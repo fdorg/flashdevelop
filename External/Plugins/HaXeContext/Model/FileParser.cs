@@ -622,6 +622,7 @@ namespace HaXeContext.Model
                         if (ba[i - 2] == '-') { /*haxe method signatures*/ }
                         else if (paramBraceCount > 0 && inAnonType)
                         {
+                            if (valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
                             valueBuffer[valueLength++] = c1;
                             if (paramTempCount > 0) paramTempCount--;
                             continue;
@@ -650,11 +651,11 @@ namespace HaXeContext.Model
                      * for example:
                      * package;
                      * class Foo {
-                     *     var v1 : {
-                     *     var v2 : String;
+                     *     var v1 : {<cursor>
+                     *     var v2 : String = 1;
                      * }
                      */
-                    else if (c1 == ';' && paramBraceCount > 0 && inAnonType)
+                    else if (c1 == '=' && paramBraceCount > 0 && inAnonType)
                     {
                         inType = false;
                         inAnonType = false;
@@ -683,9 +684,13 @@ namespace HaXeContext.Model
                         hadValue = true;
                     }
                     // in params, store the default value
-                    else if ((inParams || inType) && valueLength < VALUE_BUFFER)
+                    else if ((inParams || inType)/* && valueLength < VALUE_BUFFER*/)
                     {
-                        if (c1 > 32) valueBuffer[valueLength++] = c1;
+                        if (c1 > 32/* || inAnonType*/)
+                        {
+                            if (inAnonType && valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
+                            valueBuffer[valueLength++] = c1;
+                        }
                     }
 
                     // detect keywords
@@ -745,11 +750,10 @@ namespace HaXeContext.Model
                             i -= 2;
                             continue;
                         }
-                        if (param.EndsWith('}') || param.Contains('>'))
+                        if ((param.EndsWith('}') || param.Contains('>'))/* && !IsStructureType(param)*/)
                         {
                             param = ASFileParserRegexes.Spaces.Replace(param, "");
                             param = param.Replace(",", ", ");
-                            //param = param.Replace("->", " -> ");
                         }
                         curMember.Type = param;
                         length = 0;
@@ -2279,6 +2283,23 @@ namespace HaXeContext.Model
                 }
             }
             return type;
+        }
+
+        static bool IsStructureType(string type)
+        {
+            if (string.IsNullOrEmpty(type) || !type.StartsWith('{') || !type.EndsWith('}')) return false;
+            var braCount = 0;
+            for (int i = 1, count = type.Length - 2; i < count; i++)
+            {
+                var c = type[i];
+                if (c == '{') braCount++;
+                else if (c == '}')
+                {
+                    braCount--;
+                    if (braCount < 0) return false;
+                }
+            }
+            return braCount == 0;
         }
     }
 
