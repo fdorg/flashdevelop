@@ -25,10 +25,6 @@ namespace ASCompletion.Generators
             }
         }
 
-        protected virtual void ShowMemberGenerator(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-        }
-
         protected virtual bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => false;
 
         protected virtual void ShowGenerateExtends(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
@@ -41,6 +37,10 @@ namespace ASCompletion.Generators
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
                    && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
                    && expr.IsNull() && expr.Context.ContextFunction == null && expr.Context.ContextMember == null;
+        }
+
+        protected virtual void ShowMemberGenerator(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
         }
 
         protected virtual void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
