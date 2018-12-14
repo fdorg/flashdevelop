@@ -4574,56 +4574,70 @@ namespace ASCompletion.Completion
     /// <summary>
     /// Available generators
     /// </summary>
-    public enum GeneratorJobType
+    public enum GeneratorJobType : long
     {
-        GetterSetter,
-        Getter,
-        Setter,
-        ComplexEvent,
-        BasicEvent,
-        Delegate,
-        Variable,
-        Function,
-        ImplementInterface,
-        PromoteLocal,
-        MoveLocalUp,
-        AddImport,
-        Class,
-        FunctionPublic,
-        VariablePublic,
-        Constant,
-        Constructor,
-        ToString,
-        FieldFromParameter,
-        AddInterfaceDef,
-        ConvertToConst,
-        AddAsParameter,
-        ChangeMethodDecl,
-        EventMetatag,
-        AssignStatementToVar,
-        ChangeConstructorDecl,
-        Interface,
+        GetterSetter = 1 << 0,
+        Getter = 1 << 1,
+        Setter = 1 << 2,
+        ComplexEvent = 1 << 3,
+        BasicEvent = 1 << 4,
+        Delegate = 1 << 5,
+        Variable = 1 << 6,
+        Function = 1 << 7,
+        ImplementInterface = 1 << 8,
+        PromoteLocal = 1 << 9,
+        MoveLocalUp = 1 << 10,
+        AddImport = 1 << 11,
+        Class = 1 << 12,
+        FunctionPublic = 1 << 13,
+        VariablePublic = 1 << 14,
+        Constant = 1 << 15,
+        Constructor = 1 << 16,
+        ToString = 1 << 17,
+        FieldFromParameter = 1 << 18,
+        AddInterfaceDef = 1 << 19,
+        ConvertToConst = 1 << 20,
+        AddAsParameter = 1 << 21,
+        ChangeMethodDecl = 1 << 22,
+        EventMetatag = 1 << 23,
+        AssignStatementToVar = 1 << 24,
+        ChangeConstructorDecl = 1 << 25,
+        Interface = 1 << 26,
+        User = 1 << 27,
     }
 
     /// <summary>
     /// Generation completion list item
     /// </summary>
-    internal class GeneratorItem : ICompletionListItem
+    public class GeneratorItem : ICompletionListItem
     {
         internal GeneratorJobType Job { get; }
-        private readonly MemberModel member;
-        private readonly ClassModel inClass;
+        readonly MemberModel member;
+        readonly ClassModel inClass;
+        readonly Action action;
 
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass)
+        public GeneratorItem(string label, GeneratorJobType job, Action action) : this(label, job, action, null)
         {
-            Label = label;
-            this.Job = job;
-            this.member = member;
-            this.inClass = inClass;
         }
 
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, object data) : this(label, job, member, inClass)
+        public GeneratorItem(string label, GeneratorJobType job, Action action, object data)
         {
+            Label = label;
+            Job = job;
+            this.action = action;
+            Data = data;
+        }
+
+        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass) : this(label, job, member, inClass, null)
+        {
+        }
+
+        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, object data)
+        {
+            Label = label;
+            Job = job;
+            this.member = member;
+            this.inClass = inClass;
             Data = data;
         }
 
@@ -4637,7 +4651,8 @@ namespace ASCompletion.Completion
         {
             get
             {
-                ASGenerator.GenerateJob(Job, member, inClass, Label, Data);
+                if (action != null) action();
+                else ASGenerator.GenerateJob(Job, member, inClass, Label, Data);
                 return null;
             }
         }
