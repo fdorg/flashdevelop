@@ -251,8 +251,8 @@ namespace HaXeContext.Generators
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    if (job == GeneratorJobType.Setter) latest = FindMember("get_" + member.Name, inClass);
-                    else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + member.Name, inClass);
+                    if (job == GeneratorJobType.Setter) latest = ASComplete.FindMember("get_" + member.Name, inClass);
+                    else if (job == GeneratorJobType.Getter) latest = ASComplete.FindMember("set_" + member.Name, inClass);
                     if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
                 }
                 else latest = member;

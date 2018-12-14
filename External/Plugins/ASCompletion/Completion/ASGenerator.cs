@@ -1446,7 +1446,7 @@ namespace ASCompletion.Completion
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
                     if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter)
-                        latest = FindMember(name ?? member.Name, inClass);
+                        latest = ASComplete.FindMember(name ?? member.Name, inClass);
                     if (latest == null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
                 }
                 else latest = member;
@@ -3851,30 +3851,11 @@ namespace ASCompletion.Completion
             return latest;
         }
 
-        protected static MemberModel FindMember(string name, ClassModel inClass)
-        {
-            MemberList list;
-            if (inClass == ClassModel.VoidClass)
-                list = ASContext.Context.CurrentModel.Members;
-            else list = inClass.Members;
-
-            MemberModel found = null;
-            foreach (MemberModel member in list)
-            {
-                if (member.Name == name)
-                {
-                    found = member;
-                    break;
-                }
-            }
-            return found;
-        }
-
         private static MemberModel FindLatest(FlagType match, ClassModel inClass) => FindLatest(match, 0, inClass);
 
-        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass) => FindLatest(match, visi, inClass, true, true);
+        private static MemberModel FindLatest(FlagType match, Visibility access, ClassModel inClass) => FindLatest(match, access, inClass, true, true);
 
-        protected static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
+        protected static MemberModel FindLatest(FlagType match, Visibility access, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
         {
             MemberList list;
             if (inClass == ClassModel.VoidClass)
@@ -3889,28 +3870,28 @@ namespace ASCompletion.Completion
                 fallback = member;
                 if (isFlagMatchStrict && isVisibilityMatchStrict)
                 {
-                    if ((member.Flags & match) == match && (visi == 0 || (member.Access & visi) == visi))
+                    if ((member.Flags & match) == match && (access == 0 || (member.Access & access) == access))
                     {
                         latest = member;
                     }
                 }
                 else if (isFlagMatchStrict)
                 {
-                    if ((member.Flags & match) == match && (visi == 0 || (member.Access & visi) > 0))
+                    if ((member.Flags & match) == match && (access == 0 || (member.Access & access) > 0))
                     {
                         latest = member;
                     }
                 }
                 else if (isVisibilityMatchStrict)
                 {
-                    if ((member.Flags & match) > 0 && (visi == 0 || (member.Access & visi) == visi))
+                    if ((member.Flags & match) > 0 && (access == 0 || (member.Access & access) == access))
                     {
                         latest = member;
                     }
                 }
                 else
                 {
-                    if ((member.Flags & match) > 0 && (visi == 0 || (member.Access & visi) > 0))
+                    if ((member.Flags & match) > 0 && (access == 0 || (member.Access & access) > 0))
                     {
                         latest = member;
                     }

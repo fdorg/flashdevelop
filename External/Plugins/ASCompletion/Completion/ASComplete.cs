@@ -3120,6 +3120,24 @@ namespace ASCompletion.Completion
             }
         }
 
+        public static MemberModel FindMember(string name, ClassModel inClass)
+        {
+            var list = inClass == ClassModel.VoidClass
+                ? ASContext.Context.CurrentModel.Members
+                : inClass.Members;
+
+            MemberModel found = null;
+            foreach (MemberModel member in list)
+            {
+                if (member.Name == name)
+                {
+                    found = member;
+                    break;
+                }
+            }
+            return found;
+        }
+
         /// <summary>
         /// Find package-level member
         /// </summary>
