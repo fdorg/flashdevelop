@@ -82,6 +82,7 @@
     <Compile Include="Completion\ASGenerator.cs" />
     <Compile Include="Completion\Brace.cs" />
     <Compile Include="Completion\CodeUtils.cs" />
+    <Compile Include="Generators\CodeGeneratorDefaultBehavior.cs" />
     <Compile Include="Generators\CodeGeneratorInterfaceBehavior.cs" />
     <Compile Include="Generators\DocumenattionGenerator.cs" />
     <Compile Include="Generators\ICodeGeneratorBehavior.cs" />

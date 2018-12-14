@@ -16,7 +16,7 @@ namespace HaXeContext.Generators
                    && base.CanShowGenerateExtends(sci, position, expr, found);
         }
 
-        protected override void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected override void ShowMemberGenerator(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var member = new MemberModel {Name = expr.Context.Value};
             var label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
