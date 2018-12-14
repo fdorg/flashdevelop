@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -624,25 +623,6 @@ namespace HaXeContext.Generators
             }
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", sb.ToString());
             InsertCode(start, template, sci);
-        }
-    }
-
-    internal class GeneratorItem : ASCompletion.Completion.GeneratorItem
-    {
-        public GeneratorItem(string label, GeneratorJobType job, Action action) : base(label, job, action)
-        {
-        }
-
-        public GeneratorItem(string label, GeneratorJobType job, Action action, object data) : base(label, job, action, data)
-        {
-        }
-
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass) : base(label, job, member, inClass)
-        {
-        }
-
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, object data) : base(label, job, member, inClass, data)
-        {
         }
     }
 }
