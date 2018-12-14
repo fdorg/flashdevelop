@@ -1060,14 +1060,14 @@ namespace ASCompletion.Model
                 Assert.AreEqual(1, member.LineFrom);
                 Assert.AreEqual(1, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("{x:Int, y:Int}", member.Type);
+                Assert.AreEqual("{ x : Int, y : Int }", member.Type);
 
                 member = classModel.Members[1];
                 Assert.AreEqual("target", member.Name);
                 Assert.AreEqual(2, member.LineFrom);
                 Assert.AreEqual(2, member.LineTo);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                Assert.AreEqual("{x:Int, y:Int}", member.Type);
+                Assert.AreEqual("{ x : Int, y : Int }", member.Type);
             }
 
             [Test]

@@ -684,9 +684,9 @@ namespace HaXeContext.Model
                         hadValue = true;
                     }
                     // in params, store the default value
-                    else if ((inParams || inType)/* && valueLength < VALUE_BUFFER*/)
+                    else if ((inParams || inType))
                     {
-                        if (c1 > 32/* || inAnonType*/)
+                        if (c1 > 32 || (inAnonType && !inTypedef))
                         {
                             if (inAnonType && valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
                             valueBuffer[valueLength++] = c1;
@@ -750,7 +750,7 @@ namespace HaXeContext.Model
                             i -= 2;
                             continue;
                         }
-                        if ((param.EndsWith('}') || param.Contains('>'))/* && !IsStructureType(param)*/)
+                        if ((param.EndsWith('}') || param.Contains('>')) && !IsStructureType(param))
                         {
                             param = ASFileParserRegexes.Spaces.Replace(param, "");
                             param = param.Replace(",", ", ");
