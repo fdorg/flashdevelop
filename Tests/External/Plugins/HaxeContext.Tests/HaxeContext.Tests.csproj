@@ -1089,6 +1089,7 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2574_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2574_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2574_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2583_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
