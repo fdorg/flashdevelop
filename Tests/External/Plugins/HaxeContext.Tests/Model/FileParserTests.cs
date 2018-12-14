@@ -437,6 +437,7 @@ namespace HaXeContext.Model
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2550");
             }
         }
+        
         static IEnumerable<TestCaseData> Issue2583TestCases
         {
             get
