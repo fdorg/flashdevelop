@@ -12,15 +12,14 @@ namespace ASCompletion.Generators
     {
         public void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
-            var ctx = ASContext.Context;
             var line = sci.LineFromPosition(position);
-            var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
-            if (CanShowGenerateExtends(sci, position, expr, found)) ShowGenerateExtends(sci, expr, found, options);
-            if (CanShowGenerateMember(sci, position, expr, found))
+            var found = ((ASGenerator) ASContext.Context.CodeGenerator).GetDeclarationAtLine(line);
+            if (CanShowGenerateExtends(sci, position, expr, found)) ShowNewInterfaceList(sci, expr, found, options);
+            if (CanShowNewMemberList(sci, position, expr, found))
             {
-                ShowCustomGenerators(sci, expr, found, options);
-                ShowGenerateProperty(sci, expr, found, options);
-                ShowGenerateMethod(sci, expr, found, options);
+                ShowNewVariableList(sci, expr, found, options);
+                ShowNewPropertyList(sci, expr, found, options);
+                ShowNewMethodList(sci, expr, found, options);
             }
         }
 
@@ -32,7 +31,13 @@ namespace ASCompletion.Generators
                    && (expr.Context.WordBefore == "extends" || expr.Context.Separator == ":");
         }
 
-        static bool CanShowGenerateMember(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        static void ShowNewInterfaceList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateInterface");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
+        }
+
+        static bool CanShowNewMemberList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
@@ -40,17 +45,11 @@ namespace ASCompletion.Generators
                    && expr.IsNull() && expr.Context.ContextFunction == null && expr.Context.ContextMember == null;
         }
 
-        protected virtual void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected virtual void ShowNewVariableList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
         }
 
-        static void ShowGenerateExtends(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-            var label = TextHelper.GetString("ASCompletion.Label.GenerateInterface");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
-        }
-
-        static void ShowGenerateProperty(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        static void ShowNewPropertyList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var member = new MemberModel {Name = expr.Context.Value};
             var label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
@@ -61,7 +60,7 @@ namespace ASCompletion.Generators
             options.Add(new GeneratorItem(label, GeneratorJobType.Setter, member, found.InClass));
         }
 
-        static void ShowGenerateMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        static void ShowNewMethodList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));

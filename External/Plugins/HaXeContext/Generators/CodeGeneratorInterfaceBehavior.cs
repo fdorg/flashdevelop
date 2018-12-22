@@ -15,7 +15,7 @@ namespace HaXeContext.Generators
                    && base.CanShowGenerateExtends(sci, position, expr, found);
         }
 
-        protected override void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected override void ShowNewVariableList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
             options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.IVariable, () =>
