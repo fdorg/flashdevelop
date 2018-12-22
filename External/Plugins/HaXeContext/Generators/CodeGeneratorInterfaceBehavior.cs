@@ -9,10 +9,10 @@ namespace HaXeContext.Generators
 {
     class CodeGeneratorInterfaceBehavior : ASCompletion.Generators.CodeGeneratorInterfaceBehavior
     {
-        protected override bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected override bool CanShowNewInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return sci.GetWordFromPosition(position) is string token && !string.IsNullOrEmpty(token) && char.IsUpper(token[0])
-                   && base.CanShowGenerateExtends(sci, position, expr, found);
+                   && base.CanShowNewInterfaceList(sci, position, expr, found);
         }
 
         protected override void ShowNewVariableList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
