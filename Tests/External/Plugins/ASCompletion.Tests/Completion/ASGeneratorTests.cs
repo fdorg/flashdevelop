@@ -3152,7 +3152,7 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateInterface_issue2481_2", false)
                             .SetName("extends IFoo<generator>, Generate interface. case 2")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2481");
-                        yield return new TestCaseData("BeforeGenerateInterface_issue2481_3", false)
+                        yield return new TestCaseData("BeforeGenerateInterface_issue2481_3", true)
                             .SetName("foo(v:IFoo<generator>), Generate interface. case 3")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2481");
                     }

@@ -395,8 +395,9 @@ namespace ASCompletion.Completion
                 if (suggestItemDeclaration)
                 {
                     var text = sci.GetLine(line);
-                    var m = Regex.Match(text, string.Format(patternClass, contextToken));
-                    if (m.Success && CanShowGenerateClass(sci, position, resolve, found))
+                    Match m;
+                    if (CanShowGenerateClass(sci, position, resolve, found)
+                        && (m = Regex.Match(text, string.Format(patternClass, contextToken))).Success)
                     {
                         contextMatch = m;
                         ShowGenerateClassList(found, options);
