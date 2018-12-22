@@ -1529,7 +1529,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        static IEnumerable<TestCaseData> GenerateClassIssue2585TestCases
+        static IEnumerable<TestCaseData> NewClassIssue2585TestCases
         {
             get
             {
@@ -1549,6 +1549,21 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("localVar = new Type().value<generator>. Generate new Class. Issue 2585. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2585");
+            }
+        }
+
+        static IEnumerable<TestCaseData> NewInterfaceIssue2587TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeNewInterface_issue2587_1", GeneratorJobType.Interface, false)
+                    .Returns(null)
+                    .SetName("var v:type<generator>. Generate new Class. Issue 2587. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2587");
+                yield return new TestCaseData("BeforeNewInterface_issue2587_2", GeneratorJobType.Interface, false)
+                    .Returns(null)
+                    .SetName("new Type<generator>. Generate new Class. Issue 2587. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2587");
             }
         }
 
@@ -1651,8 +1666,9 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInferVar2456TestCases)),
-            TestCaseSource(nameof(GenerateClassIssue2585TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
+            TestCaseSource(nameof(NewClassIssue2585TestCases)),
+            TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
