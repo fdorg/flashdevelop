@@ -1529,6 +1529,29 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateClassIssue2585TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClass_issue2585_1", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("var v:type<generator>. Generate new Class. Issue 2585. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2585");
+                yield return new TestCaseData("BeforeGenerateClass_issue2585_2", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("new type<generator>. Generate new Class. Issue 2585. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2585");
+                yield return new TestCaseData("BeforeGenerateClass_issue2585_3", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("localVar = new type<generator>. Generate new Class. Issue 2585. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2585");
+                yield return new TestCaseData("BeforeGenerateClass_issue2585_4", GeneratorJobType.Class, false)
+                    .Returns(null)
+                    .SetName("localVar = new Type().value<generator>. Generate new Class. Issue 2585. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2585");
+            }
+        }
+
         static IEnumerable<TestCaseData> InterfaceContextualGeneratorTestCases
         {
             get
@@ -1628,6 +1651,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(CreateNewClassIssue2393TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInferVar2456TestCases)),
+            TestCaseSource(nameof(GenerateClassIssue2585TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);

@@ -323,7 +323,7 @@ namespace ASCompletion.Completion
                 {
                     var returnType = GetStatementReturnType(sci, found.InClass, curLine, positionFromLine);
                     if (!CanShowAssignStatementToVariable(sci, returnType.Resolve)) return;
-                    if (returnType.Resolve.Type == null && returnType.Resolve.Context?.WordBefore == "new") ShowGenerateClassList(found, returnType.Resolve.Context, options);
+                    if (CanShowGenerateClass(sci, position, resolve, found)) ShowGenerateClassList(found, returnType.Resolve.Context, options);
                     else if (returnType.Resolve.Type == null && returnType.Resolve.Member == null) return;
                     else ShowAssignStatementToVarList(found, returnType, options);
                     return;
@@ -389,7 +389,7 @@ namespace ASCompletion.Completion
                 {
                     var text = sci.GetLine(line);
                     var m = Regex.Match(text, string.Format(patternClass, contextToken));
-                    if (m.Success)
+                    if (m.Success && CanShowGenerateClass(sci, position, resolve, found))
                     {
                         contextMatch = m;
                         ShowGenerateClassList(found, options);
@@ -631,8 +631,10 @@ namespace ASCompletion.Completion
         /// <returns>true, if can show "Create new class" list</returns>
         protected virtual bool CanShowGenerateClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            // for example: public var foo : Fo|o
-            return expr.Context.Separator == ":";
+            // for example: public var foo : Foo<generator>
+            return expr.Context.Separator == ":"
+                   // for example, good: new Type()<generator>, bad: new Type().value<generator>
+                   || (expr.Context.WordBefore == "new" && !expr.Context.Value.Contains("~."));
         }
 
         /// <summary>

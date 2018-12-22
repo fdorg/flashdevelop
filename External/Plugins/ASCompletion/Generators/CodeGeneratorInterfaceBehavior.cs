@@ -69,10 +69,17 @@ namespace ASCompletion.Generators
 
         public void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
         {
-            
-            if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(sci, member, TemplateUtils.GetTemplate("IGetterSetter"));
-            else if (job == GeneratorJobType.Setter) GenerateAccessor(sci, member, TemplateUtils.GetTemplate("ISetter"));
-            else if (job == GeneratorJobType.Getter) GenerateAccessor(sci, member, TemplateUtils.GetTemplate("IGetter"));
+            sci.BeginUndoAction();
+            try
+            {
+                if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(sci, member, TemplateUtils.GetTemplate("IGetterSetter"));
+                else if (job == GeneratorJobType.Setter) GenerateAccessor(sci, member, TemplateUtils.GetTemplate("ISetter"));
+                else if (job == GeneratorJobType.Getter) GenerateAccessor(sci, member, TemplateUtils.GetTemplate("IGetter"));
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
         }
 
         static void GenerateGetterSetter(ScintillaControl sci, MemberModel member, string template)

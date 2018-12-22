@@ -100,6 +100,12 @@ namespace HaXeContext.Generators
         }
 
         /// <inheritdoc />
+        protected override bool CanShowGenerateClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return !string.IsNullOrEmpty(contextToken) && char.IsUpper(contextToken[0]) && base.CanShowGenerateClass(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
         protected override bool CanShowGetSetList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
