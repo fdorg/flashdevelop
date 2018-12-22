@@ -97,11 +97,18 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !ctx.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
+                    var @break = false;
                     if (CanShowGenerateClass(sci, position, resolve, found))
                     {
                         ShowGenerateClassList(found, resolve.Context, options);
-                        return;
+                        @break = true;
                     }
+                    if (CanShowGenerateInterface(sci, position, resolve, found))
+                    {
+                        ShowGenerateInterfaceList(resolve, found, options);
+                        @break = true;
+                    }
+                    if (@break) return;
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
@@ -323,7 +330,7 @@ namespace ASCompletion.Completion
                 {
                     var returnType = GetStatementReturnType(sci, found.InClass, curLine, positionFromLine);
                     if (!CanShowAssignStatementToVariable(sci, returnType.Resolve)) return;
-                    if (returnType.Resolve.Type == null && returnType.Resolve.Context?.WordBefore == "new") ShowGenerateClassList(found, returnType.Resolve.Context, options);
+                    if (CanShowGenerateClass(sci, position, resolve, found)) ShowGenerateClassList(found, returnType.Resolve.Context, options);
                     else if (returnType.Resolve.Type == null && returnType.Resolve.Member == null) return;
                     else ShowAssignStatementToVarList(found, returnType, options);
                     return;
@@ -388,8 +395,9 @@ namespace ASCompletion.Completion
                 if (suggestItemDeclaration)
                 {
                     var text = sci.GetLine(line);
-                    var m = Regex.Match(text, string.Format(patternClass, contextToken));
-                    if (m.Success)
+                    Match m;
+                    if (CanShowGenerateClass(sci, position, resolve, found)
+                        && (m = Regex.Match(text, string.Format(patternClass, contextToken))).Success)
                     {
                         contextMatch = m;
                         ShowGenerateClassList(found, options);
@@ -631,8 +639,10 @@ namespace ASCompletion.Completion
         /// <returns>true, if can show "Create new class" list</returns>
         protected virtual bool CanShowGenerateClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            // for example: public var foo : Fo|o
-            return expr.Context.Separator == ":";
+            // for example: public var foo : Foo<generator>
+            return expr.Context.Separator == ":"
+                   // for example, good: new Type()<generator>, bad: new Type().value<generator>
+                   || (expr.Context.WordBefore == "new" && !expr.Context.Value.Contains("~."));
         }
 
         /// <summary>
@@ -4574,56 +4584,69 @@ namespace ASCompletion.Completion
     /// <summary>
     /// Available generators
     /// </summary>
-    public enum GeneratorJobType
+    public enum GeneratorJobType : long
     {
-        GetterSetter,
-        Getter,
-        Setter,
-        ComplexEvent,
-        BasicEvent,
-        Delegate,
-        Variable,
-        Function,
-        ImplementInterface,
-        PromoteLocal,
-        MoveLocalUp,
-        AddImport,
-        Class,
-        FunctionPublic,
-        VariablePublic,
-        Constant,
-        Constructor,
-        ToString,
-        FieldFromParameter,
-        AddInterfaceDef,
-        ConvertToConst,
-        AddAsParameter,
-        ChangeMethodDecl,
-        EventMetatag,
-        AssignStatementToVar,
-        ChangeConstructorDecl,
-        Interface,
+        GetterSetter = 1 << 0,
+        Getter = 1 << 1,
+        Setter = 1 << 2,
+        ComplexEvent = 1 << 3,
+        BasicEvent = 1 << 4,
+        Delegate = 1 << 5,
+        Variable = 1 << 6,
+        Function = 1 << 7,
+        ImplementInterface = 1 << 8,
+        PromoteLocal = 1 << 9,
+        MoveLocalUp = 1 << 10,
+        AddImport = 1 << 11,
+        Class = 1 << 12,
+        FunctionPublic = 1 << 13,
+        VariablePublic = 1 << 14,
+        Constant = 1 << 15,
+        Constructor = 1 << 16,
+        ToString = 1 << 17,
+        FieldFromParameter = 1 << 18,
+        AddInterfaceDef = 1 << 19,
+        ConvertToConst = 1 << 20,
+        AddAsParameter = 1 << 21,
+        ChangeMethodDecl = 1 << 22,
+        EventMetatag = 1 << 23,
+        AssignStatementToVar = 1 << 24,
+        ChangeConstructorDecl = 1 << 25,
+        Interface = 1 << 26,
+        User = 1 << 27,
     }
 
     /// <summary>
     /// Generation completion list item
     /// </summary>
-    internal class GeneratorItem : ICompletionListItem
+    public class GeneratorItem : ICompletionListItem
     {
         internal GeneratorJobType Job { get; }
-        private readonly MemberModel member;
-        private readonly ClassModel inClass;
+        readonly MemberModel member;
+        readonly ClassModel inClass;
+        readonly Action action;
 
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass)
+        public GeneratorItem(string label, GeneratorJobType job, Action action) : this(label, job, action, null)
         {
-            Label = label;
-            this.Job = job;
-            this.member = member;
-            this.inClass = inClass;
         }
 
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, object data) : this(label, job, member, inClass)
+        public GeneratorItem(string label, GeneratorJobType job, Action action, object data)
         {
+            Label = label;
+            Job = job;
+            this.action = action;
+        }
+        
+        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass) : this(label, job, member, inClass, null)
+        {
+        }
+
+        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, object data)
+        {
+            Label = label;
+            Job = job;
+            this.member = member;
+            this.inClass = inClass;
             Data = data;
         }
 
@@ -4637,7 +4660,8 @@ namespace ASCompletion.Completion
         {
             get
             {
-                ASGenerator.GenerateJob(Job, member, inClass, Label, Data);
+                if (action != null) action();
+                else ASGenerator.GenerateJob(Job, member, inClass, Label, Data);
                 return null;
             }
         }

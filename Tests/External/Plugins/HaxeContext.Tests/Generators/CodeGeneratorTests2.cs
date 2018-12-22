@@ -244,13 +244,13 @@ namespace HaXeContext.Generators
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                var item = options.Find(it => it is GeneratorItem && ((GeneratorItem) it).Job == job);
+                var item = options.Find(it => it is GeneratorItem generatorItem && generatorItem.Job == (ASCompletion.Completion.GeneratorJobType) job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
                 return sci.Text;
             }
             if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
-            if (options.Count > 0) Assert.IsFalse(options.Any(it => it is GeneratorItem item && item.Job == job));
+            if (options.Count > 0) Assert.IsFalse(options.Any(it => it is GeneratorItem item && item.Job == (ASCompletion.Completion.GeneratorJobType) job));
             return null;
         }
     }

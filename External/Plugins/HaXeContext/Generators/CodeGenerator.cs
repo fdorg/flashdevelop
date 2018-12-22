@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,11 +17,11 @@ using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
-    public enum GeneratorJob
+    public enum GeneratorJob : long
     {
-        EnumConstructor,
-        Switch,
-        IVariable,
+        EnumConstructor = GeneratorJobType.User << 1,
+        Switch = GeneratorJobType.User << 2,
+        IVariable = GeneratorJobType.User << 3,
     }
 
     internal class CodeGenerator : ASGenerator
@@ -52,7 +50,7 @@ namespace HaXeContext.Generators
             if (CanShowGenerateSwitch(sci, position, expr))
             {
                 var label = TextHelper.GetString("Info.GenerateSwitch");
-                options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
+                options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
@@ -97,6 +95,12 @@ namespace HaXeContext.Generators
             return !found.InClass.IsVoid()
                 && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
                 && base.CanShowNewMethodList(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
+        protected override bool CanShowGenerateClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return !string.IsNullOrEmpty(contextToken) && char.IsUpper(contextToken[0]) && base.CanShowGenerateClass(sci, position, expr, found);
         }
 
         /// <inheritdoc />
@@ -434,7 +438,7 @@ namespace HaXeContext.Generators
             if (inClass != null && inClass.Flags.HasFlag(FlagType.Enum) && expr.IsStatic)
             {
                 var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                options.Add(new GeneratorItem(label, GeneratorJob.EnumConstructor, () => Generate(GeneratorJob.EnumConstructor, sci, expr)));
+                options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.EnumConstructor, () => Generate(GeneratorJob.EnumConstructor, sci, expr)));
             }
             else base.ShowNewMethodList(sci, expr, found, options);
         }
@@ -445,7 +449,7 @@ namespace HaXeContext.Generators
             if (inClass != null && inClass.Flags.HasFlag(FlagType.Enum) && expr.IsStatic)
             {
                 var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                options.Add(new GeneratorItem(label, GeneratorJob.EnumConstructor, () => Generate(GeneratorJob.EnumConstructor, sci, expr)));
+                options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.EnumConstructor, () => Generate(GeneratorJob.EnumConstructor, sci, expr)));
             }
             else base.ShowNewVarList(sci, expr, found, options);
         }
@@ -623,33 +627,5 @@ namespace HaXeContext.Generators
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", sb.ToString());
             InsertCode(start, template, sci);
         }
-    }
-
-    internal class GeneratorItem : ICompletionListItem
-    {
-        internal GeneratorJob Job { get; }
-        readonly Action action;
-
-        public GeneratorItem(string label, GeneratorJob job, Action action)
-        {
-            Label = label;
-            Job = job;
-            this.action = action;
-        }
-
-        public string Label { get; }
-
-        public string Value
-        {
-            get
-            {
-                action.Invoke();
-                return null;
-            }
-        }
-
-        public string Description => TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");
-
-        public Bitmap Icon => (Bitmap) ASContext.Panel.GetIcon(34);
     }
 }
