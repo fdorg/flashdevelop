@@ -14,7 +14,7 @@ namespace ASCompletion.Generators
         {
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ASContext.Context.CodeGenerator).GetDeclarationAtLine(line);
-            if (CanShowGenerateExtends(sci, position, expr, found)) ShowNewInterfaceList(sci, expr, found, options);
+            if (CanShowNewInterfaceList(sci, position, expr, found)) ShowNewInterfaceList(sci, expr, found, options);
             if (CanShowNewMemberList(sci, position, expr, found))
             {
                 ShowNewVariableList(sci, expr, found, options);
@@ -23,7 +23,7 @@ namespace ASCompletion.Generators
             }
         }
 
-        protected virtual bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected virtual bool CanShowNewInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
