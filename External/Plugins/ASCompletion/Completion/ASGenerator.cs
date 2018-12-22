@@ -1141,7 +1141,7 @@ namespace ASCompletion.Completion
                     var strategy = generator.GetCodeGeneratorBehavior();
                     if (strategy != null)
                     {
-                        ((CodeGeneratorInterfaceBehavior) strategy).GenerateProperty(job, sci, member, inClass);
+                        ((CodeGeneratorDefaultBehavior) strategy).GenerateProperty(job, sci, member, inClass);
                         return;
                     }
                     // default behavior

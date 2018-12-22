@@ -16,9 +16,10 @@ namespace ASCompletion.Generators
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
             if (CanShowGenerateExtends(sci, position, expr, found)) ShowGenerateExtends(sci, expr, found, options);
+            // TODO: CanShowGenerateImplements
+            // TODO: CanShowGenerateType
             if (CanShowGenerateMember(sci, position, expr, found))
             {
-                ShowMemberGenerator(sci, expr, found, options);
                 ShowGenerateField(sci, expr, found, options);
                 ShowGenerateProperty(sci, expr, found, options);
                 ShowGenerateMethod(sci, expr, found, options);
@@ -39,10 +40,6 @@ namespace ASCompletion.Generators
                    && expr.IsNull() && expr.Context.ContextFunction == null && expr.Context.ContextMember == null;
         }
 
-        protected virtual void ShowMemberGenerator(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-        }
-
         protected virtual void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
         {
         }
@@ -60,6 +57,10 @@ namespace ASCompletion.Generators
 
         protected virtual void ShowGenerateMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
+        }
+
+        public virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
+        {   
         }
     }
 }
