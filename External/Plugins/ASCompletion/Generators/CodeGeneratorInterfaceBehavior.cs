@@ -15,16 +15,16 @@ namespace ASCompletion.Generators
             var ctx = ASContext.Context;
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
-            if (CanShowGenerateNewInterface(sci, position, expr, found)) ShowGenerateNewInterface(sci, expr, found, options);
-            if (CanShowGenerateNewMethod(sci, position, expr, found))
+            if (CanShowGenerateExtends(sci, position, expr, found)) ShowGenerateExtends(sci, expr, found, options);
+            if (CanShowGenerateMember(sci, position, expr, found))
             {
                 ShowCustomGenerators(sci, expr, found, options);
-                ShowGenerateGetterSetter(sci, expr, found, options);
-                ShowGenerateNewMethod(sci, expr, found, options);
+                ShowGenerateProperty(sci, expr, found, options);
+                ShowGenerateMethod(sci, expr, found, options);
             }
         }
 
-        protected virtual bool CanShowGenerateNewInterface(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected virtual bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
@@ -32,7 +32,7 @@ namespace ASCompletion.Generators
                    && (expr.Context.WordBefore == "extends" || expr.Context.Separator == ":");
         }
 
-        static bool CanShowGenerateNewMethod(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        static bool CanShowGenerateMember(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
@@ -44,13 +44,13 @@ namespace ASCompletion.Generators
         {
         }
 
-        static void ShowGenerateNewInterface(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        static void ShowGenerateExtends(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
         }
 
-        static void ShowGenerateGetterSetter(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        static void ShowGenerateProperty(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var member = new MemberModel {Name = expr.Context.Value};
             var label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
@@ -61,7 +61,7 @@ namespace ASCompletion.Generators
             options.Add(new GeneratorItem(label, GeneratorJobType.Setter, member, found.InClass));
         }
 
-        static void ShowGenerateNewMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        static void ShowGenerateMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
@@ -73,8 +73,8 @@ namespace ASCompletion.Generators
             try
             {
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(sci, member, TemplateUtils.GetTemplate("IGetterSetter"));
-                else if (job == GeneratorJobType.Setter) GenerateAccessor(sci, member, TemplateUtils.GetTemplate("ISetter"));
-                else if (job == GeneratorJobType.Getter) GenerateAccessor(sci, member, TemplateUtils.GetTemplate("IGetter"));
+                else if (job == GeneratorJobType.Setter) GenerateProperty(sci, member, TemplateUtils.GetTemplate("ISetter"));
+                else if (job == GeneratorJobType.Getter) GenerateProperty(sci, member, TemplateUtils.GetTemplate("IGetter"));
             }
             finally
             {
@@ -86,17 +86,17 @@ namespace ASCompletion.Generators
         {
             if (!string.IsNullOrEmpty(template))
             {
-                GenerateAccessor(sci, member, template);
+                GenerateProperty(sci, member, template);
                 return;
             }
-            GenerateAccessor(sci, member, TemplateUtils.GetTemplate("IGetter"));
+            GenerateProperty(sci, member, TemplateUtils.GetTemplate("IGetter"));
             var pos = sci.LineEndPosition(sci.CurrentLine);
             sci.SetSel(pos, pos);
             sci.NewLine();
-            GenerateAccessor(sci, member, TemplateUtils.GetTemplate("ISetter"));
+            GenerateProperty(sci, member, TemplateUtils.GetTemplate("ISetter"));
         }
 
-        protected static void GenerateAccessor(ScintillaControl sci, MemberModel member, string template)
+        protected static void GenerateProperty(ScintillaControl sci, MemberModel member, string template)
         {
             var features = ASContext.Context.Features;
             template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);

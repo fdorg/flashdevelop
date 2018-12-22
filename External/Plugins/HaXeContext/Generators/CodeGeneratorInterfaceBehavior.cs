@@ -9,10 +9,10 @@ namespace HaXeContext.Generators
 {
     class CodeGeneratorInterfaceBehavior : ASCompletion.Generators.CodeGeneratorInterfaceBehavior
     {
-        protected override bool CanShowGenerateNewInterface(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected override bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return sci.GetWordFromPosition(position) is string token && !string.IsNullOrEmpty(token) && char.IsUpper(token[0])
-                   && base.CanShowGenerateNewInterface(sci, position, expr, found);
+                   && base.CanShowGenerateExtends(sci, position, expr, found);
         }
 
         protected override void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
@@ -23,7 +23,7 @@ namespace HaXeContext.Generators
                 sci.BeginUndoAction();
                 try
                 {
-                    GenerateAccessor(sci, new MemberModel {Name = expr.Context.Value}, TemplateUtils.GetTemplate("IVariable"));
+                    GenerateProperty(sci, new MemberModel {Name = expr.Context.Value}, TemplateUtils.GetTemplate("IVariable"));
                 }
                 finally
                 {
