@@ -107,12 +107,8 @@ namespace ASCompletion.Completion
             }
 
             var behavior = GetCodeGeneratorBehavior();
-            if (behavior != null)
-            {
-                behavior.ContextualGenerator(sci, position, resolve, options);
-                return;
-            }
-            
+            if (behavior != null && behavior.ContextualGenerator(sci, position, resolve, options)) return;
+
             if (CanShowConvertToConst(sci, position, resolve, found))
             {
                 ShowConvertToConst(found, options);
@@ -1137,13 +1133,9 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.Getter:
                 case GeneratorJobType.Setter:
                 case GeneratorJobType.GetterSetter:
-                    var generator = ((ASGenerator) ASContext.Context.CodeGenerator);
-                    var strategy = generator.GetCodeGeneratorBehavior();
-                    if (strategy != null)
-                    {
-                        ((CodeGeneratorDefaultBehavior) strategy).GenerateProperty(job, sci, member, inClass);
-                        return;
-                    }
+                    var generator = (ASGenerator) ASContext.Context.CodeGenerator;
+                    var customBehavior = generator.GetCodeGeneratorBehavior();
+                    if (customBehavior != null && ((CodeGeneratorDefaultBehavior) customBehavior).GenerateProperty(job, sci, member, inClass)) return;
                     // default behavior
                     generator.GenerateProperty(job, member, inClass, sci);
                     break;

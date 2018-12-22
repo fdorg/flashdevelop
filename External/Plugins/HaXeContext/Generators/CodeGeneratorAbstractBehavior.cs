@@ -48,10 +48,5 @@ namespace HaXeContext.Generators
             label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
         }
-
-        public override void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
-        {
-
-        }
     }
 }

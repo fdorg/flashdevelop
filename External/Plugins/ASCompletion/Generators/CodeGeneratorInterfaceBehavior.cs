@@ -31,7 +31,7 @@ namespace ASCompletion.Generators
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
         }
 
-        public override void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
+        public override bool GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
         {
             sci.BeginUndoAction();
             try
@@ -44,6 +44,7 @@ namespace ASCompletion.Generators
             {
                 sci.EndUndoAction();
             }
+            return true;
         }
 
         static void GenerateGetterSetter(ScintillaControl sci, MemberModel member, string template)

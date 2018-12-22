@@ -10,12 +10,17 @@ namespace ASCompletion.Generators
 {
     public class CodeGeneratorDefaultBehavior : ICodeGeneratorBehavior
     {
-        public void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
+        public bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
+            var result = false;
             var ctx = ASContext.Context;
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ctx.CodeGenerator).GetDeclarationAtLine(line);
-            if (CanShowGenerateExtends(sci, position, expr, found)) ShowGenerateExtends(sci, expr, found, options);
+            if (CanShowGenerateExtends(sci, position, expr, found))
+            {
+                ShowGenerateExtends(sci, expr, found, options);
+                result = true;
+            }
             // TODO: CanShowGenerateImplements
             // TODO: CanShowGenerateType
             if (CanShowGenerateMember(sci, position, expr, found))
@@ -23,7 +28,9 @@ namespace ASCompletion.Generators
                 ShowGenerateField(sci, expr, found, options);
                 ShowGenerateProperty(sci, expr, found, options);
                 ShowGenerateMethod(sci, expr, found, options);
+                result = true;
             }
+            return result;
         }
 
         protected virtual bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => false;
@@ -59,8 +66,6 @@ namespace ASCompletion.Generators
         {
         }
 
-        public virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
-        {   
-        }
+        public virtual bool GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass) => false;
     }
 }
