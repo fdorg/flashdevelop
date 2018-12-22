@@ -97,11 +97,18 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !ctx.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
+                    var @break = false;
                     if (CanShowGenerateClass(sci, position, resolve, found))
                     {
                         ShowGenerateClassList(found, resolve.Context, options);
-                        return;
+                        @break = true;
                     }
+                    if (CanShowGenerateInterface(sci, position, resolve, found))
+                    {
+                        ShowGenerateInterfaceList(resolve, found, options);
+                        @break = true;
+                    }
+                    if (@break) return;
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
