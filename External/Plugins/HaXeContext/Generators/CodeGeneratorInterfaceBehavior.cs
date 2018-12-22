@@ -18,7 +18,7 @@ namespace HaXeContext.Generators
         protected override void ShowCustomGenerators(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
-            options.Add(new GeneratorItem(label, GeneratorJob.IVariable, () =>
+            options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.IVariable, () =>
             {
                 sci.BeginUndoAction();
                 try
