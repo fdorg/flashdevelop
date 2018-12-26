@@ -253,13 +253,26 @@ namespace HaXeContext.Model
                             // preprocessor statements
                             else if (c1 == '#' && handleDirectives && i < len)
                             {
-                                int ls = i - 2;
+                                // peek for #end
+                                if (i + 2 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd')
+                                {
+                                    matching = 0;
+                                    inCode = true;
+                                    commentLength = 0;
+                                    i += 2;
+                                    continue;
+                                }
                                 inlineDirective = false;
+                                var ls = i - 2;
                                 while (ls > 0)
                                 {
                                     c2 = ba[ls--];
                                     if (c2 == 10 || c2 == 13) break;
-                                    if (c2 > 32) { inlineDirective = true; break; }
+                                    if (c2 > 32)
+                                    {
+                                        inlineDirective = true;
+                                        break;
+                                    }
                                 }
                                 c2 = ba[i];
                                 if (i < 2 || ba[i - 2] < 33 && c2 >= 'a' && c2 <= 'z')
@@ -348,12 +361,12 @@ namespace HaXeContext.Model
                         }
                         else if (c1 == '#') // peek for #end
                         {
-                            if (i + 3 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd' && ba[i + 3] <= 32)
+                            if (i + 2 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd')
                             {
                                 matching = 0;
                                 inCode = true;
                                 commentLength = 0;
-                                i += 3;
+                                i += 2;
                                 continue;
                             }
                         }
