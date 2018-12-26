@@ -451,6 +451,25 @@ namespace HaXeContext.Model
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2583");
             }
         }
+        
+        static IEnumerable<TestCaseData> Issue2590TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2590_1")
+                    .Returns(new List<MemberModel> {new MemberModel("a", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private)})
+                    .SetName("Issue 2590. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2590");
+                yield return new TestCaseData("Issue2590_2")
+                    .Returns(new List<MemberModel> {new MemberModel("a", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private)})
+                    .SetName("Issue 2590. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2590");
+                yield return new TestCaseData("Issue2590_3")
+                    .Returns(new List<MemberModel> {new MemberModel("a", null, FlagType.Dynamic | FlagType.Variable, Visibility.Private)})
+                    .SetName("Issue 2590. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2590");
+            }
+        }
 
         [
             Test,
@@ -463,6 +482,7 @@ namespace HaXeContext.Model
             TestCaseSource(nameof(Issue2527TestCases)),
             TestCaseSource(nameof(Issue2550TestCases)),
             TestCaseSource(nameof(Issue2583TestCases)),
+            TestCaseSource(nameof(Issue2590TestCases)),
         ]
         public List<MemberModel> ParseFile(string fileName)
         {
