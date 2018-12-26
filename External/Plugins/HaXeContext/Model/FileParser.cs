@@ -286,6 +286,15 @@ namespace HaXeContext.Model
                                 if (escNo % 2 == 0) inString = 0;
                             }
                         }
+                        /**
+                         * for example:
+                         * #if flag $(EntryPoint)< 'value'
+                         */
+                        if (isInString && inlineDirective)
+                        {
+                            inGeneric = false;
+                            paramTempCount = 0;
+                        }
                         break;
 
                     // skip commented line
@@ -434,28 +443,25 @@ namespace HaXeContext.Model
                             i++;
                         }
 
-                        string comment = new String(commentBuffer, 0, commentLength);
+                        var comment = new string(commentBuffer, 0, commentLength);
                         
                         // region start
-                        Match matchStart = ASFileParserRegexes.RegionStart.Match(comment);
+                        var matchStart = ASFileParserRegexes.RegionStart.Match(comment);
                         if (matchStart.Success)
                         {
-                            string regionName = matchStart.Groups["name"].Value.Trim();
-                            MemberModel region = new MemberModel(regionName, string.Empty, FlagType.Declaration, Visibility.Default);
+                            var regionName = matchStart.Groups["name"].Value.Trim();
+                            var region = new MemberModel(regionName, string.Empty, FlagType.Declaration, Visibility.Default);
                             region.LineFrom = line;
                             model.Regions.Add(region);
                         }
                         else
                         {
                             // region end
-                            Match matchEnd = ASFileParserRegexes.RegionEnd.Match(comment);
+                            var matchEnd = ASFileParserRegexes.RegionEnd.Match(comment);
                             if (matchEnd.Success && model.Regions.Count > 0)
                             {
-                                MemberModel region = model.Regions[model.Regions.Count - 1];
-                                if (region.LineTo == 0)
-                                {
-                                    region.LineTo = line;
-                                }
+                                var region = model.Regions[model.Regions.Count - 1];
+                                if (region.LineTo == 0) region.LineTo = line;
                             }
                         }
                     }
@@ -1051,10 +1057,8 @@ namespace HaXeContext.Model
                                 foundConstant = false;
                                 context = 0;
                             }
-                            else if (ScriptMode) // not in a class, parse if/for/while/do blocks
-                            {
-                                context = 0;
-                            }
+                            // not in a class, parse if/for/while/do blocks
+                            else if (ScriptMode) context = 0;
                             else if (curMember != null && (curMember.Flags & FlagType.Function) != 0 && length == 0 && !foundColon)
                             {
                                 inType = false;
@@ -1110,7 +1114,7 @@ namespace HaXeContext.Model
                                 foundKeyword = FlagType.Implements;
                             }
                         }
-                        else if (c1 == '(')
+                        else if (c1 == '(' && !inlineDirective)
                         {
                             if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && curToken.Text != "for")
                             {
