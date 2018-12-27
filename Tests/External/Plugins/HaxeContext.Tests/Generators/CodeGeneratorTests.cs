@@ -994,6 +994,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2594_1"))
                     .SetName("var v = true ? 1 : 0;\r\nv<generator>. Issue 2594. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2594");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2594_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2594_2"))
+                    .SetName("var v = 1 + 2 > 0 || true ? 1 : 0;\r\nv<generator>. Issue 2594. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2594");
             }
         }
 

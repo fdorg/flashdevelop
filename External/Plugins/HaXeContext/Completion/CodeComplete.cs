@@ -548,6 +548,7 @@ namespace HaXeContext.Completion
             var parCount = 0;
             var genCount = 0;
             var hadDot = false;
+            var hadOperator = false;
             var isInExpr = false;
             var lineTo = var.Flags.HasFlag(FlagType.LocalVar) || var.Flags.HasFlag(FlagType.ParameterVar)
                 ? ctx.CurrentMember.LineTo
@@ -599,17 +600,30 @@ namespace HaXeContext.Completion
                     if (genCount < 0) break;
                 }
                 if (parCount > 0 || genCount > 0 || arrCount > 0) continue;
-                if (c <= ' ')
+                if (c <= ' ' && !hadOperator)
                 {
                     hadDot = false;
                     isInExpr = true;
                     continue;
                 }
-                if (c == ';' || (!hadDot && characterClass.Contains(c))) break;
-                if (c == '.' || c == '?')
+                if (c == ';' || (!hadDot && !hadOperator && characterClass.Contains(c))) break;
+                if (c == '.')
                 {
                     hadDot = true;
                     rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
+                }
+                else if (// for example: <StartPosition>expr1 + expr2 > expr3 || expr4 << 1 > 2<EndPosition>
+                    ctx.Features.ArithmeticOperators.Contains(c) || ctx.Features.BitwiseOperators.Any(it => it.Contains(c)) || ctx.Features.BooleanOperators.Any(it => it.Contains(c))
+                    // for example: <StartPosition>expr1 ? expr2<EndPosition>
+                    || c == '?')
+                {
+                    hadOperator = true;
+                    rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
+                }
+                else if (hadOperator && characterClass.Contains(c))
+                {
+                    hadOperator = false;
+                    hadDot = true;
                 }
                 isInExpr = true;
             }
