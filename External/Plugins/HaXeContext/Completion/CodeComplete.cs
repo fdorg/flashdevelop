@@ -606,7 +606,7 @@ namespace HaXeContext.Completion
                     continue;
                 }
                 if (c == ';' || (!hadDot && characterClass.Contains(c))) break;
-                if (c == '.')
+                if (c == '.' || c == '?')
                 {
                     hadDot = true;
                     rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
