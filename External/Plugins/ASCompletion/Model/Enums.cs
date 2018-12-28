@@ -55,7 +55,9 @@ namespace ASCompletion.Model
         Declaration = 1L << 34,
         Template = 1L << 35,
         DocTemplate = 1L << 36,
-        CodeTemplate = 1L << 37
+        CodeTemplate = 1L << 37,
+
+        User = 1L << 38,
     }
 
     public enum ASMetaKind
