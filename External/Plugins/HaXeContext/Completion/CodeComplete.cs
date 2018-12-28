@@ -606,10 +606,37 @@ namespace HaXeContext.Completion
                     continue;
                 }
                 if (c == ';' || (!hadDot && characterClass.Contains(c))) break;
-                if (c == '.')
+                if (c == '.'
+                    // for example: <StartPosition>expr1 + expr2<EndPosition>
+                    || ctx.Features.ArithmeticOperators.Contains(c)
+                    // for example: <StartPosition>expr1 ? expr2<EndPosition>
+                    || c == '?')
                 {
+                    i += 1;
                     hadDot = true;
-                    rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
+                    rvalueEnd = ExpressionEndPosition(sci, i, endPosition, true);
+                }
+                else
+                {
+                    var offset = 0;
+                    if (// for example: <StartPosition>expr1 || expr2<EndPosition>
+                        TryGetOperatorMaxLength(ctx.Features.BooleanOperators, c, ref offset)
+                        // for example: <StartPosition>expr1 >> expr2<EndPosition>
+                        || TryGetOperatorMaxLength(ctx.Features.BitwiseOperators, c, ref offset))
+                    {
+                        i += offset;
+                        hadDot = true;
+                        rvalueEnd = ExpressionEndPosition(sci, i, endPosition, true);
+                    }
+                    // Utils
+                    bool TryGetOperatorMaxLength(string[] operators, char firstChar, ref int result)
+                    {
+                        foreach (var it in operators)
+                        {
+                            if (it[0] == firstChar) result = Math.Max(result, it.Length);
+                        }
+                        return result > 0;
+                    }
                 }
                 isInExpr = true;
             }
