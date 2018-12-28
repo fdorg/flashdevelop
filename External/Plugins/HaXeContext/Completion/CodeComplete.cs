@@ -618,23 +618,24 @@ namespace HaXeContext.Completion
                 }
                 else
                 {
-                    var offset = GetOffset(ctx.Features.BitwiseOperators, c);// for example: <StartPosition>expr1 >> expr2<EndPosition>
-                    if (offset == 0) offset = GetOffset(ctx.Features.BooleanOperators, c);// for example: <StartPosition>expr1 || expr2<EndPosition>
-                    if (offset > 0)
+                    var offset = 0;
+                    if (// for example: <StartPosition>expr1 || expr2<EndPosition>
+                        TryGetOperatorMaxLength(ctx.Features.BooleanOperators, c, ref offset)
+                        // for example: <StartPosition>expr1 >> expr2<EndPosition>
+                        || TryGetOperatorMaxLength(ctx.Features.BitwiseOperators, c, ref offset))
                     {
                         i += offset;
                         hadDot = true;
                         rvalueEnd = ExpressionEndPosition(sci, i, endPosition, true);
                     }
                     // Utils
-                    int GetOffset(string[] operators, char firstChar)
+                    bool TryGetOperatorMaxLength(string[] operators, char firstChar, ref int result)
                     {
-                        var result = 0;
                         foreach (var it in operators)
                         {
-                            if (it.Contains(firstChar)) result = Math.Max(result, it.Length);
+                            if (it[0] == firstChar) result = Math.Max(result, it.Length);
                         }
-                        return result;
+                        return result > 0;
                     }
                 }
                 isInExpr = true;
