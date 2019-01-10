@@ -366,6 +366,16 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue2598TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2598_1", '.', false, true)
+                    .SetName("(v:Null<T>).<complete> Issue 2598. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2598");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
@@ -377,6 +387,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharIssue2518TestCases)),
             TestCaseSource(nameof(OnCharIssue2522TestCases)),
             TestCaseSource(nameof(OnCharIssue2526TestCases)),
+            TestCaseSource(nameof(OnCharIssue2598TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {
