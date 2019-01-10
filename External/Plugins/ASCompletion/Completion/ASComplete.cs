@@ -2118,7 +2118,7 @@ namespace ASCompletion.Completion
 
             // explore members
             tmpClass.ResolveExtends();
-            if (!string.IsNullOrEmpty(tmpClass.ExtendsType) && tmpClass.ExtendsType != features.objectKey
+            if (tmpClass.ExtendsType is string extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != features.objectKey
                 && tmpClass.Extends.IsVoid() && !string.IsNullOrEmpty(tmpClass.Template) && !string.IsNullOrEmpty(tmpClass.IndexType))
             {
                 /**
@@ -2127,7 +2127,8 @@ namespace ASCompletion.Completion
                  * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
                  */
                 tmpClass = (ClassModel) tmpClass.Clone();
-                tmpClass.InFile = expr.InFile ?? ctx.CurrentModel;
+                if (expr.InFile != null && !ctx.ResolveType(extendsType, expr.InFile).IsVoid()) tmpClass.InFile = expr.InFile;
+                else tmpClass.InFile = ctx.CurrentModel;
                 tmpClass.ResolveExtends();
             }
             while (!tmpClass.IsVoid())
