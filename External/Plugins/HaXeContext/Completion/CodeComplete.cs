@@ -1135,6 +1135,13 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
+            // for example: Null<SomeType>
+            if (inClass.ExtendsType is string extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != ASContext.Context.Features.objectKey
+                && inClass.Extends.IsVoid() && !string.IsNullOrEmpty(inClass.Template) && !string.IsNullOrEmpty(inClass.IndexType))
+            {
+                var type = ResolveType(extendsType, ASContext.Context.CurrentModel);
+                if (!type.IsVoid()) inClass = type;
+            }
             base.FindMemberEx(token, inClass, result, mask, access);
             if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
             {

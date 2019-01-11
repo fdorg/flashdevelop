@@ -373,6 +373,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue2598_1", '.', false, true)
                     .SetName("(v:Null<T>).<complete> Issue 2598. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2598");
+                yield return new TestCaseData("BeforeOnChar_issue2598_2", '.', false, true)
+                    .SetName("(v:Null<js.html.VideoElement>).preload.<complete> Issue 2598. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2598");
             }
         }
 
