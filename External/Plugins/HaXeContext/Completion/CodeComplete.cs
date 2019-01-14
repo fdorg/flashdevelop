@@ -738,12 +738,12 @@ namespace HaXeContext.Completion
              *  }
              */
             var endPosition = sci.PositionFromLine(expr.LineFrom);
-            for (var i = sci.PositionFromLine(expr.LineTo); i > endPosition; i--)
+            for (var i = sci.LineEndPosition(expr.LineTo); i > endPosition; i--)
             {
                 if (sci.PositionIsOnComment(i) || sci.CharAt(i) != ';') continue;
                 var type = GetExpressionType(sci, i, false, true);
                 var name = type.Member?.Type ?? type.Type?.Name;
-                if (!string.IsNullOrEmpty(name))
+                if (!string.IsNullOrEmpty(name) && name != ASContext.Context.Features.voidKey)
                 {
                     var wordBefore = type.Context.WordBefore;
                     if (wordBefore == "new")
