@@ -363,6 +363,11 @@ namespace HaXeContext.Completion
                 InferParameterType(var);
                 return;
             }
+            if (var.Flags.HasFlag(FlagType.Function) && !var.Flags.HasFlag(FlagType.Constructor))
+            {
+                InferFunctionType(sci, var);
+                return;
+            }
             var ctx = ASContext.Context;
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
@@ -717,6 +722,44 @@ namespace HaXeContext.Completion
             if (!m.Success) return ClassModel.VoidClass;
             var rvalue = m.Groups[1].Value.TrimStart();
             return ResolveType(rvalue, ASContext.Context.CurrentModel);
+        }
+
+        static void InferFunctionType(ScintillaControl sci, MemberModel expr)
+        {
+            /**
+             *  for example:
+             *
+             *  function foo() {
+             *      return "";
+             *  }
+             *
+             *  function bar() {
+             *      foo().<complete>
+             *  }
+             */
+            var endPosition = sci.PositionFromLine(expr.LineFrom);
+            for (var i = sci.PositionFromLine(expr.LineTo); i > endPosition; i--)
+            {
+                if (sci.PositionIsOnComment(i) || sci.CharAt(i) != ';') continue;
+                var type = GetExpressionType(sci, i, false, true);
+                var name = type.Member?.Type ?? type.Type?.Name;
+                if (!string.IsNullOrEmpty(name))
+                {
+                    var wordBefore = type.Context.WordBefore;
+                    if (wordBefore == "new")
+                    {
+                        var p = type.Context.WordBeforePosition - 1;
+                        wordBefore = GetWordLeft(sci, ref p);
+                    }
+                    else if (wordBefore != "return")
+                    {
+                        var p = type.Context.PositionExpression;
+                        wordBefore = GetWordLeft(sci, ref p);
+                    }
+                    if (wordBefore == "return") expr.Type = name;
+                }
+                break;
+            }
         }
 
         /// <inheritdoc />

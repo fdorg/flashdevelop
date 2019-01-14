@@ -1105,6 +1105,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2594_2.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2598_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue2598_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue170_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnChar_issue170_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
