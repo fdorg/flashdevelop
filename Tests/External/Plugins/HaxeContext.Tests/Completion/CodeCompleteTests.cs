@@ -389,6 +389,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnChar_issue170_2", '.', false, true)
                     .SetName("foo().<complete> Issue 170. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
+                yield return new TestCaseData("BeforeOnChar_issue170_3", '.', false, true)
+                    .SetName("foo().<complete> Issue 170. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
             }
         }
 
@@ -667,6 +670,21 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> CalltipDefIssue170TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CalltipDef_issue170_1")
+                    .Returns("f () : String")
+                    .SetName("f(<complete>). Issue 170. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
+                yield return new TestCaseData("CalltipDef_issue170_2")
+                    .Returns("f170_2 ()")
+                    .SetName("f(<complete>). Issue 170. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
+            }
+        }
+
         static IEnumerable<TestCaseData> CalltipDefTestCases
         {
             get
@@ -689,6 +707,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(CalltipDefIssue2559TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2569TestCases)),
             TestCaseSource(nameof(CalltipDefIssue2217TestCases)),
+            TestCaseSource(nameof(CalltipDefIssue170TestCases)),
             TestCaseSource(nameof(CalltipDefTestCases)),
         ]
         public string CalltipDef(string fileName)
