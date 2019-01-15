@@ -3524,158 +3524,177 @@ namespace ASCompletion.Completion
                         continue;
                     }
                     // array access
-                    if (c == ']' && parCount == 0)
+                    if (c == ']')
                     {
-                        /**
-                         * for example:
-                         * var v = []
-                         * v.<complete>
-                         */
-                        if (!hadDot && sb.Length > 0 && characterClass.Contains(sb[0]))
+                        if (parCount == 0)
                         {
-                            expression.Separator = ";";
-                            break;
-                        }
-                        ignoreWhiteSpace = false;
-                        if (arrCount == 0) // start sub-expression
-                        {
-                            if (expression.SubExpressions == null)
-                            {
-                                expression.SubExpressions = new List<string>();
-                                expression.SubExpressionPositions = new List<int>();
-                            }
-                            sbSub.Clear();
-                        }
-                        arrCount++;
-                    }
-                    else if (c == '[' && parCount == 0)
-                    {
-                        arrCount--;
-                        if (arrCount == 0 && braCount == 0)
-                        {
-                            positionExpression = position;
-                            sbSub.Insert(0, c);
-                            expression.SubExpressions.Add(sbSub.ToString());
-                            expression.SubExpressionPositions.Add(position + 1);
-                            sbSub.Clear();
-                            sb.Insert(0, ".#" + (subCount++) + "~");
-                            var pos = position - 1;
-                            var word = GetWordLeft(sci, ref pos);
-                            // for example: return [].<complete>
-                            if (features.codeKeywords.Contains(word))
+                            /**
+                             * for example:
+                             * var v = []
+                             * v.<complete>
+                             */
+                            if (!hadDot && sb.Length > 0 && characterClass.Contains(sb[0]))
                             {
                                 expression.Separator = ";";
-                                expression.WordBefore = word;
-                                expression.WordBeforePosition = pos + 1;
                                 break;
                             }
-                            continue;
-                        }
-                        if (arrCount < 0)
-                        {
-                            expression.Separator = ";";
-                            break;
-                        }
-                    }
-                    else if (c == '<' && hasGenerics && arrCount == 0 && parCount == 0)
-                    {
-                        genCount--;
-                        if (genCount < 0)
-                        {
-                            expression.Separator = ";";
-                            break;
-                        }
-                    }
-                    else if (c == '>' && arrCount == 0 && parCount == 0)
-                    {
-                        if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-')
-                        {
-                        }
-                        else if (hasGenerics)
-                        {
-                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || c2 == ')' || position + 1 == startPosition)
+                            ignoreWhiteSpace = false;
+                            if (arrCount == 0) // start sub-expression
                             {
-                                genCount++;
-                                var length = sb.Length;
-                                if (length >= 3)
+                                if (expression.SubExpressions == null)
                                 {
-                                    var fc = sb[0];
-                                    var sc = sb[1];
-                                    var lc = sb[length - 1];
-                                    if (fc == '.' && sc == '[' && (lc == ']' || (length >= 4 && sb[length - 2] == ']' && lc == '.')))
+                                    expression.SubExpressions = new List<string>();
+                                    expression.SubExpressionPositions = new List<int>();
+                                }
+                                sbSub.Clear();
+                            }
+                            arrCount++;
+                        }
+                    }
+                    else if (c == '[')
+                    {
+                        if (parCount == 0)
+                        {
+                            arrCount--;
+                            if (arrCount == 0 && braCount == 0)
+                            {
+                                positionExpression = position;
+                                sbSub.Insert(0, c);
+                                expression.SubExpressions.Add(sbSub.ToString());
+                                expression.SubExpressionPositions.Add(position + 1);
+                                sbSub.Clear();
+                                sb.Insert(0, ".#" + (subCount++) + "~");
+                                var pos = position - 1;
+                                var word = GetWordLeft(sci, ref pos);
+                                // for example: return [].<complete>
+                                if (features.codeKeywords.Contains(word))
+                                {
+                                    expression.Separator = ";";
+                                    expression.WordBefore = word;
+                                    expression.WordBeforePosition = pos + 1;
+                                    break;
+                                }
+                                continue;
+                            }
+                            if (arrCount < 0)
+                            {
+                                expression.Separator = ";";
+                                break;
+                            }
+                        }
+                    }
+                    else if (c == '<')
+                    {
+                        if (hasGenerics && arrCount == 0 && parCount == 0)
+                        {
+                            genCount--;
+                            if (genCount < 0)
+                            {
+                                expression.Separator = ";";
+                                break;
+                            }
+                        }
+                    }
+                    else if (c == '>')
+                    {
+                        if (arrCount == 0 && parCount == 0)
+                        {
+                            // for example: ->
+                            if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-')
+                            {
+                            }
+                            else if (hasGenerics)
+                            {
+                                if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || c2 == ')' || position + 1 == startPosition)
+                                {
+                                    genCount++;
+                                    var length = sb.Length;
+                                    if (length >= 3)
                                     {
-                                        sbSub.Insert(0, sb.ToString(1, length - 1));
-                                        sb.Clear();
+                                        var fc = sb[0];
+                                        var sc = sb[1];
+                                        var lc = sb[length - 1];
+                                        if (fc == '.' && sc == '[' && (lc == ']' || (length >= 4 && sb[length - 2] == ']' && lc == '.')))
+                                        {
+                                            sbSub.Insert(0, sb.ToString(1, length - 1));
+                                            sb.Clear();
+                                        }
                                     }
                                 }
+                                else break;
                             }
-                            else break;
                         }
                     }
                     // ignore sub-expressions (method calls' parameters)
-                    else if (c == '(' && arrCount == 0)
+                    else if (c == '(')
                     {
-                        parCount--;
-                        if (parCount == 0)
+                        if (arrCount == 0)
                         {
-                            positionExpression = position;
-                            sbSub.Insert(0, c);
-                            expression.SubExpressions.Add(sbSub.ToString());
-                            expression.SubExpressionPositions.Add(position + 1);
-                            sbSub.Clear();
-                            sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            var pos = position - 1;
-                            var word = GetWordLeft(sci, ref pos);
-                            // AS3, AS2, Loom ex: return (a as B).<complete>
-                            if (word != "new" && word != "trace" && features.codeKeywords.Contains(word))
+                            parCount--;
+                            if (parCount == 0)
+                            {
+                                positionExpression = position;
+                                sbSub.Insert(0, c);
+                                expression.SubExpressions.Add(sbSub.ToString());
+                                expression.SubExpressionPositions.Add(position + 1);
+                                sbSub.Clear();
+                                sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
+                                var pos = position - 1;
+                                var word = GetWordLeft(sci, ref pos);
+                                // AS3, AS2, Loom ex: return (a as B).<complete>
+                                if (word != "new" && word != "trace" && features.codeKeywords.Contains(word))
+                                {
+                                    expression.Separator = ";";
+                                    expression.WordBefore = word;
+                                    expression.WordBeforePosition = pos + 1;
+                                    break;
+                                }
+                                continue;
+                            }
+                            if (parCount < 0)
                             {
                                 expression.Separator = ";";
-                                expression.WordBefore = word;
-                                expression.WordBeforePosition = pos + 1;
+                                int testPos = position - 1;
+                                string testWord = GetWordLeft(sci, ref testPos); // anonymous function
+                                var pos = testPos;
+                                string testWord2 = GetWordLeft(sci, ref pos) ?? "null"; // regular function
+                                if (testWord == features.functionKey || testWord == "catch"
+                                    || testWord2 == features.functionKey
+                                    || testWord2 == features.getKey || testWord2 == features.setKey)
+                                {
+                                    expression.Separator = ",";
+                                    expression.coma = ComaExpression.FunctionDeclaration;
+                                }
+                                else
+                                {
+                                    expression.WordBefore = testWord;
+                                    expression.WordBeforePosition = testPos + 1;
+                                }
                                 break;
                             }
-                            continue;
-                        }
-                        if (parCount < 0)
-                        {
-                            expression.Separator = ";";
-                            int testPos = position - 1;
-                            string testWord = GetWordLeft(sci, ref testPos); // anonymous function
-                            var pos = testPos;
-                            string testWord2 = GetWordLeft(sci, ref pos) ?? "null"; // regular function
-                            if (testWord == features.functionKey || testWord == "catch"
-                                || testWord2 == features.functionKey
-                                || testWord2 == features.getKey || testWord2 == features.setKey)
-                            {
-                                expression.Separator = ",";
-                                expression.coma = ComaExpression.FunctionDeclaration;
-                            }
-                            else
-                            {
-                                expression.WordBefore = testWord;
-                                expression.WordBeforePosition = testPos + 1;
-                            }
-                            break;
                         }
                     }
-                    else if (c == ')' && arrCount == 0)
+                    else if (c == ')')
                     {
-                        ignoreWhiteSpace = false;
-                        if (!hadDot)
+                        if (arrCount == 0)
                         {
-                            expression.Separator = ";";
-                            break;
-                        }
-                        if (parCount == 0) // start sub-expression
-                        {
-                            if (expression.SubExpressions == null)
+                            ignoreWhiteSpace = false;
+                            if (!hadDot)
                             {
-                                expression.SubExpressions = new List<string>();
-                                expression.SubExpressionPositions = new List<int>();
+                                expression.Separator = ";";
+                                break;
                             }
-                            sbSub.Clear();
+                            if (parCount == 0) // start sub-expression
+                            {
+                                if (expression.SubExpressions == null)
+                                {
+                                    expression.SubExpressions = new List<string>();
+                                    expression.SubExpressionPositions = new List<int>();
+                                }
+                                sbSub.Clear();
+                            }
+                            parCount++;
                         }
-                        parCount++;
                     }
                     else if (genCount == 0 && arrCount == 0 && parCount == 0)
                     {
@@ -3792,7 +3811,7 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0 || dQuotes > 0 || sQuotes > 0) 
+                    if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0) 
                     {
                         // build sub expression
                         sbSub.Insert(0, c);
@@ -3829,7 +3848,7 @@ namespace ASCompletion.Completion
                         if(expression.Separator == " ") expression.Separator = ";";
                         break;
                     }
-                    else if (hasGenerics && c == '<')
+                    else if (c == '<' && hasGenerics)
                     {
                         sbSub.Insert(0, c);
                         if (genCount < 0
@@ -4616,39 +4635,57 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
-                if (c == '(' && arrCount == 0)
+                if (c == '(')
                 {
-                    parCount++;
-                    exprStarted = true;
+                    if (arrCount == 0)
+                    {
+                        parCount++;
+                        exprStarted = true;
+                    }
                 }
-                else if (c == ')' && arrCount == 0)
+                else if (c == ')')
                 {
-                    parCount--;
-                    if (parCount == 0) result = statementEnd;
-                    if (parCount < 0) break;
+                    if (arrCount == 0)
+                    {
+                        parCount--;
+                        if (parCount == 0) result = statementEnd;
+                        if (parCount < 0) break;
+                    }
                 }
-                else if (c == '{' && parCount == 0 && arrCount == 0)
+                else if (c == '{')
                 {
-                    if (stop) break;
-                    brCount++;
-                    exprStarted = true;
+                    if (parCount == 0 && arrCount == 0)
+                    {
+                        if (stop) break;
+                        brCount++;
+                        exprStarted = true;
+                    }
                 }
-                else if (c == '}' && parCount == 0 && arrCount == 0)
+                else if (c == '}')
                 {
-                    brCount--;
-                    if (brCount == 0) result = statementEnd;
-                    if (brCount < 0) break;
+                    if (parCount == 0 && arrCount == 0)
+                    {
+                        brCount--;
+                        if (brCount == 0) result = statementEnd;
+                        if (brCount < 0) break;
+                    }
                 }
-                else if (c == '[' && parCount == 0)
+                else if (c == '[')
                 {
-                    arrCount++;
-                    exprStarted = true;
+                    if (parCount == 0)
+                    {
+                        arrCount++;
+                        exprStarted = true;
+                    }
                 }
-                else if (c == ']' && parCount == 0)
+                else if (c == ']')
                 {
-                    arrCount--;
-                    if (arrCount == 0) result = statementEnd;
-                    if (arrCount < 0) break;
+                    if (parCount == 0)
+                    {
+                        arrCount--;
+                        if (arrCount == 0) result = statementEnd;
+                        if (arrCount < 0) break;
+                    }
                 }
                 else if (parCount == 0 && arrCount == 0 && brCount == 0)
                 {
@@ -4673,7 +4710,7 @@ namespace ASCompletion.Completion
                         var p = statementEnd - 2;
                         if (p < 0 || !char.IsDigit((char) sci.CharAt(p))) break;
                     }
-                    else if ((c == '-' || c == '+'))
+                    else if (c == '-' || c == '+')
                     {
                         if (!exprStarted) continue;
                         var p = statementEnd - 2;
