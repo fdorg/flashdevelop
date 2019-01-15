@@ -4616,39 +4616,57 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
-                if (c == '(' && arrCount == 0)
+                if (c == '(')
                 {
-                    parCount++;
-                    exprStarted = true;
+                    if (arrCount == 0)
+                    {
+                        parCount++;
+                        exprStarted = true;
+                    }
                 }
-                else if (c == ')' && arrCount == 0)
+                else if (c == ')')
                 {
-                    parCount--;
-                    if (parCount == 0) result = statementEnd;
-                    if (parCount < 0) break;
+                    if (arrCount == 0)
+                    {
+                        parCount--;
+                        if (parCount == 0) result = statementEnd;
+                        if (parCount < 0) break;
+                    }
                 }
-                else if (c == '{' && parCount == 0 && arrCount == 0)
+                else if (c == '{')
                 {
-                    if (stop) break;
-                    brCount++;
-                    exprStarted = true;
+                    if (parCount == 0 && arrCount == 0)
+                    {
+                        if (stop) break;
+                        brCount++;
+                        exprStarted = true;
+                    }
                 }
-                else if (c == '}' && parCount == 0 && arrCount == 0)
+                else if (c == '}')
                 {
-                    brCount--;
-                    if (brCount == 0) result = statementEnd;
-                    if (brCount < 0) break;
+                    if (parCount == 0 && arrCount == 0)
+                    {
+                        brCount--;
+                        if (brCount == 0) result = statementEnd;
+                        if (brCount < 0) break;
+                    }
                 }
-                else if (c == '[' && parCount == 0)
+                else if (c == '[')
                 {
-                    arrCount++;
-                    exprStarted = true;
+                    if (parCount == 0)
+                    {
+                        arrCount++;
+                        exprStarted = true;
+                    }
                 }
-                else if (c == ']' && parCount == 0)
+                else if (c == ']')
                 {
-                    arrCount--;
-                    if (arrCount == 0) result = statementEnd;
-                    if (arrCount < 0) break;
+                    if (parCount == 0)
+                    {
+                        arrCount--;
+                        if (arrCount == 0) result = statementEnd;
+                        if (arrCount < 0) break;
+                    }
                 }
                 else if (parCount == 0 && arrCount == 0 && brCount == 0)
                 {
@@ -4673,7 +4691,7 @@ namespace ASCompletion.Completion
                         var p = statementEnd - 2;
                         if (p < 0 || !char.IsDigit((char) sci.CharAt(p))) break;
                     }
-                    else if ((c == '-' || c == '+'))
+                    else if (c == '-' || c == '+')
                     {
                         if (!exprStarted) continue;
                         var p = statementEnd - 2;
