@@ -351,8 +351,6 @@ namespace HaXeContext.Completion
             return false;
         }
 
-        public void InferVariableType(ScintillaControl sci, MemberModel member) => InferVariableType(sci, new ASExpr(), member);
-
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
