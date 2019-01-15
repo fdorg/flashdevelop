@@ -3422,12 +3422,9 @@ namespace ASCompletion.Completion
             // file's member declared at this position
             if (FindMember(sci.LineFromPosition(position), ctx.CurrentClass.Members.Items) is MemberModel contextMember)
             {
-                expression.ContextMember = contextMember;
                 minPos = sci.PositionFromLine(contextMember.LineFrom);
-                var sbBody = new StringBuilder();
-                for (var i = contextMember.LineFrom; i <= contextMember.LineTo; i++)
-                    sbBody.Append(sci.GetLine(i));
-                var body = sbBody.ToString();
+                expression.ContextMember = contextMember;
+                var body = sci.GetTextRange(minPos, sci.PositionFromLine(contextMember.LineTo + 1));
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
                 if ((contextMember.Flags & hasBody) > 0)
@@ -3439,7 +3436,7 @@ namespace ASCompletion.Completion
                     {
                         // cleanup function body & offset
                         var pos = m.Index + m.Length - 1;
-                        expression.BeforeBody = (position < sci.PositionFromLine(contextMember.LineFrom) + pos);
+                        expression.BeforeBody = (position < minPos + pos);
                         var pre = body.Substring(0, pos);
                         for (var i = 0; i < pre.Length - 1; i++)
                             if (pre[i] == '\r')
@@ -3456,7 +3453,7 @@ namespace ASCompletion.Completion
                 else
                 {
                     var eqPos = body.IndexOf('=');
-                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(contextMember.LineFrom) + eqPos);
+                    expression.BeforeBody = (eqPos < 0 || position < minPos + eqPos);
                 }
             }
 
