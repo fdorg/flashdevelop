@@ -758,17 +758,14 @@ namespace ASCompletion.Completion
         {
             var result = new FoundDeclaration();
             var model = ASContext.Context.CurrentModel;
-            result.Member = GetMemberAtLine(model.Members.Items);
+            result.Member = ASComplete.FindMember(line, model.Members.Items);
             if (result.Member == null)
             {
-                result.InClass = (ClassModel) GetMemberAtLine(model.Classes);
-                if (result.InClass != null) result.Member = GetMemberAtLine(result.InClass.Members.Items);
+                result.InClass = ASComplete.FindMember(line, model.Classes);
+                if (result.InClass != null) result.Member = ASComplete.FindMember(line, result.InClass.Members.Items);
             }
             if (result.InClass == null) result.InClass = ClassModel.VoidClass;
             return result;
-
-            // Utils
-            MemberModel GetMemberAtLine(IEnumerable<MemberModel> list) => list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
         }
 
         protected bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
