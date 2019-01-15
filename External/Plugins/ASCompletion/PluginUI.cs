@@ -701,7 +701,7 @@ namespace ASCompletion
             }
         }
 
-        private void UpdateTree(FileModel aFile, List<string> modelNames, List<int> newLines)
+        private void UpdateTree(FileModel aFile, IList<string> modelNames, IList<int> newLines)
         {
             try
             {
@@ -741,33 +741,32 @@ namespace ASCompletion
 
         private void AddExtend(TreeNodeCollection tree, ClassModel aClass)
         {
-            TreeNode folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
+            var folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
 
             //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
             //    folder.Text = "Defines"; // TODO need a better word I guess
 
             while (!string.IsNullOrEmpty(aClass.ExtendsType) && aClass.ExtendsType != aClass.InFile.Context.Features.dynamicKey)
             {
-                string extends = aClass.ExtendsType;
+                var extends = aClass.ExtendsType;
                 aClass = aClass.Extends;
                 if (!aClass.IsVoid()) extends = aClass.QualifiedName;
                 if (extends.ToLower() == "void")
                     break;
-                TreeNode extNode = new TreeNode(extends, ICON_TYPE, ICON_TYPE);
+                var extNode = new TreeNode(extends, ICON_TYPE, ICON_TYPE);
                 extNode.Tag = "import";
                 folder.Nodes.Add(extNode);
             }
             if (folder.Nodes.Count > 0) tree.Add(folder);
         }
 
-        private void AddImplements(TreeNodeCollection tree, List<string> implementsTypes)
+        private void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
         {
-            if (implementsTypes == null || implementsTypes.Count == 0)
-                return;
-            TreeNode folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
-            foreach (string implements in implementsTypes)
+            if (implementsTypes == null || implementsTypes.Count == 0) return;
+            var folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
+            foreach (var implements in implementsTypes)
             {
-                TreeNode impNode = new TreeNode(implements, ICON_INTERFACE, ICON_INTERFACE);
+                var impNode = new TreeNode(implements, ICON_INTERFACE, ICON_INTERFACE);
                 impNode.Tag = "import";
                 folder.Nodes.Add(impNode);
             }
@@ -879,7 +878,12 @@ namespace ASCompletion
                 if (hasInference && string.IsNullOrEmpty(member.Type))
                 {
                     member = (MemberModel) member.Clone();
-                    if (string.IsNullOrEmpty(member.Type)) member.Type = ctx.Features.voidKey;
+                    if (string.IsNullOrEmpty(member.Type))
+                    {
+                        member.Type = member.Flags.HasFlag(FlagType.Variable)
+                                    ? ctx.Features.dynamicKey
+                                    : ctx.Features.voidKey;
+                    }
                     ctx.CodeComplete.InferType(sci, member);
                 }
                 tree.Add(new MemberTreeNode(member, img));
@@ -1033,7 +1037,7 @@ namespace ASCompletion
 
         #region Find declaration
 
-        // if hilight is true, shows the node and paint it with color 
+        // if highlight is true, shows the node and paint it with color 
         private void ShowAndHighlightNode(TreeNode node, bool highlight)
         {
             if (highlight)
@@ -1049,7 +1053,7 @@ namespace ASCompletion
             }
         }
 
-        private bool IsMach(string inputText, string searchText)
+        private bool IsMatch(string inputText, string searchText)
         {
             if (inputText == null || searchText == "")
             {
@@ -1077,7 +1081,7 @@ namespace ASCompletion
         {
             foreach (TreeNode sub in nodes)
             {
-                if (sub.ImageIndex >= ICON_VAR) ShowAndHighlightNode(sub, IsMach(sub.Tag as string, text));
+                if (sub.ImageIndex >= ICON_VAR) ShowAndHighlightNode(sub, IsMatch(sub.Tag as string, text));
                 if (sub.Nodes.Count > 0) HighlightDeclarationInGroup(sub.Nodes, text);
             }
         }

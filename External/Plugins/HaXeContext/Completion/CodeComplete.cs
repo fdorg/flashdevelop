@@ -1106,8 +1106,8 @@ namespace HaXeContext.Completion
                     for (int i = 0, length = subExpression.Length - 1; i <= length; i++)
                     {
                         var c = subExpression[i];
-                        if (c == '[' || c == '(' || c == '{' || c == '<') groupCount++;
-                        else if (c == ']' || c == ')' || c == '}' || c == '>') groupCount--;
+                        if (c == '(' || c == '{' || c == '<') groupCount++;
+                        else if (c == ')' || c == '}' || c == '>') groupCount--;
                         else if (groupCount == 0 && c == ',' || i == length)
                         {
                             if (i == length) i++;
