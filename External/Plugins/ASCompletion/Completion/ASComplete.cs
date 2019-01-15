@@ -3385,6 +3385,11 @@ namespace ASCompletion.Completion
             result.Member = null;
         }
 
+        public static T FindMember<T>(int line, IEnumerable<T> list) where T : MemberModel
+        {
+            return list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
+        }
+
         #endregion
 
         #region main_code_parser
@@ -3407,38 +3412,36 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         private static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
-            var context = ASContext.Context;
-            var haXe = context.CurrentModel.haXe;
+            var ctx = ASContext.Context;
+            var haXe = ctx.CurrentModel.haXe;
             var expression = new ASExpr();
             expression.Position = position;
             expression.Separator = " ";
 
-            int minPos = 0;
+            var minPos = 0;
             // file's member declared at this position
-            if (context.CurrentMember is MemberModel currentMember
-                && position >= sci.PositionFromLine(currentMember.LineFrom)
-                && position <= sci.LineEndPosition(currentMember.LineTo))
+            if (FindMember(sci.LineFromPosition(position), ctx.CurrentClass.Members.Items) is MemberModel contextMember)
             {
-                expression.ContextMember = currentMember;
-                minPos = sci.PositionFromLine(currentMember.LineFrom);
+                expression.ContextMember = contextMember;
+                minPos = sci.PositionFromLine(contextMember.LineFrom);
                 var sbBody = new StringBuilder();
-                for (int i = currentMember.LineFrom; i <= currentMember.LineTo; i++)
+                for (var i = contextMember.LineFrom; i <= contextMember.LineTo; i++)
                     sbBody.Append(sci.GetLine(i));
                 var body = sbBody.ToString();
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
-                if ((currentMember.Flags & hasBody) > 0)
+                if ((contextMember.Flags & hasBody) > 0)
                 {
-                    expression.ContextFunction = currentMember;
-                    expression.FunctionOffset = currentMember.LineFrom;
+                    expression.ContextFunction = contextMember;
+                    expression.FunctionOffset = contextMember.LineFrom;
                     var m = Regex.Match(body, "(\\)|[a-z0-9*.,-<>])\\s*{", RegexOptions.IgnoreCase);
                     if (m.Success)
                     {
                         // cleanup function body & offset
-                        int pos = m.Index + m.Length - 1;
-                        expression.BeforeBody = (position < sci.PositionFromLine(currentMember.LineFrom) + pos);
-                        string pre = body.Substring(0, pos);
-                        for (int i = 0; i < pre.Length - 1; i++)
+                        var pos = m.Index + m.Length - 1;
+                        expression.BeforeBody = (position < sci.PositionFromLine(contextMember.LineFrom) + pos);
+                        var pre = body.Substring(0, pos);
+                        for (var i = 0; i < pre.Length - 1; i++)
                             if (pre[i] == '\r')
                             {
                                 expression.FunctionOffset++;
@@ -3453,7 +3456,7 @@ namespace ASCompletion.Completion
                 else
                 {
                     var eqPos = body.IndexOf('=');
-                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(currentMember.LineFrom) + eqPos);
+                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(contextMember.LineFrom) + eqPos);
                 }
             }
 
@@ -3461,7 +3464,7 @@ namespace ASCompletion.Completion
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
             // get expression before cursor
-            var features = context.Features;
+            var features = ctx.Features;
             var sb = new StringBuilder();
             var sbSub = new StringBuilder();
             var subCount = 0;
@@ -3483,7 +3486,7 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 position--;
-                if (arrCount == 0 && braCount == 0 && parCount == 0 && context.CodeComplete.IsRegexStyle(sci, position))
+                if (arrCount == 0 && braCount == 0 && parCount == 0 && ctx.CodeComplete.IsRegexStyle(sci, position))
                 {
                     inRegex = true;
                     positionExpression = position;
@@ -3510,7 +3513,7 @@ namespace ASCompletion.Completion
                     c = (char)sci.CharAt(position);
                     if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
                     {
-                        if (!IsStringStyle(style) && !IsCharStyle(style) && !context.CodeComplete.IsStringInterpolationStyle(sci, position))
+                        if (!IsStringStyle(style) && !IsCharStyle(style) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
                         {
                             sb.Clear();
                             positionExpression = expression.Position;

@@ -359,7 +359,7 @@ namespace HaXeContext.Completion
             if (!TryInferGenericType(var).IsVoid()) return;
             if (var.Flags.HasFlag(FlagType.ParameterVar))
             {
-                if (FileParser.IsFunctionType(var.Type)) return;
+                if (FileParser.IsFunctionType(var.Type) || !string.IsNullOrEmpty(var.Type)) return;
                 InferParameterType(var);
                 return;
             }
@@ -1041,6 +1041,13 @@ namespace HaXeContext.Completion
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token)) return;
+            if (result.IsNull())
+            {
+                base.FindMemberEx(token, inClass, result, mask, access);
+                if (result.Member != null && string.IsNullOrEmpty(result.Member.Type)
+                    && result.Member.Flags.HasFlag(FlagType.Function) && !result.Member.Flags.HasFlag(FlagType.Constructor))
+                    InferFunctionType(ASContext.CurSciControl, result.Member);
+            }
             var context = result.Context;
             var member = result.Member;
             // for example: Class.new<complete>
@@ -1186,7 +1193,8 @@ namespace HaXeContext.Completion
                 if (!type.IsVoid()) inClass = type;
             }
             base.FindMemberEx(token, inClass, result, mask, access);
-            if (result.Member?.Type != null && (result.Type == null || result.Type.IsVoid()))
+            member = result.Member;
+            if (member?.Type != null && (result.Type == null || result.Type.IsVoid()))
             {
                 /**
                  * for example:
@@ -1197,7 +1205,7 @@ namespace HaXeContext.Completion
                  *     }
                  * }
                  */
-                var clone = (MemberModel) result.Member.Clone();
+                var clone = (MemberModel) member.Clone();
                 var type = TryInferGenericType(clone);
                 if (!type.IsVoid())
                 {
@@ -1210,7 +1218,7 @@ namespace HaXeContext.Completion
                  * var v = (variable:IInterface).someMethod<T:{}>((param0:Class<T>): String):T;
                  * v.<complete>
                  */
-                type = ResolveType(result.Member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
+                type = ResolveType(member.Type, result.InClass?.InFile ?? ASContext.Context.CurrentModel);
                 if (!type.IsVoid()) result.Type = type;
             }
         }
