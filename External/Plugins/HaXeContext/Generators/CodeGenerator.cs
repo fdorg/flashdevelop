@@ -309,7 +309,7 @@ namespace HaXeContext.Generators
                     || member.Flags.HasFlag(FlagType.Getter)
                     || member.Flags.HasFlag(FlagType.Setter)))
             {
-                ((CodeComplete)ASContext.Context.CodeComplete).InferVariableType(ASContext.CurSciControl, member);
+                ((CodeComplete)ASContext.Context.CodeComplete).InferType(ASContext.CurSciControl, member);
             }
             return result;
         }
