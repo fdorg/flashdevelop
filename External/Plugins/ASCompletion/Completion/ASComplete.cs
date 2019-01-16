@@ -3072,7 +3072,7 @@ namespace ASCompletion.Completion
             return context.ResolveType(qname, inFile);
         }
 
-        public void InferType(ScintillaControl sci, MemberModel member) => InferVariableType(sci, new ASExpr(), member);
+        public virtual void InferType(ScintillaControl sci, MemberModel member) => InferVariableType(sci, new ASExpr(), member);
 
         /// <summary>
         /// Infer very simple cases: var foo = {expression}

@@ -351,6 +351,16 @@ namespace HaXeContext.Completion
             return false;
         }
 
+        public override void InferType(ScintillaControl sci, MemberModel member)
+        {
+            if (member.Flags.HasFlag(FlagType.Function) && !member.Flags.HasFlag(FlagType.Constructor))
+            {
+                InferFunctionType(sci, member);
+                return;
+            }
+            base.InferType(sci, member);
+        }
+
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
@@ -359,11 +369,6 @@ namespace HaXeContext.Completion
             {
                 if (FileParser.IsFunctionType(var.Type) || !string.IsNullOrEmpty(var.Type)) return;
                 InferParameterType(var);
-                return;
-            }
-            if (var.Flags.HasFlag(FlagType.Function) && !var.Flags.HasFlag(FlagType.Constructor))
-            {
-                InferFunctionType(sci, var);
                 return;
             }
             var ctx = ASContext.Context;
