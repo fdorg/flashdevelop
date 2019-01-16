@@ -2923,7 +2923,7 @@ namespace ASCompletion.Completion
                                 result.InClass = inClass;
                                 if (features.hasInference && (var.Type == null || ResolveType(var.Type, inFile).IsVoid()))
                                 {
-                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferVariableType(local, var);
+                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(local, var);
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ResolveType("Function", null);
@@ -2956,7 +2956,7 @@ namespace ASCompletion.Completion
                         var member = result.Member;
                         if (member != null && member.Type == null)
                         {
-                            ctx.CodeComplete.InferVariableType(local, member);
+                            ctx.CodeComplete.InferType(local, member);
                             if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
                         }
                     }
@@ -3072,29 +3072,29 @@ namespace ASCompletion.Completion
             return context.ResolveType(qname, inFile);
         }
 
-        public virtual void InferType(ScintillaControl sci, MemberModel member) => InferVariableType(sci, new ASExpr(), member);
+        public void InferType(ScintillaControl sci, MemberModel member) => InferType(sci, new ASExpr(), member);
 
         /// <summary>
         /// Infer very simple cases: var foo = {expression}
         /// </summary>
-        private void InferVariableType(ASExpr local, MemberModel var)
+        private void InferType(ASExpr local, MemberModel member)
         {
             var sci = ASContext.CurSciControl;
-            if (sci == null || var.LineFrom >= sci.LineCount) return;
-            InferVariableType(sci, local, var);
+            if (sci == null || member.LineFrom >= sci.LineCount) return;
+            InferType(sci, local, member);
         }
 
-        protected virtual void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
+        protected virtual void InferType(ScintillaControl sci, ASExpr local, MemberModel member)
         {
             // is it a simple affectation inference?
-            var text = sci.GetLine(var.LineFrom);
+            var text = sci.GetLine(member.LineFrom);
             var m = Regex.Match(text, "=([^;]+)");
             if (!m.Success) return;
             var rvalue = m.Groups[1];
             if (rvalue.Length == 0) return;
             var offset = rvalue.Length - rvalue.Value.TrimStart().Length;
-            var rvalueStart = sci.PositionFromLine(var.LineFrom) + rvalue.Index + offset;
-            InferVariableType(sci, text, rvalueStart, local, var);
+            var rvalueStart = sci.PositionFromLine(member.LineFrom) + rvalue.Index + offset;
+            InferVariableType(sci, text, rvalueStart, local, member);
         }
 
         protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)

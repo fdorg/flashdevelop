@@ -351,38 +351,33 @@ namespace HaXeContext.Completion
             return false;
         }
 
-        public override void InferType(ScintillaControl sci, MemberModel member)
+        /// <inheritdoc />
+        protected override void InferType(ScintillaControl sci, ASExpr local, MemberModel member)
         {
+            if (!TryInferGenericType(member).IsVoid()) return;
+            if (member.Flags.HasFlag(FlagType.ParameterVar))
+            {
+                if (FileParser.IsFunctionType(member.Type) || !string.IsNullOrEmpty(member.Type)) return;
+                InferParameterType(member);
+                return;
+            }
             if (member.Flags.HasFlag(FlagType.Function) && !member.Flags.HasFlag(FlagType.Constructor))
             {
                 InferFunctionType(sci, member);
                 return;
             }
-            base.InferType(sci, member);
-        }
-
-        /// <inheritdoc />
-        protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
-        {
-            if (!TryInferGenericType(var).IsVoid()) return;
-            if (var.Flags.HasFlag(FlagType.ParameterVar))
-            {
-                if (FileParser.IsFunctionType(var.Type) || !string.IsNullOrEmpty(var.Type)) return;
-                InferParameterType(var);
-                return;
-            }
             var ctx = ASContext.Context;
-            var line = sci.GetLine(var.LineFrom);
-            var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
+            var line = sci.GetLine(member.LineFrom);
+            var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + member.Name + "\\s*in\\s*");
             if (!m.Success)
             {
-                base.InferVariableType(sci, local, var);
-                if (string.IsNullOrEmpty(var.Type) && (var.Flags & (FlagType.Variable | FlagType.Getter | FlagType.Setter)) != 0)
-                    var.Type = ResolveType(ctx.Features.dynamicKey, null).Name;
+                base.InferType(sci, local, member);
+                if (string.IsNullOrEmpty(member.Type) && (member.Flags & (FlagType.Variable | FlagType.Getter | FlagType.Setter)) != 0)
+                    member.Type = ResolveType(ctx.Features.dynamicKey, null).Name;
                 return;
             }
             var currentModel = ctx.CurrentModel;
-            var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
+            var rvalueStart = sci.PositionFromLine(member.LineFrom) + m.Index + m.Length;
             var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
             var parCount = 0;
             var braCount = 0;
@@ -397,8 +392,8 @@ namespace HaXeContext.Completion
                 else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
                 {
                     var type = ResolveType("Int", null);
-                    var.Type = type.QualifiedName;
-                    var.Flags |= FlagType.Inferred;
+                    member.Type = type.QualifiedName;
+                    member.Flags |= FlagType.Inferred;
                     return;
                 }
                 if (c == '(') parCount++;
@@ -417,7 +412,7 @@ namespace HaXeContext.Completion
                      * }
                      */
                     var wordLeft = sci.GetWordLeft(i - 1, false);
-                    if (wordLeft == var.Name)
+                    if (wordLeft == member.Name)
                     {
                         var lineBefore = sci.LineFromPosition(i) - 1;
                         var vars = local.LocalVars;
@@ -446,13 +441,13 @@ namespace HaXeContext.Completion
                             continue;
                         }
                         var members = exprType.Members;
-                        var member = members.Search("iterator", 0, 0);
-                        if (member == null)
+                        var iterator = members.Search("iterator", 0, 0);
+                        if (iterator == null)
                         {
                             if (members.Contains("hasNext", 0, 0))
                             {
-                                member = members.Search("next", 0, 0);
-                                if (member != null) iteratorIndexType = member.Type;
+                                iterator = members.Search("next", 0, 0);
+                                if (iterator != null) iteratorIndexType = iterator.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
                             if (exprType.Name.StartsWithOrdinal("Iterator<")
@@ -465,7 +460,7 @@ namespace HaXeContext.Completion
                         }
                         else
                         {
-                            var type = ResolveType(member.Type, currentModel);
+                            var type = ResolveType(iterator.Type, currentModel);
                             iteratorIndexType = type.IndexType;
                             break;
                         }
@@ -473,15 +468,15 @@ namespace HaXeContext.Completion
                     }
                     if (iteratorIndexType != null)
                     {
-                        var.Type = iteratorIndexType;
+                        member.Type = iteratorIndexType;
                         var exprTypeIndexType = exprType.IndexType;
                         if (!string.IsNullOrEmpty(exprTypeIndexType) && exprTypeIndexType.Contains(','))
                         {
                             var t = exprType;
                             var originTypes = t.IndexType.Split(',');
-                            if (!originTypes.Contains(var.Type))
+                            if (!originTypes.Contains(member.Type))
                             {
-                                var.Type = null;
+                                member.Type = null;
                                 t.ResolveExtends();
                                 t = t.Extends;
                                 while (!t.IsVoid())
@@ -490,21 +485,21 @@ namespace HaXeContext.Completion
                                     for (var j = 0; j < types.Length; j++)
                                     {
                                         if (types[j] != iteratorIndexType) continue;
-                                        var.Type = originTypes[j].Trim();
+                                        member.Type = originTypes[j].Trim();
                                         break;
                                     }
-                                    if (var.Type != null) break;
+                                    if (member.Type != null) break;
                                     t = t.Extends;
                                 }
                             }
                         }
                     }
-                    if (var.Type == null)
+                    if (member.Type == null)
                     {
                         var type = ResolveType(ctx.Features.dynamicKey, null);
-                        var.Type = type.QualifiedName;
+                        member.Type = type.QualifiedName;
                     }
-                    var.Flags |= FlagType.Inferred;
+                    member.Flags |= FlagType.Inferred;
                     return;
                 }
             }
