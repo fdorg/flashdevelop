@@ -526,34 +526,34 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("CalltipDef_issue2368_1")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo(1|, 2). Calltip. Issue 2368. Case 1");
                 yield return new TestCaseData("CalltipDef_issue2368_2")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo(1, 2|). Calltip. Issue 2368. Case 2");
                 yield return new TestCaseData("CalltipDef_issue2368_3")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo((1 + 1)|, 2). Calltip. Issue 2368. Case 3");
                 yield return new TestCaseData("CalltipDef_issue2368_4")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo((1 +| 1), 2). Calltip. Issue 2368. Case 4");
                 yield return new TestCaseData("CalltipDef_issue2368_5")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo(1, 2 * (3 +| 1)). Calltip. Issue 2368. Case 5");
                 yield return new TestCaseData("CalltipDef_issue2368_6")
-                    .Returns("bar (v1, v2)")
+                    .Returns("bar (v1, v2) : Void")
                     .SetName("foo(1, bar(3|, 1)). Calltip. Issue 2368. Case 6");
                 yield return new TestCaseData("CalltipDef_issue2368_7")
-                    .Returns("bar (v1, v2)")
+                    .Returns("bar (v1, v2) : Void")
                     .SetName("foo(1, bar({x|:1}, 1)). Calltip. Issue 2368. Case 7");
                 yield return new TestCaseData("CalltipDef_issue2368_8")
-                    .Returns("bar_ (v1, v2)")
+                    .Returns("bar_ (v1, v2) : Void")
                     .SetName("foo(1, bar_({x|:1}, 1)). Calltip. Issue 2368. Case 8");
                 yield return new TestCaseData("CalltipDef_issue2368_9")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo(1, (2 * (3 +| 1))). Calltip. Issue 2368. Case 9");
                 yield return new TestCaseData("CalltipDef_issue2368_10")
-                    .Returns("foo (v1, v2)")
+                    .Returns("foo (v1, v2) : Void")
                     .SetName("foo(1, (2 + ((3 +| 1) * 2))). Calltip. Issue 2368. Case 10");
             }
         }
@@ -653,7 +653,7 @@ namespace HaXeContext.Completion
                     .SetName("trace(<complete>. Issue 2569. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2569");
                 yield return new TestCaseData("CalltipDef_issue2569_2")
-                    .Returns("trace (args:Dynamic)")
+                    .Returns("trace (args:Dynamic) : Void")
                     .SetName("trace(<complete>. Issue 2569. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2569");
             }
@@ -679,7 +679,7 @@ namespace HaXeContext.Completion
                     .SetName("f(<complete>). Issue 170. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
                 yield return new TestCaseData("CalltipDef_issue170_2")
-                    .Returns("f170_2 ()")
+                    .Returns("f170_2 () : Void")
                     .SetName("f(<complete>). Issue 170. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
             }

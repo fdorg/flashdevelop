@@ -361,12 +361,27 @@ namespace HaXeContext.Completion
                 InferParameterType(member);
                 return;
             }
-            if (member.Flags.HasFlag(FlagType.Function) && !member.Flags.HasFlag(FlagType.Constructor))
+            var ctx = ASContext.Context;
+            if (member.Flags.HasFlag(FlagType.Function))
             {
+                if (member.Flags.HasFlag(FlagType.Constructor)) return;
+                if (member.Name.StartsWith("get_") || member.Name.StartsWith("set_"))
+                {
+                    var property = ctx.CurrentClass.Members.Search(member.Name.Substring(4), 0, 0);
+                    if (property != null)
+                    {
+                        if (string.IsNullOrEmpty(property.Type)) InferType(sci, property);
+                        if (!string.IsNullOrEmpty(property.Type))
+                        {
+                            member.Type = property.Type;
+                            member.Flags |= FlagType.Inferred;
+                            return;
+                        }
+                    }
+                }
                 InferFunctionType(sci, member);
                 return;
             }
-            var ctx = ASContext.Context;
             var line = sci.GetLine(member.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + member.Name + "\\s*in\\s*");
             if (!m.Success)
@@ -948,6 +963,20 @@ namespace HaXeContext.Completion
                         expr.Member = Context.StubStringCodeProperty;
                 }
             }
+            if (expr.Member != null && string.IsNullOrEmpty(expr.Member.Type))
+            {
+                var member = (MemberModel) expr.Member.Clone();
+                InferType(ASContext.CurSciControl, member);
+                if (string.IsNullOrEmpty(member.Type))
+                {
+                    member.Type = member.Flags.HasFlag(FlagType.Variable)
+                                  || member.Flags.HasFlag(FlagType.Getter)
+                                  || member.Flags.HasFlag(FlagType.Setter)
+                        ? ASContext.Context.Features.dynamicKey
+                        : ASContext.Context.Features.voidKey;
+                }
+                expr.Member = member;
+            }
             return base.GetToolTipTextEx(expr);
         }
 
@@ -981,6 +1010,19 @@ namespace HaXeContext.Completion
                 tmp.Name = member.Name;
                 tmp.Flags |= FlagType.Function;
                 member = tmp;
+            }
+            else if (string.IsNullOrEmpty(member.Type))
+            {
+                member = (MemberModel) member.Clone();
+                InferType(ASContext.CurSciControl, member);
+                if (string.IsNullOrEmpty(member.Type))
+                {
+                    member.Type = member.Flags.HasFlag(FlagType.Variable)
+                                  || member.Flags.HasFlag(FlagType.Getter)
+                                  || member.Flags.HasFlag(FlagType.Setter)
+                        ? ASContext.Context.Features.dynamicKey
+                        : ASContext.Context.Features.voidKey;
+                }
             }
             return base.GetCalltipDef(member);
         }

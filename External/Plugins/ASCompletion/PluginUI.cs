@@ -878,13 +878,15 @@ namespace ASCompletion
                 if (hasInference && string.IsNullOrEmpty(member.Type))
                 {
                     member = (MemberModel) member.Clone();
+                    ctx.CodeComplete.InferType(sci, member);
                     if (string.IsNullOrEmpty(member.Type))
                     {
                         member.Type = member.Flags.HasFlag(FlagType.Variable)
-                                    ? ctx.Features.dynamicKey
-                                    : ctx.Features.voidKey;
+                                      || member.Flags.HasFlag(FlagType.Getter)
+                                      || member.Flags.HasFlag(FlagType.Setter) 
+                            ? ctx.Features.dynamicKey
+                            : ctx.Features.voidKey;
                     }
-                    ctx.CodeComplete.InferType(sci, member);
                 }
                 tree.Add(new MemberTreeNode(member, img));
             }
