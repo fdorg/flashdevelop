@@ -4,7 +4,7 @@ class Main {
 		foo(Math.round(1.5));
 	}
 	
-	function foo(round:Int) {
+	function foo(round:Int):Void {
 		
 	}
 }

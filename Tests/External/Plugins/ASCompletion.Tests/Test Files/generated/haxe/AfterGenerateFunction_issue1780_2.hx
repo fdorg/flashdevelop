@@ -4,7 +4,7 @@ class Main {
 		foo(round(1.5));
 	}
 	
-	function foo(round:Float) {
+	function foo(round:Float):Void {
 		
 	}
 	

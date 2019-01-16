@@ -1,10 +1,10 @@
 ﻿package;
-class Issue1880_1 {
+class Issue2613_1 {
 	public function new() {
 		foo(~/regex/);
 	}
 	
-	function foo(eReg:EReg):Void {
+	function foo(eReg:EReg) {
 		
 	}
 }

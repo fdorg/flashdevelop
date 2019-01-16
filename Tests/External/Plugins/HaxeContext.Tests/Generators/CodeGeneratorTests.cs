@@ -277,11 +277,11 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_1"))
-                    .SetName("fo|o(~/regex/). Generate private function")
+                    .SetName("fo|o(~/regex/). Generate private function. Issue 1880. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_2", GeneratorJobType.FunctionPublic, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_2"))
-                    .SetName("fo|o(~/regex/). Generate public function")
+                    .SetName("fo|o(~/regex/). Generate public function. Issue 1880. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_3", GeneratorJobType.ChangeMethodDecl, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_3"))
@@ -1797,7 +1797,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2230TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2352TestCases)),
         ]
-        public string AssignStatementToVarIssue2230(string fileName, GeneratorJobType job, bool hasGenerator)
+        public string  AssignStatementToVarIssue2230(string fileName, GeneratorJobType job, bool hasGenerator)
         {
             ((HaXeSettings) ASContext.Context.Settings).DisableTypeDeclaration = true;
             var result = ContextualGenerator(sci, fileName, job, hasGenerator);
@@ -1826,6 +1826,33 @@ namespace HaXeContext.Generators
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(fileName);
             return ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Count;
+        }
+
+        static IEnumerable<TestCaseData> DisableVoidTypeDeclarationForFunctionsIssue2613TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2613_1", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2613_1"))
+                    .SetName("fo|o(~/regex/). Generate private function")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2613");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2613_2", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2613_2"))
+                    .SetName("fo|o(~/regex/). Generate public function")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2613");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(DisableVoidTypeDeclarationForFunctionsIssue2613TestCases))
+        ]
+        public string DisableVoidTypeDeclarationForFunctionsIssue2613(string fileName, GeneratorJobType job, bool hasGenerator)
+        {
+            ((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration = true;
+            var result = ContextualGenerator(sci, fileName, job, hasGenerator);
+            ((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration = false;
+            return result;
         }
     }
 }

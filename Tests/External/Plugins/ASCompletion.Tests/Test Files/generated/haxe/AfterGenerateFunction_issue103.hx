@@ -1,5 +1,5 @@
 ﻿package;
-public class Main {
+public class Issue103_1 {
 	public function new() {
 		foo(test);
 	}

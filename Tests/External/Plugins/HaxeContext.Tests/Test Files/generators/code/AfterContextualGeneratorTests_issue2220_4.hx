@@ -4,7 +4,7 @@ class EFoo {
 		set()
 	}
 	
-	public function set() {
+	public function set():Void {
 		
 	}
 }

@@ -12,7 +12,7 @@ class EFoo {
 		], 1, 1.0, "123", {x:Int, y:Int});
 	}
 	
-	function foo(array:Array<T>, int:Int, float:Float, string:String, dynamicValue:Dynamic) {
+	function foo(array:Array<T>, int:Int, float:Float, string:String, dynamicValue:Dynamic):Void {
 		
 	}
 }

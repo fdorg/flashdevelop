@@ -2868,7 +2868,7 @@ namespace ASCompletion.Completion
                 position = sci.PositionFromLine(latest.LineTo + 1) - (sci.EOLMode == 0 ? 2 : 1);
                 sci.SetSel(position, position);
             }
-            string newMemberType = null;
+            var newMemberType = ASContext.Context.Features.voidKey;
             ASResult callerExpr = null;
             MemberModel caller = null;
             var pos = wordStartPos;
@@ -2899,7 +2899,6 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    else newMemberType = ASContext.Context.Features.voidKey;
                 }
                 newMemberType = CleanType(newMemberType);
                 // for example: 

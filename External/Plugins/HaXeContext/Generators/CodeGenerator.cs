@@ -247,7 +247,15 @@ namespace HaXeContext.Generators
                 var declaration = TemplateUtils.ToDeclarationString(member, template);
                 GenerateFunction(position, declaration, detach);
             }
-            else base.GenerateFunction(sci, member, position, inClass, detach);
+            else
+            {
+                if (((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration && member.Type == ASContext.Context.Features.voidKey)
+                {
+                    member = (MemberModel) member.Clone();
+                    member.Type = null;
+                }
+                base.GenerateFunction(sci, member, position, inClass, detach);
+            }
         }
 
         protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)

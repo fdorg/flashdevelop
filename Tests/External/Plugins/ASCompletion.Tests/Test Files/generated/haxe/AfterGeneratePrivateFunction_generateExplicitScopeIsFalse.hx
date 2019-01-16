@@ -4,7 +4,7 @@ public class Main {
 		test();
 	}
 	
-	function test() {
+	function test():Void {
 		
 	}
 }
