@@ -2923,7 +2923,7 @@ namespace ASCompletion.Completion
                                 result.InClass = inClass;
                                 if (features.hasInference && (var.Type == null || ResolveType(var.Type, inFile).IsVoid()))
                                 {
-                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(local, var);
+                                    if (var.Flags.HasFlag(FlagType.Variable)) ctx.CodeComplete.InferType(ASContext.CurSciControl, local, var);
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = ResolveType("Function", null);
@@ -2951,14 +2951,10 @@ namespace ASCompletion.Completion
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
                 {
-                    if (features.hasInference)
+                    if (features.hasInference && result.Member is MemberModel member && member.Type is null)
                     {
-                        var member = result.Member;
-                        if (member != null && member.Type == null)
-                        {
-                            ctx.CodeComplete.InferType(local, member);
-                            if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
-                        }
+                        ctx.CodeComplete.InferType(ASContext.CurSciControl, local, member);
+                        if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
                     }
                     return result;
                 }
@@ -3073,16 +3069,6 @@ namespace ASCompletion.Completion
         }
 
         public void InferType(ScintillaControl sci, MemberModel member) => InferType(sci, new ASExpr(), member);
-
-        /// <summary>
-        /// Infer very simple cases: var foo = {expression}
-        /// </summary>
-        private void InferType(ASExpr local, MemberModel member)
-        {
-            var sci = ASContext.CurSciControl;
-            if (sci == null || member.LineFrom >= sci.LineCount) return;
-            InferType(sci, local, member);
-        }
 
         protected virtual void InferType(ScintillaControl sci, ASExpr local, MemberModel member)
         {
