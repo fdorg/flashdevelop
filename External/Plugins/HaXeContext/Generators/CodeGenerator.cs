@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;

@@ -1094,8 +1094,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfPropertyGetter"))
                         .Returns(new MemberModel
                         {
-                            Flags = FlagType.Dynamic | FlagType.Function,
-                            Name = "get_foo"
+                            Flags = FlagType.Dynamic | FlagType.Function | FlagType.Inferred,
+                            Name = "get_foo",
+                            Type = "Int"
                         })
                         .SetName("Get Expression Type of property getter");
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfPropertySetter"))

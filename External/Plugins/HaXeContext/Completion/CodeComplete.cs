@@ -296,7 +296,7 @@ namespace HaXeContext.Completion
                 if (name[0] == '?')
                 {
                     if (string.IsNullOrEmpty(item.Type) && (expression.Separator != "=" || item.Value != expression.Value))
-                        InferParameterType(item);
+                        InferType(ASContext.CurSciControl, item);
                     var type = item.Type;
                     if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
                     else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
@@ -358,7 +358,7 @@ namespace HaXeContext.Completion
             if (member.Flags.HasFlag(FlagType.ParameterVar))
             {
                 if (FileParser.IsFunctionType(member.Type) || !string.IsNullOrEmpty(member.Type)) return;
-                InferParameterType(member);
+                InferParameterType(sci, member);
                 return;
             }
             var ctx = ASContext.Context;
@@ -710,7 +710,7 @@ namespace HaXeContext.Completion
             return false;
         }
 
-        static void InferParameterType(MemberModel var)
+        static void InferParameterType(ScintillaControl sci, MemberModel var)
         {
             var ctx = ASContext.Context;
             var value = var.Value;
@@ -719,7 +719,7 @@ namespace HaXeContext.Completion
             {
                 if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
                     && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
-                    type = GetExpressionType(ASContext.CurSciControl, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
+                    type = GetExpressionType(sci, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
                 if (type.IsVoid()) type = ResolveType(ctx.Features.dynamicKey, null);
             }
             var.Type = type.Name;
@@ -1102,9 +1102,8 @@ namespace HaXeContext.Completion
             if (result.IsNull())
             {
                 base.FindMemberEx(token, inClass, result, mask, access);
-                if (result.Member != null && string.IsNullOrEmpty(result.Member.Type)
-                    && result.Member.Flags.HasFlag(FlagType.Function) && !result.Member.Flags.HasFlag(FlagType.Constructor))
-                    InferFunctionType(ASContext.CurSciControl, result.Member);
+                if (result.Member != null && string.IsNullOrEmpty(result.Member.Type) && result.Member.Flags.HasFlag(FlagType.Function))
+                    InferType(ASContext.CurSciControl, result.Member);
             }
             var context = result.Context;
             var member = result.Member;
