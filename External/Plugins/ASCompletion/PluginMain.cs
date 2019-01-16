@@ -30,19 +30,13 @@ namespace ASCompletion
 {
     public class PluginMain: IPlugin
     {
-        private string pluginName = "ASCompletion";
-        private string pluginGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
-        private string pluginAuth = "FlashDevelop Team";
-        private string pluginHelp = "www.flashdevelop.org/community/";
-        private string pluginDesc = "Code completion engine for FlashDevelop.";
-
         private string dataPath;
         private string settingsFile;
         private GeneralSettings settingObject;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Image pluginIcon;
-        private EventType eventMask =
+        const EventType eventMask =
             EventType.FileOpen |
             EventType.FileSave |
             EventType.FileSwitch |
@@ -66,9 +60,9 @@ namespace ASCompletion
         private Timer timerPosition;
         private int lastHoverPosition;
 
-        private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
-        private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
-        private Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
+        private readonly Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
+        private readonly Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
+        private readonly Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
 
         const int Margin = 1;
         const int MarkerDown = 16;
@@ -86,41 +80,21 @@ namespace ASCompletion
 
         #region Required Properties
 
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
-        public string Name
-        {
-            get { return pluginName; }
-        }
+        public string Name { get; } = "ASCompletion";
 
-        public string Guid
-        {
-            get { return pluginGuid; }
-        }
+        public string Guid { get; } = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
 
-        public string Author
-        {
-            get { return pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
-        public string Description
-        {
-            get { return pluginDesc; }
-        }
+        public string Description { get; set; } = "Code completion engine for FlashDevelop.";
 
-        public string Help
-        {
-            get { return pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         [Browsable(false)]
-        public virtual Object Settings
-        {
-            get { return settingObject; }
-        }
+        public virtual object Settings => settingObject;
+
         #endregion
 
         #region Plugin Properties
@@ -641,7 +615,7 @@ namespace ASCompletion
 
         private void InitSettings()
         {
-            pluginDesc = TextHelper.GetString("Info.Description");
+            Description = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, "ASCompletion");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             else if (PluginBase.MainForm.RefreshConfig) CleanData();
@@ -686,7 +660,7 @@ namespace ASCompletion
             pluginIcon = PluginBase.MainForm.FindImage("99");
             pluginUI = new PluginUI(this);
             pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, pluginGuid, pluginIcon, DockState.DockRight);
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginIcon, DockState.DockRight);
         }
 
         private void CreateMenuItems()

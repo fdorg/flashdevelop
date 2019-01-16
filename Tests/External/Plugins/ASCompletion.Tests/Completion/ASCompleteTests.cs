@@ -1032,98 +1032,91 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfConstructor"))
-                            .Returns(new MemberModel
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfConstructor"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Access | FlagType.Function | FlagType.Constructor,
+                            Name = "Foo"
+                        })
+                        .SetName("Get Expression Type of constructor");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfConstructorParameter"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Variable | FlagType.ParameterVar,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of constructor parameter");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunction"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of function");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionParameter"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Variable | FlagType.ParameterVar,
+                            Name = "bar"
+                        })
+                        .SetName("Get Expression Type of function parameter");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionParameter2"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Variable | FlagType.ParameterVar,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of function parameter");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionWithParameter"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of function with parameter");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfLocalDynamicKey"))
+                        .Returns(null)
+                        .SetName("Get Expression Type of local dynamic object key");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfLocalDynamicValue"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of local dynamic object value");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfLocalVar"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Dynamic | FlagType.Variable | FlagType.LocalVar,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of local var");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfPropertyGetter"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Dynamic | FlagType.Function,
+                            Name = "get_foo"
+                        })
+                        .SetName("Get Expression Type of property getter");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfPropertySetter"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Dynamic | FlagType.Function | FlagType.Inferred,
+                            Name = "set_foo",
+                            Type = "Int",
+                            Parameters = new List<MemberModel>
                             {
-                                Flags = FlagType.Access | FlagType.Function | FlagType.Constructor,
-                                Name = "Foo"
-                            })
-                            .SetName("Get Expression Type of constructor");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfConstructorParameter"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Variable | FlagType.ParameterVar,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of constructor parameter");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfFunction"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of function");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionParameter"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Variable | FlagType.ParameterVar,
-                                Name = "bar"
-                            })
-                            .SetName("Get Expression Type of function parameter");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionParameter2"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Variable | FlagType.ParameterVar,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of function parameter");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionWithParameter"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of function with parameter");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfLocalDynamicKey"))
-                            .Returns(null)
-                            .SetName("Get Expression Type of local dynamic object key");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfLocalDynamicValue"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of local dynamic object value");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfLocalVar"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Dynamic | FlagType.Variable | FlagType.LocalVar,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of local var");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfPropertyGetter"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Dynamic | FlagType.Function,
-                                Name = "get_foo"
-                            })
-                            .SetName("Get Expression Type of property getter");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfPropertySetter"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Dynamic | FlagType.Function,
-                                Name = "set_foo"
-                            })
-                            .SetName("Get Expression Type of property setter");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionTypeOfVariable"))
-                            .Returns(new MemberModel
-                            {
-                                Flags = FlagType.Access | FlagType.Dynamic | FlagType.Variable,
-                                Name = "foo"
-                            })
-                            .SetName("Get Expression Type of variable");
+                                new MemberModel("v", "Dynamic", FlagType.Variable | FlagType.ParameterVar, 0)
+                            }
+                        })
+                        .SetName("Get Expression Type of property setter");
+                    yield return new TestCaseData(ReadAllText("GetExpressionTypeOfVariable"))
+                        .Returns(new MemberModel
+                        {
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Variable,
+                            Name = "foo"
+                        })
+                        .SetName("Get Expression Type of variable");
                 }
             }
 

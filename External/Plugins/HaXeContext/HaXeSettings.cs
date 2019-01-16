@@ -34,7 +34,7 @@ namespace HaXeContext
         bool disableTypeDeclaration = false;
 
         [DisplayName("Disable type declaration for variables")]
-        [Category("Code Generator")]
+        [LocalizedCategory("ASCompletion.Category.Generation")]
         [DefaultValue(false)]
         public bool DisableTypeDeclaration
         {
@@ -360,11 +360,7 @@ namespace HaXeContext
         void FireCompletionMode() => CompletionModeChanged?.Invoke();
 
         [Browsable(false)]
-        public void Init()
-        {
-            HaxeProject.saveHXML = exportHXML;
-        }
-
+        public void Init() => HaxeProject.saveHXML = exportHXML;
     }
 
     public enum HaxeCompletionModeEnum
