@@ -371,15 +371,17 @@ namespace HaXeContext.Completion
                     if (property != null)
                     {
                         if (string.IsNullOrEmpty(property.Type)) InferType(sci, property);
-                        if (!string.IsNullOrEmpty(property.Type))
-                        {
-                            member.Type = property.Type;
-                            member.Flags |= FlagType.Inferred;
-                            return;
-                        }
+                        member.Type = property.Type;
+                        member.Flags |= FlagType.Inferred;
+                        return;
                     }
                 }
                 InferFunctionType(sci, member);
+                if (string.IsNullOrEmpty(member.Type))
+                {
+                    member.Type = ctx.Features.voidKey;
+                    member.Flags |= FlagType.Inferred;
+                }
                 return;
             }
             var line = sci.GetLine(member.LineFrom);
@@ -963,20 +965,6 @@ namespace HaXeContext.Completion
                         expr.Member = Context.StubStringCodeProperty;
                 }
             }
-            if (expr.Member != null && string.IsNullOrEmpty(expr.Member.Type))
-            {
-                var member = (MemberModel) expr.Member.Clone();
-                InferType(ASContext.CurSciControl, member);
-                if (string.IsNullOrEmpty(member.Type))
-                {
-                    member.Type = member.Flags.HasFlag(FlagType.Variable)
-                                  || member.Flags.HasFlag(FlagType.Getter)
-                                  || member.Flags.HasFlag(FlagType.Setter)
-                        ? ASContext.Context.Features.dynamicKey
-                        : ASContext.Context.Features.voidKey;
-                }
-                expr.Member = member;
-            }
             return base.GetToolTipTextEx(expr);
         }
 
@@ -1010,19 +998,6 @@ namespace HaXeContext.Completion
                 tmp.Name = member.Name;
                 tmp.Flags |= FlagType.Function;
                 member = tmp;
-            }
-            else if (string.IsNullOrEmpty(member.Type))
-            {
-                member = (MemberModel) member.Clone();
-                InferType(ASContext.CurSciControl, member);
-                if (string.IsNullOrEmpty(member.Type))
-                {
-                    member.Type = member.Flags.HasFlag(FlagType.Variable)
-                                  || member.Flags.HasFlag(FlagType.Getter)
-                                  || member.Flags.HasFlag(FlagType.Setter)
-                        ? ASContext.Context.Features.dynamicKey
-                        : ASContext.Context.Features.voidKey;
-                }
             }
             return base.GetCalltipDef(member);
         }

@@ -879,14 +879,6 @@ namespace ASCompletion
                 {
                     member = (MemberModel) member.Clone();
                     ctx.CodeComplete.InferType(sci, member);
-                    if (string.IsNullOrEmpty(member.Type))
-                    {
-                        member.Type = member.Flags.HasFlag(FlagType.Variable)
-                                      || member.Flags.HasFlag(FlagType.Getter)
-                                      || member.Flags.HasFlag(FlagType.Setter) 
-                            ? ctx.Features.dynamicKey
-                            : ctx.Features.voidKey;
-                    }
                 }
                 tree.Add(new MemberTreeNode(member, img));
             }

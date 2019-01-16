@@ -747,7 +747,7 @@ namespace HaXeContext.Completion
             {
                 yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2320_1", ' ', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceTextIssue2320_1"))
-                    .SetName("override | ")
+                    .SetName("override <complete>. Issue 2320. Case 1 ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2320");
             }
         }
