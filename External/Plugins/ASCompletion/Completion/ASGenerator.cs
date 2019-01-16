@@ -3950,7 +3950,6 @@ namespace ASCompletion.Completion
         protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
             var ctx = ASContext.Context;
-            var codeGenerator = (ASGenerator)ctx.CodeGenerator;
             var curClass = ctx.CurrentClass;
             if (curClass.IsVoid()) return false;
 
@@ -4011,7 +4010,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        public static void GenerateOverride(ScintillaControl Sci, ClassModel ofClass, MemberModel member, int position)
+        public static void GenerateOverride(ScintillaControl sci, ClassModel ofClass, MemberModel member, int position)
         {
             var ctx = ASContext.Context;
             var features = ctx.Features;
@@ -4019,8 +4018,8 @@ namespace ASCompletion.Completion
             var isProxy = (member.Namespace == "flash_proxy");
             if (isProxy) typesUsed.Add("flash.utils.flash_proxy");
             
-            var line = Sci.LineFromPosition(position);
-            var currentText = Sci.GetLine(line);
+            var line = sci.LineFromPosition(position);
+            var currentText = sci.GetLine(line);
             var startPos = currentText.Length;
             GetStartPos(currentText, ref startPos, features.privateKey);
             GetStartPos(currentText, ref startPos, features.protectedKey);
@@ -4028,7 +4027,7 @@ namespace ASCompletion.Completion
             GetStartPos(currentText, ref startPos, features.publicKey);
             GetStartPos(currentText, ref startPos, features.staticKey);
             GetStartPos(currentText, ref startPos, features.overrideKey);
-            startPos += Sci.PositionFromLine(line);
+            startPos += sci.PositionFromLine(line);
 
             var newMember = new MemberModel
             {
@@ -4080,7 +4079,7 @@ namespace ASCompletion.Completion
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
                 declaration = template;
             }
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
                 if (ctx.Settings.GenerateImports && typesUsed.Count > 0)
@@ -4090,10 +4089,10 @@ namespace ASCompletion.Completion
                     position += offset;
                     startPos += offset;
                 }
-                Sci.SetSel(startPos, position + member.Name.Length);
-                InsertCode(startPos, declaration, Sci);
+                sci.SetSel(startPos, position + member.Name.Length);
+                InsertCode(startPos, declaration, sci);
             }
-            finally { Sci.EndUndoAction(); }
+            finally { sci.EndUndoAction(); }
         }
 
         protected virtual string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
@@ -4285,7 +4284,7 @@ namespace ASCompletion.Completion
             if (p > 0 && p < startPos) startPos = p;
         }
 
-        static Regex reShortType = new Regex(@"(?=\w+\.<)|(?:\w+\.)");
+        static readonly Regex reShortType = new Regex(@"(?=\w+\.<)|(?:\w+\.)");
 
         static string GetShortType(string type)
         {
