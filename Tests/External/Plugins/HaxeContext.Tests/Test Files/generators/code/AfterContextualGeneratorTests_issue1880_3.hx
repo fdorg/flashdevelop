@@ -1,10 +1,10 @@
 ﻿package;
 class Issue1880_3 {
 	public function new() {
-		foo$(EntryPoint)(~/regex/);
+		foo(~/regex/);
 	}
 	
-	function foo() {
+	function foo(eReg:EReg):Void {
 		
 	}
 }

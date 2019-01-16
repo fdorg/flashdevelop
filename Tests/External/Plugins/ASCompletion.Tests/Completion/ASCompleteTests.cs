@@ -1049,8 +1049,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunction"))
                         .Returns(new MemberModel
                         {
-                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
-                            Name = "foo"
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function | FlagType.Inferred,
+                            Name = "foo",
+                            Type = "Void"
                         })
                         .SetName("Get Expression Type of function");
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionParameter"))
@@ -1059,19 +1060,24 @@ namespace ASCompletion.Completion
                             Flags = FlagType.Variable | FlagType.ParameterVar,
                             Name = "bar"
                         })
-                        .SetName("Get Expression Type of function parameter");
+                        .SetName("Get Expression Type of function parameter. Case 1");
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionParameter2"))
                         .Returns(new MemberModel
                         {
                             Flags = FlagType.Variable | FlagType.ParameterVar,
                             Name = "foo"
                         })
-                        .SetName("Get Expression Type of function parameter");
+                        .SetName("Get Expression Type of function parameter. Case 2");
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfFunctionWithParameter"))
                         .Returns(new MemberModel
                         {
-                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
-                            Name = "foo"
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function | FlagType.Inferred,
+                            Name = "foo",
+                            Type = "Void",
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("foo", "Int", FlagType.Variable | FlagType.ParameterVar, 0)
+                            }
                         })
                         .SetName("Get Expression Type of function with parameter");
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfLocalDynamicKey"))
@@ -1080,8 +1086,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfLocalDynamicValue"))
                         .Returns(new MemberModel
                         {
-                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
-                            Name = "foo"
+                            Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function | FlagType.Inferred,
+                            Name = "foo",
+                            Type = "Void"
                         })
                         .SetName("Get Expression Type of local dynamic object value");
                     yield return new TestCaseData(ReadAllText("GetExpressionTypeOfLocalVar"))

@@ -490,7 +490,8 @@ namespace ASCompletion.Completion
         {
             // for example: return expr<generator>
             if (expr.Context.WordBefore == "return") return false;
-            return (expr.Member?.Type is string t && t != ASContext.Context.Features.voidKey) || expr.Type != ClassModel.VoidClass;
+            if (expr.Member != null) return expr.Member.Type is string t && t != ASContext.Context.Features.voidKey;
+            return expr.Type != ClassModel.VoidClass;
         }
 
         /// <summary>

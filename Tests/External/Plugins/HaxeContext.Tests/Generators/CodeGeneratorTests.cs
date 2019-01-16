@@ -284,7 +284,7 @@ namespace HaXeContext.Generators
                     .SetName("fo|o(~/regex/). Generate public function")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_3", GeneratorJobType.ChangeMethodDecl, true)
-                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_1"))
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_3"))
                     .SetName("fo|o(~/regex/). Change method declaration.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_4", GeneratorJobType.ChangeConstructorDecl, true)
