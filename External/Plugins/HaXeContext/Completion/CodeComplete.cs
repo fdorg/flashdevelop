@@ -568,38 +568,56 @@ namespace HaXeContext.Completion
                     }
                 }
                 var c = (char) sci.CharAt(i);
-                if (c == '[' && genCount == 0 && parCount == 0)
+                if (c == '[')
                 {
-                    arrCount++;
-                    isInExpr = true;
+                    if (genCount == 0 && parCount == 0)
+                    {
+                        arrCount++;
+                        isInExpr = true;
+                    }
                 }
-                else if (c == ']' && genCount == 0 && parCount == 0)
+                else if (c == ']')
                 {
-                    arrCount--;
-                    rvalueEnd = i + 1;
-                    if (arrCount < 0) break;
+                    if (genCount == 0 && parCount == 0)
+                    {
+                        arrCount--;
+                        rvalueEnd = i + 1;
+                        if (arrCount < 0) break;
+                    }
                 }
-                else if (c == '(' && genCount == 0 && arrCount == 0)
+                else if (c == '(')
                 {
-                    parCount++;
-                    isInExpr = true;
+                    if (genCount == 0 && arrCount == 0)
+                    {
+                        parCount++;
+                        isInExpr = true;
+                    }
                 }
-                else if (c == ')' && genCount == 0 && arrCount == 0)
+                else if (c == ')')
                 {
-                    parCount--;
-                    rvalueEnd = i + 1;
-                    if (parCount < 0) break;
+                    if (genCount == 0 && arrCount == 0)
+                    {
+                        parCount--;
+                        rvalueEnd = i + 1;
+                        if (parCount < 0) break;
+                    }
                 }
-                else if (c == '<' && parCount == 0 && arrCount == 0)
+                else if (c == '<')
                 {
-                    genCount++;
-                    isInExpr = true;
+                    if (parCount == 0 && arrCount == 0)
+                    {
+                        genCount++;
+                        isInExpr = true;
+                    }
                 }
-                else if (c == '>' && parCount == 0 && arrCount == 0)
+                else if (c == '>')
                 {
-                    genCount--;
-                    rvalueEnd = i + 1;
-                    if (genCount < 0) break;
+                    if (parCount == 0 && arrCount == 0)
+                    {
+                        genCount--;
+                        rvalueEnd = i + 1;
+                        if (genCount < 0) break;
+                    }
                 }
                 if (parCount > 0 || genCount > 0 || arrCount > 0) continue;
                 if (c <= ' ')
