@@ -997,14 +997,12 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsTrue"))
-                                .SetName("Generate private function");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.FunctionPublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsTrue"))
-                                .SetName("Generate public function");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsTrue"))
+                            .SetName("Generate private function");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.FunctionPublic)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsTrue"))
+                            .SetName("Generate public function");
                     }
                 }
 
@@ -1026,14 +1024,12 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunctionWithDefaultModifier"))
-                                .SetName("Generate private function with default modifier declaration");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticFunction"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticFunctionWithDefaultModifier"))
-                                .SetName("Generate private static function with default modifier declaration");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunctionWithDefaultModifier"))
+                            .SetName("Generate private function with default modifier declaration");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticFunction"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticFunctionWithDefaultModifier"))
+                            .SetName("Generate private static function with default modifier declaration");
                     }
                 }
 
@@ -1055,10 +1051,9 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextAS3("AfterGenerateProtectedFunction"))
-                                .SetName("Generate private function with protected modifier declaration");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction"), GeneratorJobType.Function)
+                            .Returns(ReadAllTextAS3("AfterGenerateProtectedFunction"))
+                            .SetName("Generate private function with protected modifier declaration");
                     }
                 }
 

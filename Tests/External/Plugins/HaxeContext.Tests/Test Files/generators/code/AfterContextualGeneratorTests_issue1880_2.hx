@@ -4,7 +4,7 @@ class Issue1880_2 {
 		foo(~/regex/);
 	}
 	
-	public function foo(eReg:EReg) {
+	public function foo(eReg:EReg):Void {
 		
 	}
 }

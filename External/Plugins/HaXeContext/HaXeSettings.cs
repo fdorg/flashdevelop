@@ -30,7 +30,6 @@ namespace HaXeContext
             set { documentationCommandLine = value; }
         }
         
-
         bool disableTypeDeclaration = false;
 
         [DisplayName("Disable type declaration for variables")]
@@ -40,6 +39,17 @@ namespace HaXeContext
         {
             get { return disableTypeDeclaration; }
             set { disableTypeDeclaration = value; }
+        }
+        
+        bool disableVoidTypeDeclaration = false;
+
+        [DisplayName("Disable void type declaration for functions")]
+        [LocalizedCategory("ASCompletion.Category.Generation")]
+        [DefaultValue(false)]
+        public bool DisableVoidTypeDeclaration
+        {
+            get { return disableVoidTypeDeclaration; }
+            set { disableVoidTypeDeclaration = value; }
         }
 
         private bool enableLeadingAsterisks = true;

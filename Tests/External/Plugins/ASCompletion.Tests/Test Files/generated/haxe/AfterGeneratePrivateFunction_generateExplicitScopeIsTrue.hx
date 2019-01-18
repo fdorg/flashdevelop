@@ -4,7 +4,7 @@ public class Main {
 		this.test();
 	}
 	
-	function test() {
+	function test():Void {
 		
 	}
 }

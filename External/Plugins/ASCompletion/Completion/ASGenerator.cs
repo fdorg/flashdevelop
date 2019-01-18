@@ -2385,7 +2385,7 @@ namespace ASCompletion.Completion
                 }
             }
             var template = TemplateUtils.GetTemplate("ToString");
-            var result = TemplateUtils.ToDeclarationWithModifiersString(resultMember, template);
+            var result = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(resultMember, template);
             result = TemplateUtils.ReplaceTemplateVariable(result, "Body", "\"[" + inClass.Name + membersString + "]\"");
             InsertCode(sci.CurrentPos, result, sci);
         }
@@ -2868,7 +2868,7 @@ namespace ASCompletion.Completion
                 position = sci.PositionFromLine(latest.LineTo + 1) - (sci.EOLMode == 0 ? 2 : 1);
                 sci.SetSel(position, position);
             }
-            string newMemberType = null;
+            var newMemberType = ASContext.Context.Features.voidKey;
             ASResult callerExpr = null;
             MemberModel caller = null;
             var pos = wordStartPos;
@@ -2899,7 +2899,6 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    else newMemberType = ASContext.Context.Features.voidKey;
                 }
                 newMemberType = CleanType(newMemberType);
                 // for example: 
@@ -2944,7 +2943,7 @@ namespace ASCompletion.Completion
             else if ((member.Flags & FlagType.Constructor) > 0)
             {
                 template = TemplateUtils.GetTemplate("Constructor");
-                template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(member, template);
                 var line = sci.LineFromPosition(position);
                 if (GetDeclarationAtLine(line).Member != null) template += $"{NewLine}{NewLine}{NewLine}";
                 else if (GetDeclarationAtLine(line + 1).Member != null) template += $"{NewLine}{NewLine}";
@@ -2953,7 +2952,7 @@ namespace ASCompletion.Completion
             {
                 var body = GetFunctionBody(member, inClass);
                 template = TemplateUtils.GetTemplate("Function");
-                template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(member, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
             }
             GenerateFunction(position, template, detach);
@@ -3148,27 +3147,26 @@ namespace ASCompletion.Completion
             lookupPosition = sci.CurrentPos;
             AddLookupPosition();
 
-            MemberModel latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("PrivateMethods"));
+            var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("PrivateMethods"));
 
-            if (latest == null)
+            if (latest is null)
                 latest = GetLatestMemberForFunction(found.InClass, GetDefaultVisibility(found.InClass), found.Member);
 
-            if (latest == null)
+            if (latest is null)
                 latest = found.Member;
 
-            int position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
+            var position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
             sci.SetSel(position, position);
 
-            FlagType flags = FlagType.Function;
+            var flags = FlagType.Function;
             if ((found.Member.Flags & FlagType.Static) > 0)
             {
                 flags |= FlagType.Static;
             }
 
-            MemberModel m = new MemberModel(newName, ctx.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
-
+            var member = new MemberModel(newName, ctx.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
             template = NewLine + TemplateUtils.GetTemplate("Function");
-            template = TemplateUtils.ToDeclarationWithModifiersString(m, template);
+            template = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(member, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", selText);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
             InsertCode(position, template, sci);
@@ -3376,7 +3374,7 @@ namespace ASCompletion.Completion
                             if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
                                 parameter.Type = ctx.CodeComplete.ToFunctionDeclarationString(parameter);
                         }
-                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
+                        decl = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
                     }
                     else if ((method.Flags & FlagType.Function) > 0)
                     {
@@ -3389,9 +3387,9 @@ namespace ASCompletion.Completion
                                     parameter.Type = ctx.CodeComplete.ToFunctionDeclarationString(parameter);
                             }
                         }
-                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                        decl = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
                     }
-                    else decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
+                    else decl = NewLine + ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
 
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", "_" + method.Name);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", features.voidKey);
@@ -3403,7 +3401,7 @@ namespace ASCompletion.Completion
                     entry = false;
                     sb.Append(decl);
                     canGenerate = true;
-                    typesUsed.Add(method.Type);
+                    if (method.Type != features.voidKey) typesUsed.Add(method.Type);
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (var param in method.Parameters)
                             typesUsed.Add(param.Type);
@@ -3428,10 +3426,7 @@ namespace ASCompletion.Completion
             finally { sci.EndUndoAction(); }
         }
 
-        protected virtual string GetGetterImplementationTemplate(MemberModel method)
-        {
-            return TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));
-        }
+        protected virtual string GetGetterImplementationTemplate(MemberModel method) => ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));
 
         private static void AddTypeOnce(ICollection<string> typesUsed, string qualifiedName)
         {
@@ -3505,14 +3500,14 @@ namespace ASCompletion.Completion
             string result;
             if ((member.Flags & FlagType.Constant) > 0)
             {
-                string template = TemplateUtils.GetTemplate("Constant");
-                result = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                var template = TemplateUtils.GetTemplate("Constant");
+                result = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(member, template);
                 result = TemplateUtils.ReplaceTemplateVariable(result, "Value", member.Value);
             }
             else
             {
-                string template = TemplateUtils.GetTemplate("Variable");
-                result = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                var template = TemplateUtils.GetTemplate("Variable");
+                result = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(member, template);
             }
 
             if (firstVar) 
@@ -3653,7 +3648,7 @@ namespace ASCompletion.Completion
                 };
                 if ((afterMethod.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
                 var template = TemplateUtils.GetTemplate("EventHandler");
-                var declaration = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+                var declaration = NewLine + ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
                 declaration = TemplateUtils.ReplaceTemplateVariable(declaration, "Void", ctx.Features.voidKey);
                 var eventName = contextMatch.Groups["event"].Value;
                 var autoRemove = AddRemoveEvent(eventName);
@@ -3721,10 +3716,10 @@ namespace ASCompletion.Completion
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
-            string template = TemplateUtils.GetTemplate("Getter");
-            string decl;
-            if (startsWithNewLine) decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
-            else decl = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            var template = TemplateUtils.GetTemplate("Getter");
+            var decl = startsWithNewLine
+                ? NewLine + ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template)
+                : ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
             if (endsWithNewLine) decl += NewLine + NewLine;
@@ -3740,8 +3735,8 @@ namespace ASCompletion.Completion
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
-            string template = TemplateUtils.GetTemplate("Setter");
-            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            var template = TemplateUtils.GetTemplate("Setter");
+            var decl = NewLine + ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey ?? "void");
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
@@ -3765,7 +3760,7 @@ namespace ASCompletion.Completion
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
-            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            var decl = NewLine + ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey ?? "void");
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
@@ -3878,9 +3873,9 @@ namespace ASCompletion.Completion
 
         private static MemberModel FindLatest(FlagType match, ClassModel inClass) => FindLatest(match, 0, inClass);
 
-        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass) => FindLatest(match, visi, inClass, true, true);
+        private static MemberModel FindLatest(FlagType match, Visibility access, ClassModel inClass) => FindLatest(match, access, inClass, true, true);
 
-        protected static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
+        protected static MemberModel FindLatest(FlagType match, Visibility access, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
         {
             MemberList list;
             if (inClass == ClassModel.VoidClass)
@@ -3895,28 +3890,28 @@ namespace ASCompletion.Completion
                 fallback = member;
                 if (isFlagMatchStrict && isVisibilityMatchStrict)
                 {
-                    if ((member.Flags & match) == match && (visi == 0 || (member.Access & visi) == visi))
+                    if ((member.Flags & match) == match && (access == 0 || (member.Access & access) == access))
                     {
                         latest = member;
                     }
                 }
                 else if (isFlagMatchStrict)
                 {
-                    if ((member.Flags & match) == match && (visi == 0 || (member.Access & visi) > 0))
+                    if ((member.Flags & match) == match && (access == 0 || (member.Access & access) > 0))
                     {
                         latest = member;
                     }
                 }
                 else if (isVisibilityMatchStrict)
                 {
-                    if ((member.Flags & match) > 0 && (visi == 0 || (member.Access & visi) == visi))
+                    if ((member.Flags & match) > 0 && (access == 0 || (member.Access & access) == access))
                     {
                         latest = member;
                     }
                 }
                 else
                 {
-                    if ((member.Flags & match) > 0 && (visi == 0 || (member.Access & visi) > 0))
+                    if ((member.Flags & match) > 0 && (access == 0 || (member.Access & access) > 0))
                     {
                         latest = member;
                     }
@@ -3939,6 +3934,9 @@ namespace ASCompletion.Completion
             sci.ReplaceSel(text);
             UpdateLookupPosition(position, text.Length - length);
         }
+
+        protected virtual string ToDeclarationWithModifiersString(MemberModel member, string template) => TemplateUtils.ToDeclarationWithModifiersString(member, template);
+
         #endregion
 
         #region override generator
@@ -3951,7 +3949,6 @@ namespace ASCompletion.Completion
         protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
             var ctx = ASContext.Context;
-            var codeGenerator = (ASGenerator)ctx.CodeGenerator;
             var curClass = ctx.CurrentClass;
             if (curClass.IsVoid()) return false;
 
@@ -4012,7 +4009,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        public static void GenerateOverride(ScintillaControl Sci, ClassModel ofClass, MemberModel member, int position)
+        public static void GenerateOverride(ScintillaControl sci, ClassModel ofClass, MemberModel member, int position)
         {
             var ctx = ASContext.Context;
             var features = ctx.Features;
@@ -4020,8 +4017,8 @@ namespace ASCompletion.Completion
             var isProxy = (member.Namespace == "flash_proxy");
             if (isProxy) typesUsed.Add("flash.utils.flash_proxy");
             
-            var line = Sci.LineFromPosition(position);
-            var currentText = Sci.GetLine(line);
+            var line = sci.LineFromPosition(position);
+            var currentText = sci.GetLine(line);
             var startPos = currentText.Length;
             GetStartPos(currentText, ref startPos, features.privateKey);
             GetStartPos(currentText, ref startPos, features.protectedKey);
@@ -4029,7 +4026,7 @@ namespace ASCompletion.Completion
             GetStartPos(currentText, ref startPos, features.publicKey);
             GetStartPos(currentText, ref startPos, features.staticKey);
             GetStartPos(currentText, ref startPos, features.overrideKey);
-            startPos += Sci.PositionFromLine(line);
+            startPos += sci.PositionFromLine(line);
 
             var newMember = new MemberModel
             {
@@ -4077,11 +4074,11 @@ namespace ASCompletion.Completion
                 newMember.Parameters = parameters;
                 var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed);
                 var template = TemplateUtils.GetTemplate("MethodOverride");
-                template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+                template = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
                 declaration = template;
             }
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
                 if (ctx.Settings.GenerateImports && typesUsed.Count > 0)
@@ -4091,10 +4088,10 @@ namespace ASCompletion.Completion
                     position += offset;
                     startPos += offset;
                 }
-                Sci.SetSel(startPos, position + member.Name.Length);
-                InsertCode(startPos, declaration, Sci);
+                sci.SetSel(startPos, position + member.Name.Length);
+                InsertCode(startPos, declaration, sci);
             }
-            finally { Sci.EndUndoAction(); }
+            finally { sci.EndUndoAction(); }
         }
 
         protected virtual string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
@@ -4102,7 +4099,7 @@ namespace ASCompletion.Completion
             var name = newMember.Name;
             if (!ofClass.Members.Contains(name, FlagType.Getter, 0)) return string.Empty;
             var result = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
-            result = TemplateUtils.ToDeclarationWithModifiersString(newMember, result);
+            result = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, result);
             result = TemplateUtils.ReplaceTemplateVariable(result, "Member", $"super.{name}");
             return result;
         }
@@ -4112,14 +4109,13 @@ namespace ASCompletion.Completion
             var name = newMember.Name;
             if (!ofClass.Members.Contains(name, FlagType.Setter, 0)) return string.Empty;
             var template = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
-            template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(newMember, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Member", $"super.{name}");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ASContext.Context.Features.voidKey ?? "void");
             return template;
         }
 
-        public static void GenerateDelegateMethods(ScintillaControl sci, MemberModel member,
-            Dictionary<MemberModel, ClassModel> selectedMembers, ClassModel classModel, ClassModel inClass)
+        public static void GenerateDelegateMethods(ScintillaControl sci, MemberModel member, Dictionary<MemberModel, ClassModel> selectedMembers, ClassModel classModel, ClassModel inClass)
         {
             var ctx = ASContext.Context;
             var generateImports = ctx.Settings.GenerateImports;
@@ -4163,7 +4159,7 @@ namespace ASCompletion.Completion
                         methodTemplate += TemplateUtils.GetTemplate("Function");
                         methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Body", "<<$(Return) >>$(Body)");
                         methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", null);
-                        methodTemplate = TemplateUtils.ToDeclarationWithModifiersString(mCopy, methodTemplate);
+                        methodTemplate = ((ASGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(mCopy, methodTemplate);
                         if (m.Type != null && m.Type.ToLower() != "void")
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Return", "return");
                         else
@@ -4286,7 +4282,7 @@ namespace ASCompletion.Completion
             if (p > 0 && p < startPos) startPos = p;
         }
 
-        static Regex reShortType = new Regex(@"(?=\w+\.<)|(?:\w+\.)");
+        static readonly Regex reShortType = new Regex(@"(?=\w+\.<)|(?:\w+\.)");
 
         static string GetShortType(string type)
         {

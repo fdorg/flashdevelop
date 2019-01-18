@@ -5,7 +5,7 @@ class Main {
 		test("".charAt);
 	}
 	
-	function test(charAt:Int->String) {
+	function test(charAt:Int->String):Void {
 		
 	}
 }

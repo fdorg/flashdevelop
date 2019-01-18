@@ -5,7 +5,7 @@ class Issue2478_1 {
 		foo(a[0]());
 	}
 	
-	static function foo(item:String) {
+	static function foo(item:String):Void {
 		
 	}
 }

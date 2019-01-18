@@ -4,7 +4,7 @@ public class Main {
 		test();
 	}
 	
-	private static function test() {
+	private static function test():Void {
 		
 	}
 }

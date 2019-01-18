@@ -6,7 +6,7 @@ class Main {
 		test(complete);
 	}
 	
-	function test(complete:Void->Bool) {
+	function test(complete:Void->Bool):Void {
 		
 	}
 }

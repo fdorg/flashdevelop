@@ -1,11 +1,11 @@
 ﻿package;
-public class Main {
+public class Issue103_15 {
 	public function new() {
 		foo(null);
 		test();
 	}
 	
-	function test() {
+	function test():Void {
 		
 	}
 	

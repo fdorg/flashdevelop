@@ -6,7 +6,7 @@ class Main {
 }
 
 class Log {
-	public static function info(string:String, array:Array<T>) {
+	public static function info(string:String, array:Array<T>):Void {
 		
 	}
 }

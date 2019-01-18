@@ -4,7 +4,7 @@ class EFoo {
 		foo(1 < 2 && 1 > 0 ? 1.0 : 0.0);
 	}
 	
-	function foo(float:Float) {
+	function foo(float:Float):Void {
 		
 	}
 }
