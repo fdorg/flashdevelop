@@ -778,7 +778,15 @@ namespace HaXeContext.Completion
                 if (expr.Value is string name && !string.IsNullOrEmpty(name) && name != ASContext.Context.Features.voidKey)
                 {
                     var wordBefore = expr.WordBefore;
-                    if (wordBefore == "new")
+                    // for example: untyped "";<position>
+                    if (string.IsNullOrEmpty(wordBefore))
+                    {
+                        var p = expr.PositionExpression - 1;
+                        wordBefore = GetWordLeft(sci, ref p);
+                        if (!string.IsNullOrEmpty(wordBefore)) expr.WordBeforePosition = p;
+                    }
+                    var hasUntyped = wordBefore == "untyped";
+                    if (hasUntyped || wordBefore == "new")
                     {
                         var p = expr.WordBeforePosition - 1;
                         wordBefore = GetWordLeft(sci, ref p);
@@ -790,9 +798,14 @@ namespace HaXeContext.Completion
                     }
                     if (wordBefore == "return")
                     {
-                        var expressionType = GetExpressionType(sci, i, false, true);
-                        var type = expressionType.Member?.Type ?? expressionType.Type?.Name;
-                        member.Type = type;
+                        if (hasUntyped) member.Type = ASContext.Context.Features.dynamicKey;
+                        else
+                        {
+                            var expressionType = GetExpressionType(sci, i, false, true);
+                            var type = expressionType.Member?.Type ?? expressionType.Type?.Name;
+                            member.Type = type;
+                        }
+                        member.Flags |= FlagType.Inferred;
                     }
                 }
                 break;
