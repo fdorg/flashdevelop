@@ -757,7 +757,7 @@ namespace HaXeContext.Completion
             return ResolveType(rvalue, ASContext.Context.CurrentModel);
         }
 
-        static void InferFunctionType(ScintillaControl sci, MemberModel expr)
+        static void InferFunctionType(ScintillaControl sci, MemberModel member)
         {
             /**
              *  for example:
@@ -770,26 +770,30 @@ namespace HaXeContext.Completion
              *      foo().<complete>
              *  }
              */
-            var endPosition = sci.PositionFromLine(expr.LineFrom);
-            for (var i = sci.LineEndPosition(expr.LineTo); i > endPosition; i--)
+            var endPosition = sci.PositionFromLine(member.LineFrom);
+            for (var i = sci.LineEndPosition(member.LineTo); i > endPosition; i--)
             {
                 if (sci.PositionIsOnComment(i) || sci.CharAt(i) != ';') continue;
-                var type = GetExpressionType(sci, i, false, true);
-                var name = type.Member?.Type ?? type.Type?.Name;
-                if (!string.IsNullOrEmpty(name) && name != ASContext.Context.Features.voidKey)
+                var expr = GetExpression(sci, i, true);
+                if (expr.Value is string name && !string.IsNullOrEmpty(name) && name != ASContext.Context.Features.voidKey)
                 {
-                    var wordBefore = type.Context.WordBefore;
+                    var wordBefore = expr.WordBefore;
                     if (wordBefore == "new")
                     {
-                        var p = type.Context.WordBeforePosition - 1;
+                        var p = expr.WordBeforePosition - 1;
                         wordBefore = GetWordLeft(sci, ref p);
                     }
                     else if (wordBefore != "return")
                     {
-                        var p = type.Context.PositionExpression;
+                        var p = expr.PositionExpression;
                         wordBefore = GetWordLeft(sci, ref p);
                     }
-                    if (wordBefore == "return") expr.Type = name;
+                    if (wordBefore == "return")
+                    {
+                        var expressionType = GetExpressionType(sci, i, false, true);
+                        var type = expressionType.Member?.Type ?? expressionType.Type?.Name;
+                        member.Type = type;
+                    }
                 }
                 break;
             }
