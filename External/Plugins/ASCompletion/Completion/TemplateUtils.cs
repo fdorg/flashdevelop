@@ -8,7 +8,7 @@ using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
-    public class TemplateUtils
+    public static class TemplateUtils
     {
         public const string boundaries_folder = "boundaries";
         public const string generators_folder = "generators";
@@ -73,74 +73,55 @@ namespace ASCompletion.Completion
             if (!string.IsNullOrEmpty(m.Type))
             {
                 if ((m.Flags & FlagType.Setter) > 0 && m.Parameters != null && m.Parameters.Count == 1)
-                    template = ReplaceTemplateVariable(template, "Type", FormatType(m.Parameters[0].Type));
-                else template = ReplaceTemplateVariable(template, "Type", FormatType(m.Type));
+                    template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(m.Parameters[0].Type));
+                else template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(m.Type));
             }
             else template = ReplaceTemplateVariable(template, "Type", null);
             template = ReplaceTemplateVariable(template, "Value", m.Value);
             return template;
         }
 
-        public static string ParametersString(MemberModel member, bool formated)
+        public static string ParametersString(MemberModel member, bool formatted)
         {
-            string template = GetTemplate("FunctionParameter");
-            string res = "";
+            var result = "";
             if (member.Parameters != null && member.Parameters.Count > 0)
             {
-                for (int i = 0; i < member.Parameters.Count; i++)
+                var template = GetTemplate("FunctionParameter");
+                for (int i = 0, count = member.Parameters.Count; i < count; i++)
                 {
-                    MemberModel param = member.Parameters[i];
-                    string one = template;
-
-                    if (i + 1 < member.Parameters.Count)
-                        one = ReplaceTemplateVariable(one, "PComma", ",");
-                    else
-                        one = ReplaceTemplateVariable(one, "PComma", null);
-
+                    var param = member.Parameters[i];
+                    var one = template;
+                    if (i + 1 < count) one = ReplaceTemplateVariable(one, "PComma", ",");
+                    else one = ReplaceTemplateVariable(one, "PComma", null);
                     one = ReplaceTemplateVariable(one, "PName", param.Name);
-
-                    if (!string.IsNullOrEmpty(param.Type))
-                        one = ReplaceTemplateVariable(one, "PType", formated ? FormatType(param.Type) : param.Type);
-                    else
-                        one = ReplaceTemplateVariable(one, "PType", null);
-
-                    if (param.Value != null)
-                        one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value.Trim());
-                    else
-                        one = ReplaceTemplateVariable(one, "PDefaultValue", null);
-
-                    res += one;
+                    if (string.IsNullOrEmpty(param.Type)) one = ReplaceTemplateVariable(one, "PType", null);
+                    else one = ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
+                    if (param.Value is null) one = ReplaceTemplateVariable(one, "PDefaultValue", null);
+                    else one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value.Trim());
+                    result += one;
                 }
             }
-            return res;
+            return result;
         }
 
         public static string CallParametersString(MemberModel member)
         {
-            string template = GetTemplate("FunctionParameter");
-            string res = "";
+            var result = "";
             if (member.Parameters != null && member.Parameters.Count > 0)
             {
-                for (int i = 0; i < member.Parameters.Count; i++)
+                var template = GetTemplate("FunctionParameter");
+                for (int i = 0, count = member.Parameters.Count; i < count; i++)
                 {
-                    MemberModel param = member.Parameters[i];
-                    string one = template;
-
-                    if (i + 1 < member.Parameters.Count)
-                        one = ReplaceTemplateVariable(one, "PComma", ",");
-                    else
-                        one = ReplaceTemplateVariable(one, "PComma", null);
-
-                    var pname = GetParamName(param);
-                    one = ReplaceTemplateVariable(one, "PName", pname);
-
+                    var param = member.Parameters[i];
+                    var one = template;
+                    one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
+                    one = ReplaceTemplateVariable(one, "PName", GetParamName(param));
                     one = ReplaceTemplateVariable(one, "PType", null);
                     one = ReplaceTemplateVariable(one, "PDefaultValue", null);
-
-                    res += one;
+                    result += one;
                 }
             }
-            return res;
+            return result;
         }
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
@@ -177,31 +158,25 @@ namespace ASCompletion.Completion
             return template;
         }
 
-        private static string FormatType(string type) => MemberModel.FormatType(type);
-
         public static MemberModel GetTemplateBlockMember(ScintillaControl sci, string blockTmpl)
         {
-            if (string.IsNullOrEmpty(blockTmpl))
-                return null;
-
-            string firstLine = blockTmpl;
-            int lineCount = 0;
-
-            int index = blockTmpl.IndexOf('\n');
+            if (string.IsNullOrEmpty(blockTmpl)) return null;
+            var firstLine = blockTmpl;
+            var lineCount = 0;
+            var index = blockTmpl.IndexOf('\n');
             if (index != -1)
             {
                 firstLine = blockTmpl.Substring(0, index);
                 lineCount = Regex.Matches(blockTmpl, "\n").Count;
             }
-
-            int lineNum = 0;
+            var lineNum = 0;
             while (lineNum < sci.LineCount)
             {
-                string line = sci.GetLine(lineNum);
-                int funcBlockIndex = line.IndexOfOrdinal(firstLine);
+                var line = sci.GetLine(lineNum);
+                var funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
-                    MemberModel latest = new MemberModel();
+                    var latest = new MemberModel();
                     latest.LineFrom = lineNum;
                     latest.LineTo = lineNum + lineCount;
                     return latest;
