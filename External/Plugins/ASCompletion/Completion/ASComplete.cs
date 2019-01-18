@@ -3398,7 +3398,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="ignoreWhiteSpace">Skip whitespace at position</param>
         /// <returns></returns>
-        private static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
+        protected static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
             var ctx = ASContext.Context;
             var haXe = ctx.CurrentModel.haXe;
