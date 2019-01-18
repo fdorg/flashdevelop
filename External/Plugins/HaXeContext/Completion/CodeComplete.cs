@@ -785,8 +785,8 @@ namespace HaXeContext.Completion
                         wordBefore = GetWordLeft(sci, ref p);
                         if (!string.IsNullOrEmpty(wordBefore)) expr.WordBeforePosition = p;
                     }
-                    var hasUntyped = wordBefore == "untyped";
-                    if (hasUntyped || wordBefore == "new")
+                    var isUntyped = wordBefore == "untyped";
+                    if (isUntyped || wordBefore == "new")
                     {
                         var p = expr.WordBeforePosition - 1;
                         wordBefore = GetWordLeft(sci, ref p);
@@ -798,7 +798,7 @@ namespace HaXeContext.Completion
                     }
                     if (wordBefore == "return")
                     {
-                        if (hasUntyped) member.Type = ASContext.Context.Features.dynamicKey;
+                        if (isUntyped) member.Type = ASContext.Context.Features.dynamicKey;
                         else
                         {
                             var expressionType = GetExpressionType(sci, i, false, true);
