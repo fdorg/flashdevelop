@@ -30,12 +30,12 @@ namespace ASCompletion.Completion
 
         public static string GetModifiers(MemberModel member) => GetModifiers(member.Access);
 
-        public static string GetModifiers(Visibility acceess)
+        public static string GetModifiers(Visibility access)
         {
-            if ((acceess & Visibility.Private) > 0) return "private ";
-            if ((acceess & Visibility.Public) > 0) return "public ";
-            if ((acceess & Visibility.Protected) > 0) return "protected ";
-            if ((acceess & Visibility.Internal) > 0) return "internal ";
+            if ((access & Visibility.Private) > 0) return "private ";
+            if ((access & Visibility.Public) > 0) return "public ";
+            if ((access & Visibility.Protected) > 0) return "protected ";
+            if ((access & Visibility.Internal) > 0) return "internal ";
             return "";
         }
 
@@ -190,10 +190,7 @@ namespace ASCompletion.Completion
             return template;
         }
 
-        private static string FormatType(string type)
-        {
-            return MemberModel.FormatType(type);
-        }
+        private static string FormatType(string type) => MemberModel.FormatType(type);
 
         public static MemberModel GetTemplateBlockMember(ScintillaControl Sci, string blockTmpl)
         {

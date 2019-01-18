@@ -247,33 +247,25 @@ namespace HaXeContext.Generators
                 var declaration = TemplateUtils.ToDeclarationString(member, template);
                 GenerateFunction(position, declaration, detach);
             }
-            else
-            {
-                if (((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration && member.Type == ASContext.Context.Features.voidKey)
-                {
-                    member = (MemberModel) member.Clone();
-                    member.Type = null;
-                }
-                base.GenerateFunction(sci, member, position, inClass, detach);
-            }
+            else base.GenerateFunction(sci, member, position, inClass, detach);
         }
 
         protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
-            if (latest != null) location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
-            else
+            if (latest is null)
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
                     if (job == GeneratorJobType.Setter) latest = FindMember("get_" + member.Name, inClass);
                     else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + member.Name, inClass);
-                    if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                    if (latest is null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
                 }
                 else latest = member;
             }
-            if (latest == null) return;
+            else location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
+            if (latest is null) return;
             sci.BeginUndoAction();
             try
             {
@@ -376,8 +368,7 @@ namespace HaXeContext.Generators
             if ((member.Flags & (FlagType.Getter | FlagType.Setter)) != 0)
             {
                 var template = TemplateUtils.GetTemplate("IGetterSetter");
-                var parameters = member.Parameters;
-                if (parameters != null)
+                if (member.Parameters is List<MemberModel> parameters)
                 {
                     if (parameters.Count > 0) template = template.Replace("get", parameters[0].Name);
                     if (parameters.Count > 1) template = template.Replace("set", parameters[1].Name);
@@ -524,7 +515,14 @@ namespace HaXeContext.Generators
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
 
-        bool CanShowGenerateSwitch(ScintillaControl sci, int position, ASResult expr)
+        protected override string ToDeclarationWithModifiersString(MemberModel member, string template)
+        {
+            if (((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration && member.Type == ASContext.Context.Features.voidKey)
+                template = TemplateUtils.ReplaceTemplateVariable(template, "Type", null);
+            return base.ToDeclarationWithModifiersString(member, template);
+        }
+
+        static bool CanShowGenerateSwitch(ScintillaControl sci, int position, ASResult expr)
         {
             var member = expr.Member;
             if (member == null

@@ -1840,6 +1840,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2613_2"))
                     .SetName("fo|o(~/regex/). Generate public function")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2613");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2613_3", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2613_3"))
+                    .SetName("implements IFoo<generator>. Implement interface methods")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2613");
             }
         }
 
