@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
@@ -11,20 +10,17 @@ namespace ASCompletion.Completion
 {
     public class TemplateUtils
     {
-        public static string boundaries_folder = "boundaries";
-        public static string generators_folder = "generators";
-        public static string template_variable = @"<<[^\$]*?\$\({0}\).*?>>";
+        public const string boundaries_folder = "boundaries";
+        public const string generators_folder = "generators";
+        public const string template_variable = @"<<[^\$]*?\$\({0}\).*?>>";
 
         public static string GetStaticExternOverride(MemberModel member)
         {
-            FlagType ft = member.Flags;
-            string modifiers = "";
-            if ((ft & FlagType.Extern) > 0)
-                modifiers += "extern ";
-            if ((ft & FlagType.Static) > 0)
-                modifiers += "static ";
-            if ((ft & FlagType.Override) > 0)
-                modifiers += "override ";
+            var modifiers = "";
+            var flags = member.Flags;
+            if ((flags & FlagType.Extern) > 0) modifiers += "extern ";
+            if ((flags & FlagType.Static) > 0) modifiers += "static ";
+            if ((flags & FlagType.Override) > 0) modifiers += "override ";
             return modifiers;
         }
 
@@ -39,41 +35,37 @@ namespace ASCompletion.Completion
             return "";
         }
 
-        public static string ToDeclarationWithModifiersString(MemberModel m, string template)
+        public static string ToDeclarationWithModifiersString(MemberModel member, string template)
         {
             var features = ASContext.Context.Features;
-            var accessModifier = m.Access == 0 && features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
-                               ? m.Namespace
-                               : GetModifiers(m).Trim();
+            var accessModifier = member.Access == 0 && features.hasNamespaces && !string.IsNullOrEmpty(member.Namespace)
+                               ? member.Namespace
+                               : GetModifiers(member).Trim();
             if (accessModifier == "private" && features.methodModifierDefault == Visibility.Private
                 && !ASContext.CommonSettings.GenerateDefaultModifierDeclaration)
                 accessModifier = null;
 
-            string modifiers = null;
-            if ((m.Flags & FlagType.Constructor) > 0) modifiers = accessModifier;
+            string modifiers;
+            if ((member.Flags & FlagType.Constructor) > 0) modifiers = accessModifier;
             else
             {
-                modifiers = GetStaticExternOverride(m);
+                modifiers = GetStaticExternOverride(member);
                 if (accessModifier != null) modifiers += accessModifier;
                 modifiers = modifiers.Trim();
                 if (modifiers.Length == 0) modifiers = null;
             }
 
-            string res = ReplaceTemplateVariable(template, "Modifiers", modifiers);
-
+            var result = ReplaceTemplateVariable(template, "Modifiers", modifiers);
             // Insert Declaration
-            res = ToDeclarationString(m, res);
-
-            return res;
+            result = ToDeclarationString(member, result);
+            return result;
         }
 
         public static string ToDeclarationString(MemberModel m, string template)
         {
             // Insert Name
-            if (m.Name != null)
-                template = ReplaceTemplateVariable(template, "Name", m.FullName);
-            else
-                template = ReplaceTemplateVariable(template, "Name", null);
+            if (m.Name is null) template = ReplaceTemplateVariable(template, "Name", null);
+            else template = ReplaceTemplateVariable(template, "Name", m.FullName);
 
             // If method, insert arguments
             template = ReplaceTemplateVariable(template, "Arguments", ParametersString(m, true));
@@ -82,14 +74,10 @@ namespace ASCompletion.Completion
             {
                 if ((m.Flags & FlagType.Setter) > 0 && m.Parameters != null && m.Parameters.Count == 1)
                     template = ReplaceTemplateVariable(template, "Type", FormatType(m.Parameters[0].Type));
-                else
-                    template = ReplaceTemplateVariable(template, "Type", FormatType(m.Type));
+                else template = ReplaceTemplateVariable(template, "Type", FormatType(m.Type));
             }
-            else
-                template = ReplaceTemplateVariable(template, "Type", null);
-
+            else template = ReplaceTemplateVariable(template, "Type", null);
             template = ReplaceTemplateVariable(template, "Value", m.Value);
-
             return template;
         }
 
@@ -157,7 +145,7 @@ namespace ASCompletion.Completion
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
         {
-            MatchCollection mc = Regex.Matches(template, String.Format(template_variable, var));
+            MatchCollection mc = Regex.Matches(template, string.Format(template_variable, var));
             int mcCount = mc.Count;
             if (mcCount > 0)
             {
@@ -174,8 +162,7 @@ namespace ASCompletion.Completion
                         val = val.Substring(2, val.Length - 4);
                         sb.Append(val);
                     }
-                    if (i == mcCount - 1)
-                        sb.Append(template.Substring(endIndex));
+                    if (i == mcCount - 1) sb.Append(template.Substring(endIndex));
                     else
                     {
                         int next = mc[i + 1].Index;
@@ -192,7 +179,7 @@ namespace ASCompletion.Completion
 
         private static string FormatType(string type) => MemberModel.FormatType(type);
 
-        public static MemberModel GetTemplateBlockMember(ScintillaControl Sci, string blockTmpl)
+        public static MemberModel GetTemplateBlockMember(ScintillaControl sci, string blockTmpl)
         {
             if (string.IsNullOrEmpty(blockTmpl))
                 return null;
@@ -208,9 +195,9 @@ namespace ASCompletion.Completion
             }
 
             int lineNum = 0;
-            while (lineNum < Sci.LineCount)
+            while (lineNum < sci.LineCount)
             {
-                string line = Sci.GetLine(lineNum);
+                string line = sci.GetLine(lineNum);
                 int funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
@@ -227,11 +214,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Templates are stored in the plugin's Data folder
         /// </summary>
-        public static string GetTemplate(string name, string altName)
-        {
-            var tmp = GetTemplate(name);
-            return tmp == "" ? GetTemplate(altName) : tmp;
-        }
+        public static string GetTemplate(string name, string altName) => GetTemplate(name) is string tmp && tmp != "" ? tmp : GetTemplate(altName);
 
         /// <summary>
         /// Templates are stored in the plugin's Data folder
@@ -270,9 +253,6 @@ namespace ASCompletion.Completion
             return content;
         }
 
-        public static string GetParamName(MemberModel param)
-        {
-            return (param.Name ?? "").Replace("?", ""); // '?' is a marker for optional arguments
-        }
+        public static string GetParamName(MemberModel param) => (param.Name ?? "").Replace("?", "");
     }
 }

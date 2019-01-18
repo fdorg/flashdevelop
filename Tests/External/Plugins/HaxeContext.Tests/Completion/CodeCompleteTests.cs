@@ -682,6 +682,10 @@ namespace HaXeContext.Completion
                     .Returns("f170_2 () : Void")
                     .SetName("f(<complete>). Issue 170. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
+                yield return new TestCaseData("CalltipDef_issue170_3")
+                    .Returns("f170_3 () : Dynamic")
+                    .SetName("f(<complete>). Issue 170. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/170");
             }
         }
 
