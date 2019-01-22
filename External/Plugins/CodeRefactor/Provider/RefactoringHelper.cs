@@ -432,30 +432,24 @@ namespace CodeRefactor.Provider
                 foreach (var pathModel in context.Classpath)
                 {
                     var absolute = project.GetAbsolutePath(pathModel.Path);
-                    if (Directory.Exists(absolute))
+                    if (!Directory.Exists(absolute) || (ignoreSdkFiles && IsUnderSDKPath(absolute))) continue;
+                    foreach (var filterMask in filters)
                     {
-                        if (ignoreSdkFiles && IsUnderSDKPath(absolute)) continue;
-                        foreach (var filterMask in filters)
-                        {
-                            files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
-                        }
+                        files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
                     }
                 }
             }
             else
             {
-                var lookupPaths = project.SourcePaths.
-                    Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language)).
-                    Select(project.GetAbsolutePath).Distinct();
+                var lookupPaths = project.SourcePaths.Concat(ProjectManager.PluginMain.Settings.GetGlobalClasspaths(project.Language));
+                if (project is Project p && p.AdditionalPaths != null) lookupPaths = lookupPaths.Concat(p.AdditionalPaths);
+                lookupPaths = lookupPaths.Select(project.GetAbsolutePath).Distinct();
                 foreach (var path in lookupPaths)
                 {
-                    if (Directory.Exists(path))
+                    if (!Directory.Exists(path) || (ignoreSdkFiles && IsUnderSDKPath(path))) continue;
+                    foreach (var filterMask in filters)
                     {
-                        if (ignoreSdkFiles && IsUnderSDKPath(path)) continue;
-                        foreach (var filterMask in filters)
-                        {
-                            files.AddRange(Directory.GetFiles(path, filterMask, SearchOption.AllDirectories));
-                        }
+                        files.AddRange(Directory.GetFiles(path, filterMask, SearchOption.AllDirectories));
                     }
                 }
             }
