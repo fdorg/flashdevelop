@@ -17,7 +17,7 @@ namespace HaXeContext
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if(document.FileName != Sci.FileName && document.IsModified) document.Save();
+                if(document.IsModified) document.Save();
             }
         }
 
