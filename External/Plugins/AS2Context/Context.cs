@@ -349,6 +349,7 @@ namespace AS2Context
                         inClass = Context.ResolveType(result.Member.Type, null);
                     result.Type = inClass;
                     result.InFile = Context.CurrentModel;
+                    result.RelClass = Context.CurrentClass;
                     return;
                 }
                 if (token == "super")
@@ -365,6 +366,7 @@ namespace AS2Context
                         result.Member = topLevel.Members.Search("super", 0, 0);
                         result.Type = extends;
                         result.InFile = extends.InFile;
+                        result.RelClass = Context.CurrentClass;
                         return;
                     }
                 }
@@ -953,7 +955,7 @@ namespace AS2Context
         /// </summary>
         protected override void InitTopLevelElements()
         {
-            string filename = "toplevel.as";
+            var filename = "toplevel.as";
             topLevel = new FileModel(filename);
 
             // search top-level declaration
@@ -1119,7 +1121,7 @@ namespace AS2Context
                 dirEntries = Directory.GetDirectories(path);
             }
             catch { }
-            if (dirEntries == null) return;
+            if (dirEntries is null) return;
 
             foreach (string entry in dirEntries)
             {
@@ -1139,12 +1141,9 @@ namespace AS2Context
         /// <returns></returns>
         public override MemberList GetTopLevelElements()
         {
-            if (topLevel != null)
-            {
-                if (topLevel.OutOfDate) InitTopLevelElements();
-                return topLevel.Members;
-            }
-            else return new MemberList();
+            if (topLevel is null) return new MemberList();
+            if (topLevel.OutOfDate) InitTopLevelElements();
+            return topLevel.Members;
         }
 
         /// <summary>

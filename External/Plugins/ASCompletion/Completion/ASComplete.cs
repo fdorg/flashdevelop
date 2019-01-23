@@ -1933,7 +1933,7 @@ namespace ASCompletion.Completion
             // get expression at cursor position
             var position = sci.CurrentPos;
             var expr = GetExpression(sci, position);
-            if (expr.Value == null) return true;
+            if (expr.Value is null) return true;
             var ctx = ASContext.Context;
             var features = ctx.Features;
             var dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
@@ -1970,27 +1970,24 @@ namespace ASCompletion.Completion
 
                 if (expr.coma == ComaExpression.AnonymousObjectParam)
                 {
-                    int cpos = sci.CurrentPos - 1;
-                    int paramIndex = FindParameterIndex(sci, ref cpos);
+                    var cpos = sci.CurrentPos - 1;
+                    var paramIndex = FindParameterIndex(sci, ref cpos);
                     if (calltipPos != cpos) ctx.CodeComplete.ResolveFunction(sci, cpos, autoHide);
-                    if (calltipMember == null) return false;
+                    if (calltipMember is null) return false;
                     argumentType = ResolveParameterType(paramIndex, true);
                     if (argumentType.IsVoid()) return false;
                 }
 
                 // complete declaration
-                MemberModel cMember = ctx.CurrentMember;
-                int line = sci.LineFromPosition(position);
-                if (cMember == null && !ctx.CurrentClass.IsVoid())
+                var cMember = ctx.CurrentMember;
+                if (cMember is null && !ctx.CurrentClass.IsVoid())
                 {
-                    if (!string.IsNullOrEmpty(expr.Value))
-                        return HandleDeclarationCompletion(sci, expr.Value, autoHide);
-                    if (ctx.CurrentModel.Version >= 2)
-                        return ASGenerator.HandleGeneratorCompletion(sci, autoHide, features.overrideKey);
+                    if (!string.IsNullOrEmpty(expr.Value)) return HandleDeclarationCompletion(sci, expr.Value, autoHide);
+                    if (ctx.CurrentModel.Version >= 2) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, features.overrideKey);
                 }
-                else if (cMember != null && line == cMember.LineFrom)
+                else if (cMember != null && sci.LineFromPosition(position) is int line && line == cMember.LineFrom)
                 {
-                    string text = sci.GetLine(line);
+                    var text = sci.GetLine(line);
                     int p;
                     if ((cMember.Flags & FlagType.Constructor) != 0 && !string.IsNullOrEmpty(features.ConstructorKey))
                         p = text.IndexOfOrdinal(features.ConstructorKey);
@@ -2078,22 +2075,21 @@ namespace ASCompletion.Completion
             }
 
             // known classes / toplevel vars/methods
-            if (argumentType == null && (result.IsNull() || (dotIndex < 0)))
+            if (argumentType is null && (result.IsNull() || (dotIndex < 0)))
             {
                 mix.Merge(ctx.CurrentModel.GetSortedMembersList());
-                mix.Merge(ctx.GetTopLevelElements());
+                if (expr.ContextFunction is null || !expr.ContextFunction.Flags.HasFlag(FlagType.Static)) mix.Merge(ctx.GetTopLevelElements());
+                else mix.Merge(ctx.GetTopLevelElements().Items.Where(it => it.Flags.HasFlag(FlagType.Static)));
                 mix.Merge(ctx.GetVisibleExternalElements());
                 mix.Merge(GetKeywords());
             }
 
             // show
-            if (list == null) list = new List<ICompletionListItem>();
+            if (list is null) list = new List<ICompletionListItem>();
             foreach (MemberModel member in mix)
             {
-                if ((member.Flags & FlagType.Template) > 0)
-                    list.Add(new TemplateItem(member));
-                else
-                    list.Add(new MemberItem(member));
+                if ((member.Flags & FlagType.Template) > 0) list.Add(new TemplateItem(member));
+                else list.Add(new MemberItem(member));
             }
             if (comparison != null) list.Sort(comparison);
             EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
@@ -2648,7 +2644,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
             var ctx = ASContext.Context;
             var features = ctx.Features;
-            ASResult head = null;
+            ASResult head;
             if (token[0] == '#')
             {
                 var mSub = re_sub.Match(token);
@@ -2681,8 +2677,9 @@ namespace ASCompletion.Completion
             {
                 var type = ctx.ResolveToken(token, inClass.InFile);
                 if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
-                if (token.Contains('<')) head = new ASResult {Type = ResolveType(token, inFile)};
-                else head = EvalVariable(token, context, inFile, inClass); // regular eval
+                head = token.Contains('<')
+                    ? new ASResult {Type = ResolveType(token, inFile)}
+                    : EvalVariable(token, context, inFile, inClass);
             }
 
             // no head, exit
@@ -2699,7 +2696,7 @@ namespace ASCompletion.Completion
             var result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
 
             // if failed, try as qualified class name
-            if ((result == null || result.IsNull()) && tokens.Length > 1) 
+            if ((result is null || result.IsNull()) && tokens.Length > 1) 
             {
                 var qualif = ResolveType(expression, null);
                 if (!qualif.IsVoid())

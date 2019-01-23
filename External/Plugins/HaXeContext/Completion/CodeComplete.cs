@@ -1100,7 +1100,7 @@ namespace HaXeContext.Completion
             var context = result.Context;
             var member = result.Member;
             // for example: Class.new<complete>
-            if (token == "new" && member != null && context != null && context.SubExpressions == null)
+            if (token == "new" && member != null && context != null && context.SubExpressions is null)
             {
                 result.IsStatic = false;
                 result.Member = new MemberModel("new", null, member.Flags & ~FlagType.Constructor & ~FlagType.Function, member.Access);

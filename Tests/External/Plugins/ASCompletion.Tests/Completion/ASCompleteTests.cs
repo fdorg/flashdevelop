@@ -505,6 +505,20 @@ namespace ASCompletion.Completion
                 }
             }
 
+
+            static IEnumerable<TestCaseData> GetExpressionTypeIssue2624TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2624_1"))
+                        .Returns(null)
+                        .SetName("this.<complete>. Issue 2624. Case 1");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2624_2"))
+                        .Returns(null)
+                        .SetName("super.<complete>. Issue 2624. Case 2");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
@@ -514,6 +528,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_XML_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionTypeIssue2429TestCases)),
+                TestCaseSource(nameof(GetExpressionTypeIssue2624TestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
@@ -1516,6 +1531,19 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionTypeIssue2624TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2624_1"))
+                        .Returns(null)
+                        .SetName("this.<complete>. Issue 2624. Case 1");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2624_2"))
+                        .Returns(null)
+                        .SetName("super.<complete>. Issue 2624. Case 2");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1535,6 +1563,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2503_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2505_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedClass_issue2536_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionTypeIssue2624TestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {

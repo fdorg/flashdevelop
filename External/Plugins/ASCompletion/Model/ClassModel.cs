@@ -147,7 +147,7 @@ namespace ASCompletion.Model
                     {
                         if (model.QualifiedName == extends.QualifiedName)
                         {
-                            string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                            var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
                             MessageBar.ShowWarning(info);
                             resolvedExtend = null;
                             return VoidClass;

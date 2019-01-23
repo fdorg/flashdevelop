@@ -245,9 +245,9 @@ namespace HaXeContext
             var paths = new List<string>();
             do
             {
-                string line = p.StandardOutput.ReadLine();
+                var line = p.StandardOutput.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
-                if (line.IndexOfOrdinal("not installed") > 0)
+                if (line.Contains("not installed"))
                 {
                     TraceManager.Add(line, (int)TraceType.Error);
                 }
@@ -395,7 +395,7 @@ namespace HaXeContext
             features.metadata = new Dictionary<string, string>();
 
             ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
-            if (processInfo == null) return;
+            if (processInfo is null) return;
             string metaList;
             using (var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true})
             {
@@ -450,7 +450,7 @@ namespace HaXeContext
                 else // assume game-related toolchain
                 {
                     lang = "cpp";
-                    if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWithOrdinal("flash"))
+                    if (contextSetup.TargetBuild is null || contextSetup.TargetBuild.StartsWithOrdinal("flash"))
                         lang = "";
                     else if (contextSetup.TargetBuild.StartsWithOrdinal("html5"))
                         lang = "js";
@@ -971,7 +971,7 @@ namespace HaXeContext
                 return completionCache.Imports;
 
             var imports = new MemberList();
-            if (inFile == null) return imports;
+            if (inFile is null) return imports;
             foreach (MemberModel item in inFile.Imports)
             {
                 if (item.Name != "*") ResolveImport(item, imports);
@@ -1025,7 +1025,7 @@ namespace HaXeContext
                     for (var i = 0; i < imports.Count; i++)
                     {
                         var import = imports[i].Type;
-                        if (import == null) continue;
+                        if (import is null) continue;
                         var p1 = import.LastIndexOf('.');
                         if (p1 == -1) continue;
                         var lpart = import.Substring(0, p1);
@@ -1036,7 +1036,7 @@ namespace HaXeContext
                         if (type.IsVoid() || type.Members.Count <= 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
-                        if (member == null) continue;
+                        if (member is null) continue;
                         member = (MemberModel) member.Clone();
                         member.InFile = type.InFile;
                         imports[i] = member;
@@ -1082,7 +1082,7 @@ namespace HaXeContext
 
                         // add all public classes of Haxe modules
                         foreach (ClassModel c in file.Classes)
-                            if (c.IndexType == null && c.Access == Visibility.Public)
+                            if (c.IndexType is null && c.Access == Visibility.Public)
                                 imports.Add(c);
                         matched = true;
                     }
@@ -1377,7 +1377,7 @@ namespace HaXeContext
         /// </summary>
         protected override void InitTopLevelElements()
         {
-            string filename = "toplevel.hx";
+            var filename = "toplevel.hx";
             topLevel = new FileModel(filename);
 
             // search top-level declaration
@@ -1395,7 +1395,7 @@ namespace HaXeContext
             if (File.Exists(filename))
             {
                 // copy declarations as file-level
-                ClassModel tlClass = topLevel.GetPublicClass();
+                var tlClass = topLevel.GetPublicClass();
                 if (!tlClass.IsVoid())
                 {
                     topLevel.Members = tlClass.Members;
@@ -1409,8 +1409,8 @@ namespace HaXeContext
                 //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
             }
 
-            topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable, Visibility.Public));
-            topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
+            topLevel.Members.Add(new MemberModel(features.ThisKey, "", FlagType.Variable, Visibility.Public));
+            topLevel.Members.Add(new MemberModel(features.BaseKey, "", FlagType.Variable, Visibility.Public));
             //topLevel.Members.Add(new MemberModel("Void", "", FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
@@ -1714,7 +1714,7 @@ namespace HaXeContext
                 if (type.Flags == FlagType.Class)
                 {
                     var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
-                    if (member == null)
+                    if (member is null)
                     {
                         type.ResolveExtends();
                         while (!(type = type.Extends).IsVoid())
@@ -1775,7 +1775,7 @@ namespace HaXeContext
         public override MemberList GetTopLevelElements()
         {
             GetVisibleExternalElements(); // update cache if needed
-            if (topLevel == null) return hxCompletionCache.OtherElements;
+            if (topLevel is null) return hxCompletionCache.OtherElements;
             var items = new MemberList();
             if (topLevel.OutOfDate) InitTopLevelElements();
             items.Add(topLevel.Members);
@@ -1793,7 +1793,7 @@ namespace HaXeContext
                 if (items.Count == 1)
                 {
                     var item = items[0];
-                    result.InClass = ClassModel.VoidClass;
+                    result.RelClass = result.InClass = Context.CurrentClass ?? ClassModel.VoidClass;
                     result.InFile = item.InFile;
                     result.Member = item;
                     result.Type = ResolveType(item.Type, item.InFile);
