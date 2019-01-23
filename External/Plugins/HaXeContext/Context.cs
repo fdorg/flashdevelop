@@ -1409,8 +1409,8 @@ namespace HaXeContext
                 //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
             }
 
-            topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable, Visibility.Public));
-            topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
+            topLevel.Members.Add(new MemberModel(features.ThisKey, "", FlagType.Variable, Visibility.Public));
+            topLevel.Members.Add(new MemberModel(features.BaseKey, "", FlagType.Variable, Visibility.Public));
             //topLevel.Members.Add(new MemberModel("Void", "", FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
