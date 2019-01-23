@@ -1250,6 +1250,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1756_1"))
                     .SetName("true ? 1 : 2;<generate> Assign statement to var. Issue 1756. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1756");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1756_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1756_2"))
+                    .SetName("true ? '' : '';<generate> Assign statement to var. Issue 1756. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1756");
             }
         }
 

@@ -4306,7 +4306,7 @@ namespace ASCompletion.Completion
                         if (!skipWS) break;
                     }
                     else if (char.IsLetterOrDigit(c)
-                             || c == '.' || c == ',' || c == ':' || c == ';' || c == '_' || c == '$'
+                             || c == '.' || c == ',' || c == ';' || c == '_' || c == '$'
                              || c == '"' || c == '\''
                              || c == ')' || c == '('
                              || c == ']' || c == '['
