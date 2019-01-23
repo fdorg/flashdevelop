@@ -245,9 +245,9 @@ namespace HaXeContext
             var paths = new List<string>();
             do
             {
-                string line = p.StandardOutput.ReadLine();
+                var line = p.StandardOutput.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
-                if (line.IndexOfOrdinal("not installed") > 0)
+                if (line.Contains("not installed"))
                 {
                     TraceManager.Add(line, (int)TraceType.Error);
                 }
