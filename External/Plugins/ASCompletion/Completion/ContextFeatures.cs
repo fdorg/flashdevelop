@@ -115,6 +115,7 @@ namespace ASCompletion.Completion
         public string[] IncrementDecrementOperators = {};
         public string[] BitwiseOperators = { };
         public string[] BooleanOperators = { };
+        public string[] TernaryOperators = { };
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')
@@ -136,8 +137,8 @@ namespace ASCompletion.Completion
         /// <returns>Keywords list</returns>
         internal List<string> GetDeclarationKeywords(string text, bool insideClass)
         {
-            List<string> access = new List<string>(accessKeywords);
-            List<string> members = new List<string>(declKeywords);
+            var access = new List<string>(accessKeywords);
+            var members = new List<string>(declKeywords);
             if (!insideClass) members.AddRange(typesKeywords);
 
             string foundMember = null;

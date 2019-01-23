@@ -1524,6 +1524,7 @@ namespace ASCompletion.Completion
                     .Concat(ctx.Features.IncrementDecrementOperators)
                     .Concat(ctx.Features.BitwiseOperators)
                     .Concat(ctx.Features.BooleanOperators)
+                    .Concat(ctx.Features.TernaryOperators)
                     .ToHashSet();
                 var sep = new[] {' '};
                 var isValid = new Func<ASExpr, bool>((c) => c.Separator.Contains(' ') 

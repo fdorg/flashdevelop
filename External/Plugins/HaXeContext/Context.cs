@@ -194,6 +194,7 @@ namespace HaXeContext
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "=="};
+            features.TernaryOperators = new[] {"?", ":"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -241,7 +242,7 @@ namespace HaXeContext
 
             Process p = StartHiddenProcess(haxePath, "path " + lib);
 
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
             do
             {
                 string line = p.StandardOutput.ReadLine();
@@ -291,8 +292,8 @@ namespace HaXeContext
             string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
             Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
 
-            List<string> paths = new List<string>();
-            bool isPathExpected = false;
+            var paths = new List<string>();
+            var isPathExpected = false;
             do
             {
                 string line = p.StandardOutput.ReadLine();
@@ -310,7 +311,7 @@ namespace HaXeContext
             }
             while (!p.StandardOutput.EndOfStream);
 
-            string error = p.StandardError.ReadToEnd();
+            var error = p.StandardError.ReadToEnd();
             if (error != "") TraceManager.Add(error, (int)TraceType.Error);
 
             p.WaitForExit();
@@ -329,7 +330,7 @@ namespace HaXeContext
                 if (File.Exists(fileName + ".exe")) fileName += ".exe";
             }
 
-            ProcessStartInfo pi = new ProcessStartInfo();
+            var pi = new ProcessStartInfo();
             pi.FileName = fileName;
             pi.Arguments = arguments;
             pi.WorkingDirectory = workingDirectory;
@@ -421,7 +422,7 @@ namespace HaXeContext
         {
             ReleaseClasspath();
             started = true;
-            if (contextSetup == null)
+            if (contextSetup is null)
             {
                 contextSetup = new ContextSetupInfos();
                 contextSetup.Classpath = new[] { Environment.CurrentDirectory };
@@ -440,7 +441,7 @@ namespace HaXeContext
             string lang = GetHaxeTarget(platform);
             features.Directives = new List<string>();
 
-            if (lang == null)
+            if (lang is null)
             {
                 if (contextSetup.Platform == "hxml")
                 {
@@ -606,7 +607,7 @@ namespace HaXeContext
 
             resolvingDot = false;
             resolvingFunction = false;
-            if (completionModeHandler == null) 
+            if (completionModeHandler is null) 
                 OnCompletionModeChange();
         }
 
@@ -614,7 +615,7 @@ namespace HaXeContext
         {
             if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
             var haxeLang = PlatformData.SupportedLanguages["haxe"];
-            if (haxeLang == null) return null;
+            if (haxeLang is null) return null;
             foreach (var platform in haxeLang.Platforms.Values)
                 if (platform.Name == platformName) return platform.HaxeTarget;
             return null;
@@ -2012,7 +2013,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
-                    if (result == null) return;
+                    if (result is null) return;
 
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 

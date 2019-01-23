@@ -3200,6 +3200,17 @@ namespace ASCompletion.Completion
                     SetAs3Features(sci);
                 }
 
+                static IEnumerable<TestCaseData> AssignStatementToVarIssue1756TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeContextualGenerator_issue1756_1", GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue1756_1"))
+                            .SetName("true ? 1 : 2;<generator> Issue 1756. Case 1.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1756");
+                    }
+                }
+
                 static IEnumerable<TestCaseData> ContextualGeneratorTestCases
                 {
                     get
@@ -3469,6 +3480,7 @@ namespace ASCompletion.Completion
 
                 [
                     Test, 
+                    TestCaseSource(nameof(AssignStatementToVarIssue1756TestCases)),
                     TestCaseSource(nameof(ContextualGeneratorTestCases)),
                     TestCaseSource(nameof(Issue2297TestCases)),
                     TestCaseSource(nameof(Issue2346TestCases)),
