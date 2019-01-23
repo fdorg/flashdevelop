@@ -267,10 +267,7 @@ namespace ASCompletion.Model
 
         #region Text output
 
-        public override string ToString()
-        {
-            return String.Format("package {0} ({1})", Package, FileName);
-        }
+        public override string ToString() => $"package {Package} ({FileName})";
 
         public string GenerateIntrinsic(bool caching)
         {

@@ -1714,7 +1714,7 @@ namespace HaXeContext
                 if (type.Flags == FlagType.Class)
                 {
                     var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
-                    if (member == null)
+                    if (member is null)
                     {
                         type.ResolveExtends();
                         while (!(type = type.Extends).IsVoid())
@@ -1775,7 +1775,7 @@ namespace HaXeContext
         public override MemberList GetTopLevelElements()
         {
             GetVisibleExternalElements(); // update cache if needed
-            if (topLevel == null) return hxCompletionCache.OtherElements;
+            if (topLevel is null) return hxCompletionCache.OtherElements;
             var items = new MemberList();
             if (topLevel.OutOfDate) InitTopLevelElements();
             items.Add(topLevel.Members);
@@ -1793,7 +1793,7 @@ namespace HaXeContext
                 if (items.Count == 1)
                 {
                     var item = items[0];
-                    result.InClass = ClassModel.VoidClass;
+                    result.RelClass = result.InClass = Context.CurrentClass ?? ClassModel.VoidClass;
                     result.InFile = item.InFile;
                     result.Member = item;
                     result.Type = ResolveType(item.Type, item.InFile);

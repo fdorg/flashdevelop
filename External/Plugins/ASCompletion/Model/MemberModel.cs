@@ -15,8 +15,8 @@ namespace ASCompletion.Model
     [Serializable]
     public class MemberModel: ICloneable, IComparable
     {
-        public static String TypedCallbackHLStart = "<[BGCOLOR=#2F90:NORMAL]"; // <- with alpha (0x02)
-        public static String TypedCallbackHLEnd = "[/BGCOLOR]>";
+        public static string TypedCallbackHLStart = "<[BGCOLOR=#2F90:NORMAL]"; // <- with alpha (0x02)
+        public static string TypedCallbackHLEnd = "[/BGCOLOR]>";
 
         public FileModel InFile;
         public bool IsPackageLevel;
@@ -47,7 +47,7 @@ namespace ASCompletion.Model
             Access = access;
         }
 
-        virtual public string FullName
+        public virtual string FullName
         {
             get
             {
@@ -59,9 +59,9 @@ namespace ASCompletion.Model
         /// <summary>
         /// Clone member
         /// </summary>
-        public Object Clone()
+        public object Clone()
         {
-            MemberModel copy = new MemberModel();
+            var copy = new MemberModel();
             copy.Name = Name;
             copy.Template = Template;
             copy.Flags = Flags;
@@ -168,7 +168,7 @@ namespace ASCompletion.Model
 
         public string ParametersString() => ParametersString(false);
 
-        public string ParametersString(bool formated)
+        public string ParametersString(bool formatted)
         {
             string res = "";
             if (Parameters != null && Parameters.Count > 0)
@@ -353,10 +353,7 @@ namespace ASCompletion.Model
         /// <param name="item">Item to merge</param>
         public void Merge(MemberModel item)
         {
-            if (item == null) return;
-            var list = new MemberList();
-            list.Add(item);
-            Merge(list);
+            if (item != null) Merge(new MemberList {item});
         }
         
         /// <summary>
@@ -365,28 +362,37 @@ namespace ASCompletion.Model
         /// <param name="list">Items to merge</param>
         public void Merge(MemberList list)
         {
-            if (list == null) return;
-            int index = 0;
-            foreach (MemberModel m in list)
+            if (list != null) Merge(list.Items);
+        }
+        
+        /// <summary>
+        /// Merge SORTED lists without duplicate values
+        /// </summary>
+        /// <param name="list">Items to merge</param>
+        public void Merge(IEnumerable<MemberModel> list)
+        {
+            if (list is null) return;
+            var index = 0;
+            foreach (var it in list)
             {
                 var added = false;
                 while (index < items.Count)
                 {
                     var item = items[index];
-                    if (m.Name.CompareTo(item.Name) <= 0)
+                    if (it.Name.CompareTo(item.Name) <= 0)
                     {
-                        if (m.Name != item.Name) items.Insert(index, m);
+                        if (it.Name != item.Name) items.Insert(index, it);
                         else if ((item.Flags & FlagType.Setter) > 0)
                         {
                             items.RemoveAt(index);
-                            items.Insert(index, m);
+                            items.Insert(index, it);
                         }
                         added = true;
                         break;
                     }
                     index++;
                 }
-                if (!added) items.Add(m);
+                if (!added) items.Add(it);
             }
         }
 
