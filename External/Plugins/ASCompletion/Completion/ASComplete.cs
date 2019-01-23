@@ -2644,7 +2644,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
             var ctx = ASContext.Context;
             var features = ctx.Features;
-            ASResult head = null;
+            ASResult head;
             if (token[0] == '#')
             {
                 var mSub = re_sub.Match(token);
@@ -2677,8 +2677,9 @@ namespace ASCompletion.Completion
             {
                 var type = ctx.ResolveToken(token, inClass.InFile);
                 if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
-                if (token.Contains('<')) head = new ASResult {Type = ResolveType(token, inFile)};
-                else head = EvalVariable(token, context, inFile, inClass); // regular eval
+                head = token.Contains('<')
+                    ? new ASResult {Type = ResolveType(token, inFile)}
+                    : EvalVariable(token, context, inFile, inClass);
             }
 
             // no head, exit
@@ -2686,7 +2687,7 @@ namespace ASCompletion.Completion
 
             // accessing instance member in static function, exit
             if (IsStatic(context.ContextFunction) && context.WordBefore != features.overrideKey
-                && (/*head.RelClass == null || */head.RelClass == inClass)
+                && head.RelClass == inClass
                 && head.Member != null && !IsStatic(head.Member)
                 && (head.Member.Flags & FlagType.Constructor) == 0)
                 return notFound;
@@ -2695,7 +2696,7 @@ namespace ASCompletion.Completion
             var result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
 
             // if failed, try as qualified class name
-            if ((result == null || result.IsNull()) && tokens.Length > 1) 
+            if ((result is null || result.IsNull()) && tokens.Length > 1) 
             {
                 var qualif = ResolveType(expression, null);
                 if (!qualif.IsVoid())
