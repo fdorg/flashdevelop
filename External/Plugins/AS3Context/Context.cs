@@ -138,6 +138,7 @@ namespace AS3Context
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!==", "==="};
+            features.TernaryOperators = new[] {"?", ":"};
             features.Literals = new HashSet<string> {"int", "uint"};
             /* INITIALIZATION */
 

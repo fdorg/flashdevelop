@@ -1297,6 +1297,8 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedClass_issue2536_1.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedClass_issue2536_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_ParameterizedClass_issue2536_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeContextualGenerator_issue1756_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterContextualGenerator_issue1756_1.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
