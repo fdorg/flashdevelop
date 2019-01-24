@@ -3319,6 +3319,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods_issue2280_2"))
                             .SetName("Implement interface methods. Issue 2280. Case 2")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2280");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2628_1", GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterContextualGenerator_issue2628_1"))
+                            .SetName("!true;<generator> Issue 2628. Case 1.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2628");
                     }
                 }
 
