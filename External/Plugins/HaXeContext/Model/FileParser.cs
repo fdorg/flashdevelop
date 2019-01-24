@@ -2189,9 +2189,12 @@ namespace HaXeContext.Model
 
         #endregion
 
-        public static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features) => FunctionTypeToMemberModel(type, features, new MemberModel());
+        public static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features) where T : MemberModel, new()
+        {
+            return FunctionTypeToMemberModel(type, features, new T());
+        }
 
-        internal static MemberModel FunctionTypeToMemberModel(string type, ContextFeatures features, MemberModel result)
+        internal static T FunctionTypeToMemberModel<T>(string type, ContextFeatures features, T result) where T : MemberModel
         {
             type = CleanFunctionType(type);
             var voidKey = features.voidKey;

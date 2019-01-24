@@ -85,27 +85,14 @@ namespace HaXeContext.Completion
                     // for example: SomeType->(<complete>
                     if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                    // for example: someFunction(<complete>
+                    if (HandleFunctionCompletion(sci, sci.CurrentPos, autoHide)) return false;
                     // for example: @:forward(<complete> or @:forwardStatics(<complete>
-                    return HandleForwardCompletion(sci, autoHide);
+                    return HandleMetadataForwardCompletion(sci, autoHide);
             }
             return false;
             // Utils
             bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is ClassModel t && !t.IsVoid();
-        }
-
-        static bool HandleMetadataCompletion(bool autoHide)
-        {
-            var list = new List<ICompletionListItem>();
-            foreach (var meta in ASContext.Context.Features.metadata)
-            {
-                var member = new MemberModel();
-                member.Name = meta.Key;
-                member.Comments = meta.Value;
-                member.Type = "Compiler Metadata";
-                list.Add(new MemberItem(member));
-                CompletionList.Show(list, autoHide);
-            }
-            return true;
         }
 
         /// <inheritdoc />
@@ -130,8 +117,10 @@ namespace HaXeContext.Completion
                             else break;
                         }
                     }
+                    // for example: someFunction(<complete>
+                    if (HandleFunctionCompletion(sci, position, autoHide)) return true;
                     // for example: @:forward(methodName, <complete> or @:forwardStatics(methodName, <complete>
-                    return HandleForwardCompletion(sci, autoHide);
+                    return HandleMetadataForwardCompletion(sci, autoHide);
                 }
                 return false;
             }
@@ -143,118 +132,22 @@ namespace HaXeContext.Completion
             return wordLeft == "case" && HandleSwitchCaseCompletion(sci, position, autoHide);
         }
 
-        bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
+        static bool HandleMetadataCompletion(bool autoHide)
         {
-            var c = (char) sci.CharAt(position);
-            var expr = GetExpressionType(sci, position, false, true);
-            if (!(expr.Type is ClassModel type)) return false;
-            var ctx = ASContext.Context;
-            // for example: function(v:Bool = <complete>, var v:Bool = <complete>, v != <complete>, v == <complete>
-            if ((c == ' ' || c == '!' || c == '=') && type.Name == ctx.Features.booleanKey)
+            var list = new List<ICompletionListItem>();
+            foreach (var meta in ASContext.Context.Features.metadata)
             {
-                var word = sci.GetWordFromPosition(sci.CurrentPos);
-                if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word))
-                    completionHistory[ctx.CurrentClass.QualifiedName] = "true";
-                return HandleDotCompletion(sci, autoHide, null, (a, b) =>
-                {
-                    var aLabel = (a as TemplateItem)?.Label;
-                    var bLabel = (b as TemplateItem)?.Label;
-                    if (IsBool(aLabel) && IsBool(bLabel))
-                    {
-                        if (aLabel == "true") return -1;
-                        return 1;
-                    }
-                    if (IsBool(aLabel)) return -1;
-                    if (IsBool(bLabel)) return 1;
-                    return 0;
-                    // Utils
-                    bool IsBool(string s) => s == "true" || s == "false";
-                });
+                var member = new MemberModel();
+                member.Name = meta.Key;
+                member.Comments = meta.Value;
+                member.Type = "Compiler Metadata";
+                list.Add(new MemberItem(member));
+                CompletionList.Show(list, autoHide);
             }
-            // for example: function(v:Type = <complete>
-            if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
-            {
-                if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
-                CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
-                return true;
-            }
-            // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
-            if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
-            {
-                MemberModel member;
-                // for example: (v:Void->Void) = <complete>
-                if (IsFunction(expr.Member)) member = expr.Member;
-                // for example: var v:Void->Void = <complete>
-                else
-                {
-                    var functionType = type.Name;
-                    while (expr.Context.Separator == "->")
-                    {
-                        expr = GetExpressionType(sci, expr.Context.SeparatorPosition, false, true);
-                        if (expr.Type == null) return false;
-                        functionType = expr.Type.Name + "->" + functionType;
-                    }
-                    member =  FileParser.FunctionTypeToMemberModel(functionType, ctx.Features);
-                }
-                if (member == null) return false;
-                var functionName = "function() {}";
-                var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
-                if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
-                {
-                    functionName = "() -> {}";
-                    list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
-                }
-                var word = sci.GetWordFromPosition(sci.CurrentPos);
-                if (string.IsNullOrEmpty(word) || functionName.StartsWithOrdinal(word))
-                    completionHistory[ctx.CurrentClass.QualifiedName] = functionName;
-                return HandleDotCompletion(sci, autoHide, list, null);
-            }
-            // for example: v = <complete>, v != <complete>, v == <complete>
-            if ((c == ' ' || c == '!' || c == '='))
-            {
-                if (IsEnum(type))
-                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
-                    {
-                        var aMember = (a as MemberItem)?.Member;
-                        var bMember = (b as MemberItem)?.Member;
-                        var aType = aMember?.Type;
-                        var bType = bMember?.Type;
-                        if (aType != null && aType == type.Name && IsEnumValue(aMember.Flags)
-                            && bType == type.Name && IsEnumValue(bMember.Flags))
-                        {
-                            return aMember.Name.CompareTo(bMember.Name);
-                        }
-
-                        if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
-                        if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
-                        return 0;
-                        // Utils
-                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
-                    });
-                if (ctx.GetDefaultValue(type.Name) == "null")
-                {
-                    var word = sci.GetWordFromPosition(sci.CurrentPos);
-                    if (string.IsNullOrEmpty(word) || "null".StartsWithOrdinal(word))
-                        completionHistory[ctx.CurrentClass.QualifiedName] = "null";
-                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
-                    {
-                        if ((a as TemplateItem)?.Label == "null") return -1;
-                        if ((b as TemplateItem)?.Label == "null") return 1;
-                        return 0;
-                    });
-                }
-                return HandleDotCompletion(sci, autoHide, null, null);
-            }
-            return false;
-            // Utils
-            bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
-                                         || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
-                                             && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
-
-            bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
+            return true;
         }
 
-        bool HandleForwardCompletion(ScintillaControl sci, bool autoHide)
+        bool HandleMetadataForwardCompletion(ScintillaControl sci, bool autoHide)
         {
             var ctx = ASContext.Context;
             if (!ctx.CurrentClass.IsVoid()) return false;
@@ -295,6 +188,148 @@ namespace HaXeContext.Completion
                 return true;
             }
             return false;
+        }
+
+        bool HandleFunctionCompletion(ScintillaControl sci, int position, bool autoHide)
+        {
+            var pos = position - 1;
+            var paramIndex = FindParameterIndex(sci, ref pos);
+            if (pos != -1 && ResolveFunction(sci, pos, autoHide)
+                && calltipMember?.Parameters is List<MemberModel> parameters && paramIndex < parameters.Count
+                && parameters[paramIndex] is MemberModel parameter && parameter.Type is string parameterType)
+            {
+                ClassModel type;
+                if (FileParser.IsFunctionType(parameterType))
+                {
+                    type = FileParser.FunctionTypeToMemberModel<ClassModel>(parameterType, ASContext.Context.Features);
+                    type.Flags |= FlagType.Function;
+                }   
+                else type = ResolveType(parameterType, calltipMember.InFile);
+                if (!type.IsVoid())
+                {
+                    HandleAssignCompletion(sci, autoHide, ' ', type, new ASResult {Context = new ASExpr(), Member = type, Type = type});
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="position">Current cursor position</param>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Auto-completion has been handled</returns>
+        bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
+        {
+            var expr = GetExpressionType(sci, position, false, true);
+            return expr.Type is ClassModel type && HandleAssignCompletion(sci, autoHide, (char) sci.CharAt(position), type, expr);
+        }
+
+        bool HandleAssignCompletion(ScintillaControl sci, bool autoHide, char c, ClassModel type, ASResult expr)
+        {
+            var ctx = ASContext.Context;
+            // for example: function(v:Bool = <complete>, var v:Bool = <complete>, v != <complete>, v == <complete>
+            if ((c == ' ' || c == '!' || c == '=') && type.Name == ctx.Features.booleanKey)
+            {
+                var word = sci.GetWordFromPosition(sci.CurrentPos);
+                if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word)) 
+                    completionHistory[ctx.CurrentClass.QualifiedName] = "true";
+                return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                {
+                    var aLabel = (a as TemplateItem)?.Label;
+                    var bLabel = (b as TemplateItem)?.Label;
+                    if (IsBool(aLabel) && IsBool(bLabel))
+                    {
+                        if (aLabel == "true") return -1;
+                        return 1;
+                    }
+                    if (IsBool(aLabel)) return -1;
+                    if (IsBool(bLabel)) return 1;
+                    return 0;
+                    // Utils
+                    bool IsBool(string s) => s == "true" || s == "false";
+                });
+            }
+            // for example: function(v:Type = <complete>
+            if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
+            {
+                if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
+                CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
+                return true;
+            }
+            // for example: var v:Void->Void = <complete>, (v:Void->Void) = <complete>
+            if (c == ' ' && (expr.Context.Separator == "->" || IsFunction(expr.Member)))
+            {
+                MemberModel member;
+                // for example: (v:Void->Void) = <complete>
+                if (IsFunction(expr.Member)) member = expr.Member;
+                // for example: var v:Void->Void = <complete>
+                else
+                {
+                    var functionType = type.Name;
+                    while (expr.Context.Separator == "->")
+                    {
+                        expr = GetExpressionType(sci, expr.Context.SeparatorPosition, false, true);
+                        if (expr.Type == null) return false;
+                        functionType = expr.Type.Name + "->" + functionType;
+                    }
+                    member = FileParser.FunctionTypeToMemberModel<MemberModel>(functionType, ctx.Features);
+                }
+                if (member == null) return false;
+                var functionName = "function() {}";
+                var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
+                if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
+                {
+                    functionName = "() -> {}";
+                    list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
+                }
+                var word = sci.GetWordFromPosition(sci.CurrentPos);
+                if (string.IsNullOrEmpty(word) || functionName.StartsWithOrdinal(word)) completionHistory[ctx.CurrentClass.QualifiedName] = functionName;
+                return HandleDotCompletion(sci, autoHide, list, null);
+            }
+            // for example: v = <complete>, v != <complete>, v == <complete>
+            if ((c == ' ' || c == '!' || c == '='))
+            {
+                if (IsEnum(type))
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    {
+                        var aMember = (a as MemberItem)?.Member;
+                        var bMember = (b as MemberItem)?.Member;
+                        var aType = aMember?.Type;
+                        var bType = bMember?.Type;
+                        if (aType != null && aType == type.Name && IsEnumValue(aMember.Flags)
+                            && bType == type.Name && IsEnumValue(bMember.Flags))
+                        {
+                            return aMember.Name.CompareTo(bMember.Name);
+                        }
+
+                        if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
+                        if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
+                        return 0;
+
+                        // Utils
+                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                    });
+                if (ctx.GetDefaultValue(type.Name) == "null")
+                {
+                    var word = sci.GetWordFromPosition(sci.CurrentPos);
+                    if (string.IsNullOrEmpty(word) || "null".StartsWithOrdinal(word))
+                        completionHistory[ctx.CurrentClass.QualifiedName] = "null";
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    {
+                        if ((a as TemplateItem)?.Label == "null") return -1;
+                        if ((b as TemplateItem)?.Label == "null") return 1;
+                        return 0;
+                    });
+                }
+                return HandleDotCompletion(sci, autoHide, null, null);
+            }
+            return false;
+            // Utils
+            bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
+                                         || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
+                                             && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
+
+            bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
@@ -1026,7 +1061,7 @@ namespace HaXeContext.Completion
         {
             if ((member.Flags & FlagType.ParameterVar) != 0 && FileParser.IsFunctionType(member.Type))
             {
-                var tmp = FileParser.FunctionTypeToMemberModel(member.Type, ASContext.Context.Features);
+                var tmp = FileParser.FunctionTypeToMemberModel<MemberModel>(member.Type, ASContext.Context.Features);
                 tmp.Name = member.Name;
                 tmp.Flags |= FlagType.Function;
                 member = tmp;
@@ -1337,7 +1372,7 @@ namespace HaXeContext.Completion
 
         public override MemberModel FunctionTypeToMemberModel(string type, FileModel inFile)
         {
-            var result = FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
+            var result = FileParser.FunctionTypeToMemberModel<MemberModel>(type, ASContext.Context.Features);
             return result.Type != type ? result : null;
         }
 
