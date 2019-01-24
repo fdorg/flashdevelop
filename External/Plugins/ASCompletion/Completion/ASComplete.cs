@@ -725,10 +725,10 @@ namespace ASCompletion.Completion
 
         public static void OpenVirtualFile(FileModel model)
         {
-            string ext = Path.GetExtension(model.FileName);
+            var ext = Path.GetExtension(model.FileName);
             if (ext == "") ext = model.Context.GetExplorerMask()[0].Replace("*", "");
-            string dummyFile = Path.Combine(Path.GetDirectoryName(model.FileName), "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
-            foreach (ITabbedDocument doc in ASContext.MainForm.Documents)
+            var dummyFile = Path.Combine(Path.GetDirectoryName(model.FileName), "[model] " + Path.GetFileNameWithoutExtension(model.FileName) + ext);
+            foreach (var doc in ASContext.MainForm.Documents)
             {
                 if (doc.FileName == dummyFile)
                 {
@@ -738,13 +738,12 @@ namespace ASCompletion.Completion
             }
             // nice output
             model.Members.Sort();
-            foreach (ClassModel aClass in model.Classes) aClass.Members.Sort();
-            string src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
-            ITabbedDocument temp = ASContext.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) as ITabbedDocument;
-            if (temp != null && temp.IsEditable) 
+            foreach (var aClass in model.Classes) aClass.Members.Sort();
+            var src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
+            if (ASContext.MainForm.CreateEditableDocument(dummyFile, src, Encoding.UTF8.CodePage) is ITabbedDocument tmp && tmp.IsEditable) 
             {
                 // The model document will be read only
-                temp.SciControl.IsReadOnly = true;
+                tmp.SciControl.IsReadOnly = true;
             }
         }
 
@@ -755,7 +754,7 @@ namespace ASCompletion.Completion
 
         public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
         {
-            if (sci == null || line <= 0) return;
+            if (sci == null || line <= 0 || string.IsNullOrEmpty(name)) return;
             ASContext.Context.CodeComplete.LocateMember(sci, line, keyword, name);
         }
 
@@ -766,36 +765,26 @@ namespace ASCompletion.Completion
 
         protected void LocateMember(ScintillaControl sci, int line, string pattern)
         {
-            try
+            var found = false;
+            var re = new Regex(pattern);
+            for (int i = line, lineCount = sci.LineCount; i < line + 2 && i < lineCount; i++)
             {
-                var found = false;
-                var re = new Regex(pattern);
-                for (var i = line; i < line + 2; i++)
-                {
-                    if (i < sci.LineCount)
-                    {
-                        var text = sci.GetLine(i);
-                        var m = re.Match(text);
-                        if (!m.Success) continue;
-                        var position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
-                        sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
-                        sci.SetSel(position, position + m.Groups["name"].Length);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    sci.EnsureVisible(line);
-                    var linePos = sci.PositionFromLine(line);
-                    sci.SetSel(linePos, linePos);
-                }
-                sci.Focus();
+                var text = sci.GetLine(i);
+                var m = re.Match(text);
+                if (!m.Success) continue;
+                var position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
+                sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
+                sci.SetSel(position, position + m.Groups["name"].Length);
+                found = true;
+                break;
             }
-            catch
+            if (!found)
             {
-                // ignored
+                sci.EnsureVisible(line);
+                var linePos = sci.PositionFromLine(line);
+                sci.SetSel(linePos, linePos);
             }
+            sci.Focus();
         }
 
         /// <summary>
