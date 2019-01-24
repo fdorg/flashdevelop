@@ -352,7 +352,7 @@ namespace HaXeContext.Generators
                 if (type == "haxe.Constraints.Function") return string.Empty;
                 if (FileParser.IsFunctionType(type))
                 {
-                    var member = FileParser.FunctionTypeToMemberModel(type, ASContext.Context.Features);
+                    var member = FileParser.FunctionTypeToMemberModel<MemberModel>(type, ASContext.Context.Features);
                     if (member.Parameters.Count > 0 && member.Parameters[0].Type is string result)
                     {
                         if (result.Equals(ASContext.Context.Features.voidKey)) return string.Empty;

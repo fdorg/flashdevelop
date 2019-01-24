@@ -1,3 +1,1 @@
-function($(Arguments))<<:$(Type)>> $(CSLB){
-	<<$(Body)>>$(EntryPoint)
-}
+function($(Arguments))<<:$(Type)>> { <<$(Body)>>$(EntryPoint) }

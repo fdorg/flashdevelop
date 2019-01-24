@@ -1391,7 +1391,7 @@ namespace ASCompletion.Completion
 
         #region function_completion
         internal static string calltipDef;
-        static private MemberModel calltipMember;
+        protected static MemberModel calltipMember;
         static private bool calltipDetails;
         static private int calltipPos = -1;
         static private int calltipOffset;
@@ -1575,7 +1575,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Position obtained by FindParameterIndex()</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Function successfully resolved</returns>
-        internal bool ResolveFunction(ScintillaControl sci, int position, bool autoHide)
+        protected internal bool ResolveFunction(ScintillaControl sci, int position, bool autoHide)
         {
             calltipPos = 0;
             calltipMember = null;
@@ -1730,7 +1730,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Locate beginning of function call parameters and return index of current parameter
         /// </summary>
-        internal static int FindParameterIndex(ScintillaControl sci, ref int position)
+        protected internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var ctx = ASContext.Context;
@@ -1794,6 +1794,12 @@ namespace ASCompletion.Completion
                 else if (c == '?' && genCount > 0) genCount = 0;
                 else if (c == '>')
                 {
+                    // for example: ->
+                    if (position - 1 >= endPosition && sci.CharAt(position - 1) == '-')
+                    {
+                        position -= 2;
+                        continue;
+                    }
                     if (hasChar)
                     {
                         position--;
