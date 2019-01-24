@@ -193,7 +193,7 @@ namespace HaXeContext
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
-            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "=="};
+            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!"};
             features.TernaryOperators = new[] {"?", ":"};
             /* INITIALIZATION */
 
