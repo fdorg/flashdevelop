@@ -1135,17 +1135,21 @@ namespace HaXeContext.Completion
         {
             get
             {
-                yield return new TestCaseData("BeforeOnChar_issue2632_1", '(', false, true)
+                yield return new TestCaseData("BeforeOnChar_issue2632_1", '(', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2632_1"))
                     .SetName("someMethod(<complete> Issue 2632. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2632");
-                yield return new TestCaseData("BeforeOnChar_issue2632_2", ' ', false, true)
+                yield return new TestCaseData("BeforeOnChar_issue2632_2", ' ', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2632_2"))
                     .SetName("someMethod(<complete> Issue 2632. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2632");
-                yield return new TestCaseData("BeforeOnChar_issue2632_3", ' ', false, true)
+                yield return new TestCaseData("BeforeOnChar_issue2632_3", ' ', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2632_3"))
                     .SetName("someMethod(<complete> Issue 2632. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2632");
+                yield return new TestCaseData("BeforeOnChar_issue2632_4", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2632_4"))
+                    .SetName("someMethod(<complete> Issue 2632. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2632");
             }
         }

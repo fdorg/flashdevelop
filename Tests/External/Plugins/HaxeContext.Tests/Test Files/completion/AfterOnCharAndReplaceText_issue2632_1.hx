@@ -1,7 +1,7 @@
 ﻿package;
 class Issue2632_1 {
 	public function new() {
-		f(() -> {  })
+		f(function():Void {  })
 	}
 	function f(v:Void->Void) {}
 }
