@@ -298,11 +298,11 @@ namespace HaXeContext.Completion
         {
             get
             {
-                yield return new TestCaseData("BeforeOnChar_issue2518_1", ' ', false, false)
-                    .SetName("(v:Void->Void) == <complete> Issue 2518. Case 1")
+                yield return new TestCaseData("BeforeOnChar_issue2518_1", ' ', false, true)
+                    .SetName("if((v:Void->Void) == <complete> Issue 2518. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2518");
-                yield return new TestCaseData("BeforeOnChar_issue2518_2", ' ', false, false)
-                    .SetName("(v:Void->Void) != <complete> Issue 2518. Case 2")
+                yield return new TestCaseData("BeforeOnChar_issue2518_2", ' ', false, true)
+                    .SetName("if((v:Void->Void) != <complete> Issue 2518. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2518");
                 yield return new TestCaseData("BeforeOnChar_issue2518_3", ' ', false, false)
                     .SetName("(v:Void->Void) += <complete> Issue 2518. Case 3")
@@ -395,6 +395,22 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharIssue2630TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnChar_issue2630_1", ' ', false, true)
+                    .SetName("var v:Bool = <complete> Issue 2630. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2630");
+                yield return new TestCaseData("BeforeOnChar_issue2630_2", ' ', false, false)
+                    .SetName("var v:Bool |= <complete> Issue 2630. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2630");
+                yield return new TestCaseData("BeforeOnChar_issue2630_3", ' ', false, true)
+                    .SetName("var v:Null<Int> = <complete> Issue 2630. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2630");
+            }
+        }
+
         [
             Test, 
             TestCaseSource(nameof(OnCharIssue2105TestCases)),
@@ -408,6 +424,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharIssue2526TestCases)),
             TestCaseSource(nameof(OnCharIssue2598TestCases)),
             TestCaseSource(nameof(OnCharIssue170TestCases)),
+            TestCaseSource(nameof(OnCharIssue2630TestCases)),
         ]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
         {

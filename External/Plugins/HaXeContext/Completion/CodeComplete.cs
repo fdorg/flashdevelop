@@ -149,31 +149,31 @@ namespace HaXeContext.Completion
             var expr = GetExpressionType(sci, position, false, true);
             if (!(expr.Type is ClassModel type)) return false;
             var ctx = ASContext.Context;
+            // for example: function(v:Bool = <complete>, var v:Bool = <complete>, v != <complete>, v == <complete>
+            if ((c == ' ' || c == '!' || c == '=') && type.Name == ctx.Features.booleanKey)
+            {
+                var word = sci.GetWordFromPosition(sci.CurrentPos);
+                if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = "true";
+                return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                {
+                    var aLabel = (a as TemplateItem)?.Label;
+                    var bLabel = (b as TemplateItem)?.Label;
+                    if (IsBool(aLabel) && IsBool(bLabel))
+                    {
+                        if (aLabel == "true") return -1;
+                        return 1;
+                    }
+                    if (IsBool(aLabel)) return -1;
+                    if (IsBool(bLabel)) return 1;
+                    return 0;
+                    // Utils
+                    bool IsBool(string s) => s == "true" || s == "false";
+                });
+            }
             // for example: function(v:Type = <complete>
             if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
             {
-                // for example: function(v:Bool = <complete>
-                if (type.Name == ctx.Features.booleanKey)
-                {
-                    var word = sci.GetWordFromPosition(sci.CurrentPos);
-                    if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word))
-                        completionHistory[ctx.CurrentClass.QualifiedName] = "true";
-                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
-                    {
-                        var aLabel = (a as TemplateItem)?.Label;
-                        var bLabel = (b as TemplateItem)?.Label;
-                        if (IsBool(aLabel) && IsBool(bLabel))
-                        {
-                            if (aLabel == "true") return -1;
-                            return 1;
-                        }
-                        if (IsBool(aLabel)) return -1;
-                        if (IsBool(bLabel)) return 1;
-                        return 0;
-                        // Utils
-                        bool IsBool(string s) => s == "true" || s == "false";
-                    });
-                }
                 if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
                 CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
                 return true;
@@ -210,25 +210,40 @@ namespace HaXeContext.Completion
                 return HandleDotCompletion(sci, autoHide, list, null);
             }
             // for example: v = <complete>, v != <complete>, v == <complete>
-            if ((c == ' ' || c == '!' || c == '=') && IsEnum(type))
+            if ((c == ' ' || c == '!' || c == '='))
             {
-                return HandleDotCompletion(sci, autoHide, null, (a, b) =>
-                {
-                    var aMember = (a as MemberItem)?.Member;
-                    var bMember = (b as MemberItem)?.Member;
-                    var aType = aMember?.Type;
-                    var bType = bMember?.Type;
-                    if (aType == type.Name && IsEnumValue(aMember.Flags)
-                        && bType == type.Name && IsEnumValue(bMember.Flags))
+                if (IsEnum(type))
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
                     {
-                        return aMember.Name.CompareTo(bMember.Name);
-                    }
-                    if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
-                    if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
-                    return 0;
-                    // Utils
-                    bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
-                });
+                        var aMember = (a as MemberItem)?.Member;
+                        var bMember = (b as MemberItem)?.Member;
+                        var aType = aMember?.Type;
+                        var bType = bMember?.Type;
+                        if (aType != null && aType == type.Name && IsEnumValue(aMember.Flags)
+                            && bType == type.Name && IsEnumValue(bMember.Flags))
+                        {
+                            return aMember.Name.CompareTo(bMember.Name);
+                        }
+
+                        if (aType == type.Name && IsEnumValue(aMember.Flags)) return -1;
+                        if (bType == type.Name && IsEnumValue(bMember.Flags)) return 1;
+                        return 0;
+                        // Utils
+                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                    });
+                if (ctx.GetDefaultValue(type.Name) == "null")
+                {
+                    var word = sci.GetWordFromPosition(sci.CurrentPos);
+                    if (string.IsNullOrEmpty(word) || "null".StartsWithOrdinal(word))
+                        completionHistory[ctx.CurrentClass.QualifiedName] = "null";
+                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    {
+                        if ((a as TemplateItem)?.Label == "null") return -1;
+                        if ((b as TemplateItem)?.Label == "null") return 1;
+                        return 0;
+                    });
+                }
+                return HandleDotCompletion(sci, autoHide, null, null);
             }
             return false;
             // Utils
