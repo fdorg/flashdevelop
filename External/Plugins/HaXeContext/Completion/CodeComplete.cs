@@ -1350,7 +1350,7 @@ namespace HaXeContext.Completion
         protected override string ToFunctionDeclarationString(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
-            var dynamicTypeName = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
+            var dynamicTypeName = ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
             var parameters = member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
             parameters.Add(member.Type ?? voidKey);
             var sb = new StringBuilder();
