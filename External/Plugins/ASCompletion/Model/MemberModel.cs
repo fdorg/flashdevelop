@@ -20,7 +20,6 @@ namespace ASCompletion.Model
 
         public FileModel InFile;
         public bool IsPackageLevel;
-
         public FlagType Flags;
         public Visibility Access;
         public string Namespace;

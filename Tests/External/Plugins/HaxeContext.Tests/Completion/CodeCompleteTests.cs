@@ -713,6 +713,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("CalltipDef_1")
                     .Returns("PCalltipDef_1 (a, b, c, d)")
                     .SetName("private var _value = new SomeType(<complete>. CalltipDef. Case 1");
+                yield return new TestCaseData("CalltipDef_issue1900_1")
+                    .Returns("urlEncode () : String")
+                    .SetName("''.urlEncode(<complete>. CalltipDef. Issue 1900 Case 1");
             }
         }
 
