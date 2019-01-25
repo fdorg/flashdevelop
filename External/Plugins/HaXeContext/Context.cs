@@ -404,10 +404,10 @@ namespace HaXeContext
                 metaList = process.StandardOutput.ReadToEnd();
             }
 
-            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
+            var regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");
 
-            MatchCollection matches = regex.Matches(metaList);
+            var matches = regex.Matches(metaList);
 
             foreach (Match m in matches)
             {
@@ -521,7 +521,7 @@ namespace HaXeContext
 
                     if (!string.IsNullOrEmpty(lang))
                     {
-                        PathModel specific = PathModel.GetModel(Path.Combine(haxeCP, lang), this);
+                        var specific = PathModel.GetModel(Path.Combine(haxeCP, lang), this);
                         if (!specific.WasExplored && !Settings.LazyClasspathExploration)
                         {
                             ManualExploration(specific, null);
@@ -596,7 +596,7 @@ namespace HaXeContext
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
 
-            // add current temporaty path
+            // add current temporary path
             if (temporaryPath != null)
             {
                 string tempPath = temporaryPath;
@@ -626,7 +626,7 @@ namespace HaXeContext
             foreach(string cp in contextSetup.Classpath) 
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
                     return;
-            if (contextSetup.AdditionalPaths == null) contextSetup.AdditionalPaths = new List<string>();
+            if (contextSetup.AdditionalPaths is null) contextSetup.AdditionalPaths = new List<string>();
             foreach (string cp in contextSetup.AdditionalPaths)
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
                     return;
@@ -695,7 +695,7 @@ namespace HaXeContext
         {
             if (!pathModel.ValidatePackage) return true;
             var path = Path.GetDirectoryName(aFile.FileName);
-            if (path == null || !path.StartsWith(pathModel.Path, StringComparison.OrdinalIgnoreCase)) return false;
+            if (path is null || !path.StartsWith(pathModel.Path, StringComparison.OrdinalIgnoreCase)) return false;
             var package = path.Length <= pathModel.Path.Length ? "" : path.Substring(pathModel.Path.Length + 1).Replace('/', '.').Replace('\\', '.');
             return (aFile.Package == package);
         }
@@ -862,7 +862,7 @@ namespace HaXeContext
                     if (aFile.Classes.Count > 0 && !aFile.Classes[0].IsVoid())
                         foreach (ClassModel aClass in aFile.Classes)
                         {
-                            if (aClass.IndexType == null
+                            if (aClass.IndexType is null
                                 && (aClass.Access == Visibility.Public
                                     || (aClass.Access == Visibility.Internal && aClass.InFile.Package == package)))
                             {
@@ -875,21 +875,17 @@ namespace HaXeContext
                         }
                     // HX files correspond to a "module" which should appear in code completion
                     // (you don't import classes defined in modules but the module itself)
-                    if (needModule)
+                    if (needModule && aFile.FullPackage is string qmodule)
                     {
-                        string qmodule = aFile.FullPackage;
-                        if (qmodule != null)
-                        {
-                            item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
-                            fullList.Add(item);
-                        }
+                        item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
+                        fullList.Add(item);
                     }
                     return true;
                 });
             }
             // display imported classes and classes declared in imported modules
-            MemberList imports = ResolveImports(cFile);
-            FlagType mask = FlagType.Class | FlagType.Enum;
+            var imports = ResolveImports(cFile);
+            const FlagType mask = FlagType.Class | FlagType.Enum;
             foreach (MemberModel import in imports)
             {
                 if ((import.Flags & mask) > 0)
@@ -943,7 +939,7 @@ namespace HaXeContext
                         }
                     }
                 }
-                if (insert == null) return false;
+                if (insert is null) return false;
                 if (trigger == '.')
                 {
                     sci.InsertText(position + text.Length, insert.Substring(1));
@@ -1127,7 +1123,7 @@ namespace HaXeContext
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // unknown type
-            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
+            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath is null)
                 return ClassModel.VoidClass;
             
             // handle generic types
@@ -1623,9 +1619,9 @@ namespace HaXeContext
             completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
         }
 
-        /**
-         * Gets the needed information to create a haxe.exe process with the given arguments.
-         */
+        /// <summary>
+        /// Gets the needed information to create a haxe.exe process with the given arguments.
+        /// </summary>
         internal ProcessStartInfo CreateHaxeProcessInfo(string args)
         {
             // compiler path
@@ -1905,13 +1901,13 @@ namespace HaXeContext
         /// <param name="result"></param>
         static void TryAddEnums(ClassModel model, MemberList result)
         {
-            if (model == null || model.IsVoid()) return;
+            if (model is null || model.IsVoid()) return;
             if (model.IsEnum())
             {
                 for (var i = 0; i < model.Members.Count; i++)
                 {
                     var member = model.Members[i];
-                    if (member.Type == null || model.InFile == null)
+                    if (member.Type is null || model.InFile is null)
                     {
                         member = (MemberModel) member.Clone();
                         member.Type = model.Type;
@@ -1923,7 +1919,7 @@ namespace HaXeContext
             else if (model.Flags.HasFlag(FlagType.Abstract))
             {
                 var meta = model.MetaDatas;
-                if (meta == null || meta.All(it => it.Name != ":enum")) return;
+                if (meta is null || meta.All(it => it.Name != ":enum")) return;
                 foreach (MemberModel member in model.Members)
                 {
                     if (member.Flags.HasFlag(FlagType.Variable)) result.Add(member);
@@ -1931,12 +1927,7 @@ namespace HaXeContext
             }
         }
 
-        /// <summary>
-        /// Let contexts handle code completion
-        /// </summary>
-        /// <param name="sci">Scintilla control</param>
-        /// <param name="expression">Completion context</param>
-        /// <returns>Null (not handled) or function signature</returns>
+        /// <inheritdoc />
         public override MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
             if (resolvingFunction || haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
@@ -2031,9 +2022,7 @@ namespace HaXeContext
 
         public static string TemporaryOutputFile;
 
-        /// <summary>
-        /// Retrieve the context's default compiler path
-        /// </summary>
+        /// <inheritdoc />
         public override string GetCompilerPath() => GetCurrentSDK()?.Path ?? haxeSettings.GetDefaultSDK().Path;
 
         /// <summary>
@@ -2069,10 +2058,8 @@ namespace HaXeContext
         /// <param name="append">Additional comiler switches</param>
         public override void RunCMD(string append)
         {
-            if (!IsFileValid || !File.Exists(CurrentFile))
-                return;
-
-            string haxePath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
+            if (!IsFileValid || !File.Exists(CurrentFile)) return;
+            var haxePath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
             if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
@@ -2084,26 +2071,26 @@ namespace HaXeContext
             try
             {
                 // save modified files if needed
-                if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
-                else MainForm.CallCommand("SaveAllModified", ".hx");
+                if (outputFile is null) MainForm.CallCommand("SaveAllModified", ".hx");
+                else MainForm.CallCommand("SaveAllModified", null);
 
                 // change current directory
-                string currentPath = Directory.GetCurrentDirectory();
-                string filePath = temporaryPath ?? Path.GetDirectoryName(cFile.FileName);
+                var currentPath = Directory.GetCurrentDirectory();
+                var filePath = temporaryPath ?? Path.GetDirectoryName(cFile.FileName);
                 filePath = NormalizePath(filePath);
                 Directory.SetCurrentDirectory(filePath);
                 
                 // prepare command
-                string command = haxePath;
+                var command = haxePath;
                 if (Path.GetExtension(command) == "") command = Path.Combine(command, "haxe.exe");
 
                 command += ";";
                 if (cFile.Package.Length > 0) command += cFile.Package + ".";
-                string cname = cFile.GetPublicClass().Name;
+                var cname = cFile.GetPublicClass().Name;
                 if (cname.IndexOf('<') is var p && p > 0) cname = cname.Substring(0, p);
                 command += cname;
 
-                if (haxeTarget == "flash" && (append == null || !append.Contains("-swf-version")))
+                if (haxeTarget == "flash" && (append is null || !append.Contains("-swf-version")))
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
@@ -2129,20 +2116,17 @@ namespace HaXeContext
         /// </summary>
         public override bool BuildCMD(bool failSilently)
         {
-            if (!File.Exists(CurrentFile))
-                return false;
+            if (!File.Exists(CurrentFile)) return false;
             // check if @haxe is defined
             Match mCmd = null;
             if (IsFileValid)
             {
-                var cClass = cFile.GetPublicClass();
-                if (cFile.Comments != null)
-                    mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
-                if ((mCmd == null || !mCmd.Success) && cClass.Comments != null)
+                if (cFile.Comments != null) mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
+                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is ClassModel cClass && cClass.Comments != null)
                     mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             }
 
-            if (mCmd == null || !mCmd.Success)
+            if (mCmd is null || !mCmd.Success)
             {
                 if (!failSilently)
                 {
@@ -2178,7 +2162,7 @@ namespace HaXeContext
                         var op = mPar[i].Groups["switch"].Value;
                         int start = mPar[i].Index + mPar[i].Length;
                         int end = (mPar.Count > i + 1) ? mPar[i + 1].Index : start;
-                        if ((op == "-swf") && (outputFile == null) && (mPlayIndex < 0))
+                        if ((op == "-swf") && (outputFile is null) && (mPlayIndex < 0))
                         {
                             if (end > start)
                                 outputFile = command.Substring(start, end - start).Trim();

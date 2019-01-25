@@ -2118,7 +2118,7 @@ namespace ASCompletion.Completion
                  * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
                  */
                 tmpClass = (ClassModel) tmpClass.Clone();
-                if (expr.InFile != null && !ctx.ResolveType(extendsType, expr.InFile).IsVoid()) tmpClass.InFile = expr.InFile;
+                if (expr.InFile != null && !ResolveType(extendsType, expr.InFile).IsVoid()) tmpClass.InFile = expr.InFile;
                 else tmpClass.InFile = ctx.CurrentModel;
                 tmpClass.ResolveExtends();
             }
@@ -3036,28 +3036,31 @@ namespace ASCompletion.Completion
             return ClassModel.VoidClass;
         }
 
-        protected static ClassModel ResolveType(string qname, FileModel inFile)
+        /// <summary>
+        /// Retrieves a class model from its name
+        /// </summary>
+        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="inFile">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        protected static ClassModel ResolveType(string cname, FileModel inFile)
         {
-            if (qname == null) return ClassModel.VoidClass;
-            var context = ASContext.Context;
-            if (inFile == null || inFile == context.CurrentModel)
+            if (cname is null) return ClassModel.VoidClass;
+            var ctx = ASContext.Context;
+            if (inFile is null || inFile == ctx.CurrentModel)
             {
-                bool isQualified = qname.Contains('.');
-                foreach (MemberModel aDecl in context.GetVisibleExternalElements())
+                var isQualified = cname.Contains('.');
+                foreach (MemberModel aDecl in ctx.GetVisibleExternalElements())
                 {
-                    if (aDecl.Name == qname || (isQualified && aDecl.Type == qname))
+                    if (aDecl.Name == cname || (isQualified && aDecl.Type == cname))
                     {
-                        if (aDecl.InFile != null)
-                        {
-                            foreach (ClassModel aClass in aDecl.InFile.Classes)
-                                if (aClass.Name == aDecl.Name) return aClass;
-                            return context.GetModel(aDecl.InFile.Package, qname, inFile?.Package);
-                        }
-                        return context.ResolveType(aDecl.Type, inFile);
+                        if (aDecl.InFile is null) return ctx.ResolveType(aDecl.Type, inFile);
+                        foreach (var aClass in aDecl.InFile.Classes)
+                            if (aClass.Name == aDecl.Name) return aClass;
+                        return ctx.GetModel(aDecl.InFile.Package, cname, inFile?.Package);
                     }
                 }
             }
-            return context.ResolveType(qname, inFile);
+            return ctx.ResolveType(cname, inFile);
         }
 
         public void InferType(ScintillaControl sci, MemberModel member) => InferType(sci, new ASExpr(), member);
@@ -3218,7 +3221,7 @@ namespace ASCompletion.Completion
         protected virtual void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token)) return;
-            if (inClass == null)
+            if (inClass is null)
             {
                 if (result.InFile != null) FindMember(token, result.InFile, result, mask, access);
                 return;
