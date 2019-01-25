@@ -1515,7 +1515,15 @@ namespace HaXeContext
                     if (index != -1) targetType = targetType.Remove(index);
                     index = firstParamType.IndexOf('<');
                     if (index != -1) firstParamType = firstParamType.Remove(index);
-                    if (firstParamType != targetType) return false;
+                    if (firstParamType != targetType)
+                    {
+                        var paramType = Context.ResolveType(firstParamType, null);
+                        if (!paramType.Flags.HasFlag(FlagType.TypeDef)) return false;
+                        foreach (MemberModel typedefMember in paramType.Members)
+                        {
+                            if (!type.Members.Contains(typedefMember.Name, typedefMember.Flags, 0)) return false;
+                        }
+                    }
                 }
                 while (!target.IsVoid())
                 {

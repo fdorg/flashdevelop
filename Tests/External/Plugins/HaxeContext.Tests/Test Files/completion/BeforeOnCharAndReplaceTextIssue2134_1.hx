@@ -1,5 +1,5 @@
 ﻿package;
 import flash.utils.Proxy;
-class Bar extends Proxy {
+class Issue2134_1 extends Proxy {
 	override $(EntryPoint)
 }
