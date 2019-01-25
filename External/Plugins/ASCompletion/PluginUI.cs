@@ -1202,8 +1202,8 @@ namespace ASCompletion
     struct LookupLocation
     {
         public readonly string File;
-        public int Line;
-        public int Column;
+        public readonly int Line;
+        public readonly int Column;
 
         public LookupLocation(string file, int line, int column)
         {

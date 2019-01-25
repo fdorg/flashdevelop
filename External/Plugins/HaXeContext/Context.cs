@@ -1050,8 +1050,7 @@ namespace HaXeContext
                 return;
             }
             // HX files are "modules": when imported all the classes contained are available
-            string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
-
+            var fileName = item.Type.Replace(".", dirSeparator) + ".hx";
             if (fileName.StartsWithOrdinal("flash" + dirSeparator))
             {
                 if (haxeTarget != "flash" || majorVersion > 8) // flash9 remap
@@ -1059,29 +1058,37 @@ namespace HaXeContext
                 else
                     fileName = FLASH_OLD + fileName.Substring(5);
             }
-
-            bool matched = false;
-            foreach (PathModel aPath in classPath)
+            var isUsing = item.Flags.HasFlag(FlagType.Using);
+            var matched = false;
+            foreach (var aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     var path = aPath.Path + dirSeparator + fileName;
 
                     // cached file
-                    if (aPath.TryGetFile(path, out var file))
+                    if (!aPath.TryGetFile(path, out var file)) continue;
+                    if (file.Context != this)
                     {
-                        if (file.Context != this)
-                        {
-                            // not associated with this context -> refresh
-                            file.OutOfDate = true;
-                            file.Context = this;
-                        }
-
-                        // add all public classes of Haxe modules
-                        foreach (ClassModel c in file.Classes)
-                            if (c.IndexType is null && c.Access == Visibility.Public)
-                                imports.Add(c);
-                        matched = true;
+                        // not associated with this context -> refresh
+                        file.OutOfDate = true;
+                        file.Context = this;
                     }
+
+                    // add all public classes of Haxe modules
+                    for (var i = 0; i < file.Classes.Count; i++)
+                    {
+                        var c = file.Classes[i];
+                        if (c.IndexType is null && c.Access == Visibility.Public)
+                        {
+                            if (isUsing)
+                            {
+                                c = (ClassModel) c.Clone();
+                                c.Flags |= FlagType.Using;
+                            }
+                            imports.Add(c);
+                        }
+                    }
+                    matched = true;
                 }
 
             if (!matched) imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
@@ -1453,6 +1460,81 @@ namespace HaXeContext
             return result;
         }
 
+        /// <summary>
+        /// https://haxe.org/manual/lf-static-extension.html
+        /// </summary>
+        /// <param name="type">Type for which need to find extension methods</param>
+        /// <param name="inFile">Current file</param>
+        /// <param name="result">A new ClassModel with extension methods or the original ClassModel if no extension are found</param>
+        /// <returns>True if extension are found</returns>
+        internal static bool TryResolveStaticExtensions(ClassModel type, FileModel inFile, out ClassModel result)
+        {
+            result = type;
+            var imports = Context.ResolveImports(inFile);
+            if (imports.Count == 0) return false;
+            var extensions = new MemberList();
+            const FlagType kind = FlagType.Static | FlagType.Function;
+            for (var i = imports.Count - 1; i >= 0; i--)
+            {
+                if (imports[i] is ClassModel import && (import.Flags & FlagType.Using) != 0 && import.Members.Count > 0)
+                {
+                    var access = Context.TypesAffinity(type, import);
+                    var extends = type;
+                    extends.ResolveExtends();
+                    while (!extends.IsVoid())
+                    {
+                        foreach (MemberModel member in import.Members)
+                        {
+                            if ((member.Access & access) == 0
+                                || (member.Flags & kind) == 0
+                                || member.Parameters is null || member.Parameters.Count == 0
+                                || extensions.Contains(member.Name, 0, 0)
+                                || !CanBeExtended(extends, member, access)) continue;
+                            var extension = (MemberModel) member.Clone();
+                            extension.Parameters.RemoveAt(0);
+                            extension.Flags = FlagType.Dynamic | FlagType.Function | FlagType.Using;
+                            extension.InFile = import.InFile;
+                            extensions.Add(extension);
+                        }
+                        extends = extends.Extends;
+                    }
+                }
+            }
+            if (extensions.Count <= 0) return false;
+            result = (ClassModel) type.Clone();
+            result.Members.Merge(extensions);
+            return true;
+            // Utils
+            bool CanBeExtended(ClassModel target, MemberModel extension, Visibility access)
+            {
+                var firstParamType = extension.Parameters[0].Type;
+                if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
+                {
+                    var targetType = type.Type;
+                    var index = targetType.IndexOf('<');
+                    if (index != -1) targetType = targetType.Remove(index);
+                    index = firstParamType.IndexOf('<');
+                    if (index != -1) firstParamType = firstParamType.Remove(index);
+                    if (firstParamType != targetType)
+                    {
+                        var paramType = Context.ResolveType(firstParamType, null);
+                        if (!paramType.Flags.HasFlag(FlagType.TypeDef)) return false;
+                        foreach (MemberModel typedefMember in paramType.Members)
+                        {
+                            if (!type.Members.Contains(typedefMember.Name, typedefMember.Flags, 0)) return false;
+                        }
+                    }
+                }
+                while (!target.IsVoid())
+                {
+                    var model = target.Members.Search(extension.Name, 0, access);
+                    if (model != null && (model.Flags & FlagType.Static) == 0) return false;
+                    target = target.Extends;
+                }
+                return true;
+            }
+        }
+
         public override string GetDefaultValue(string type)
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
@@ -1629,8 +1711,7 @@ namespace HaXeContext
             var process = Path.Combine(hxPath, "haxe.exe");
             if (!File.Exists(process) && (GetCurrentSDK()?.IsHaxeShim ?? false))
                 process = Path.Combine(hxPath, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
-            if (!File.Exists(process))
-                return null;
+            if (!File.Exists(process)) return null;
 
             // Prepare process information
             var procInfo = new ProcessStartInfo();
@@ -1707,6 +1788,7 @@ namespace HaXeContext
         {
             if (expression.IsStatic && expression.Type is ClassModel type)
             {
+                // Attempt to add callback `new` into `result`
                 if (type.Flags == FlagType.Class)
                 {
                     var member = type.Members.Search(type.Name, FlagType.Constructor, 0);

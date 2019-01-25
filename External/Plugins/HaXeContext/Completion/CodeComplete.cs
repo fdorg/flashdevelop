@@ -1069,40 +1069,40 @@ namespace HaXeContext.Completion
             return base.GetCalltipDef(member);
         }
 
-        protected override void GetInstanceMembers(bool autoHide, ASResult expr, ClassModel tmpClass, FlagType mask, int dotIndex, MemberList result)
+        protected override void GetInstanceMembers(bool autoHide, ASResult expr, ClassModel exprType, FlagType mask, int dotIndex, MemberList result)
         {
-            if (tmpClass.Flags.HasFlag(FlagType.Abstract))
+            if (exprType.Flags.HasFlag(FlagType.Abstract))
             {
                 if (expr.Member?.Name == "this")
                 {
-                    var extends = tmpClass.Extends;
+                    var extends = exprType.Extends;
                     if (extends.IsVoid())
                     {
-                        extends = ResolveType(tmpClass.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
+                        extends = ResolveType(exprType.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
                         if (extends.IsVoid()) return;
                     }
                     base.GetInstanceMembers(autoHide, expr, extends, mask, dotIndex, result);
                     return;
                 }
-                if (!string.IsNullOrEmpty(tmpClass.ExtendsType)
+                if (!string.IsNullOrEmpty(exprType.ExtendsType)
                     // for example: @:enum abstract
-                    && tmpClass.MetaDatas is var metaDatas && (metaDatas == null || metaDatas.All(it => it.Name != ":enum"))
+                    && exprType.MetaDatas is var metaDatas && (metaDatas is null || metaDatas.All(it => it.Name != ":enum"))
                     // for example: abstract Null<T> from T to T
-                    && (string.IsNullOrEmpty(tmpClass.Template) || tmpClass.ExtendsType != tmpClass.IndexType))
+                    && (string.IsNullOrEmpty(exprType.Template) || exprType.ExtendsType != exprType.IndexType))
                 {
-                    var access = ASContext.Context.TypesAffinity(ASContext.Context.CurrentClass, tmpClass);
-                    result.Merge(tmpClass.GetSortedMembersList(), mask, access);
-                    if (metaDatas == null) return;
-                    var extends = tmpClass.Extends;
+                    var access = ASContext.Context.TypesAffinity(ASContext.Context.CurrentClass, exprType);
+                    result.Merge(exprType.GetSortedMembersList(), mask, access);
+                    if (metaDatas is null) return;
+                    var extends = exprType.Extends;
                     if (extends.IsVoid())
                     {
-                        extends = ResolveType(tmpClass.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
+                        extends = ResolveType(exprType.ExtendsType, expr.InFile ?? ASContext.Context.CurrentModel);
                         if (extends.IsVoid()) return;
                     }
                     var @params = mask.HasFlag(FlagType.Static)
                         ? metaDatas.Find(it => it.Name == ":forwardStatics")?.Params
                         : metaDatas.Find(it => it.Name == ":forward")?.Params;
-                    if (@params == null)
+                    if (@params is null)
                     {
                         base.GetInstanceMembers(autoHide, expr, extends, mask, dotIndex, result);
                         return;
@@ -1118,7 +1118,8 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            base.GetInstanceMembers(autoHide, expr, tmpClass, mask, dotIndex, result);
+            Context.TryResolveStaticExtensions(exprType, ASContext.Context.CurrentModel, out exprType);
+            base.GetInstanceMembers(autoHide, expr, exprType, mask, dotIndex, result);
         }
 
         protected override void FindMemberEx(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
@@ -1307,8 +1308,28 @@ namespace HaXeContext.Completion
                 if (!type.IsVoid()) inClass = type;
             }
             base.FindMemberEx(token, inClass, result, mask, access);
+            /**
+             * for example:
+             * using StringTools;
+             * "".startsWith(<complete>
+             */
+            if (result.IsNull() && !string.IsNullOrEmpty(result.Path) && result.RelClass != null && !result.RelClass.IsVoid())
+            {
+                if (Context.TryResolveStaticExtensions(inClass, ASContext.Context.CurrentModel, out inClass))
+                {
+                    base.FindMemberEx(token, inClass, result, mask, access);
+                    if (result.Member != null && result.Member.Flags.HasFlag(FlagType.Using))
+                    {
+                        var relClass = FindMember(result.Member.LineFrom, result.Member.InFile.Classes) ?? ClassModel.VoidClass;
+                        result.InClass = relClass;
+                        result.RelClass = relClass;
+                        result.InFile = result.Member.InFile;
+                        result.Type = null;
+                    }
+                }
+            }
             member = result.Member;
-            if (member?.Type != null && (result.Type == null || result.Type.IsVoid()))
+            if (member?.Type != null && (result.Type is null || result.Type.IsVoid()))
             {
                 /**
                  * for example:

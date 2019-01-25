@@ -1524,13 +1524,10 @@ namespace ASCompletion.Completion
         public static bool HandleFunctionCompletion(ScintillaControl sci, bool autoHide)
         {
             // only auto-complete where it makes sense
-            if (DeclarationSectionOnly()) 
-                return false;
-
-            int position = sci.CurrentPos - 1;
-            int paramIndex = FindParameterIndex(sci, ref position);
+            if (DeclarationSectionOnly()) return false;
+            var position = sci.CurrentPos - 1;
+            var paramIndex = FindParameterIndex(sci, ref position);
             if (position < 0) return false;
-            
             // continuing calltip ?
             if (HasCalltip())
             {
@@ -1541,17 +1538,13 @@ namespace ASCompletion.Completion
                 }
                 UITools.CallTip.Hide();
             }
-
-            if (!ASContext.Context.CodeComplete.ResolveFunction(sci, position, autoHide))
-                return true;
-
+            if (!ASContext.Context.CodeComplete.ResolveFunction(sci, position, autoHide)) return true;
             // EventDispatchers
             if (paramIndex == 0 && calltipRelClass != null && calltipMember.Name.EndsWithOrdinal("EventListener"))
             {
                 ShowListeners(sci, position, calltipRelClass);
                 return true;
             }
-
             // show calltip
             ShowCalltip(sci, paramIndex);
             return true;
@@ -1578,7 +1571,7 @@ namespace ASCompletion.Completion
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
             var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, true);
-            if (result.Member == null && result.Type != null)
+            if (result.Member is null && result.Type != null)
             {
                 foreach (MemberModel member in result.Type.Members)
                     if (member.Name == result.Type.Constructor)
@@ -1604,7 +1597,7 @@ namespace ASCompletion.Completion
             if (expr.IsNull() || (expr.Member != null && (expr.Member.Flags & FlagType.Function) == 0))
             {
                 // custom completion
-                MemberModel customMethod = ctx.ResolveFunctionContext(sci, expr.Context, autoHide);
+                var customMethod = ctx.ResolveFunctionContext(sci, expr.Context, autoHide);
                 if (customMethod != null) expr = new ASResult {Member = customMethod, Context = new ASExpr()};
             }
             if (expr.IsNull())
@@ -2008,10 +2001,10 @@ namespace ASCompletion.Completion
             var cClass = ctx.CurrentClass;
 
             ASResult result;
-            ClassModel tmpClass;
+            ClassModel inClass;
             if (argumentType != null)
             {
-                tmpClass = argumentType;
+                inClass = argumentType;
                 expr.LocalVars.Clear();
                 result = new ASResult {Context = expr};
             }
@@ -2026,7 +2019,7 @@ namespace ASCompletion.Completion
                     return true;
                 }
                 if (autoHide && features.hasE4X && IsXmlType(result.Type)) return true;
-                tmpClass = result.Type;
+                inClass = result.Type;
             }
             else
             {
@@ -2034,20 +2027,17 @@ namespace ASCompletion.Completion
                 result = new ASResult {Context = expr};
                 if (expr.Separator == "\"")
                 {
-                    tmpClass = ResolveType(ctx.Features.stringKey, null);
-                    result.Type = tmpClass;
+                    inClass = ResolveType(ctx.Features.stringKey, null);
+                    result.Type = inClass;
                     dotIndex = 1;
                 }
-                else tmpClass = cClass;
+                else inClass = cClass;
             }
             var mix = new MemberList();
             ctx.ResolveDotContext(sci, result, mix);
 
-            //stores a reference to our current class. tmpClass gets overwritten later, so we need to store the current class separately
-            var classScope = tmpClass;
             // local vars are the first thing to try
-            if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
-                mix.Merge(expr.LocalVars);
+            if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null) mix.Merge(expr.LocalVars);
 
             // list package elements
             if (result.IsPackage)
@@ -2065,8 +2055,8 @@ namespace ASCompletion.Completion
                 else mask = 0;
                 if (argumentType != null) mask |= FlagType.Variable;
                 var limitMembers = autoHide;
-                if (!limitMembers || result.IsStatic || tmpClass.Name != features.objectKey)
-                    GetInstanceMembers(autoHide, result, tmpClass, mask, dotIndex, mix);
+                if (!limitMembers || result.IsStatic || inClass.Name != features.objectKey)
+                    GetInstanceMembers(autoHide, result, inClass, mask, dotIndex, mix);
             }
 
             // known classes / toplevel vars/methods
@@ -2094,52 +2084,52 @@ namespace ASCompletion.Completion
 
             // smart focus token
             //if (!features.externalCompletion)
-            AutoselectDotToken(classScope, tail);
+            AutoselectDotToken(inClass, tail);
 
             if (outOfDate) ctx.SetOutOfDate();
             return true;
         }
 
-        protected virtual void GetInstanceMembers(bool autoHide, ASResult expr, ClassModel tmpClass, FlagType mask, int dotIndex, MemberList result)
+        protected virtual void GetInstanceMembers(bool autoHide, ASResult expr, ClassModel exprType, FlagType mask, int dotIndex, MemberList result)
         {
             var ctx = ASContext.Context;
             var features = ctx.Features;
             var currentClass = ctx.CurrentClass;
 
             currentClass.ResolveExtends();
-            var access = TypesAffinity(expr.Context, currentClass, tmpClass);
+            var access = TypesAffinity(expr.Context, currentClass, exprType);
 
             // explore members
-            tmpClass.ResolveExtends();
-            if (tmpClass.ExtendsType is string extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != features.objectKey
-                && tmpClass.Extends.IsVoid() && !string.IsNullOrEmpty(tmpClass.Template) && !string.IsNullOrEmpty(tmpClass.IndexType))
+            exprType.ResolveExtends();
+            if (exprType.ExtendsType is string extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != features.objectKey
+                && exprType.Extends.IsVoid() && !string.IsNullOrEmpty(exprType.Template) && !string.IsNullOrEmpty(exprType.IndexType))
             {
                 /**
                  * Temporary fix:
-                 * If `tmpClass` is generic type with the concrete type explicit definition, like `Null<UserType>`,
-                 * there can be problems in `tmpClass.ResolveExtends()` because `tmpClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
+                 * If `inClass` is generic type with the concrete type explicit definition, like `Null<UserType>`,
+                 * there can be problems in `inClass.ResolveExtends()` because `inClass` contains a link to the real file with origin declaration, like `Null<T>`, not current file
                  */
-                tmpClass = (ClassModel) tmpClass.Clone();
-                if (expr.InFile != null && !ResolveType(extendsType, expr.InFile).IsVoid()) tmpClass.InFile = expr.InFile;
-                else tmpClass.InFile = ctx.CurrentModel;
-                tmpClass.ResolveExtends();
+                exprType = (ClassModel) exprType.Clone();
+                if (expr.InFile != null && !ResolveType(extendsType, expr.InFile).IsVoid()) exprType.InFile = expr.InFile;
+                else exprType.InFile = ctx.CurrentModel;
+                exprType.ResolveExtends();
             }
-            while (!tmpClass.IsVoid())
+            while (!exprType.IsVoid())
             {
-                result.Merge(tmpClass.GetSortedMembersList(), mask, access);
+                result.Merge(exprType.GetSortedMembersList(), mask, access);
                 // static inheritance
                 if ((mask & FlagType.Static) > 0)
                 {
-                    if ((!features.hasStaticInheritance || dotIndex > 0) && (tmpClass.Flags & FlagType.TypeDef) == 0)
+                    if ((!features.hasStaticInheritance || dotIndex > 0) && (exprType.Flags & FlagType.TypeDef) == 0)
                         break;
                 }
                 else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
-                tmpClass = tmpClass.Extends;
+                exprType = exprType.Extends;
                 // hide Object class members
-                if (autoHide && !tmpClass.IsVoid() && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey)
+                if (autoHide && !exprType.IsVoid() && exprType.InFile.Package == "" && exprType.Name == features.objectKey)
                     break;
                 // members visibility
-                access = ctx.TypesAffinity(currentClass, tmpClass);
+                access = ctx.TypesAffinity(currentClass, exprType);
             }
         }
 
