@@ -1994,8 +1994,6 @@ namespace ASCompletion.Completion
             else if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\."))
                 return false;
 
-            var tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
-            
             // custom completion
             var items = ctx.ResolveDotContext(sci, expr, autoHide);
             if (items != null)
@@ -2003,6 +2001,8 @@ namespace ASCompletion.Completion
                 DotContextResolved(sci, expr, items, autoHide);
                 return true;
             }
+            
+            var tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
             var outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
             var cClass = ctx.CurrentClass;
