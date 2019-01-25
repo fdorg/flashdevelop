@@ -1465,11 +1465,13 @@ namespace HaXeContext
         /// </summary>
         /// <param name="type">Type for which need to find extension methods</param>
         /// <param name="inFile">Current file</param>
-        /// <returns>A new ClassModel with extension methods or the original ClassModel if no extension are found</returns>
-        internal static ClassModel ResolveStaticExtensions(ClassModel type, FileModel inFile)
+        /// <param name="result">A new ClassModel with extension methods or the original ClassModel if no extension are found</param>
+        /// <returns>True if extension are found</returns>
+        internal static bool TryResolveStaticExtensions(ClassModel type, FileModel inFile, out ClassModel result)
         {
+            result = type;
             var imports = Context.ResolveImports(inFile);
-            if (imports.Count == 0) return type;
+            if (imports.Count == 0) return false;
             var extensions = new MemberList();
             const FlagType kind = FlagType.Static | FlagType.Function;
             for (var i = imports.Count - 1; i >= 0; i--)
@@ -1490,7 +1492,7 @@ namespace HaXeContext
                                 || !CanBeExtended(extends, member, access)) continue;
                             var extension = (MemberModel) member.Clone();
                             extension.Parameters.RemoveAt(0);
-                            extension.Flags = FlagType.Dynamic | FlagType.Function;
+                            extension.Flags = FlagType.Dynamic | FlagType.Function | FlagType.Using;
                             extension.InFile = import.InFile;
                             extensions.Add(extension);
                         }
@@ -1498,12 +1500,10 @@ namespace HaXeContext
                     }
                 }
             }
-            if (extensions.Count > 0)
-            {
-                type = (ClassModel) type.Clone();
-                type.Members.Merge(extensions);
-            }
-            return type;
+            if (extensions.Count <= 0) return false;
+            result = (ClassModel) type.Clone();
+            result.Members.Merge(extensions);
+            return true;
             // Utils
             bool CanBeExtended(ClassModel target, MemberModel extension, Visibility access)
             {

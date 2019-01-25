@@ -1118,7 +1118,7 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            exprType = Context.ResolveStaticExtensions(exprType, ASContext.Context.CurrentModel);
+            Context.TryResolveStaticExtensions(exprType, ASContext.Context.CurrentModel, out exprType);
             base.GetInstanceMembers(autoHide, expr, exprType, mask, dotIndex, result);
         }
 
@@ -1315,14 +1315,17 @@ namespace HaXeContext.Completion
              */
             if (result.IsNull() && !string.IsNullOrEmpty(result.Path) && result.RelClass != null && !result.RelClass.IsVoid())
             {
-                inClass = Context.ResolveStaticExtensions(inClass, ASContext.Context.CurrentModel);
-                base.FindMemberEx(token, inClass, result, mask, access);
-                if (result.Member != null)
+                if (Context.TryResolveStaticExtensions(inClass, ASContext.Context.CurrentModel, out inClass))
                 {
-                    var relClass = FindMember(result.Member.LineFrom, result.Member.InFile.Classes) ?? ClassModel.VoidClass;
-                    result.InClass = relClass;
-                    result.RelClass = relClass;
-                    result.Type = null;
+                    base.FindMemberEx(token, inClass, result, mask, access);
+                    if (result.Member != null && result.Member.Flags.HasFlag(FlagType.Using))
+                    {
+                        var relClass = FindMember(result.Member.LineFrom, result.Member.InFile.Classes) ?? ClassModel.VoidClass;
+                        result.InClass = relClass;
+                        result.RelClass = relClass;
+                        result.InFile = result.Member.InFile;
+                        result.Type = null;
+                    }
                 }
             }
             member = result.Member;
