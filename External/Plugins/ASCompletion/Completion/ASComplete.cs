@@ -2073,8 +2073,10 @@ namespace ASCompletion.Completion
             if (argumentType is null && (result.IsNull() || (dotIndex < 0)))
             {
                 mix.Merge(ctx.CurrentModel.GetSortedMembersList());
-                if (expr.ContextFunction is null || !expr.ContextFunction.Flags.HasFlag(FlagType.Static)) mix.Merge(ctx.GetTopLevelElements());
-                else mix.Merge(ctx.GetTopLevelElements().Items.Where(it => it.Flags.HasFlag(FlagType.Static)));
+                IEnumerable<MemberModel> topLevelElements = ctx.GetTopLevelElements().Items;
+                if (expr.ContextFunction != null && expr.ContextFunction.Flags.HasFlag(FlagType.Static))
+                    topLevelElements = topLevelElements.Where(it => it.Flags.HasFlag(FlagType.Static));
+                mix.Merge(topLevelElements);
                 mix.Merge(ctx.GetVisibleExternalElements());
                 mix.Merge(GetKeywords());
             }
