@@ -331,7 +331,7 @@ namespace HaXeContext.Completion
                     {"null", 0}
                 };
                 List<ICompletionListItem> list = null;
-                if (type.Name == "Array" && type.Name.StartsWithOrdinal("Array<"))
+                if (type.Name == "Array" || type.Name.StartsWithOrdinal("Array<"))
                 {
                     orders.Add("[]", 1);
                     list = new List<ICompletionListItem>
