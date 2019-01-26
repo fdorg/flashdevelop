@@ -349,6 +349,15 @@ namespace HaXeContext.Completion
                         new ObjectInitializerGeneratorItem("[=>]", "Creates a new map and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
                     };
                 }
+                // for example: var v:Dynamic = <complete>
+                else if (type.Name.StartsWithOrdinal("Dynamic"))
+                {
+                    orders.Add("{}", 1);
+                    list = new List<ICompletionListItem>
+                    {
+                        new ObjectInitializerGeneratorItem("{}", "Creates a new dynamic object and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "{$(EntryPoint)}"))
+                    };
+                }
                 if (ctx.GetDefaultValue(type.Name) == "null")
                 {
                     var word = sci.GetWordFromPosition(sci.CurrentPos);
