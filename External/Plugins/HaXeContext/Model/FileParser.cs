@@ -92,14 +92,10 @@ namespace HaXeContext.Model
             this.features = features;
         }
 
-        /// <summary>
-        /// Rebuild a file model with the source provided
-        /// </summary>
-        /// <param name="fileModel">Model</param>
-        /// <param name="src">Source</param>
+        /// <inheritdoc />
         public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
 
-        public void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract)
+        public void ParseSrc(FileModel fileModel, string src, bool allowBaReExtract)
         {
             //TraceManager.Add("Parsing " + Path.GetFileName(fileModel.FileName));
             model = fileModel;
@@ -109,7 +105,7 @@ namespace HaXeContext.Model
 
             // pre-filtering
             if (allowBaReExtract && model.HasFiltering && model.Context != null)
-                ba = model.Context.FilterSource(fileModel.FileName, ba);
+                src = model.Context.FilterSource(fileModel.FileName, src);
 
             model.InlinedIn = null;
             model.InlinedRanges = null;
@@ -125,7 +121,7 @@ namespace HaXeContext.Model
             model.MetaDatas = null;
 
             // state
-            int len = ba.Length;
+            int len = src.Length;
             int i = 0;
             line = 0;
             int matching = 0;
@@ -188,7 +184,7 @@ namespace HaXeContext.Model
 
             while (i < len)
             {
-                var c1 = ba[i++];
+                var c1 = src[i++];
                 var isInString = (inString > 0);
 
                 /* MATCH COMMENTS / STRING LITERALS */
@@ -203,11 +199,11 @@ namespace HaXeContext.Model
                             // new comment
                             if (c1 == '/' && i < len)
                             {
-                                c2 = ba[i];
+                                c2 = src[i];
                                 if (c2 == '/')
                                 {
                                     // Check if this this is a /// comment
-                                    if (i + 1 < len && ba[i + 1] == '/')
+                                    if (i + 1 < len && src[i + 1] == '/')
                                     {
                                         // This is a /// comment
                                         matching = 4;
@@ -226,14 +222,14 @@ namespace HaXeContext.Model
                                 }
                                 if (c2 == '*')
                                 {
-                                    isBlockComment = (i + 1 < len && ba[i + 1] == '*');
+                                    isBlockComment = (i + 1 < len && src[i + 1] == '*');
                                     matching = 2;
                                     inCode = false;
                                     i++;
                                     while (i < len - 1)
                                     {
-                                        c2 = ba[i];
-                                        if (c2 == '*' && ba[i + 1] != '/') i++;
+                                        c2 = src[i];
+                                        if (c2 == '*' && src[i + 1] != '/') i++;
                                         else break;
                                     }
                                     continue;
@@ -254,7 +250,7 @@ namespace HaXeContext.Model
                             else if (c1 == '#' && handleDirectives && i < len)
                             {
                                 // peek for #end
-                                if (i + 2 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd')
+                                if (i + 2 < len && src[i] == 'e' && src[i + 1] == 'n' && src[i + 2] == 'd')
                                 {
                                     matching = 0;
                                     inCode = true;
@@ -266,7 +262,7 @@ namespace HaXeContext.Model
                                 var ls = i - 2;
                                 while (ls > 0)
                                 {
-                                    c2 = ba[ls--];
+                                    c2 = src[ls--];
                                     if (c2 == 10 || c2 == 13) break;
                                     if (c2 > 32)
                                     {
@@ -274,8 +270,8 @@ namespace HaXeContext.Model
                                         break;
                                     }
                                 }
-                                c2 = ba[i];
-                                if (i < 2 || ba[i - 2] < 33 && c2 >= 'a' && c2 <= 'z')
+                                c2 = src[i];
+                                if (i < 2 || src[i - 2] < 33 && c2 >= 'a' && c2 <= 'z')
                                 {
                                     matching = 3;
                                     inCode = false;
@@ -292,7 +288,7 @@ namespace HaXeContext.Model
                                 // Are we on an escaped ' or ""?
                                 int escNo = 0;
                                 int l = i - 2;
-                                while (l > -1 && ba[l--] == '\\')
+                                while (l > -1 && src[l--] == '\\')
                                     escNo++;
 
                                 // Even number of escaped \ means we are not on an escaped ' or ""
@@ -328,7 +324,7 @@ namespace HaXeContext.Model
                             bool end = false;
                             while (i < len)
                             {
-                                c2 = ba[i];
+                                c2 = src[i];
                                 if (c2 == '\\') { i++; continue; }
                                 if (c2 == '/')
                                 {
@@ -361,7 +357,7 @@ namespace HaXeContext.Model
                         }
                         else if (c1 == '#') // peek for #end
                         {
-                            if (i + 2 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd')
+                            if (i + 2 < len && src[i] == 'e' && src[i + 1] == 'n' && src[i + 2] == 'd')
                             {
                                 matching = 0;
                                 inCode = true;
@@ -380,7 +376,7 @@ namespace HaXeContext.Model
                             bool skipAhead = false;
 
                             // See if we just ended a line
-                            if (2 <= i && (ba[i - 2] == 10 || ba[i - 2] == 13))
+                            if (2 <= i && (src[i - 2] == 10 || src[i - 2] == 13))
                             {
                                 // Check ahead to the next line, see if it has a /// comment on it too.
                                 // If it does, we want to continue the comment with that line.  If it
@@ -388,10 +384,10 @@ namespace HaXeContext.Model
                                 for (int j = i + 1; j < len; ++j)
                                 {
                                     // Skip whitespace
-                                    char twoBack = ba[j - 2];
+                                    char twoBack = src[j - 2];
                                     if (' ' != twoBack && '\t' != twoBack)
                                     {
-                                        if ('/' == twoBack && '/' == ba[j - 1] && '/' == ba[j])
+                                        if ('/' == twoBack && '/' == src[j - 1] && '/' == src[j])
                                         {
                                             // There is a comment ahead.  Move up to it so we can gather the
                                             // rest of the comment
@@ -431,9 +427,8 @@ namespace HaXeContext.Model
                 if (c1 == 10 || c1 == 13)
                 {
                     line++;
-                    if (c1 == 13 && i < len && ba[i] == 10) i++;
+                    if (c1 == 13 && i < len && src[i] == 10) i++;
                 }
-
 
                 /* SKIP CONTENT */
 
@@ -449,7 +444,7 @@ namespace HaXeContext.Model
                         commentBuffer[commentLength++] = c1;
                         while (i < len)
                         {
-                            c2 = ba[i];
+                            c2 = src[i];
                             if (commentLength < COMMENTS_BUFFER) commentBuffer[commentLength++] = c2;
                             if (c2 == 10 || c2 == 13)
                                 break;
@@ -502,15 +497,17 @@ namespace HaXeContext.Model
                                 else if (end != -1) break;
                                 else start = j + 1;
                             }
-                            var count = end - start;
-                            if (count > 4)
+                            var wordLength = end - start;
+                            if (wordLength > 4)
                             {
-                                var word = new string(valueBuffer, start, count);
+                                var word = new string(valueBuffer, start, wordLength);
                                 if (word == "macro"
                                     || word == "extern" || word == "public" || word == "static" || word == "inline"
                                     || word == "private"
                                     || word == "override"
-                                    || word == "function")
+                                    || word == "function"
+                                    // Haxe 4
+                                    || word == "final")
                                 {
                                     abort = true;
                                     i -= valueLength;
@@ -539,7 +536,7 @@ namespace HaXeContext.Model
                     }
                     if (braceCount > 0)
                     {
-                        if (c1 == '/') LookupRegex(ba, ref i);
+                        if (c1 == '/') LookupRegex(src, ref i);
                         else if (c1 == '}')
                         {
                             lastComment = null;
@@ -558,13 +555,12 @@ namespace HaXeContext.Model
                     }
                 }
 
-
                 /* PARSE DECLARATION VALUES/TYPES */
                 
                 if (inValue)
                 {
-                    bool stopParser = false;
-                    bool valueError = false;
+                    var stopParser = false;
+                    var valueError = false;
                     if (inType && !inAnonType && !inGeneric && !char.IsLetterOrDigit(c1)
                         && (c1 != '.' && c1 != '{' && c1 != '}' && c1 != '-' && c1 != '>' && c1 != '<'))
                     {
@@ -629,7 +625,7 @@ namespace HaXeContext.Model
                     }
                     else if (c1 == '<')
                     {
-                        if (i > 1 && ba[i - 2] == '<') paramTempCount = 0; // a << b
+                        if (i > 1 && src[i - 2] == '<') paramTempCount = 0; // a << b
                         else
                         {
                             if (inType) inGeneric = true;
@@ -638,7 +634,7 @@ namespace HaXeContext.Model
                     }
                     else if (c1 == '>')
                     {
-                        if (ba[i - 2] == '-') { /*haxe method signatures*/ }
+                        if (src[i - 2] == '-') { /*haxe method signatures*/ }
                         else if (paramBraceCount > 0 && inAnonType)
                         {
                             if (valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
@@ -656,11 +652,11 @@ namespace HaXeContext.Model
                     else if (c1 == '/')
                     {
                         int i0 = i;
-                        if (LookupRegex(ba, ref i) && valueLength < VALUE_BUFFER - 3)
+                        if (LookupRegex(src, ref i) && valueLength < VALUE_BUFFER - 3)
                         {
                             valueBuffer[valueLength++] = '/';
                             for (; i0 < i; i0++)
-                                if (valueLength < VALUE_BUFFER - 2) valueBuffer[valueLength++] = ba[i0];
+                                if (valueLength < VALUE_BUFFER - 2) valueBuffer[valueLength++] = src[i0];
                             valueBuffer[valueLength++] = '/';
                             continue;
                         }
@@ -705,6 +701,51 @@ namespace HaXeContext.Model
                     // in params, store the default value
                     else if ((inParams || inType))
                     {
+                        /**
+                         * for example:
+                         * var v : Type<
+                         * public function foo() {
+                         * }
+                         */
+                        if (c1 == ' ' && inGeneric && valueLength > 5)
+                        {
+                            var start = valueLength - 5;
+                            for (var j = valueLength; j > 0; j--)
+                            {
+                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(valueBuffer[j]))) break;
+                                start = j;
+                            }
+                            var wordLength = valueLength - start;
+                            if (wordLength > 4)
+                            {
+                                var word = new string(valueBuffer, start, wordLength);
+                                if (word == "macro"
+                                    || word == "extern" || word == "public" || word == "static" || word == "inline"
+                                    || word == "private"
+                                    || word == "override"
+                                    || word == "function"
+                                    // Haxe 4
+                                    || word == "final")
+                                {
+                                    i -= (wordLength + 1);
+                                    if (curMember != null)
+                                    {
+                                        curMember.LineTo = line;
+                                        curMember = null;
+                                    }
+                                    context = 0;
+                                    curModifiers = 0;
+                                    foundColon = false;
+                                    inGeneric = false;
+                                    inType = false;
+                                    inValue = false;
+                                    length = 0;
+                                    paramTempCount = 0;
+                                    valueLength = 0;
+                                    continue;
+                                }
+                            }
+                        }
                         if (c1 > 32 || (inAnonType && !inTypedef))
                         {
                             if (inAnonType && valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
@@ -718,7 +759,7 @@ namespace HaXeContext.Model
                         // escape next char
                         if (c1 == '\\' && i < len)
                         {
-                            c1 = ba[i++];
+                            c1 = src[i++];
                             if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
                             continue;
                         }
@@ -757,7 +798,7 @@ namespace HaXeContext.Model
                     else if (inType)
                     {
                         foundColon = false;
-                        if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
+                        if (c1 == '>' && src[i - 2] == '-' && inAnonType)
                         {
                             length = 0;
                             valueLength = 0;
@@ -825,7 +866,7 @@ namespace HaXeContext.Model
                 else
                 {
                     // function types
-                    if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && ba[i] == '>')
+                    if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && src[i] == '>')
                     {
                         buffer[length++] = '-';
                         buffer[length++] = '>';
@@ -874,8 +915,8 @@ namespace HaXeContext.Model
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
-                                        && (char.IsLetter(ba[i]) || (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?'))
+                                    if ((char.IsLetterOrDigit(src[i - 3]) || src[i - 3] == '_')
+                                        && (char.IsLetter(src[i]) || (src[i] == '{' || src[i] == '(' || src[i] <= ' ' || src[i] == '?'))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                     {
                                         if (curMember == null)
@@ -1030,7 +1071,7 @@ namespace HaXeContext.Model
                                     var pos = i;
                                     while (pos < len)
                                     {
-                                        var c = ba[pos++];
+                                        var c = src[pos++];
                                         if (c <= ' ') continue;
                                         if (c == '>')
                                         {
@@ -1108,7 +1149,7 @@ namespace HaXeContext.Model
                             foundColon = curMember != null && curMember.Type == null;
                             // recognize compiler config block
                             if (!foundColon && braceCount == 0 
-                                && i < len - 2 && ba[i] == ':' && char.IsLetter(ba[i + 1]))
+                                && i < len - 2 && src[i] == ':' && char.IsLetter(src[i + 1]))
                                 foundConstant = true;
                         }
                         // next variable declaration
@@ -1271,12 +1312,12 @@ namespace HaXeContext.Model
                         {
                             if (features.hasCArrays && curMember?.Type != null)
                             {
-                                if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
+                                if (src[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
                             }
                         }
                         else if (!inValue && c1 == '@')
                         {
-                            var meta = LookupMeta(ref ba, ref i);
+                            var meta = LookupMeta(ref src, ref i);
                             if (meta != null)
                             {
                                 carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
@@ -1287,7 +1328,7 @@ namespace HaXeContext.Model
                         // Haxe signatures: T -> T -> T 
                         else if (c1 == '-' && curMember != null)
                         {
-                            if (ba[i] == '>' && curMember.Type != null)
+                            if (src[i] == '>' && curMember.Type != null)
                             {
                                 curMember.Type += "->";
                                 foundColon = true;
