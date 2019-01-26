@@ -776,7 +776,7 @@ namespace PluginCore.Controls
             sci.BeginUndoAction();
             try
             {
-                string triggers = PluginBase.Settings.InsertionTriggers ?? "";
+                var triggers = PluginBase.Settings.InsertionTriggers ?? "";
                 if (triggers.Length > 0 && !Regex.Unescape(triggers).Contains(trigger)) return false;
 
                 ICompletionListItem item = null;
@@ -785,17 +785,15 @@ namespace PluginCore.Controls
                     item = completionList.Items[completionList.SelectedIndex] as ICompletionListItem;
                 }
                 Hide();
-                if (item == null) return false;
-                string replace = item.Value;
-                if (replace != null)
+                if (item is null) return false;
+                var replace = item.Value;
+                if (!string.IsNullOrEmpty(replace))
                 {
+                    if (char.IsPunctuation(trigger) && replace[0] != trigger) return false;
                     sci.SetSel(startPos, sci.CurrentPos);
-                    if (word != null && tail.Length > 0)
+                    if (word != null && tail.Length > 0 && replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOfOrdinal(tail) >= word.Length)
                     {
-                        if (replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOfOrdinal(tail) >= word.Length)
-                        {
-                            replace = replace.Substring(0, replace.IndexOfOrdinal(tail));
-                        }
+                        replace = replace.Substring(0, replace.IndexOfOrdinal(tail));
                     }
                     sci.ReplaceSel(replace);
                     OnInsert?.Invoke(sci, startPos, replace, trigger, item);
@@ -813,10 +811,7 @@ namespace PluginCore.Controls
         
         #region Event Handling
         
-        public static IntPtr GetHandle()
-        {
-            return completionList.Handle;
-        }
+        public static IntPtr GetHandle() => completionList.Handle;
 
         public static void OnChar(ScintillaControl sci, int value)
         {
@@ -847,7 +842,7 @@ namespace PluginCore.Controls
                 {
                     Hide('\0');
                 }
-                else if (word.Length > 0 || c == '.' || c == '(' || c == '[' || c == '<' || c == ',' || c == ';')
+                else if (word.Length > 0 || c == '.' || c == '(' || c == '[' || c == '<' || c == ',' || c == ';' || c == '\"' || c == '\'')
                 {
                     ReplaceText(sci, c.ToString(), c);
                 }
