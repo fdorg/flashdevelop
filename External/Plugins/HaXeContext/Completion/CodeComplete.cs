@@ -347,7 +347,7 @@ namespace HaXeContext.Completion
                     orders.Add("[]", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, '[', "[$(EntryPoint)]"))
+                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
                     };
                 }
                 // for example: var v:Map<TKey, TValue> = <complete>
@@ -356,7 +356,7 @@ namespace HaXeContext.Completion
                     orders.Add("[=>]", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("[=>]", "Creates a new map and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, '[', "[$(EntryPoint)]"))
+                        new ObjectInitializerGeneratorItem("[=>]", "Creates a new map and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
                     };
                 }
                 // for example: var v:Dynamic = <complete>
@@ -365,7 +365,7 @@ namespace HaXeContext.Completion
                     orders.Add("{}", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("{}", "Creates a new dynamic object and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, '{', "{$(EntryPoint)}"))
+                        new ObjectInitializerGeneratorItem("{}", "Creates a new dynamic object and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "{$(EntryPoint)}"))
                     };
                 }
                 if (ctx.GetDefaultValue(type.Name) == "null")
@@ -1677,13 +1677,13 @@ namespace HaXeContext.Completion
             }
         }
 
-        static void GenerateObjectInitializer(ScintillaControl sci, char startChar, string template)
+        static void GenerateObjectInitializer(ScintillaControl sci, string template)
         {
             sci.BeginUndoAction();
             try
             {
                 var pos = sci.CurrentPos;
-                if (GetNonSpaceCharLeft(sci, ref pos) == startChar) sci.SetSel(pos, sci.CurrentPos);
+                if (GetNonSpaceCharLeft(sci, ref pos) == template[0]) sci.SetSel(pos, sci.CurrentPos);
                 ASGenerator.InsertCode(sci.CurrentPos, template);
             }
             finally
