@@ -336,7 +336,7 @@ namespace HaXeContext.Completion
                     orders.Add("[]", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array or multidimensional array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
+                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
                     };
                 }   
                 if (ctx.GetDefaultValue(type.Name) == "null")
