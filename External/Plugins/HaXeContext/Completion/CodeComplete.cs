@@ -1648,15 +1648,12 @@ namespace HaXeContext.Completion
             try
             {
                 var sb = new StringBuilder();
+                sb.Append('{');
                 for (var i = 0; i < type.Members.Count; i++)
                 {
                     var member = type.Members[i];
                     sb.Append(SnippetHelper.BOUNDARY);
-                    if (i > 0)
-                    {
-                        sb.Append('\n');
-                        sb.Append('\t');
-                    }
+                    sb.Append("\n\t");
                     sb.Append(member.Name);
                     sb.Append(':');
                     if (i == 0)
@@ -1665,7 +1662,6 @@ namespace HaXeContext.Completion
                         sb.Append(',');
                     }
                 }
-                sb.Insert(0, "{\n\t");
                 sb.Append("\n}");
                 var pos = sci.CurrentPos;
                 if (GetNonSpaceCharLeft(sci, ref pos) == '{') sci.SetSel(pos, sci.CurrentPos);
