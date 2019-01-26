@@ -3387,6 +3387,18 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         protected static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
+            return ASContext.Context.CodeComplete.GetExpressionEx(sci, position, ignoreWhiteSpace);
+        }
+
+        /// <summary>
+        /// Find expression at cursor position
+        /// </summary>
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="ignoreWhiteSpace">Skip whitespace at position</param>
+        /// <returns></returns>
+        protected virtual ASExpr GetExpressionEx(ScintillaControl sci, int position, bool ignoreWhiteSpace)
+        {
             var ctx = ASContext.Context;
             var haXe = ctx.CurrentModel.haXe;
             var expression = new ASExpr();
@@ -3979,7 +3991,11 @@ namespace ASCompletion.Completion
                 expression.Separator = ";";
                 value = "</>";
             }
-
+            
+            expression.Value = value;
+            expression.PositionExpression = positionExpression;
+            expression.LineFrom = sci.LineFromPosition(positionExpression);
+            expression.LineTo = sci.LineFromPosition(expression.Position);
             // check if there is a particular keyword
             if (expression.Separator == " " && position > 0)
             {
@@ -3991,20 +4007,7 @@ namespace ASCompletion.Completion
                     expression.WordBeforePosition = position + 1;
                 }
             }
-            if (expression.Separator == " " || (expression.Separator == ";" && sci.CharAt(position) != ';'))
-            {
-                var @operator = GetOperatorLeft(sci, ref position);
-                if (@operator.Length > 0)
-                {
-                    expression.Separator = @operator;
-                    expression.SeparatorPosition = position + 1;
-                }
-            }
-
-            expression.Value = value;
-            expression.PositionExpression = positionExpression;
-            expression.LineFrom = sci.LineFromPosition(positionExpression);
-            expression.LineTo = sci.LineFromPosition(expression.Position);
+            GetOperatorLeft(sci, position, expression);
             LastExpression = expression;
             return expression;
         }
@@ -4253,10 +4256,10 @@ namespace ASCompletion.Completion
         public static string GetWordLeft(ScintillaControl sci, ref int position)
         {
             // get the word characters from the syntax definition
-            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            string word = "";
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var word = "";
             //string exclude = "(){};,+*/\\=:.%\"<>";
-            bool skipWS = true;
+            var skipWS = true;
             while (position >= 0)
             {
                 var style = sci.BaseStyleAt(position);
@@ -4280,7 +4283,18 @@ namespace ASCompletion.Completion
             return word;
         }
 
-        static string GetOperatorLeft(ScintillaControl sci, ref int position)
+        protected static void GetOperatorLeft(ScintillaControl sci, int position, ASExpr expression)
+        {
+            if (expression.Separator == " " || (expression.Separator == ";" && sci.CharAt(position) != ';'))
+            {
+                var @operator = GetOperatorLeft(sci, ref position);
+                if (@operator.Length == 0) return;
+                expression.Separator = @operator;
+                expression.SeparatorPosition = position + 1;
+            }
+        }
+
+        protected static string GetOperatorLeft(ScintillaControl sci, ref int position)
         {
             var result = string.Empty;
             var skipWS = true;

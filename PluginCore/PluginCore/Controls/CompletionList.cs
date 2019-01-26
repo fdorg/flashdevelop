@@ -125,7 +125,7 @@ namespace PluginCore.Controls
         {
             if (!string.IsNullOrEmpty(select))
             {
-                int maxLen = 0;
+                var maxLen = 0;
                 foreach (var item in itemList)
                     if (item.Label.Length > maxLen)
                         maxLen = item.Label.Length;

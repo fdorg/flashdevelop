@@ -72,6 +72,7 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool OnChar(ScintillaControl sci, int value, char prevValue, bool autoHide)
         {
+            var currentPos = sci.CurrentPos;
             switch (value)
             {
                 case ':':
@@ -79,16 +80,31 @@ namespace HaXeContext.Completion
                     break;
                 case '>':
                     // for example: SomeType-><complete>
-                    if (prevValue == '-' && IsType(sci.CurrentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                    if (prevValue == '-' && IsType(currentPos - 2)) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     break;
                 case '(':
                     // for example: SomeType->(<complete>
-                    if (prevValue == '>' && (sci.CurrentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
+                    if (prevValue == '>' && (currentPos - 3) is int p && p > 0 && (char)sci.CharAt(p) == '-' && IsType(p))
                         return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
                     // for example: someFunction(<complete>
-                    if (HandleFunctionCompletion(sci, sci.CurrentPos, autoHide)) return false;
+                    if (HandleFunctionCompletion(sci, currentPos, autoHide)) return false;
                     // for example: @:forward(<complete> or @:forwardStatics(<complete>
                     return HandleMetadataForwardCompletion(sci, autoHide);
+                default:
+                    // for example: https://haxe.org/manual/macro-reification-expression.html
+                    if (ASContext.Context.CurrentMember is MemberModel member && (member.Flags & (FlagType.Function | (FlagType) HaxeFlagType.Macro)) != 0)
+                    {
+                        // for example: $a<complete>
+                        if (value != '$' && !string.IsNullOrEmpty(GetWordLeft(sci, ref currentPos))) value = (char) sci.CharAt(currentPos);
+                        if (value == '$')
+                        {
+                            // for example: var $<complete>
+                            if (GetWordLeft(sci, ref currentPos) == "var") return false;
+                            // TODO slavara: handle object.$<complete>
+                            return HandleExpressionReificationCompletion(sci, autoHide);
+                        }
+                    }
+                    break;
             }
             return false;
             // Utils
@@ -330,6 +346,42 @@ namespace HaXeContext.Completion
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
 
             bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
+        }
+
+        bool HandleExpressionReificationCompletion(ScintillaControl sci, bool autoHide)
+        {
+            var list = new List<ICompletionListItem>
+            {
+                new ExpressionReificationGeneratorItem("", "Expr", "Expr", 
+                    "${} : Expr -> Expr This can be used to compose expressions. The expression within the delimiting { } is executed, with its value being used in place.",
+                    () => GenerateExpressionReification(sci, "")
+                ),
+                new ExpressionReificationGeneratorItem("e", "Expr", "Expr",
+                    "$e{} : Expr -> Expr This can be used to compose expressions. The expression within the delimiting { } is executed, with its value being used in place.",
+                    () => GenerateExpressionReification(sci, "e")
+                ),
+                new ExpressionReificationGeneratorItem("a", "Array<Expr>", "Array<Expr>",
+                    "$a{} : Array<Expr> -> Array<Expr> or Array<Expr> -> Expr If used in a place where an Array<Expr> is expected (e.g. call arguments, block elements), $a{} treats its value as that array. Otherwise it generates an array declaration.",
+                    () => GenerateExpressionReification(sci, "a")
+                ),
+                new ExpressionReificationGeneratorItem("b", "Array<Expr>", "Expr",
+                    "$b{} : Array<Expr> -> Expr Generates a block expression from the given expression array.",
+                    () => GenerateExpressionReification(sci, "b")
+                ),
+                new ExpressionReificationGeneratorItem("i", "String", "Expr",
+                    "$i{} : String -> Expr Generates an identifier from the given string.",
+                    () => GenerateExpressionReification(sci, "i")
+                ),
+                new ExpressionReificationGeneratorItem("p", "Array<String>", "Expr",
+                    "$p{} : Array<String> -> Expr Generates a field expression from the given string array.",
+                    () => GenerateExpressionReification(sci, "p")
+                ),
+                new ExpressionReificationGeneratorItem("v", "Dynamic", "Expr",
+                    "$v{} : Dynamic -> Expr Generates an expression depending on the type of its argument. This is only guaranteed to work for basic types and enum instances.",
+                    () => GenerateExpressionReification(sci, "v")
+                ),
+            };
+            return HandleDotCompletion(sci, autoHide, list, null);
         }
 
         protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
@@ -890,6 +942,22 @@ namespace HaXeContext.Completion
             return true;
         }
 
+        /// <inheritdoc />
+        protected override ASExpr GetExpressionEx(ScintillaControl sci, int position, bool ignoreWhiteSpace)
+        {
+            var result = base.GetExpressionEx(sci, position, ignoreWhiteSpace);
+            if (result.ContextFunction is MemberModel member
+                && (member.Flags & (FlagType) HaxeFlagType.Macro) != 0
+                && sci.CharAt(result.PositionExpression - 1) == '$')
+            {
+                result.Value = $"${result.Value}";
+                result.PositionExpression--;
+                GetOperatorLeft(sci, result.PositionExpression, result);
+            }
+            return result;
+        }
+
+        /// <inheritdoc />
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             if (!string.IsNullOrEmpty(expression))
@@ -993,12 +1061,7 @@ namespace HaXeContext.Completion
                  *     }
                  * }
                  */
-                if (string.IsNullOrEmpty(context.WordBefore) && context.PositionExpression > 0 &&
-                    ASContext.CurSciControl is ScintillaControl sci && sci.CharAt(context.PositionExpression - 1) == '$')
-                {
-                    context.PositionExpression -= 1;
-                    context.Value = $"${context.Value}";
-                }
+                if (string.IsNullOrEmpty(context.WordBefore) && expression[0] == '$') expression = expression.Substring(1);
             }
             var result = base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
             // for example: trace<complete>, trace<cursor>()
@@ -1122,6 +1185,7 @@ namespace HaXeContext.Completion
             base.GetInstanceMembers(autoHide, expr, exprType, mask, dotIndex, result);
         }
 
+        /// <inheritdoc />
         protected override void FindMemberEx(string token, FileModel inFile, ASResult result, FlagType mask, Visibility access)
         {
             base.FindMemberEx(token, inFile, result, mask, access);
@@ -1139,6 +1203,7 @@ namespace HaXeContext.Completion
             }
         }
 
+        /// <inheritdoc />
         protected override void FindMemberEx(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility access)
         {
             if (string.IsNullOrEmpty(token)) return;
@@ -1513,6 +1578,22 @@ namespace HaXeContext.Completion
             sci.SelectWord();
             ASGenerator.InsertCode(sci.CurrentPos, template);
         }
+
+        static void GenerateExpressionReification(ScintillaControl sci, string name)
+        {
+            sci.BeginUndoAction();
+            try
+            {
+                sci.SelectWord();
+                var position = sci.SelectionStart + name.Length + 1;
+                sci.ReplaceSel($"{name}{{}}");
+                sci.SetSel(position, position);
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
+        }
     }
 
     class AnonymousFunctionGeneratorItem : ICompletionListItem
@@ -1529,6 +1610,36 @@ namespace HaXeContext.Completion
         public string Description => TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");
         public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(34);
 
+        public string Value
+        {
+            get
+            {
+                action();
+                return null;
+            }
+        }
+    }
+
+    class ExpressionReificationGeneratorItem : ICompletionListItem
+    {
+        readonly string name;
+        readonly string exprType;
+        readonly string returnType;
+        readonly string comments;
+        readonly Action action;
+
+        public ExpressionReificationGeneratorItem(string name, string exprType, string returnType, string comments, Action action)
+        {
+            this.name = name;
+            this.exprType = exprType;
+            this.returnType = returnType;
+            this.comments = comments;
+            this.action = action;
+        }
+
+        public string Label => $"${name}{{}}";
+        public string Description => $"${name}{{expr:{exprType}}} : {returnType}\r\n\r\n{comments}";
+        public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(34);
         public string Value
         {
             get
