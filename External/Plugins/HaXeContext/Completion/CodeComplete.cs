@@ -11,6 +11,7 @@ using ASCompletion.Settings;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using ScintillaNet;
 
@@ -331,13 +332,22 @@ namespace HaXeContext.Completion
                     {"null", 0}
                 };
                 List<ICompletionListItem> list = null;
+                // for example: var v:Typedef = <complete>
+                if (type.Flags.HasFlag(FlagType.TypeDef) && type.Members.Count > 0)
+                {
+                    orders.Add("{}", 1);
+                    list = new List<ICompletionListItem>
+                    {
+                        new ObjectInitializerGeneratorItem("{}", $"Creates a new {type.Name} and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, type))
+                    };
+                }
                 // for example: var v:Array<TItem> = <complete>
-                if (type.Name.StartsWithOrdinal("Array<"))
+                else if (type.Name.StartsWithOrdinal("Array<"))
                 {
                     orders.Add("[]", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
+                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, '[', "[$(EntryPoint)]"))
                     };
                 }
                 // for example: var v:Map<TKey, TValue> = <complete>
@@ -346,7 +356,7 @@ namespace HaXeContext.Completion
                     orders.Add("[=>]", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("[=>]", "Creates a new map and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
+                        new ObjectInitializerGeneratorItem("[=>]", "Creates a new map and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, '[', "[$(EntryPoint)]"))
                     };
                 }
                 // for example: var v:Dynamic = <complete>
@@ -355,7 +365,7 @@ namespace HaXeContext.Completion
                     orders.Add("{}", 1);
                     list = new List<ICompletionListItem>
                     {
-                        new ObjectInitializerGeneratorItem("{}", "Creates a new dynamic object and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "{$(EntryPoint)}"))
+                        new ObjectInitializerGeneratorItem("{}", "Creates a new dynamic object and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, '{', "{$(EntryPoint)}"))
                     };
                 }
                 if (ctx.GetDefaultValue(type.Name) == "null")
@@ -1632,13 +1642,48 @@ namespace HaXeContext.Completion
             }
         }
 
-        static void GenerateObjectInitializer(ScintillaControl sci, string template)
+        static void GenerateObjectInitializer(ScintillaControl sci, ClassModel type)
+        {
+            sci.BeginUndoAction();
+            try
+            {
+                var sb = new StringBuilder();
+                for (var i = 0; i < type.Members.Count; i++)
+                {
+                    var member = type.Members[i];
+                    sb.Append(SnippetHelper.BOUNDARY);
+                    if (i > 0)
+                    {
+                        sb.Append('\n');
+                        sb.Append('\t');
+                    }
+                    sb.Append(member.Name);
+                    sb.Append(':');
+                    if (i == 0)
+                    {
+                        sb.Append(SnippetHelper.ENTRYPOINT);
+                        sb.Append(';');
+                    }
+                }
+                sb.Insert(0, "{\n\t");
+                sb.Append("\n}");
+                var pos = sci.CurrentPos;
+                if (GetNonSpaceCharLeft(sci, ref pos) == '{') sci.SetSel(pos, sci.CurrentPos);
+                ASGenerator.InsertCode(sci.CurrentPos, sb.ToString());
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
+        }
+
+        static void GenerateObjectInitializer(ScintillaControl sci, char startChar, string template)
         {
             sci.BeginUndoAction();
             try
             {
                 var pos = sci.CurrentPos;
-                if (GetNonSpaceCharLeft(sci, ref pos) == '[') sci.SetSel(pos, sci.CurrentPos);
+                if (GetNonSpaceCharLeft(sci, ref pos) == startChar) sci.SetSel(pos, sci.CurrentPos);
                 ASGenerator.InsertCode(sci.CurrentPos, template);
             }
             finally
