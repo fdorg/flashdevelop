@@ -4268,8 +4268,7 @@ namespace ASCompletion.Completion
                     var c = (char)sci.CharAt(position);
                     if (c <= ' ')
                     {
-                        if (!skipWS)
-                            break;
+                        if (!skipWS) break;
                     }
                     else if (!characterClass.Contains(c)) break;
                     else if (style != 6)
@@ -4324,6 +4323,19 @@ namespace ASCompletion.Completion
                 --position;
             }
             return result;
+        }
+
+        protected static char GetNonSpaceCharLeft(ScintillaControl sci, ref int position)
+        {
+            while (position >= 0)
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    if (sci.CharAt(position) is var c && c > ' ') return (char) c;
+                }
+                --position;
+            }
+            return ' ';
         }
 
         public static ASResult GetExpressionType(ScintillaControl sci, int position) => GetExpressionType(sci, position, true);
