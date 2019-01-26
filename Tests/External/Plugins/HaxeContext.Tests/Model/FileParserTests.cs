@@ -213,7 +213,7 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
-                        new MemberModel("v", "Int", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public)
+                        new MemberModel("v", "Int", FlagType.Access | (FlagType) HaxeFlagType.Inline | FlagType.Static | FlagType.Variable, Visibility.Public)
                     })
                     .SetName("function foo(i:Int):Int trace(i)\vinline public static var v:Int;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
@@ -245,7 +245,7 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
-                        new MemberModel("max", "ExprOf<T>", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public)
+                        new MemberModel("max", "ExprOf<T>", FlagType.Access | (FlagType) HaxeFlagType.Inline | FlagType.Static | FlagType.Function, Visibility.Public)
                     })
                     .SetName("function foo(i:Int):Int trace(i)\nmacro public static inline max(v1, v2) return v1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");

@@ -5,11 +5,11 @@ namespace ASCompletion.Model
     [Flags]
     public enum Visibility : uint
     {
-        Default = 1<<1,
-        Public = 1<<2,
-        Internal = 1<<3,
-        Protected = 1<<4,
-        Private = 1<<5
+        Default = 1 << 1,
+        Public = 1 << 2,
+        Internal = 1 << 3,
+        Protected = 1 << 4,
+        Private = 1 << 5,
     }
 
     [Flags]
@@ -55,11 +55,21 @@ namespace ASCompletion.Model
         Declaration = 1L << 34,
         Template = 1L << 35,
         DocTemplate = 1L << 36,
-        CodeTemplate = 1L << 37
+        CodeTemplate = 1L << 37,
+
+        User = 1L << 38,
     }
 
     public enum ASMetaKind
     {
-        Unknown, Event, Style, Effect, Exclude, Include, DefaultProperty, MaxChildren, Inspectable
+        Unknown,
+        Event,
+        Style,
+        Effect,
+        Exclude,
+        Include,
+        DefaultProperty,
+        MaxChildren,
+        Inspectable
     }
 }

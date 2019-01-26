@@ -8,6 +8,12 @@ using PluginCore;
 
 namespace HaXeContext.Model
 {
+    public enum HaxeFlagType : ulong
+    {
+        Macro = FlagType.User << 0,
+        Inline = FlagType.User << 1,
+    }
+
     #region Token class
     class Token
     {
@@ -1701,6 +1707,8 @@ namespace HaXeContext.Model
                         {
                             foundModifier = FlagType.Dynamic;
                         }
+                        //else if (token == "macro") foundModifier = (FlagType) HaxeFlagType.Macro;
+                        else if (token == "inline") foundModifier = (FlagType) HaxeFlagType.Inline;
                     }
                     // a declaration modifier was recognized
                     if (foundModifier != 0)
