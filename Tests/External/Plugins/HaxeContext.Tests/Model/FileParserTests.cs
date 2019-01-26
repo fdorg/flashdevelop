@@ -470,6 +470,38 @@ namespace HaXeContext.Model
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2590");
             }
         }
+        
+        static IEnumerable<TestCaseData> Issue2639TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2639_1")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("addFormat", "StringBuf->String->Rest<", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public),
+                        new MemberModel("addFormat", null, FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                    })
+                    .SetName("Issue 2639. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2639");
+                yield return new TestCaseData("Issue2639_2")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("addFormat", "StringBuf->String->Rest<", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                        new MemberModel("addFormat", null, FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                    })
+                    .SetName("Issue 2639. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2639");
+                yield return new TestCaseData("Issue2639_3")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("addFormat", "StringBuf->String->Rest<Void->", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public),
+                        new MemberModel("addFormat", null, FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                    })
+                    .SetName("Issue 2639. Case 3")
+                    .Ignore("")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2639");
+            }
+        }
 
         [
             Test,
@@ -483,6 +515,7 @@ namespace HaXeContext.Model
             TestCaseSource(nameof(Issue2550TestCases)),
             TestCaseSource(nameof(Issue2583TestCases)),
             TestCaseSource(nameof(Issue2590TestCases)),
+            TestCaseSource(nameof(Issue2639TestCases)),
         ]
         public List<MemberModel> ParseFile(string fileName)
         {

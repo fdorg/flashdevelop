@@ -395,7 +395,7 @@ namespace ASCompletion.Model
         /// <param name="fileModel">Model</param>
         /// <param name="src">Source</param>
         void ParseSrc(FileModel fileModel, string src);
-        void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract);
+        void ParseSrc(FileModel fileModel, string src, bool allowBaReExtract);
     }
 
     /// <summary>
@@ -502,7 +502,7 @@ namespace ASCompletion.Model
         /// <inheritdoc />
         public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
 
-        public void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract)
+        public void ParseSrc(FileModel fileModel, string src, bool allowBaReExtract)
         {
             //TraceManager.Add("Parsing " + Path.GetFileName(fileModel.FileName));
             model = fileModel;
@@ -512,7 +512,7 @@ namespace ASCompletion.Model
 
             // pre-filtering
             if (allowBaReExtract && model.HasFiltering && model.Context != null)
-                ba = model.Context.FilterSource(fileModel.FileName, ba);
+                src = model.Context.FilterSource(fileModel.FileName, src);
 
             model.InlinedIn = null;
             model.InlinedRanges = null;
@@ -528,7 +528,7 @@ namespace ASCompletion.Model
             model.MetaDatas = null;
 
             // state
-            int len = ba.Length;
+            int len = src.Length;
             int i = 0;
             line = 0;
             int matching = 0;
@@ -589,7 +589,7 @@ namespace ASCompletion.Model
 
             while (i < len)
             {
-                var c1 = ba[i++];
+                var c1 = src[i++];
                 var isInString = (inString > 0);
 
                 /* MATCH COMMENTS / STRING LITERALS */
@@ -604,11 +604,11 @@ namespace ASCompletion.Model
                             // new comment
                             if (c1 == '/' && i < len)
                             {
-                                c2 = ba[i];
+                                c2 = src[i];
                                 if (c2 == '/')
                                 {
                                     // Check if this this is a /// comment
-                                    if (i + 1 < len && ba[i + 1] == '/')
+                                    if (i + 1 < len && src[i + 1] == '/')
                                     {
                                         // This is a /// comment
                                         matching = 4;
@@ -627,14 +627,14 @@ namespace ASCompletion.Model
                                 }
                                 if (c2 == '*')
                                 {
-                                    isBlockComment = (i + 1 < len && ba[i + 1] == '*');
+                                    isBlockComment = (i + 1 < len && src[i + 1] == '*');
                                     matching = 2;
                                     inCode = false;
                                     i++;
                                     while (i < len - 1)
                                     {
-                                        c2 = ba[i];
-                                        if (c2 == '*' && ba[i + 1] != '/') i++;
+                                        c2 = src[i];
+                                        if (c2 == '*' && src[i + 1] != '/') i++;
                                         else break;
                                     }
                                     continue;
@@ -658,12 +658,12 @@ namespace ASCompletion.Model
                                 inlineDirective = false;
                                 while (ls > 0)
                                 {
-                                    c2 = ba[ls--];
+                                    c2 = src[ls--];
                                     if (c2 == 10 || c2 == 13) break;
                                     if (c2 > 32) { inlineDirective = true; break; }
                                 }
-                                c2 = ba[i];
-                                if (i < 2 || ba[i - 2] < 33 && c2 >= 'a' && c2 <= 'z')
+                                c2 = src[i];
+                                if (i < 2 || src[i - 2] < 33 && c2 >= 'a' && c2 <= 'z')
                                 {
                                     matching = 3;
                                     inCode = false;
@@ -680,7 +680,7 @@ namespace ASCompletion.Model
                                 // Are we on an escaped ' or ""?
                                 int escNo = 0;
                                 int l = i - 2;
-                                while (l > -1 && ba[l--] == '\\')
+                                while (l > -1 && src[l--] == '\\')
                                     escNo++;
 
                                 // Even number of escaped \ means we are not on an escaped ' or ""
@@ -693,7 +693,7 @@ namespace ASCompletion.Model
                                 string token = new string(buffer, 0, length);
                                 if (token == "include")
                                 {
-                                    string inc = ba.Substring(tokPos, i - tokPos);
+                                    string inc = src.Substring(tokPos, i - tokPos);
                                     ASMetaData meta = new ASMetaData("Include");
                                     meta.ParseParams(inc);
                                     if (curClass == null)
@@ -729,7 +729,7 @@ namespace ASCompletion.Model
                             bool end = false;
                             while (i < len)
                             {
-                                c2 = ba[i];
+                                c2 = src[i];
                                 if (c2 == '\\') { i++; continue; }
                                 if (c2 == '/')
                                 {
@@ -762,7 +762,7 @@ namespace ASCompletion.Model
                         }
                         else if (c1 == '#') // peek for #end
                         {
-                            if (i + 3 < len && ba[i] == 'e' && ba[i + 1] == 'n' && ba[i + 2] == 'd' && ba[i + 3] <= 32)
+                            if (i + 3 < len && src[i] == 'e' && src[i + 1] == 'n' && src[i + 2] == 'd' && src[i + 3] <= 32)
                             {
                                 matching = 0;
                                 inCode = true;
@@ -781,7 +781,7 @@ namespace ASCompletion.Model
                             bool skipAhead = false;
 
                             // See if we just ended a line
-                            if (2 <= i && (ba[i - 2] == 10 || ba[i - 2] == 13))
+                            if (2 <= i && (src[i - 2] == 10 || src[i - 2] == 13))
                             {
                                 // Check ahead to the next line, see if it has a /// comment on it too.
                                 // If it does, we want to continue the comment with that line.  If it
@@ -789,10 +789,10 @@ namespace ASCompletion.Model
                                 for (int j = i + 1; j < len; ++j)
                                 {
                                     // Skip whitespace
-                                    char twoBack = ba[j - 2];
+                                    char twoBack = src[j - 2];
                                     if (' ' != twoBack && '\t' != twoBack)
                                     {
-                                        if ('/' == twoBack && '/' == ba[j - 1] && '/' == ba[j])
+                                        if ('/' == twoBack && '/' == src[j - 1] && '/' == src[j])
                                         {
                                             // There is a comment ahead.  Move up to it so we can gather the
                                             // rest of the comment
@@ -832,7 +832,7 @@ namespace ASCompletion.Model
                 if (c1 == 10 || c1 == 13)
                 {
                     line++;
-                    if (c1 == 13 && i < len && ba[i] == 10) i++;
+                    if (c1 == 13 && i < len && src[i] == 10) i++;
                 }
 
 
@@ -850,7 +850,7 @@ namespace ASCompletion.Model
                         commentBuffer[commentLength++] = c1;
                         while (i < len)
                         {
-                            c2 = ba[i];
+                            c2 = src[i];
                             if (commentLength < COMMENTS_BUFFER) commentBuffer[commentLength++] = c2;
                             if (c2 == 10 || c2 == 13)
                                 break;
@@ -895,7 +895,7 @@ namespace ASCompletion.Model
                 {
                     if (c1 == '/')
                     {
-                        LookupRegex(ba, ref i);
+                        LookupRegex(src, ref i);
                     }
                     else if (c1 == '}')
                     {
@@ -967,7 +967,7 @@ namespace ASCompletion.Model
                     }
                     else if (c1 == '<')
                     {
-                        if (i > 1 && ba[i - 2] == '<') paramTempCount = 0; // a << b
+                        if (i > 1 && src[i - 2] == '<') paramTempCount = 0; // a << b
                         else
                         {
                             if (inType) inGeneric = true;
@@ -976,7 +976,7 @@ namespace ASCompletion.Model
                     }
                     else if (c1 == '>')
                     {
-                        if (ba[i - 2] == '-') { /*haxe method signatures*/ }
+                        if (src[i - 2] == '-') { /*haxe method signatures*/ }
                         else if (paramTempCount > 0)
                         {
                             paramTempCount--;
@@ -987,11 +987,11 @@ namespace ASCompletion.Model
                     else if (c1 == '/')
                     {
                         int i0 = i;
-                        if (LookupRegex(ba, ref i) && valueLength < VALUE_BUFFER - 3)
+                        if (LookupRegex(src, ref i) && valueLength < VALUE_BUFFER - 3)
                         {
                             valueBuffer[valueLength++] = '/';
                             for (; i0 < i; i0++)
-                                if (valueLength < VALUE_BUFFER - 2) valueBuffer[valueLength++] = ba[i0];
+                                if (valueLength < VALUE_BUFFER - 2) valueBuffer[valueLength++] = src[i0];
                             valueBuffer[valueLength++] = '/';
                             continue;
                         }
@@ -1029,7 +1029,7 @@ namespace ASCompletion.Model
                         // escape next char
                         if (c1 == '\\' && i < len)
                         {
-                            c1 = ba[i++];
+                            c1 = src[i++];
                             if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
                             continue;
                         }
@@ -1125,7 +1125,7 @@ namespace ASCompletion.Model
                 else
                 {
                     // function types
-                    if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && ba[i] == '>')
+                    if (c1 == '-' && context != 0 && length > 0 && features.hasGenerics && i < len && src[i] == '>')
                     {
                         buffer[length++] = '-';
                         buffer[length++] = '>';
@@ -1159,7 +1159,7 @@ namespace ASCompletion.Model
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if (ba[i] == '*')
+                                    if (src[i] == '*')
                                     {
                                         inGeneric = true;
                                         inValue = false;
@@ -1172,8 +1172,8 @@ namespace ASCompletion.Model
                                         i++;
                                         continue;
                                     }
-                                    if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
-                                        && (char.IsLetter(ba[i]))
+                                    if ((char.IsLetterOrDigit(src[i - 3]) || src[i - 3] == '_')
+                                        && (char.IsLetter(src[i]))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                     {
                                         if (curMember == null)
@@ -1291,7 +1291,7 @@ namespace ASCompletion.Model
                             foundColon = curMember != null && curMember.Type == null;
                             // recognize compiler config block
                             if (!foundColon && braceCount == 0 
-                                && i < len - 2 && ba[i] == ':' && char.IsLetter(ba[i + 1]))
+                                && i < len - 2 && src[i] == ':' && char.IsLetter(src[i + 1]))
                                 foundConstant = true;
                         }
                         // next variable declaration
@@ -1409,7 +1409,7 @@ namespace ASCompletion.Model
                         {
                             if (version == 3)
                             {
-                                var meta = LookupMeta(ref ba, ref i);
+                                var meta = LookupMeta(ref src, ref i);
                                 if (meta != null)
                                 {
                                     carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
@@ -1418,7 +1418,7 @@ namespace ASCompletion.Model
                             }
                             else if (features.hasCArrays && curMember?.Type != null)
                             {
-                                if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
+                                if (src[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
                             }
                         }
                         // escape next char
@@ -1430,7 +1430,7 @@ namespace ASCompletion.Model
                         // literal regex
                         else if (c1 == '/' && version == 3)
                         {
-                            if (LookupRegex(ba, ref i))
+                            if (LookupRegex(src, ref i))
                                 continue;
                         }
                 }
