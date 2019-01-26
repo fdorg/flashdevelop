@@ -245,7 +245,7 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("foo", "Int", FlagType.Dynamic | FlagType.Function, Visibility.Private),
-                        new MemberModel("max", "ExprOf<T>", FlagType.Access | (FlagType) HaxeFlagType.Inline | FlagType.Static | FlagType.Function, Visibility.Public)
+                        new MemberModel("max", "ExprOf<T>", FlagType.Access | (FlagType) HaxeFlagType.Macro | (FlagType) HaxeFlagType.Inline | FlagType.Static | FlagType.Function, Visibility.Public)
                     })
                     .SetName("function foo(i:Int):Int trace(i)\nmacro public static inline max(v1, v2) return v1;")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2210");
@@ -479,7 +479,7 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("addFormat", "StringBuf->String->Rest<", FlagType.Access | FlagType.Static | FlagType.Variable, Visibility.Public),
-                        new MemberModel("addFormat", null, FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                        new MemberModel("addFormat", null, FlagType.Access | (FlagType) HaxeFlagType.Macro | FlagType.Static | FlagType.Function, Visibility.Public),
                     })
                     .SetName("Issue 2639. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2639");
@@ -487,7 +487,7 @@ namespace HaXeContext.Model
                     .Returns(new List<MemberModel>
                     {
                         new MemberModel("addFormat", "StringBuf->String->Rest<", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
-                        new MemberModel("addFormat", null, FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                        new MemberModel("addFormat", null, FlagType.Access | (FlagType) HaxeFlagType.Macro | FlagType.Static | FlagType.Function, Visibility.Public),
                     })
                     .SetName("Issue 2639. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2639");
