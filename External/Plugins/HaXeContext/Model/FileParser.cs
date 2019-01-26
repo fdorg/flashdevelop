@@ -8,6 +8,12 @@ using PluginCore;
 
 namespace HaXeContext.Model
 {
+    public enum HaxeFlagType : ulong
+    {
+        Macro = FlagType.User << 0,
+        Inline = FlagType.User << 1,
+    }
+
     #region Token class
     class Token
     {
@@ -1681,25 +1687,15 @@ namespace HaXeContext.Model
                     // other modifiers
                     if (foundModifier == 0)
                     {
-                        if (token == "static")
+                        if (token == "static") foundModifier = FlagType.Static;
+                        else if (token == "override") foundModifier = FlagType.Override;
+                        else if (token == "final") foundModifier = FlagType.Final;
+                        else if (token == "dynamic") foundModifier = FlagType.Dynamic;
+                        else if (token == "inline") foundModifier = (FlagType) HaxeFlagType.Inline;
+                        else if (context != FlagType.Package)
                         {
-                            foundModifier = FlagType.Static;
-                        }
-                        else if (token == "override")
-                        {
-                            foundModifier = FlagType.Override;
-                        }
-                        else if (token == "extern" && context != FlagType.Package)
-                        {
-                            foundModifier = FlagType.Intrinsic | FlagType.Extern;
-                        }
-                        else if (token == "final")
-                        {
-                            foundModifier = FlagType.Final;
-                        }
-                        else if (token == "dynamic")
-                        {
-                            foundModifier = FlagType.Dynamic;
+                            if (token == "extern") foundModifier = FlagType.Intrinsic | FlagType.Extern;
+                            else if (token == "macro") foundModifier = (FlagType) HaxeFlagType.Macro;
                         }
                     }
                     // a declaration modifier was recognized
