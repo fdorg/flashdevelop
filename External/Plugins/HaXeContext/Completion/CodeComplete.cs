@@ -1647,18 +1647,34 @@ namespace HaXeContext.Completion
             sci.BeginUndoAction();
             try
             {
+                var members = new List<MemberModel>();
+                type.ResolveExtends();
+                var currentType = type;
+                while (!currentType.IsVoid())
+                {
+                    members.AddRange(currentType.Members.Items);
+                    currentType = currentType.Extends;
+                }
                 var sb = new StringBuilder();
                 sb.Append('{');
-                for (var i = 0; i < type.Members.Count; i++)
+                for (var i = 0; i < members.Count; i++)
                 {
-                    var member = type.Members[i];
+                    var member = members[i];
                     sb.Append(SnippetHelper.BOUNDARY);
                     sb.Append("\n\t");
-                    sb.Append(member.Name);
-                    sb.Append(':');
-                    if (i == 0)
+                    if (member.MetaDatas != null && member.MetaDatas.Any(it => it.Name == ":optional"))
                     {
-                        sb.Append(SnippetHelper.ENTRYPOINT);
+                        sb.Append("//");
+                        sb.Append(member.Name);
+                        sb.Append(':');
+                        sb.Append(',');
+                        sb.Append("// optional");
+                    }
+                    else
+                    {
+                        sb.Append(member.Name);
+                        sb.Append(':');
+                        if (i == 0) sb.Append(SnippetHelper.ENTRYPOINT);
                         sb.Append(',');
                     }
                 }
