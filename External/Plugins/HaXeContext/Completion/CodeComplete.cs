@@ -326,15 +326,32 @@ namespace HaXeContext.Completion
                         // Utils
                         bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
                     });
+                var orders = new Dictionary<string, int>
+                {
+                    {"null", 0}
+                };
+                List<ICompletionListItem> list = null;
+                if (type.Name == "Array" || type.Name.StartsWithOrdinal("Array<"))
+                {
+                    orders.Add("[]", 1);
+                    list = new List<ICompletionListItem>
+                    {
+                        new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
+                    };
+                }   
                 if (ctx.GetDefaultValue(type.Name) == "null")
                 {
                     var word = sci.GetWordFromPosition(sci.CurrentPos);
                     if (string.IsNullOrEmpty(word) || "null".StartsWithOrdinal(word))
                         completionHistory[ctx.CurrentClass.QualifiedName] = "null";
-                    return HandleDotCompletion(sci, autoHide, null, (a, b) =>
+                    return HandleDotCompletion(sci, autoHide, list, (a, b) =>
                     {
-                        if ((a as TemplateItem)?.Label == "null") return -1;
-                        if ((b as TemplateItem)?.Label == "null") return 1;
+                        var aLabel = (a as TemplateItem)?.Label ?? (a as ObjectInitializerGeneratorItem)?.Label;
+                        var bLabel = (b as TemplateItem)?.Label ?? (b as ObjectInitializerGeneratorItem)?.Label;
+                        if (aLabel != null && bLabel != null && orders.ContainsKey(aLabel) && orders.ContainsKey(bLabel))
+                            return bLabel.CompareTo(aLabel);
+                        if (aLabel != null && orders.ContainsKey(aLabel)) return -1;
+                        if (bLabel != null && orders.ContainsKey(bLabel)) return 1;
                         return 0;
                     });
                 }
@@ -1595,6 +1612,21 @@ namespace HaXeContext.Completion
                 sci.EndUndoAction();
             }
         }
+
+        static void GenerateObjectInitializer(ScintillaControl sci, string template)
+        {
+            sci.BeginUndoAction();
+            try
+            {
+                var pos = sci.CurrentPos;
+                if (GetNonSpaceCharLeft(sci, ref pos) == '[') sci.SetSel(pos, sci.CurrentPos);
+                ASGenerator.InsertCode(sci.CurrentPos, template);
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
+        }
     }
 
     class AnonymousFunctionGeneratorItem : ICompletionListItem
@@ -1621,25 +1653,27 @@ namespace HaXeContext.Completion
         }
     }
 
-    class ExpressionReificationGeneratorItem : ICompletionListItem
+    class ExpressionReificationGeneratorItem : ObjectInitializerGeneratorItem
     {
-        readonly string name;
-        readonly string exprType;
-        readonly string returnType;
-        readonly string comments;
+        public ExpressionReificationGeneratorItem(string name, string exprType, string returnType, string comments, Action action)
+            : base($"${name}{{}}", $"${name}{{expr:{exprType}}} : {returnType}\r\n\r\n{comments}", action)
+        {
+        }
+    }
+
+    class ObjectInitializerGeneratorItem : ICompletionListItem
+    {
         readonly Action action;
 
-        public ExpressionReificationGeneratorItem(string name, string exprType, string returnType, string comments, Action action)
+        public ObjectInitializerGeneratorItem(string name, string description, Action action)
         {
-            this.name = name;
-            this.exprType = exprType;
-            this.returnType = returnType;
-            this.comments = comments;
+            Label = name;
+            Description = description;
             this.action = action;
         }
 
-        public string Label => $"${name}{{}}";
-        public string Description => $"${name}{{expr:{exprType}}} : {returnType}\r\n\r\n{comments}";
+        public string Label { get; }
+        public string Description { get; }
         public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(34);
         public string Value
         {
