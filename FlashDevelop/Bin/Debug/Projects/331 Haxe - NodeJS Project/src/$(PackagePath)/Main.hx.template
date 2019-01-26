@@ -1,0 +1,13 @@
+package $(PackageName);
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+class Main $(CSLB){
+	
+	static function main() $(CSLB){
+		
+	}
+	
+}
