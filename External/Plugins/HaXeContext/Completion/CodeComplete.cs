@@ -331,14 +331,24 @@ namespace HaXeContext.Completion
                     {"null", 0}
                 };
                 List<ICompletionListItem> list = null;
-                if (type.Name == "Array" || type.Name.StartsWithOrdinal("Array<"))
+                // for example: var v:Array<TItem> = <complete>
+                if (type.Name.StartsWithOrdinal("Array<"))
                 {
                     orders.Add("[]", 1);
                     list = new List<ICompletionListItem>
                     {
                         new ObjectInitializerGeneratorItem("[]", "Initializes a new array with the specified elements (a0, and so on)", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
                     };
-                }   
+                }
+                // for example: var v:Map<TKey, TValue> = <complete>
+                else if (type.Name.StartsWithOrdinal("Map<") || type.Name.StartsWith("IMap<"))
+                {
+                    orders.Add("[=>]", 1);
+                    list = new List<ICompletionListItem>
+                    {
+                        new ObjectInitializerGeneratorItem("[=>]", "Creates a new map and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "[$(EntryPoint)]"))
+                    };
+                }
                 if (ctx.GetDefaultValue(type.Name) == "null")
                 {
                     var word = sci.GetWordFromPosition(sci.CurrentPos);
