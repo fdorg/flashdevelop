@@ -92,7 +92,8 @@ namespace HaXeContext.Completion
                     return HandleMetadataForwardCompletion(sci, autoHide);
                 default:
                     // for example: https://haxe.org/manual/macro-reification-expression.html
-                    if (ASContext.Context.CurrentMember is MemberModel member && (member.Flags & (FlagType.Function | (FlagType) HaxeFlagType.Macro)) != 0)
+                    if (ASContext.Context.CurrentMember is MemberModel member
+                        && member.Flags.HasFlag(FlagType.Function) && member.Flags.HasFlag((FlagType) HaxeFlagType.Macro))
                     {
                         // for example: $a<complete>
                         if (value != '$' && !string.IsNullOrEmpty(GetWordLeft(sci, ref currentPos))) value = (char) sci.CharAt(currentPos);
