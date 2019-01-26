@@ -1662,7 +1662,7 @@ namespace HaXeContext.Completion
                     if (i == 0)
                     {
                         sb.Append(SnippetHelper.ENTRYPOINT);
-                        sb.Append(';');
+                        sb.Append(',');
                     }
                 }
                 sb.Insert(0, "{\n\t");
