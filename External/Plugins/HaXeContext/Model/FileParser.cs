@@ -1023,7 +1023,22 @@ namespace HaXeContext.Model
                         }
                         // star is valid in import statements
                         else if (c1 == '*') addChar = true;
-                        else if (c1 == '?' && inParams && length == 0) addChar = true;
+                        else if (c1 == '?')
+                        {
+                            if ((inParams || inTypedef) && length == 0)
+                            {
+                                /**
+                                 * for example:
+                                 * function foo(<position>?paramName
+                                 * or
+                                 * typedef Typedef = {
+                                 *     <position>?fieldName
+                                 * }
+                                 */
+                                addChar = true;
+                            }
+                            else shortcut = false;
+                        }
                         else shortcut = false;
                     }
                     // eval this word
@@ -1511,6 +1526,29 @@ namespace HaXeContext.Model
             {
                 var @class = model.Classes[i];
                 FinalizeMembers(@class.Members.Items);
+                if ((@class.Flags & FlagType.TypeDef) != 0)
+                {
+                    /**
+                     * for example:
+                     * transform
+                     * typedef Typedef = {
+                     *     ?v:T
+                     * }
+                     * to
+                     * typedef Typedef = {
+                     *     @:optional
+                     *     v:T
+                     * }
+                     */
+                    for (var j = @class.Members.Items.Count - 1; j >= 0; j--)
+                    {
+                        var member = @class.Members.Items[j];
+                        if (!member.Name.StartsWith('?')) continue;
+                        member.Name = member.Name.Substring(1);
+                        if (member.MetaDatas == null) member.MetaDatas = new List<ASMetaData>();
+                        member.MetaDatas.Add(new ASMetaData(":optional"));
+                    }
+                }
                 if (@class.MetaDatas == null || @class.Members.Count == 0) continue;
                 for (var j = @class.MetaDatas.Count - 1; j >= 0; j--)
                 {
