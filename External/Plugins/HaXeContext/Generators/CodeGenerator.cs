@@ -43,7 +43,7 @@ namespace HaXeContext.Generators
             var currentClass = ctx.CurrentClass;
             if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
-                if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
+                if (contextToken != null && expr.Member is null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
             }
             if (CanShowGenerateSwitch(sci, position, expr))
@@ -180,7 +180,7 @@ namespace HaXeContext.Generators
             MemberModel last = null;
             foreach (var member in members)
             {
-                if (last == null || last.Name != member.Name)
+                if (last is null || last.Name != member.Name)
                     list.Add(new MemberItem(member));
                 last = member;
             }
@@ -503,14 +503,14 @@ namespace HaXeContext.Generators
 
         protected override string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            if (parameters == null || parameters.Count == 0 || parameters.First().Name != "get"
+            if (parameters is null || parameters.Count == 0 || parameters.First().Name != "get"
                 || ASContext.Context.CurrentClass.Members.Contains($"get_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideGetterTemplate(ofClass, parameters, newMember);
         }
 
         protected override string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            if (parameters == null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
+            if (parameters is null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
                 || ASContext.Context.CurrentClass.Members.Contains($"set_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
@@ -525,7 +525,7 @@ namespace HaXeContext.Generators
         static bool CanShowGenerateSwitch(ScintillaControl sci, int position, ASResult expr)
         {
             var member = expr.Member;
-            if (member == null
+            if (member is null
                 || member.Flags.HasFlag(FlagType.Enum) 
                 || (member.Flags.HasFlag(FlagType.ParameterVar) && expr.Context.BeforeBody)) return false;
             var ctx = ASContext.Context;
@@ -637,6 +637,29 @@ namespace HaXeContext.Generators
             }
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", sb.ToString());
             InsertCode(start, template, sci);
+        }
+
+        internal static void GenerateAnonymousFunction(ScintillaControl sci, MemberModel member, string template)
+        {
+            var ctx = ASContext.Context;
+            string body = null;
+            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+            {
+                case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                    var returnTypeName = member.Type;
+                    var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                    if ((returnType.Flags & FlagType.Abstract) != 0
+                        && !string.IsNullOrEmpty(returnType.ExtendsType)
+                        && returnType.ExtendsType != ctx.Features.dynamicKey)
+                        returnTypeName = returnType.ExtendsType;
+                    var defaultValue = ctx.GetDefaultValue(returnTypeName);
+                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                    break;
+            }
+            template = ((CodeGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(member, template);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            sci.SelectWord();
+            InsertCode(sci.CurrentPos, template);
         }
     }
 }
