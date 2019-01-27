@@ -522,5 +522,12 @@ namespace HaXeContext.Model
             var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
             return model.Classes.First().Members.Items;
         }
+
+        [Test]
+        public void ParseFileIssue2654()
+        {
+            var model = ASContext.Context.GetCodeModel(ReadAllText("Issue2654_1"));
+            Assert.AreEqual(":optional", model.Classes.First().Members.Items.First().MetaDatas.First().Name);
+        }
     }
 }
