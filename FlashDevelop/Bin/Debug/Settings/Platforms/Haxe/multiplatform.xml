@@ -1,0 +1,9 @@
+<platform name="MultiPlatform" targets="js,neko,hl,php,python,lua,cpp,as3,flash,java,cs,all" debugger="flash"
+  external="cmd" external-capture="" default-project="all.xml">
+  <versions>
+    <version value="1.0">
+      <command name="display" value="type &quot;$(OutputFile)&quot;"/>
+      <command name="build" value="haxe &quot;$(OutputFile)&quot;"/>
+    </version>
+  </versions>
+</platform>
