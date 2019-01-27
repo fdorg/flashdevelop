@@ -43,7 +43,7 @@ namespace HaXeContext.Generators
             var currentClass = ctx.CurrentClass;
             if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
-                if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
+                if (contextToken != null && expr.Member is null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
             }
             if (CanShowGenerateSwitch(sci, position, expr))
@@ -180,7 +180,7 @@ namespace HaXeContext.Generators
             MemberModel last = null;
             foreach (var member in members)
             {
-                if (last == null || last.Name != member.Name)
+                if (last is null || last.Name != member.Name)
                     list.Add(new MemberItem(member));
                 last = member;
             }
@@ -503,14 +503,14 @@ namespace HaXeContext.Generators
 
         protected override string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            if (parameters == null || parameters.Count == 0 || parameters.First().Name != "get"
+            if (parameters is null || parameters.Count == 0 || parameters.First().Name != "get"
                 || ASContext.Context.CurrentClass.Members.Contains($"get_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideGetterTemplate(ofClass, parameters, newMember);
         }
 
         protected override string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            if (parameters == null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
+            if (parameters is null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
                 || ASContext.Context.CurrentClass.Members.Contains($"set_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
@@ -525,7 +525,7 @@ namespace HaXeContext.Generators
         static bool CanShowGenerateSwitch(ScintillaControl sci, int position, ASResult expr)
         {
             var member = expr.Member;
-            if (member == null
+            if (member is null
                 || member.Flags.HasFlag(FlagType.Enum) 
                 || (member.Flags.HasFlag(FlagType.ParameterVar) && expr.Context.BeforeBody)) return false;
             var ctx = ASContext.Context;
