@@ -1208,6 +1208,26 @@ namespace HaXeContext.Completion
             ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2657TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_issue2657_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_issue2657_1"))
+                    .SetName("var v:Void->Void = <complete>. Disable void type declaration for function. Issue 2657. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2657");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(OnCharAndReplaceTextIssue2657TestCases))]
+        public string OnCharAndReplaceTextDisableVoidTypeDeclarationForFunction(string fileName, char addedChar, bool autoHide)
+        {
+            ((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration = true;
+            var result = OnCharAndReplaceText(fileName, addedChar, autoHide);
+            ((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration = false;
+            return result;
+        }
     }
 
     class CodeCompleteTests3 : ASCompleteTests

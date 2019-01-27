@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ASCompletion.Settings;
+using HaXeContext.Generators;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -294,11 +294,11 @@ namespace HaXeContext.Completion
                 }
                 if (member == null) return false;
                 var functionName = "function() {}";
-                var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
+                var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => CodeGenerator.GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
                 if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
                 {
                     functionName = "() -> {}";
-                    list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
+                    list.Insert(0, new AnonymousFunctionGeneratorItem(functionName, () => CodeGenerator.GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction.Haxe4"))));
                 }
                 var word = sci.GetWordFromPosition(sci.CurrentPos);
                 if (string.IsNullOrEmpty(word) || functionName.StartsWithOrdinal(word)) completionHistory[ctx.CurrentClass.QualifiedName] = functionName;
@@ -1601,29 +1601,6 @@ namespace HaXeContext.Completion
                     return s.Substring(startIndex, s.Length - (startIndex + startIndex / 5));
                 }
             }
-        }
-
-        static void GenerateAnonymousFunction(ScintillaControl sci, MemberModel member, string template)
-        {
-            string body = null;
-            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
-            {
-                case GeneratedMemberBodyStyle.ReturnDefaultValue:
-                    var ctx = ASContext.Context;
-                    var returnTypeName = member.Type;
-                    var returnType = ResolveType(returnTypeName, ctx.CurrentModel);
-                    if ((returnType.Flags & FlagType.Abstract) != 0
-                        && !string.IsNullOrEmpty(returnType.ExtendsType)
-                        && returnType.ExtendsType != ctx.Features.dynamicKey)
-                        returnTypeName = returnType.ExtendsType;
-                    var defaultValue = ctx.GetDefaultValue(returnTypeName);
-                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
-                    break;
-            }
-            template = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
-            sci.SelectWord();
-            ASGenerator.InsertCode(sci.CurrentPos, template);
         }
 
         static void GenerateExpressionReification(ScintillaControl sci, string name)

@@ -638,5 +638,28 @@ namespace HaXeContext.Generators
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", sb.ToString());
             InsertCode(start, template, sci);
         }
+
+        internal static void GenerateAnonymousFunction(ScintillaControl sci, MemberModel member, string template)
+        {
+            var ctx = ASContext.Context;
+            string body = null;
+            switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+            {
+                case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                    var returnTypeName = member.Type;
+                    var returnType = ctx.ResolveType(returnTypeName, ctx.CurrentModel);
+                    if ((returnType.Flags & FlagType.Abstract) != 0
+                        && !string.IsNullOrEmpty(returnType.ExtendsType)
+                        && returnType.ExtendsType != ctx.Features.dynamicKey)
+                        returnTypeName = returnType.ExtendsType;
+                    var defaultValue = ctx.GetDefaultValue(returnTypeName);
+                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                    break;
+            }
+            template = ((CodeGenerator) ctx.CodeGenerator).ToDeclarationWithModifiersString(member, template);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            sci.SelectWord();
+            InsertCode(sci.CurrentPos, template);
+        }
     }
 }
