@@ -2007,6 +2007,8 @@ namespace ASCompletion.Completion
                         .Returns("5e-324".Length);
                     yield return new TestCaseData("2.225e-308; //")
                         .Returns("2.225e-308".Length);
+                    yield return new TestCaseData("~/}])\"\'/; //")
+                        .Returns("~/}])\"\'/".Length);
                 }
             }
 
