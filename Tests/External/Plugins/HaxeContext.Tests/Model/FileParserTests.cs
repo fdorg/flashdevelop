@@ -529,5 +529,13 @@ namespace HaXeContext.Model
             var model = ASContext.Context.GetCodeModel(ReadAllText("Issue2654_1"));
             Assert.AreEqual(":optional", model.Classes.First().Members.Items.First().MetaDatas.First().Name);
         }
+
+        [Test]
+        public void ParseFileIssue2660()
+        {
+            var model = ASContext.Context.GetCodeModel(ReadAllText("Issue2660_1"));
+            Assert.AreEqual("A", model.Classes.First().ExtendsType);
+            Assert.AreEqual(new List<string> {"B", "C"}, model.Classes.First().ExtendsTypes);
+        }
     }
 }

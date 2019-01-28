@@ -9,7 +9,7 @@ using PluginCore.Localization;
 namespace ASCompletion.Model
 {
     /// <summary>
-    /// Object representation of an Actionscript class
+    /// Object representation of an ActionScript class
     /// </summary>
     [Serializable]
     public class ClassModel: MemberModel
@@ -32,7 +32,16 @@ namespace ASCompletion.Model
         public string Constructor;
         public MemberList Members;
 
+        /// <summary>
+        /// 1st extends type
+        /// </summary>
         public string ExtendsType;
+
+        /// <summary>
+        /// Extensible types starting from the second
+        /// </summary>
+        public List<string> ExtendsTypes;
+
         public string IndexType;
         public List<string> Implements;
         [NonSerialized]
