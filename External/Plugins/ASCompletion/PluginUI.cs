@@ -746,16 +746,20 @@ namespace ASCompletion
             //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
             //    folder.Text = "Defines"; // TODO need a better word I guess
 
-            while (!string.IsNullOrEmpty(aClass.ExtendsType) && aClass.ExtendsType != aClass.InFile.Context.Features.dynamicKey)
+            var features = ASContext.Context.Features;
+            while ((!string.IsNullOrEmpty(aClass.ExtendsType) && aClass.ExtendsType != features.dynamicKey) || aClass.ExtendsTypes != null)
             {
-                var extends = aClass.ExtendsType;
+                var extendsType = aClass.ExtendsType;
+                var extends = aClass.Extends;
+                if (!extends.IsVoid()) extendsType = extends.QualifiedName;
+                if (extendsType != features.voidKey) folder.Nodes.Add(new TreeNode(extendsType, ICON_TYPE, ICON_TYPE) {Tag = "import"});
+                if (aClass.ExtendsTypes != null)
+                    for (var i = 0; i < aClass.ExtendsTypes.Count; i++)
+                    {
+                        extendsType = aClass.ExtendsTypes[i];
+                        if (extendsType != features.voidKey) folder.Nodes.Add(new TreeNode(extendsType, ICON_TYPE, ICON_TYPE) {Tag = "import"});
+                    }
                 aClass = aClass.Extends;
-                if (!aClass.IsVoid()) extends = aClass.QualifiedName;
-                if (extends.ToLower() == "void")
-                    break;
-                var extNode = new TreeNode(extends, ICON_TYPE, ICON_TYPE);
-                extNode.Tag = "import";
-                folder.Nodes.Add(extNode);
             }
             if (folder.Nodes.Count > 0) tree.Add(folder);
         }
@@ -766,9 +770,7 @@ namespace ASCompletion
             var folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
             foreach (var implements in implementsTypes)
             {
-                var impNode = new TreeNode(implements, ICON_INTERFACE, ICON_INTERFACE);
-                impNode.Tag = "import";
-                folder.Nodes.Add(impNode);
+                folder.Nodes.Add(new TreeNode(implements, ICON_INTERFACE, ICON_INTERFACE) {Tag = "import"});
             }
             tree.Add(folder);
         }
@@ -804,10 +806,9 @@ namespace ASCompletion
 
         private void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
         {
-            int index = 0;
             MemberList regions = aFile.Regions;
             int count = regions.Count;
-            for (index = 0; index < count; ++index)
+            for (var index = 0; index < count; ++index)
             {
                 var region = regions[index];
                 MemberTreeNode node = new MemberTreeNode(region, ICON_PACKAGE);
