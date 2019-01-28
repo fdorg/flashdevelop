@@ -1169,7 +1169,7 @@ namespace HaXeContext.Model
                         {
                             foundColon = curMember != null && curMember.Type == null;
                             // recognize compiler config block
-                            if (!foundColon && braceCount == 0 
+                            if (!foundColon && braceCount == 0
                                 && i < len - 2 && src[i] == ':' && char.IsLetter(src[i + 1]))
                                 foundConstant = true;
                         }
@@ -1276,7 +1276,7 @@ namespace HaXeContext.Model
                                 if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
                             }
                             // an Abstract "opaque type"
-                            else if (context == FlagType.Abstract && prevToken.Text == "abstract") 
+                            else if (context == FlagType.Abstract && prevToken.Text == "abstract")
                             {
                                 foundKeyword = FlagType.Class;
                                 curModifiers = FlagType.Extends;
@@ -1362,6 +1362,18 @@ namespace HaXeContext.Model
                         {
                             i++;
                             continue;
+                        }
+                        else if (c1 == '>' && context == FlagType.TypeDef && curClass != null && (curClass.Flags & FlagType.TypeDef) != 0)
+                        {
+                            buffer[0] = 'e';
+                            buffer[1] = 'x';
+                            buffer[2] = 't';
+                            buffer[3] = 'e';
+                            buffer[4] = 'n';
+                            buffer[5] = 'd';
+                            buffer[6] = 's';
+                            length = 7;
+                            context = FlagType.Class;
                         }
                 }
 
@@ -1898,14 +1910,19 @@ namespace HaXeContext.Model
                                 if ((token == "Array" || token == "Proxy" || token == "flash.utils.Proxy")
                                     && lastComment != null && ASFileParserRegexes.ValidTypeName.IsMatch(lastComment))
                                 {
-                                    Match m = ASFileParserRegexes.ValidTypeName.Match(lastComment);
+                                    var m = ASFileParserRegexes.ValidTypeName.Match(lastComment);
                                     if (m.Success)
                                     {
                                         token += "<" + m.Groups["type"].Value + ">";
                                         lastComment = null;
                                     }
                                 }
-                                curClass.ExtendsType = token;
+                                if (curClass.ExtendsType is null) curClass.ExtendsType = token;
+                                else
+                                {
+                                    if (curClass.ExtendsTypes is null) curClass.ExtendsTypes = new List<string>();
+                                    curClass.ExtendsTypes.Add(token);
+                                }
                                 if (inTypedef) context = FlagType.TypeDef;
                             }
                         }
