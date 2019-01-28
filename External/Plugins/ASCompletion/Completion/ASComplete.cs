@@ -4627,7 +4627,8 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                if (sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
+                if ((sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
+                    || ctx.CodeComplete.IsRegexStyle(sci, statementEnd))
                 {
                     statementEnd++;
                     result = statementEnd;
