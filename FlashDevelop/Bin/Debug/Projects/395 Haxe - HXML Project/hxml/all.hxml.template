@@ -1,5 +1,4 @@
 ## Neko
---next
 -cmd echo Building Neko
 --next hxml/neko.hxml
 
