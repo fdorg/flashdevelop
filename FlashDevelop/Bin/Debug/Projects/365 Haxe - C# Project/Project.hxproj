@@ -9,7 +9,6 @@
     <movie width="0" />
     <movie height="0" />
     <movie version="1" />
-    <movie minorVersion="0" />
     <movie platform="C#" />
     <movie background="#FFFFFF" />
   </output>
@@ -21,9 +20,9 @@
   <build>
     <option directives="" />
     <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
     <option mainClass="$(PackageDot)Main" />
-    <option enabledebug="False" />
+    <option override="False" />
+    <option verbose="False" />
     <option additional="" />
   </build>
   <!-- haxelib libraries -->
@@ -48,6 +47,4 @@
     <option testMovie="Custom" />
     <option testMovieCommand="run.bat $(BuildConfig)" />
   </options>
-  <!-- Plugin storage -->
-  <storage />
 </project>
