@@ -438,30 +438,21 @@ namespace HaXeContext
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
             // NOTE: version > 10 for non-Flash platforms
-            string lang = GetHaxeTarget(platform);
-            features.Directives = new List<string>();
-
+            var lang = GetHaxeTarget(platform);
             if (lang is null)
             {
-                if (contextSetup.Platform == "hxml")
-                {
+                if (contextSetup.Platform == "hxml" || contextSetup.Platform.EndsWith("multitarget", StringComparison.OrdinalIgnoreCase))
                     lang = contextSetup.TargetBuild ?? "";
-                }
                 else // assume game-related toolchain
                 {
                     lang = "cpp";
-                    if (contextSetup.TargetBuild is null || contextSetup.TargetBuild.StartsWithOrdinal("flash"))
-                        lang = "";
-                    else if (contextSetup.TargetBuild.StartsWithOrdinal("html5"))
-                        lang = "js";
-                    else if (contextSetup.TargetBuild.Contains("neko"))
-                        lang = "neko";
+                    if (contextSetup.TargetBuild is null || contextSetup.TargetBuild.StartsWithOrdinal("flash")) lang = "";
+                    else if (contextSetup.TargetBuild.StartsWithOrdinal("html5")) lang = "js";
+                    else if (contextSetup.TargetBuild.Contains("neko")) lang = "neko";
                 }
             }
-            else if (lang == "swf")
-            {
-                lang = "flash";
-            }
+            else if (lang == "swf") lang = "flash";
+            features.Directives = new List<string>();
             features.Directives.Add(lang);
             haxeTarget = lang;
 
@@ -576,7 +567,7 @@ namespace HaXeContext
             }
 
             // add external pathes
-            List<PathModel> initCP = classPath;
+            var initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
             {
