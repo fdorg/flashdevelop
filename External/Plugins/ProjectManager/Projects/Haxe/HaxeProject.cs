@@ -349,19 +349,18 @@ namespace ProjectManager.Projects.Haxe
 
         private void ParseHXML(string[] raw)
         {
-            if (raw != null && (raw.Length == 0 || raw[0] == null))
+            if (raw != null && (raw.Length == 0 || raw[0] is null))
                 raw = null;
             rawHXML = raw;
 
-            List<string> libs = new List<string>();
-            List<string> defs = new List<string>();
-            List<string> cps = new List<string>();
-            List<string> add = new List<string>();
-            string target = PlatformData.JAVASCRIPT_PLATFORM;
-            string haxeTarget = "js";
-            string output = "";
-            if (raw != null)
-                ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ".");
+            var libs = new List<string>();
+            var defs = new List<string>();
+            var cps = new List<string>();
+            var add = new List<string>();
+            var target = PlatformData.JAVASCRIPT_PLATFORM;
+            var haxeTarget = "js";
+            var output = "";
+            if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ".");
 
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
@@ -380,7 +379,7 @@ namespace ProjectManager.Projects.Haxe
             }
             else MovieOptions.TargetBuildTypes = null;
 
-            if (MovieOptions.TargetBuildTypes == null)
+            if (MovieOptions.TargetBuildTypes is null)
             {
                 OutputPath = output;
                 OutputType = OutputType.Application;

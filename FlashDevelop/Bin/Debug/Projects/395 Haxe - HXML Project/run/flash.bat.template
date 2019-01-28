@@ -1,0 +1,4 @@
+@echo off
+cd "bin\flash"
+$(ProjectID).swf
+pause
