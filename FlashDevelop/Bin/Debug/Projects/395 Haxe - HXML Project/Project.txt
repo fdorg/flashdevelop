@@ -1,1 +1,1 @@
-An Multi Platform(JavaScript, Neko, HashLink, PHP, Python, Lua, C++, ActionScript3, Flash, Java, CSharp) project written in the Haxe language
+A multi target(JavaScript, Neko, HashLink, PHP, Python, Lua, C++, ActionScript3, Flash, Java, CSharp) project written in the Haxe language
