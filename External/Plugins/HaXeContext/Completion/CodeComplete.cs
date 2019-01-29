@@ -333,7 +333,7 @@ namespace HaXeContext.Completion
                 };
                 List<ICompletionListItem> list = null;
                 // for example: var v:Typedef = <complete>
-                if (type.Flags.HasFlag(FlagType.TypeDef) && type.Members.Count > 0)
+                if (type.Flags.HasFlag(FlagType.TypeDef) && (type.Members.Count > 0 || type.ExtendsType != null))
                 {
                     orders.Add("{}", 1);
                     list = new List<ICompletionListItem>
@@ -1625,13 +1625,7 @@ namespace HaXeContext.Completion
             try
             {
                 var members = new List<MemberModel>();
-                type.ResolveExtends();
-                var currentType = type;
-                while (!currentType.IsVoid())
-                {
-                    members.AddRange(currentType.Members.Items);
-                    currentType = currentType.Extends;
-                }
+                GetMembers(type, members);
                 var sb = new StringBuilder();
                 sb.Append('{');
                 for (var i = 0; i < members.Count; i++)
@@ -1663,6 +1657,24 @@ namespace HaXeContext.Completion
             finally
             {
                 sci.EndUndoAction();
+            }
+            // Utils
+            void GetMembers(ClassModel t, List<MemberModel> result)
+            {
+                t.ResolveExtends();
+                while (!t.IsVoid())
+                {
+                    result.AddRange(t.Members.Items);
+                    if (t.ExtendsTypes != null)
+                    {
+                        for (int i = 0, count = t.ExtendsTypes.Count; i < count; i++)
+                        {
+                            var model = ResolveType(t.ExtendsTypes[i], t.InFile ?? ASContext.Context.CurrentModel);
+                            if (!model.IsVoid()) GetMembers(model, result);
+                        }
+                    }
+                    t = t.Extends;
+                }
             }
         }
 
