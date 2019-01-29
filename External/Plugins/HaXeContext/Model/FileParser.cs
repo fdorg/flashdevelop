@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
@@ -705,7 +704,7 @@ namespace HaXeContext.Model
                         hadValue = true;
                     }
                     // in params, store the default value
-                    else if ((inParams || inType))
+                    else if ((inParams || (inType && c1 != '=')))
                     {
                         /**
                          * for example:
@@ -716,9 +715,9 @@ namespace HaXeContext.Model
                         if (c1 == ' ' && inGeneric && valueLength > 5)
                         {
                             var start = valueLength - 5;
-                            for (var j = valueLength; j > 0; j--)
+                            for (var j = valueLength - 1; j >= 0; j--)
                             {
-                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(valueBuffer[j]))) break;
+                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(c))) break;
                                 start = j;
                             }
                             var wordLength = valueLength - start;
