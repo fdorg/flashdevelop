@@ -333,7 +333,7 @@ namespace HaXeContext.Completion
                 };
                 List<ICompletionListItem> list = null;
                 // for example: var v:Typedef = <complete>
-                if (type.Flags.HasFlag(FlagType.TypeDef) && (type.Members.Count > 0 || type.ExtendsType != null))
+                if (IsTypedef(type, ref type))
                 {
                     orders.Add("{}", 1);
                     list = new List<ICompletionListItem>
@@ -393,6 +393,37 @@ namespace HaXeContext.Completion
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
 
             bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
+
+            bool IsTypedef(ClassModel t, ref ClassModel realType)
+            {
+                if (t.Flags.HasFlag(FlagType.TypeDef))
+                {
+                    // for example: typedef Typedef = {}
+                    if (string.IsNullOrEmpty(t.ExtendsType)) return true;
+                    /**
+                     * for example:
+                     * typedef Typedef = {
+                     *     > Type1,
+                     *     > Type2,
+                     * }
+                     */
+                    if (t.ExtendsTypes != null) return true;
+                    t.ResolveExtends();
+                    var extends = t.Extends;
+                    while (!extends.IsVoid())
+                    {
+                        if (!extends.Flags.HasFlag(FlagType.TypeDef))
+                        {
+                            realType = extends;
+                            return false;
+                        }
+                        extends = t.Extends;
+                    }
+                    return true;
+                }
+                realType = t;
+                return false;
+            }
         }
 
         bool HandleExpressionReificationCompletion(ScintillaControl sci, bool autoHide)
