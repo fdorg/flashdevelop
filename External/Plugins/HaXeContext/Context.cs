@@ -1464,7 +1464,6 @@ namespace HaXeContext
             var imports = Context.ResolveImports(inFile);
             if (imports.Count == 0) return false;
             var extensions = new MemberList();
-            const FlagType kind = FlagType.Static | FlagType.Function;
             for (var i = imports.Count - 1; i >= 0; i--)
             {
                 if (imports[i] is ClassModel import && (import.Flags & FlagType.Using) != 0 && import.Members.Count > 0)
@@ -1477,7 +1476,7 @@ namespace HaXeContext
                         foreach (MemberModel member in import.Members)
                         {
                             if ((member.Access & access) == 0
-                                || (member.Flags & kind) == 0
+                                || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
                                 || member.Parameters is null || member.Parameters.Count == 0
                                 || extensions.Contains(member.Name, 0, 0)
                                 || !CanBeExtended(extends, member, access)) continue;
