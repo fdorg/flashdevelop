@@ -417,7 +417,7 @@ namespace HaXeContext.Completion
                             realType = extends;
                             return false;
                         }
-                        extends = t.Extends;
+                        extends = extends.Extends;
                     }
                     return true;
                 }
