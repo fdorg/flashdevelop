@@ -8,6 +8,7 @@ using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -160,21 +161,13 @@ namespace CodeRefactor.Commands
                             //ignore the declaration source
                             foundDeclarationSource = true;
                         }
-                        else
-                        {
-                            add = true;
-                        }
+                        else add = true;
                     }
-                    else if (optionsEnabled)
-                    {
-                        add = RefactoringHelper.IsInsideCommentOrString(match, sci, IncludeComments, IncludeStrings);
-                    }
+                    else if (optionsEnabled) add = IsInsideCommentOrString(match, sci, IncludeComments, IncludeStrings);
 
                     if (add)
                     {
-                        if (!actualMatches.ContainsKey(currentFileName))
-                            actualMatches.Add(currentFileName, new List<SearchMatch>());
-
+                        if (!actualMatches.ContainsKey(currentFileName)) actualMatches.Add(currentFileName, new List<SearchMatch>());
                         actualMatches[currentFileName].Add(match);
                     }
 
@@ -184,6 +177,11 @@ namespace CodeRefactor.Commands
             }
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
             return actualMatches;
+        }
+
+        protected virtual bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
+        {
+            return RefactoringHelper.IsInsideCommentOrString(match, sci, IncludeComments, IncludeStrings);
         }
 
         /// <summary>

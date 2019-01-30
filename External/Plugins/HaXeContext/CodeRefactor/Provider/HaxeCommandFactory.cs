@@ -40,12 +40,9 @@ namespace HaXeContext.CodeRefactor.Provider
                 && target.Member != null && ((target.Member.Flags & FlagType.LocalVar) > 0 || (target.Member.Flags & FlagType.ParameterVar) > 0)
                 && context.GetCurrentSDKVersion() >= "3.2.0")
             {
-                return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations)
-                {
-                    OnlySourceFiles = onlySourceFiles
-                };
+                return new Commands.HaxeCompilerFindAllReferences(target, output, ignoreDeclarations) {OnlySourceFiles = onlySourceFiles};
             }
-            return base.CreateFindAllReferencesCommand(target, output, ignoreDeclarations, onlySourceFiles);
+            return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations) {OnlySourceFiles = onlySourceFiles};
         }
     }
 }

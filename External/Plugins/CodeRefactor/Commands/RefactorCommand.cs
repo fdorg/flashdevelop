@@ -71,7 +71,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if this command already has a DocumentHelper registered with it.
         /// </summary>
-        public Boolean HasRegisteredDocumentHelper
+        public bool HasRegisteredDocumentHelper
         {
             get
             {
@@ -130,10 +130,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected void FireOnRefactorComplete()
         {
-            if (OnRefactorComplete != null)
-            {
-                OnRefactorComplete(this, new RefactorCompleteEventArgs<RefactorResultType>(this.results));
-            }
+            OnRefactorComplete?.Invoke(this, new RefactorCompleteEventArgs<RefactorResultType>(results));
         }
 
         #endregion
@@ -149,7 +146,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public abstract Boolean IsValid();
+        public abstract bool IsValid();
 
         #endregion
 
