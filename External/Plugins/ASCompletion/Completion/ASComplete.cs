@@ -3508,6 +3508,11 @@ namespace ASCompletion.Completion
                         sbSub.Insert(0, c);
                         continue;
                     }
+                    if (arrCount == 0 && braCount == 0 && parCount == 0
+                        && dQuotes == 0 && sQuotes == 0
+                        && c != '\"' && c != '\''
+                        && (IsStringStyle(style) || IsCharStyle(style))
+                        && !IsStringInterpolationStyle(sci, position)) break;
                     // array access
                     if (c == ']')
                     {

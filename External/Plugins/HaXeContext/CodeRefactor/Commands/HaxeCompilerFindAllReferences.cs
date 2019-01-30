@@ -9,9 +9,9 @@ using PluginCore.Managers;
 
 namespace HaXeContext.CodeRefactor.Commands
 {
-    class HaxeFindAllReferences : FindAllReferences
+    class HaxeCompilerFindAllReferences : FindAllReferences
     {
-        public HaxeFindAllReferences(ASResult target, bool output, bool ignoreDeclarations) : base(target, output, ignoreDeclarations)
+        public HaxeCompilerFindAllReferences(ASResult target, bool output, bool ignoreDeclarations) : base(target, output, ignoreDeclarations)
         {
         }
 
