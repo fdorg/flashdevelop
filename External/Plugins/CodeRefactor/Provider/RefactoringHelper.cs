@@ -28,7 +28,7 @@ namespace CodeRefactor.Provider
         public static IDictionary<string, List<SearchMatch>> GetInitialResultsList(FRResults results)
         {
             var searchResults = new Dictionary<string, List<SearchMatch>>();
-            if (results == null)
+            if (results is null)
             {
                 // I suppose this should never happen -- 
                 // normally invoked when the user cancels the FindInFiles dialogue.  
@@ -64,7 +64,7 @@ namespace CodeRefactor.Provider
         public static bool GetLanguageIsValid()
         {
             var document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return false;
+            if (document is null || !document.IsEditable) return false;
             var lang = document.SciControl.ConfigurationLanguage;
             return CommandFactoryProvider.ContainsLanguage(lang);
         }
@@ -96,7 +96,7 @@ namespace CodeRefactor.Provider
         public static ASResult GetDefaultRefactorTarget()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (!ASContext.Context.IsFileValid || (sci == null)) return null;
+            if (!ASContext.Context.IsFileValid || (sci is null)) return null;
             var position = sci.WordEndPosition(sci.CurrentPos, true);
             return ASComplete.GetExpressionType(sci, position);
         }
@@ -105,7 +105,7 @@ namespace CodeRefactor.Provider
         {
             var type = target.Type;
             var member = target.Member;
-            if ((type.IsEnum() && member == null) || (!type.IsVoid() && (member == null || (member.Flags & FlagType.Constructor) > 0)))
+            if ((type.Flags.HasFlag(FlagType.Enum) && member is null) || (!type.IsVoid() && (member is null || (member.Flags & FlagType.Constructor) > 0)))
                 return type;
             return member;
         }
@@ -117,10 +117,10 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static ASResult GetRefactorTargetFromFile(string path, DocumentHelper associatedDocumentHelper)
         {
+            var sci = associatedDocumentHelper.LoadDocument(path)?.SciControl;
+            if (sci is null) return null; // Should not happen...
             var fileName = Path.GetFileNameWithoutExtension(path);
             var line = 0;
-            var sci = associatedDocumentHelper.LoadDocument(path)?.SciControl;
-            if (sci == null) return null; // Should not happen...
             var classes = ASContext.Context.CurrentModel.Classes;
             if (classes.Count > 0)
             {
@@ -163,7 +163,7 @@ namespace CodeRefactor.Provider
         /// <returns>True if the SearchMatch does point to the target source.</returns>
         public static ASResult DeclarationLookupResult(ScintillaControl sci, int position, DocumentHelper associatedDocumentHelper)
         {
-            if (!ASContext.Context.IsFileValid || (sci == null)) return null;
+            if (!ASContext.Context.IsFileValid || (sci is null)) return null;
             // get type at cursor position
             var result = ASComplete.GetExpressionType(sci, position);
             if (result.IsPackage) return result;
@@ -172,7 +172,7 @@ namespace CodeRefactor.Provider
             {
                 if (result.Member != null && (result.Member.Flags & FlagType.AutomaticVar) > 0) return null;
                 var model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
-                if (model == null || model.FileName == "") return null;
+                if (model is null || model.FileName == "") return null;
                 var inClass = result.InClass ?? result.Type;
                 // for Back command
                 int lookupLine = sci.CurrentLine;
@@ -190,7 +190,7 @@ namespace CodeRefactor.Provider
                     {
                         ASComplete.OpenVirtualFile(model);
                         result.InFile = ASContext.Context.CurrentModel;
-                        if (result.InFile == null) return null;
+                        if (result.InFile is null) return null;
                         if (inClass != null)
                         {
                             inClass = result.InFile.GetClassByName(inClass.Name);
@@ -203,8 +203,8 @@ namespace CodeRefactor.Provider
                         sci = ASContext.CurSciControl;
                     }
                 }
-                if (sci == null) return null;
-                if ((inClass == null || inClass.IsVoid()) && result.Member == null) return null;
+                if (sci is null) return null;
+                if ((inClass is null || inClass.IsVoid()) && result.Member is null) return null;
                 var line = 0;
                 string name = null;
                 var isClass = false;
@@ -252,7 +252,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static bool IsMatchTheTarget(ScintillaControl sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
-            if (sci == null || target?.InFile == null || target.Member == null) return false;
+            if (sci is null || target?.InFile is null || target.Member is null) return false;
             var originalFile = sci.FileName;
             // get type at match position
             var declaration = DeclarationLookupResult(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
@@ -265,16 +265,16 @@ namespace CodeRefactor.Provider
         /// <returns>True if the SearchMatch does point to the target source.</returns>
         public static bool DoesMatchPointToTarget(ScintillaControl sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
-            if (sci == null || target == null) return false;
+            if (sci is null || target is null) return false;
             FileModel targetInFile = null;
 
             if (target.InFile != null)
                 targetInFile = target.InFile;
-            else if (target.Member != null && target.InClass == null)
+            else if (target.Member != null && target.InClass is null)
                 targetInFile = target.Member.InFile;
 
             var matchMember = targetInFile != null && target.Member != null;
-            var matchType = target.Member == null && target.Type != null;
+            var matchType = target.Member is null && target.Type != null;
             if (!matchMember && !matchType) return false;
 
             ASResult result = null;
@@ -286,10 +286,10 @@ namespace CodeRefactor.Provider
                 associatedDocumentHelper?.RegisterLoadedDocument(PluginBase.MainForm.CurrentDocument);
             }
             // check if the result matches the target
-            if (result == null || (result.InFile == null && result.Type == null)) return false;
+            if (result is null || (result.InFile is null && result.Type is null)) return false;
             if (matchMember)
             {
-                if (result.Member == null) return false;
+                if (result.Member is null) return false;
 
                 var resultInFile = result.InClass != null ? result.InFile : result.Member.InFile;
 
@@ -349,10 +349,10 @@ namespace CodeRefactor.Provider
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous, bool onlySourceFiles, bool ignoreSdkFiles, bool includeComments, bool includeStrings)
         {
-            if (target == null) return null;
+            if (target is null) return null;
             var member = target.Member;
             var type = target.Type;
-            if ((member == null || string.IsNullOrEmpty(member.Name)) && (type == null || (type.Flags & (FlagType.Class | FlagType.Enum)) == 0))
+            if ((member is null || string.IsNullOrEmpty(member.Name)) && (type is null || (type.Flags & (FlagType.Class | FlagType.Enum)) == 0))
             {
                 return null;
             }
@@ -395,9 +395,9 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static bool IsProjectRelatedFile(IProject project, string file)
         {
-            if (project == null) return false;
+            if (project is null) return false;
             var context = ASContext.GetLanguageContext(project.Language);
-            if (context == null) return false;
+            if (context is null) return false;
             foreach (var pathModel in context.Classpath)
             {
                 var absolute = project.GetAbsolutePath(pathModel.Path);
@@ -428,7 +428,7 @@ namespace CodeRefactor.Provider
             if (!onlySourceFiles)
             {
                 var context = ASContext.GetLanguageContext(project.Language);
-                if (context == null) return files;
+                if (context is null) return files;
                 foreach (var pathModel in context.Classpath)
                 {
                     var absolute = project.GetAbsolutePath(pathModel.Path);
@@ -489,7 +489,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static void ReplaceMatches(List<SearchMatch> matches, ScintillaControl sci, string replacement)
         {
-            if (sci == null || matches == null || matches.Count == 0) return;
+            if (sci is null || matches is null || matches.Count == 0) return;
             sci.BeginUndoAction();
             try
             {
@@ -513,7 +513,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static void SelectMatch(ScintillaControl sci, SearchMatch match)
         {
-            if (sci == null || match == null) return;
+            if (sci is null || match is null) return;
             var start = sci.MBSafePosition(match.Index); // wchar to byte position
             var end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
             var line = sci.LineFromPosition(start);

@@ -177,6 +177,7 @@ namespace ASCompletion.Model
 
         public bool IsVoid() => this == VoidClass;
 
+        [Obsolete("Please use (Flags & FlagType.Enum) != 0 or Flags.HasFlag(FlagType.Enum")]
         public bool IsEnum() => (Flags & FlagType.Enum) != 0;
 
         public new object Clone()

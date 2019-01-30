@@ -822,8 +822,7 @@ namespace HaXeContext
             var tmp = inClass;
             while (!tmp.IsVoid())
             {
-                if (tmp == withClass)
-                    return Visibility.Public | Visibility.Private;
+                if (tmp == withClass) return Visibility.Public | Visibility.Private;
                 tmp = tmp.Extends;
             }
             return Visibility.Public;
@@ -1974,7 +1973,7 @@ namespace HaXeContext
         static void TryAddEnums(ClassModel model, MemberList result)
         {
             if (model is null || model.IsVoid()) return;
-            if (model.IsEnum())
+            if (model.Flags.HasFlag(FlagType.Enum))
             {
                 for (var i = 0; i < model.Members.Count; i++)
                 {
