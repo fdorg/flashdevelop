@@ -368,17 +368,39 @@ namespace HaXeContext.Completion
                         new ObjectInitializerGeneratorItem("{}", "Creates a new dynamic object and initializes it with the specified name and value property pairs.", () => GenerateObjectInitializer(sci, "{$(EntryPoint)}"))
                     };
                 }
+                // for example: var v:Constructible = <complete>
+                if (type.Flags.HasFlag(FlagType.Class))
+                {
+                    var extends = type;
+                    if (extends.IsVoid()) type.ResolveExtends();
+                    var access = ctx.TypesAffinity(type, ctx.CurrentClass);
+                    MemberModel member = null;
+                    while (!extends.IsVoid())
+                    {
+                        member = extends.Members.Search(extends.Constructor, FlagType.Constructor, access);
+                        if (member != null) break;
+                        extends = extends.Extends;
+                    }
+                    if (member != null)
+                    {
+                        var label = string.IsNullOrEmpty(type.IndexType) 
+                            ? $"new {type.Constructor}()"
+                            : $"new {type.Constructor}<{type.IndexType}>()";
+                        orders.Add(label, 2);
+                        if (list is null) list = new List<ICompletionListItem>();
+                        list.Add(new ObjectInitializerGeneratorItem(label, $"Creates a new {type.Constructor}", () => GenerateObjectInitializer(sci , $"{label}$(EntryPoint)")));
+                    }
+                }
                 if (ctx.GetDefaultValue(type.Name) == "null")
                 {
                     var word = sci.GetWordFromPosition(sci.CurrentPos);
-                    if (string.IsNullOrEmpty(word) || "null".StartsWithOrdinal(word))
-                        completionHistory[ctx.CurrentClass.QualifiedName] = "null";
+                    if (string.IsNullOrEmpty(word) || "null".StartsWithOrdinal(word)) completionHistory[ctx.CurrentClass.QualifiedName] = "null";
                     return HandleDotCompletion(sci, autoHide, list, (a, b) =>
                     {
                         var aLabel = (a as TemplateItem)?.Label ?? (a as ObjectInitializerGeneratorItem)?.Label;
                         var bLabel = (b as TemplateItem)?.Label ?? (b as ObjectInitializerGeneratorItem)?.Label;
                         if (aLabel != null && bLabel != null && orders.ContainsKey(aLabel) && orders.ContainsKey(bLabel))
-                            return bLabel.CompareTo(aLabel);
+                            return orders[aLabel].CompareTo(orders[bLabel]);
                         if (aLabel != null && orders.ContainsKey(aLabel)) return -1;
                         if (bLabel != null && orders.ContainsKey(bLabel)) return 1;
                         return 0;
@@ -415,6 +437,11 @@ namespace HaXeContext.Completion
                         if (!extends.Flags.HasFlag(FlagType.TypeDef))
                         {
                             realType = extends;
+                            if (!string.IsNullOrEmpty(t.Extends.IndexType))
+                            {
+                                realType = (ClassModel) realType.Clone();
+                                realType.IndexType = t.Extends.IndexType;
+                            }
                             return false;
                         }
                         extends = extends.Extends;

@@ -2194,12 +2194,14 @@ namespace HaXeContext.Model
                                 }
                                 member.Flags |= FlagType.Constructor;
                                 if ((member.Flags & FlagType.Dynamic) > 0) member.Flags -= FlagType.Dynamic;
-                                if (curAccess == 0) curAccess = Visibility.Public;
+                                if (curAccess == 0)
+                                {
+                                    curAccess = Visibility.Public;
+                                    member.Access = curAccess;
+                                }
                             }
 
-                            FlagType forcePublic = FlagType.Interface;
-                            forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
-                            if (curAccess == 0 && (curClass.Flags & forcePublic) > 0)
+                            if (curAccess == 0 && (curClass.Flags & (FlagType.Interface | FlagType.Intrinsic | FlagType.TypeDef)) > 0)
                                 member.Access = Visibility.Public;
 
                             curClass.Members.Add(member);
@@ -2210,16 +2212,15 @@ namespace HaXeContext.Model
                         {
                             member.InFile = model;
                             member.IsPackageLevel = true;
+                            if (curAccess == 0 && token == features.ConstructorKey) member.Access = Visibility.Public;
                             model.Members.Add(member);
                         }
                         //
                         curMember = member;
                         if (carriedMetaData != null)
                         {
-                            if (member.MetaDatas == null)
-                                member.MetaDatas = carriedMetaData;
+                            if (member.MetaDatas == null) member.MetaDatas = carriedMetaData;
                             else member.MetaDatas.AddRange(carriedMetaData);
-
                             carriedMetaData = null;
                         }
                         break;

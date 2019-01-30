@@ -85,7 +85,7 @@ namespace CodeRefactor.Commands
         public Rename(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false)
         {
             Results = new Dictionary<string, List<SearchMatch>>();
-            if (target == null)
+            if (target is null)
             {
                 TraceManager.Add("Refactor target is null.");
                 return;
@@ -176,19 +176,18 @@ namespace CodeRefactor.Commands
         private bool ValidateTargets()
         {
             var target = findAllReferencesCommand.CurrentTarget;
-            bool isEnum = target.Type.IsEnum();
+            bool isEnum = target.Type.Flags.HasFlag(FlagType.Enum);
             bool isClass = false;
 
             if (!isEnum)
             {
-                bool isVoid = target.Type.IsVoid();
-                isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
+                isClass = !target.Type.IsVoid() && target.IsStatic && (target.Member is null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
             }
 
             bool isGlobalFunction = false;
             bool isGlobalNamespace = false;
 
-            if (!isEnum && !isClass && (target.InClass == null || target.InClass.IsVoid()))
+            if (!isEnum && !isClass && (target.InClass is null || target.InClass.IsVoid()))
             {
                 isGlobalFunction = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function);
                 isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
