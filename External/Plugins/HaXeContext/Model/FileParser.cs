@@ -930,137 +930,134 @@ namespace HaXeContext.Model
                     {
                         addChar = true;
                     }
-                    else
+                    else if (length > 0)
                     {
-                        if (length > 0)
+                        if (c1 >= '0' && c1 <= '9') addChar = true;
+                        else if (c1 == '*' && context == FlagType.Import) addChar = true;
+                        // generics
+                        else if (c1 == '<')
                         {
-                            if (c1 >= '0' && c1 <= '9') addChar = true;
-                            else if (c1 == '*' && context == FlagType.Import) addChar = true;
-                            // generics
-                            else if (c1 == '<')
+                            if (!inValue && i > 2 && length > 1 && i <= len - 3)
                             {
-                                if (!inValue && i > 2 && length > 1 && i <= len - 3)
+                                if ((char.IsLetterOrDigit(src[i - 3]) || src[i - 3] == '_')
+                                    && (char.IsLetter(src[i]) || (src[i] == '{' || src[i] == '(' || src[i] <= ' ' || src[i] == '?'))
+                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                 {
-                                    if ((char.IsLetterOrDigit(src[i - 3]) || src[i - 3] == '_')
-                                        && (char.IsLetter(src[i]) || (src[i] == '{' || src[i] == '(' || src[i] <= ' ' || src[i] == '?'))
-                                        && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
+                                    if (curMember == null)
                                     {
-                                        if (curMember == null)
+                                        evalToken = 0;
+                                        if (inGeneric) paramTempCount++;
+                                        else
                                         {
-                                            evalToken = 0;
-                                            if (inGeneric) paramTempCount++;
-                                            else
-                                            {
-                                                paramTempCount = 1;
-                                                inGeneric = true;
-                                            }
-                                            addChar = true;
-                                        }
-                                        else if (foundColon)
-                                        {
-                                            evalToken = 0;
+                                            paramTempCount = 1;
                                             inGeneric = true;
-                                            inValue = true;
-                                            hadValue = false;
-                                            inType = true;
-                                            inAnonType = false;
-                                            valueLength = 0;
-                                            for (int j = 0; j < length; j++)
-                                                valueBuffer[valueLength++] = buffer[j];
-                                            valueBuffer[valueLength++] = c1;
-                                            length = 0;
-                                            paramTempCount++;
-                                            continue;
                                         }
+                                        addChar = true;
                                     }
-                                }
-                            }
-                            else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
-                            {
-                                hadWS = false;
-                                hadDot = false;
-                                evalToken = 0;
-                                if (!inValue)
-                                {
-                                    addChar = true;
-                                    if (c1 == '>')
+                                    else if (foundColon)
                                     {
-                                        if (paramTempCount > 0) paramTempCount--;
-                                        if (paramTempCount == 0 && paramBraceCount == 0
-                                            && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
+                                        evalToken = 0;
+                                        inGeneric = true;
+                                        inValue = true;
+                                        hadValue = false;
+                                        inType = true;
+                                        inAnonType = false;
+                                        valueLength = 0;
+                                        for (int j = 0; j < length; j++)
+                                            valueBuffer[valueLength++] = buffer[j];
+                                        valueBuffer[valueLength++] = c1;
+                                        length = 0;
+                                        paramTempCount++;
+                                        continue;
                                     }
                                 }
-                            }
-                            else if (inType && c1 == ')')
-                            {
-                                if (paramParCount > 0)
-                                {
-                                    paramParCount--;
-                                    addChar = true;
-                                }
-                                else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0)
-                                {
-                                    inType = false;
-                                    shortcut = false;
-                                    evalToken = 1;
-                                }
-                            }
-                            else if (inType && c1 == '(')
-                            {
-                                paramParCount++;
-                                addChar = true;
-                            }
-                            else if (c1 == '{' && length > 1
-                                     && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
-                                        || buffer[length - 1] == ':'
-                                        || buffer[length - 1] == '('
-                                        || buffer[length - 1] == '?'))
-                            {
-                                paramBraceCount++;
-                                inAnonType = true;
-                                addChar = true;
-                            }
-                            else if (inAnonType && paramBraceCount > 0)
-                            {
-                                if (c1 == '}')
-                                {
-                                    paramBraceCount--;
-                                    if (paramBraceCount == 0) inAnonType = false;
-                                }
-                                addChar = true;
-                            }
-                            else if (c1 == '?')
-                            {
-                                hadWS = false;
-                                evalToken = 0;
-                                addChar = true;
-                            }
-                            else if (paramBraceCount == 0)
-                            {
-                                evalToken = 2;
-                                shortcut = false;
                             }
                         }
-                        // star is valid in import statements
-                        else if (c1 == '*') addChar = true;
-                        else if (c1 == '?')
+                        else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                         {
-                            if ((inParams || inTypedef) && length == 0)
+                            hadWS = false;
+                            hadDot = false;
+                            evalToken = 0;
+                            if (!inValue)
                             {
-                                /**
-                                 * for example:
-                                 * function foo(<position>?paramName
-                                 * or
-                                 * typedef Typedef = {
-                                 *     <position>?fieldName
-                                 * }
-                                 */
+                                addChar = true;
+                                if (c1 == '>')
+                                {
+                                    if (paramTempCount > 0) paramTempCount--;
+                                    if (paramTempCount == 0 && paramBraceCount == 0
+                                        && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
+                                }
+                            }
+                        }
+                        else if (inType && c1 == ')')
+                        {
+                            if (paramParCount > 0)
+                            {
+                                paramParCount--;
                                 addChar = true;
                             }
-                            else shortcut = false;
+                            else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0)
+                            {
+                                inType = false;
+                                shortcut = false;
+                                evalToken = 1;
+                            }
+                        }
+                        else if (inType && c1 == '(')
+                        {
+                            paramParCount++;
+                            addChar = true;
+                        }
+                        else if (c1 == '{' && length > 1
+                                 && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                                    || buffer[length - 1] == ':'
+                                    || buffer[length - 1] == '('
+                                    || buffer[length - 1] == '?'))
+                        {
+                            paramBraceCount++;
+                            inAnonType = true;
+                            addChar = true;
+                        }
+                        else if (inAnonType && paramBraceCount > 0)
+                        {
+                            if (c1 == '}')
+                            {
+                                paramBraceCount--;
+                                if (paramBraceCount == 0) inAnonType = false;
+                            }
+                            addChar = true;
+                        }
+                        else if (c1 == '?')
+                        {
+                            hadWS = false;
+                            evalToken = 0;
+                            addChar = true;
+                        }
+                        else if (paramBraceCount == 0)
+                        {
+                            evalToken = 2;
+                            shortcut = false;
+                        }
+                    }
+                    // star is valid in import statements
+                    else if (c1 == '*') addChar = true;
+                    else if (c1 == '?')
+                    {
+                        if ((inParams || inTypedef) && length == 0)
+                        {
+                            /**
+                             * for example:
+                             * function foo(<position>?paramName
+                             * or
+                             * typedef Typedef = {
+                             *     <position>?fieldName
+                             * }
+                             */
+                            addChar = true;
                         }
                         else shortcut = false;
                     }
+                    else shortcut = false;
                     // eval this word
                     if (evalToken > 0)
                     {
