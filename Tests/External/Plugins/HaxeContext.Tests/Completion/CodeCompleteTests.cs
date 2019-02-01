@@ -715,7 +715,11 @@ namespace HaXeContext.Completion
                     .SetName("private var _value = new SomeType(<complete>. CalltipDef. Case 1");
                 yield return new TestCaseData("CalltipDef_issue1900_1")
                     .Returns("urlEncode () : String")
-                    .SetName("''.urlEncode(<complete>. CalltipDef. Issue 1900 Case 1");
+                    .SetName("''.urlEncode(<complete>. CalltipDef. Issue 1900. Case 1");
+                yield return new TestCaseData("CalltipDef_issue2682_1")
+                    .Returns("f (e:Dynamic) : String")
+                    .SetName("f(<complete>. CalltipDef. Issue 2682. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2682");
             }
         }
 
