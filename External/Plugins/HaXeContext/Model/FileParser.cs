@@ -717,7 +717,11 @@ namespace HaXeContext.Model
                             var start = valueLength - 5;
                             for (var j = valueLength - 1; j >= 0; j--)
                             {
-                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(c))) break;
+                                if (valueBuffer[j] is char c && (c == '<' || c == '>' || char.IsPunctuation(c)))
+                                {
+                                    start = j + 1;
+                                    break;
+                                }
                                 start = j;
                             }
                             var wordLength = valueLength - start;
@@ -951,7 +955,7 @@ namespace HaXeContext.Model
                                         {
                                             evalToken = 0;
                                             if (inGeneric) paramTempCount++;
-                                            else
+                                            else if (context != 0)
                                             {
                                                 paramTempCount = 1;
                                                 inGeneric = true;
