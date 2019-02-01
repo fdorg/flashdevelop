@@ -4614,7 +4614,11 @@ namespace ASCompletion.Completion
 
         public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos, bool skipWhiteSpace)
         {
+            var wordStartPosition = sci.WordStartPosition(startPos, true) - 1;
+            var word = GetWordLeft(sci, ref wordStartPosition);
             var ctx = ASContext.Context;
+            if (ctx.Features.declKeywords.Contains(word) || ctx.Features.typesKeywords.Contains(word))
+                return sci.WordEndPosition(startPos, true);
             var result = startPos;
             var statementEnd = startPos;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
