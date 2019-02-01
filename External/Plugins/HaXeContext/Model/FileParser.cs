@@ -881,37 +881,60 @@ namespace HaXeContext.Model
                         hadDot = false;
                         continue;
                     }
-                    // should we evaluate the token?
-                    if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
-                        // for example: foo(? v)
-                        && (!inParams || (buffer[length - 1] != '?'))
-                        // for example: String -> Int
-                        && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
-                    {
-                        evalToken = 1;
-                    }
-                    hadWS = false;
-                    hadDot = false;
                     var shortcut = true;
-                    // for example: function foo() return null;
-                    if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
-                        && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
-                        && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
+                    /**
+                     * parse:
+                     * typedef Typedef = {
+                     *     > OtherTypedef,
+                     * }
+                     * as:
+                     * class Typedef extends OtherTypedef
+                     */
+                    if (c1 == '>' && !inGeneric && !inType && inTypedef)
                     {
-                        inFunction = true;
-                        inType = false;
-                        i -= 2;
-                        continue;
-                    }
-                    if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
-                        || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
-                        || (c1 == '$' || c1 == '_'))
-                    {
-                        addChar = true;
+                        hadWS = false;
+                        hadDot = false;
+                        buffer[0] = 'e';
+                        buffer[1] = 'x';
+                        buffer[2] = 't';
+                        buffer[3] = 'e';
+                        buffer[4] = 'n';
+                        buffer[5] = 'd';
+                        buffer[6] = 's';
+                        length = 7;
+                        evalToken = 1;
+                        context = FlagType.Class;
                     }
                     else
                     {
-                        if (length > 0)
+                        // should we evaluate the token?
+                        if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
+                            // for example: foo(? v)
+                            && (!inParams || (buffer[length - 1] != '?'))
+                            // for example: String -> Int
+                            && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
+                        {
+                            evalToken = 1;
+                        }
+                        hadWS = false;
+                        hadDot = false;
+                        // for example: function foo() return null;
+                        if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
+                            && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
+                            && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
+                        {
+                            inFunction = true;
+                            inType = false;
+                            i -= 2;
+                            continue;
+                        }
+                        if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
+                            || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
+                            || (c1 == '$' || c1 == '_'))
+                        {
+                            addChar = true;
+                        }
+                        else if (length > 0)
                         {
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
@@ -956,8 +979,6 @@ namespace HaXeContext.Model
                             }
                             else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
-                                hadWS = false;
-                                hadDot = false;
                                 evalToken = 0;
                                 if (!inValue)
                                 {
@@ -965,8 +986,7 @@ namespace HaXeContext.Model
                                     if (c1 == '>')
                                     {
                                         if (paramTempCount > 0) paramTempCount--;
-                                        if (paramTempCount == 0 && paramBraceCount == 0
-                                            && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
+                                        if (paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
                                     }
                                 }
                             }
@@ -1010,7 +1030,6 @@ namespace HaXeContext.Model
                             }
                             else if (c1 == '?')
                             {
-                                hadWS = false;
                                 evalToken = 0;
                                 addChar = true;
                             }
@@ -1024,18 +1043,15 @@ namespace HaXeContext.Model
                         else if (c1 == '*') addChar = true;
                         else if (c1 == '?')
                         {
-                            if ((inParams || inTypedef) && length == 0)
-                            {
-                                /**
-                                 * for example:
-                                 * function foo(<position>?paramName
-                                 * or
-                                 * typedef Typedef = {
-                                 *     <position>?fieldName
-                                 * }
-                                 */
-                                addChar = true;
-                            }
+                            /**
+                             * for example:
+                             * function foo(<position>?paramName
+                             * or
+                             * typedef Typedef = {
+                             *     <position>?fieldName
+                             * }
+                             */
+                            if ((inParams || inTypedef) && length == 0) addChar = true;
                             else shortcut = false;
                         }
                         else shortcut = false;
@@ -1085,29 +1101,7 @@ namespace HaXeContext.Model
                             }
                             else if (context == FlagType.TypeDef) // parse typedef block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) > 0)
-                                {
-                                    inTypedef = true;
-                                    var pos = i;
-                                    while (pos < len)
-                                    {
-                                        var c = src[pos++];
-                                        if (c <= ' ') continue;
-                                        if (c == '>')
-                                        {
-                                            buffer[0] = 'e';
-                                            buffer[1] = 'x';
-                                            buffer[2] = 't';
-                                            buffer[3] = 'e';
-                                            buffer[4] = 'n';
-                                            buffer[5] = 'd';
-                                            buffer[6] = 's';
-                                            length = 7;
-                                            context = FlagType.Class;
-                                        }
-                                        break;
-                                    }
-                                }
+                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) != 0) inTypedef = true;
                                 else
                                 {
                                     context = 0;
@@ -1361,18 +1355,6 @@ namespace HaXeContext.Model
                         {
                             i++;
                             continue;
-                        }
-                        else if (c1 == '>' && context == FlagType.TypeDef && curClass != null && (curClass.Flags & FlagType.TypeDef) != 0)
-                        {
-                            buffer[0] = 'e';
-                            buffer[1] = 'x';
-                            buffer[2] = 't';
-                            buffer[3] = 'e';
-                            buffer[4] = 'n';
-                            buffer[5] = 'd';
-                            buffer[6] = 's';
-                            length = 7;
-                            context = FlagType.Class;
                         }
                 }
 
