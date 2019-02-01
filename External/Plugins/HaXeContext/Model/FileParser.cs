@@ -881,12 +881,33 @@ namespace HaXeContext.Model
                         hadDot = false;
                         continue;
                     }
+                    /**
+                     * parse:
+                     * typedef Typedef = {
+                     *     > OtherTypedef,
+                     * }
+                     * as:
+                     * class Typedef extends OtherTypedef
+                     */
+                    if (c1 == '>' && !inGeneric && !inType && inTypedef)
+                    {
+                        buffer[0] = 'e';
+                        buffer[1] = 'x';
+                        buffer[2] = 't';
+                        buffer[3] = 'e';
+                        buffer[4] = 'n';
+                        buffer[5] = 'd';
+                        buffer[6] = 's';
+                        length = 7;
+                        evalToken = 1;
+                        context = FlagType.Class;
+                    }
                     // should we evaluate the token?
-                    if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
-                        // for example: foo(? v)
-                        && (!inParams || (buffer[length - 1] != '?'))
-                        // for example: String -> Int
-                        && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
+                    else if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
+                             // for example: foo(? v)
+                             && (!inParams || (buffer[length - 1] != '?'))
+                             // for example: String -> Int
+                             && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
                     {
                         evalToken = 1;
                     }
@@ -1085,29 +1106,7 @@ namespace HaXeContext.Model
                             }
                             else if (context == FlagType.TypeDef) // parse typedef block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) > 0)
-                                {
-                                    inTypedef = true;
-                                    var pos = i;
-                                    while (pos < len)
-                                    {
-                                        var c = src[pos++];
-                                        if (c <= ' ') continue;
-                                        if (c == '>')
-                                        {
-                                            buffer[0] = 'e';
-                                            buffer[1] = 'x';
-                                            buffer[2] = 't';
-                                            buffer[3] = 'e';
-                                            buffer[4] = 'n';
-                                            buffer[5] = 'd';
-                                            buffer[6] = 's';
-                                            length = 7;
-                                            context = FlagType.Class;
-                                        }
-                                        break;
-                                    }
-                                }
+                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) != 0) inTypedef = true;
                                 else
                                 {
                                     context = 0;
@@ -1361,18 +1360,6 @@ namespace HaXeContext.Model
                         {
                             i++;
                             continue;
-                        }
-                        else if (c1 == '>' && context == FlagType.TypeDef && curClass != null && (curClass.Flags & FlagType.TypeDef) != 0)
-                        {
-                            buffer[0] = 'e';
-                            buffer[1] = 'x';
-                            buffer[2] = 't';
-                            buffer[3] = 'e';
-                            buffer[4] = 'n';
-                            buffer[5] = 'd';
-                            buffer[6] = 's';
-                            length = 7;
-                            context = FlagType.Class;
                         }
                 }
 
