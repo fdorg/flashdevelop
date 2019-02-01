@@ -2009,6 +2009,12 @@ namespace ASCompletion.Completion
                         .Returns("2.225e-308".Length);
                     yield return new TestCaseData("~/}])\"\'/; //")
                         .Returns("~/}])\"\'/".Length);
+                    yield return new TestCaseData("function foo$(EntryPoint)(v:String) { return null;} //")
+                        .Returns("function foo".Length);
+                    yield return new TestCaseData("var foo$(EntryPoint)(null, set) //")
+                        .Returns("var foo".Length);
+                    yield return new TestCaseData("abstract AFoo$(EntryPoint)(Int) //")
+                        .Returns("abstract AFoo".Length);
                 }
             }
 
