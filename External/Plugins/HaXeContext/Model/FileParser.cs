@@ -881,6 +881,7 @@ namespace HaXeContext.Model
                         hadDot = false;
                         continue;
                     }
+                    var shortcut = true;
                     /**
                      * parse:
                      * typedef Typedef = {
@@ -891,6 +892,8 @@ namespace HaXeContext.Model
                      */
                     if (c1 == '>' && !inGeneric && !inType && inTypedef)
                     {
+                        hadWS = false;
+                        hadDot = false;
                         buffer[0] = 'e';
                         buffer[1] = 'x';
                         buffer[2] = 't';
@@ -902,162 +905,164 @@ namespace HaXeContext.Model
                         evalToken = 1;
                         context = FlagType.Class;
                     }
-                    // should we evaluate the token?
-                    else if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
-                             // for example: foo(? v)
-                             && (!inParams || (buffer[length - 1] != '?'))
-                             // for example: String -> Int
-                             && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
+                    else
                     {
-                        evalToken = 1;
-                    }
-                    hadWS = false;
-                    hadDot = false;
-                    var shortcut = true;
-                    // for example: function foo() return null;
-                    if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
-                        && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
-                        && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
-                    {
-                        inFunction = true;
-                        inType = false;
-                        i -= 2;
-                        continue;
-                    }
-                    if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
-                        || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
-                        || (c1 == '$' || c1 == '_'))
-                    {
-                        addChar = true;
-                    }
-                    else if (length > 0)
-                    {
-                        if (c1 >= '0' && c1 <= '9') addChar = true;
-                        else if (c1 == '*' && context == FlagType.Import) addChar = true;
-                        // generics
-                        else if (c1 == '<')
+                        // should we evaluate the token?
+                        if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0
+                            // for example: foo(? v)
+                            && (!inParams || (buffer[length - 1] != '?'))
+                            // for example: String -> Int
+                            && (!inType || (length < 2 || (buffer[length - 2] != '-' && buffer[length - 1] != '>'))))
                         {
-                            if (!inValue && i > 2 && length > 1 && i <= len - 3)
+                            evalToken = 1;
+                        }
+                        hadWS = false;
+                        hadDot = false;
+                        // for example: function foo() return null;
+                        if (!inFunction && context != 0 && curClass != null && curMethod != null && !inParams && !foundColon && c1 != ':' && c1 != ';' && c1 != '{' && c1 != '}' && braceCount == 0
+                            && (curModifiers & FlagType.Function) != 0 && (curModifiers & FlagType.Extern) == 0
+                            && curClass.Flags is var f && (f & FlagType.Extern) == 0 && (f & FlagType.TypeDef) == 0 && (f & FlagType.Interface) == 0)
+                        {
+                            inFunction = true;
+                            inType = false;
+                            i -= 2;
+                            continue;
+                        }
+                        if ((c1 >= 'a' && c1 <= 'z') // valid char for keyword
+                            || (c1 >= 'A' && c1 <= 'Z') // valid chars for identifiers
+                            || (c1 == '$' || c1 == '_'))
+                        {
+                            addChar = true;
+                        }
+                        else if (length > 0)
+                        {
+                            if (c1 >= '0' && c1 <= '9') addChar = true;
+                            else if (c1 == '*' && context == FlagType.Import) addChar = true;
+                            // generics
+                            else if (c1 == '<')
                             {
-                                if ((char.IsLetterOrDigit(src[i - 3]) || src[i - 3] == '_')
-                                    && (char.IsLetter(src[i]) || (src[i] == '{' || src[i] == '(' || src[i] <= ' ' || src[i] == '?'))
-                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
+                                if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if (curMember == null)
+                                    if ((char.IsLetterOrDigit(src[i - 3]) || src[i - 3] == '_')
+                                        && (char.IsLetter(src[i]) || (src[i] == '{' || src[i] == '(' || src[i] <= ' ' || src[i] == '?'))
+                                        && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                     {
-                                        evalToken = 0;
-                                        if (inGeneric) paramTempCount++;
-                                        else
+                                        if (curMember == null)
                                         {
-                                            paramTempCount = 1;
-                                            inGeneric = true;
+                                            evalToken = 0;
+                                            if (inGeneric) paramTempCount++;
+                                            else
+                                            {
+                                                paramTempCount = 1;
+                                                inGeneric = true;
+                                            }
+                                            addChar = true;
                                         }
-                                        addChar = true;
-                                    }
-                                    else if (foundColon)
-                                    {
-                                        evalToken = 0;
-                                        inGeneric = true;
-                                        inValue = true;
-                                        hadValue = false;
-                                        inType = true;
-                                        inAnonType = false;
-                                        valueLength = 0;
-                                        for (int j = 0; j < length; j++)
-                                            valueBuffer[valueLength++] = buffer[j];
-                                        valueBuffer[valueLength++] = c1;
-                                        length = 0;
-                                        paramTempCount++;
-                                        continue;
+                                        else if (foundColon)
+                                        {
+                                            evalToken = 0;
+                                            inGeneric = true;
+                                            inValue = true;
+                                            hadValue = false;
+                                            inType = true;
+                                            inAnonType = false;
+                                            valueLength = 0;
+                                            for (int j = 0; j < length; j++)
+                                                valueBuffer[valueLength++] = buffer[j];
+                                            valueBuffer[valueLength++] = c1;
+                                            length = 0;
+                                            paramTempCount++;
+                                            continue;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
-                        {
-                            hadWS = false;
-                            hadDot = false;
-                            evalToken = 0;
-                            if (!inValue)
+                            else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
-                                addChar = true;
-                                if (c1 == '>')
+                                hadWS = false;
+                                hadDot = false;
+                                evalToken = 0;
+                                if (!inValue)
                                 {
-                                    if (paramTempCount > 0) paramTempCount--;
-                                    if (paramTempCount == 0 && paramBraceCount == 0
-                                        && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
+                                    addChar = true;
+                                    if (c1 == '>')
+                                    {
+                                        if (paramTempCount > 0) paramTempCount--;
+                                        if (paramTempCount == 0 && paramBraceCount == 0
+                                            && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
+                                    }
                                 }
                             }
-                        }
-                        else if (inType && c1 == ')')
-                        {
-                            if (paramParCount > 0)
+                            else if (inType && c1 == ')')
                             {
-                                paramParCount--;
+                                if (paramParCount > 0)
+                                {
+                                    paramParCount--;
+                                    addChar = true;
+                                }
+                                else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0)
+                                {
+                                    inType = false;
+                                    shortcut = false;
+                                    evalToken = 1;
+                                }
+                            }
+                            else if (inType && c1 == '(')
+                            {
+                                paramParCount++;
                                 addChar = true;
                             }
-                            else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0)
+                            else if (c1 == '{' && length > 1
+                                     && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                                        || buffer[length - 1] == ':'
+                                        || buffer[length - 1] == '('
+                                        || buffer[length - 1] == '?'))
                             {
-                                inType = false;
+                                paramBraceCount++;
+                                inAnonType = true;
+                                addChar = true;
+                            }
+                            else if (inAnonType && paramBraceCount > 0)
+                            {
+                                if (c1 == '}')
+                                {
+                                    paramBraceCount--;
+                                    if (paramBraceCount == 0) inAnonType = false;
+                                }
+                                addChar = true;
+                            }
+                            else if (c1 == '?')
+                            {
+                                hadWS = false;
+                                evalToken = 0;
+                                addChar = true;
+                            }
+                            else if (paramBraceCount == 0)
+                            {
+                                evalToken = 2;
                                 shortcut = false;
-                                evalToken = 1;
                             }
                         }
-                        else if (inType && c1 == '(')
-                        {
-                            paramParCount++;
-                            addChar = true;
-                        }
-                        else if (c1 == '{' && length > 1
-                                 && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
-                                    || buffer[length - 1] == ':'
-                                    || buffer[length - 1] == '('
-                                    || buffer[length - 1] == '?'))
-                        {
-                            paramBraceCount++;
-                            inAnonType = true;
-                            addChar = true;
-                        }
-                        else if (inAnonType && paramBraceCount > 0)
-                        {
-                            if (c1 == '}')
-                            {
-                                paramBraceCount--;
-                                if (paramBraceCount == 0) inAnonType = false;
-                            }
-                            addChar = true;
-                        }
+                        // star is valid in import statements
+                        else if (c1 == '*') addChar = true;
                         else if (c1 == '?')
                         {
-                            hadWS = false;
-                            evalToken = 0;
-                            addChar = true;
-                        }
-                        else if (paramBraceCount == 0)
-                        {
-                            evalToken = 2;
-                            shortcut = false;
-                        }
-                    }
-                    // star is valid in import statements
-                    else if (c1 == '*') addChar = true;
-                    else if (c1 == '?')
-                    {
-                        if ((inParams || inTypedef) && length == 0)
-                        {
-                            /**
-                             * for example:
-                             * function foo(<position>?paramName
-                             * or
-                             * typedef Typedef = {
-                             *     <position>?fieldName
-                             * }
-                             */
-                            addChar = true;
+                            if ((inParams || inTypedef) && length == 0)
+                            {
+                                /**
+                                 * for example:
+                                 * function foo(<position>?paramName
+                                 * or
+                                 * typedef Typedef = {
+                                 *     <position>?fieldName
+                                 * }
+                                 */
+                                addChar = true;
+                            }
+                            else shortcut = false;
                         }
                         else shortcut = false;
                     }
-                    else shortcut = false;
                     // eval this word
                     if (evalToken > 0)
                     {
