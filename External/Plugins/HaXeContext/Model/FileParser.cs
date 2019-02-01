@@ -1186,7 +1186,7 @@ namespace HaXeContext.Model
                                 foundKeyword = FlagType.Implements;
                             }
                         }
-                        else if (c1 == '(' && !inlineDirective)
+                        else if (c1 == '(')
                         {
                             if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && curToken.Text != "for")
                             {
@@ -1278,7 +1278,7 @@ namespace HaXeContext.Model
                                 foundKeyword = FlagType.Class;
                                 curModifiers = FlagType.Extends;
                             }
-                            else if (curMember == null && curToken.Text != "catch" && curToken.Text != "for")
+                            else if (curClass == null && curMember == null && curToken.Text != "catch" && curToken.Text != "for")
                             {
                                 context = 0;
                                 inGeneric = false;
