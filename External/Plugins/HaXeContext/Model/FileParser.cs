@@ -979,8 +979,6 @@ namespace HaXeContext.Model
                             }
                             else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
-                                hadWS = false;
-                                hadDot = false;
                                 evalToken = 0;
                                 if (!inValue)
                                 {
@@ -988,8 +986,7 @@ namespace HaXeContext.Model
                                     if (c1 == '>')
                                     {
                                         if (paramTempCount > 0) paramTempCount--;
-                                        if (paramTempCount == 0 && paramBraceCount == 0
-                                            && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
+                                        if (paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0 && paramParCount == 0) inGeneric = false;
                                     }
                                 }
                             }
@@ -1033,7 +1030,6 @@ namespace HaXeContext.Model
                             }
                             else if (c1 == '?')
                             {
-                                hadWS = false;
                                 evalToken = 0;
                                 addChar = true;
                             }
@@ -1047,18 +1043,15 @@ namespace HaXeContext.Model
                         else if (c1 == '*') addChar = true;
                         else if (c1 == '?')
                         {
-                            if ((inParams || inTypedef) && length == 0)
-                            {
-                                /**
-                                 * for example:
-                                 * function foo(<position>?paramName
-                                 * or
-                                 * typedef Typedef = {
-                                 *     <position>?fieldName
-                                 * }
-                                 */
-                                addChar = true;
-                            }
+                            /**
+                             * for example:
+                             * function foo(<position>?paramName
+                             * or
+                             * typedef Typedef = {
+                             *     <position>?fieldName
+                             * }
+                             */
+                            if ((inParams || inTypedef) && length == 0) addChar = true;
                             else shortcut = false;
                         }
                         else shortcut = false;
