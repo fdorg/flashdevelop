@@ -53,24 +53,20 @@ namespace CodeRefactor.Provider
             LanguageToFactory.Add(language, factory);
         }
 
-        public static bool ContainsLanguage(string language)
-        {
-            return LanguageToFactory.ContainsKey(language);
-        }
+        public static bool ContainsLanguage(string language) => LanguageToFactory.ContainsKey(language);
 
         public static ICommandFactory GetFactoryForCurrentDocument()
         {
-            var document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return null;
-            return GetFactory(document);
+            return PluginBase.MainForm.CurrentDocument is ITabbedDocument document && document.IsEditable
+                ? GetFactory(document)
+                : null;
         }
 
         public static ICommandFactory GetFactory(ASResult target) => GetFactory(target.InFile ?? target.Type.InFile);
 
         public static ICommandFactory GetFactory(FileModel file)
         {
-            var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName);
-            return GetFactory(language);
+            return GetFactory(PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName));
         }
 
         public static ICommandFactory GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
@@ -79,8 +75,7 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactory(string language)
         {
-            ICommandFactory factory;
-            LanguageToFactory.TryGetValue(language, out factory);
+            LanguageToFactory.TryGetValue(language, out var factory);
             return factory;
         }
     }
