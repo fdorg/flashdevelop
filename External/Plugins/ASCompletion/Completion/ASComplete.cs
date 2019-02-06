@@ -684,8 +684,8 @@ namespace ASCompletion.Completion
                         result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
                 }
             }
-            if ((inClass == null || inClass.IsVoid()) && result.Member == null) return false;
-            if (ASContext.CurSciControl == null) return false;
+            if ((inClass is null || inClass.IsVoid()) && result.Member is null) return false;
+            if (ASContext.CurSciControl is null) return false;
 
             int line = 0;
             string name = null;
@@ -754,7 +754,7 @@ namespace ASCompletion.Completion
 
         public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
         {
-            if (sci == null || line <= 0 || string.IsNullOrEmpty(name)) return;
+            if (sci is null || line <= 0 || string.IsNullOrEmpty(name)) return;
             ASContext.Context.CodeComplete.LocateMember(sci, line, keyword, name);
         }
 
@@ -790,46 +790,45 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Resolve word at cursor position and pre-fill arguments for args processor
         /// </summary>
-        internal static void ResolveContext(ScintillaControl Sci)
+        internal static void ResolveContext(ScintillaControl sci)
         {
             try
             {
                 // check if a document
-                if (Sci == null)
+                if (sci is null)
                 {
                     ClearResolvedContext();
                     return;
                 }
-
+                var currentPos = sci.CurrentPos;
                 // check if resolution is needed
-                var position = Sci.WordEndPosition(Sci.CurrentPos, true);
+                var position = sci.WordEndPosition(currentPos, true);
                 if (CurrentResolvedContext != null && CurrentResolvedContext.Position == position
                     && CurrentResolvedContext.Result != null && !CurrentResolvedContext.Result.IsNull())
                     return;
 
                 // check context
                 var context = ASContext.Context;
-                if (context?.CurrentModel == null)
+                if (context?.CurrentModel is null)
                 {
                     ClearResolvedContext();
                     return;
                 }
-                CurrentResolvedContext = new ResolvedContext();
-                CurrentResolvedContext.Position = position;
+                CurrentResolvedContext = new ResolvedContext {Position = position};
+                var features = context.Features;
 
                 // get type at cursor position
                 ASResult result;
                 if (context.IsFileValid
                     // comments
-                    && Sci.BaseStyleAt(Sci.CurrentPos) is int style && !IsCommentStyle(style)
+                    && sci.BaseStyleAt(currentPos) is int style && !IsCommentStyle(style)
                     // keywords
-                    && style != 19 && style != 24)
+                    && (style != 19 && style != 24 && string.IsNullOrEmpty(features.ConstructorKey) || sci.GetWordFromPosition(currentPos) == features.ConstructorKey))
                 {
-                    result = GetExpressionType(Sci, position);
+                    result = GetExpressionType(sci, position);
                 }
                 else result = new ASResult();
                 CurrentResolvedContext.Result = result;
-                var features = context.Features;
 
                 Hashtable args = CurrentResolvedContext.Arguments;
                 string package = context.CurrentModel.Package;
@@ -882,9 +881,8 @@ namespace ASCompletion.Completion
                 }
                 else if (result.Type != null || result.Member != null)
                 {
-                    ClassModel oClass = result.InClass ?? result.Type;
-
-                    if (oClass.IsVoid() && (result.Member == null || (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
+                    var oClass = result.InClass ?? result.Type;
+                    if (oClass.IsVoid() && (result.Member is null || (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
                     {
                         NotifyContextChanged();
                         return;
@@ -892,8 +890,7 @@ namespace ASCompletion.Completion
 
                     // type details
                     FileModel file;
-                    MemberModel member = result.Member;
-
+                    var member = result.Member;
                     if (member != null && member.IsPackageLevel)
                     {
                         args.Add("ItmTypName", member.Name);
@@ -969,8 +966,9 @@ namespace ASCompletion.Completion
                 }
                 NotifyContextChanged();
             }
-            catch 
+            catch
             {
+                // ignored
             }
         }
 
@@ -987,11 +985,12 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Using the text under at cursor position, resolve the member/type and call the specified command.
         /// </summary>
-        /// <param name="Sci">Control</param>
+        /// <param name="sci">Control</param>
+        /// <param name="eventAction"></param>
         /// <returns>Resolved element details</returns>
-        static public Hashtable ResolveElement(ScintillaControl Sci, string eventAction)
+        public static Hashtable ResolveElement(ScintillaControl sci, string eventAction)
         {
-            if (CurrentResolvedContext == null) ResolveContext(Sci);
+            if (CurrentResolvedContext is null) ResolveContext(sci);
 
             if (eventAction != null && !CurrentResolvedContext.Result.IsNull())
             {
@@ -1026,7 +1025,7 @@ namespace ASCompletion.Completion
 
         public static void FindClosestList(IASContext context, ASExpr expr, int lineNum, ref string closestListName, ref string closestListItemType)
         {
-            if (expr?.LocalVars == null) return;
+            if (expr?.LocalVars is null) return;
             MemberModel closestList = null;
             foreach (MemberModel m in expr.LocalVars)
             {
@@ -2549,7 +2548,7 @@ namespace ASCompletion.Completion
             if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
             var beforeBody = true;
             var expr = CurrentResolvedContext?.Result?.Context;
-            if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
+            if (expr != null) beforeBody = expr.ContextFunction is null || expr.BeforeBody;
             if (!beforeBody && features.codeKeywords.Contains(word)) return false;
             // override
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
@@ -3409,8 +3408,8 @@ namespace ASCompletion.Completion
             // file's member declared at this position
             if (FindMember(sci.LineFromPosition(position), ctx.CurrentClass.Members.Items) is MemberModel contextMember)
             {
-                minPos = sci.PositionFromLine(contextMember.LineFrom);
                 expression.ContextMember = contextMember;
+                minPos = sci.PositionFromLine(contextMember.LineFrom);
                 var body = sci.GetTextRange(minPos, sci.PositionFromLine(contextMember.LineTo + 1));
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
@@ -4914,7 +4913,7 @@ namespace ASCompletion.Completion
                 int textEndPosition = position + text.Length;
                 // was a fully qualified type inserted?
                 ASExpr expr = GetExpression(sci, textEndPosition);
-                if (expr.Value == null) return;
+                if (expr.Value is null) return;
                 ASResult type = GetExpressionType(sci, textEndPosition);
                 if (type.IsPackage) return;
                 ContextFeatures features = ASContext.Context.Features;
@@ -5015,7 +5014,7 @@ namespace ASCompletion.Completion
                 inFile = context.InFile;
                 import = context.Type;
             }
-            if (inFile == null || import == null) return false;
+            if (inFile is null || import is null) return false;
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
