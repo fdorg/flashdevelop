@@ -2548,7 +2548,7 @@ namespace ASCompletion.Completion
             if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
             var beforeBody = true;
             var expr = CurrentResolvedContext?.Result?.Context;
-            if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
+            if (expr != null) beforeBody = expr.ContextFunction is null || expr.BeforeBody;
             if (!beforeBody && features.codeKeywords.Contains(word)) return false;
             // override
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
@@ -4913,7 +4913,7 @@ namespace ASCompletion.Completion
                 int textEndPosition = position + text.Length;
                 // was a fully qualified type inserted?
                 ASExpr expr = GetExpression(sci, textEndPosition);
-                if (expr.Value == null) return;
+                if (expr.Value is null) return;
                 ASResult type = GetExpressionType(sci, textEndPosition);
                 if (type.IsPackage) return;
                 ContextFeatures features = ASContext.Context.Features;
@@ -5014,7 +5014,7 @@ namespace ASCompletion.Completion
                 inFile = context.InFile;
                 import = context.Type;
             }
-            if (inFile == null || import == null) return false;
+            if (inFile is null || import is null) return false;
             if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
