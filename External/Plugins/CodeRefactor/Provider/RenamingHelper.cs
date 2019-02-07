@@ -45,14 +45,10 @@ namespace CodeRefactor.Provider
             }
             else if (HasGetterSetter(target))
             {
-                var oldName = command.OldName;
-                var newName = command.NewName;
-                var list = target.Member.Parameters;
-                if (list != null)
+                if (target.Member.Parameters is List<MemberModel> list && list.Count is int count && count > 0)
                 {
-                    var count = list.Count;
-                    if (count > 0 && list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + oldName, PrefixGetter + newName, outputResults);
-                    if (count > 1 && list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + oldName, PrefixSetter + newName, outputResults);
+                    if (count > 0 && list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + command.OldName, PrefixGetter + command.NewName, outputResults);
+                    if (count > 1 && list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + command.OldName, PrefixSetter + command.NewName, outputResults);
                 }
             }
             else if ((RefactoringHelper.GetRefactoringTarget(target).Flags & (FlagType.Constructor | FlagType.Class)) > 0)
