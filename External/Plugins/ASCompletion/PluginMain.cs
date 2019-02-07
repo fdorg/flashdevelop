@@ -170,7 +170,7 @@ namespace ASCompletion
                 // current active document
                 ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
                 // editor ready?
-                if (doc == null) return;
+                if (doc is null) return;
                 ScintillaControl sci = doc.IsEditable ? doc.SciControl : null;
 
                 //
