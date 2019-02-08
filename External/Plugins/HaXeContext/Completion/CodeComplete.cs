@@ -44,27 +44,28 @@ namespace HaXeContext.Completion
         {
             if (!ASContext.Context.Features.hasStringInterpolation) return false;
             var stringChar = sci.GetStringType(position - 1);
-            if (ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar))
+            if (!ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar)) return false;
+            var hadDot = false;
+            var current = (char)sci.CharAt(position);
+            for (var i = position - 1; i >= 0; i--)
             {
-                var current = (char)sci.CharAt(position);
-                for (var i = position - 1; i >= 0; i--)
+                var next = current;
+                current = (char)sci.CharAt(i);
+                if (current == stringChar)
                 {
-                    var next = current;
+                    if (!IsEscapedCharacter(sci, i)) break;
+                }
+                else if (current == '.' || current == '[' || current == '(') hadDot = true;
+                else if (current == '$')
+                {
+                    if ((!hadDot || next == '{') && !IsEscapedCharacter(sci, i, '$')) return true;
+                    hadDot = true;
+                }
+                else if (current == '}')
+                {
+                    i = sci.BraceMatch(i);
                     current = (char)sci.CharAt(i);
-                    if (current == stringChar)
-                    {
-                        if (!IsEscapedCharacter(sci, i)) break;
-                    }
-                    else if (current == '$')
-                    {
-                        if (next == '{' && !IsEscapedCharacter(sci, i, '$')) return true;
-                    }
-                    else if (current == '}')
-                    {
-                        i = sci.BraceMatch(i);
-                        current = (char)sci.CharAt(i);
-                        if (i > 0 && current == '{' && sci.CharAt(i - 1) == '$') break;
-                    }
+                    if (i > 0 && current == '{' && sci.CharAt(i - 1) == '$') break;
                 }
             }
             return false;

@@ -46,6 +46,22 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("IsInterpolationStringStyle_3")
                     .Returns(false)
                     .SetName("'$${exp|r}'");
+                yield return new TestCaseData("IsInterpolationStringStyle_issue2684_1")
+                    .Returns(true)
+                    .SetName("'$value<cursor>'. Issue 2684. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2684");
+                yield return new TestCaseData("IsInterpolationStringStyle_issue2684_2")
+                    .Returns(false)
+                    .SetName("'$value.charAt<cursor>'. Issue 2684. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2684");
+                yield return new TestCaseData("IsInterpolationStringStyle_issue2684_3")
+                    .Returns(false)
+                    .SetName("'$array[index<cursor>]'. Issue 2684. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2684");
+                yield return new TestCaseData("IsInterpolationStringStyle_issue2684_4")
+                    .Returns(false)
+                    .SetName("'$func(param<cursor>)'. Issue 2684. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2684");
             }
         }
 
