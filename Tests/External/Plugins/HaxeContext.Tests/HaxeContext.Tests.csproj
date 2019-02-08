@@ -1154,6 +1154,10 @@
     <EmbeddedResource Include="Test Files\parser\Issue2654_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2660_1.hx" />
     <EmbeddedResource Include="Test Files\completion\CalltipDef_issue2682_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_issue2684_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_issue2684_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_issue2684_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_issue2684_4.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
