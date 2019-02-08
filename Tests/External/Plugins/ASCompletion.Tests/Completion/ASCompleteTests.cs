@@ -1993,7 +1993,6 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("'12345'; //")
                         .Returns("'12345'".Length);
                     yield return new TestCaseData("'${1$(EntryPoint)2345}'; //")
-                        .Ignore("")
                         .Returns("'${12345".Length);
                     yield return new TestCaseData("-1; //")
                         .Returns("-1".Length);
@@ -2015,6 +2014,14 @@ namespace ASCompletion.Completion
                         .Returns("var foo".Length);
                     yield return new TestCaseData("abstract AFoo$(EntryPoint)(Int) //")
                         .Returns("abstract AFoo".Length);
+                    yield return new TestCaseData("'${$(EntryPoint)array[index]}'; //")
+                        .Returns("'${array[index]".Length);
+                    yield return new TestCaseData("'$$(EntryPoint)array[index]'; //")
+                        .Returns("'$array".Length);
+                    yield return new TestCaseData("'$$(EntryPoint)array.length'; //")
+                        .Returns("'$array".Length);
+                    yield return new TestCaseData("'$$(EntryPoint)array(list)'; //")
+                        .Returns("'$array".Length);
                 }
             }
 

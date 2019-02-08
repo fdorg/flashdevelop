@@ -4339,15 +4339,33 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        protected static char GetNonSpaceCharLeft(ScintillaControl sci, ref int position)
+        protected static char GetCharLeft(ScintillaControl sci,ref int position) => GetCharLeft(sci, true, ref position);
+
+        protected static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
         {
             while (position >= 0)
             {
                 if (!sci.PositionIsOnComment(position))
                 {
-                    if (sci.CharAt(position) is var c && c > ' ') return (char) c;
+                    if (sci.CharAt(position) is var c && (!skipWhiteSpace || c > ' ')) return (char) c;
                 }
                 --position;
+            }
+            return ' ';
+        }
+
+        protected static char GetCharRight(ScintillaControl sci,ref int position) => GetCharRight(sci, true, ref position);
+
+        protected static char GetCharRight(ScintillaControl sci, bool skipWhiteSpace, ref int position)
+        {
+            var length = sci.Length;
+            while (position < length)
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    if (sci.CharAt(position) is var c && (!skipWhiteSpace || c > ' ')) return (char) c;
+                }
+                ++position;
             }
             return ' ';
         }
@@ -4626,8 +4644,8 @@ namespace ASCompletion.Completion
             var wordStartPosition = sci.WordStartPosition(startPos, true) - 1;
             var word = GetWordLeft(sci, ref wordStartPosition);
             var ctx = ASContext.Context;
-            if (ctx.Features.declKeywords.Contains(word) || ctx.Features.typesKeywords.Contains(word))
-                return sci.WordEndPosition(startPos, true);
+            if (ctx.Features.declKeywords.Contains(word) || ctx.Features.typesKeywords.Contains(word)) return sci.WordEndPosition(startPos, true);
+            var isInStringInterpolation = ctx.CodeComplete.IsStringInterpolationStyle(sci, startPos);
             var result = startPos;
             var statementEnd = startPos;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
@@ -4645,9 +4663,19 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                if ((sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
-                    || ctx.CodeComplete.IsRegexStyle(sci, statementEnd))
+                if (ctx.CodeComplete.IsRegexStyle(sci, statementEnd))
                 {
+                    statementEnd++;
+                    result = statementEnd;
+                    continue;
+                }
+                if (sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
+                {
+                    if (isInStringInterpolation)
+                    {
+                        result = statementEnd - 1;
+                        break;
+                    }
                     statementEnd++;
                     result = statementEnd;
                     continue;

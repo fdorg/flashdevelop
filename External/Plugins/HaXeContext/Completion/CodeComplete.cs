@@ -45,6 +45,8 @@ namespace HaXeContext.Completion
             if (!ASContext.Context.Features.hasStringInterpolation) return false;
             var stringChar = sci.GetStringType(position - 1);
             if (!ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar)) return false;
+            //var p = position + 1;
+            //var hadDot = GetCharRight(sci, ref p) is char c && c == '.';
             var hadDot = false;
             var current = (char)sci.CharAt(position);
             for (var i = position - 1; i >= 0; i--)
@@ -1710,7 +1712,7 @@ namespace HaXeContext.Completion
                 }
                 sb.Append("\n}");
                 var pos = sci.CurrentPos;
-                if (GetNonSpaceCharLeft(sci, ref pos) == '{') sci.SetSel(pos, sci.CurrentPos);
+                if (GetCharLeft(sci, ref pos) == '{') sci.SetSel(pos, sci.CurrentPos);
                 ASGenerator.InsertCode(sci.CurrentPos, sb.ToString());
             }
             finally
@@ -1743,7 +1745,7 @@ namespace HaXeContext.Completion
             try
             {
                 var pos = sci.CurrentPos;
-                if (GetNonSpaceCharLeft(sci, ref pos) == template[0]) sci.SetSel(pos, sci.CurrentPos);
+                if (GetCharLeft(sci, ref pos) == template[0]) sci.SetSel(pos, sci.CurrentPos);
                 ASGenerator.InsertCode(sci.CurrentPos, template);
             }
             finally
