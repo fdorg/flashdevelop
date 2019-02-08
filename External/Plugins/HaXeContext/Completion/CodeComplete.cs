@@ -45,8 +45,6 @@ namespace HaXeContext.Completion
             if (!ASContext.Context.Features.hasStringInterpolation) return false;
             var stringChar = sci.GetStringType(position - 1);
             if (!ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar)) return false;
-            //var p = position + 1;
-            //var hadDot = GetCharRight(sci, ref p) is char c && c == '.';
             var hadDot = false;
             var current = (char)sci.CharAt(position);
             for (var i = position - 1; i >= 0; i--)
