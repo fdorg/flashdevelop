@@ -1191,18 +1191,14 @@ namespace ASCompletion
             lastHoverPosition = position;
             if (!ctx.CodeComplete.IsAvailableForToolTip(sci, position)) return;
             position = ASComplete.ExpressionEndPosition(sci, position);
-            var result = ASComplete.GetExpressionType(sci, position, false, true);
+            var expr = ASComplete.GetExpressionType(sci, position, false, true);
             if (Control.ModifierKeys == Keys.Control)
             {
-                var code = ASComplete.GetCodeTipCode(result);
-                if (code == null) return;
-                UITools.CodeTip.Show(sci, position - result.Path.Length, code);
+                if (ASComplete.GetCodeTipCode(expr) is string text) UITools.CodeTip.Show(sci, position - expr.Path.Length, text);
             }
             else
             {
-                var text = ASComplete.GetToolTipText(result);
-                if (text == null) return;
-                UITools.Tip.ShowAtMouseLocation(text);
+                if (ASComplete.GetToolTipText(expr) is string text) UITools.Tip.ShowAtMouseLocation(text);
             }
         }
 

@@ -1710,7 +1710,7 @@ namespace HaXeContext.Completion
                 }
                 sb.Append("\n}");
                 var pos = sci.CurrentPos;
-                if (GetNonSpaceCharLeft(sci, ref pos) == '{') sci.SetSel(pos, sci.CurrentPos);
+                if (GetCharLeft(sci, ref pos) == '{') sci.SetSel(pos, sci.CurrentPos);
                 ASGenerator.InsertCode(sci.CurrentPos, sb.ToString());
             }
             finally
@@ -1743,7 +1743,7 @@ namespace HaXeContext.Completion
             try
             {
                 var pos = sci.CurrentPos;
-                if (GetNonSpaceCharLeft(sci, ref pos) == template[0]) sci.SetSel(pos, sci.CurrentPos);
+                if (GetCharLeft(sci, ref pos) == template[0]) sci.SetSel(pos, sci.CurrentPos);
                 ASGenerator.InsertCode(sci.CurrentPos, template);
             }
             finally

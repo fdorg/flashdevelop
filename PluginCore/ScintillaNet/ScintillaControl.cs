@@ -5990,7 +5990,7 @@ namespace ScintillaNet
                 case Enums.SmartIndent.Custom:
                     if (ch == newline)
                     {
-                        if (SmartIndent != null) SmartIndent(this);
+                        SmartIndent?.Invoke(this);
                     }
                     break;
             }
@@ -6003,28 +6003,24 @@ namespace ScintillaNet
         /// <returns>' or " or Space if undefined</returns>
         public char GetStringType(int position)
         {
-            char current;
-            char previous = (char) CharAt(position);
-            for (int i = position; i > 0; i--)
+            int i;
+            var previous = (char) CharAt(position);
+            for (i = position; i > 0; i--)
             {
-                current = previous;
+                var current = previous;
                 previous = (char) CharAt(i - 1);
-
-                if (current == '\'' || current == '"')
+                if (current != '\'' && current != '"') continue;
+                var escaped = false;
+                while (previous == '\\')
                 {
-                    bool escaped = false;
-                    while (previous == '\\')
-                    {
-                        i--;
-                        previous = (char) CharAt(i - 1);
-                        escaped = !escaped;
-                    }
-                    if (!escaped)
-                    {
-                        return current;
-                    }
+                    i--;
+                    previous = (char) CharAt(i - 1);
+                    escaped = !escaped;
                 }
+                if (!escaped) return current;
             }
+            // for example: '${v}'
+            if (i == 0 && (char) CharAt(0) is char c && (c == '\'' || c == '"')) return c;
             return ' ';
         }
 
@@ -6035,16 +6031,16 @@ namespace ScintillaNet
         /// <summary>
         /// Gets the amount of lines visible (ie. not folded)
         /// </summary>
-        private Int32 LinesVisible
+        private int LinesVisible
         {
             get
             {
-                Int32 vlineCount = 0;
-                for (Int32 i = 0; i < LineCount; i++)
+                var result = 0;
+                for (int i = 0, count = LineCount; i < count; i++)
                 {
-                    if (this.GetLineVisible(i)) vlineCount++;
+                    if (GetLineVisible(i)) result++;
                 }
-                return vlineCount;
+                return result;
             }
         }
 
@@ -6053,8 +6049,8 @@ namespace ScintillaNet
         /// </summary>
         public void GotoLineIndent(int line)
         {
-            int pos = this.LineIndentPosition(line);
-            this.GotoPos(pos);
+            var pos = LineIndentPosition(line);
+            GotoPos(pos);
         }
 
         /// <summary>
@@ -6079,8 +6075,8 @@ namespace ScintillaNet
         private RangeToFormat GetRangeToFormat(IntPtr hdc, int charFrom, int charTo)
         {
             RangeToFormat frPrint;
-            int pageWidth = (int)GetDeviceCaps(hdc, 110);
-            int pageHeight = (int)GetDeviceCaps(hdc, 111);
+            var pageWidth = GetDeviceCaps(hdc, 110);
+            var pageHeight = GetDeviceCaps(hdc, 111);
             frPrint.hdcTarget = hdc;
             frPrint.hdc = hdc;
             frPrint.rcPage.Left = 0;
@@ -6099,21 +6095,18 @@ namespace ScintillaNet
         /// <summary>
         /// Free cached data from the control after printing
         /// </summary>
-        public void FormatRangeDone()
-        {
-            this.SPerform(2151, 0, 0);
-        }
+        public void FormatRangeDone() => SPerform(2151, 0, 0);
 
         /// <summary>
         /// This holds the actual encoding of the document
         /// </summary>
         public Encoding Encoding
         {
-            get { return this.encoding; }
+            get { return encoding; }
             set
             {
-                this.encoding = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                encoding = value;
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -6122,11 +6115,11 @@ namespace ScintillaNet
         /// </summary>
         public bool SaveBOM
         {
-            get { return this.saveBOM; }
+            get { return saveBOM; }
             set
             {
-                this.saveBOM = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                saveBOM = value;
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -6135,18 +6128,16 @@ namespace ScintillaNet
         /// </summary>
         public void AddLastLineEnd()
         {
-            string eolMarker = NewLineMarker;
-            if (!this.Text.EndsWithOrdinal(eolMarker)) this.AppendText(eolMarker.Length, eolMarker);
+            var eolMarker = NewLineMarker;
+            if (!Text.EndsWithOrdinal(eolMarker)) AppendText(eolMarker.Length, eolMarker);
         }
 
         /// <summary>
         /// Removes trailing spaces from each line
         /// </summary>
-        public void StripTrailingSpaces()
-        {
-            this.StripTrailingSpaces(false);
-        }
-        public void StripTrailingSpaces(Boolean keepIndentTabs)
+        public void StripTrailingSpaces() => StripTrailingSpaces(false);
+
+        public void StripTrailingSpaces(bool keepIndentTabs)
         {
             this.BeginUndoAction();
             try
@@ -6237,10 +6228,8 @@ namespace ScintillaNet
         /// Checks that if the specified position is on comment.
         /// NOTE: You may need to manually update coloring: "sci.Colourise(0, -1);"
         /// </summary>
-        public bool PositionIsOnComment(int position)
-        {
-            return PositionIsOnComment(position, this.Lexer);
-        }
+        public bool PositionIsOnComment(int position) => PositionIsOnComment(position, Lexer);
+
         public bool PositionIsOnComment(int position, int lexer)
         {
             int style = BaseStyleAt(position);
