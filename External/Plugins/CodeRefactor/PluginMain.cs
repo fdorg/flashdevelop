@@ -490,14 +490,23 @@ namespace CodeRefactor
         /// </summary>
         private void FindAllReferencesClicked(object sender, EventArgs e)
         {
+            ASComplete.OnResolvedContextChanged -= OnResolvedContextChanged;
+            EventManager.RemoveEventHandler(this, EventType.FileSwitch, HandlingPriority.Normal);
             try
             {
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateFindAllReferencesCommand(true);
                 command.Execute();
+                command.OnRefactorComplete += (o, args) =>
+                {
+                    ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
+                    EventManager.AddEventHandler(this, EventType.FileSwitch);
+                };
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
+                ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
+                EventManager.AddEventHandler(this, EventType.FileSwitch);
             }
         }
 
@@ -647,15 +656,15 @@ namespace CodeRefactor
         /// </summary>
         void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         void OnAddRefactorOptions(List<ICompletionListItem> list)
         {
