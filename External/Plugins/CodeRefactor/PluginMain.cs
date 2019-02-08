@@ -645,7 +645,7 @@ namespace CodeRefactor
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
-        public void LoadSettings()
+        void LoadSettings()
         {
             this.settingObject = new Settings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
@@ -655,7 +655,7 @@ namespace CodeRefactor
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
 
         void OnAddRefactorOptions(List<ICompletionListItem> list)
         {
