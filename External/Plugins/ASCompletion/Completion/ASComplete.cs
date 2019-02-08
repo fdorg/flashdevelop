@@ -3407,7 +3407,17 @@ namespace ASCompletion.Completion
 
             var minPos = 0;
             // file's member declared at this position
-            if (FindMember(sci.LineFromPosition(position), ctx.CurrentClass.Members.Items) is MemberModel contextMember)
+            MemberModel contextMember = null;
+            var currentLine = sci.LineFromPosition(position);
+            if (sci.FileName != ctx.CurrentFile)
+            {
+                var model = ctx.GetFileModel(sci.FileName);
+                if (FindMember(currentLine, model.Classes) is ClassModel contextClass)
+                    contextMember = FindMember(currentLine, contextClass.Members.Items);
+                if (contextMember is null) contextMember = FindMember(currentLine, model.Members.Items);
+            }
+            else contextMember = FindMember(currentLine, ctx.CurrentClass.Members.Items);
+            if (contextMember != null)
             {
                 minPos = sci.PositionFromLine(contextMember.LineFrom);
                 expression.ContextMember = contextMember;
