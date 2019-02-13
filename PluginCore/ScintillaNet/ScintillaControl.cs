@@ -3541,6 +3541,42 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Return the number of selections currently active. There is always at least one selection.
+        /// </summary>
+        /// <returns></returns>
+        public int GetSelections() => SPerform(2570, 0, 0);
+
+        /// <summary>
+        /// Set a single selection from anchor to caret as the only selection.
+        /// </summary>
+        /// <param name="caret"></param>
+        /// <param name="anchor"></param>
+        public void SetSelection(int caret, int anchor) => SPerform(2572, caret, anchor);
+
+        /// <summary>
+        /// Add a new selection from anchor to caret as the main selection retaining all other selections as additional selections.
+        /// Since there is always at least one selection, to set a list of selections, the first selection should be added with SetSelection and later selections added with AddSelection
+        /// </summary>
+        /// <param name="caret"></param>
+        /// <param name="anchor"></param>
+        public void AddSelection(int caret, int anchor) => SPerform(2573, caret, anchor);
+
+        /// <summary>
+        /// Returns the start position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <returns></returns>
+        public int GetSelectionStart(int selection) => SPerform(2585, selection, 0);
+
+        /// <summary>
+        /// If there are multiple selections, remove the indicated selection.
+        /// If this was the main selection then make the previous selection the main and if it was the first then the last selection becomes main.
+        /// If there is only one selection, or there is no selection selection, then there is no effect.
+        /// </summary>
+        /// <param name="selection"></param>
+        public void DropSelection(int selection) => SPerform(2671, selection, 0);
+
+        /// <summary>
         /// Retrieve the selected text.
         /// Return the length of the text.
         /// </summary>
