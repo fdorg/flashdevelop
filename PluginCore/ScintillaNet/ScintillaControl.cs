@@ -3568,7 +3568,7 @@ namespace ScintillaNet
         /// <param name="selection"></param>
         /// <param name="anchor"></param>
         /// <returns></returns>
-        public int SetSelectionStart(int selection, int anchor) => SPerform(2584, selection, anchor);
+        public void SetSelectionStart(int selection, int anchor) => SPerform(2584, selection, anchor);
 
         /// <summary>
         /// If there are multiple selections, remove the indicated selection.
