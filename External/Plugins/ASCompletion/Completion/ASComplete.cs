@@ -561,11 +561,17 @@ namespace ASCompletion.Completion
         
         private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open, char close, int closePosition)
         {
-            if (open == brace.Open && close == brace.Close && brace.ShouldRemove(sci.CurrentPos, closePosition))
+            var selections = sci.GetSelections();
+            for (var i = 0; i < selections; i++)
             {
-                sci.SelectionEnd = closePosition + 1;
-                sci.DeleteBack();
-                return true;
+                var position = sci.GetSelectionStart(i);
+                if (open == brace.Open && close == brace.Close && brace.ShouldRemove(position, position))
+                {
+                    sci.SetSelectionStart(i, position - 1);
+                    sci.SetSelectionEnd(i, position + 1);
+                    //sci.DeleteBack();
+                    //return true;
+                }
             }
             return false;
         }
