@@ -3515,10 +3515,7 @@ namespace ScintillaNet
         /// <summary>
         /// Clear all the registered XPM images.
         /// </summary>
-        public void ClearRegisteredImages()
-        {
-            SPerform(2408, 0, 0);
-        }
+        public void ClearRegisteredImages() => SPerform(2408, 0, 0);
 
         /// <summary>
         /// Retrieve the contents of a line.
@@ -3535,13 +3532,10 @@ namespace ScintillaNet
         /// <summary>
         /// Select a range of text.
         /// </summary>
-        public void SetSel(int start, int end)
-        {
-            SPerform(2160, start, end);
-        }
+        public void SetSel(int start, int end) => SPerform(2160, start, end);
 
         /// <summary>
-        /// Return the number of selections currently active. There is always at least one selection.
+        /// Returns the number of selections currently active. There is always at least one selection.
         /// </summary>
         /// <returns></returns>
         public int GetSelections() => SPerform(2570, 0, 0);
@@ -3619,42 +3613,27 @@ namespace ScintillaNet
         /// <summary>
         /// Draw the selection in normal style or with selection highlighted.
         /// </summary>
-        public void HideSelection(bool normal)
-        {
-            SPerform(2163, normal ? 1 : 0, 0);
-        }
+        public void HideSelection(bool normal) => SPerform(2163, normal ? 1 : 0, 0);
 
         /// <summary>
         /// Retrieve the x value of the point in the window where a position is displayed.
         /// </summary>
-        public int PointXFromPosition(int pos)
-        {
-            return SPerform(2164, 0, pos);
-        }
+        public int PointXFromPosition(int pos) => SPerform(2164, 0, pos);
 
         /// <summary>
         /// Retrieve the y value of the point in the window where a position is displayed.
         /// </summary>
-        public int PointYFromPosition(int pos)
-        {
-            return SPerform(2165, 0, pos);
-        }
+        public int PointYFromPosition(int pos) => SPerform(2165, 0, pos);
 
         /// <summary>
         /// Retrieve the line containing a position.
         /// </summary>
-        public int LineFromPosition(int pos)
-        {
-            return SPerform(2166, pos, 0);
-        }
+        public int LineFromPosition(int pos) => SPerform(2166, pos, 0);
 
         /// <summary>
         /// Retrieve the position at the start of a line.
         /// </summary>
-        public int PositionFromLine(int line)
-        {
-            return SPerform(2167, line, 0);
-        }
+        public int PositionFromLine(int line) => SPerform(2167, line, 0);
 
         /// <summary>
         /// Retrieve the text from line before position
