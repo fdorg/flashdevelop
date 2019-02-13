@@ -3646,31 +3646,25 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the text from line before position
         /// </summary>
-        public String GetLineUntilPosition(int pos)
+        public string GetLineUntilPosition(int pos)
         {
-            int curLine = LineFromPosition(pos);
-            int curPosInLine = pos - PositionFromLine(curLine);
-            String line = GetLine(curLine);
-            int length = MBSafeLengthFromBytes(line, curPosInLine);
-            String lineUntilPos = line.Substring(0, length);
+            var curLine = LineFromPosition(pos);
+            var curPosInLine = pos - PositionFromLine(curLine);
+            var line = GetLine(curLine);
+            var length = MBSafeLengthFromBytes(line, curPosInLine);
+            var lineUntilPos = line.Substring(0, length);
             return lineUntilPos;
         }
 
         /// <summary>
         /// Scroll horizontally and vertically.
         /// </summary>
-        public void LineScroll(int columns, int lines)
-        {
-            SPerform(2168, columns, lines);
-        }
+        public void LineScroll(int columns, int lines) => SPerform(2168, columns, lines);
 
         /// <summary>
         /// Ensure the caret is visible.
         /// </summary>
-        public void ScrollCaret()
-        {
-            SPerform(2169, 0, 0);
-        }
+        public void ScrollCaret() => SPerform(2169, 0, 0);
 
         /// <summary>
         /// Replace the selected text with the argument text.
@@ -3687,10 +3681,7 @@ namespace ScintillaNet
         /// <summary>
         /// Null operation.
         /// </summary>
-        public void Null()
-        {
-            SPerform(2172, 0, 0);
-        }
+        public void Null() => SPerform(2172, 0, 0);
 
         /// <summary>
         /// Delete the undo history.
