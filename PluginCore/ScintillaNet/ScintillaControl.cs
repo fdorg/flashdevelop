@@ -3563,6 +3563,14 @@ namespace ScintillaNet
         public int GetSelectionStart(int selection) => SPerform(2585, selection, 0);
 
         /// <summary>
+        /// Set the start position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <param name="anchor"></param>
+        /// <returns></returns>
+        public int SetSelectionStart(int selection, int anchor) => SPerform(2584, selection, anchor);
+
+        /// <summary>
         /// If there are multiple selections, remove the indicated selection.
         /// If this was the main selection then make the previous selection the main and if it was the first then the last selection becomes main.
         /// If there is only one selection, or there is no selection selection, then there is no effect.
