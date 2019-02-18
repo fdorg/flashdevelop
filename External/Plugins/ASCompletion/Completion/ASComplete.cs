@@ -823,7 +823,7 @@ namespace ASCompletion.Completion
                     // comments
                     && sci.BaseStyleAt(currentPos) is int style && !IsCommentStyle(style)
                     // keywords
-                    && (style != 19 && style != 24 && string.IsNullOrEmpty(features.ConstructorKey) || sci.GetWordFromPosition(currentPos) == features.ConstructorKey))
+                    && ((style != 19 && style != 24) || (!string.IsNullOrEmpty(features.ConstructorKey) && sci.GetWordFromPosition(currentPos) == features.ConstructorKey)))
                 {
                     result = GetExpressionType(sci, position);
                 }
