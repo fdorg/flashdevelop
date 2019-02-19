@@ -15,8 +15,8 @@ namespace ASCompletion.Model
     [Serializable]
     public class MemberModel: ICloneable, IComparable
     {
-        public static string TypedCallbackHLStart = "<[BGCOLOR=#2F90:NORMAL]"; // <- with alpha (0x02)
-        public static string TypedCallbackHLEnd = "[/BGCOLOR]>";
+        const string TypedCallbackHLStart = "<[BGCOLOR=#2F90:NORMAL]"; // <- with alpha (0x02)
+        const string TypedCallbackHLEnd = "[/BGCOLOR]>";
 
         public FileModel InFile;
         public bool IsPackageLevel;
@@ -88,7 +88,7 @@ namespace ASCompletion.Model
             if ((Flags & FlagType.Function) > 0)
             {
                 var declaration = "(" + ParametersString(true) + ")";
-                if ((Flags & FlagType.Variable) > 0 || (Flags & FlagType.Getter) > 0)
+                if ((Flags & FlagType.Variable) > 0)
                 {
                     if (!string.IsNullOrEmpty(type)) declaration += ":" + type;
                     result += " : Function" + TypedCallbackHLStart + declaration + TypedCallbackHLEnd;
@@ -105,8 +105,7 @@ namespace ASCompletion.Model
                 }
             }
             if ((Flags & FlagType.Constructor) > 0) return result;
-            var comment = "";
-            if (!string.IsNullOrEmpty(type)) result += " : " + type + comment;
+            if (!string.IsNullOrEmpty(type)) result += " : " + type;
             return result;
         }
 
@@ -198,18 +197,12 @@ namespace ASCompletion.Model
         {
             if (string.IsNullOrEmpty(type)) return null;
             var p = type.IndexOf('@');
-            if (p > 0)
-            {
-                var bbCodeOpen = allowBBCode ? "[BGCOLOR=#EEE:SUBTRACT]" : "";
-                var bbCodeClose = allowBBCode ? "[/BGCOLOR]" : "";
-
-                if (type.Substring(0, p) == "Array")
-                    return type.Substring(0, p) + bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose;
-                if (type.IndexOfOrdinal("<T>") is var p1 && p1 > 0)
-                    return type.Substring(0, p1) + bbCodeOpen + "<" + type.Substring(p + 1) + ">" + bbCodeClose;
-                return bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose + type.Substring(0, p);
-            }
-            return type;
+            if (p == -1) return type;
+            var bbCodeOpen = allowBBCode ? "[BGCOLOR=#EEE:SUBTRACT]" : "";
+            var bbCodeClose = allowBBCode ? "[/BGCOLOR]" : "";
+            if (type.Substring(0, p) == "Array") return $"{type.Substring(0, p)}{bbCodeOpen}/*{type.Substring(p + 1)}*/{bbCodeClose}";
+            if (type.IndexOfOrdinal("<T>") is var p1 && p1 > 0) return $"{type.Substring(0, p1)}{bbCodeOpen}<{type.Substring(p + 1)}>{bbCodeClose}";
+            return $"{bbCodeOpen}/*{type.Substring(p + 1)}*/{bbCodeClose}{type.Substring(0, p)}";
         }
     }
     
