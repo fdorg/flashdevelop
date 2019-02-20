@@ -3560,7 +3560,7 @@ namespace ScintillaNet
         /// </summary>
         /// <param name="selection"></param>
         /// <returns></returns>
-        public int GetSelectionStart(int selection) => SPerform(2585, selection, 0);
+        public int GetSelectionNStart(int selection) => SPerform(2585, selection, 0);
 
         /// <summary>
         /// Set the start position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
@@ -3568,7 +3568,14 @@ namespace ScintillaNet
         /// <param name="selection"></param>
         /// <param name="anchor"></param>
         /// <returns></returns>
-        public void SetSelectionStart(int selection, int anchor) => SPerform(2584, selection, anchor);
+        public void SetSelectionNStart(int selection, int anchor) => SPerform(2584, selection, anchor);
+
+        /// <summary>
+        /// Returns the end position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <returns></returns>
+        public int GetSelectionNEnd(int selection) => SPerform(2587, selection, 0);
 
         /// <summary>
         /// Set the end position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
@@ -3576,7 +3583,7 @@ namespace ScintillaNet
         /// <param name="selection"></param>
         /// <param name="anchor"></param>
         /// <returns></returns>
-        public void SetSelectionEnd(int selection, int anchor) => SPerform(2586, selection, anchor);
+        public void SetSelectionNEnd(int selection, int anchor) => SPerform(2586, selection, anchor);
 
         /// <summary>
         /// If there are multiple selections, remove the indicated selection.
@@ -3584,7 +3591,7 @@ namespace ScintillaNet
         /// If there is only one selection, or there is no selection selection, then there is no effect.
         /// </summary>
         /// <param name="selection"></param>
-        public void DropSelection(int selection) => SPerform(2671, selection, 0);
+        public void DropSelectionN(int selection) => SPerform(2671, selection, 0);
 
         /// <summary>
         /// Retrieve the selected text.
@@ -3680,7 +3687,7 @@ namespace ScintillaNet
         unsafe public void ReplaceSel(string text)
         {
             if (string.IsNullOrEmpty(text)) text = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
+            fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
                 SPerform(2170, 0, (uint)b);
             }
@@ -3694,26 +3701,17 @@ namespace ScintillaNet
         /// <summary>
         /// Delete the undo history.
         /// </summary>
-        public void EmptyUndoBuffer()
-        {
-            SPerform(2175, 0, 0);
-        }
+        public void EmptyUndoBuffer() => SPerform(2175, 0, 0);
 
         /// <summary>
         /// Undo one action in the undo history.
         /// </summary>
-        public void Undo()
-        {
-            SPerform(2176, 0, 0);
-        }
+        public void Undo() => SPerform(2176, 0, 0);
 
         /// <summary>
         /// Cut the selection to the clipboard.
         /// </summary>
-        public void Cut()
-        {
-            SPerform(2177, 0, 0);
-        }
+        public void Cut() => SPerform(2177, 0, 0);
 
         /// <summary>
         /// Copy the selection to the clipboard.
@@ -3722,7 +3720,7 @@ namespace ScintillaNet
         {
             SPerform(2178, 0, 0);
             // Invoke UI update after copy...
-            if (UpdateUI != null) UpdateUI(this);
+            UpdateUI?.Invoke(this);
         }
 
         /// <summary>

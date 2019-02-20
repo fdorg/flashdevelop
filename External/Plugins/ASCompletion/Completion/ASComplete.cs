@@ -523,7 +523,7 @@ namespace ASCompletion.Completion
             var positions = new List<int>(selections);
             for (var i = selections - 1; i >= 0; i--)
             {
-                positions.Add(sci.GetSelectionStart(i));
+                positions.Add(sci.GetSelectionNStart(i));
             }
             positions.Sort();
             var braceString = brace.Close.ToString();
@@ -564,11 +564,11 @@ namespace ASCompletion.Completion
             var selections = sci.GetSelections();
             for (var i = 0; i < selections; i++)
             {
-                var position = sci.GetSelectionStart(i);
+                var position = sci.GetSelectionNStart(i);
                 if (open == brace.Open && close == brace.Close && brace.ShouldRemove(position, position))
                 {
-                    sci.SetSelectionStart(i, position - 1);
-                    sci.SetSelectionEnd(i, position + 1);
+                    sci.SetSelectionNStart(i, position - 1);
+                    sci.SetSelectionNEnd(i, position + 1);
                     //sci.DeleteBack();
                     //return true;
                 }
