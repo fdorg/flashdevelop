@@ -494,14 +494,6 @@ namespace ASCompletion.Completion
                     || context.CodeComplete.IsStringInterpolationStyle(sci, position)
                     || IsMatchingQuote(open, styleAfter))
                 {
-                    int closePos = sci.CurrentPos;
-
-                    while (char.IsWhiteSpace(c))
-                    {
-                        closePos++;
-                        c = (char) sci.CharAt(closePos);
-                    }
-
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
                         if (HandleBraceRemove(sci, brace, open, c))
