@@ -250,15 +250,15 @@ namespace HaXeContext.Completion
             if ((c == ' ' || c == '!' || c == '=') && type.Name == ctx.Features.booleanKey)
             {
                 var word = sci.GetWordFromPosition(sci.CurrentPos);
-                if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word)) 
-                    completionHistory[ctx.CurrentClass.QualifiedName] = "true";
+                if (string.IsNullOrEmpty(word) || "false".StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = "false";
                 return HandleDotCompletion(sci, autoHide, null, (a, b) =>
                 {
                     var aLabel = (a as TemplateItem)?.Label;
                     var bLabel = (b as TemplateItem)?.Label;
                     if (IsBool(aLabel) && IsBool(bLabel))
                     {
-                        if (aLabel == "true") return -1;
+                        if (aLabel == "false") return -1;
                         return 1;
                     }
                     if (IsBool(aLabel)) return -1;
