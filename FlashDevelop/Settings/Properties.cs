@@ -91,6 +91,7 @@ namespace FlashDevelop.Settings
         private UpdateInterval checkForUpdates = UpdateInterval.Monthly;
         private Int32 uiHoverDelay = 500;
         private Int32 uiDisplayDelay = 100;
+        private Int32 uiMaxTraceLines = 1000;
         private Int64 lastUpdateCheck = 0;
         private Boolean uiShowDetails = false;
         private Boolean uiAutoFilterList = true;

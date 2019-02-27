@@ -608,6 +608,16 @@ namespace FlashDevelop.Settings
             set { this.maxRecentFiles = value; }
         }
 
+        [DefaultValue(1000)]
+        [DisplayName("Max Trace Lines")]
+        [LocalizedCategory("FlashDevelop.Category.Features")]
+        [LocalizedDescription("FlashDevelop.Description.MaxTraceLines")]
+        public Int32 MaxTraceLines
+        {
+            get { return this.uiMaxTraceLines; }
+            set { this.uiMaxTraceLines = value; }
+        }
+
         [DefaultValue(true)]
         [DisplayName("Restore File States")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
