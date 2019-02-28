@@ -6044,6 +6044,10 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>최근 파일 목록의 최대 길이.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>한 번에 최대 라인 수를 출력 할 수 있습니다.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>이름 바꾸기를 사용할때 인라인 편집을 사용합니다.</value>
     <comment>Added after 5.2.0</comment>
