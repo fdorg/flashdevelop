@@ -891,7 +891,7 @@ namespace HaXeContext
             }
 
             if (cFile != null)
-                foreach(ClassModel aClass in cFile.Classes)
+                foreach(var aClass in cFile.Classes)
                     fullList.Add(aClass.ToMemberModel());
 
             // in cache
@@ -1012,7 +1012,6 @@ namespace HaXeContext
 
         private void ResolveImports(string package, MemberList result)
         {
-            // classes matching wildcard
             var matches = ResolvePackage(package, false);
             if (matches != null)
             {
