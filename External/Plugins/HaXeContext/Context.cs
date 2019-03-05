@@ -891,7 +891,7 @@ namespace HaXeContext
             }
 
             if (cFile != null)
-                foreach(ClassModel aClass in cFile.Classes)
+                foreach(var aClass in cFile.Classes)
                     fullList.Add(aClass.ToMemberModel());
 
             // in cache
@@ -963,30 +963,8 @@ namespace HaXeContext
                 if (item.Name != "*") ResolveImport(item, imports);
                 else
                 {
-                    var cname = item.Type.Substring(0, item.Type.Length - 2);
-                    // classes matching wildcard
-                    var matches = ResolvePackage(cname, false);
-                    if (matches != null)
-                    {
-                        imports.Add(matches.Imports);
-                        imports.Add(matches.Members);
-                    }
-                    else
-                    {
-                        var model = ResolveType(cname, null);
-                        if (!model.IsVoid())
-                        {
-                            var access = TypesAffinity(model, Context.CurrentClass);
-                            foreach (MemberModel member in model.Members)
-                            {
-                                if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
-                                {
-                                    member.InFile = model.InFile;
-                                    imports.Add(member);
-                                }
-                            }
-                        }
-                    }
+                    var package = item.Type.Substring(0, item.Type.Length - 2);
+                    ResolveImports(package, imports);
                 }
             }
 
@@ -1030,6 +1008,30 @@ namespace HaXeContext
                 }
             }
             return imports;
+        }
+
+        private void ResolveImports(string package, MemberList result)
+        {
+            var matches = ResolvePackage(package, false);
+            if (matches != null)
+            {
+                result.Add(matches.Imports);
+                result.Add(matches.Members);
+            }
+            else
+            {
+                var model = ResolveType(package, null);
+                if (model.IsVoid()) return;
+                var access = TypesAffinity(model, Context.CurrentClass);
+                foreach (MemberModel member in model.Members)
+                {
+                    if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
+                    {
+                        member.InFile = model.InFile;
+                        result.Add(member);
+                    }
+                }
+            }
         }
 
         private void ResolveImport(MemberModel item, MemberList imports)
@@ -1441,7 +1443,18 @@ namespace HaXeContext
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
                     if (!it.TryGetFile(path, out var model)) continue;
-                    result.Add(model.Imports);
+                    foreach (MemberModel import in model.Imports)
+                    {
+                        if ((import.Flags & (FlagType.Class | FlagType.Using)) != 0 && !(import is ClassModel))
+                        {
+                            var type = ResolveType(import.Type, null);
+                            if (type.IsVoid()) continue;
+                            type.Flags |= FlagType.Using;
+                            result.Add(type);
+                        }
+                        else if (import.Name != "*") result.Add(import);
+                        else ResolveImports(import.Type.Substring(0, import.Type.Length - 2), result);
+                    }
                     break;
                 }
                 if (string.IsNullOrEmpty(packagePath)) break;
