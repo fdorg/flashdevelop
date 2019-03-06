@@ -626,7 +626,7 @@ namespace HaXeContext.Completion
                     return;
                 }
                 if (c == '(') parCount++;
-                // for(it in expression)
+                // for(it in expr)
                 else if (c == ')' || (c == ';' && braCount == 0))
                 {
                     parCount--;
@@ -1194,11 +1194,11 @@ namespace HaXeContext.Completion
         {
             if (expr.Member == null && expr.Context is ASExpr context)
             {
-                // for example: cast<cursor>(expression, Type);
+                // for example: cast<cursor>(expr, Type);
                 if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
                 else if (context.Value is string s)
                 {
-                    // for example: cast<cursor> expression;
+                    // for example: cast<cursor> expr;
                     if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
                     // for example: 'c'.code<complete> or "\n".code<complete>
                     else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
@@ -1784,7 +1784,7 @@ namespace HaXeContext.Completion
     class ExpressionReificationGeneratorItem : ObjectInitializerGeneratorItem
     {
         public ExpressionReificationGeneratorItem(string name, string exprType, string returnType, string comments, Action action)
-            : base($"${name}{{}}", $"${name}{{expression:{exprType}}} : {returnType}\r\n\r\n{comments}", action)
+            : base($"${name}{{}}", $"${name}{{expr:{exprType}}} : {returnType}\r\n\r\n{comments}", action)
         {
         }
     }
