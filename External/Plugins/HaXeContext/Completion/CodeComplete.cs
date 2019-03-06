@@ -503,7 +503,7 @@ namespace HaXeContext.Completion
                 var name = item.Name;
                 if (name[0] == '?')
                 {
-                    if (string.IsNullOrEmpty(item.Type) && (expression.Separator != "=" || item.Value != expression.Value))
+                    if (string.IsNullOrEmpty(item.Type) && !string.IsNullOrEmpty(expression.Value) && (expression.Separator != "=" || item.Value != expression.Value))
                         InferType(ASContext.CurSciControl, item);
                     var type = item.Type;
                     if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";

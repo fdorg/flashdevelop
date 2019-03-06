@@ -1545,6 +1545,16 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionTypeIssue2710TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2710_1"))
+                        .Returns(new ClassModel {Name = "Null<Dynamic>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore})
+                        .SetName("v<complete>. Issue 2710. Case 1");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
@@ -1565,6 +1575,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2505_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedClass_issue2536_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionTypeIssue2624TestCases)),
+                TestCaseSource(nameof(GetExpressionTypeIssue2710TestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
