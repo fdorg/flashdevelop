@@ -21,6 +21,12 @@ namespace ASCompletion.Completion
         static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
+            //{ Update completion cache
+            var ctx = ASContext.GetLanguageContext(sci.ConfigurationLanguage);
+            ((ASContext) ctx).completionCache.IsDirty = true;
+            var visibleExternalElements = ctx.GetVisibleExternalElements();
+            ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
+            //}
             return ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
         }
 
@@ -1550,8 +1556,14 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_issue2710_1"))
-                        .Returns(new ClassModel {Name = "Null<BinaryType>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore})
+                        .Returns(new ClassModel { Name = "Null<BinaryType>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore })
                         .SetName("v<complete>. Issue 2710. Case 1");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2710_2"))
+                        .Returns(new ClassModel { Name = "Null<AlignSetting>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore })
+                        .SetName("v<complete>. Issue 2710. Case 2");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue2710_3"))
+                        .Returns(new ClassModel { Name = "Null<BinaryType>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore })
+                        .SetName("v<complete>. Issue 2710. Case 3");
                 }
             }
 
