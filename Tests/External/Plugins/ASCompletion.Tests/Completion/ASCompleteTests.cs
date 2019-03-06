@@ -1550,7 +1550,7 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_issue2710_1"))
-                        .Returns(new ClassModel {Name = "Null<Dynamic>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore})
+                        .Returns(new ClassModel {Name = "Null<BinaryType>", Flags = FlagType.Abstract | FlagType.Class, InFile = FileModel.Ignore})
                         .SetName("v<complete>. Issue 2710. Case 1");
                 }
             }

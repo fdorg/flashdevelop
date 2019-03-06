@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -500,18 +500,22 @@ namespace HaXeContext.Completion
             for (int i = 0, count = expression.ContextFunction.Parameters.Count; i < count; i++)
             {
                 var item = expression.ContextFunction.Parameters[i];
-                var name = item.Name;
-                if (name[0] == '?')
+                if (string.IsNullOrEmpty(item.Type) && !string.IsNullOrEmpty(item.Value))
                 {
-                    if (string.IsNullOrEmpty(item.Type) && !string.IsNullOrEmpty(expression.Value) && (expression.Separator != "=" || item.Value != expression.Value))
-                        InferType(ASContext.CurSciControl, item);
-                    var type = item.Type;
-                    if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
-                    else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
-                    item = (MemberModel) item.Clone();
-                    item.Name = name.Substring(1);
-                    item.Type = type;
+                    var expr = EvalExpression(item.Value, new ASExpr(), model, ASContext.Context.CurrentClass, true, false, false);
+                    if (expr.Type != null && !expr.Type.IsVoid()) item.Type = expr.Type.Name;
                 }
+                var type = item.Type;
+                if (string.IsNullOrEmpty(type)) type = "Dynamic";
+                var name = item.Name;
+                if (name.StartsWith('?'))
+                {
+                    name = name.Substring(1);
+                    if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
+                }
+                item = (MemberModel) item.Clone();
+                item.Name = name;
+                item.Type = type;
                 model.Members.MergeByLine(item);
             }
         }
@@ -622,7 +626,7 @@ namespace HaXeContext.Completion
                     return;
                 }
                 if (c == '(') parCount++;
-                // for(it in expr)
+                // for(it in expression)
                 else if (c == ')' || (c == ';' && braCount == 0))
                 {
                     parCount--;
@@ -929,7 +933,7 @@ namespace HaXeContext.Completion
             {
                 if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
                     && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
-                    type = GetExpressionType(sci, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
+                    type = GetExpressionType(sci, var.ValueEndPosition, false, true).Type ?? ClassModel.VoidClass;
                 if (type.IsVoid()) type = ResolveType(ctx.Features.dynamicKey, null);
             }
             var.Type = type.Name;
@@ -1190,11 +1194,11 @@ namespace HaXeContext.Completion
         {
             if (expr.Member == null && expr.Context is ASExpr context)
             {
-                // for example: cast<cursor>(expr, Type);
+                // for example: cast<cursor>(expression, Type);
                 if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
                 else if (context.Value is string s)
                 {
-                    // for example: cast<cursor> expr;
+                    // for example: cast<cursor> expression;
                     if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
                     // for example: 'c'.code<complete> or "\n".code<complete>
                     else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
@@ -1780,7 +1784,7 @@ namespace HaXeContext.Completion
     class ExpressionReificationGeneratorItem : ObjectInitializerGeneratorItem
     {
         public ExpressionReificationGeneratorItem(string name, string exprType, string returnType, string comments, Action action)
-            : base($"${name}{{}}", $"${name}{{expr:{exprType}}} : {returnType}\r\n\r\n{comments}", action)
+            : base($"${name}{{}}", $"${name}{{expression:{exprType}}} : {returnType}\r\n\r\n{comments}", action)
         {
         }
     }
