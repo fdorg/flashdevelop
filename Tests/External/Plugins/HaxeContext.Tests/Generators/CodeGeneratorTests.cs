@@ -791,7 +791,7 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_5", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_5"))
-                    .SetName("foo(?v = 1.0f). Infer parameter var type. Issue 2371. Case 5.")
+                    .SetName("foo(?v = 1.0). Infer parameter var type. Issue 2371. Case 5.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2371");
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_issue2371_6", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_issue2371_6"))
