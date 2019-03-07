@@ -6041,6 +6041,10 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>The number of recent files to remember in the recent files drop-down.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>The maximum number of lines can be output at a time.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
     <comment>Added after 5.2.0</comment>

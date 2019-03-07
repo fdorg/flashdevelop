@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -250,15 +250,15 @@ namespace HaXeContext.Completion
             if ((c == ' ' || c == '!' || c == '=') && type.Name == ctx.Features.booleanKey)
             {
                 var word = sci.GetWordFromPosition(sci.CurrentPos);
-                if (string.IsNullOrEmpty(word) || "true".StartsWithOrdinal(word)) 
-                    completionHistory[ctx.CurrentClass.QualifiedName] = "true";
+                if (string.IsNullOrEmpty(word) || "false".StartsWithOrdinal(word))
+                    completionHistory[ctx.CurrentClass.QualifiedName] = "false";
                 return HandleDotCompletion(sci, autoHide, null, (a, b) =>
                 {
                     var aLabel = (a as TemplateItem)?.Label;
                     var bLabel = (b as TemplateItem)?.Label;
                     if (IsBool(aLabel) && IsBool(bLabel))
                     {
-                        if (aLabel == "true") return -1;
+                        if (aLabel == "false") return -1;
                         return 1;
                     }
                     if (IsBool(aLabel)) return -1;
@@ -500,18 +500,22 @@ namespace HaXeContext.Completion
             for (int i = 0, count = expression.ContextFunction.Parameters.Count; i < count; i++)
             {
                 var item = expression.ContextFunction.Parameters[i];
-                var name = item.Name;
-                if (name[0] == '?')
+                if (string.IsNullOrEmpty(item.Type) && !string.IsNullOrEmpty(item.Value))
                 {
-                    if (string.IsNullOrEmpty(item.Type) && (expression.Separator != "=" || item.Value != expression.Value))
-                        InferType(ASContext.CurSciControl, item);
-                    var type = item.Type;
-                    if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
-                    else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
-                    item = (MemberModel) item.Clone();
-                    item.Name = name.Substring(1);
-                    item.Type = type;
+                    var expr = EvalExpression(item.Value, new ASExpr(), model, ASContext.Context.CurrentClass, true, false, false);
+                    if (expr.Type != null && !expr.Type.IsVoid()) item.Type = expr.Type.Name;
                 }
+                var type = item.Type;
+                if (string.IsNullOrEmpty(type)) type = "Dynamic";
+                var name = item.Name;
+                if (name.StartsWith('?'))
+                {
+                    name = name.Substring(1);
+                    if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
+                }
+                item = (MemberModel) item.Clone();
+                item.Name = name;
+                item.Type = type;
                 model.Members.MergeByLine(item);
             }
         }
@@ -929,7 +933,7 @@ namespace HaXeContext.Completion
             {
                 if (!string.IsNullOrEmpty(value) && value != "null" && var.ValueEndPosition != -1
                     && char.IsLetter(value[0]) && (var.Name != value && (var.Name[0] != '?' || var.Name != '?' + value)))
-                    type = GetExpressionType(sci, var.ValueEndPosition + 1, true).Type ?? ClassModel.VoidClass;
+                    type = GetExpressionType(sci, var.ValueEndPosition, false, true).Type ?? ClassModel.VoidClass;
                 if (type.IsVoid()) type = ResolveType(ctx.Features.dynamicKey, null);
             }
             var.Type = type.Name;

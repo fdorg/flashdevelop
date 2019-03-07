@@ -835,7 +835,7 @@ namespace HaXeContext.Model
                         if (inParams)
                         {
                             curMember.Value = param;
-                            curMember.ValueEndPosition = i;
+                            curMember.ValueEndPosition = i - 1;
                         }
                         curMember.LineTo = line;
                         if (c1 == '\r' || c1 == '\n') curMember.LineTo--;
@@ -1633,6 +1633,12 @@ namespace HaXeContext.Model
                 {
                     foundKeyword = FlagType.Abstract;
                     modifiers |= FlagType.Abstract;
+                    // Haxe 4. transform `enum abstract A {}` to `@:enum abstract A {}`
+                    if (prevToken?.Text == "enum")
+                    {
+                        if (carriedMetaData == null) carriedMetaData = new List<ASMetaData>();
+                        carriedMetaData.Add(new ASMetaData(":enum"));
+                    }
                 }
                 else if (features.hasEnums && token == "enum")
                 {

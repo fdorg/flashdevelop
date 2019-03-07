@@ -10,7 +10,7 @@ namespace PluginCore.Managers
     public class TraceManager
     {
         private static Boolean synchronizing;
-        private static Int32 MAX_QUEUE = 1000;
+        private static Int32 maxQueue = 1000;
         private static List<TraceItem> traceLog;
         private static List<TraceItem> asyncQueue;
         private static Dictionary<string, TraceGroup> traceGroups;
@@ -27,6 +27,14 @@ namespace PluginCore.Managers
             asyncTimer.AutoReset = false;
             asyncTimer.Elapsed += new ElapsedEventHandler(AsyncTimer_Elapsed);
             uniqueToken = 0;
+        }
+
+        /// <summary>
+        /// Apply the modified settings.
+        /// </summary>
+        public static void ApplySettings(Int32 maxTraceLines)
+        {
+            maxQueue = maxTraceLines;
         }
 
         /// <summary>
@@ -84,14 +92,16 @@ namespace PluginCore.Managers
                 lock (asyncQueue)
                 {
                     int count = asyncQueue.Count;
-                    if (count < MAX_QUEUE)
+                    if (count < maxQueue)
                     {
                         asyncQueue.Add(new TraceItem(message, state));
                         asyncTimer.Start();
                     }
-                    else if (count == MAX_QUEUE)
+                    else if (count == maxQueue)
                     {
-                        asyncQueue.Add(new TraceItem(DistroConfig.DISTRIBUTION_NAME + ": Trace overflow", 4));
+                        asyncQueue.Add(new TraceItem(DistroConfig.DISTRIBUTION_NAME + ": Trace overflow, " +
+                            "you can configure \"Max Trace Lines\" in: " +
+                            "Tools >> Program Settings >> FlashDevelop >> Features", 4));
                         asyncTimer.Stop();
                         asyncTimer.Start();
                     }
