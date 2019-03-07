@@ -6083,6 +6083,10 @@ UseData:"</value>
     <value>The number of recent files to remember in the recent files drop-down.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>一度に最大行数を出力できます。</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
     <comment>Added after 5.2.0</comment>
