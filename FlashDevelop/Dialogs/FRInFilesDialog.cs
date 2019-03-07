@@ -554,98 +554,90 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Runs the find based on the user specified arguments
         /// </summary>
-        private void FindButtonClick(Object sender, EventArgs e)
+        private void FindButtonClick(object sender, EventArgs e)
         {
-            String mask = this.extensionComboBox.Text;
-            if (IsValidPattern() && this.IsValidFileMask(mask))
+            if (!IsValidPattern()) return;
+            var mask = extensionComboBox.Text.Trim();
+            if (!IsValidFileMask(mask)) return;
+            var recursive = subDirectoriesCheckBox.Checked;
+            var paths = folderComboBox.Text.Trim().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var path in paths)
             {
-                bool recursive = this.subDirectoriesCheckBox.Checked;
-                var paths = this.folderComboBox.Text.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
-                foreach (String path in paths)
-                {
-                    FRConfiguration config = this.GetFRConfig(path, mask, recursive);
-                    if (config == null) return;
-                    config.CacheDocuments = true;
-                    this.UpdateUIState(true);
-                    this.runner = new FRRunner();
-                    this.runner.ProgressReport += this.RunnerProgress;
-                    this.runner.Finished += this.FindFinished;
-                    this.runner.SearchAsync(config);
-                    FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                }
+                var config = GetFRConfig(path, mask, recursive);
+                if (config is null) return;
+                config.CacheDocuments = true;
+                UpdateUIState(true);
+                runner = new FRRunner();
+                runner.ProgressReport += RunnerProgress;
+                runner.Finished += FindFinished;
+                runner.SearchAsync(config);
+                FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(extensionComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(findComboBox);
             }
         }
 
         /// <summary>
         /// Runs the replace based on the user specified arguments
         /// </summary>
-        private void ReplaceButtonClick(Object sender, EventArgs e)
+        private void ReplaceButtonClick(object sender, EventArgs e)
         {
-            String mask = this.extensionComboBox.Text;
-            if (IsValidPattern() && this.IsValidFileMask(mask))
+            if (!IsValidPattern()) return;
+            var mask = extensionComboBox.Text.Trim();
+            if (!IsValidFileMask(mask)) return;
+            if (!Globals.Settings.DisableReplaceFilesConfirm)
             {
-                if (!Globals.Settings.DisableReplaceFilesConfirm)
-                {
-                    String caption = TextHelper.GetString("Title.ConfirmDialog");
-                    String message = TextHelper.GetString("Info.AreYouSureToReplaceInFiles");
-                    DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                    if (result == DialogResult.Cancel) return;
-                }
-                var recursive = this.subDirectoriesCheckBox.Checked;
-                var paths = this.folderComboBox.Text.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
-                foreach (String path in paths)
-                {
-                    FRConfiguration config = this.GetFRConfig(path, mask, recursive);
-                    if (config == null) return;
-                    config.CacheDocuments = true;
-                    config.UpdateSourceFileOnly = false;
-                    config.Replacement = this.replaceComboBox.Text;
-                    this.UpdateUIState(true);
-                    this.runner = new FRRunner();
-                    this.runner.ProgressReport += this.RunnerProgress;
-                    this.runner.Finished += this.ReplaceFinished;
-                    this.runner.ReplaceAsync(config);
-                    FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                }
+                var caption = TextHelper.GetString("Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.AreYouSureToReplaceInFiles");
+                var result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel) return;
+            }
+            var recursive = subDirectoriesCheckBox.Checked;
+            var paths = folderComboBox.Text.Trim().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var path in paths)
+            {
+                var config = GetFRConfig(path, mask, recursive);
+                if (config is null) return;
+                config.CacheDocuments = true;
+                config.UpdateSourceFileOnly = false;
+                config.Replacement = replaceComboBox.Text;
+                UpdateUIState(true);
+                runner = new FRRunner();
+                runner.ProgressReport += RunnerProgress;
+                runner.Finished += ReplaceFinished;
+                runner.ReplaceAsync(config);
+                FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(extensionComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(replaceComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(findComboBox);
             }
         }
 
         /// <summary>
         /// Closes the dialog window
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void CloseButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Selects the path for the find and replace
         /// </summary>
-        private void BrowseButtonClick(Object sender, EventArgs e)
+        private void BrowseButtonClick(object sender, EventArgs e)
         {
             using (var fbd = new VistaFolderBrowserDialog())
             {
                 fbd.Multiselect = true;
-                String curDir = this.folderComboBox.Text;
+                var curDir = folderComboBox.Text.Trim();
                 if (curDir == "<Project>")
                 {
-                    if (PluginBase.CurrentProject != null)
-                    {
-                        String projectPath = PluginBase.CurrentProject.ProjectPath;
-                        curDir = Path.GetDirectoryName(projectPath);
-                    }
-                    else curDir = Globals.MainForm.WorkingDirectory;
+                    curDir = PluginBase.CurrentProject is null
+                        ? Globals.MainForm.WorkingDirectory
+                        : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
                 }
                 if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
                 if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
                 {
-                    this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
-                    this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
+                    folderComboBox.Text = string.Join(";", fbd.SelectedPaths);
+                    folderComboBox.SelectionStart = folderComboBox.Text.Length;
                 }
             }
         }
@@ -1076,10 +1068,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Sets the path to find
         /// </summary>
-        public void SetFindPath(String path)
-        {
-            this.folderComboBox.Text = path;
-        }
+        public void SetFindPath(string path) => folderComboBox.Text = path;
 
         /// <summary>
         /// Update the dialog args when show is called

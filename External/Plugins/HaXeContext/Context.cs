@@ -1975,7 +1975,7 @@ namespace HaXeContext
                     catch (AccessViolationException) { } // catch memory errors
                 }
             }
-             return completionCache.Elements;
+            return completionCache.Elements;
         }
 
         /// <summary>
