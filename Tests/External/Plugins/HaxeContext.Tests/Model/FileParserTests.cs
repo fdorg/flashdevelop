@@ -4,6 +4,7 @@ using ASCompletion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using HaXeContext.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace HaXeContext.Model
@@ -2360,91 +2361,94 @@ namespace HaXeContext.Model
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("Issue1814"))
+                yield return new TestCaseData("Issue1814")
                     .Returns(9)
                     .SetName("Issue 1814. Case 0. ?");
-                yield return new TestCaseData(ReadAllText("Issue1814_case1"))
+                yield return new TestCaseData("Issue1814_case1")
                     .Returns(9)
                     .SetName("Issue 1814. Case 1. return");
-                yield return new TestCaseData(ReadAllText("Issue1814_case2"))
+                yield return new TestCaseData("Issue1814_case2")
                     .Returns(9)
                     .SetName("Issue 1814. Case 2. [");
-                yield return new TestCaseData(ReadAllText("Issue1814_case3"))
+                yield return new TestCaseData("Issue1814_case3")
                     .Returns(9)
                     .SetName("Issue 1814. Case 3. :");
-                yield return new TestCaseData(ReadAllText("Issue1814_case4"))
+                yield return new TestCaseData("Issue1814_case4")
                     .Returns(9)
                     .SetName("Issue 1814. Case 4. =");
-                yield return new TestCaseData(ReadAllText("Issue1814_case5"))
+                yield return new TestCaseData("Issue1814_case5")
                     .Returns(9)
                     .SetName("Issue 1814. Case 5. in");
-                yield return new TestCaseData(ReadAllText("Issue1814_case6"))
+                yield return new TestCaseData("Issue1814_case6")
                     .Returns(8)
                     .SetName("Issue 1814. Case 6. +");
-                yield return new TestCaseData(ReadAllText("Issue1814_case7"))
+                yield return new TestCaseData("Issue1814_case7")
                     .Returns(8)
                     .SetName("Issue 1814. Case 7. =>");
-                yield return new TestCaseData(ReadAllText("Issue1814_case8"))
+                yield return new TestCaseData("Issue1814_case8")
                     .Returns(8)
                     .SetName("Issue 1814. Case 8. -");
-                yield return new TestCaseData(ReadAllText("Issue1814_case9"))
+                yield return new TestCaseData("Issue1814_case9")
                     .Returns(8)
                     .SetName("Issue 1814. Case 9. *");
-                yield return new TestCaseData(ReadAllText("Issue1814_case10"))
+                yield return new TestCaseData("Issue1814_case10")
                     .Returns(8)
                     .SetName("Issue 1814. Case 10. /");
-                yield return new TestCaseData(ReadAllText("Issue1814_case11"))
+                yield return new TestCaseData("Issue1814_case11")
                     .Returns(8)
                     .SetName("Issue 1814. Case 11. |");
-                yield return new TestCaseData(ReadAllText("Issue1814_case12"))
+                yield return new TestCaseData("Issue1814_case12")
                     .Returns(8)
                     .SetName("Issue 1814. Case 12. &");
-                yield return new TestCaseData(ReadAllText("Issue1814_case13"))
+                yield return new TestCaseData("Issue1814_case13")
                     .Returns(8)
                     .SetName("Issue 1814. Case 13. <");
-                yield return new TestCaseData(ReadAllText("Issue1814_case14"))
+                yield return new TestCaseData("Issue1814_case14")
                     .Returns(8)
                     .SetName("Issue 1814. Case 14. ~");
-                yield return new TestCaseData(ReadAllText("Issue1814_case15"))
+                yield return new TestCaseData("Issue1814_case15")
                     .Returns(8)
                     .SetName("Issue 1814. Case 15. ^");
-                yield return new TestCaseData(ReadAllText("Issue1814_case16"))
+                yield return new TestCaseData("Issue1814_case16")
                     .Returns(8)
                     .SetName("Issue 1814. Case 16. !");
-                yield return new TestCaseData(ReadAllText("Issue1814_case17"))
+                yield return new TestCaseData("Issue1814_case17")
                     .Returns(9)
                     .SetName("Issue 1814. Case 17. switch");
-                yield return new TestCaseData(ReadAllText("Issue1814_case18"))
+                yield return new TestCaseData("Issue1814_case18")
                     .Returns(7)
                     .SetName("Issue 1814. Case 18. try");
-                yield return new TestCaseData(ReadAllText("Issue1814_case19"))
+                yield return new TestCaseData("Issue1814_case19")
                     .Returns(7)
                     .SetName("Issue 1814. Case 19. function():Bool ~/regex/ ? true : false");
-                yield return new TestCaseData(ReadAllText("Issue1814_case20"))
+                yield return new TestCaseData("Issue1814_case20")
                     .Returns(7)
                     .SetName("Issue 1814. Case 20. function():{v:Bool} ~/regex/ ? {v:true} : {v:false}");
             }
         }
 
-        [Test, TestCaseSource(nameof(ParseClassTestCases_issue1814))]
-        public int ParseFile_Issue1814(string sourceText)
+        [
+            Test,
+            TestCaseSource(nameof(ParseClassTestCases_issue1814)),
+        ]
+        public int ParseFile_Issue1814(string fileName)
         {
-            return ASContext.Context.GetCodeModel(sourceText).Classes[0].LineTo;
+            return ASContext.Context.GetCodeModel(ReadAllText(fileName)).Classes[0].LineTo;
         }
 
         static IEnumerable<TestCaseData> ParseClassTestCases_issue1921
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("Issue1921_case1"))
+                yield return new TestCaseData("Issue1921_case1")
                     .Returns(11)
                     .SetName("Issue 1921. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
-                yield return new TestCaseData(ReadAllText("Issue1921_case2"))
+                yield return new TestCaseData("Issue1921_case2")
                     .Returns(11)
                     .SetName("Issue 1921. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
-                yield return new TestCaseData(ReadAllText("Issue1921_case3"))
+                yield return new TestCaseData("Issue1921_case3")
                     .Returns(11)
                     .SetName("Issue 1921. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
@@ -2452,12 +2456,18 @@ namespace HaXeContext.Model
         }
 
         [Test, TestCaseSource(nameof(ParseClassTestCases_issue1921))]
-        public int ParseFile_Issue1921(string sourceText) => ASContext.Context.GetCodeModel(sourceText).Classes.First().LineTo;
+        public int ParseFile_Issue1921(string fileName) => ASContext.Context.GetCodeModel(ReadAllText(fileName)).Classes.First().LineTo;
 
         [Test]
         public void ParseFile_Issue1964()
         {
             Assert.AreEqual("test.extern", ASContext.Context.GetCodeModel(ReadAllText("Issue1964_package_test.extern")).Package);
+        }
+
+        [Test]
+        public void ParseFile_Issue2724()
+        {
+            Assert.AreEqual(15, ASContext.Context.GetCodeModel(ReadAllText("Issue2724_1")).Classes.First().Members.Items.First().LineTo);
         }
     }
 }
