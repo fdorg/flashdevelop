@@ -492,7 +492,7 @@ namespace HaXeContext.Model
                     if (inFunction)
                     {
                         var abort = false;
-                        if (c1 <= 32)
+                        if (c1 <= ' ')
                         {
                             var start = 0;
                             var end = -1;
@@ -516,6 +516,11 @@ namespace HaXeContext.Model
                                 {
                                     abort = true;
                                     i -= valueLength;
+                                }
+                                else if (c1 == ' ')
+                                {
+                                    valueLength = 0;
+                                    continue;
                                 }
                             }
                             valueLength = 0;
