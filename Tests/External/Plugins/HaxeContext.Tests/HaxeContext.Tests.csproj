@@ -1215,6 +1215,8 @@
     <EmbeddedResource Include="Test Files\parser\TypeDefsTest.hx" />
     <EmbeddedResource Include="Test Files\parser\WrongSyntaxCompilerMetaAfterMethodWithNoType.hx" />
     <EmbeddedResource Include="Test Files\parser\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2724_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2724_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
