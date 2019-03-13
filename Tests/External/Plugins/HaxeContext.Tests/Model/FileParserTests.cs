@@ -2464,10 +2464,36 @@ namespace HaXeContext.Model
             Assert.AreEqual("test.extern", ASContext.Context.GetCodeModel(ReadAllText("Issue1964_package_test.extern")).Package);
         }
 
-        [Test]
-        public void ParseFile_Issue2724()
+        static IEnumerable<TestCaseData> ParseClassTestCases_issue2724
         {
-            Assert.AreEqual(15, ASContext.Context.GetCodeModel(ReadAllText("Issue2724_1")).Classes.First().Members.Items.First().LineTo);
+            get
+            {
+                yield return new TestCaseData("Issue2724_1", 0, 0)
+                    .Returns(15)
+                    .SetName("Issue 2724. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2724");
+                yield return new TestCaseData("Issue2724_1", 0, 1)
+                    .Returns(22)
+                    .SetName("Issue 2724. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2724");
+                yield return new TestCaseData("Issue2724_2", 3, 0)
+                    .Returns(66)
+                    .SetName("Issue 2724. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2724");
+                yield return new TestCaseData("Issue2724_2", 3, 1)
+                    .Returns(72)
+                    .SetName("Issue 2724. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2724");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(ParseClassTestCases_issue2724)),
+        ]
+        public int ParseFile_Issue2724(string fileName, int classIndex, int memberIndex)
+        {
+            return ASContext.Context.GetCodeModel(ReadAllText(fileName)).Classes[classIndex].Members.Items[memberIndex].LineTo;
         }
     }
 }

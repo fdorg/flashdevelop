@@ -520,6 +520,7 @@ namespace HaXeContext.Model
                             }
                             valueLength = 0;
                         }
+                        else if (curMethod != null && lastComment is null && curComment is null) curMethod.LineTo = line;
                         if (c1 == '{') braceCount++;
                         else if (c1 == '}') braceCount--;
                         else if (abort || (braceCount == 0 && c1 == ';'))
@@ -528,7 +529,7 @@ namespace HaXeContext.Model
                             if (curMethod != null)
                             {
                                 if (curMethod.Equals(curMember)) curMember = null;
-                                curMethod.LineTo = line;
+                                if (!abort) curMethod.LineTo = line;
                                 curMethod = null;
                             }
                             inFunction = false;
