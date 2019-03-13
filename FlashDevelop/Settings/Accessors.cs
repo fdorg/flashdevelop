@@ -612,10 +612,14 @@ namespace FlashDevelop.Settings
         [DisplayName("Max Trace Lines")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
         [LocalizedDescription("FlashDevelop.Description.MaxTraceLines")]
-        public Int32 MaxTraceLines
+        public int MaxTraceLines
         {
-            get { return this.uiMaxTraceLines; }
-            set { this.uiMaxTraceLines = value; }
+            get
+            {
+                if (uiMaxTraceLines <= 0) uiMaxTraceLines = 1000;
+                return uiMaxTraceLines;
+            }
+            set { uiMaxTraceLines = value; }
         }
 
         [DefaultValue(true)]

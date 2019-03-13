@@ -9,12 +9,12 @@ namespace PluginCore.Managers
 {
     public class TraceManager
     {
-        private static Boolean synchronizing;
-        private static Int32 maxQueue = 1000;
-        private static List<TraceItem> traceLog;
-        private static List<TraceItem> asyncQueue;
-        private static Dictionary<string, TraceGroup> traceGroups;
-        private static Timer asyncTimer;
+        private static bool synchronizing;
+        private static int maxQueue = 1000;
+        private static readonly List<TraceItem> traceLog;
+        private static readonly List<TraceItem> asyncQueue;
+        private static readonly Dictionary<string, TraceGroup> traceGroups;
+        private static readonly Timer asyncTimer;
         private static int uniqueToken;
 
         static TraceManager()
@@ -32,7 +32,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Apply the modified settings.
         /// </summary>
-        public static void ApplySettings(Int32 maxTraceLines)
+        public static void ApplySettings(int maxTraceLines)
         {
             maxQueue = maxTraceLines;
         }

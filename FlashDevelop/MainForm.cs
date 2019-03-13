@@ -2229,7 +2229,7 @@ namespace FlashDevelop
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
             ClipboardManager.ApplySettings();
-            TraceManager.ApplySettings(this.appSettings.MaxTraceLines);
+            TraceManager.ApplySettings(appSettings.MaxTraceLines);
         }
 
         /// <summary>
