@@ -1,7 +1,5 @@
 package $(PackageName);
 
-import flash.Lib;
-
 /**
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
@@ -9,11 +7,6 @@ $(CBI)*/
 class SwcMain $(CSLB){
 	
 	static function main() $(CSLB){
-		//var stage = Lib.current.stage;
 		// Entry point
-	}
-	
-	static function foo() $(CSLB){
-		trace("swc::foo");
 	}
 }
