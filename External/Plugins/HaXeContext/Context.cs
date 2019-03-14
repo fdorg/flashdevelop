@@ -1083,7 +1083,7 @@ namespace HaXeContext
                     matched = true;
                 }
 
-            if (!matched) imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+            if (!matched) imports.Add(item);
         }
 
         /// <summary>
@@ -1478,27 +1478,37 @@ namespace HaXeContext
             var extensions = new MemberList();
             for (var i = imports.Count - 1; i >= 0; i--)
             {
-                if (imports[i] is ClassModel import && (import.Flags & FlagType.Using) != 0 && import.Members.Count > 0)
                 {
-                    var access = Context.TypesAffinity(type, import);
-                    var extends = type;
-                    extends.ResolveExtends();
-                    while (!extends.IsVoid())
+                    if (imports[i] is MemberModel import && !(import is ClassModel) && (import.Flags & FlagType.Using) != 0)
                     {
-                        foreach (MemberModel member in import.Members)
+                        imports[i] = Context.ResolveType(import.Type, Context.CurrentModel);
+                        imports[i].Flags |= FlagType.Using;
+                    }
+                }
+                {
+                    if (imports[i] is ClassModel import && (import.Flags & FlagType.Using) != 0 && import.Members.Count > 0)
+                    {
+                        var access = Context.TypesAffinity(type, import);
+                        var extends = type;
+                        extends.ResolveExtends();
+                        while (!extends.IsVoid())
                         {
-                            if ((member.Access & access) == 0
-                                || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
-                                || member.Parameters is null || member.Parameters.Count == 0
-                                || extensions.Contains(member.Name, 0, 0)
-                                || !CanBeExtended(extends, member, access)) continue;
-                            var extension = (MemberModel) member.Clone();
-                            extension.Parameters.RemoveAt(0);
-                            extension.Flags = FlagType.Dynamic | FlagType.Function | FlagType.Using;
-                            extension.InFile = import.InFile;
-                            extensions.Add(extension);
+                            foreach (MemberModel member in import.Members)
+                            {
+                                if ((member.Access & access) == 0
+                                    || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
+                                    || member.Parameters is null || member.Parameters.Count == 0
+                                    || extensions.Contains(member.Name, 0, 0)
+                                    || !CanBeExtended(extends, member, access)) continue;
+                                // transform `extensionMethod(target:Type, ...params)` to `extensionMethod(...params)`
+                                var extension = (MemberModel)member.Clone();
+                                extension.Parameters.RemoveAt(0);
+                                extension.Flags = FlagType.Dynamic | FlagType.Function | FlagType.Using;
+                                extension.InFile = import.InFile;
+                                extensions.Add(extension);
+                            }
+                            extends = extends.Extends;
                         }
-                        extends = extends.Extends;
                     }
                 }
             }
@@ -1510,6 +1520,7 @@ namespace HaXeContext
             bool CanBeExtended(ClassModel target, MemberModel extension, Visibility access)
             {
                 var firstParamType = extension.Parameters[0].Type;
+                if (string.IsNullOrEmpty(firstParamType)) return false;
                 if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
                 {
                     var targetType = type.Type;
@@ -1519,6 +1530,28 @@ namespace HaXeContext
                     if (index != -1) firstParamType = firstParamType.Remove(index);
                     if (firstParamType != targetType)
                     {
+                        /**
+                         * for example:
+                         * typedef Typedef = {
+                         *     x:Int,
+                         *     y:Int,
+                         * }
+                         *
+                         * class Point {
+                         *     var x:Int = 0;
+                         *     var x:Int = 0;
+                         * }
+                         *
+                         * ...
+                         * using Example;
+                         * class Example {
+                         *     static function extensionMethod(to:Typedef, ...args) {}
+                         *
+                         *     function f(p:Point) {
+                         *         p.extensionMethod();
+                         *     }
+                         * }
+                         */
                         var paramType = Context.ResolveType(firstParamType, null);
                         if (!paramType.Flags.HasFlag(FlagType.TypeDef)) return false;
                         foreach (MemberModel typedefMember in paramType.Members)
