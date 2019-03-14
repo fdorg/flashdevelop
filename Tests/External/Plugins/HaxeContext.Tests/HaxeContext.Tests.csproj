@@ -1217,6 +1217,8 @@
     <EmbeddedResource Include="Test Files\parser\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2724_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2724_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2726_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2726_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
