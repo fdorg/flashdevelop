@@ -48,4 +48,6 @@ app::Main
 SwcMain.hx:12: swc::init
 SwcMain.hx:17: swc::foo
 
-2. There are issues with SWC written in Haxe version 4p5 or above. But SWC should work with Haxe 3.4.7.
+2. To include source from package, place package in project classpath directory and then add the option "--macro include('package.name')" to "Additional Compiler Options". With this approach, the "Main Class" option is optional and can be removed (along with SwcMain.hx).
+
+3. There are issues with SWC written in Haxe 4.x. But SWC should work with Haxe 3.4.7.
