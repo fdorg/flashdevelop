@@ -3515,10 +3515,7 @@ namespace ScintillaNet
         /// <summary>
         /// Clear all the registered XPM images.
         /// </summary>
-        public void ClearRegisteredImages()
-        {
-            SPerform(2408, 0, 0);
-        }
+        public void ClearRegisteredImages() => SPerform(2408, 0, 0);
 
         /// <summary>
         /// Retrieve the contents of a line.
@@ -3535,10 +3532,66 @@ namespace ScintillaNet
         /// <summary>
         /// Select a range of text.
         /// </summary>
-        public void SetSel(int start, int end)
-        {
-            SPerform(2160, start, end);
-        }
+        public void SetSel(int start, int end) => SPerform(2160, start, end);
+
+        /// <summary>
+        /// Returns the number of selections currently active. There is always at least one selection.
+        /// </summary>
+        /// <returns></returns>
+        public int GetSelections() => SPerform(2570, 0, 0);
+
+        /// <summary>
+        /// Set a single selection from anchor to caret as the only selection.
+        /// </summary>
+        /// <param name="caret"></param>
+        /// <param name="anchor"></param>
+        public void SetSelection(int caret, int anchor) => SPerform(2572, caret, anchor);
+
+        /// <summary>
+        /// Add a new selection from anchor to caret as the main selection retaining all other selections as additional selections.
+        /// Since there is always at least one selection, to set a list of selections, the first selection should be added with SetSelection and later selections added with AddSelection
+        /// </summary>
+        /// <param name="caret"></param>
+        /// <param name="anchor"></param>
+        public void AddSelection(int caret, int anchor) => SPerform(2573, caret, anchor);
+
+        /// <summary>
+        /// Returns the start position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <returns></returns>
+        public int GetSelectionNStart(int selection) => SPerform(2585, selection, 0);
+
+        /// <summary>
+        /// Set the start position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <param name="anchor"></param>
+        /// <returns></returns>
+        public void SetSelectionNStart(int selection, int anchor) => SPerform(2584, selection, anchor);
+
+        /// <summary>
+        /// Returns the end position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <returns></returns>
+        public int GetSelectionNEnd(int selection) => SPerform(2587, selection, 0);
+
+        /// <summary>
+        /// Set the end position of each already existing selection. Mostly of use to query each range for its text. The selection parameter is zero-based.
+        /// </summary>
+        /// <param name="selection"></param>
+        /// <param name="anchor"></param>
+        /// <returns></returns>
+        public void SetSelectionNEnd(int selection, int anchor) => SPerform(2586, selection, anchor);
+
+        /// <summary>
+        /// If there are multiple selections, remove the indicated selection.
+        /// If this was the main selection then make the previous selection the main and if it was the first then the last selection becomes main.
+        /// If there is only one selection, or there is no selection selection, then there is no effect.
+        /// </summary>
+        /// <param name="selection"></param>
+        public void DropSelectionN(int selection) => SPerform(2671, selection, 0);
 
         /// <summary>
         /// Retrieve the selected text.
@@ -3583,71 +3636,50 @@ namespace ScintillaNet
         /// <summary>
         /// Draw the selection in normal style or with selection highlighted.
         /// </summary>
-        public void HideSelection(bool normal)
-        {
-            SPerform(2163, normal ? 1 : 0, 0);
-        }
+        public void HideSelection(bool normal) => SPerform(2163, normal ? 1 : 0, 0);
 
         /// <summary>
         /// Retrieve the x value of the point in the window where a position is displayed.
         /// </summary>
-        public int PointXFromPosition(int pos)
-        {
-            return SPerform(2164, 0, pos);
-        }
+        public int PointXFromPosition(int pos) => SPerform(2164, 0, pos);
 
         /// <summary>
         /// Retrieve the y value of the point in the window where a position is displayed.
         /// </summary>
-        public int PointYFromPosition(int pos)
-        {
-            return SPerform(2165, 0, pos);
-        }
+        public int PointYFromPosition(int pos) => SPerform(2165, 0, pos);
 
         /// <summary>
         /// Retrieve the line containing a position.
         /// </summary>
-        public int LineFromPosition(int pos)
-        {
-            return SPerform(2166, pos, 0);
-        }
+        public int LineFromPosition(int pos) => SPerform(2166, pos, 0);
 
         /// <summary>
         /// Retrieve the position at the start of a line.
         /// </summary>
-        public int PositionFromLine(int line)
-        {
-            return SPerform(2167, line, 0);
-        }
+        public int PositionFromLine(int line) => SPerform(2167, line, 0);
 
         /// <summary>
         /// Retrieve the text from line before position
         /// </summary>
-        public String GetLineUntilPosition(int pos)
+        public string GetLineUntilPosition(int pos)
         {
-            int curLine = LineFromPosition(pos);
-            int curPosInLine = pos - PositionFromLine(curLine);
-            String line = GetLine(curLine);
-            int length = MBSafeLengthFromBytes(line, curPosInLine);
-            String lineUntilPos = line.Substring(0, length);
+            var curLine = LineFromPosition(pos);
+            var curPosInLine = pos - PositionFromLine(curLine);
+            var line = GetLine(curLine);
+            var length = MBSafeLengthFromBytes(line, curPosInLine);
+            var lineUntilPos = line.Substring(0, length);
             return lineUntilPos;
         }
 
         /// <summary>
         /// Scroll horizontally and vertically.
         /// </summary>
-        public void LineScroll(int columns, int lines)
-        {
-            SPerform(2168, columns, lines);
-        }
+        public void LineScroll(int columns, int lines) => SPerform(2168, columns, lines);
 
         /// <summary>
         /// Ensure the caret is visible.
         /// </summary>
-        public void ScrollCaret()
-        {
-            SPerform(2169, 0, 0);
-        }
+        public void ScrollCaret() => SPerform(2169, 0, 0);
 
         /// <summary>
         /// Replace the selected text with the argument text.
@@ -3655,7 +3687,7 @@ namespace ScintillaNet
         unsafe public void ReplaceSel(string text)
         {
             if (string.IsNullOrEmpty(text)) text = "\0\0";
-            fixed (byte* b = Encoding.GetEncoding(this.CodePage).GetBytes(text))
+            fixed (byte* b = Encoding.GetEncoding(CodePage).GetBytes(text))
             {
                 SPerform(2170, 0, (uint)b);
             }
@@ -3664,34 +3696,22 @@ namespace ScintillaNet
         /// <summary>
         /// Null operation.
         /// </summary>
-        public void Null()
-        {
-            SPerform(2172, 0, 0);
-        }
+        public void Null() => SPerform(2172, 0, 0);
 
         /// <summary>
         /// Delete the undo history.
         /// </summary>
-        public void EmptyUndoBuffer()
-        {
-            SPerform(2175, 0, 0);
-        }
+        public void EmptyUndoBuffer() => SPerform(2175, 0, 0);
 
         /// <summary>
         /// Undo one action in the undo history.
         /// </summary>
-        public void Undo()
-        {
-            SPerform(2176, 0, 0);
-        }
+        public void Undo() => SPerform(2176, 0, 0);
 
         /// <summary>
         /// Cut the selection to the clipboard.
         /// </summary>
-        public void Cut()
-        {
-            SPerform(2177, 0, 0);
-        }
+        public void Cut() => SPerform(2177, 0, 0);
 
         /// <summary>
         /// Copy the selection to the clipboard.
@@ -3700,7 +3720,7 @@ namespace ScintillaNet
         {
             SPerform(2178, 0, 0);
             // Invoke UI update after copy...
-            if (UpdateUI != null) UpdateUI(this);
+            UpdateUI?.Invoke(this);
         }
 
         /// <summary>

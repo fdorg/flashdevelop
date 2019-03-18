@@ -29,28 +29,30 @@ namespace ASCompletion.Completion
     {
 
         #region regular_expressions_definitions
-        static private readonly RegexOptions ro_csr = ASFileParserRegexOptions.SinglelineComment | RegexOptions.RightToLeft;
+
+        const RegexOptions ro_csr = ASFileParserRegexOptions.SinglelineComment | RegexOptions.RightToLeft;
+
         // refine last expression
-        static private readonly Regex re_refineExpression = new Regex("[^\\[\\]'\"{}(:,=+*/%!<>-]*$", ro_csr);
+        private static readonly Regex re_refineExpression = new Regex("[^\\[\\]'\"{}(:,=+*/%!<>-]*$", ro_csr);
         // code cleaning
-        static private readonly Regex re_whiteSpace = new Regex("[\\s]+", ASFileParserRegexOptions.SinglelineComment);
+        private static readonly Regex re_whiteSpace = new Regex("[\\s]+", ASFileParserRegexOptions.SinglelineComment);
         // balanced matching, see: http://blogs.msdn.com/bclteam/archive/2005/03/15/396452.aspx
-        static private readonly Regex re_balancedParenthesis = new Regex("\\([^()]*(((?<Open>\\()[^()]*)+((?<Close-Open>\\))[^()]*)+)*(?(Open)(?!))\\)",
+        private static readonly Regex re_balancedParenthesis = new Regex("\\([^()]*(((?<Open>\\()[^()]*)+((?<Close-Open>\\))[^()]*)+)*(?(Open)(?!))\\)",
                                                                          ASFileParserRegexOptions.SinglelineComment);
         // expressions
         private static readonly Regex re_sub = new Regex("^#(?<index>[0-9]+)~$", ASFileParserRegexOptions.SinglelineComment);
         #endregion
 
         #region fields
-        static public Keys HelpKeys = Keys.F1;
+        public static Keys HelpKeys = Keys.F1;
 
         //stores the currently used class namespace and name
         private static string currentClassHash = null;
         //stores the last completed member for each class
         protected static readonly IDictionary<string, string> completionHistory = new Dictionary<string, string>();
 
-        static public ResolvedContext CurrentResolvedContext;
-        static public event ResolvedContextChangeHandler OnResolvedContextChanged;
+        public static ResolvedContext CurrentResolvedContext;
+        public static event ResolvedContextChangeHandler OnResolvedContextChanged;
 
         #endregion
 
@@ -237,25 +239,25 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="keys">Test keys</param>
         /// <returns></returns>
-        public static bool OnShortcut(Keys keys, ScintillaControl Sci)
+        public static bool OnShortcut(Keys keys, ScintillaControl sci)
         {
-            if (Sci.IsSelectionRectangle) return false;
+            if (sci.IsSelectionRectangle) return false;
             // dot complete
             if (keys == (Keys.Control | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
                 {
                     // try to get completion as if we had just typed the previous char
-                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false)) return true;
+                    if (OnChar(sci, sci.CharAt(sci.PositionBefore(sci.CurrentPos)), false)) return true;
                     // force dot completion
-                    OnChar(Sci, '.', false);
+                    OnChar(sci, '.', false);
                     return true;
                 }
                 return false;
             }
             if (keys == Keys.Back)
             {
-                HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
+                HandleAddClosingBraces(sci, sci.CurrentChar, false);
                 return false;
             }
             // show calltip
@@ -265,7 +267,7 @@ namespace ASCompletion.Completion
                 {
                     //HandleFunctionCompletion(Sci);
                     // force function completion
-                    OnChar(Sci, '(', false);
+                    OnChar(sci, '(', false);
                     return true;
                 }
                 return false;
@@ -275,12 +277,12 @@ namespace ASCompletion.Completion
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
                 {
-                    int position = Sci.CurrentPos - 1;
-                    string tail = GetWordLeft(Sci, ref position);
+                    int position = sci.CurrentPos - 1;
+                    string tail = GetWordLeft(sci, ref position);
                     ContextFeatures features = ASContext.Context.Features;
                     if (!tail.Contains(features.dot) && features.HasTypePreKey(tail)) tail = "";
                     // display the full project classes list
-                    HandleAllClassesCompletion(Sci, tail, false, true);
+                    HandleAllClassesCompletion(sci, tail, false, true);
                     return true;
                 }
                 return false;
@@ -316,7 +318,7 @@ namespace ASCompletion.Completion
             // help
             if (keys == HelpKeys && ASContext.HasContext && ASContext.Context.IsFileValid)
             {
-                ResolveElement(Sci, "ShowDocumentation");
+                ResolveElement(sci, "ShowDocumentation");
                 return true;
             }
             return false;
@@ -492,17 +494,9 @@ namespace ASCompletion.Completion
                     || context.CodeComplete.IsStringInterpolationStyle(sci, position)
                     || IsMatchingQuote(open, styleAfter))
                 {
-                    int closePos = sci.CurrentPos;
-
-                    while (char.IsWhiteSpace(c))
-                    {
-                        closePos++;
-                        c = (char) sci.CharAt(closePos);
-                    }
-
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleBraceRemove(sci, brace, open, c, closePos))
+                        if (HandleBraceRemove(sci, brace, open))
                         {
                             break;
                         }
@@ -513,23 +507,36 @@ namespace ASCompletion.Completion
 
         private static bool HandleBraceOpen(ScintillaControl sci, Brace brace, char open, byte styleAfter, byte styleBefore)
         {
-            if (open == brace.Open)
+            if (open != brace.Open) return false;
+            var charAfter = (char) sci.CharAt(sci.CurrentPos);
+            var charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
+            if (!brace.ShouldOpen(charBefore, styleBefore, charAfter, styleAfter)) return false;
+            var selections = sci.GetSelections();
+            var positions = new List<int>(selections);
+            for (var i = selections - 1; i >= 0; i--)
             {
-                char charAfter = (char) sci.CharAt(sci.CurrentPos);
-                char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
-
-                if (brace.ShouldOpen(charBefore, styleBefore, charAfter, styleAfter))
+                positions.Add(sci.GetSelectionNStart(i));
+            }
+            positions.Sort();
+            var braceString = brace.Close.ToString();
+            for (var i = 0; i < selections; i++)
+            {
+                var position = positions[i] + i * braceString.Length;
+                sci.InsertText(position, braceString);
+                positions[i] = position;
+                if (brace.AddSpace)
                 {
-                    sci.InsertText(-1, brace.Close.ToString());
-                    if (brace.AddSpace)
-                    {
-                        sci.AddText(1, " ");
-                    }
-                    return true;
+                    sci.InsertText(position, " ");
+                    if (i + 1 < selections) positions[i + 1] += " ".Length * (i + 1);
                 }
             }
-
-            return false;
+            sci.SetSelection(positions[0], positions[0]);
+            for (var i = 1; i < selections; i++)
+            {
+                var position = positions[i];
+                sci.AddSelection(position, position);
+            }
+            return true;
         }
 
         private static bool HandleBraceClose(ScintillaControl sci, Brace brace, char close, char next, int nextPosition)
@@ -544,13 +551,17 @@ namespace ASCompletion.Completion
             return false;
         }
         
-        private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open, char close, int closePosition)
+        private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open)
         {
-            if (open == brace.Open && close == brace.Close && brace.ShouldRemove(sci.CurrentPos, closePosition))
+            var selections = sci.GetSelections();
+            for (var i = 0; i < selections; i++)
             {
-                sci.SelectionEnd = closePosition + 1;
-                sci.DeleteBack();
-                return true;
+                if (open != brace.Open) continue;
+                var startPosition = sci.GetSelectionNStart(i);
+                var closePosition = startPosition;
+                if (GetCharRight(sci, true, ref closePosition) != brace.Close || !brace.ShouldRemove(startPosition, closePosition)) continue;
+                sci.SetSelectionNStart(i, startPosition - 1);
+                sci.SetSelectionNEnd(i, closePosition + 1);
             }
             return false;
         }
@@ -565,7 +576,7 @@ namespace ASCompletion.Completion
         /// <returns>Declaration was found</returns>
         public static bool DeclarationLookup(ScintillaControl sci)
         {
-            if (!ASContext.Context.IsFileValid || sci == null) return false;
+            if (!ASContext.Context.IsFileValid || sci is null) return false;
 
             // let the context handle goto declaration if we couldn't find anything
             if (InternalDeclarationLookup(sci)) return true;
@@ -575,13 +586,13 @@ namespace ASCompletion.Completion
 
         public static bool TypeDeclarationLookup(ScintillaControl sci)
         {
-            if (sci == null || !ASContext.Context.IsFileValid) return false;
+            if (sci is null || !ASContext.Context.IsFileValid) return false;
             var position = ExpressionEndPosition(sci, sci.CurrentPos);
             var result = GetExpressionType(sci, position, false, true);
             if (result.IsPackage) return false;
             var member = result.Member;
             var type = result.Type;
-            if (member == null || member.Flags.HasFlag(FlagType.AutomaticVar) || type == null) return false;
+            if (member is null || member.Flags.HasFlag(FlagType.AutomaticVar) || type is null) return false;
             if (member.Flags.HasFlag(FlagType.Function))
             {
                 type = ResolveType(result.Member.Type, result.InFile);
@@ -646,7 +657,7 @@ namespace ASCompletion.Completion
 
         public static void SaveLastLookupPosition(ScintillaControl sci)
         {
-            if (sci == null) return;
+            if (sci is null) return;
             var lookupLine = sci.CurrentLine;
             var lookupCol = sci.CurrentPos - sci.PositionFromLine(lookupLine);
             ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
@@ -660,7 +671,7 @@ namespace ASCompletion.Completion
         public static bool OpenDocumentToDeclaration(ScintillaControl sci, ASResult result)
         {
             var model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
-            if (model == null || model.FileName == "") return false;
+            if (model is null || model.FileName == "") return false;
             var inClass = result.InClass ?? result.Type;
 
             SaveLastLookupPosition(sci);
@@ -673,7 +684,7 @@ namespace ASCompletion.Completion
                 {
                     OpenVirtualFile(model);
                     result.InFile = ASContext.Context.CurrentModel;
-                    if (result.InFile == null) return false;
+                    if (result.InFile is null) return false;
                     if (inClass != null)
                     {
                         inClass = result.InFile.GetClassByName(inClass.Name);
@@ -1114,30 +1125,29 @@ namespace ASCompletion.Completion
         #endregion
 
         #region structure_completion
-        static private void HandleStructureCompletion(ScintillaControl Sci)
+        private static void HandleStructureCompletion(ScintillaControl sci)
         {
             try
             {
-                int position = Sci.CurrentPos;
-                int line = Sci.LineFromPosition(position);
-                if (line == 0)
-                    return;
-                string txt = Sci.GetLine(line - 1).TrimEnd();
-                int style = Sci.BaseStyleAt(position);
+                int position = sci.CurrentPos;
+                int line = sci.LineFromPosition(position);
+                if (line == 0) return;
+                string txt = sci.GetLine(line - 1).TrimEnd();
+                int style = sci.BaseStyleAt(position);
 
                 // move closing brace to its own line and fix indentation
-                if (Sci.CurrentChar == '}')
+                if (sci.CurrentChar == '}')
                 {
-                    var openingBrace = Sci.SafeBraceMatch(position);
-                    var openLine = openingBrace >= 0 ? Sci.LineFromPosition(openingBrace) : line - 1;
-                    Sci.InsertText(Sci.CurrentPos, LineEndDetector.GetNewLineMarker(Sci.EOLMode));
-                    Sci.SetLineIndentation(line + 1, Sci.GetLineIndentation(openLine));
+                    var openingBrace = sci.SafeBraceMatch(position);
+                    var openLine = openingBrace >= 0 ? sci.LineFromPosition(openingBrace) : line - 1;
+                    sci.InsertText(sci.CurrentPos, LineEndDetector.GetNewLineMarker(sci.EOLMode));
+                    sci.SetLineIndentation(line + 1, sci.GetLineIndentation(openLine));
                 }
                 // in comments
                 else if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented && txt.EndsWithOrdinal("*/"))
-                    FixIndentationAfterComments(Sci, line);
-                else if (IsCommentStyle(style) && (Sci.BaseStyleAt(position + 1) == style))
-                    FormatComments(Sci, txt, line);
+                    FixIndentationAfterComments(sci, line);
+                else if (IsCommentStyle(style) && (sci.BaseStyleAt(position + 1) == style))
+                    FormatComments(sci, txt, line);
                 // in code
                 else
                 {
@@ -1146,15 +1156,15 @@ namespace ASCompletion.Completion
                     {
                         if (txt.IndexOfOrdinal("//") is var p1 && p1 > 0) // remove comment at end of line
                         {
-                            int slashes = Sci.MBSafeTextLength(txt.Substring(0, p1 + 1));
-                            if (Sci.PositionIsOnComment(Sci.PositionFromLine(line-1) + slashes))
+                            int slashes = sci.MBSafeTextLength(txt.Substring(0, p1 + 1));
+                            if (sci.PositionIsOnComment(sci.PositionFromLine(line-1) + slashes))
                                 txt = txt.Substring(0, p1).Trim();
                         }
-                        if (txt.EndsWith('{') && (line > 1)) AutoCloseBrace(Sci, line);
+                        if (txt.EndsWith('{') && (line > 1)) AutoCloseBrace(sci, line);
                     }
                     // code reformatting
                     if (!ASContext.CommonSettings.DisableCodeReformat && !txt.EndsWithOrdinal("*/"))
-                        ReformatLine(Sci, Sci.PositionFromLine(line) - 1);
+                        ReformatLine(sci, sci.PositionFromLine(line) - 1);
                 }
             }
             catch (Exception ex)
@@ -1206,46 +1216,46 @@ namespace ASCompletion.Completion
         /// Add closing brace to a code block.
         /// If enabled, move the starting brace to a new line.
         /// </summary>
-        /// <param name="Sci"></param>
+        /// <param name="sci"></param>
         /// <param name="line"></param>
-        private static void AutoCloseBrace(ScintillaControl Sci, int line)
+        private static void AutoCloseBrace(ScintillaControl sci, int line)
         {
             // find matching brace
-            int bracePos = Sci.LineEndPosition(line - 1) - 1;
-            while ((bracePos > 0) && (Sci.CharAt(bracePos) != '{')) bracePos--;
-            if (bracePos == 0 || Sci.BaseStyleAt(bracePos) != 10) return;
-            int match = Sci.SafeBraceMatch(bracePos);
+            int bracePos = sci.LineEndPosition(line - 1) - 1;
+            while ((bracePos > 0) && (sci.CharAt(bracePos) != '{')) bracePos--;
+            if (bracePos == 0 || sci.BaseStyleAt(bracePos) != 10) return;
+            int match = sci.SafeBraceMatch(bracePos);
             int start = line;
-            int indent = Sci.GetLineIndentation(start - 1);
+            int indent = sci.GetLineIndentation(start - 1);
             if (match > 0)
             {
-                int endIndent = Sci.GetLineIndentation(Sci.LineFromPosition(match));
-                if (endIndent + Sci.TabWidth > indent)
+                int endIndent = sci.GetLineIndentation(sci.LineFromPosition(match));
+                if (endIndent + sci.TabWidth > indent)
                     return;
             }
 
             // find where to include the closing brace
             int startIndent = indent;
-            int count = Sci.LineCount;
+            int count = sci.LineCount;
             int lastLine = line;
             int position;
-            string txt = Sci.GetLine(line).Trim();
+            string txt = sci.GetLine(line).Trim();
             line++;
-            int eolMode = Sci.EOLMode;
+            int eolMode = sci.EOLMode;
             string NL = LineEndDetector.GetNewLineMarker(eolMode);
 
             if (txt.Length > 0 && ")]};,".Contains(txt[0]))
             {
-                Sci.BeginUndoAction();
+                sci.BeginUndoAction();
                 try
                 {
-                    position = Sci.CurrentPos;
-                    Sci.InsertText(position, NL + "}");
-                    Sci.SetLineIndentation(line, startIndent);
+                    position = sci.CurrentPos;
+                    sci.InsertText(position, NL + "}");
+                    sci.SetLineIndentation(line, startIndent);
                 }
                 finally
                 {
-                    Sci.EndUndoAction();
+                    sci.EndUndoAction();
                 }
                 return;
             }
@@ -1253,10 +1263,10 @@ namespace ASCompletion.Completion
             {
                 while (line < count - 1)
                 {
-                    txt = Sci.GetLine(line).TrimEnd();
+                    txt = sci.GetLine(line).TrimEnd();
                     if (txt.Length != 0)
                     {
-                        indent = Sci.GetLineIndentation(line);
+                        indent = sci.GetLineIndentation(line);
                         if (indent <= startIndent) break;
                         lastLine = line;
                     }
@@ -1267,16 +1277,16 @@ namespace ASCompletion.Completion
             if (line >= count - 1) lastLine = start;
 
             // insert closing brace
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
-                position = Sci.LineEndPosition(lastLine);
-                Sci.InsertText(position, NL + "}");
-                Sci.SetLineIndentation(lastLine + 1, startIndent);
+                position = sci.LineEndPosition(lastLine);
+                sci.InsertText(position, NL + "}");
+                sci.SetLineIndentation(lastLine + 1, startIndent);
             }
             finally
             {
-                Sci.EndUndoAction();
+                sci.EndUndoAction();
             }
         }
 
@@ -1284,61 +1294,61 @@ namespace ASCompletion.Completion
         /// When javadoc comment blocks have and additional space, 
         /// fix indentation of new line following this block
         /// </summary>
-        /// <param name="Sci"></param>
+        /// <param name="sci"></param>
         /// <param name="line"></param>
-        private static void FixIndentationAfterComments(ScintillaControl Sci, int line)
+        private static void FixIndentationAfterComments(ScintillaControl sci, int line)
         {
             int startLine = line - 1;
             while (startLine > 0)
             {
-                string txt = Sci.GetLine(startLine).TrimStart();
+                string txt = sci.GetLine(startLine).TrimStart();
                 if (txt.StartsWithOrdinal("/*")) break;
                 if (!txt.StartsWith('*')) break;
                 startLine--;
             }
-            Sci.SetLineIndentation(line, Sci.GetLineIndentation(startLine));
-            int position = Sci.LineIndentPosition(line);
-            Sci.SetSel(position, position);
+            sci.SetLineIndentation(line, sci.GetLineIndentation(startLine));
+            int position = sci.LineIndentPosition(line);
+            sci.SetSel(position, position);
         }
 
         /// <summary>
         /// Add a '*' at the beginning of new lines inside a comment block
         /// </summary>
-        /// <param name="Sci"></param>
+        /// <param name="sci"></param>
         /// <param name="txt"></param>
         /// <param name="line"></param>
-        private static void FormatComments(ScintillaControl Sci, string txt, int line)
+        private static void FormatComments(ScintillaControl sci, string txt, int line)
         {
             txt = txt.TrimStart();
             if (txt.StartsWithOrdinal("/*"))
             {
-                Sci.ReplaceSel("* ");
+                sci.ReplaceSel("* ");
                 if (PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented)
-                    Sci.SetLineIndentation(line, Sci.GetLineIndentation(line) + 1);
-                int position = Sci.LineIndentPosition(line) + 2;
-                Sci.SetSel(position, position);
+                    sci.SetLineIndentation(line, sci.GetLineIndentation(line) + 1);
+                int position = sci.LineIndentPosition(line) + 2;
+                sci.SetSel(position, position);
             }
             else if (txt.StartsWith('*'))
             {
-                Sci.ReplaceSel("* ");
-                int position = Sci.LineIndentPosition(line) + 2;
-                Sci.SetSel(position, position);
+                sci.ReplaceSel("* ");
+                int position = sci.LineIndentPosition(line) + 2;
+                sci.SetSel(position, position);
             }
         }
         #endregion
 
         #region template_completion
-        private static bool HandleDeclarationCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleDeclarationCompletion(ScintillaControl sci, string tail, bool autoHide)
         {
-            int position = Sci.CurrentPos;
-            int line = Sci.LineFromPosition(position);
-            if (Sci.CharAt(position - 1) <= 32) tail = "";
+            int position = sci.CurrentPos;
+            int line = sci.LineFromPosition(position);
+            if (sci.CharAt(position - 1) <= 32) tail = "";
 
             // completion support
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
             bool insideClass = !ctx.CurrentClass.IsVoid() && ctx.CurrentClass.LineFrom < line;
-            List<string> support = features.GetDeclarationKeywords(Sci.GetLine(line), insideClass);
+            List<string> support = features.GetDeclarationKeywords(sci.GetLine(line), insideClass);
             if (support.Count == 0) return true;
             
             // does it need indentation?
@@ -1346,23 +1356,23 @@ namespace ASCompletion.Completion
             int tempLine = line-1;
             while (tempLine > 0)
             {
-                var tempText = Sci.GetLine(tempLine).Trim();
+                var tempText = sci.GetLine(tempLine).Trim();
                 if (insideClass && CodeUtils.IsTypeDecl(tempText, features.typesKeywords))
                 {
-                    tab = Sci.GetLineIndentation(tempLine) + Sci.TabWidth;
+                    tab = sci.GetLineIndentation(tempLine) + sci.TabWidth;
                     break;
                 }
                 if (tempText.Length > 0 && (tempText.EndsWith('}') || CodeUtils.IsDeclaration(tempText, features)))
                 {
-                    tab = Sci.GetLineIndentation(tempLine);
-                    if (tempText.EndsWith('{')) tab += Sci.TabWidth;
+                    tab = sci.GetLineIndentation(tempLine);
+                    if (tempText.EndsWith('{')) tab += sci.TabWidth;
                     break;
                 }
                 tempLine--;
             }
             if (tab > 0)
             {
-                Sci.SetLineIndentation(line, tab);
+                sci.SetLineIndentation(line, tab);
             }
 
             // build list
@@ -1380,11 +1390,11 @@ namespace ASCompletion.Completion
         #region function_completion
         internal static string calltipDef;
         protected static MemberModel calltipMember;
-        static private bool calltipDetails;
-        static private int calltipPos = -1;
-        static private int calltipOffset;
-        static private ClassModel calltipRelClass;
-        static private string prevParam = "";
+        private static bool calltipDetails;
+        private static int calltipPos = -1;
+        private static int calltipOffset;
+        private static ClassModel calltipRelClass;
+        private static string prevParam = "";
 
         public static bool HasCalltip() => UITools.CallTip.CallTipActive && (calltipDef != null);
 
@@ -1603,36 +1613,33 @@ namespace ASCompletion.Completion
                 return false;
 
             MemberModel method = expr.Member;
-            if (method == null)
+            if (method is null)
             {
-                if (expr.Type == null)
-                    return false;
-                string constructor = ASContext.GetLastStringToken(expr.Type.Name, ".");
+                if (expr.Type is null) return false;
+                var constructor = ASContext.GetLastStringToken(expr.Type.Name, ".");
                 expr.Member = method = expr.Type.Members.Search(constructor, FlagType.Constructor, 0);
-                if (method == null)
-                    return false;
+                if (method is null) return false;
             }
             else if ((method.Flags & FlagType.Function) == 0)
             {
                 if (method.Name == "super" && expr.Type != null)
                 {
                     expr.Member = method = expr.Type.Members.Search(expr.Type.Constructor, FlagType.Constructor, 0);
-                    if (method == null)
-                        return false;
+                    if (method is null) return false;
                 }
                 else return false;
             }
 
             // inherit doc
             while ((method.Flags & FlagType.Override) > 0 && expr.InClass != null
-                && (method.Comments == null || method.Comments.Trim() == "" || method.Comments.Contains("@inheritDoc")))
+                && (method.Comments is null || method.Comments.Trim() == "" || method.Comments.Contains("@inheritDoc")))
             {
                 FindMember(method.Name, expr.InClass.Extends, expr, 0, 0);
                 method = expr.Member;
                 if (method == null)
                     return false;
             }
-            if ((method.Comments == null || method.Comments.Trim() == "") && expr.InClass?.Implements != null)
+            if ((method.Comments is null || method.Comments.Trim() == "") && expr.InClass?.Implements != null)
             {
                 ASResult iResult = new ASResult();
                 foreach (string type in expr.InClass.Implements)
@@ -1660,7 +1667,7 @@ namespace ASCompletion.Completion
             if (calltipMember != null && calltipMember.Name == method.Name)
             {
                 // use FD-extracted comments
-                if (method.Comments == null && !string.IsNullOrEmpty(calltipMember.Comments))
+                if (method.Comments is null && !string.IsNullOrEmpty(calltipMember.Comments))
                     method.Comments = calltipMember.Comments;
             }
 
@@ -1810,7 +1817,7 @@ namespace ASCompletion.Completion
             return comaCount;
         }
 
-        private static void ShowListeners(ScintillaControl Sci, int position, ClassModel ofClass)
+        private static void ShowListeners(ScintillaControl sci, int position, ClassModel ofClass)
         {
             // find event metadatas
             var events = new List<ASMetaData>();
@@ -1881,9 +1888,9 @@ namespace ASCompletion.Completion
             }
 
             // display
-            Sci.SetSel(position + 1, Sci.CurrentPos);
-            var tail = Sci.SelText;
-            Sci.SetSel(Sci.SelectionEnd, Sci.SelectionEnd);
+            sci.SetSel(position + 1, sci.CurrentPos);
+            var tail = sci.SelText;
+            sci.SetSel(sci.SelectionEnd, sci.SelectionEnd);
             CompletionList.Show(items, true, tail);
         }
 
@@ -2345,11 +2352,11 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        private static bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleColonCompletion(ScintillaControl sci, string tail, bool autoHide)
         {
             ComaExpression coma;
             if (DeclarationSectionOnly()) coma = ComaExpression.FunctionDeclaration;
-            else coma = GetFunctionContext(Sci, autoHide);
+            else coma = GetFunctionContext(sci, autoHide);
 
             if (coma != ComaExpression.FunctionDeclaration && coma != ComaExpression.VarDeclaration)
                 return false;
@@ -2358,7 +2365,7 @@ namespace ASCompletion.Completion
                 && ASContext.Context.Settings.CompletionListAllTypes)
             {
                 // show all project classes
-                HandleAllClassesCompletion(Sci, tail, true, false);
+                HandleAllClassesCompletion(sci, tail, true, false);
             }
             else
             {
@@ -2461,10 +2468,10 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Display the full project classes list
         /// </summary>
-        /// <param name="Sci"></param>
-        public static void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
+        /// <param name="sci"></param>
+        public static void HandleAllClassesCompletion(ScintillaControl sci, string tail, bool classesOnly, bool showClassVars)
         {
-            var list = GetAllClasses(Sci, classesOnly, showClassVars);
+            var list = GetAllClasses(sci, classesOnly, showClassVars);
             list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
