@@ -794,7 +794,7 @@ namespace HaXeContext.Completion
             }
         }
 
-        bool InferVariableType(ScintillaControl sci, int rvalueStart, MemberModel var)
+        static bool InferVariableType(ScintillaControl sci, int rvalueStart, MemberModel var)
         {
             var ctx = ASContext.Context;
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
