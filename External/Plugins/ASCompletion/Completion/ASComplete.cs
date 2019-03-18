@@ -496,7 +496,7 @@ namespace ASCompletion.Completion
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleBraceRemove(sci, brace, open, c))
+                        if (HandleBraceRemove(sci, brace, open))
                         {
                             break;
                         }
@@ -551,16 +551,17 @@ namespace ASCompletion.Completion
             return false;
         }
         
-        private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open, char close)
+        private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open)
         {
             var selections = sci.GetSelections();
             for (var i = 0; i < selections; i++)
             {
-                if (open == brace.Open && close == brace.Close && sci.GetSelectionNStart(i) is var p && brace.ShouldRemove(p, p))
-                {
-                    sci.SetSelectionNStart(i, p - 1);
-                    sci.SetSelectionNEnd(i, p + 1);
-                }
+                if (open != brace.Open) continue;
+                var startPosition = sci.GetSelectionNStart(i);
+                var closePosition = startPosition;
+                if (GetCharRight(sci, true, ref closePosition) != brace.Close || !brace.ShouldRemove(startPosition, closePosition)) continue;
+                sci.SetSelectionNStart(i, startPosition - 1);
+                sci.SetSelectionNEnd(i, closePosition + 1);
             }
             return false;
         }
