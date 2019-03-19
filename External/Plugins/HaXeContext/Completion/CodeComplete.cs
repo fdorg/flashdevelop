@@ -737,6 +737,29 @@ namespace HaXeContext.Completion
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
             if (local.PositionExpression <= rvalueStart && rvalueStart <= local.Position) return;
+            var features = ASContext.Context.Features;
+            if (!string.IsNullOrEmpty(local.Separator))
+            {
+                string type = null;
+                // for example: var v = value == v;
+                if (features.BooleanOperators.Contains(local.Separator)) type = ResolveType(features.booleanKey, null).Name;
+                // for example: var v = 1 | v;
+                else if (features.BitwiseOperators.Contains(local.Separator)) type = ResolveType(features.IntegerKey, null).Name;
+                // for example: var v = ++v;
+                else if (features.IncrementDecrementOperators.Contains(local.Separator)) type = ResolveType(features.numberKey, null).Name;
+                // for example: var v = 1 + v;
+                else if (local.Separator.Length == 1 && features.ArithmeticOperators.Contains(local.Separator[0]))
+                {
+                    var expr = GetExpressionType(sci, local.SeparatorPosition, false, true);
+                    type = expr.Member?.Type ?? expr.Type?.Name;
+                }
+                if (!string.IsNullOrEmpty(type))
+                {
+                    var.Type = type;
+                    var.Flags |= FlagType.Inferred;
+                    return;
+                }
+            }
             var word = sci.GetWordRight(rvalueStart, true);
             // for example: var v = v;
             if (word == local.Value) return;
@@ -755,7 +778,7 @@ namespace HaXeContext.Completion
              */
             if (word == "untyped")
             {
-                var type = ResolveType(ASContext.Context.Features.dynamicKey, null);
+                var type = ResolveType(features.dynamicKey, null);
                 var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
                 return;
@@ -771,7 +794,7 @@ namespace HaXeContext.Completion
             }
         }
 
-        bool InferVariableType(ScintillaControl sci, int rvalueStart, MemberModel var)
+        static bool InferVariableType(ScintillaControl sci, int rvalueStart, MemberModel var)
         {
             var ctx = ASContext.Context;
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
