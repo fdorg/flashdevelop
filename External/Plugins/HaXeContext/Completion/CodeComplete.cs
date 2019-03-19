@@ -761,13 +761,13 @@ namespace HaXeContext.Completion
                 }
             }
             var word = sci.GetWordRight(rvalueStart, true);
-            // for example: var v = v;
-            if (word == local.Value) return;
             if (word == "new")
             {
                 rvalueStart = sci.WordEndPosition(rvalueStart, false) + 1;
                 word = sci.GetWordRight(rvalueStart, true);
             }
+            // for example: `var v = v;` or `var V = new V();`
+            if (word == local.Value) return;
             /**
              * for example:
              * class Foo {

@@ -1032,6 +1032,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2734TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2734_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2734_1"))
+                    .SetName("var V = new V();\r\nv<generator>. Issue 2734. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2734");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue220TestCases
         {
             get
@@ -1717,6 +1728,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2574TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2594TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2725TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2734TestCases)),
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(AddToInterfaceIssue1733TestCases)),
