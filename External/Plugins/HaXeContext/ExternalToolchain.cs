@@ -16,6 +16,7 @@ namespace HaXeContext
         static string projectPath;
         static WatcherEx watcher;
         static HaxeProject hxproj;
+        static bool skipSaveOnce;
         static System.Timers.Timer updater;
 
         internal static bool HandleProject(IProject project)
@@ -175,8 +176,12 @@ namespace HaXeContext
         /// <param name="project"></param>
         public static void Monitor(IProject project)
         {
-            if (updater == null)
+            if (!(project is HaxeProject pj))
             {
+                return;
+            }
+
+            if (updater == null) {
                 updater = new System.Timers.Timer();
                 updater.Interval = 200;
                 updater.SynchronizingObject = (System.Windows.Forms.Form) PluginBase.MainForm;
@@ -184,15 +189,18 @@ namespace HaXeContext
                 updater.AutoReset = false;
             }
 
-            hxproj = null;
-            StopWatcher();
-
-            if (project is HaxeProject)
+            if (hxproj != null)
             {
-                hxproj = project as HaxeProject;
-                hxproj.ProjectUpdating += hxproj_ProjectUpdating;
-                hxproj_ProjectUpdating(hxproj);
+                // When not calling "Monitor" for the first time
+                // Then the ".Save" will be called later at the same time by the PropertiesDialog updated.
+                skipSaveOnce = true;
             }
+            if (hxproj != pj)
+            {
+                hxproj = pj;
+                hxproj.ProjectUpdating += hxproj_ProjectUpdating;
+            }
+            hxproj_ProjectUpdating(hxproj);
         }
 
         internal static void StopWatcher()
@@ -216,8 +224,8 @@ namespace HaXeContext
             string projectFile = hxproj.OutputPathAbsolute;
             if (projectPath != projectFile)
             {
-                projectPath = projectFile;
                 StopWatcher();
+                projectPath = projectFile;
                 if (File.Exists(projectPath))
                 {
                     watcher = new WatcherEx(Path.GetDirectoryName(projectPath), Path.GetFileName(projectPath));
@@ -316,7 +324,15 @@ namespace HaXeContext
                         hxproj.TestMovieCommand = "";
                     }
                 }
-                hxproj.Save();
+
+                if (skipSaveOnce)
+                {
+                    skipSaveOnce = false;
+                }
+                else
+                {
+                    hxproj.Save();
+                }
             }
         }
 
