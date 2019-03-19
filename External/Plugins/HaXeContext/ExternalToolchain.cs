@@ -181,7 +181,8 @@ namespace HaXeContext
                 return;
             }
 
-            if (updater == null) {
+            if (updater == null)
+            {
                 updater = new System.Timers.Timer();
                 updater.Interval = 200;
                 updater.SynchronizingObject = (System.Windows.Forms.Form) PluginBase.MainForm;
