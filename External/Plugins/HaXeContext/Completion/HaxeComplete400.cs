@@ -23,8 +23,8 @@ namespace HaXeContext
             var result = base.ExtractPos(reader);
             if (result.RangeType == HaxePositionCompleteRangeType.CHARACTERS)
             {
-                result.CharacterStart = result.CharacterStart - 1;
-                result.CharacterEnd = result.CharacterEnd - 1;
+                result.CharacterStart -= 1;
+                result.CharacterEnd -= 1;
             }
             return result;
         }
