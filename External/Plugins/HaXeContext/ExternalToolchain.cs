@@ -213,7 +213,6 @@ namespace HaXeContext
                 StopWatcher();
                 hxproj.ProjectUpdating -= hxproj_ProjectUpdating;
                 hxproj = null;
-                skipSaveOnce = false;
             }
         }
 
