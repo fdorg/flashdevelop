@@ -178,6 +178,7 @@ namespace HaXeContext
         {
             if (!(project is HaxeProject pj))
             {
+                ProjSwitch();
                 return;
             }
 
@@ -190,18 +191,30 @@ namespace HaXeContext
                 updater.AutoReset = false;
             }
 
-            if (hxproj != null)
+            if (hxproj == pj)
             {
                 // When not calling "Monitor" for the first time
                 // Then the ".Save" will be called later at the same time by the PropertiesDialog updated.
                 skipSaveOnce = true;
             }
-            if (hxproj != pj)
+            else
             {
+                ProjSwitch();
                 hxproj = pj;
                 hxproj.ProjectUpdating += hxproj_ProjectUpdating;
             }
             hxproj_ProjectUpdating(hxproj);
+        }
+
+        internal static void ProjSwitch()
+        {
+            if (hxproj != null)
+            {
+                StopWatcher();
+                hxproj.ProjectUpdating -= hxproj_ProjectUpdating;
+                hxproj = null;
+                skipSaveOnce = false;
+            }
         }
 
         internal static void StopWatcher()
