@@ -2518,7 +2518,6 @@ namespace ScintillaNet
             SPerform(2459, 0, 0);
         }
 
-
         /// <summary>
         /// Retrieve the fold level of a line.
         /// </summary>
@@ -6709,17 +6708,11 @@ namespace ScintillaNet
         /// </summary>
         public int MBSafePosition(int position)
         {
-            if (this.CodePage != 65001)
-            {
-                return position;
-            }
-            else if (position < 0) return position;
-            else
-            {
-                string count = this.Text.Substring(0, position);
-                int mbpos = Encoding.UTF8.GetByteCount(count);
-                return mbpos;
-            }
+            if (CodePage != 65001) return position;
+            if (position < 0) return position;
+            var count = Text.Substring(0, position);
+            var result = Encoding.UTF8.GetByteCount(count);
+            return result;
         }
 
         /// <summary>
@@ -6727,17 +6720,11 @@ namespace ScintillaNet
         /// </summary>
         public int MBSafeCharPosition(int bytePosition)
         {
-            if (this.CodePage != 65001)
-            {
-                return bytePosition;
-            }
-            else if (bytePosition < 0) return bytePosition;
-            else
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(this.Text);
-                int chrpos = Encoding.UTF8.GetCharCount(bytes, 0, bytePosition);
-                return chrpos;
-            }
+            if (CodePage != 65001) return bytePosition;
+            if (bytePosition < 0) return bytePosition;
+            var bytes = Encoding.UTF8.GetBytes(Text);
+            var result = Encoding.UTF8.GetCharCount(bytes, 0, bytePosition);
+            return result;
         }
 
         /// <summary>
@@ -6745,15 +6732,9 @@ namespace ScintillaNet
         /// </summary>
         public int MBSafeTextLength(string text)
         {
-            if (this.CodePage != 65001)
-            {
-                return text.Length;
-            }
-            else
-            {
-                int mblength = Encoding.UTF8.GetByteCount(text);
-                return mblength;
-            }
+            if (CodePage != 65001) return text.Length;
+            var result = Encoding.UTF8.GetByteCount(text);
+            return result;
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -6,54 +6,79 @@ namespace PluginCore.Helpers
 {
     public class SnippetHelper
     {
-        public const String BOUNDARY = "$(Boundary)";
-        public const String ENTRYPOINT = "$(EntryPoint)";
-        public const String EXITPOINT = "$(ExitPoint)";
+        public const string BOUNDARY = "$(Boundary)";
+        public const string ENTRYPOINT = "$(EntryPoint)";
+        public const string EXITPOINT = "$(ExitPoint)";
 
         /// <summary>
         /// Processes the snippet and template arguments
         /// </summary>
-        public static Int32 PostProcessSnippets(ScintillaControl sci, Int32 currentPosition)
+        public static int PostProcessSnippets(ScintillaControl sci, int currentPosition)
         {
-            Int32 delta = 0;
-            while (sci.SelectText(BOUNDARY, 0) != -1) { sci.ReplaceSel(""); delta -= BOUNDARY.Length; }
-            String text = sci.Text; // Store text temporarily
-            Int32 entryPosition = sci.MBSafePosition(text.IndexOfOrdinal(ENTRYPOINT));
-            Int32 exitPosition = sci.MBSafePosition(text.IndexOfOrdinal(EXITPOINT));
-            if (entryPosition != -1 && exitPosition != -1)
+            var delta = 0;
+            while (sci.SelectText(BOUNDARY, 0) != -1)
             {
-                sci.SelectText(ENTRYPOINT, 0); sci.ReplaceSel(""); delta -= ENTRYPOINT.Length;
-                sci.SelectText(EXITPOINT, 0); sci.ReplaceSel(""); delta -= EXITPOINT.Length;
-                sci.SetSel(entryPosition, exitPosition - ENTRYPOINT.Length);
+                sci.ReplaceSel("");
+                delta -= BOUNDARY.Length;
             }
-            else if (entryPosition != -1 && exitPosition == -1)
-            {
-                sci.SelectText(ENTRYPOINT, 0); sci.ReplaceSel(""); delta -= ENTRYPOINT.Length;
-                sci.SetSel(entryPosition, entryPosition);
-            }
-            else sci.SetSel(currentPosition, currentPosition);
+            if (!TryProcessEntryExitPoints(sci, 0, ref delta))
+                sci.SetSel(currentPosition, currentPosition);
             return delta;
+        }
+
+        static bool TryProcessEntryExitPoints(ScintillaControl sci, int startPosition, ref int delta)
+        {
+            var startSelection = sci.SelectText(ENTRYPOINT, startPosition);
+            if (startSelection == -1) return false;
+            var positions = new List<int>();
+            while (startSelection != -1)
+            {
+                positions.Add(sci.MBSafePosition(startSelection));
+                sci.ReplaceSel(string.Empty);
+                delta -= ENTRYPOINT.Length;
+                var endSelection = startSelection;
+                startSelection = sci.SelectText(EXITPOINT, startPosition);
+                if (startSelection != -1)
+                {
+                    sci.ReplaceSel(string.Empty);
+                    delta -= EXITPOINT.Length;
+                    endSelection = startSelection;
+                }
+                positions.Add(sci.MBSafePosition(endSelection));
+                startPosition = endSelection;
+                startSelection = sci.SelectText(ENTRYPOINT, startPosition);
+            }
+            if (positions.Count > 0)
+            {
+                sci.SetSelection(positions[0], positions[1]);
+                for (var i = 2; i < positions.Count; i += 2)
+                {
+                    sci.AddSelection(positions[i], positions[i + 1]);
+                }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// Processes the text and returns correct action point
         /// </summary>
-        public static ActionPoint ProcessActionPoint(String text)
+        public static ActionPoint ProcessActionPoint(string text)
         {
             text = text.Trim().Replace(BOUNDARY, "");
-            Int32 entryPosition = text.IndexOfOrdinal(ENTRYPOINT);
-            Int32 exitPosition = text.IndexOfOrdinal(EXITPOINT);
+            int entryPosition = text.IndexOfOrdinal(ENTRYPOINT);
+            int exitPosition = text.IndexOfOrdinal(EXITPOINT);
             if (entryPosition != -1 && exitPosition != -1)
             {
-                String cleaned = text.Replace(ENTRYPOINT, "").Replace(EXITPOINT, "");
+                string cleaned = text.Replace(ENTRYPOINT, "").Replace(EXITPOINT, "");
                 return new ActionPoint(cleaned, entryPosition, exitPosition - ENTRYPOINT.Length);
             }
-            else if (entryPosition != -1 && exitPosition == -1)
+            if (entryPosition != -1 && exitPosition == -1)
             {
-                String cleaned = text.Replace(ENTRYPOINT, "");
+                string cleaned = text.Replace(ENTRYPOINT, "");
                 return new ActionPoint(cleaned, entryPosition, -1);
             }
-            else return new ActionPoint(text, -1, -1);
+            return new ActionPoint(text, -1, -1);
         }
 
         /// <summary>
@@ -63,13 +88,13 @@ namespace PluginCore.Helpers
         {
             if (point.EntryPosition != -1 && point.ExitPosition != -1)
             {
-                Int32 start = sci.MBSafePosition(point.EntryPosition);
-                Int32 end = sci.MBSafePosition(point.ExitPosition);
+                int start = sci.MBSafePosition(point.EntryPosition);
+                int end = sci.MBSafePosition(point.ExitPosition);
                 sci.SetSel(start, end);
             }
             else if (point.EntryPosition != -1 && point.ExitPosition == -1)
             {
-                Int32 start = sci.MBSafePosition(point.EntryPosition);
+                int start = sci.MBSafePosition(point.EntryPosition);
                 sci.SetSel(start, start);
             }
         }
@@ -77,27 +102,26 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Inserts the specified snippet to the document
         /// </summary>
-        public static Int32 InsertSnippetText(ScintillaControl sci, Int32 currentPosition, String snippet)
+        public static int InsertSnippetText(ScintillaControl sci, int currentPosition, string snippet)
         {
             sci.BeginUndoAction();
             try
             {
-                Int32 newIndent; 
-                String text = snippet;
+                string text = snippet;
                 if (sci.SelTextSize > 0)
                     currentPosition -= sci.MBSafeTextLength(sci.SelText);
-                Int32 line = sci.LineFromPosition(currentPosition);
-                Int32 indent = sci.GetLineIndentation(line);
+                int line = sci.LineFromPosition(currentPosition);
+                int indent = sci.GetLineIndentation(line);
                 sci.ReplaceSel("");
                 
-                Int32 lineMarker = LineEndDetector.DetectNewLineMarker(text, sci.EOLMode);
-                String newline = LineEndDetector.GetNewLineMarker(lineMarker);
+                int lineMarker = LineEndDetector.DetectNewLineMarker(text, sci.EOLMode);
+                string newline = LineEndDetector.GetNewLineMarker(lineMarker);
                 if (newline != "\n") text = text.Replace(newline, "\n");
-                newline = LineEndDetector.GetNewLineMarker((Int32)PluginBase.MainForm.Settings.EOLMode);
+                newline = LineEndDetector.GetNewLineMarker((int)PluginBase.MainForm.Settings.EOLMode);
                 text = PluginBase.MainForm.ProcessArgString(text).Replace(newline, "\n");
                 newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-                String[] splitted = text.Trim().Split('\n');
-                for (Int32 j = 0; j < splitted.Length; j++)
+                string[] splitted = text.Trim().Split('\n');
+                for (int j = 0; j < splitted.Length; j++)
                 {
                     if (j != splitted.Length - 1) sci.InsertText(sci.CurrentPos, splitted[j] + newline);
                     else sci.InsertText(sci.CurrentPos, splitted[j]);
@@ -105,12 +129,12 @@ namespace PluginCore.Helpers
                     if (j > 0)
                     {
                         line = sci.LineFromPosition(sci.CurrentPos - newline.Length);
-                        newIndent = sci.GetLineIndentation(line) + indent;
+                        var newIndent = sci.GetLineIndentation(line) + indent;
                         sci.SetLineIndentation(line, newIndent);
                     }
                 }
-                Int32 length = sci.CurrentPos - currentPosition - newline.Length;
-                Int32 delta = PostProcessSnippets(sci, currentPosition);
+                int length = sci.CurrentPos - currentPosition - newline.Length;
+                int delta = PostProcessSnippets(sci, currentPosition);
                 return length + delta;
             }
             finally
@@ -122,11 +146,11 @@ namespace PluginCore.Helpers
 
     public class ActionPoint
     {
-        public String Text;
-        public Int32 EntryPosition;
-        public Int32 ExitPosition;
+        public string Text;
+        public int EntryPosition;
+        public int ExitPosition;
 
-        public ActionPoint(String text, Int32 entryPosition, Int32 exitPosition)
+        public ActionPoint(string text, int entryPosition, int exitPosition)
         {
             this.Text = text;
             this.EntryPosition = entryPosition;
