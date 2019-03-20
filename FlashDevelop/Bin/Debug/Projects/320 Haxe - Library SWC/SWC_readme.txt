@@ -29,7 +29,6 @@ Main.as3:
 package
 {
 	import flash.display.MovieClip;
-	import flash.display.Sprite;
 	public class Main extends MovieClip
 	{
 		public function Main()
