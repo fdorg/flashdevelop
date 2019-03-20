@@ -1445,14 +1445,28 @@ namespace HaXeContext
                     if (!it.TryGetFile(path, out var model)) continue;
                     foreach (MemberModel import in model.Imports)
                     {
-                        if ((import.Flags & (FlagType.Class | FlagType.Using)) != 0 && !(import is ClassModel))
+                        // for example: using package.Type;
+                        if ((import.Flags & FlagType.Using) != 0)
                         {
-                            var type = ResolveType(import.Type, null);
-                            if (type.IsVoid()) continue;
-                            type.Flags |= FlagType.Using;
-                            result.Add(type);
+                            /**
+                             * The static extension keyword using implies the effect of import.
+                             * https://haxe.org/manual/type-system-import.html
+                             */
+                            it.ForeachFile(file =>
+                            {
+                                if (file.FullPackage != import.Type) return true;
+                                foreach (var @class in file.Classes)
+                                {
+                                    var type = (ClassModel) @class.Clone();
+                                    type.Flags |= FlagType.Using;
+                                    result.Merge(type);
+                                }
+                                return false;
+                            });
                         }
+                        // for example: import package.Type;
                         else if (import.Name != "*") result.Add(import);
+                        // for example: import package.*;
                         else ResolveImports(import.Type.Substring(0, import.Type.Length - 2), result);
                     }
                     break;
