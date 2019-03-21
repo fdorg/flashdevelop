@@ -1055,6 +1055,18 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2743_2"))
                     .SetName("var v = \"\r\n\";\r\nv<generator>. Issue 2743. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2743");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2743_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2743_3"))
+                    .SetName("var v = '\r\'\n';\r\nv<generator>. Issue 2743. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2743");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2743_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2743_4"))
+                    .SetName("var v = '\r\"\n';\r\nv<generator>. Issue 2743. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2743");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2743_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2743_5"))
+                    .SetName("var v = '\r[\n';\r\nv<generator>. Issue 2743. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2743");
             }
         }
 
