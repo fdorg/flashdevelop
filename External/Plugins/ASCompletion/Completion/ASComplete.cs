@@ -3513,14 +3513,14 @@ namespace ASCompletion.Completion
                     c = (char)sci.CharAt(position);
                     if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
                     {
-                        if (!IsStringStyle(style) && !IsCharStyle(style) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
-                        {
-                            sb.Clear();
-                            positionExpression = expression.Position;
-                            expression.SubExpressions = null;
-                            expression.SubExpressionPositions = null;
-                            break;
-                        }
+                        //if (!IsStringStyle(style) && !IsCharStyle(style) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
+                        //{
+                        //    sb.Clear();
+                        //    positionExpression = expression.Position;
+                        //    expression.SubExpressions = null;
+                        //    expression.SubExpressionPositions = null;
+                        //    break;
+                        //}
                         sbSub.Insert(0, c);
                         continue;
                     }
@@ -4659,6 +4659,8 @@ namespace ASCompletion.Completion
             var parCount = 0;
             var brCount = 0;
             var arrCount = 0;
+            var dQuotes = 0;
+            var sQuotes = 0;
             var hadWS = false;
             var stop = false;
             var exprStarted = false;
@@ -4688,6 +4690,11 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
+                if ((dQuotes > 0 && c != '"') || (sQuotes > 0 && c != '\''))
+                {
+                    result = statementEnd;
+                    continue;
+                }
                 if (c == '(')
                 {
                     if (arrCount == 0)
@@ -4742,6 +4749,24 @@ namespace ASCompletion.Completion
                 }
                 else if (parCount == 0 && arrCount == 0 && brCount == 0)
                 {
+                    if (dQuotes == 0 && c == '\'')
+                    {
+                        result = statementEnd;
+                        statementEnd++;
+                        if (sQuotes == 0) sQuotes++;
+                        else sQuotes--;
+                        continue;
+                    }
+                    if (sQuotes > 0) continue;
+                    if (sQuotes == 0 && c == '"')
+                    {
+                        result = statementEnd;
+                        statementEnd++;
+                        if (dQuotes == 0) dQuotes++;
+                        else dQuotes--;
+                        continue;
+                    }
+                    if (dQuotes > 0) continue;
                     if (characterClass.Contains(c))
                     {
                         if (skipWhiteSpace)
