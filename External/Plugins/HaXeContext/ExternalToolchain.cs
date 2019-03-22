@@ -16,7 +16,7 @@ namespace HaXeContext
         static string projectPath;
         static WatcherEx watcher;
         static HaxeProject hxproj;
-        static bool skipSaveOnce;
+        static MonitorState monitorState;
         static System.Timers.Timer updater;
 
         internal static bool HandleProject(IProject project)
@@ -170,6 +170,14 @@ namespace HaXeContext
             return true;
         }
 
+        [Flags]
+        private enum MonitorState
+        {
+            ProjectSwitch  = 1 << 0,
+            ProjectOnSame  = 1 << 1,  // When closing the changed PropertiesDialog
+            ProjectUpdate  = 1 << 2,
+            WatcherChange  = 1 << 3,
+        }
         /// <summary>
         /// Watch NME projects to update the configuration & HXML command using 'nme display'
         /// </summary>
@@ -186,11 +194,10 @@ namespace HaXeContext
                     updater.Elapsed += updater_Elapsed;
                     updater.AutoReset = false;
                 }
-
+                monitorState = MonitorState.ProjectSwitch;
                 if (hxproj == pj)
                 {
-                    // Then the ".Save" will be called later at the same time by the PropertiesDialog updated.
-                    skipSaveOnce = true;
+                    monitorState |= MonitorState.ProjectOnSame;
                 }
                 else
                 {
@@ -222,7 +229,7 @@ namespace HaXeContext
                 StopWatcher();
                 return;
             }
-
+            monitorState |= MonitorState.ProjectUpdate;
             string projectFile = hxproj.OutputPathAbsolute;
             if (projectPath != projectFile)
             {
@@ -233,6 +240,7 @@ namespace HaXeContext
                     watcher = new WatcherEx(Path.GetDirectoryName(projectPath), Path.GetFileName(projectPath));
                     watcher.Changed += watcher_Changed;
                     watcher.EnableRaisingEvents = true;
+                    monitorState |= MonitorState.WatcherChange;
                     UpdateProject();
                 }
             }
@@ -241,6 +249,7 @@ namespace HaXeContext
 
         static void updater_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            monitorState = MonitorState.WatcherChange;
             UpdateProject();
             hxproj.PropertiesChanged();
         }
@@ -259,6 +268,9 @@ namespace HaXeContext
                 form.BeginInvoke((System.Windows.Forms.MethodInvoker)UpdateProject);
                 return;
             }
+            MonitorState state = monitorState;
+            monitorState = 0;
+
             if (hxproj.MovieOptions.Platform == "Lime" && string.IsNullOrEmpty(hxproj.TargetBuild)) return;
 
             var exe = GetExecutable(hxproj.MovieOptions.PlatformSupport.ExternalToolchain);
@@ -327,11 +339,7 @@ namespace HaXeContext
                     }
                 }
 
-                if (skipSaveOnce)
-                {
-                    skipSaveOnce = false;
-                }
-                else
+                if (!state.HasFlag(MonitorState.ProjectOnSame))
                 {
                     hxproj.Save();
                 }
