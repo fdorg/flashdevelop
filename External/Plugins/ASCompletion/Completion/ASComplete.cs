@@ -3513,14 +3513,6 @@ namespace ASCompletion.Completion
                     c = (char)sci.CharAt(position);
                     if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
                     {
-                        //if (!IsStringStyle(style) && !IsCharStyle(style) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, position))
-                        //{
-                        //    sb.Clear();
-                        //    positionExpression = expression.Position;
-                        //    expression.SubExpressions = null;
-                        //    expression.SubExpressionPositions = null;
-                        //    break;
-                        //}
                         sbSub.Insert(0, c);
                         continue;
                     }
