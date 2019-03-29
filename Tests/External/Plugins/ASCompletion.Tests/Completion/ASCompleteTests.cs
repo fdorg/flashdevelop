@@ -2045,6 +2045,12 @@ namespace ASCompletion.Completion
                         .Returns("'$array".Length);
                     yield return new TestCaseData("'$$(EntryPoint)array(list)'; //")
                         .Returns("'$array".Length);
+                    yield return new TestCaseData("'\n\n\n'; //")
+                        .Returns("'\n\n\n'".Length);
+                    yield return new TestCaseData("'\n\n[{(\n'; //")
+                        .Returns("'\n\n[{(\n'".Length);
+                    yield return new TestCaseData("\"\n\n\n\"; //")
+                        .Returns("\"\n\n\n\"".Length);
                 }
             }
 

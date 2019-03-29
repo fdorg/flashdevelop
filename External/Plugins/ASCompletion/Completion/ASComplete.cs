@@ -4581,8 +4581,8 @@ namespace ASCompletion.Completion
 
         protected bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
         {
-            bool result = false;
-            for (int i = position - 1; i >= 0; i--)
+            var result = false;
+            for (var i = position - 1; i >= 0; i--)
             {
                 if (sci.CharAt(i) != escapeChar) break;
                 result = !result;
@@ -4670,6 +4670,26 @@ namespace ASCompletion.Completion
                     result = statementEnd;
                     continue;
                 }
+                var c = (char)sci.CharAt(statementEnd);
+                #region PositionIsInMultilineString
+                if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
+                {
+                    result = ++statementEnd;
+                    continue;
+                }
+                if (dQuotes > 0 && c == '\"')
+                {
+                    result = ++statementEnd;
+                    if (!ctx.CodeComplete.IsEscapedCharacter(sci, statementEnd - 1) && --dQuotes <= 0) break;
+                    continue;
+                }
+                if (sQuotes > 0 && c == '\'')
+                {
+                    result = ++statementEnd;
+                    if (!ctx.CodeComplete.IsEscapedCharacter(sci, statementEnd - 1) && --sQuotes <= 0) break;
+                    continue;
+                }
+                #endregion PositionIsInMultilineString
                 if (sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
                 {
                     if (isInStringInterpolation)
@@ -4677,16 +4697,10 @@ namespace ASCompletion.Completion
                         result = statementEnd - 1;
                         break;
                     }
-                    statementEnd++;
-                    result = statementEnd;
+                    result = ++statementEnd;
                     continue;
                 }
-                var c = (char) sci.CharAt(statementEnd++);
-                if ((dQuotes > 0 && c != '"') || (sQuotes > 0 && c != '\''))
-                {
-                    result = statementEnd;
-                    continue;
-                }
+                statementEnd++;
                 if (c == '(')
                 {
                     if (arrCount == 0)
@@ -4743,8 +4757,7 @@ namespace ASCompletion.Completion
                 {
                     if (dQuotes == 0 && c == '\'')
                     {
-                        result = statementEnd;
-                        statementEnd++;
+                        result = ++statementEnd;
                         if (sQuotes == 0) sQuotes++;
                         else sQuotes--;
                         continue;
@@ -4752,8 +4765,7 @@ namespace ASCompletion.Completion
                     if (sQuotes > 0) continue;
                     if (sQuotes == 0 && c == '"')
                     {
-                        result = statementEnd;
-                        statementEnd++;
+                        result = ++statementEnd;
                         if (dQuotes == 0) dQuotes++;
                         else dQuotes--;
                         continue;
@@ -4885,7 +4897,7 @@ namespace ASCompletion.Completion
         {
             var name = type.Name;
             var member = type.Members.Search(name, FlagType.Constructor, 0);
-            if (member == null) member = new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
+            if (member is null) member = new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
             return MemberTooltipText(member, type) + GetToolTipDoc(member);
         }
 
