@@ -161,7 +161,7 @@ namespace ProjectManager.Controls
 
         internal void AddTargetBuild(string target)
         {
-            if (target == null) return;
+            if (target is null) return;
             target = target.Trim();
             if (target.Length > 0 && !TargetBuildSelector.Items.Contains(target)) 
                 TargetBuildSelector.Items.Insert(0, target);

@@ -967,11 +967,11 @@ namespace ProjectManager
         {
             if (project != null) BroadcastBuildComplete(project);
             if (buildQueue.Count > 0) ProcessBuildQueue();
-            else if (this.buildingAll)
+            else if (buildingAll)
             {
-                this.buildingAll = false;
-                this.buildTimer.Tag = "buildAll";
-                this.buildTimer.Start();
+                buildingAll = false;
+                buildTimer.Tag = "buildAll";
+                buildTimer.Start();
             }
             else if (runOutput)
             {
@@ -983,7 +983,7 @@ namespace ProjectManager
         {
             buildQueue.Clear();
             this.runOutput = false;
-            this.buildingAll = false;
+            buildingAll = false;
             BroadcastBuildFailed(project);
         }
 
@@ -1061,18 +1061,12 @@ namespace ProjectManager
         private void ImportProject(object sender, EventArgs eventArgs)
         {
             string importFrom = null;
-            if (eventArgs is LinkLabelLinkClickedEventArgs)
+            if (eventArgs is LinkLabelLinkClickedEventArgs args && args.Link.LinkData is string data)
             {
-                var data = ((LinkLabelLinkClickedEventArgs)eventArgs).Link.LinkData;
-                if (data is string)
-                {
-                    var strings = ((string)data).Split('|');
-                    if (strings.Length > 1) importFrom = strings[1];
-                }
+                var strings = data.Split('|');
+                if (strings.Length > 1) importFrom = strings[1];
             }
-            string project;
-            if (importFrom == null) project = projectActions.ImportProject();
-            else project = projectActions.ImportProject(importFrom);
+            var project = projectActions.ImportProject(importFrom);
             if (project != null) OpenProjectSilent(project);
         }
 

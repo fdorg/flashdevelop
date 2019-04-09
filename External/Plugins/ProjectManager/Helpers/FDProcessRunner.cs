@@ -59,10 +59,7 @@ namespace ProjectManager.Helpers
             if (runningProcessName != null)
             {
                 bool success = result.EndsWithOrdinal("(0)");
-                if (processEndedHandler != null)
-                {
-                    processEndedHandler.DynamicInvoke(new object[] { success });
-                }
+                processEndedHandler?.DynamicInvoke(success);
                 // restore current directory
                 Environment.CurrentDirectory = savedDirectory;
                 processEndedHandler = null;
