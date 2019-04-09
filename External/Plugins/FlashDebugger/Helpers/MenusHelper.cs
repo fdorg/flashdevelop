@@ -11,7 +11,7 @@ namespace FlashDebugger
 {
     internal class MenusHelper
     {
-        static public ImageListManager imageList;
+        public static ImageListManager imageList;
         private ToolStripItem[] m_ToolStripButtons;
         private ToolStripSeparator m_ToolStripSeparator, m_ToolStripSeparator2;
         private ToolStripButton StartContinueButton, PauseButton, StopButton, CurrentButton, RunToCursorButton, StepButton, NextButton, FinishButton;
@@ -60,12 +60,12 @@ namespace FlashDebugger
             viewMenu.DropDownItems.Add(tempItem);
 
             // Menu           
-            ToolStripMenuItem debugMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("DebugMenu");
-            if (debugMenu == null)
+            var debugMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("DebugMenu");
+            if (debugMenu is null)
             {
                 debugMenu = new ToolStripMenuItem(TextHelper.GetString("Label.Debug"));
-                ToolStripMenuItem insertMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("InsertMenu");
-                Int32 idx = PluginBase.MainForm.MenuStrip.Items.IndexOf(insertMenu);
+                var insertMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("InsertMenu");
+                var idx = PluginBase.MainForm.MenuStrip.Items.IndexOf(insertMenu);
                 if (idx < 0) idx = PluginBase.MainForm.MenuStrip.Items.Count - 1;
                 PluginBase.MainForm.MenuStrip.Items.Insert(idx, debugMenu);
             }
@@ -159,51 +159,23 @@ namespace FlashDebugger
             //imageList.Images.Add("Finish", PluginBase.MainForm.ImageSetAdjust(Resource.Finish));
         }
 
-        public void AddToolStripItems()
-        {
-            ToolStrip toolStrip = PluginBase.MainForm.ToolStrip;
-            toolStrip.Items.AddRange(m_ToolStripButtons);
-        }
+        public void AddToolStripItems() => PluginBase.MainForm.ToolStrip.Items.AddRange(m_ToolStripButtons);
 
-        public void OpenLocalVariablesPanel(Object sender, EventArgs e)
-        {
-            PanelsHelper.localsPanel.Show();
-        }
+        void OpenLocalVariablesPanel(object sender, EventArgs e) => PanelsHelper.localsPanel.Show();
 
-        public void OpenBreakPointPanel(Object sender, EventArgs e)
-        {
-            PanelsHelper.breakPointPanel.Show();
-        }
+        void OpenBreakPointPanel(object sender, EventArgs e) => PanelsHelper.breakPointPanel.Show();
 
-        public void OpenStackframePanel(Object sender, EventArgs e)
-        {
-            PanelsHelper.stackframePanel.Show();
-        }
+        void OpenStackframePanel(object sender, EventArgs e) => PanelsHelper.stackframePanel.Show();
 
-        public void OpenWatchPanel(Object sender, EventArgs e)
-        {
-            PanelsHelper.watchPanel.Show();
-        }
+        void OpenWatchPanel(object sender, EventArgs e) => PanelsHelper.watchPanel.Show();
 
-        public void OpenImmediatePanel(Object sender, EventArgs e)
-        {
-            PanelsHelper.immediatePanel.Show();
-        }
+        void OpenImmediatePanel(object sender, EventArgs e) => PanelsHelper.immediatePanel.Show();
 
-        public void OpenThreadsPanel(Object sender, EventArgs e)
-        {
-            PanelsHelper.threadsPanel.Show();
-        }
+        void OpenThreadsPanel(object sender, EventArgs e) => PanelsHelper.threadsPanel.Show();
 
-        private void BreakOnAll_Click(Object sender, EventArgs e)
-        {
-            PluginMain.settingObject.BreakOnThrow = !BreakOnAllMenu.Checked;
-        }
+        void BreakOnAll_Click(object sender, EventArgs e) => PluginMain.settingObject.BreakOnThrow = !BreakOnAllMenu.Checked;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void StartContinue_Click(Object sender, EventArgs e)
+        void StartContinue_Click(object sender, EventArgs e)
         {
             if (PluginMain.debugManager.FlashInterface.isDebuggerStarted)
             {
@@ -212,10 +184,7 @@ namespace FlashDebugger
             else PluginMain.debugManager.Start(/*false*/);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void StartRemote_Click(Object sender, EventArgs e)
+        void StartRemote_Click(object sender, EventArgs e)
         {
             if (PluginMain.debugManager.FlashInterface.isDebuggerStarted)
             {
@@ -226,29 +195,21 @@ namespace FlashDebugger
 
         #region Menus State Management
 
-        private void BreakOnThrowChanged(object sender, EventArgs e)
-        {
-            BreakOnAllMenu.Checked = PluginMain.settingObject.BreakOnThrow;
-        }
+        private void BreakOnThrowChanged(object sender, EventArgs e) => BreakOnAllMenu.Checked = PluginMain.settingObject.BreakOnThrow;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void UpdateMenuState(object sender)
-        {
-            UpdateMenuState(sender, CurrentState);
-        }
+        public void UpdateMenuState(object sender) => UpdateMenuState(sender, CurrentState);
+
         public void UpdateMenuState(object sender, DebuggerState state)
         {
-            if ((PluginBase.MainForm as Form).InvokeRequired)
+            if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate()
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate()
                 {
                     UpdateMenuState(sender, state);
                 });
                 return;
             }
-            Boolean hasChanged = CurrentState != state;
+            bool hasChanged = CurrentState != state;
             CurrentState = state; // Set current now...
             if (state == DebuggerState.Initializing || state == DebuggerState.Stopped)
             {
@@ -272,7 +233,7 @@ namespace FlashDebugger
             }
             else StartContinueButton.Enabled = StartContinueMenu.Enabled = false;
             //
-            Boolean enabled = (state == DebuggerState.BreakHalt || state == DebuggerState.PauseHalt);
+            bool enabled = (state == DebuggerState.BreakHalt || state == DebuggerState.PauseHalt);
             CurrentButton.Enabled = CurrentMenu.Enabled = RunToCursorButton.Enabled = enabled;
             NextButton.Enabled = NextMenu.Enabled = FinishButton.Enabled = FinishMenu.Enabled = enabled;
             RunToCursorMenu.Enabled = StepButton.Enabled = StepMenu.Enabled = enabled;
@@ -288,7 +249,7 @@ namespace FlashDebugger
             EnableAllBreakPointsMenu.Enabled = PanelsHelper.breakPointUI.Enabled = enabled;
             StartRemoteDebuggingMenu.Enabled = (state == DebuggerState.Initializing || state == DebuggerState.Stopped);
             //
-            Boolean hideButtons = state == DebuggerState.Initializing || state == DebuggerState.Stopped;
+            bool hideButtons = state == DebuggerState.Initializing || state == DebuggerState.Stopped;
             StartContinueButton.Visible = StartContinueButton.Enabled;
             PauseButton.Visible = StopButton.Visible = CurrentButton.Visible = NextButton.Visible =
             RunToCursorButton.Visible = StepButton.Visible = FinishButton.Visible = !hideButtons;
@@ -306,16 +267,13 @@ namespace FlashDebugger
         /// <summary>
         /// Gets if the language is valid for debugging
         /// </summary>
-        private Boolean GetLanguageIsValid()
+        private bool GetLanguageIsValid()
         {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document != null && document.IsEditable)
-            {
-                String ext = Path.GetExtension(document.FileName);
-                String lang = document.SciControl.ConfigurationLanguage;
-                return (lang == "as3" || lang == "haxe" || ext == ".mxml");
-            }
-            else return false;
+            var document = PluginBase.MainForm.CurrentDocument;
+            if (document is null || !document.IsEditable) return false;
+            var ext = Path.GetExtension(document.FileName);
+            var lang = document.SciControl.ConfigurationLanguage;
+            return lang == "as3" || ext == ".mxml" || lang == "haxe";
         }
 
         #endregion
