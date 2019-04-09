@@ -834,12 +834,12 @@ namespace ProjectManager
             Webserver.Port = Settings.WebserverPort;
 
             var project = activeProject; // TODO this should be the runnable project
-            if (path == null)
+            if (path is null)
             {
-                if (project == null) return;
+                if (project is null) return;
                 path = project.OutputPathAbsolute;
             }
-            if (project == null) // use default player
+            if (project is null) // use default player
             {
                 de = new DataEvent(EventType.Command, "FlashViewer.Default", path);
                 EventManager.DispatchEvent(this, de);
