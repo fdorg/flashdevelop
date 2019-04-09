@@ -446,8 +446,7 @@ namespace ProjectManager
                     break;
 
                 case EventType.ProcessEnd:
-                    string result = te.Value;
-                    buildActions.NotifyBuildEnded(result);
+                    buildActions.NotifyBuildEnded(te.Value);
                     break;
 
                 case EventType.ApplySettings:
@@ -547,7 +546,14 @@ namespace ProjectManager
                             }
                         }
                     }
-                    else if (de.Action == "FlashDebugger.Running") DisabledForBuild = true;
+                    else if (de.Action == "FlashDebugger.Running")
+                    {
+                        menus.TestMovie.Enabled = false;
+                        menus.ProjectMenu.TestMovie.Enabled = false;
+                        menus.ProjectMenu.RunProject.Enabled = false;
+                        pluginUI.Menu.TestMovie.Enabled = false;
+                        pluginUI.Menu.RunProject.Enabled = false;
+                    }
                     else if (de.Action == "FlashDebugger.Stopped") UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
                     break;
 
