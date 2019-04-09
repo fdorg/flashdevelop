@@ -233,28 +233,24 @@ namespace ProjectManager.Actions
             return true;
         }
 
-        void OnBuildComplete(IProject project, bool runOutput)
-        {
-            if (BuildComplete != null) BuildComplete(project, runOutput);
-        }
+        void OnBuildComplete(IProject project, bool runOutput) => BuildComplete?.Invoke(project, runOutput);
 
-        void OnBuildFailed(IProject project, bool runOutput)
-        {
-            if (BuildFailed != null) BuildFailed(project, runOutput);
-        }
+        void OnBuildFailed(IProject project, bool runOutput) => BuildFailed?.Invoke(project, runOutput);
 
-        void AddTrustFile(Project project)
+        void AddTrustFile(IProject project)
         {
-            string directory = Path.GetDirectoryName(project.OutputPathAbsolute);
+            var directory = Path.GetDirectoryName(project.OutputPathAbsolute);
             if (!Directory.Exists(directory)) return;
-            string trustParams = "FlashDevelop.cfg;" + directory;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CreateTrustFile", trustParams);
+            var trustParams = "FlashDevelop.cfg;" + directory;
+            var de = new DataEvent(EventType.Command, "ASCompletion.CreateTrustFile", trustParams);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void NotifyBuildStarted() { fdProcess.ProcessStartedEventCaught(); }
-        public void NotifyBuildEnded(string result) { fdProcess.ProcessEndedEventCaught(result); }
-        public void SetStatusBar(string text) { mainForm.StatusLabel.Text = " " + text; }
+        public void NotifyBuildStarted() => fdProcess.ProcessStartedEventCaught();
+
+        public void NotifyBuildEnded(string result) => fdProcess.ProcessEndedEventCaught(result);
+
+        public void SetStatusBar(string text) => mainForm.StatusLabel.Text = " " + text;
 
         /* SDK MANAGEMENT */
 
@@ -357,7 +353,7 @@ namespace ProjectManager.Actions
                     string[] pb = new SemVer(sb[j].Trim()).ToString().Split('.');
                     int major = int.Parse(pa[0]) - int.Parse(pb[0]);
                     if (major < 0) return int.MaxValue;
-                    else if (major > 0) score += 10;
+                    if (major > 0) score += 10;
                     else
                     {
                         int minor = int.Parse(pa[1]) - int.Parse(pb[1]);
