@@ -556,8 +556,8 @@ namespace FlashDebugger
                 }
                 m_Session = null;
             }
-            if (runningIsolates != null) runningIsolates.Clear();
-            SessionManager mgr = Bootstrap.sessionManager();
+            runningIsolates?.Clear();
+            var mgr = Bootstrap.sessionManager();
             if (mgr != null && mgr.isListening()) mgr.stopListening();
             m_CurrentState = DebuggerState.Stopped;
             clearBreakpoints();

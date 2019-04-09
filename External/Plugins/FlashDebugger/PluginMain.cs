@@ -228,7 +228,7 @@ namespace FlashDebugger
         /// </summary>
         private void CreateMenuItems()
         {
-            menusHelper = new MenusHelper(pluginImage, debugManager, settingObject);
+            menusHelper = new MenusHelper(pluginImage, debugManager);
         }
 
         /// <summary>

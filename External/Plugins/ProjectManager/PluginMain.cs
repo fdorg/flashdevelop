@@ -547,6 +547,8 @@ namespace ProjectManager
                             }
                         }
                     }
+                    else if (de.Action == "FlashDebugger.Running") DisabledForBuild = true;
+                    else if (de.Action == "FlashDebugger.Stopped") UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
                     break;
 
                 case EventType.Keys:
@@ -566,7 +568,7 @@ namespace ProjectManager
 
         private bool HandleKeyEvent(KeyEvent ke)
         {
-            if (activeProject == null) return false;
+            if (activeProject is null) return false;
 
             string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
 
