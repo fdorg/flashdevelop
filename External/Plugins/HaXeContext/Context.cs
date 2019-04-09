@@ -135,6 +135,7 @@ namespace HaXeContext
             features.hasTryCatch = true;
             features.hasInference = true;
             features.hasStringInterpolation = true;
+            features.HasMultilineString = true;
             features.checkFileName = false;
 
             // haxe directives

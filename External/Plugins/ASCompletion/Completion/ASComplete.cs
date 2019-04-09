@@ -87,7 +87,7 @@ namespace ASCompletion.Completion
 
                 sci.Colourise(0, -1);
                 int style = sci.BaseStyleAt(position - 1);
-
+                
                 if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
                     var stringTypeChar = sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
@@ -96,20 +96,26 @@ namespace ASCompletion.Completion
                         && IsMatchingQuote(stringTypeChar, sci.BaseStyleAt(position - 2)))
                     {
                         if (value == '$' && !ctx.CodeComplete.IsEscapedCharacter(sci, position - 1, '$'))
-                        {
                             return HandleInterpolationCompletion(sci, autoHide, false);
-                        }
                         if (value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(sci, position - 2, '$'))
                         {
                             if (autoHide) HandleAddClosingBraces(sci, (char) value, true);
                             return HandleInterpolationCompletion(sci, autoHide, true);
                         }
                         if (ctx.CodeComplete.IsStringInterpolationStyle(sci, position - 2))
-                        {
                             skipQuoteCheck = true; // continue on with regular completion
-                        }
                     }
                 }
+                /**
+                 * for example:
+                 * '
+                 * '.<complete>
+                 * or
+                 * "
+                 * ".<complete>
+                 */
+                else if (features.HasMultilineString && value == '.' && sci.GetStringType(position - 1) is var c && (c == '\"' || c == '\''))
+                    skipQuoteCheck = true;
 
                 if (!skipQuoteCheck)
                 {
@@ -2166,7 +2172,7 @@ namespace ASCompletion.Completion
 
         private static bool DeclarationSectionOnly()
         {
-            ClassModel inClass = ASContext.Context.CurrentClass;
+            var inClass = ASContext.Context.CurrentClass;
             return !inClass.IsVoid() && (inClass.Flags & (FlagType.Enum | FlagType.TypeDef | FlagType.Struct)) > 0;
         }
 
