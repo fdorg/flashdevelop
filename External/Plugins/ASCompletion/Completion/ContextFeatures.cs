@@ -42,6 +42,7 @@ namespace ASCompletion.Completion
         public bool hasStaticInheritance;
         public bool hasInference;
         public bool hasStringInterpolation;
+        public bool HasMultilineString;
         public bool checkFileName;
         public char hiddenPackagePrefix;
 
