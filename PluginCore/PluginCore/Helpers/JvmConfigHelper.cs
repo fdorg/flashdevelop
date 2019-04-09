@@ -71,23 +71,18 @@ namespace PluginCore.Helpers
             return value;
         }
 
-        public static string GetJavaEXE()
-        {
-            return GetJavaEXE(null, null);
-        }
-        public static string GetJavaEXE(Dictionary<string, string> jvmConfig)
-        {
-            return GetJavaEXE(jvmConfig, null);
-        }
+        public static string GetJavaEXE() => GetJavaEXE(null, null);
+
+        public static string GetJavaEXE(Dictionary<string, string> jvmConfig) => GetJavaEXE(jvmConfig, null);
+
         public static string GetJavaEXE(Dictionary<string, string> jvmConfig, string flexSdkPath)
         {
-            string defaultExe = "java";
-            string home = GetJavaHome(jvmConfig, flexSdkPath);
-            if (!String.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
+            var home = GetJavaHome(jvmConfig, flexSdkPath);
+            if (!string.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
                 return Path.Combine(home, "bin","java");
             }
-            return defaultExe;
+            return "java";
         }
 
         public static string GetJavaHome(Dictionary<string, string> jvmConfig, string flexSdkPath)
@@ -97,7 +92,7 @@ namespace PluginCore.Helpers
             {
                 home = ResolvePath(jvmConfig["java.home"], flexSdkPath);
             }
-            if (home == null)
+            if (home is null)
             {
                 home = Environment.ExpandEnvironmentVariables("%JAVA_HOME%");
                 if (home.StartsWith("%", StringComparison.Ordinal)) home = null;
@@ -125,14 +120,7 @@ namespace PluginCore.Helpers
             return null;
         }
 
-        private static String AppDir
-        {
-            get
-            {
-                return Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            }
-        }
-
+        private static string AppDir => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
     }
 
 }
