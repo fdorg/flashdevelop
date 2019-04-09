@@ -95,7 +95,7 @@ namespace PluginCore.Helpers
             string home = null;
             if (jvmConfig != null && jvmConfig.ContainsKey("java.home"))
             {
-                home = ResolvePath(jvmConfig["java.home"], flexSdkPath, true);
+                home = ResolvePath(jvmConfig["java.home"], flexSdkPath);
             }
             if (home == null)
             {
@@ -107,7 +107,7 @@ namespace PluginCore.Helpers
 
         // Duplicated from 'PluginCore.PathHelper.ResolvePath()'
         // because JvmConfigHelper is used in external tool 'FDBuild'
-        private static string ResolvePath(String path, String relativeTo, Boolean checkResolvedPathExisting)
+        private static string ResolvePath(String path, String relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
             Boolean isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
