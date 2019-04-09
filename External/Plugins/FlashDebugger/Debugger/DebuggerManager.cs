@@ -304,10 +304,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        private void UpdateMenuState(DebuggerState state)
-        {
-            if (StateChangedEvent != null) StateChangedEvent(this, state);
-        }
+        private void UpdateMenuState(DebuggerState state) => StateChangedEvent?.Invoke(this, state);
 
         #endregion
 
@@ -414,26 +411,17 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        private void flashInterface_WatchpointEvent(object sender)
-        {
-            UpdateUI(DebuggerState.BreakHalt);
-        }
+        private void flashInterface_WatchpointEvent(object sender) => UpdateUI(DebuggerState.BreakHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        private void flashInterface_UnknownHaltEvent(object sender)
-        {
-            UpdateUI(DebuggerState.ExceptionHalt);
-        }
+        private void flashInterface_UnknownHaltEvent(object sender) => UpdateUI(DebuggerState.ExceptionHalt);
 
         /// <summary>
         /// 
         /// </summary>
-        private void flashInterface_PauseEvent(object sender)
-        {
-            UpdateUI(DebuggerState.PauseHalt);
-        }
+        private void flashInterface_PauseEvent(object sender) => UpdateUI(DebuggerState.PauseHalt);
 
         /// <summary>
         /// 

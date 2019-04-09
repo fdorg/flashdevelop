@@ -67,10 +67,6 @@ namespace ProjectManager
 
     public class PluginMain : IPlugin
     {
-        const string pluginName = "ProjectManager";
-        const string pluginAuth = "FlashDevelop Team";
-        const string pluginGuid = "30018864-fadd-1122-b2a5-779832cbbf23";
-        const string pluginHelp = "www.flashdevelop.org/community/";
         private string pluginDesc = "Adds project management and building to FlashDevelop.";
 
         private FDMenus menus;
@@ -78,21 +74,22 @@ namespace ProjectManager
         private BuildActions buildActions;
         private ProjectActions projectActions;
         private FlashDevelopActions flashDevelopActions;
-        private Queue<String> openFileQueue;
+        private Queue<string> openFileQueue;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Project activeProject;
         private OpenResourceForm projectResources;
-        private Boolean runOutput;
-        private Boolean buildingAll;
-        private Queue<String> buildQueue;
+        private bool runOutput;
+        private bool buildingAll;
+        private Queue<string> buildQueue;
         private Timer buildTimer;
         private bool listenToPathChange;
         private ProjectManagerUIStatus uiStatus = ProjectManagerUIStatus.NotBuilding;
         private bool firstRun;
 
-        private ProjectTreeView Tree { get { return pluginUI.Tree; } }
-        public static IMainForm MainForm { get { return PluginBase.MainForm; } }
+        private ProjectTreeView Tree => pluginUI.Tree;
+        public static IMainForm MainForm => PluginBase.MainForm;
+
         public static ProjectManagerSettings Settings;
 
         const EventType eventMask = EventType.UIStarted | EventType.UIClosing | EventType.FileOpening
@@ -101,8 +98,8 @@ namespace ProjectManager
 
         #region Load/Save Settings
 
-        static string SettingsDir { get { return Path.Combine(PathHelper.DataDir, pluginName); } }
-        static string SettingsPath { get { return Path.Combine(SettingsDir, "Settings.fdb"); } }
+        static string SettingsDir => Path.Combine(PathHelper.DataDir, nameof(ProjectManager));
+        static string SettingsPath => Path.Combine(SettingsDir, "Settings.fdb");
 
         public void LoadSettings()
         {
@@ -115,7 +112,7 @@ namespace ProjectManager
             }
             else
             {
-                Object obj = ObjectSerializer.Deserialize(SettingsPath, Settings);
+                object obj = ObjectSerializer.Deserialize(SettingsPath, Settings);
                 Settings = (ProjectManagerSettings)obj;
                 PatchSettings();
             }
@@ -133,7 +130,7 @@ namespace ProjectManager
             // remove 'obj' from the excluded directory names - now /obj a hidden directory
             if (Settings.ExcludedDirectories.Length > 0 && Settings.ExcludedDirectories[0] == "obj")
             {
-                List<String> ex = new List<string>(Settings.ExcludedDirectories);
+                List<string> ex = new List<string>(Settings.ExcludedDirectories);
                 ex.RemoveAt(0);
                 Settings.ExcludedDirectories = ex.ToArray();
                 this.SaveSettings();
@@ -157,15 +154,21 @@ namespace ProjectManager
 
         #region Plugin MetaData
 
-        public Int32 Api { get { return 1; } }
-        public string Name { get { return pluginName; } }
-        public string Guid { get { return pluginGuid; } }
-        public string Author { get { return pluginAuth; } }
-        public string Description { get { return pluginDesc; } }
-        public string Help { get { return pluginHelp; } }
+        public int Api => 1;
+
+        public string Name => "ProjectManager";
+
+        public string Guid => "30018864-fadd-1122-b2a5-779832cbbf23";
+
+        public string Author => "FlashDevelop Team";
+
+        public string Description => pluginDesc;
+
+        public string Help => "www.flashdevelop.org/community/";
+
         [Browsable(false)] // explicit implementation so we can reuse the "Settings" var name
-        object IPlugin.Settings { get { return Settings; } }
-        
+        object IPlugin.Settings => Settings;
+
         #endregion
         
         #region Initialize/Dispose
@@ -174,7 +177,7 @@ namespace ProjectManager
         {
             LoadSettings();
             pluginDesc = TextHelper.GetString("Info.Description");
-            openFileQueue = new Queue<String>();
+            openFileQueue = new Queue<string>();
 
             Icons.Initialize(MainForm);
             EventManager.AddEventHandler(this, eventMask);
@@ -349,7 +352,7 @@ namespace ProjectManager
 
         #region Plugin Events
 
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             TextEvent te = e as TextEvent;
             DataEvent de = e as DataEvent;
@@ -606,8 +609,8 @@ namespace ProjectManager
         bool RestoreProjectSession(Project project)
         {
             if (project == null || !Settings.UseProjectSessions) return false;
-            String hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
-            String sessionFile = Path.Combine(SettingsDir, "Sessions", hash + ".fdb");
+            string hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
+            string sessionFile = Path.Combine(SettingsDir, "Sessions", hash + ".fdb");
             if (File.Exists(sessionFile))
             {
                 PluginBase.MainForm.CallCommand("RestoreSession", sessionFile);
@@ -621,10 +624,10 @@ namespace ProjectManager
             Project project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
 
             if (project == null || !Settings.UseProjectSessions) return;
-            String hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
-            String sessionDir = Path.Combine(SettingsDir, "Sessions");
+            string hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
+            string sessionDir = Path.Combine(SettingsDir, "Sessions");
             if (!Directory.Exists(sessionDir)) Directory.CreateDirectory(sessionDir);
-            String sessionFile = Path.Combine(sessionDir, hash + ".fdb");
+            string sessionFile = Path.Combine(sessionDir, hash + ".fdb");
             PluginBase.MainForm.CallCommand("SaveSession", sessionFile);
         }
 
@@ -694,8 +697,8 @@ namespace ProjectManager
 
         void CloseProject(bool internalClosing)
         {
-            Project project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
-            if (project == null) return; // already closed
+            var project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
+            if (project is null) return; // already closed
             listenToPathChange = false;
 
             // save project prefs
@@ -989,11 +992,7 @@ namespace ProjectManager
 
         private bool DisabledForBuild
         {
-            get { return menus.DisabledForBuild; }
-            set
-            {
-                menus.DisabledForBuild = pluginUI.Menu.DisabledForBuild = value;
-            }
+            set => menus.DisabledForBuild = pluginUI.Menu.DisabledForBuild = value;
         }
 
         public void UpdateUIStatus(ProjectManagerUIStatus status)
@@ -1452,12 +1451,12 @@ namespace ProjectManager
         /// </summary>
         private void TreeShowShellMenu()
         {
-            String parentDir = null;
+            string parentDir = null;
             ShellContextMenu scm = new ShellContextMenu();
             List<FileInfo> selectedPathsAndFiles = new List<FileInfo>();
-            for (Int32 i = 0; i < Tree.SelectedPaths.Length; i++)
+            for (int i = 0; i < Tree.SelectedPaths.Length; i++)
             {
-                String path = Tree.SelectedPaths[i];
+                string path = Tree.SelectedPaths[i];
                 // only select files in the same directory
                 if (parentDir == null) parentDir = Path.GetDirectoryName(path);
                 else if (Path.GetDirectoryName(path) != parentDir) continue;
@@ -1490,7 +1489,7 @@ namespace ProjectManager
 
         private void BackgroundBuild()
         {
-            foreach (String path in Tree.SelectedPaths)
+            foreach (string path in Tree.SelectedPaths)
             {
                 if (IsBuildable(path) && !buildQueue.Contains(path))
                 {
@@ -1508,7 +1507,7 @@ namespace ProjectManager
             }
         }
 
-        void OnBuildTimerTick(Object sender, EventArgs e)
+        void OnBuildTimerTick(object sender, EventArgs e)
         {
             buildTimer.Stop();
             if (buildTimer.Tag == null)
@@ -1518,7 +1517,7 @@ namespace ProjectManager
                     Project project = ProjectLoader.Load(buildQueue.Dequeue());
                     if (project != null)
                     {
-                        Boolean debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
+                        bool debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
                         this.buildActions.Build(project, false, debugging);
                     }
                 }
@@ -1537,9 +1536,9 @@ namespace ProjectManager
             }
         }
 
-        private bool IsBuildable(String path)
+        private bool IsBuildable(string path)
         {
-            String ext = Path.GetExtension(path).ToLower();
+            string ext = Path.GetExtension(path).ToLower();
             if (FileInspector.IsAS2Project(path, ext)) return true;
             else if (FileInspector.IsAS3Project(path, ext)) return true;
             else if (FileInspector.IsHaxeProject(path, ext)) return true;
@@ -1548,7 +1547,7 @@ namespace ProjectManager
 
         private void AddSourcePath()
         {
-            String path = Tree.SelectedPath;
+            string path = Tree.SelectedPath;
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
@@ -1563,7 +1562,7 @@ namespace ProjectManager
 
         private void RemoveSourcePath()
         {
-            String path = Tree.SelectedPath;
+            string path = Tree.SelectedPath;
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
@@ -1576,7 +1575,7 @@ namespace ProjectManager
 
         private void CopyClassName()
         {
-            String path = Tree.SelectedPath;
+            string path = Tree.SelectedPath;
             DataEvent copyCP = new DataEvent(EventType.Command, "ASCompletion.GetClassPath", path);
             EventManager.DispatchEvent(this, copyCP);
             if (copyCP.Handled) // UI needs refresh on clipboard change...
@@ -1587,7 +1586,7 @@ namespace ProjectManager
 
         private void FindAndReplace()
         {
-            String path = Tree.SelectedPath;
+            string path = Tree.SelectedPath;
             if (path != null && File.Exists(path))
             {
                 PluginBase.MainForm.CallCommand("FindAndReplaceFrom", path);
@@ -1604,7 +1603,7 @@ namespace ProjectManager
 
             if (paths.Count > 0)
             {
-                String path = String.Join(";", paths.ToArray());
+                string path = string.Join(";", paths.ToArray());
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }

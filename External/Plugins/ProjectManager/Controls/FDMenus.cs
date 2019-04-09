@@ -65,7 +65,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector = new ToolStripComboBoxEx();
             ConfigurationSelector.Name = "ConfigurationSelector";
             ConfigurationSelector.ToolTipText = TextHelper.GetString("ToolTip.SelectConfiguration");
-            ConfigurationSelector.Items.AddRange(new string[] { TextHelper.GetString("Info.Debug"), TextHelper.GetString("Info.Release") });
+            ConfigurationSelector.Items.AddRange(new object[] { TextHelper.GetString("Info.Debug"), TextHelper.GetString("Info.Release") });
             ConfigurationSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             ConfigurationSelector.AutoSize = false;
             ConfigurationSelector.Enabled = false;
@@ -94,9 +94,7 @@ namespace ProjectManager.Controls
         private int GetThemeWidth(string themeId, int defaultValue)
         {
             string strValue = PluginBase.MainForm.GetThemeValue(themeId);
-            int intValue;
-            if (int.TryParse(strValue, out intValue)) return intValue;
-            else return defaultValue;
+            return int.TryParse(strValue, out var intValue) ? intValue : defaultValue;
         }
 
         public void EnableTargetBuildSelector(bool enabled)

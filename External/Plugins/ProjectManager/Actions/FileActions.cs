@@ -33,7 +33,7 @@ namespace ProjectManager.Actions
     /// </summary>
     public class FileActions
     {
-        IMainForm mainForm;
+        readonly IMainForm mainForm;
         string storedDirectory;
         string lastFileFromTemplate;
         FlashDevelopActions fdActions;
@@ -47,8 +47,8 @@ namespace ProjectManager.Actions
 
         public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
         {
-            this.fdActions = fdActions;
             this.mainForm = mainForm;
+            this.fdActions = fdActions;
         }
 
         private void PushCurrentDirectory()
@@ -216,7 +216,7 @@ namespace ProjectManager.Actions
                     }
 
                     project.Save();
-                    OnProjectModified(new string[] { filePath });
+                    OnProjectModified(new[] { filePath });
                 }
             }
         }
@@ -655,41 +655,17 @@ namespace ProjectManager.Actions
 
         #region Event Helpers
 
-        private void OnFileCreated(string path)
-        {
-            if (FileCreated != null)
-                FileCreated(path);
-        }
+        private void OnFileCreated(string path) => FileCreated?.Invoke(path);
 
-        private void OnFileMoved(string fromPath, string toPath)
-        {
-            if (FileMoved != null)
-                FileMoved(fromPath, toPath);
-        }
+        private void OnFileMoved(string fromPath, string toPath) => FileMoved?.Invoke(fromPath, toPath);
 
-        private void OnFilePasted(string fromPath, string toPath)
-        {
-            if (FileCopied != null)
-                FileCopied(fromPath, toPath);
-        }
+        private void OnFilePasted(string fromPath, string toPath) => FileCopied?.Invoke(fromPath, toPath);
 
-        private void OnFileDeleted(string path)
-        {
-            if (FileDeleted != null)
-                FileDeleted(path);
-        }
+        private void OnFileDeleted(string path) => FileDeleted?.Invoke(path);
 
-        private void OnProjectModified(string[] paths)
-        {
-            if (ProjectModified != null)
-                ProjectModified(paths);
-        }
+        private void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
 
-        private void OnOpenFile(string path)
-        {
-            if (OpenFile != null)
-                OpenFile(path);
-        }
+        private void OnOpenFile(string path) => OpenFile?.Invoke(path);
 
         #endregion
 

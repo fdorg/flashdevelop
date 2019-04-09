@@ -194,10 +194,7 @@ namespace FlashDebugger
                 }
                 initSession();
                 m_CurrentState = DebuggerState.Running;
-                if (StartedEvent != null)
-                {
-                    StartedEvent(this);
-                }
+                StartedEvent?.Invoke(this);
                 try
                 {
                     waitTilHalted();
@@ -234,7 +231,7 @@ namespace FlashDebugger
                         {
                             // resume before we disconnect, this is in case of ExceptionHalt
                             m_Session.resume(); // just throw for now
-                            if (ThreadsEvent != null) ThreadsEvent(this);
+                            ThreadsEvent?.Invoke(this);
                         }
                         continue;
                     }
@@ -251,7 +248,7 @@ namespace FlashDebugger
                             {
                                 m_Session.resume();
                             }
-                            if (ThreadsEvent != null) ThreadsEvent(this);
+                            ThreadsEvent?.Invoke(this);
                         }
                         catch (NotSuspendedException)
                         {
@@ -319,10 +316,7 @@ namespace FlashDebugger
                                     }
                                     else
                                     {
-                                        if (ThreadsEvent != null)
-                                        {
-                                            ThreadsEvent(this);
-                                        }
+                                        ThreadsEvent?.Invoke(this);
                                     }
                                 }
                                 else
@@ -440,15 +434,12 @@ namespace FlashDebugger
                                     stop = true;
                                     continue;
                                 }
-                                else if (!m_Session.isSuspended())
+                                if (!m_Session.isSuspended())
                                 {
                                     m_RequestPause = false;
                                     m_CurrentState = DebuggerState.Running;
                                     TraceManager.AddAsync(TextHelper.GetString("Info.CouldNotHalt"));
-                                    if (PauseFailedEvent != null)
-                                    {
-                                        PauseFailedEvent(this);
-                                    }
+                                    PauseFailedEvent?.Invoke(this);
                                 }
                             }
                             catch (ArgumentException)
@@ -506,10 +497,7 @@ namespace FlashDebugger
             }
             finally
             {
-                if (DisconnectedEvent != null)
-                {
-                    DisconnectedEvent(this);
-                }
+                DisconnectedEvent?.Invoke(this);
                 exitSession();
             }
         }
