@@ -606,24 +606,18 @@ namespace ProjectManager
 
         #region Custom Methods
 
-        bool RestoreProjectSession(Project project)
+        void RestoreProjectSession(IProject project)
         {
-            if (project == null || !Settings.UseProjectSessions) return false;
-            string hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
-            string sessionFile = Path.Combine(SettingsDir, "Sessions", hash + ".fdb");
-            if (File.Exists(sessionFile))
-            {
-                PluginBase.MainForm.CallCommand("RestoreSession", sessionFile);
-                return true;
-            }
-            return false;
+            if (project is null || !Settings.UseProjectSessions) return;
+            var hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
+            var sessionFile = Path.Combine(SettingsDir, "Sessions", hash + ".fdb");
+            if (File.Exists(sessionFile)) PluginBase.MainForm.CallCommand("RestoreSession", sessionFile);
         }
 
         void SaveProjectSession()
         {
             Project project = Tree.Projects.Count > 0 ? Tree.Projects[0] : null; // TODO we need a main project/solution
-
-            if (project == null || !Settings.UseProjectSessions) return;
+            if (project is null || !Settings.UseProjectSessions) return;
             string hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
             string sessionDir = Path.Combine(SettingsDir, "Sessions");
             if (!Directory.Exists(sessionDir)) Directory.CreateDirectory(sessionDir);
@@ -671,7 +665,7 @@ namespace ProjectManager
             UpdateUIStatus(ProjectManagerUIStatus.NotBuilding);
         }
 
-        private void SetActiveProject(Project project)
+        void SetActiveProject(Project project)
         {
             activeProject = project;
 
@@ -739,7 +733,7 @@ namespace ProjectManager
             TabColors.UpdateTabColors(Settings);
         }
         
-        public void OpenPanel() => this.pluginPanel.Show();
+        public void OpenPanel() => pluginPanel.Show();
 
         public void OpenLastProject()
         {
