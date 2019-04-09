@@ -14,82 +14,58 @@ namespace FlashDebugger
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "FlashDebugger";
-        private String pluginHelp = "http://www.flashdevelop.org/community/";
-        private String pluginDesc = "Hosts the ActionScript 3 debugger in FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
+        private string pluginDesc = "Hosts the ActionScript 3 debugger in FlashDevelop.";
         private PanelsHelper panelsHelpers;
         private MenusHelper menusHelper;
-        private String settingFilename;
+        private string settingFilename;
         private Image pluginImage;
-        private Boolean firstRun = false;
+        private bool firstRun;
 
-        static internal Settings settingObject;
-        static internal LiveDataTip liveDataTip;
-        static internal DebuggerManager debugManager;
-        static internal BreakPointManager breakPointManager;
-        static internal WatchManager watchManager;
-        static internal Boolean disableDebugger = false;
+        internal static Settings settingObject;
+        internal static LiveDataTip liveDataTip;
+        internal static DebuggerManager debugManager;
+        internal static BreakPointManager breakPointManager;
+        internal static WatchManager watchManager;
+        internal static bool disableDebugger;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name => nameof(FlashDebugger);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return PanelsHelper.localsGuid; }
-        }
+        public string Guid => PanelsHelper.localsGuid;
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author => "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description => pluginDesc;
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help => "http://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -121,7 +97,7 @@ namespace FlashDebugger
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (debugManager == null) return;
             switch (e.Type)
@@ -237,7 +213,7 @@ namespace FlashDebugger
         /// </summary>
         private void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "FlashDebugger");
+            string dataPath = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
@@ -299,7 +275,7 @@ namespace FlashDebugger
             }
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
+                object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
                 settingObject = (Settings)obj;
             }
         }
@@ -307,10 +283,7 @@ namespace FlashDebugger
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, settingObject);
 
         #endregion
 
