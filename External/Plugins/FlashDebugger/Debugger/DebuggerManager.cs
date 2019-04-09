@@ -105,7 +105,8 @@ namespace FlashDebugger
                 try
                 {
                     var bridgeSetup = new BridgeSetup(false);
-                    if (PluginMain.settingObject.JavaHome is string path && Directory.Exists(path))
+                    if (PluginMain.settingObject.JavaHome is string path && Directory.Exists(path)
+                        && File.Exists(Path.Combine(path, "bin", "java.exe")))
                     {
                         bridgeSetup.JavaHome = path;
                     }

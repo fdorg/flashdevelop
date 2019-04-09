@@ -13,28 +13,24 @@ namespace FlashDebugger
     [DefaultProperty("Path")]
     public class Folder
     {
-        private string m_Value;
+        private string path;
 
-        public Folder()
+        public Folder() : this(string.Empty)
         {
-            m_Value = "";
         }
 
         public Folder(string value)
         {
-            m_Value = value;
+            path = value;
         }
 
-        public override string ToString()
-        {
-            return m_Value;
-        }
+        public override string ToString() => path;
 
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string Path
         {
-            get { return m_Value; }
-            set { m_Value = value; }
+            get => path;
+            set => path = value;
         }
     }
 
@@ -139,7 +135,6 @@ namespace FlashDebugger
                     return;
 
                 m_BreakOnThrow = value;
-
                 BreakOnThrowChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -149,6 +144,7 @@ namespace FlashDebugger
 
         [DisplayName("Java Home Directory")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
+        [Description("The JDK software is installed on your computer, for example, at C:\\Program Files (x86)\\Java\\jdk1.8.0_202")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string JavaHome
         {
@@ -169,7 +165,6 @@ namespace FlashDebugger
                     return;
 
                 m_CombineInherited = value;
-
                 DataTreeDisplayChanged?.Invoke(this, EventArgs.Empty);
             }
         }
