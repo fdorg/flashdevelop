@@ -144,7 +144,7 @@ namespace FlashDebugger
 
         [DisplayName("Java Home Directory")]
         [LocalizedCategory("FlashDebugger.Category.Misc")]
-        [Description("The JDK software is installed on your computer, for example, at C:\\Program Files (x86)\\Java\\jdk1.8.0_202")]
+        [Description("The JDK software is installed on your computer, for example, at C:\\Program Files (x86)\\Java\\jdk1.8.0_202 for FlashDevelop.exe or C:\\Program Files\\Java\\jdk1.8.0_202 for FlashDevelop64.exe")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string JavaHome
         {
