@@ -531,6 +531,7 @@ namespace HaXeContext
             {
                 if (majorVersion < 9)
                 {
+                    // for example: HXML MultipTarget
                     var value = project.CompilerOptions.Additional.FirstOrDefault(it => it.StartsWithOrdinal("-swf-version "));
                     if (value != null) ParseVersion(value.Substring("-swf-version ".Length), ref majorVersion, ref minorVersion);
                 }
