@@ -453,8 +453,7 @@ namespace HaXeContext
                 }
             }
             else if (lang == "swf") lang = "flash";
-            features.Directives = new List<string>();
-            features.Directives.Add(lang);
+            features.Directives = new List<string> {lang};
             haxeTarget = lang;
 
             //
@@ -528,19 +527,33 @@ namespace HaXeContext
             }
 
             // swf-libs
-            if (project != null && haxeTarget == "flash" && majorVersion >= 9)
+            if (project != null && haxeTarget == "flash")
             {
-                foreach(LibraryAsset asset in project.LibraryAssets)
-                    if (asset.IsSwc)
-                    {
-                        string path = project.GetAbsolutePath(asset.Path);
-                        if (File.Exists(path)) AddPath(path);
-                    }
-                foreach(string p in project.CompilerOptions.Additional)
-                    if (p.IndexOfOrdinal("-swf-lib ") == 0) {
-                        string path = project.GetAbsolutePath(p.Substring(9));
-                        if (File.Exists(path)) AddPath(path);
-                    }
+                if (majorVersion < 9)
+                {
+                    // for example: HXML MultipTarget
+                    var value = project.CompilerOptions.Additional.FirstOrDefault(it => it.StartsWithOrdinal("-swf-version "));
+                    if (value != null) ParseVersion(value.Substring("-swf-version ".Length), ref majorVersion, ref minorVersion);
+                }
+                if (majorVersion >= 9)
+                {
+                    foreach(LibraryAsset asset in project.LibraryAssets)
+                        if (asset.IsSwc)
+                        {
+                            var path = project.GetAbsolutePath(asset.Path);
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                    foreach(var line in project.CompilerOptions.Additional)
+                        if (line.StartsWithOrdinal("-swf-lib ")) {
+                            var path = project.GetAbsolutePath(line.Substring(9/*"-swf-lib ".Length*/));
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                        else if (line.StartsWithOrdinal("-swf-lib-extern "))
+                        {
+                            var path = project.GetAbsolutePath(line.Substring(16/*"-swf-lib-extern ".Length*/));
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                }
             }
 
             // add haxe libraries
