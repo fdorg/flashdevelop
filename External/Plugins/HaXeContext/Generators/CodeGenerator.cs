@@ -12,6 +12,7 @@ using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Utilities;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
@@ -21,6 +22,7 @@ namespace HaXeContext.Generators
         EnumConstructor = GeneratorJobType.User << 1,
         Switch = GeneratorJobType.User << 2,
         IVariable = GeneratorJobType.User << 3,
+        ConvertStaticMethodCallToStaticExtensionCall = GeneratorJobType.User << 4,
     }
 
     internal class CodeGenerator : ASGenerator
@@ -50,6 +52,11 @@ namespace HaXeContext.Generators
             {
                 var label = TextHelper.GetString("Info.GenerateSwitch");
                 options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
+            }
+            if (CanShowConvertStaticMethodCallToStaticExtensionCall(sci, position, expr))
+            {
+                var label = TextHelper.GetString("Label.ConvertStaticMethodCallToStaticExtensionCall");
+                options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, () => Generate(GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, sci, expr)));
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
@@ -112,8 +119,7 @@ namespace HaXeContext.Generators
         protected override bool CanShowGetSetList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
-            if (inClass.Flags.HasFlag(FlagType.Abstract)) return false;
-            return base.CanShowGetSetList(sci, position, expr, found);
+            return !inClass.Flags.HasFlag(FlagType.Abstract) && base.CanShowGetSetList(sci, position, expr, found);
         }
 
         /// <inheritdoc />
@@ -547,6 +553,14 @@ namespace HaXeContext.Generators
                        && type.Members.Items.Any(it => it.Flags.HasFlag(FlagType.Variable)));
         }
 
+        static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, int position, ASResult expr)
+        {
+            return expr.Member is MemberModel member
+                   && member.Parameters?.Count > 0
+                   && (member.LineFrom != sci.CurrentLine || !expr.Context.BeforeBody)
+                   && member.Flags.HasFlag(FlagType.Static | FlagType.Function);
+        }
+
         static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)
         {
             switch (job)
@@ -567,7 +581,129 @@ namespace HaXeContext.Generators
                     }
                     finally { sci.EndUndoAction(); }
                     break;
+                case GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        ConvertStaticMethodCallToStaticExtensionCall(sci, expr);
+                    }
+                    finally { sci.EndUndoAction(); }
+                    break;
             }
+        }
+
+        internal static void ConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, ASResult expr)
+        {
+            var member = expr.Member;
+            var inClass = expr.InClass;
+            var isImported = ASContext.Context.IsImported(inClass, sci.CurrentLine);
+            var caretPos = sci.CurrentPos;
+            var startPos = expr.Context.PositionExpression;
+            var endPos = sci.LineEndPosition(expr.Context.ContextFunction?.LineTo ?? expr.Context.ContextMember.LineFrom);
+            endPos = GetEndOfStatement(startPos, endPos, sci);
+            var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(caretPos, true));
+            var ctx = parameters[0].result.Context;
+            var value = ctx.Value;
+            if (ctx.SubExpressions != null)
+            {
+                var startIndex = 0;
+                for (var i = ctx.SubExpressions.Count - 1; i >= 0; i--)
+                {
+                    var pattern = ".#" + i + "~";
+                    startIndex = value.IndexOf(pattern, startIndex);
+                    if (startIndex == -1) continue;
+                    var newValue = ctx.SubExpressions[i];
+                    value = value.Replace(pattern, newValue);
+                    startIndex += newValue.Length;
+                }
+            }
+            value = value.Replace(".[", "[");
+            if (ctx.WordBefore == "new") value = "new " + value;
+            var statement = value + "." + member.Name + "(" + string.Join(", ", parameters.Skip(1).Select(it => it.result.Context.Value)) + ");";
+            sci.SetSel(startPos, endPos);
+            sci.ReplaceSel(statement);
+            if (isImported) return;
+            caretPos += value.Length - (expr.Path.Length - member.Name.Length);
+            caretPos += InsertUsing(inClass);
+            sci.SetSel(caretPos, caretPos);
+        }
+
+        /// <summary>
+        /// Add an 'using' statement in the current file
+        /// </summary>
+        /// <param name="member">Generates 'using {member.Type};'</param>
+        /// <returns>Inserted characters count</returns>
+        static int InsertUsing(MemberModel member)
+        {
+            var statement = string.Empty;
+            if (member.InFile is FileModel inFile && member.Name != inFile.Module)
+            {
+                if (!string.IsNullOrEmpty(inFile.Package)) statement = inFile.Package + ".";
+                statement += inFile.Module + "." + member.Name;
+            }
+            if (string.IsNullOrEmpty(statement)) statement = member.Type;
+            var sci = ASContext.CurSciControl;
+            var newLineMarker = LineEndDetector.GetNewLineMarker(sci.EOLMode);
+            statement = "using " + statement + ";" + newLineMarker;
+            int position;
+            var ctx = ASContext.Context;
+            var cFile = ctx.CurrentModel;
+            var line = ctx.InPrivateSection ? cFile.PrivateSectionIndex : 0;
+            if (cFile.InlinedRanges != null)
+            {
+                position = sci.CurrentPos;
+                foreach (var range in cFile.InlinedRanges)
+                {
+                    if (position > range.Start && position < range.End)
+                    {
+                        line = sci.LineFromPosition(range.Start) + 1;
+                        break;
+                    }
+                }
+            }
+            var firstLine = line;
+            var found = false;
+            var indent = 0;
+            var skipIfDef = 0;
+            var importKey = ctx.Features.importKey;
+            var importKeyAlt = ctx.Features.importKeyAlt;
+            var importKeyAltLength = importKeyAlt.Length;
+            var curLine = sci.CurrentLine;
+            while (line < curLine)
+            {
+                var txt = sci.GetLine(line++).TrimStart();
+                if (txt.StartsWith("package") || txt.StartsWithOrdinal(importKey)) firstLine = line;
+                else if (txt.StartsWithOrdinal("#if") && txt.IndexOfOrdinal("#end") == -1) skipIfDef++;
+                else if (skipIfDef > 0)
+                {
+                    if (txt.StartsWithOrdinal("#end")) skipIfDef--;
+                }
+                else if (txt.Length > importKeyAltLength && txt.StartsWithOrdinal(importKeyAlt) && txt[importKeyAltLength] <= 32)
+                {
+                    found = true;
+                    indent = sci.GetLineIndentation(line - 1);
+                    var m = ASFileParserRegexes.Import.Match(txt);
+                    if (m.Success && CaseSensitiveImportComparer.CompareImports(m.Groups["package"].Value, member.Type) > 0)
+                    {
+                        line--;
+                        break;
+                    }
+                }
+                else if (found)
+                {
+                    line--;
+                    break;
+                }
+            }
+            if (line == curLine) line = firstLine;
+            position = sci.PositionFromLine(line);
+            firstLine = sci.FirstVisibleLine;
+            sci.SetSel(position, position);
+            sci.ReplaceSel(statement);
+            sci.SetLineIndentation(line, indent);
+            sci.LineScroll(0, firstLine - sci.FirstVisibleLine + 1);
+            ctx.RefreshContextCache(member.Type);
+            return sci.GetLine(line).Length;
         }
 
         static void GenerateEnumConstructor(ScintillaControl sci, ASResult expr, ClassModel inClass)

@@ -1708,6 +1708,57 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2473");
             }
         }
+        
+        static IEnumerable<TestCaseData> ConvertStaticMethodCallToStaticExtensionCallIssue1565TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall"))
+                    .SetName("var v = StringTools.trim(' string ') -> var v = ' string '.trim()")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall2", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall2"))
+                    .SetName("var v = StringTools.lpad('10' , 8, 0) -> var v = '10'.lpad(8, 0)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall3", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall3"))
+                    .SetName("var v = Lambda.count([1, 2, 3]) -> var s = [1, 2, 3].count()")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall4", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall4"))
+                    .SetName("var v = Reflect.isObject({x:0, y:1}) -> var v = {x:0, y:1}.isObject()")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall5", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall5"))
+                    .SetName("private var v = Reflect.isObject({x:0, y:1}) -> private var v = {x:0, y:1}.isObject()")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall6", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall6"))
+                    .SetName("private function foo() return Reflect.isObject({x:0, y:1}) -> private function foo() return {x:0, y:1}.isObject()")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall7", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall7"))
+                    .SetName("var v = StringTools.lpad(Std.string(1), '0', 2) -> var v = Std.string(1).lpad('0', 2)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall8", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall8"))
+                    .SetName("var v = StringTools.lpad(someVar, '0', 2) -> var v = someVar.lpad('0', 2)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall9", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall9"))
+                    .SetName("var v = StringTools.lpad('-${someVar}', '0', 20) -> var v = '-${someVar}'.lpad('0', 20)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall10", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall10"))
+                    .SetName("var v = StringTools.lpad('12345'.split('')[0].charCodeAt(0), '0', 20) -> var v = '12345'.split('')[0].charCodeAt(0).lpad('0', 20)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+                yield return new TestCaseData("BeforeConvertStaticMethodCallIntoStaticExtensionsCall11", GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, true)
+                    .Returns(ReadAllText("AfterConvertStaticMethodCallIntoStaticExtensionsCall11"))
+                    .SetName("var v = Lambda.count(new Array<Int>()) -> var v = new Array<Int>().count()")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1565");
+            }
+        }
 
         [
             Test,
@@ -1777,6 +1828,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
             TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),
+            TestCaseSource(nameof(ConvertStaticMethodCallToStaticExtensionCallIssue1565TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
