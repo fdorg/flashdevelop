@@ -1095,7 +1095,6 @@ namespace HaXeContext.Completion
         {
             if (!string.IsNullOrEmpty(expression))
             {
-                var ctx = ASContext.Context;
                 // for example: 1.0.<complete>, 5e-324.<complete>
                 if (char.IsDigit(expression, 0)
                     // for example: -1.<complete>
@@ -1138,6 +1137,7 @@ namespace HaXeContext.Completion
                         return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
                     }
                 }
+                var ctx = ASContext.Context;
                 if (context.SubExpressions != null)
                 {
                     var count = context.SubExpressions.Count - 1;
@@ -1152,6 +1152,11 @@ namespace HaXeContext.Completion
                             var type = ctx.ResolveToken(subExpression, inFile);
                             if (type.IsVoid()) break;
                             expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
+                            if (count == 0)
+                            {
+                                // transform #0~ to []
+                                context.Value = context.SubExpressions[0];
+                            }
                             context.SubExpressions.RemoveAt(i);
                             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
                         }

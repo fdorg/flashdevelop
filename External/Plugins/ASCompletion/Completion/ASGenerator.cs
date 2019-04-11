@@ -2578,18 +2578,18 @@ namespace ASCompletion.Completion
 
         public static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
         {
-            List<FunctionParameter> prms = new List<FunctionParameter>();
-            StringBuilder sb = new StringBuilder();
-            List<ASResult> types = new List<ASResult>();
-            bool isFuncStarted = false;
-            bool doBreak = false;
-            bool writeParam = false;
-            int subClosuresCount = 0;
+            var prms = new List<FunctionParameter>();
+            var sb = new StringBuilder();
+            var types = new List<ASResult>();
+            var isFuncStarted = false;
+            var doBreak = false;
+            var writeParam = false;
+            var subClosuresCount = 0;
             var arrCount = 0;
-            IASContext ctx = ASContext.Context;
+            var ctx = ASContext.Context;
             char[] charsToTrim = {' ', '\t', '\r', '\n'};
-            int counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
-            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
             while (p < counter && !doBreak)
             {
@@ -2604,7 +2604,6 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(p++);
-                ASResult result;
                 if (c == '(' && !isFuncStarted)
                 {
                     if (sb.ToString().Trim(charsToTrim).Length == 0) isFuncStarted = true;
@@ -2637,7 +2636,7 @@ namespace ASCompletion.Completion
                             {
                                 if (!sb.ToString().Contains("<"))
                                 {
-                                    result = ASComplete.GetExpressionType(sci, p);
+                                    var result = ASComplete.GetExpressionType(sci, p);
                                     if (result.Type != null) result.Member = null;
                                     else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
                                     types.Insert(0, result);
@@ -2653,45 +2652,38 @@ namespace ASCompletion.Completion
                 if (writeParam)
                 {
                     writeParam = false;
-                    string trimmed = sb.ToString().Trim(charsToTrim);
+                    var trimmed = sb.ToString().Trim(charsToTrim);
                     var trimmedLength = trimmed.Length;
                     if (trimmedLength > 0)
                     {
                         var last = trimmed[trimmedLength - 1];
                         var type = last == '}' && trimmed.StartsWith(ctx.Features.functionKey)
-                                   ? ctx.ResolveType("Function", null)
-                                   : ctx.ResolveToken(trimmed, ctx.CurrentModel);
-                        if (!type.IsVoid()) result = new ASResult {Type = type};
-                        else result = ASComplete.GetExpressionType(sci, p - 1, false, true);
+                            ? ctx.ResolveType("Function", null)
+                            : ctx.ResolveToken(trimmed, ctx.CurrentModel);
+                        var result = type.IsVoid()
+                            ? ASComplete.GetExpressionType(sci, p - 1, false, true)
+                            : new ASResult {Type = type, Context = new ASExpr {Value = trimmed}};
                         if (result != null && !result.IsNull())
                         {
                             if (characterClass.Contains(last)) types.Insert(0, result);
                             else types.Add(result);
                         }
-                        if (types.Count == 0)
-                        {
-                            result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.objectKey, null);
-                            types.Add(result);
-                        }
+                        if (types.Count == 0) types.Add(new ASResult {Type = ctx.ResolveType(ctx.Features.objectKey, null)});
 
                         result = types[0];
                         string paramName = null;
-                        string paramType = null;
-                        string paramQualType = null;
+                        string paramType;
+                        string paramQualType;
 
-                        if (result.Member == null)
+                        if (result.Member is null)
                         {
                             paramType = result.Type.Name;
                             paramQualType = result.Type.QualifiedName;
                         }
                         else
                         {
-                            if (result.Member.Name != null)
-                            {
-                                paramName = result.Member.Name.Trim('@');
-                            }
-                            if (result.Member.Type == null)
+                            if (result.Member.Name != null) paramName = result.Member.Name.Trim('@');
+                            if (result.Member.Type is null)
                             {
                                 paramType = ctx.Features.dynamicKey;
                                 paramQualType = ctx.Features.dynamicKey;
@@ -2705,8 +2697,9 @@ namespace ASCompletion.Completion
                                     paramType = ctx.CodeComplete.ToFunctionDeclarationString(result.Member);
                                 }
                                 else paramType = MemberModel.FormatType(GetShortType(result.Member.Type));
-                                if (result.InClass == null) paramQualType = result.Type.QualifiedName;
-                                else paramQualType = GetQualifiedType(paramType, result.InClass);
+                                paramQualType = result.InClass is null
+                                    ? result.Type.QualifiedName
+                                    : GetQualifiedType(paramType, result.InClass);
                             }
                         }
                         prms.Add(new FunctionParameter(paramName, paramType, paramQualType, result));
@@ -4383,27 +4376,24 @@ namespace ASCompletion.Completion
         /// <returns>Inserted characters count</returns>
         public static int InsertImport(MemberModel member, bool fixScrolling)
         {
-            ScintillaControl sci = ASContext.CurSciControl;
-            FileModel cFile = ASContext.Context.CurrentModel;
-            int position = sci.CurrentPos;
-            int curLine = sci.LineFromPosition(position);
-
-            string fullPath = member.Type;
+            var fullPath = member.Type;
             if ((member.Flags & (FlagType.Class | FlagType.Enum | FlagType.TypeDef | FlagType.Struct)) > 0)
             {
-                FileModel inFile = member.InFile;
+                var inFile = member.InFile;
                 if (inFile != null && inFile.Module == member.Name && inFile.Package != "")
                     fullPath = inFile.Package + "." + inFile.Module;
                 fullPath = CleanType(fullPath);
             }
-            string nl = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-            string statement = "import " + fullPath + ";" + nl;
-
-            // locate insertion point
-            int line = (ASContext.Context.InPrivateSection) ? cFile.PrivateSectionIndex : 0;
+            var sci = ASContext.CurSciControl;
+            var newLineMarker = LineEndDetector.GetNewLineMarker(sci.EOLMode);
+            var statement = "import " + fullPath + ";" + newLineMarker;
+            var position = sci.CurrentPos;
+            var curLine = sci.LineFromPosition(position);
+            var cFile = ASContext.Context.CurrentModel;
+            var line = (ASContext.Context.InPrivateSection) ? cFile.PrivateSectionIndex : 0;
             if (cFile.InlinedRanges != null)
             {
-                foreach (InlineRange range in cFile.InlinedRanges)
+                foreach (var range in cFile.InlinedRanges)
                 {
                     if (position > range.Start && position < range.End)
                     {
@@ -4412,12 +4402,11 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            int firstLine = line;
-            bool found = false;
-            int packageLine = -1;
-            int indent = 0;
-            int skipIfDef = 0;
-            var importComparer = new CaseSensitiveImportComparer();
+            var firstLine = line;
+            var found = false;
+            var packageLine = -1;
+            var indent = 0;
+            var skipIfDef = 0;
             while (line < curLine)
             {
                 var txt = sci.GetLine(line++).TrimStart();
@@ -4441,7 +4430,7 @@ namespace ASCompletion.Completion
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
                     var mImport = ASFileParserRegexes.Import.Match(txt);
-                    if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
+                    if (mImport.Success && CaseSensitiveImportComparer.CompareImports(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
                         break;
@@ -4473,7 +4462,7 @@ namespace ASCompletion.Completion
             sci.ReplaceSel(statement);
             sci.SetLineIndentation(line, indent);
             sci.LineScroll(0, firstLine - sci.FirstVisibleLine + 1);
-
+            
             ASContext.Context.RefreshContextCache(fullPath);
             return sci.GetLine(line).Length;
         }

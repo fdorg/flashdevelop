@@ -1110,7 +1110,7 @@ namespace HaXeContext
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
-            if (member.InFile?.Package == CurrentModel.Package) return true;
+            if (member.InFile?.BasePath == CurrentModel.BasePath) return true;
             var name = member.Name;
             var p = name.IndexOf('#');
             if (p > 0) name = name.Substring(0, p);
