@@ -1319,7 +1319,29 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            Context.TryResolveStaticExtensions(exprType, ASContext.Context.CurrentModel, out exprType);
+            if ((exprType.Flags & FlagType.Enum) != 0 && (exprType.Flags & FlagType.Abstract) == 0 && expr.IsStatic)
+            {
+                /**
+                 * for example:
+                 * using haxe.EnumTools;
+                 * enum ETest {
+                 *     A;
+                 *     B;
+                 * }
+                 * class Test {
+                 *     function test() {
+                 *         ETest.<complete>
+                 *     }
+                 * }
+                 */
+                var type = ResolveType("Enum", ASContext.Context.CurrentModel);
+                if (!type.IsVoid() && Context.TryResolveStaticExtensions(type, ASContext.Context.CurrentModel, out var tmpExprType))
+                {
+                    exprType = tmpExprType;
+                    mask &= ~FlagType.Static;
+                }
+            }
+            else Context.TryResolveStaticExtensions(exprType, ASContext.Context.CurrentModel, out exprType);
             base.GetInstanceMembers(autoHide, expr, exprType, mask, dotIndex, result);
         }
 
