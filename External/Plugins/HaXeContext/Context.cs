@@ -710,7 +710,7 @@ namespace HaXeContext
         {
             result.haXe = true;
             base.GetCodeModel(result, src, scriptMode);
-            if (result.Members != null)
+            // members
             {
                 for (var i = 0; i < result.Members.Count; i++)
                 {
@@ -726,9 +726,9 @@ namespace HaXeContext
                     }
                 }
             }
-            if (result.Classes != null)
+            // classes
             {
-                for (int i = 0, length = result.Classes.Count; i < length; i++)
+                for (var i = 0; i < result.Classes.Count; i++)
                 {
                     var @class = result.Classes[i];
                     var flags = @class.Flags;
@@ -758,6 +758,7 @@ namespace HaXeContext
                             }
                         }
                     }
+                    else if ((flags & FlagType.Enum) != 0) @class.ExtendsType = "EnumValue";
                     else if (flags == FlagType.Class && @class.Members.Count > 0)
                     {
                         /**
@@ -1502,6 +1503,13 @@ namespace HaXeContext
         {
             result = type;
             var imports = Context.ResolveImports(inFile);
+            if ((type.Flags & FlagType.Enum) != 0 && (type.Flags & FlagType.Abstract) == 0
+                && Context.ResolveType("haxe.EnumTools.EnumValueTools", null) is ClassModel @using && !@using.IsVoid())
+            {
+                @using = (ClassModel)@using.Clone();
+                @using.Flags |= FlagType.Using;
+                imports.Add(@using);
+            }
             if (imports.Count == 0) return false;
             var extensions = new MemberList();
             for (var i = imports.Count - 1; i >= 0; i--)
@@ -1549,7 +1557,26 @@ namespace HaXeContext
             {
                 var firstParamType = extension.Parameters[0].Type;
                 if (string.IsNullOrEmpty(firstParamType)) return false;
-                if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
+                if (!string.IsNullOrEmpty(extension.Template) && Context.ResolveType(firstParamType, null).IsVoid())
+                {
+                    // transform methodName<T:ConcreteType>(a:T, b) to methodName<T:ConcreteType>(a:ConcreteType, b)
+                    var template = extension.Template.Substring(1, extension.Template.Length - 2);
+                    var parts = Context is Context ctx && ctx.GetCurrentSDKVersion() >= "4.0.0"
+                        ? template.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries)
+                        : template.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var part in parts)
+                    {
+                        if (!part.Contains(':')) continue;
+                        var templateToType = part.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries);
+                        if (templateToType[0] != firstParamType) continue;
+                        if (templateToType.Length == 2) firstParamType = templateToType[1];
+                        break;
+                    }
+                }
+                if ((target.Flags & FlagType.Enum) != 0 && (target.Flags & FlagType.Abstract) == 0 && firstParamType == "EnumValue")
+                {
+                }
+                else if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
                 {
                     var targetType = type.Type;
                     var index = targetType.IndexOf('<');
