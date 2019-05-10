@@ -3413,9 +3413,7 @@ namespace ASCompletion.Completion
         {
             var ctx = ASContext.Context;
             var haXe = ctx.CurrentModel.haXe;
-            var expression = new ASExpr();
-            expression.Position = position;
-            expression.Separator = " ";
+            var expression = new ASExpr {Position = position, Separator = " "};
 
             var minPos = 0;
             // file's member declared at this position
@@ -3436,7 +3434,7 @@ namespace ASCompletion.Completion
                 var body = sci.GetTextRange(minPos, sci.PositionFromLine(contextMember.LineTo + 1));
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
-                if ((contextMember.Flags & hasBody) > 0)
+                if (!contextMember.Flags.HasFlag(FlagType.Variable) && (contextMember.Flags & hasBody) > 0)
                 {
                     expression.ContextFunction = contextMember;
                     expression.FunctionOffset = contextMember.LineFrom;

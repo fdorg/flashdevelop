@@ -1272,6 +1272,9 @@
     <EmbeddedResource Include="Test Files\parser\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2757_1.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2757_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_issue2764_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_issue2764_1_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_issue2764_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_issue2759_1.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_issue2759_1.hx" />
   </ItemGroup>
