@@ -1,10 +1,10 @@
 ﻿package;
 class Bar {
 	static function main() {
-		EType.EnumInstance
+		EType.AEnumInstance
 	}
 }
 
 enum EType {
-	EnumInstance;
+	AEnumInstance;
 }

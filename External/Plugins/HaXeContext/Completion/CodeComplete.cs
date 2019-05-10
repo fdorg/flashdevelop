@@ -1319,26 +1319,13 @@ namespace HaXeContext.Completion
                     return;
                 }
             }
-            if ((exprType.Flags & FlagType.Enum) != 0 && (exprType.Flags & FlagType.Abstract) == 0 && expr.IsStatic)
+            if (expr.IsStatic && (exprType.Flags & FlagType.Enum) != 0 && (exprType.Flags & FlagType.Abstract) == 0)
             {
-                /**
-                 * for example:
-                 * using haxe.EnumTools;
-                 * enum ETest {
-                 *     A;
-                 *     B;
-                 * }
-                 * class Test {
-                 *     function test() {
-                 *         ETest.<complete>
-                 *     }
-                 * }
-                 */
-                var type = ResolveType("Enum", ASContext.Context.CurrentModel);
-                if (!type.IsVoid() && Context.TryResolveStaticExtensions(type, ASContext.Context.CurrentModel, out var tmpExprType))
+                var type = ResolveType("Enum", null);
+                if (Context.TryResolveStaticExtensions(type, ASContext.Context.CurrentModel, out var tmp))
                 {
-                    exprType = tmpExprType;
-                    mask &= ~FlagType.Static;
+                    foreach (MemberModel it in tmp.Members) it.Flags |= FlagType.Static;
+                    exprType.Members.Merge(tmp.Members);
                 }
             }
             else Context.TryResolveStaticExtensions(exprType, ASContext.Context.CurrentModel, out exprType);
@@ -1540,7 +1527,27 @@ namespace HaXeContext.Completion
              */
             if (result.IsNull() && !string.IsNullOrEmpty(result.Path) && result.RelClass != null && !result.RelClass.IsVoid())
             {
-                if (Context.TryResolveStaticExtensions(inClass, ASContext.Context.CurrentModel, out inClass))
+                var hasStaticExtensions = false;
+
+                /**
+                 * for example:
+                 * EnumType.createAll(<complete>
+                 */
+//                if (result.IsStatic
+//                    && inClass.Flags.HasFlag(FlagType.Enum)
+//                    && !inClass.Flags.HasFlag(FlagType.Abstract))
+//                {
+//                    var type = ResolveType("Enum", null);
+//                    if (Context.TryResolveStaticExtensions(type, ASContext.Context.CurrentModel, out var tmp))
+//                    {
+//                        foreach (MemberModel it in tmp.Members) it.Flags |= FlagType.Static;
+//                        inClass.Members.Merge(tmp.Members);
+//                        hasStaticExtensions = true;
+//                    }
+//                }
+//                else
+                    hasStaticExtensions = Context.TryResolveStaticExtensions(inClass, ASContext.Context.CurrentModel, out inClass);
+                if (hasStaticExtensions)
                 {
                     base.FindMemberEx(token, inClass, result, mask, access);
                     if (result.Member != null && result.Member.Flags.HasFlag(FlagType.Using))

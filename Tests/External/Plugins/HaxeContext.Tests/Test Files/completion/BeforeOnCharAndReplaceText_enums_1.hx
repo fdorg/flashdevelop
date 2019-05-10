@@ -6,5 +6,5 @@ class Bar {
 }
 
 enum EType {
-	EnumInstance;
+	AEnumInstance;
 }
