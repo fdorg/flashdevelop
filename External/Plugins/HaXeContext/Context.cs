@@ -1503,12 +1503,32 @@ namespace HaXeContext
         {
             result = type;
             var imports = Context.ResolveImports(inFile);
-            if ((type.Flags & FlagType.Enum) != 0 && (type.Flags & FlagType.Abstract) == 0
-                && Context.ResolveType("haxe.EnumTools.EnumValueTools", null) is ClassModel @using && !@using.IsVoid())
+            /**
+             * for example:
+             * ```
+             * enum EEnum {}
+             * ...
+             * EEnum.<complete>
+             * ```
+             */
+            if ((type.Flags & FlagType.Class) != 0 && type.Name == "Enum")
             {
-                @using = (ClassModel)@using.Clone();
-                @using.Flags |= FlagType.Using;
-                imports.Add(@using);
+                var @using = ResolveUsing("haxe.EnumTools", null);
+                if (!@using.IsVoid()) imports.Add(@using);
+            }
+            /**
+             * for example:
+             * ```
+             * enum EEnum {}
+             * ...
+             * var e:EEnum;
+             * e.<complete>
+             * ```
+             */
+            else if ((type.Flags & FlagType.Enum) != 0 && (type.Flags & FlagType.Abstract) == 0)
+            {
+                var @using = ResolveUsing("haxe.EnumTools.EnumValueTools", null);
+                if (!@using.IsVoid()) imports.Add(@using);
             }
             if (imports.Count == 0) return false;
             var extensions = new MemberList();
@@ -1573,10 +1593,18 @@ namespace HaXeContext
                         break;
                     }
                 }
+                if ((target.Flags & (FlagType.Abstract | FlagType.Class)) == (FlagType.Abstract | FlagType.Class)
+                    && target.Name == "Enum" && target.Type == "Enum")
+                {
+                    // for example: Enum.<complete>
+                    return firstParamType.StartsWithOrdinal("Enum<");
+                }
                 if ((target.Flags & FlagType.Enum) != 0 && (target.Flags & FlagType.Abstract) == 0 && firstParamType == "EnumValue")
                 {
+                    // for example: EnumValue.<complete>
+                    return true;
                 }
-                else if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
+                if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
                 {
                     var targetType = type.Type;
                     var index = targetType.IndexOf('<');
@@ -1622,6 +1650,14 @@ namespace HaXeContext
                     target = target.Extends;
                 }
                 return true;
+            }
+            ClassModel ResolveUsing(string name, FileModel file)
+            {
+                var @using = Context.ResolveType(name, file);
+                if (@using.IsVoid()) return ClassModel.VoidClass;
+                @using = (ClassModel) @using.Clone();
+                @using.Flags |= FlagType.Using;
+                return @using;
             }
         }
 
@@ -1746,7 +1782,7 @@ namespace HaXeContext
         /// <summary>
         /// Checks completion mode changes to start/restart/stop the haXe completion server if needed.
         /// </summary>
-        private void OnCompletionModeChange()
+        void OnCompletionModeChange()
         {
             if (completionModeHandler != null)
             {
