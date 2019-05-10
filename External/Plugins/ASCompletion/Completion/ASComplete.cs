@@ -3429,7 +3429,7 @@ namespace ASCompletion.Completion
                 if (contextMember is null) contextMember = FindMember(currentLine, model.Members.Items);
             }
             else contextMember = FindMember(currentLine, ctx.CurrentClass.Members.Items);
-            if (contextMember != null)
+            if (contextMember != null && (contextMember.Flags & FlagType.Variable) == 0)
             {
                 expression.ContextMember = contextMember;
                 minPos = sci.PositionFromLine(contextMember.LineFrom);
