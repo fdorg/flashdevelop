@@ -42,21 +42,21 @@ namespace ProjectManager.Actions
 
         public Project NewProject()
         {
-            using (NewProjectDialog dialog = new NewProjectDialog())
+            using (var dialog = new NewProjectDialog())
             {
                 if (dialog.ShowDialog(owner) == DialogResult.OK)
                 {
                     try
                     {
                         FlashDevelopActions.CheckAuthorName();
-                        ProjectCreator creator = new ProjectCreator();
-                        Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
+                        var creator = new ProjectCreator();
+                        var created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
                         PatchProject(created);
                         return created;
                     }
                     catch (Exception exception)
                     {
-                        string msg = TextHelper.GetString("Info.CouldNotCreateProject");
+                        var msg = TextHelper.GetString("Info.CouldNotCreateProject");
                         ErrorManager.ShowInfo(msg + " " + exception.Message);
                     }
                 }
@@ -83,7 +83,7 @@ namespace ProjectManager.Actions
         {
             try
             {
-                String physical = PathHelper.GetPhysicalPathName(path);
+                string physical = PathHelper.GetPhysicalPathName(path);
                 Project loaded = ProjectLoader.Load(physical);
                 PatchProject(loaded);
                 return loaded;
@@ -279,19 +279,18 @@ namespace ProjectManager.Actions
                         {
                             foreach (ZipEntry entry in zFile)
                             {
-                                Int32 size = 4095;
-                                Byte[] data = new Byte[4095];
+                                byte[] data = new byte[4095];
                                 string newPath = Path.Combine(saveDialog.SelectedPath, entry.Name.Replace('/', '\\'));
 
                                 if (entry.IsFile)
                                 {
                                     Stream zip = zFile.GetInputStream(entry);
-                                    String dirPath = Path.GetDirectoryName(newPath);
+                                    string dirPath = Path.GetDirectoryName(newPath);
                                     if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
                                     FileStream extracted = new FileStream(newPath, FileMode.Create);
                                     while (true)
                                     {
-                                        size = zip.Read(data, 0, data.Length);
+                                        var size = zip.Read(data, 0, data.Length);
                                         if (size > 0) extracted.Write(data, 0, size);
                                         else break;
                                     }
@@ -347,8 +346,7 @@ namespace ProjectManager.Actions
                     MxmlcOptions options = (project as AS3Project).CompilerOptions;
                     foreach (string relPath in options.IntrinsicPaths)
                     {
-                        absPath = PathHelper.ResolvePath(relPath);
-                        if (absPath == null) absPath = project.GetAbsolutePath(relPath);
+                        absPath = PathHelper.ResolvePath(relPath) ?? project.GetAbsolutePath(relPath);
                         if (absPath == null) continue;
                         if (Directory.Exists(absPath)) classPaths.Add(absPath);
                     }
@@ -360,7 +358,7 @@ namespace ProjectManager.Actions
                         else if (Directory.Exists(absPath))
                         {
                             string[] libs = Directory.GetFiles(absPath, "*.swc");
-                            foreach (string lib in libs) classPaths.Add(lib);
+                            classPaths.AddRange(libs);
                         }
                     }
                     foreach (string relPath in options.IncludeLibraries)
@@ -475,9 +473,9 @@ namespace ProjectManager.Actions
         public void InsertFile(IMainForm mainForm, Project project, string path, GenericNode node)
         {
             if (!mainForm.CurrentDocument.IsEditable) return;
-            string nodeType = (node != null) ? node.GetType().ToString() : null;
-            string export = (node != null && node is ExportNode) ? (node as ExportNode).Export : null;
-            string textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
+            var nodeType = node?.GetType().ToString();
+            var export = (node is ExportNode exportNode) ? exportNode.Export : null;
+            var textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
             if (textToInsert == null) return;
             mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
             mainForm.CurrentDocument.Activate();
@@ -530,7 +528,7 @@ namespace ProjectManager.Actions
                         project.CompileTargets.RemoveAt(0);
 
                     string path = project.GetAbsolutePath(relPath);
-                    OnProjectModified(new string[] { path });
+                    OnProjectModified(new[] { path });
                 }
             }
             project.Save();
@@ -551,11 +549,7 @@ namespace ProjectManager.Actions
 
         #endregion
 
-        private void OnProjectModified(string[] paths)
-        {
-            if (ProjectModified != null)
-                ProjectModified(paths);
-        }
+        void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
     }
 }
 

@@ -78,13 +78,13 @@ namespace ProjectManager.Projects
 
         public abstract string Language { get; }
         public abstract string LanguageDisplayName { get; }
-        public virtual bool IsCompilable { get { return false; } }
-        public virtual bool ReadOnly { get { return false; } }
-        public virtual bool UsesInjection { get { return false; } }
-        public virtual bool HasLibraries { get { return false; } }
-        public virtual bool RequireLibrary { get { return false; } }
+        public virtual bool IsCompilable => false;
+        public virtual bool ReadOnly => false;
+        public virtual bool UsesInjection => false;
+        public virtual bool HasLibraries => false;
+        public virtual bool RequireLibrary => false;
         public virtual void ValidateBuild(out string error) { error = null; }
-        public virtual int MaxTargetsCount { get { return 0; } }
+        public virtual int MaxTargetsCount => 0;
         public abstract string DefaultSearchFilter { get; }
 
         public abstract void Save();
