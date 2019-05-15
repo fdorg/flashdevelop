@@ -34,7 +34,7 @@ namespace ProjectManager.Projects.Haxe
         {
             get
             {
-                string projectName = RemoveDiacritics(Name);
+                var projectName = RemoveDiacritics(Name);
                 return Path.Combine("obj", projectName + "Resources.swf");
             }
         }
@@ -47,25 +47,18 @@ namespace ProjectManager.Projects.Haxe
 
         public new HaxeOptions CompilerOptions => (HaxeOptions)base.CompilerOptions;
 
-        public string HaxeTarget
-        {
-            get
-            {
-                if (!MovieOptions.HasPlatformSupport) return null;
-                return MovieOptions.PlatformSupport.HaxeTarget;
-            }
-        }
+        public string HaxeTarget => MovieOptions.HasPlatformSupport ? MovieOptions.PlatformSupport.HaxeTarget : null;
 
         public bool IsFlashOutput => HaxeTarget == "swf";
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
-            bool isInjectionTarget = (UsesInjection && path == GetAbsolutePath(InputPath));
             if (export != null) return export;
+            var isInjectionTarget = (UsesInjection && path == GetAbsolutePath(InputPath));
             if (IsLibraryAsset(path) && !isInjectionTarget)
                 return GetAsset(path).ID;
 
-            string dirName = inFile;
+            var dirName = inFile;
             if (FileInspector.IsHaxeFile(inFile, Path.GetExtension(inFile).ToLower()))
                 dirName = ProjectPath;
 
@@ -175,7 +168,7 @@ namespace ProjectManager.Projects.Haxe
                     }
 
                 // libraries
-                foreach (string lib in CompilerOptions.Libraries)
+                foreach (var lib in CompilerOptions.Libraries)
                     if (lib.Length > 0)
                     {
                         if (lib.Trim().StartsWith("-lib", StringComparison.Ordinal)) pr.Add(lib);
@@ -185,9 +178,9 @@ namespace ProjectManager.Projects.Haxe
                 // class paths
                 var classPaths = paths.ToList();
                 classPaths.AddRange(Classpaths);
-                foreach (string cp in classPaths)
+                foreach (var cp in classPaths)
                 {
-                    string ccp = string.Join("/", cp.Split('\\'));
+                    var ccp = string.Join("/", cp.Split('\\'));
                     pr.Add("-cp " + Quote(ccp));
                 }
 
@@ -222,18 +215,18 @@ namespace ProjectManager.Projects.Haxe
                 }
 
                 // defines
-                foreach (string def in CompilerOptions.Directives)
+                foreach (var def in CompilerOptions.Directives)
                     pr.Add("-D " + Quote(def));
 
                 // add project files marked as "always compile"
-                foreach (string relTarget in CompileTargets)
+                foreach (var relTarget in CompileTargets)
                 {
-                    string absTarget = GetAbsolutePath(relTarget);
+                    var absTarget = GetAbsolutePath(relTarget);
                     // guess the class name from the file name
-                    foreach (string cp in classPaths)
+                    foreach (var cp in classPaths)
                         if (absTarget.StartsWith(cp, StringComparison.OrdinalIgnoreCase))
                         {
-                            string className = GetClassName(absTarget, cp);
+                            var className = GetClassName(absTarget, cp);
                             if (CompilerOptions.MainClass != className)
                                 pr.Add(className);
                         }
@@ -244,17 +237,14 @@ namespace ProjectManager.Projects.Haxe
                     pr.Add("-main " + CompilerOptions.MainClass);
                 
                 // extra options
-                foreach (string opt in CompilerOptions.Additional)
+                foreach (var opt in CompilerOptions.Additional)
                 {
-                    string p = opt.Trim();
-                    if (p == "" || p[0] == '#')
-                        continue;
+                    var p = opt.Trim();
+                    if (p == "" || p[0] == '#') continue;
                     char[] space = { ' ' };
-                    string[] parts = p.Split(space, 2);
-                    if (parts.Length == 1)
-                        pr.Add(p);
-                    else
-                        pr.Add(parts[0] + ' ' + Quote(parts[1]));
+                    var parts = p.Split(space, 2);
+                    if (parts.Length == 1) pr.Add(p);
+                    else pr.Add(parts[0] + ' ' + Quote(parts[1]));
                 }
             }
 
@@ -276,7 +266,7 @@ namespace ProjectManager.Projects.Haxe
 
         private string GetClassName(string absTarget, string cp)
         {
-            string className = absTarget.Substring(cp.Length);
+            var className = absTarget.Substring(cp.Length);
             className = className.Substring(0, className.LastIndexOf('.'));
             className = Regex.Replace(className, "[\\\\/]+", ".");
             if (className.StartsWith(".", StringComparison.Ordinal)) className = className.Substring(1);
@@ -293,7 +283,7 @@ namespace ProjectManager.Projects.Haxe
                 return new HaxeProject(path) {RawHXML = File.ReadAllLines(path)};
             }
 
-            HaxeProjectReader reader = new HaxeProjectReader(path);
+            var reader = new HaxeProjectReader(path);
 
             try
             {
@@ -307,10 +297,7 @@ namespace ProjectManager.Projects.Haxe
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {
@@ -384,19 +371,19 @@ namespace ProjectManager.Projects.Haxe
 
         private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
         {
-            Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
+            var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
             {
                 if (line == null) break;
-                string trimmedLine = line.Trim();
-                Match m = reHxOp.Match(trimmedLine);
+                var trimmedLine = line.Trim();
+                var m = reHxOp.Match(trimmedLine);
                 if (m.Success)
                 {
-                    string op = m.Groups[1].Value;
+                    var op = m.Groups[1].Value;
                     if (op == "-next")
                         break; // ignore the rest
 
-                    string value = m.Groups[2].Value.Trim();
+                    var value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
                         case "D": defs.Add(value); break;
@@ -419,7 +406,7 @@ namespace ProjectManager.Projects.Haxe
                         case "-connect": break; // ignore
                         case "-each": break; // ignore
                         case "-cwd":
-                            cwd = this.CleanPath(value, cwd);
+                            cwd = CleanPath(value, cwd);
                             break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
@@ -436,7 +423,7 @@ namespace ProjectManager.Projects.Haxe
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    string subhxml = this.GetAbsolutePath(CleanPath(trimmedLine, cwd));
+                    var subhxml = GetAbsolutePath(CleanPath(trimmedLine, cwd));
                     if (File.Exists(subhxml))
                     {
                         ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output, cwd);

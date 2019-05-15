@@ -42,10 +42,10 @@ namespace HaXeContext
             var platform = hxproj.MovieOptions.PlatformSupport;
             var toolchain = platform.ExternalToolchain;
             var exe = GetExecutable(toolchain);
-            if (exe == null) return false;
+            if (exe is null) return false;
 
             var args = GetCommand(hxproj, "run");
-            if (args == null) return false;
+            if (args is null) return false;
 
             var config = hxproj.TargetBuild;
             if (string.IsNullOrEmpty(config)) config = "flash";
@@ -82,7 +82,7 @@ namespace HaXeContext
             exe = Environment.ExpandEnvironmentVariables(exe);
             if (ShouldCapture(platform.ExternalToolchainCapture, config))
             {
-                string oldWD = PluginBase.MainForm.WorkingDirectory;
+                var oldWD = PluginBase.MainForm.WorkingDirectory;
                 PluginBase.MainForm.WorkingDirectory = hxproj.Directory;
                 PluginBase.MainForm.CallCommand("RunProcessCaptured", exe + ";" + args);
                 PluginBase.MainForm.WorkingDirectory = oldWD;
@@ -105,7 +105,7 @@ namespace HaXeContext
         /// <summary>
         /// Start Android ADB server in the background
         /// </summary>
-        private static void CheckADB()
+        static void CheckADB()
         {
             if (Process.GetProcessesByName("adb").Length > 0)
                 return;
@@ -113,27 +113,25 @@ namespace HaXeContext
             var adb = Environment.ExpandEnvironmentVariables("%ANDROID_SDK%/platform-tools");
             if (adb.StartsWith('%') || !Directory.Exists(adb))
                 adb = Path.Combine(PathHelper.ToolDir, "android/platform-tools");
-            if (Directory.Exists(adb))
-            {
-                adb = Path.Combine(adb, "adb.exe");
-                var p = new ProcessStartInfo(adb, "get-state");
-                p.UseShellExecute = true;
-                p.WindowStyle = ProcessWindowStyle.Hidden;
-                Process.Start(p);
-            }
+            if (!Directory.Exists(adb)) return;
+            adb = Path.Combine(adb, "adb.exe");
+            var p = new ProcessStartInfo(adb, "get-state");
+            p.UseShellExecute = true;
+            p.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.Start(p);
         }
 
         internal static bool Clean(IProject project)
         {
             if (!HandleProject(project)) return false;
-            var hxproj = project as HaxeProject;
+            var hxproj = (HaxeProject) project;
 
             var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
             var exe = GetExecutable(toolchain);
-            if (exe == null) return false;
+            if (exe is null) return false;
 
             var args = GetCommand(hxproj, "clean");
-            if (args == null) return false;
+            if (args is null) return false;
 
             TraceManager.Add(toolchain + " " + args);
 
@@ -156,7 +154,7 @@ namespace HaXeContext
         /// <param name="project"></param>
         public static void Monitor(IProject project)
         {
-            if (updater == null)
+            if (updater is null)
             {
                 updater = new System.Timers.Timer();
                 updater.Interval = 200;
@@ -178,7 +176,7 @@ namespace HaXeContext
 
         internal static void StopWatcher()
         {
-            if (watcher == null) return;
+            if (watcher is null) return;
             watcher.Dispose();
             watcher = null;
             projectPath = null;
@@ -220,7 +218,7 @@ namespace HaXeContext
             updater.Enabled = true;
         }
 
-        private static void UpdateProject()
+        static void UpdateProject()
         {
             var form = (System.Windows.Forms.Form) PluginBase.MainForm;
             if (form.InvokeRequired)
@@ -231,10 +229,10 @@ namespace HaXeContext
             if (hxproj.MovieOptions.Platform == "Lime" && string.IsNullOrEmpty(hxproj.TargetBuild)) return;
 
             var exe = GetExecutable(hxproj.MovieOptions.PlatformSupport.ExternalToolchain);
-            if (exe == null) return;
+            if (exe is null) return;
 
             var args = GetCommand(hxproj, "display");
-            if (args == null)
+            if (args is null)
             {
                 TraceManager.Add($"No external 'display' command found for platform '{hxproj.MovieOptions.Platform}'", -3);
                 return;
@@ -274,7 +272,7 @@ namespace HaXeContext
                 hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
 
                 args = GetCommand(hxproj, "build", false);
-                if (args == null)
+                if (args is null)
                 {
                     TraceManager.Add($"No external 'build' command found for platform '{hxproj.MovieOptions.Platform}'", -3);
                 }
@@ -299,7 +297,7 @@ namespace HaXeContext
             }
         }
 
-        private static string GetExecutable(string toolchain)
+        static string GetExecutable(string toolchain)
         {
             if (toolchain == "haxelib")
             {
@@ -322,10 +320,10 @@ namespace HaXeContext
             return null;
         }
 
-        private static string GetHaxelib(IProject project)
+        static string GetHaxelib(IProject project)
         {
             var haxelib = project.CurrentSDK;
-            if (haxelib == null) return "haxelib";
+            if (haxelib is null) return "haxelib";
             haxelib = Directory.Exists(haxelib)
                 ? Path.Combine(haxelib, "haxelib.exe")
                 : haxelib.Replace("haxe.exe", "haxelib.exe");
@@ -349,20 +347,17 @@ namespace HaXeContext
         {
             var platform = project.MovieOptions.PlatformSupport;
             var version = platform.GetVersion(project.MovieOptions.Version);
-            if (version.Commands == null)
+            if (version.Commands is null)
             {
                 throw new Exception($"No external commands found for target {project.MovieOptions.Platform} and version {project.MovieOptions.Version}");
             }
-            if (version.Commands.ContainsKey(name))
-            {
-                var cmd = version.Commands[name].Value;
-                if (platform.ExternalToolchain == "haxelib") cmd = "run " + cmd;
-                else if (platform.ExternalToolchain == "cmd") cmd = "/c " + cmd;
+            if (!version.Commands.ContainsKey(name)) return null;
+            var cmd = version.Commands[name].Value;
+            if (platform.ExternalToolchain == "haxelib") cmd = "run " + cmd;
+            else if (platform.ExternalToolchain == "cmd") cmd = "/c " + cmd;
                 
-                if (!processArguments) return cmd;
-                return PluginBase.MainForm.ProcessArgString(cmd);
-            }
-            return null;
+            if (!processArguments) return cmd;
+            return PluginBase.MainForm.ProcessArgString(cmd);
         }
     }
 }
