@@ -53,15 +53,15 @@ namespace HaXeContext
             
             if (config.StartsWithOrdinal("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {
-                foreach (string line in hxproj.RawHXML)
+                foreach (var line in hxproj.RawHXML)
                 {
-                    if (line.StartsWithOrdinal("-js "))
-                    {
-                        string path = line.Substring(4);
-                        path = path.Substring(0, path.LastIndexOf('/'));
-                        ProjectManager.Actions.Webserver.StartServer(hxproj.GetAbsolutePath(path));
-                        return true;
-                    }
+                    if (!line.StartsWithOrdinal("-js ")) continue;
+                    var p = line.LastIndexOf('/');
+                    if (p == -1) break;// for example: -js _
+                    var path = line.Substring(3, p - 3).Trim();
+                    path = hxproj.GetAbsolutePath(path);
+                    ProjectManager.Actions.Webserver.StartServer(path);
+                    return true;
                 }
             }
 
