@@ -48,7 +48,7 @@ namespace HaXeContext
             if (args == null) return false;
 
             string config = hxproj.TargetBuild;
-            if (String.IsNullOrEmpty(config)) config = "flash";
+            if (string.IsNullOrEmpty(config)) config = "flash";
             else if (config.Contains("android")) CheckADB();
             
             if (config.StartsWithOrdinal("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
@@ -135,7 +135,7 @@ namespace HaXeContext
             {
                 DataEvent de = new DataEvent(EventType.Command, "FlashViewer.GetFlashPlayer", null);
                 EventManager.DispatchEvent(null, de);
-                if (de.Handled && !String.IsNullOrEmpty((string)de.Data) && File.Exists((string)de.Data))
+                if (de.Handled && !string.IsNullOrEmpty((string)de.Data) && File.Exists((string)de.Data))
                     return " -DSWF_PLAYER=\"" + de.Data + "\"";
             }
             catch { }
@@ -371,7 +371,7 @@ namespace HaXeContext
             var version = platform.GetVersion(project.MovieOptions.Version);
             if (version.Commands == null)
             {
-                throw new Exception(String.Format("No external commands found for target {0} and version {1}",
+                throw new Exception(string.Format("No external commands found for target {0} and version {1}",
                     project.MovieOptions.Platform, project.MovieOptions.Version));
             }
             if (version.Commands.ContainsKey(name))
