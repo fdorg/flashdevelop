@@ -30,7 +30,7 @@ namespace ProjectManager.Projects.Haxe
         public override bool RequireLibrary => IsFlashOutput;
         public override string DefaultSearchFilter => "*.hx;*.hxp";
 
-        public override String LibrarySWFPath
+        public override string LibrarySWFPath
         {
             get
             {
@@ -65,7 +65,7 @@ namespace ProjectManager.Projects.Haxe
             if (IsLibraryAsset(path) && !isInjectionTarget)
                 return GetAsset(path).ID;
 
-            String dirName = inFile;
+            string dirName = inFile;
             if (FileInspector.IsHaxeFile(inFile, Path.GetExtension(inFile).ToLower()))
                 dirName = ProjectPath;
 
@@ -157,7 +157,7 @@ namespace ProjectManager.Projects.Haxe
 
         public string[] BuildHXML(string[] paths, string outfile, bool release)
         {
-            List<String> pr = new List<String>();
+            var pr = new List<string>();
             var isFlash = IsFlashOutput;
 
             if (rawHXML != null)
@@ -183,33 +183,32 @@ namespace ProjectManager.Projects.Haxe
                     }
 
                 // class paths
-                List<String> classPaths = paths.ToList();
+                var classPaths = paths.ToList();
                 classPaths.AddRange(Classpaths);
                 foreach (string cp in classPaths)
                 {
-                    String ccp = String.Join("/", cp.Split('\\'));
+                    string ccp = string.Join("/", cp.Split('\\'));
                     pr.Add("-cp " + Quote(ccp));
                 }
 
                 // compilation mode
-                string mode = HaxeTarget;
+                var mode = HaxeTarget;
                 //throw new SystemException("Unknown mode");
 
                 if (mode != null)
                 {
-                    outfile = String.Join("/", outfile.Split('\\'));
+                    outfile = string.Join("/", outfile.Split('\\'));
                     pr.Add("-" + mode + " " + Quote(outfile));
                 }
 
                 // flash options
                 if (isFlash)
                 {
-                    string htmlColor = this.MovieOptions.Background.Substring(1);
-
+                    var htmlColor = MovieOptions.Background.Substring(1);
                     if (htmlColor.Length > 0)
                         htmlColor = ":" + htmlColor;
 
-                    pr.Add("-swf-header " + string.Format("{0}:{1}:{2}{3}", MovieOptions.Width, MovieOptions.Height, MovieOptions.Fps, htmlColor));
+                    pr.Add("-swf-header " + $"{MovieOptions.Width}:{MovieOptions.Height}:{MovieOptions.Fps}{htmlColor}");
 
                     if (!UsesInjection && LibraryAssets.Count > 0)
                         pr.Add("-swf-lib " + Quote(LibrarySWFPath));
@@ -218,7 +217,7 @@ namespace ProjectManager.Projects.Haxe
                         pr.Add("--flash-strict");
 
                     // haxe compiler uses Flash version directly
-                    string version = MovieOptions.Version;
+                    var version = MovieOptions.Version;
                     if (version != null) pr.Add("-swf-version " + version);
                 }
 
@@ -247,7 +246,7 @@ namespace ProjectManager.Projects.Haxe
                 // extra options
                 foreach (string opt in CompilerOptions.Additional)
                 {
-                    String p = opt.Trim();
+                    string p = opt.Trim();
                     if (p == "" || p[0] == '#')
                         continue;
                     char[] space = { ' ' };
@@ -288,12 +287,10 @@ namespace ProjectManager.Projects.Haxe
 
         public static HaxeProject Load(string path)
         {
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             if (ext == ".hxml")
             {
-                HaxeProject hxproj = new HaxeProject(path);
-                hxproj.RawHXML = File.ReadAllLines(path);
-                return hxproj;
+                return new HaxeProject(path) {RawHXML = File.ReadAllLines(path)};
             }
 
             HaxeProjectReader reader = new HaxeProjectReader(path);
@@ -302,11 +299,10 @@ namespace ProjectManager.Projects.Haxe
             {
                 return reader.ReadProject();
             }
-            catch (XmlException exception)
+            catch (XmlException e)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.",
-                    exception.LineNumber, exception.LinePosition);
-                throw new Exception(format, exception);
+                var format = $"Error in XML Document line {e.LineNumber}, position {e.LinePosition}.";
+                throw new Exception(format, e);
             }
             finally { reader.Close(); }
         }
@@ -318,20 +314,21 @@ namespace ProjectManager.Projects.Haxe
 
         public override void SaveAs(string fileName)
         {
-            string ext = Path.GetExtension(fileName).ToLower();
+            var ext = Path.GetExtension(fileName).ToLower();
             if (ext != ".hxproj") return;
 
             if (!AllowedSaving(fileName)) return;
             try
             {
-                HaxeProjectWriter writer = new HaxeProjectWriter(this, fileName);
+                var writer = new HaxeProjectWriter(this, fileName);
                 writer.WriteProject();
                 writer.Flush();
                 writer.Close();
-                if (saveHXML && OutputType != OutputType.CustomBuild) {
-                    StreamWriter hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
-                    foreach( string e in BuildHXML(new string[0],this.OutputPath,true) )
-                        hxml.WriteLine(e);
+                if (saveHXML && OutputType != OutputType.CustomBuild)
+                {
+                    var hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
+                    foreach(var line in BuildHXML(new string[0], OutputPath,true))
+                        hxml.WriteLine(line);
                     hxml.Close();
                 }
             }
