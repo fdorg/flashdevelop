@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -21,13 +22,13 @@ namespace ProjectManager.Projects.Haxe
             movieOptions = new HaxeMovieOptions();
         }
 
-        public override string Language { get { return "haxe"; } }
-        public override string LanguageDisplayName { get { return "Haxe"; } }
-        public override bool IsCompilable { get { return true; } }
-        public override bool ReadOnly { get { return false; } }
-        public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }
-        public override bool RequireLibrary { get { return IsFlashOutput; } }
-        public override string DefaultSearchFilter { get { return "*.hx;*.hxp"; } }
+        public override string Language => "haxe";
+        public override string LanguageDisplayName => "Haxe";
+        public override bool IsCompilable => true;
+        public override bool ReadOnly => false;
+        public override bool HasLibraries => OutputType == OutputType.Application && IsFlashOutput;
+        public override bool RequireLibrary => IsFlashOutput;
+        public override string DefaultSearchFilter => "*.hx;*.hxp";
 
         public override String LibrarySWFPath
         {
@@ -40,11 +41,11 @@ namespace ProjectManager.Projects.Haxe
 
         public string[] RawHXML
         {
-            get { return rawHXML; }
-            set { ParseHXML(value); }
+            get => rawHXML;
+            set => ParseHXML(value);
         }
 
-        public new HaxeOptions CompilerOptions { get { return (HaxeOptions)base.CompilerOptions; } }
+        public new HaxeOptions CompilerOptions => (HaxeOptions)base.CompilerOptions;
 
         public string HaxeTarget
         {
@@ -55,7 +56,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        public bool IsFlashOutput { get { return HaxeTarget == "swf"; } }
+        public bool IsFlashOutput => HaxeTarget == "swf";
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
@@ -182,11 +183,8 @@ namespace ProjectManager.Projects.Haxe
                     }
 
                 // class paths
-                List<String> classPaths = new List<String>();
-                foreach (string cp in paths)
-                    classPaths.Add(cp);
-                foreach (string cp in this.Classpaths)
-                    classPaths.Add(cp);
+                List<String> classPaths = paths.ToList();
+                classPaths.AddRange(Classpaths);
                 foreach (string cp in classPaths)
                 {
                     String ccp = String.Join("/", cp.Split('\\'));
