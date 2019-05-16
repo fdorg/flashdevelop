@@ -1368,7 +1368,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2362TypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2362TestCases
             {
                 get
                 {
@@ -1384,7 +1384,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2373TypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2373TestCases
             {
                 get
                 {
@@ -1399,7 +1399,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2401TypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2401TestCases
             {
                 get
                 {
@@ -1407,6 +1407,17 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "Null<Dynamic>", Flags = FlagType.Class | FlagType.Abstract})
                         .SetName("function foo(?v| = null). Issue 2401. Case 1")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2401");
+                }
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_InferVariableTypeIssue2771TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2771_1"))
+                        .Returns(new ClassModel {Name = "Dynamic", Flags = FlagType.Class | FlagType.Abstract})
+                        .SetName("v<complete> = switch... Issue 2771. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2771");
                 }
             }
 
@@ -1576,9 +1587,10 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_MapInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_new_TypeTestCases)),
-                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2362TypeTestCases)),
-                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2373TypeTestCases)),
-                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2401TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2362TestCases)),
+                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2373TestCases)),
+                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2401TestCases)),
+                TestCaseSource(nameof(GetExpressionType_InferVariableTypeIssue2771TestCases)),
                 TestCaseSource(nameof(GetExpressionType_ArrayAccess_issue2471_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2203_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ParameterizedFunction_issue2487_TypeTestCases)),

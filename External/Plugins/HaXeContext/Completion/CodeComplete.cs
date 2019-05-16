@@ -768,15 +768,8 @@ namespace HaXeContext.Completion
             }
             // for example: `var v = v;` or `var V = new V();`
             if (word == local.Value) return;
-            /**
-             * for example:
-             * class Foo {
-             *   function new() {
-             *     var v<complete> = untyped __js__('value')
-             *   }
-             * }
-             */
-            if (word == "untyped")
+            // for example: var v<complete> = untyped __js__('value')
+            if (word != "true" && word != "false" && word != "null" && features.codeKeywords.Contains(word))
             {
                 var type = ResolveType(features.dynamicKey, null);
                 var.Type = type.QualifiedName;
