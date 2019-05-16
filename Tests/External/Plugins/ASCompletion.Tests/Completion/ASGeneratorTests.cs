@@ -1080,8 +1080,8 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVector"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVector"))
                             .SetName("new Vector.<Vector.<int>>()|");
-                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFIeldOfItemOfVector"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFIeldOfItemOfVector"))
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFieldOfItemOfVector"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFieldOfItemOfVector"))
                             .SetName("v[0][0].length|");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces"))
@@ -1353,9 +1353,17 @@ namespace ASCompletion.Completion
                 ]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
+                internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
+                {
+                    sci.IsUseTabs = isUseTabs;
+                    SetAs3Features(sci);
+                    return Common(sourceText, job, sci);
+                }
+
                 static IEnumerable<TestCaseData> HaxeTestCases
                 {
-                    get {
+                    get
+                    {
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useSpaces"))
@@ -1512,13 +1520,6 @@ namespace ASCompletion.Completion
                     SetHaxeFeatures(sci);
                     ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = "3.3.0"}};
                     return HaxeImpl(sourceText, job, isUseTabs, sci);
-                }
-
-                internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
-                {
-                    sci.IsUseTabs = isUseTabs;
-                    SetAs3Features(sci);
-                    return Common(sourceText, job, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)

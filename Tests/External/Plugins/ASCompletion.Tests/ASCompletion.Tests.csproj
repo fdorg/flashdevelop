@@ -359,8 +359,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeChangeConstructorDeclaration_Function.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_ArrayAccess.as" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfArrayAccess.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFIeldOfItemOfVector.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFIeldOfItemOfVector.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFieldOfItemOfVector.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFieldOfItemOfVector.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_String.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Boolean.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Digit.hx" />
@@ -1251,6 +1251,7 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_issue2710_1.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_issue2710_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_issue2710_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_issue2771_1.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
