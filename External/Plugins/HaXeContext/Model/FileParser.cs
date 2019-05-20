@@ -2417,7 +2417,8 @@ namespace HaXeContext.Model
             if (!string.IsNullOrEmpty(type))
             {
                 var parCount = 0;
-                while (type[0] == '(' && type[type.Length - 1] == ')')
+                while (type.Length is int length && length > 2
+                       && type[0] == '(' && type[length - 1] == ')')
                 {
                     foreach (var c in type)
                     {
@@ -2425,7 +2426,7 @@ namespace HaXeContext.Model
                         else if (c == ')') parCount--;
                         else if (parCount == 0) return type;
                     }
-                    type = type.Substring(1, type.Length - 2);
+                    type = type.Substring(1, length - 2);
                 }
             }
             return type;
