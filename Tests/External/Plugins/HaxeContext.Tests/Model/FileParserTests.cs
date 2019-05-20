@@ -505,6 +505,52 @@ namespace HaXeContext.Model
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2773TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2773_1")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("a1", "Void", FlagType.Dynamic | FlagType.Variable | FlagType.Function, Visibility.Private)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter1", "Int", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter2", "Int", FlagType.ParameterVar, Visibility.Private),
+                            },
+                        },
+                        new MemberModel("a2", "Void", FlagType.Dynamic | FlagType.Variable | FlagType.Function, Visibility.Private)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "String", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter1", "Int", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter2", "Int", FlagType.ParameterVar, Visibility.Private),
+                            },
+                        },
+                    })
+                    .SetName("Issue 2773. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2773");
+                yield return new TestCaseData("Issue2773_2")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("a1", "Void", FlagType.Dynamic | FlagType.Variable | FlagType.Function, Visibility.Private)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("parameter0", "Map<String, Int>", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter1", "Int", FlagType.ParameterVar, Visibility.Private),
+                                new MemberModel("parameter2", "Int", FlagType.ParameterVar, Visibility.Private),
+                            },
+                        },
+                    })
+                    .SetName("Issue 2773. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2773");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(Issue163TestCases)),
@@ -518,6 +564,7 @@ namespace HaXeContext.Model
             TestCaseSource(nameof(Issue2583TestCases)),
             TestCaseSource(nameof(Issue2590TestCases)),
             TestCaseSource(nameof(Issue2639TestCases)),
+            TestCaseSource(nameof(Issue2773TestCases)),
         ]
         public List<MemberModel> ParseFile(string fileName)
         {
