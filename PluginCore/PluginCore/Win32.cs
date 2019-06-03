@@ -61,6 +61,7 @@ namespace PluginCore
 
         #region Structs
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct COPYDATASTRUCT
         {
             public IntPtr dwData;
