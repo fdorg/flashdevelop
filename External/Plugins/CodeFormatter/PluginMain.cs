@@ -32,7 +32,7 @@ namespace CodeFormatter
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public string Name { get; } = "CodeFormatter";
+        public string Name { get; } = nameof(CodeFormatter);
 
         /// <summary>
         /// GUID of the plugin
@@ -58,7 +58,7 @@ namespace CodeFormatter
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public object Settings => this.settingObject;
+        public object Settings => settingObject;
 
         #endregion
         
@@ -69,20 +69,17 @@ namespace CodeFormatter
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.CreateMainMenuItem();
-            this.CreateContextMenuItem();
-            this.LoadSettings();
+            InitBasics();
+            CreateMainMenuItem();
+            CreateContextMenuItem();
+            LoadSettings();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
@@ -91,24 +88,24 @@ namespace CodeFormatter
             switch (e.Type)
             {
                 case EventType.FileSwitch:
-                    this.UpdateMenuItems();
+                    UpdateMenuItems();
                     break;
 
                 case EventType.Command:
-                    DataEvent de = (DataEvent)e;
+                    var de = (DataEvent)e;
                     if (de.Action == "CodeRefactor.Menu")
                     {
-                        this.AttachMainMenuItem((ToolStripMenuItem)de.Data);
-                        this.UpdateMenuItems();
+                        AttachMainMenuItem((ToolStripMenuItem)de.Data);
+                        UpdateMenuItems();
                     }
                     else if (de.Action == "CodeRefactor.ContextMenu")
                     {
-                        this.AttachContextMenuItem((ToolStripMenuItem)de.Data);
-                        this.UpdateMenuItems();
+                        AttachContextMenuItem((ToolStripMenuItem)de.Data);
+                        UpdateMenuItems();
                     }
                     else if (de.Action == "CodeFormatter.FormatDocument")
                     {
-                        this.DoFormat((ITabbedDocument)de.Data);
+                        DoFormat((ITabbedDocument)de.Data);
                     }
                     break;
             }
@@ -125,10 +122,10 @@ namespace CodeFormatter
         {
             EventManager.AddEventHandler(this, EventType.Command);
             EventManager.AddEventHandler(this, EventType.FileSwitch);
-            string dataPath = Path.Combine(PathHelper.DataDir, "CodeFormatter");
+            var dataPath = Path.Combine(PathHelper.DataDir, nameof(CodeFormatter));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
+            settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -136,10 +133,10 @@ namespace CodeFormatter
         /// </summary>
         private void UpdateMenuItems()
         {
-            if (this.mainMenuItem == null || this.contextMenuItem == null) return;
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            bool isValid = doc != null && doc.IsEditable && this.DocumentType != TYPE_UNKNOWN;
-            this.mainMenuItem.Enabled = this.contextMenuItem.Enabled = isValid;
+            if (mainMenuItem == null || contextMenuItem == null) return;
+            var doc = PluginBase.MainForm.CurrentDocument;
+            var isValid = doc != null && doc.IsEditable && DocumentType != TYPE_UNKNOWN;
+            mainMenuItem.Enabled = contextMenuItem.Enabled = isValid;
         }
 
         /// <summary>
@@ -148,13 +145,11 @@ namespace CodeFormatter
         public void CreateMainMenuItem()
         {
             string label = TextHelper.GetString("Label.CodeFormatter");
-            this.mainMenuItem = new ToolStripMenuItem(label, null, this.Format, Keys.Control | Keys.Shift | Keys.D2);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
+            mainMenuItem = new ToolStripMenuItem(label, null, Format, Keys.Control | Keys.Shift | Keys.D2);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", mainMenuItem);
         }
-        private void AttachMainMenuItem(ToolStripMenuItem mainMenu)
-        {
-            mainMenu.DropDownItems.Insert(7, this.mainMenuItem);
-        }
+
+        private void AttachMainMenuItem(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(7, mainMenuItem);
 
         /// <summary>
         /// Creates a context menu item for the plugin
@@ -162,39 +157,30 @@ namespace CodeFormatter
         public void CreateContextMenuItem()
         {
             string label = TextHelper.GetString("Label.CodeFormatter");
-            this.contextMenuItem = new ToolStripMenuItem(label, null, this.Format, Keys.None);
-            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeFormatter", this.contextMenuItem);
+            contextMenuItem = new ToolStripMenuItem(label, null, Format, Keys.None);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeFormatter", contextMenuItem);
         }
-        public void AttachContextMenuItem(ToolStripMenuItem contextMenu)
-        {
-            contextMenu.DropDownItems.Insert(6, this.contextMenuItem);
-        }
+
+        public void AttachContextMenuItem(ToolStripMenuItem menu) => menu.DropDownItems.Insert(6, contextMenuItem);
 
         /// <summary>
         /// Loads the plugin settings
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) 
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) 
             {
-                this.settingObject.InitializeDefaultPreferences();
-                this.SaveSettings();
+                settingObject.InitializeDefaultPreferences();
+                SaveSettings();
             }
-            else
-            {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
 
@@ -209,10 +195,7 @@ namespace CodeFormatter
         /// <summary>
         /// Formats the current document
         /// </summary>
-        public void Format(object sender, EventArgs e)
-        {
-            this.DoFormat(PluginBase.MainForm.CurrentDocument);
-        }
+        public void Format(object sender, EventArgs e) => DoFormat(PluginBase.MainForm.CurrentDocument);
 
         /// <summary>
         /// Formats the specified document
@@ -230,7 +213,7 @@ namespace CodeFormatter
                     {
                         case TYPE_AS3:
                             ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
-                            FormatUtility.configureASPrinter(asPrinter, this.settingObject);
+                            FormatUtility.configureASPrinter(asPrinter, settingObject);
                             string asResultData = asPrinter.print(0);
                             if (asResultData == null)
                             {
@@ -247,7 +230,7 @@ namespace CodeFormatter
                         case TYPE_MXML:
                         case TYPE_XML:
                             MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
-                            FormatUtility.configureMXMLPrinter(mxmlPrinter, this.settingObject);
+                            FormatUtility.configureMXMLPrinter(mxmlPrinter, settingObject);
                             string mxmlResultData = mxmlPrinter.print(0);
                             if (mxmlResultData == null)
                             {
@@ -263,7 +246,7 @@ namespace CodeFormatter
 
                         case TYPE_CPP:
                             AStyleInterface asi = new AStyleInterface();
-                            string optionData = this.GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
+                            string optionData = GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
                             string resultData = asi.FormatSource(source, optionData);
                             if (string.IsNullOrEmpty(resultData))
                             {
@@ -299,8 +282,8 @@ namespace CodeFormatter
         private string GetOptionData(string language)
         {
             string optionData;
-            if (language == "cpp") optionData = this.settingObject.Pref_AStyle_CPP;
-            else optionData = this.settingObject.Pref_AStyle_Others;
+            if (language == "cpp") optionData = settingObject.Pref_AStyle_CPP;
+            else optionData = settingObject.Pref_AStyle_Others;
             if (string.IsNullOrEmpty(optionData))
             {
                 int tabSize = PluginBase.Settings.TabWidth;
@@ -345,7 +328,7 @@ namespace CodeFormatter
                         sci.SetSel(midpoint, midpoint);
                         break;
                     }
-                    else if (value < compressedText.Length) high = midpoint - 1;
+                    if (value < compressedText.Length) high = midpoint - 1;
                     else low = midpoint + 1;
                 }
                 if (!found) 

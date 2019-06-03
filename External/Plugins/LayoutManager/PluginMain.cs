@@ -30,7 +30,7 @@ namespace LayoutManager
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "LayoutManager";
+        public string Name { get; } = nameof(LayoutManager);
 
         /// <summary>
         /// GUID of the plugin
@@ -67,11 +67,11 @@ namespace LayoutManager
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreatePluginPanel();
-            this.CreateMenuItem();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreatePluginPanel();
+            CreateMenuItem();
         }
         
         /// <summary>
@@ -87,7 +87,7 @@ namespace LayoutManager
             switch (e.Type)
             {
                 case EventType.FileOpening:
-                    TextEvent te = (TextEvent) e;
+                    var te = (TextEvent) e;
                     if (te.Value.EndsWithOrdinal(".fdl") && File.Exists(te.Value))
                     {
                         te.Handled = true;
@@ -106,29 +106,26 @@ namespace LayoutManager
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "LayoutManager");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("46");
+            var path = Path.Combine(PathHelper.DataDir, nameof(LayoutManager));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
+            pluginImage = PluginBase.MainForm.FindImage("46");
         }
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.FileOpening);
-        }
+        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.FileOpening);
 
         /// <summary>
         /// Creates a menu item for the plugin
         /// </summary>
         public void CreateMenuItem()
         {
-            string label = TextHelper.GetString("Label.ViewMenuItem");
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, this.OpenPanel);
+            var label = TextHelper.GetString("Label.ViewMenuItem");
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var viewItem = new ToolStripMenuItem(label, pluginImage, OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowLayouts", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -138,9 +135,8 @@ namespace LayoutManager
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottomAutoHide);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
         }
 
         /// <summary>
@@ -148,10 +144,10 @@ namespace LayoutManager
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
-            LayoutManager.Settings.Instance = this.settingObject;
+            LayoutManager.Settings.Instance = settingObject;
         }
 
         /// <summary>
@@ -165,7 +161,5 @@ namespace LayoutManager
         public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
-
     }
-    
 }

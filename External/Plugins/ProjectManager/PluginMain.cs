@@ -105,13 +105,12 @@ namespace ProjectManager
             if (!Directory.Exists(SettingsDir)) Directory.CreateDirectory(SettingsDir);
             if (!File.Exists(SettingsPath))
             {
-                this.SaveSettings();
+                SaveSettings();
                 firstRun = true;
             }
             else
             {
-                object obj = ObjectSerializer.Deserialize(SettingsPath, Settings);
-                Settings = (ProjectManagerSettings)obj;
+                Settings = (ProjectManagerSettings)ObjectSerializer.Deserialize(SettingsPath, Settings);
                 PatchSettings();
             }
             // set manually to avoid dependency in FDBuild
@@ -128,17 +127,15 @@ namespace ProjectManager
             // remove 'obj' from the excluded directory names - now /obj a hidden directory
             if (Settings.ExcludedDirectories.Length > 0 && Settings.ExcludedDirectories[0] == "obj")
             {
-                List<string> ex = new List<string>(Settings.ExcludedDirectories);
-                ex.RemoveAt(0);
-                Settings.ExcludedDirectories = ex.ToArray();
-                this.SaveSettings();
+                Settings.ExcludedDirectories = Settings.ExcludedDirectories.Skip(1).ToArray();
+                SaveSettings();
             }
             // add new filtered types if user has old settings
             if (!Settings.ExcludedDirectories.Contains("node_modules"))
             {
                 var list = new List<string>(Settings.ExcludedDirectories) {"node_modules"};
                 Settings.ExcludedDirectories = list.ToArray();
-                this.SaveSettings();
+                SaveSettings();
             }
         }
 
@@ -154,7 +151,7 @@ namespace ProjectManager
 
         public int Api => 1;
 
-        public string Name => "ProjectManager";
+        public string Name => nameof(ProjectManager);
 
         public string Guid => "30018864-fadd-1122-b2a5-779832cbbf23";
 
@@ -316,16 +313,15 @@ namespace ProjectManager
 
         private void ApplyTargetBuild()
         {
-            string target = menus.TargetBuildSelector.Text;
-            Project project = activeProject;
-            if (project != null && project.TargetBuild != target)
-            {
-                menus.AddTargetBuild(target);
-                FlexCompilerShell.Cleanup();
-                project.TargetBuild = menus.TargetBuildSelector.Text;
-                project.UpdateVars(false);
-                projectActions.UpdateASCompletion(MainForm, project);
-            }
+            var project = activeProject;
+            if (project is null) return;
+            var target = menus.TargetBuildSelector.Text;
+            if (project.TargetBuild == target) return;
+            menus.AddTargetBuild(target);
+            FlexCompilerShell.Cleanup();
+            project.TargetBuild = menus.TargetBuildSelector.Text;
+            project.UpdateVars(false);
+            projectActions.UpdateASCompletion(MainForm, project);
         }
 
         void TargetBuildSelector_KeyDown(object sender, KeyEventArgs e)
@@ -338,8 +334,8 @@ namespace ProjectManager
         {
             // we have to fiddle this a little since we only get once change to save our settings!
             // (further saves will be ignored by FD design)
-            Project project = activeProject; 
-            string lastProject = (project != null) ? project.ProjectPath : "";
+            var project = activeProject; 
+            var lastProject = (project != null) ? project.ProjectPath : "";
             CloseProject(true);
             Settings.LastProject = lastProject;
             FlexCompilerShell.Cleanup(); // in case it was used
@@ -637,7 +633,7 @@ namespace ProjectManager
 
         void SetProject(Project project, bool stealFocus, bool internalOpening)
         {
-            if (project == null || Tree.Projects.Contains(project)) return;
+            if (project is null || Tree.Projects.Contains(project)) return;
             if (activeProject != null) CloseProject(true);
 
             // configure
@@ -702,7 +698,7 @@ namespace ProjectManager
             listenToPathChange = false;
 
             // save project prefs
-            ProjectPreferences prefs = Settings.GetPrefs(project);
+            var prefs = Settings.GetPrefs(project);
             prefs.ExpandedPaths = Tree.ExpandedPaths;
             prefs.DebugMode = project.TraceEnabled;
             prefs.TargetBuild = project.TargetBuild;
@@ -885,8 +881,7 @@ namespace ProjectManager
                     {
                         // ignored
                     }
-                    var psi = new ProcessStartInfo(doc);
-                    psi.WorkingDirectory = project.Directory;
+                    var psi = new ProcessStartInfo(doc) {WorkingDirectory = project.Directory};
                     ProcessHelper.StartAsync(psi);
                 }
             }
@@ -1207,13 +1202,13 @@ namespace ProjectManager
 
         private void BroadcastMenuInfo()
         {
-            var de = new DataEvent(EventType.Command, ProjectManagerEvents.Menu, this.menus.ProjectMenu);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.Menu, menus.ProjectMenu);
             EventManager.DispatchEvent(this, de);
         }
 
         private void BroadcastToolBarInfo()
         {
-            var de = new DataEvent(EventType.Command, ProjectManagerEvents.ToolBar, this.pluginUI.TreeBar);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.ToolBar, pluginUI.TreeBar);
             EventManager.DispatchEvent(this, de);
         }
 
@@ -1249,7 +1244,7 @@ namespace ProjectManager
         {
             if (Control.ModifierKeys == Keys.Control)
             {
-                this.TreeShowShellMenu();
+                TreeShowShellMenu();
             }
         }
 
@@ -1294,8 +1289,7 @@ namespace ProjectManager
                 BridgeManager.RemoteOpen(path);
                 return;
             }
-            var psi = new ProcessStartInfo(path);
-            psi.WorkingDirectory = Path.GetDirectoryName(path);
+            var psi = new ProcessStartInfo(path) {WorkingDirectory = Path.GetDirectoryName(path)};
             ProcessHelper.StartAsync(psi);
         }
 
@@ -1305,8 +1299,7 @@ namespace ProjectManager
             var node = Tree.SelectedNode as ExportNode;
             var path = (node != null) ? node.ContainingSwfPath : Tree.SelectedPath;
             var project = Tree.ProjectOf(path) ?? Tree.ProjectOf(Tree.SelectedNode);
-            if (project != null)
-                projectActions.InsertFile(MainForm, project, path, node);
+            if (project != null) projectActions.InsertFile(MainForm, project, path, node);
             // TODO better handling / report invalid action
         }
 
@@ -1317,8 +1310,7 @@ namespace ProjectManager
             var selectedPaths = Tree.SelectedPaths;
             var project = Tree.ProjectOf(Tree.SelectedNode);
             Tree.SelectedNodes = null;
-            if (project != null)
-                projectActions.ToggleLibraryAsset(project, selectedPaths);
+            if (project != null) projectActions.ToggleLibraryAsset(project, selectedPaths);
             // TODO report invalid action
         }
 
@@ -1344,39 +1336,23 @@ namespace ProjectManager
             EventManager.DispatchEvent(this, de);
         }
 
-        private void TreeCutItems()
-        {
-            fileActions.CutToClipboard(Tree.SelectedPaths);
-        }
+        private void TreeCutItems() => fileActions.CutToClipboard(Tree.SelectedPaths);
 
-        private void TreeCopyItems()
-        {
-            fileActions.CopyToClipboard(Tree.SelectedPaths);
-        }
+        private void TreeCopyItems() => fileActions.CopyToClipboard(Tree.SelectedPaths);
 
-        private void TreePasteItems()
-        {
-            fileActions.PasteFromClipboard(Tree.SelectedPath);
-        }
+        private void TreePasteItems() => fileActions.PasteFromClipboard(Tree.SelectedPath);
 
-        private void TreeDeleteItems()
-        {
-            fileActions.Delete(Tree.SelectedPaths);
-        }
+        private void TreeDeleteItems() => fileActions.Delete(Tree.SelectedPaths);
 
         private void TreeLibraryOptions()
         {
             var project = Tree.ProjectOf(Tree.SelectedNode);
-            if (project != null)
+            if (project is null) return;
+            using (var dialog = new LibraryAssetDialog( /*Tree.SelectedAsset*/project.GetAsset(Tree.SelectedPath), project))
             {
-                using (var dialog = new LibraryAssetDialog( /*Tree.SelectedAsset*/project.GetAsset(Tree.SelectedPath), project))
-                {
-                    if (dialog.ShowDialog(pluginUI) == DialogResult.OK)
-                    {
-                        Tree.SelectedNode.Refresh(false);
-                        project.Save();
-                    }
-                }
+                if (dialog.ShowDialog(pluginUI) != DialogResult.OK) return;
+                Tree.SelectedNode.Refresh(false);
+                project.Save();
             }
         }
 
@@ -1387,27 +1363,19 @@ namespace ProjectManager
                 fileActions.AddFileFromTemplate(project, Tree.SelectedPath, templatePath, noName);
         }
 
-        private void TreeAddFolder()
-        {
-            fileActions.AddFolder(Tree.SelectedPath);
-        }
+        private void TreeAddFolder() => fileActions.AddFolder(Tree.SelectedPath);
 
         private void TreeAddAsset()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedPath);
-            if (project != null)
+            if (Tree.ProjectOf(Tree.SelectedPath) is Project project)
                 fileActions.AddLibraryAsset(project, Tree.SelectedPath);
         }
 
-        private void TreeAddExistingFile()
-        {
-            fileActions.AddExistingFile(Tree.SelectedPath);
-        }
+        private void TreeAddExistingFile() => fileActions.AddExistingFile(Tree.SelectedPath);
 
         private void TreeHideItems()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedNode);
-            if (project != null)
+            if (Tree.ProjectOf(Tree.SelectedNode) is Project project)
                 projectActions.ToggleHidden(project, Tree.SelectedPaths);
         }
 
@@ -1452,31 +1420,29 @@ namespace ProjectManager
         private void TreeShowShellMenu()
         {
             string parentDir = null;
-            ShellContextMenu scm = new ShellContextMenu();
-            List<FileInfo> selectedPathsAndFiles = new List<FileInfo>();
-            for (int i = 0; i < Tree.SelectedPaths.Length; i++)
+            var scm = new ShellContextMenu();
+            var selectedPathsAndFiles = new List<FileInfo>();
+            foreach (var path in Tree.SelectedPaths)
             {
-                string path = Tree.SelectedPaths[i];
                 // only select files in the same directory
-                if (parentDir == null) parentDir = Path.GetDirectoryName(path);
+                if (parentDir is null) parentDir = Path.GetDirectoryName(path);
                 else if (Path.GetDirectoryName(path) != parentDir) continue;
                 selectedPathsAndFiles.Add(new FileInfo(path));
             }
-            this.pluginUI.Menu.Hide(); /* Hide default menu */
-            Point location = new Point(this.pluginUI.Menu.Bounds.Left, this.pluginUI.Menu.Bounds.Top);
+            pluginUI.Menu.Hide(); /* Hide default menu */
+            var location = new Point(pluginUI.Menu.Bounds.Left, pluginUI.Menu.Bounds.Top);
             scm.ShowContextMenu(selectedPathsAndFiles.ToArray(), location);
         }
-
-
+        
         private void TestBuild()
         {
-            this.runOutput = true;
-            this.FullBuild();
+            runOutput = true;
+            FullBuild();
         }
 
         private void FullBuild()
         {
-            this.buildingAll = true;
+            buildingAll = true;
             foreach (GenericNode node in Tree.SelectedNode.Nodes)
             {
                 if (IsBuildable(node.BackingPath) && !buildQueue.Contains(node.BackingPath))
@@ -1510,16 +1476,14 @@ namespace ProjectManager
         void OnBuildTimerTick(object sender, EventArgs e)
         {
             buildTimer.Stop();
-            if (buildTimer.Tag == null)
+            if (buildTimer.Tag is null)
             {
                 try
                 {
-                    Project project = ProjectLoader.Load(buildQueue.Dequeue());
-                    if (project != null)
-                    {
-                        bool debugging = this.buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
-                        this.buildActions.Build(project, false, debugging);
-                    }
+                    var project = ProjectLoader.Load(buildQueue.Dequeue());
+                    if (project is null) return;
+                    var debugging = buildingAll ? !activeProject.TraceEnabled : !project.TraceEnabled;
+                    buildActions.Build(project, false, debugging);
                 }
                 catch (Exception ex)
                 {
@@ -1530,47 +1494,42 @@ namespace ProjectManager
             else
             {
                 buildTimer.Tag = null;
-                if (this.runOutput) this.TestMovie();
-                else this.BuildProject();
-                this.runOutput = false;
+                if (runOutput) TestMovie();
+                else BuildProject();
+                runOutput = false;
             }
         }
 
         private bool IsBuildable(string path)
         {
             string ext = Path.GetExtension(path).ToLower();
-            if (FileInspector.IsAS2Project(path, ext)) return true;
-            else if (FileInspector.IsAS3Project(path, ext)) return true;
-            else if (FileInspector.IsHaxeProject(path, ext)) return true;
-            else return false;
+            return FileInspector.IsAS2Project(path, ext)
+                   || FileInspector.IsAS3Project(path, ext)
+                   || FileInspector.IsHaxeProject(path, ext);
         }
 
         private void AddSourcePath()
         {
-            string path = Tree.SelectedPath;
-            Project project = Tree.ProjectOf(path);
-            if (project != null)
-            {
-                if (path.StartsWithOrdinal(project.Directory)) path = project.GetRelativePath(path);
-                if (project.Classpaths.Count == 1 && project.Classpaths[0] == ".")
-                    project.Classpaths.Clear();
-                project.Classpaths.Add(path);
-                project.Save();
-                project.OnClasspathChanged();
-            }
+            var path = Tree.SelectedPath;
+            var project = Tree.ProjectOf(path);
+            if (project is null) return;
+            if (path.StartsWithOrdinal(project.Directory)) path = project.GetRelativePath(path);
+            if (project.Classpaths.Count == 1 && project.Classpaths[0] == ".")
+                project.Classpaths.Clear();
+            project.Classpaths.Add(path);
+            project.Save();
+            project.OnClasspathChanged();
         }
 
         private void RemoveSourcePath()
         {
-            string path = Tree.SelectedPath;
-            Project project = Tree.ProjectOf(path);
-            if (project != null)
-            {
-                project.Classpaths.Remove(project.GetRelativePath(path));
-                if (project.Classpaths.Count == 0) project.Classpaths.Add(".");
-                project.Save();
-                project.OnClasspathChanged();
-            }
+            var path = Tree.SelectedPath;
+            var project = Tree.ProjectOf(path);
+            if (project is null) return;
+            project.Classpaths.Remove(project.GetRelativePath(path));
+            if (project.Classpaths.Count == 0) project.Classpaths.Add(".");
+            project.Save();
+            project.OnClasspathChanged();
         }
 
         private void CopyClassName()
@@ -1586,7 +1545,7 @@ namespace ProjectManager
 
         private void FindAndReplace()
         {
-            string path = Tree.SelectedPath;
+            var path = Tree.SelectedPath;
             if (path != null && File.Exists(path))
             {
                 PluginBase.MainForm.CallCommand("FindAndReplaceFrom", path);
@@ -1595,15 +1554,12 @@ namespace ProjectManager
 
         private void FindInFiles()
         {
-            if (Tree.SelectedPaths == null)
-                return;
-
-            List<string> paths = new List<string>(Tree.SelectedPaths);
+            if (Tree.SelectedPaths is null) return;
+            var paths = new List<string>(Tree.SelectedPaths);
             paths.RemoveAll(p => !Directory.Exists(p));
-
             if (paths.Count > 0)
             {
-                string path = string.Join(";", paths.ToArray());
+                var path = string.Join(";", paths);
                 PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
             }
         }
@@ -1657,7 +1613,7 @@ namespace ProjectManager
         {
             if (PluginBase.CurrentProject != null)
             {
-                if (projectResources == null) projectResources = new OpenResourceForm(this);
+                if (projectResources is null) projectResources = new OpenResourceForm(this);
                 projectResources.ShowDialog(pluginUI);
             }
         }

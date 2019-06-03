@@ -51,9 +51,9 @@ namespace LintingHelper
 
         private void InitBasics()
         {
-            var dataPath = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            settingFilename = Path.Combine(dataPath, $"{nameof(Settings)}.fdb");
+            var path = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, $"{nameof(Settings)}.fdb");
             TraceManager.RegisterTraceGroup(LintingManager.TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.LintingResults"));
         }
 
@@ -100,7 +100,7 @@ namespace LintingHelper
                                     LintingManager.LintDocument(doc);*/
                             {
                                 ScintillaNet.ScintillaControl sci;
-                                if (doc.IsUntitled || (sci = doc.SciControl) == null) continue;
+                                if (doc.IsUntitled || (sci = doc.SciControl) is null) continue;
 
                                 var files = groupedFiles.GetOrCreate(sci.ConfigurationLanguage);
                                 files.Add(sci.FileName);

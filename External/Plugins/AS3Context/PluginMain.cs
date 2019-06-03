@@ -42,7 +42,7 @@ namespace AS3Context
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public string Name { get; } = "AS3Context";
+        public string Name { get; } = nameof(AS3Context);
 
         /// <summary>
         /// GUID of the plugin
@@ -81,11 +81,11 @@ namespace AS3Context
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.CreatePanels();
-            this.CreateMenuItems();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            CreatePanels();
+            CreateMenuItems();
+            AddEventHandlers();
         }
 
         /// <summary>
@@ -94,8 +94,8 @@ namespace AS3Context
         public void Dispose()
         {
             FlexDebugger.Stop();
-            if (profilerUI != null) profilerUI.Cleanup();
-            this.SaveSettings();
+            profilerUI?.Cleanup();
+            SaveSettings();
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace AS3Context
                 switch (e.Type)
                 {
                     case EventType.ProcessArgs:
-                        TextEvent te = e as TextEvent;
+                        var te = (TextEvent) e;
                         if (te.Value.Contains("$(FlexSDK)"))
                         {
                             te.Value = te.Value.Replace("$(FlexSDK)", contextInstance.GetCompilerPath());
@@ -116,8 +116,8 @@ namespace AS3Context
                         break;
 
                     case EventType.Command:
-                        DataEvent de = e as DataEvent;
-                        string action = de.Action;
+                        var de = (DataEvent) e;
+                        var action = de.Action;
                         if (action == "ProjectManager.Project")
                         {
                             FlexShells.Instance.Stop(); // clear
@@ -151,7 +151,7 @@ namespace AS3Context
                     case EventType.Keys:
                         if (inMXML)
                         {
-                            KeyEvent ke = e as KeyEvent;
+                            var ke = (KeyEvent) e;
                             if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("SearchMenu.GotoDeclaration"))
                             {
                                 if (MxmlComplete.GotoDeclaration())
@@ -165,7 +165,7 @@ namespace AS3Context
                 }
                 return;
             }
-            else if (priority == HandlingPriority.Normal)
+            if (priority == HandlingPriority.Normal)
             {
                 switch (e.Type)
                 {
@@ -180,7 +180,7 @@ namespace AS3Context
 
                     case EventType.FileSave:
                     case EventType.FileSwitch:
-                        if (contextInstance != null) contextInstance.OnFileOperation(e);
+                        contextInstance?.OnFileOperation(e);
 
                         if (PluginBase.MainForm.CurrentDocument.IsEditable)
                         {
@@ -193,16 +193,16 @@ namespace AS3Context
                 }
                 return;
             }
-            else if (priority == HandlingPriority.High)
+            if (priority == HandlingPriority.High)
             {
                 if (e.Type == EventType.Command)
                 {
-                    string action = (e as DataEvent).Action;
+                    var action = ((DataEvent) e).Action;
                     if (action == "ProjectManager.Project")
                     {
                         FlexDebugger.Stop();
-                        IProject project = PluginBase.CurrentProject;
-                        viewButton.Enabled = project == null || project.Language == "as3" || project.Language == "haxe";
+                        var project = PluginBase.CurrentProject;
+                        viewButton.Enabled = project is null || project.Language == "as3" || project.Language == "haxe";
                     }
                     else if (action.StartsWithOrdinal("FlashViewer."))
                     {
@@ -210,18 +210,16 @@ namespace AS3Context
                         {
                             FlexDebugger.Stop();
                         }
-                        else if (action == "FlashViewer.External" || action == "FlashViewer.Default" 
-                            || action == "FlashViewer.Popup" || action == "FlashViewer.Document")
+                        else if (action == "FlashViewer.External" || action == "FlashViewer.Default" || action == "FlashViewer.Popup" || action == "FlashViewer.Document")
                         {
-                            if (PluginBase.CurrentProject != null 
-                                && PluginBase.CurrentProject.EnableInteractiveDebugger)
+                            if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.EnableInteractiveDebugger)
                             {
                                 DataEvent de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
                                 EventManager.DispatchEvent(this, de);
                                 
                                 if (PluginBase.CurrentProject.TraceEnabled)
                                 {
-                                    de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", (e as DataEvent).Data);
+                                    de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", ((DataEvent) e).Data);
                                     EventManager.DispatchEvent(this, de);
                                 }
                             }
@@ -229,11 +227,11 @@ namespace AS3Context
                     }
                     else if (action == "FlashConnect")
                     {
-                        ProfilerUI.HandleFlashConnect(sender, (e as DataEvent).Data);
+                        ProfilerUI.HandleFlashConnect(sender, ((DataEvent) e).Data);
                     }
                     else if (inMXML)
                     {
-                        DataEvent de = e as DataEvent;
+                        var de = (DataEvent) e;
                         if (de.Action == "XMLCompletion.Element")
                         {
                             de.Handled = MxmlComplete.HandleElement(de.Data);
@@ -275,8 +273,7 @@ namespace AS3Context
             AbcConverter.Convert(parser, path, contextInstance);
 
             string fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
-            FileModel model;
-            if (path.TryGetFile(fileName, out model))
+            if (path.TryGetFile(fileName, out var model))
             {
                 ASComplete.OpenVirtualFile(model);
                 return true;
@@ -306,11 +303,11 @@ namespace AS3Context
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "AS3Context");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
-            this.pluginIcon = PluginBase.MainForm.FindImage("123");
+            var path = Path.Combine(PathHelper.DataDir, nameof(AS3Context));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
+            pluginIcon = PluginBase.MainForm.FindImage("123");
         }
 
         /// <summary>
@@ -318,8 +315,7 @@ namespace AS3Context
         /// </summary>
         private void CreatePanels()
         {
-            profilerUI = new ProfilerUI();
-            profilerUI.Text = TextHelper.GetString("Title.Profiler");
+            profilerUI = new ProfilerUI {Text = TextHelper.GetString("Title.Profiler")};
             profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerUI, Guid, pluginIcon, DockState.Hidden);
             profilerPanel.VisibleState = DockState.Float;
             profilerUI.PanelRef = profilerPanel;
@@ -330,10 +326,9 @@ namespace AS3Context
         /// </summary>
         private void CreateMenuItems()
         {
-            ToolStripMenuItem menu = PluginBase.MainForm.FindMenuItem("ViewMenu") as ToolStripMenuItem;
-            if (menu == null) return;
+            if (!(PluginBase.MainForm.FindMenuItem("ViewMenu") is ToolStripMenuItem menu)) return;
 
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
+            var viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowProfiler", viewItem);
             menu.DropDownItems.Add(viewItem);
 
@@ -396,13 +391,9 @@ namespace AS3Context
         public void LoadSettings()
         {
             Settings = new AS3Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, Settings);
-                Settings = (AS3Settings)obj;
-            }
-            if (Settings.AS3ClassPath == null) Settings.AS3ClassPath = @"Library\AS3\intrinsic";
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else Settings = (AS3Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
+            if (Settings.AS3ClassPath is null) Settings.AS3ClassPath = @"Library\AS3\intrinsic";
         }
 
         /// <summary>
@@ -410,26 +401,20 @@ namespace AS3Context
         /// </summary>
         private void ValidateSettings()
         {
-            if (Settings.InstalledSDKs == null || Settings.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
+            if (Settings.InstalledSDKs is null || Settings.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
             {
-                InstalledSDK sdk;
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
-                string includedSDK;
-                includedSDK = "Tools\\flexsdk";
+                var includedSDK = "Tools\\flexsdk";
                 if (Directory.Exists(PathHelper.ResolvePath(includedSDK)))
                 {
                     InstalledSDKContext.Current = this;
-                    sdk = new InstalledSDK(this);
-                    sdk.Path = includedSDK;
-                    sdks.Add(sdk);
+                    sdks.Add(new InstalledSDK(this) {Path = includedSDK});
                 }
                 includedSDK = "Tools\\ascsdk";
                 if (Directory.Exists(PathHelper.ResolvePath(includedSDK)))
                 {
                     InstalledSDKContext.Current = this;
-                    sdk = new InstalledSDK(this);
-                    sdk.Path = includedSDK;
-                    sdks.Add(sdk);
+                    sdks.Add(new InstalledSDK(this) {Path = includedSDK});
                 }
                 /* Resolve AppMan Flex SDKs */
                 string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flexsdk");
@@ -440,9 +425,7 @@ namespace AS3Context
                     {
                         if (Directory.Exists(versionDir))
                         {
-                            sdk = new InstalledSDK(this);
-                            sdk.Path = versionDir;
-                            sdks.Add(sdk);
+                            sdks.Add(new InstalledSDK(this) {Path = versionDir});
                         }
                     }
                 }
@@ -455,9 +438,7 @@ namespace AS3Context
                     {
                         if (Directory.Exists(versionDir))
                         {
-                            sdk = new InstalledSDK(this);
-                            sdk.Path = versionDir;
-                            sdks.Add(sdk);
+                            sdks.Add(new InstalledSDK(this) {Path = versionDir});
                         }
                     }
                 }
@@ -470,9 +451,7 @@ namespace AS3Context
                     {
                         if (Directory.Exists(versionDir))
                         {
-                            sdk = new InstalledSDK(this);
-                            sdk.Path = versionDir;
-                            sdks.Add(sdk);
+                            sdks.Add(new InstalledSDK(this) {Path = versionDir});
                         }
                     }
                 }
@@ -481,7 +460,7 @@ namespace AS3Context
                 //
                 if (Settings.InstalledSDKs != null)
                 {
-                    char[] slashes = new char[] { '/', '\\' };
+                    char[] slashes = { '/', '\\' };
                     foreach (InstalledSDK oldSdk in Settings.InstalledSDKs)
                     {
                         string oldPath = oldSdk.Path.TrimEnd(slashes);
@@ -501,7 +480,7 @@ namespace AS3Context
             }
             else
             {
-                foreach (InstalledSDK sdk in Settings.InstalledSDKs)
+                foreach (var sdk in Settings.InstalledSDKs)
                 {
                     sdk.Validate();
                 }
@@ -528,7 +507,7 @@ namespace AS3Context
         /// </summary>
         private void SettingObjectOnClasspathChanged()
         {
-            if (contextInstance != null) contextInstance.BuildClassPath();
+            contextInstance?.BuildClassPath();
         }
 
         /// <summary>
@@ -536,7 +515,7 @@ namespace AS3Context
         /// </summary>
         public void SaveSettings()
         {
-            ObjectSerializer.Serialize(this.settingFilename, Settings);
+            ObjectSerializer.Serialize(settingFilename, Settings);
         }
 
         /// <summary>
@@ -544,10 +523,10 @@ namespace AS3Context
         /// </summary>
         static public string FindAuthoringConfigurationPath(string flashPath)
         {
-            if (flashPath == null)
+            if (flashPath is null)
             {
                 flashPath = CallFlashIDE.FindFlashIDE(true);
-                if (flashPath == null) return null;
+                if (flashPath is null) return null;
             }
             string ext = Path.GetExtension(flashPath).ToLower();
             if (ext == ".exe" || ext == ".bat" || ext == ".cmd")
@@ -568,7 +547,7 @@ namespace AS3Context
                 return basePath + deflang + "\\Configuration\\";
             }
             // look for other languages
-            else if (Directory.Exists(basePath))
+            if (Directory.Exists(basePath))
             {
                 string[] dirs = Directory.GetDirectories(basePath);
                 foreach (string dir in dirs)
@@ -589,21 +568,20 @@ namespace AS3Context
         public bool ValidateSDK(InstalledSDK sdk)
         {
             sdk.Owner = this;
-            string path = sdk.Path;
-            if (path == null) return false;
-            Match mBin = Regex.Match(path, "[/\\\\]bin$", RegexOptions.IgnoreCase);
+            var path = sdk.Path;
+            if (path is null) return false;
+            var mBin = Regex.Match(path, "[/\\\\]bin$", RegexOptions.IgnoreCase);
             if (mBin.Success)
                 sdk.Path = path = path.Substring(0, mBin.Index);
 
-            IProject project = PluginBase.CurrentProject;
-            if (project != null)
-                path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
-            else
-                path = PathHelper.ResolvePath(path);
+            var project = PluginBase.CurrentProject;
+            path = project != null
+                ? PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath))
+                : PathHelper.ResolvePath(path);
 
             try
             {
-                if (path == null || !Directory.Exists(path))
+                if (path is null || !Directory.Exists(path))
                 {
                     ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
                     return false;
@@ -622,8 +600,8 @@ namespace AS3Context
             if (File.Exists(descriptor))
             {
                 string raw = File.ReadAllText(descriptor);
-                Match mName = Regex.Match(raw, "<name>([^<]+)</name>");
-                Match mVer = Regex.Match(raw, "<version>([^<]+)</version>");
+                var mName = Regex.Match(raw, "<name>([^<]+)</name>");
+                var mVer = Regex.Match(raw, "<version>([^<]+)</version>");
                 if (mName.Success && mVer.Success)
                 {
                     sdk.Name = mName.Groups[1].Value;
@@ -642,14 +620,12 @@ namespace AS3Context
                     }
                     return true;
                 }
-                else ErrorManager.ShowInfo("Invalid SDK descriptor:\n" + descriptor);
+                ErrorManager.ShowInfo("Invalid SDK descriptor:\n" + descriptor);
             }
             else ErrorManager.ShowInfo("No SDK descriptor found:\n" + descriptor);
             return false;
         }
 
         #endregion
-    
     }
-
 }
