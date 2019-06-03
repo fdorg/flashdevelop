@@ -138,7 +138,7 @@ namespace PluginCore.Utilities
                         //pin the byte array in memory
                         bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
 
-                        data.dwData = 0;
+                        data.dwData = new IntPtr(0);
                         data.cbData = buffer.Length;
                         //get the address of the pinned buffer
                         data.lpData = bufferHandle.AddrOfPinnedObject();
