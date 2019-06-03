@@ -11,33 +11,33 @@ namespace PluginCore.Managers
         /// <summary>
         /// Enables/disables the log file output
         /// </summary>
-        public static Boolean OutputIsEnabled = true;
+        public static bool OutputIsEnabled = true;
 
         /// <summary>
         /// Shows a visible info message to the user
         /// </summary>
-        public static void ShowInfo(String info)
+        public static void ShowInfo(string info)
         {
-            if ((PluginBase.MainForm as Form).InvokeRequired)
+            if (((Form) PluginBase.MainForm).InvokeRequired)
             {
                 AddToLog("Unsafe ShowInfo: " + info, null);
                 return;
             }
-            String title = TextHelper.GetString("FlashDevelop.Title.InfoDialog");
+            var title = TextHelper.GetString("FlashDevelop.Title.InfoDialog");
             MessageBox.Show(PluginBase.MainForm, info, " " + title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
         /// Shows a visible warning message to the user
         /// </summary>
-        public static void ShowWarning(String info, Exception exception)
+        public static void ShowWarning(string info, Exception exception)
         {
-            if ((PluginBase.MainForm as Form).InvokeRequired)
+            if (((Form) PluginBase.MainForm).InvokeRequired)
             {
                 AddToLog("Unsafe ShowWarning: " + info, exception);
                 return;
             }
-            String title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
+            var title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
             MessageBox.Show(PluginBase.MainForm, info, " " + title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             if (OutputIsEnabled && exception != null) AddToLog(info, exception);
         }
@@ -45,14 +45,14 @@ namespace PluginCore.Managers
         /// <summary>
         /// Shows a simple error dialog to the user
         /// </summary>
-        public static void ShowError(String info, Exception exception)
+        public static void ShowError(string info, Exception exception)
         {
-            if ((PluginBase.MainForm as Form).InvokeRequired)
+            if (((Form) PluginBase.MainForm).InvokeRequired)
             {
                 AddToLog("Unsafe ShowError: " + info, exception);
                 return;
             }
-            String title = TextHelper.GetString("FlashDevelop.Title.ErrorDialog");
+            var title = TextHelper.GetString("FlashDevelop.Title.ErrorDialog");
             MessageBox.Show(PluginBase.MainForm, info, " " + title, MessageBoxButtons.OK, MessageBoxIcon.Error);
             if (OutputIsEnabled) AddToLog(info, exception);
         }
@@ -62,7 +62,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static void ShowError(Exception exception)
         {
-            if ((PluginBase.MainForm as Form).InvokeRequired)
+            if (((Form) PluginBase.MainForm).InvokeRequired)
             {
                 AddToLog("Unsafe ShowError", exception);
                 return;
@@ -74,16 +74,16 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds the message and exception to the error log silently
         /// </summary>
-        public static void AddToLog(String message, Exception exception)
+        public static void AddToLog(string message, Exception exception)
         {
-            String result = String.Empty;
+            var result = string.Empty;
             result += DateTime.Now + "\r\n\r\n";
             if (message != null) result += message + "\r\n\r\n";
             if (exception != null) result += exception + "\r\n\r\n";
             try
             {
-                String fileName = Path.Combine(PathHelper.BaseDir, "Exceptions.log");
-                using (StreamWriter sw = new StreamWriter(fileName, true))
+                var fileName = Path.Combine(PathHelper.BaseDir, "Exceptions.log");
+                using (var sw = new StreamWriter(fileName, true))
                 {
                     sw.Write(result);
                 }

@@ -10,11 +10,6 @@ namespace BookmarkPanel
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "BookmarkPanel";
-        private String pluginGuid = "9b79609e-2b05-4e88-9430-21713aafc827";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a bookmark management panel to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
         private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Image pluginImage;
@@ -24,59 +19,38 @@ namespace BookmarkPanel
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "BookmarkPanel";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "9b79609e-2b05-4e88-9430-21713aafc827";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a bookmark management panel to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
-        public Object Settings
-        {
-            get { return null; }
-        }
-        
+        public object Settings => null;
+
         #endregion
         
         #region Required Methods
@@ -103,18 +77,16 @@ namespace BookmarkPanel
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.FileOpen:
-                    TextEvent fo = e as TextEvent;
-                    if (fo != null) this.pluginUI.CreateDocument(fo.Value);
+                    if (e is TextEvent fo) this.pluginUI.CreateDocument(fo.Value);
                     break;
 
                 case EventType.FileClose:
-                    TextEvent fc = e as TextEvent;
-                    if (fc != null) this.pluginUI.CloseDocument(fc.Value);
+                    if (e is TextEvent fc) this.pluginUI.CloseDocument(fc.Value);
                     break;
 
                 case EventType.ApplySettings:
@@ -137,7 +109,7 @@ namespace BookmarkPanel
         /// </summary>
         public void InitBasics()
         {
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
             this.pluginImage = PluginBase.MainForm.FindImage("402");
         }
 
@@ -155,7 +127,7 @@ namespace BookmarkPanel
         public void CreateMenuItem()
         {
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, this.OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowBookmarks", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -167,13 +139,13 @@ namespace BookmarkPanel
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight);
+            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockRight);
         }
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
+        public void OpenPanel(object sender, EventArgs e)
         {
             this.pluginPanel.Show();
         }

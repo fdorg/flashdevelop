@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -15,7 +14,7 @@ namespace PluginCore
         public static string FLASHPLAYER_PLATFORM = "Flash Player";
         public static string JAVASCRIPT_PLATFORM = "JavaScript";
 
-        public static Dictionary<String, SupportedLanguage> SupportedLanguages;
+        public static Dictionary<string, SupportedLanguage> SupportedLanguages;
 
         public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
@@ -54,7 +53,7 @@ namespace PluginCore
 
         public static void Load(string path)
         {
-            SupportedLanguages = new Dictionary<String, SupportedLanguage>();
+            SupportedLanguages = new Dictionary<string, SupportedLanguage>();
             if (!Directory.Exists(path)) return;
 
             // walk AS2, AS3, Haxe...
@@ -243,10 +242,7 @@ namespace PluginCore
         public string GetProjectTemplate(string target)
         {
             var templateNode = RawData.SelectSingleNode("templates/template[@target='" + target + "']/@value");
-                
-            if (templateNode != null) return templateNode.Value;
-
-            return null;
+            return templateNode?.Value;
         }
     }
 

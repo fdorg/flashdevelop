@@ -113,7 +113,7 @@ namespace AS3Context
             {
                 installedSDKs = value;
                 FireChanged();
-                if (OnInstalledSDKsChanged != null) OnInstalledSDKsChanged();
+                OnInstalledSDKsChanged?.Invoke();
             }
         }
 
@@ -295,7 +295,7 @@ namespace AS3Context
 
         private void FireChanged()
         {
-            if (OnClasspathChanged != null) OnClasspathChanged();
+            OnClasspathChanged?.Invoke();
         }
     }
 }

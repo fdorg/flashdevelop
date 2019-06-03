@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 

@@ -7,13 +7,13 @@ namespace StartPage
     [Serializable]
     public class Settings
     {
-        private Boolean closeOnProjectOpen = false;
-        private Boolean showStartPageInsteadOfUntitled = false;
+        private bool closeOnProjectOpen = false;
+        private bool showStartPageInsteadOfUntitled = false;
         private ShowStartPageOnStartupEnum showStartPageOnStartup = ShowStartPageOnStartupEnum.NotRestoringSession;
-        private Boolean useCustomStartPage = false;
-        private Boolean useCustomRssFeed = false;
-        private String customStartPage = "";
-        private String customRssFeed = "";
+        private bool useCustomStartPage = false;
+        private bool useCustomRssFeed = false;
+        private string customStartPage = "";
+        private string customRssFeed = "";
 
         #region Common Settings
 
@@ -24,7 +24,7 @@ namespace StartPage
         [LocalizedDescription("StartPage.Description.CloseOnProjectOpen")]
         [LocalizedCategory("StartPage.Category.Common")]
         [DefaultValue(false)]
-        public Boolean CloseOnProjectOpen
+        public bool CloseOnProjectOpen
         {
             get { return closeOnProjectOpen; }
             set { this.closeOnProjectOpen = value; }
@@ -37,7 +37,7 @@ namespace StartPage
         [LocalizedDescription("StartPage.Description.ShowStartPageInsteadOfUntitled")]
         [LocalizedCategory("StartPage.Category.Common")]
         [DefaultValue(false)]
-        public Boolean ShowStartPageInsteadOfUntitled
+        public bool ShowStartPageInsteadOfUntitled
         {
             get { return showStartPageInsteadOfUntitled; }
             set { this.showStartPageInsteadOfUntitled = value; }
@@ -67,7 +67,7 @@ namespace StartPage
         [LocalizedDescription("StartPage.Description.CustomStartPage")]
         [LocalizedCategory("StartPage.Category.Custom")]
         [DefaultValue("")]
-        public String CustomStartPage
+        public string CustomStartPage
         {
             get { return customStartPage; }
             set { this.customStartPage = value; }
@@ -80,7 +80,7 @@ namespace StartPage
         [LocalizedDescription("StartPage.Description.UseCustomStartPage")]
         [LocalizedCategory("StartPage.Category.Custom")]
         [DefaultValue(false)]
-        public Boolean UseCustomStartPage
+        public bool UseCustomStartPage
         {
             get { return useCustomStartPage; }
             set { this.useCustomStartPage = value; }
@@ -93,7 +93,7 @@ namespace StartPage
         [LocalizedDescription("StartPage.Description.CustomRssFeed")]
         [LocalizedCategory("StartPage.Category.Custom")]
         [DefaultValue("")]
-        public String CustomRssFeed
+        public string CustomRssFeed
         {
             get { return customRssFeed; }
             set { this.customRssFeed = value; }
@@ -106,7 +106,7 @@ namespace StartPage
         [LocalizedDescription("StartPage.Description.UseCustomRssFeed")]
         [LocalizedCategory("StartPage.Category.Custom")]
         [DefaultValue(false)]
-        public Boolean UseCustomRssFeed
+        public bool UseCustomRssFeed
         {
             get { return useCustomRssFeed; }
             set { this.useCustomRssFeed = value; }

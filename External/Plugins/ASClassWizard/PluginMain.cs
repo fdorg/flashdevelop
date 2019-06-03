@@ -104,7 +104,7 @@ namespace ASClassWizard
                                 if (templateType.Equals("class", StringComparison.OrdinalIgnoreCase))
                                 {
                                     var className = table.ContainsKey("className") ? (string) table["className"] : TextHelper.GetString("Wizard.Label.NewClass");
-                                    DisplayClassWizard((string) table["inDirectory"], templateFile, className, table["constructorArgs"] as String, table["constructorArgTypes"] as List<String>);
+                                    DisplayClassWizard((string) table["inDirectory"], templateFile, className, table["constructorArgs"] as string, table["constructorArgTypes"] as List<string>);
                                 }
                                 else if (templateType.Equals("interface", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -121,7 +121,7 @@ namespace ASClassWizard
                     {
                         processOnSwitch = null;
                         if (lastFileOptions?.interfaces == null) return;
-                        foreach (String cname in lastFileOptions.interfaces)
+                        foreach (string cname in lastFileOptions.interfaces)
                         {
                             ASContext.Context.CurrentModel.Check();
                             ClassModel inClass = ASContext.Context.CurrentModel.GetPublicClass();
@@ -328,9 +328,9 @@ namespace ASClassWizard
 
         private string ProcessFileTemplate(string args)
         {
-            Int32 eolMode = (Int32)PluginBase.MainForm.Settings.EOLMode;
-            String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            List<String> imports = new List<string>();
+            int eolMode = (int)PluginBase.MainForm.Settings.EOLMode;
+            string lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
+            List<string> imports = new List<string>();
             string extends = "";
             string implements = "";
             string inheritedMethods = "";
@@ -421,7 +421,7 @@ namespace ASClassWizard
             if (constructorArgs != null)
             {
                 paramString = constructorArgs;
-                foreach (String type in constructorArgTypes)
+                foreach (string type in constructorArgTypes)
                 {
                     if (!imports.Contains(type))
                     {

@@ -183,15 +183,9 @@ namespace PHPContext
 
         #region Interface Implementations
 
-        public InstalledSDK GetDefaultSDK()
-        {
-            return null;
-        }
+        public InstalledSDK GetDefaultSDK() => null;
 
-        public bool ValidateSDK(InstalledSDK sdk)
-        {
-            return true;
-        }
+        public bool ValidateSDK(InstalledSDK sdk) => true;
 
         [Browsable(false)]
         public InstalledSDK[] InstalledSDKs
@@ -203,11 +197,7 @@ namespace PHPContext
         #endregion
         
         [Browsable(false)]
-        private void FireChanged()
-        {
-            if (OnClasspathChanged != null) OnClasspathChanged();
-        }
-
+        private void FireChanged() => OnClasspathChanged?.Invoke();
     }
 
 }

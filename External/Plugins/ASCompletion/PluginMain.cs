@@ -56,7 +56,7 @@ namespace ASCompletion
         private string currentDoc;
         private bool started;
         private FlashErrorsWatcher flashErrorsWatcher;
-        private bool checking = false;
+        private bool checking;
         private Timer timerPosition;
         private int lastHoverPosition;
 

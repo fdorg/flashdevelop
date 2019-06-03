@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -14,7 +13,6 @@ namespace FlashDebugger
 {
     public class PluginMain : IPlugin
     {
-        private string pluginDesc = "Hosts the ActionScript 3 debugger in FlashDevelop.";
         private PanelsHelper panelsHelpers;
         private MenusHelper menusHelper;
         private string settingFilename;
@@ -53,7 +51,7 @@ namespace FlashDebugger
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public string Description => pluginDesc;
+        public string Description { get; set; } = "Hosts the ActionScript 3 debugger in FlashDevelop.";
 
         /// <summary>
         /// Web address for help
@@ -245,7 +243,7 @@ namespace FlashDebugger
         /// </summary>
         private void InitLocalization()
         {
-            pluginDesc = TextHelper.GetString("Info.Description");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -275,8 +273,7 @@ namespace FlashDebugger
             }
             else
             {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
-                settingObject = (Settings)obj;
+                settingObject = (Settings)ObjectSerializer.Deserialize(this.settingFilename, settingObject);
             }
         }
 

@@ -276,7 +276,7 @@ namespace AS2Context
         [Browsable(false)]
         private void FireChanged()
         {
-            if (OnClasspathChanged != null) OnClasspathChanged();
+            OnClasspathChanged?.Invoke();
         }
     }
 }

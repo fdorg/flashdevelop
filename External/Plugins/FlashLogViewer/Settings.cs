@@ -9,14 +9,14 @@ namespace FlashLogViewer
     [Serializable]
     public class Settings
     {
-        private String flashLogFile = "";
-        private String policyLogFile = "";
-        private String regexError = "Error #";
-        private String regexWarning = "Warning: ";
+        private string flashLogFile = "";
+        private string policyLogFile = "";
+        private string regexError = "Error #";
+        private string regexWarning = "Warning: ";
         private StartType trackingStartType = StartType.Manually;
-        private Boolean keepPopupTopMost = true;
-        private Boolean colourWarnings = true;
-        private Int32 updateInterval = 100;
+        private bool keepPopupTopMost = true;
+        private bool colourWarnings = true;
+        private int updateInterval = 100;
 
         /// <summary> 
         /// Get or sets the flashLogFile.
@@ -25,7 +25,7 @@ namespace FlashLogViewer
         [LocalizedCategory("FlashLogViewer.Category.Files")]
         [LocalizedDescription("FlashLogViewer.Description.FlashLogFile")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String FlashLogFile 
+        public string FlashLogFile 
         {
             get { return this.flashLogFile; }
             set { this.flashLogFile = value; }
@@ -38,7 +38,7 @@ namespace FlashLogViewer
         [LocalizedCategory("FlashLogViewer.Category.Files")]
         [LocalizedDescription("FlashLogViewer.Description.PolicyLogFile")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String PolicyLogFile
+        public string PolicyLogFile
         {
             get { return this.policyLogFile; }
             set { this.policyLogFile = value; }
@@ -50,7 +50,7 @@ namespace FlashLogViewer
         [DefaultValue(true)]
         [DisplayName("Colorize Warnings")]
         [LocalizedDescription("FlashLogViewer.Description.ColourWarnings")]
-        public Boolean ColourWarnings
+        public bool ColourWarnings
         {
             get { return this.colourWarnings; }
             set { this.colourWarnings = value; }
@@ -62,7 +62,7 @@ namespace FlashLogViewer
         [DefaultValue(true)]
         [DisplayName("Keep Popup On Top")]
         [LocalizedDescription("FlashLogViewer.Description.KeepPopupTopMost")]
-        public Boolean KeepPopupTopMost
+        public bool KeepPopupTopMost
         {
             get { return this.keepPopupTopMost; }
             set { this.keepPopupTopMost = value; }
@@ -86,7 +86,7 @@ namespace FlashLogViewer
         [DefaultValue(100)]
         [DisplayName("Update Interval")]
         [LocalizedDescription("FlashLogViewer.Description.UpdateInterval")]
-        public Int32 UpdateInterval
+        public int UpdateInterval
         {
             get { return this.updateInterval; }
             set { this.updateInterval = value; }
@@ -99,7 +99,7 @@ namespace FlashLogViewer
         [DisplayName("Regex For Warnings")]
         [LocalizedCategory("FlashLogViewer.Category.Regex")]
         [LocalizedDescription("FlashLogViewer.Description.RegexWarning")]
-        public String RegexWarning
+        public string RegexWarning
         {
             get { return this.regexWarning; }
             set { this.regexWarning = value; }
@@ -112,7 +112,7 @@ namespace FlashLogViewer
         [DisplayName("Regex For Errors")]
         [LocalizedCategory("FlashLogViewer.Category.Regex")]
         [LocalizedDescription("FlashLogViewer.Description.RegexError")]
-        public String RegexError
+        public string RegexError
         {
             get { return this.regexError; }
             set { this.regexError = value; }

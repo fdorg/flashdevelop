@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using ASCompletion.Context;
 using PluginCore;
@@ -12,15 +11,10 @@ namespace PHPContext
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "PHPContext";
-        private String pluginGuid = "2eecf4ad-08f5-45d7-8060-86b637e94773";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "PHP context for the ASCompletion engine.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String languageID = "PHP"; // change also in ContextSetting class
-        private String associatedSyntax = "HTML"; // ie. coloring syntax file name
+        private string languageID = "PHP"; // change also in ContextSetting class
+        private string associatedSyntax = "HTML"; // ie. coloring syntax file name
         private ContextSettings settingObject;
-        private String settingFilename;
+        private string settingFilename;
         private Context contextInstance;
 
         #region Required Properties
@@ -28,59 +22,38 @@ namespace PHPContext
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "PHPContext";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "2eecf4ad-08f5-45d7-8060-86b637e94773";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "PHP context for the ASCompletion engine.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => settingObject;
 
         #endregion
 
@@ -99,15 +72,12 @@ namespace PHPContext
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -128,19 +98,16 @@ namespace PHPContext
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, languageID + "Context");
+            string dataPath = Path.Combine(PathHelper.DataDir, languageID + "Context");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary>
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.UIStarted);
-        }
+        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted);
 
         /// <summary>
         /// Loads the plugin settings
@@ -149,11 +116,7 @@ namespace PHPContext
         {
             this.settingObject = new ContextSettings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (ContextSettings)obj;
-            }
+            else settingObject = (ContextSettings) ObjectSerializer.Deserialize(settingFilename, settingObject);
             if (this.settingObject.LanguageDefinitions == null) this.settingObject.LanguageDefinitions = @"Library\PHP\intrinsic";
             this.settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
         }
@@ -161,10 +124,7 @@ namespace PHPContext
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged()
-        {
-            if (contextInstance != null) contextInstance.BuildClassPath();
-        }
+        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings

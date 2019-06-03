@@ -21,80 +21,54 @@ namespace BasicCompletion
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "BasicCompletion";
-        private String pluginGuid = "c5564dec-5288-4bbb-b286-a5678536698b";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds global basic code completion support to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private Hashtable updateTable = new Hashtable();
-        private Hashtable baseTable = new Hashtable();
-        private Hashtable fileTable = new Hashtable();
+        private readonly Hashtable updateTable = new Hashtable();
+        private readonly Hashtable baseTable = new Hashtable();
+        private readonly Hashtable fileTable = new Hashtable();
         private Timer updateTimer;
-        private Boolean isActive;
-        private Boolean isSupported;
-        private String settingFilename;
+        private bool isActive;
+        private bool isSupported;
+        private string settingFilename;
         private Settings settingObject;
-        private String[] projKeywords;
+        private string[] projKeywords;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "BasicCompletion";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "c5564dec-5288-4bbb-b286-a5678536698b";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds global basic code completion support to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -121,7 +95,7 @@ namespace BasicCompletion
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return;
@@ -132,14 +106,14 @@ namespace BasicCompletion
                     Keys keys = (e as KeyEvent).Value;
                     if (this.isSupported && keys == (Keys.Control | Keys.Space))
                     {
-                        String lang = document.SciControl.ConfigurationLanguage;
+                        string lang = document.SciControl.ConfigurationLanguage;
                         List<ICompletionListItem> items = this.GetCompletionListItems(lang, document.FileName);
                         if (items != null && items.Count > 0)
                         {
                             items.Sort();
-                            Int32 curPos = document.SciControl.CurrentPos - 1;
-                            String curWord = document.SciControl.GetWordLeft(curPos, false);
-                            if (curWord == null) curWord = String.Empty;
+                            int curPos = document.SciControl.CurrentPos - 1;
+                            string curWord = document.SciControl.GetWordLeft(curPos, false);
+                            if (curWord == null) curWord = string.Empty;
                             CompletionList.Show(items, false, curWord);
                             e.Handled = true;
                         }
@@ -214,7 +188,7 @@ namespace BasicCompletion
         {
             if (this.isSupported)
             {
-                String language = document.SciControl.ConfigurationLanguage;
+                string language = document.SciControl.ConfigurationLanguage;
                 if (!this.baseTable.ContainsKey(language)) this.AddBaseKeywords(language);
                 if (!this.fileTable.ContainsKey(document.FileName)) this.AddDocumentKeywords(document);
                 if (this.updateTable.ContainsKey(document.FileName)) // Need to update after save?
@@ -241,14 +215,14 @@ namespace BasicCompletion
         {
             this.updateTimer = new Timer();
             this.updateTimer.SynchronizingObject = PluginBase.MainForm as Form;
-            this.updateTimer.Elapsed += new ElapsedEventHandler(this.UpdateTimerElapsed);
+            this.updateTimer.Elapsed += this.UpdateTimerElapsed;
             this.updateTimer.Interval = 500;
         }
 
         /// <summary>
         /// After the timer elapses, update doc keywords
         /// </summary>
-        private void UpdateTimerElapsed(Object sender, ElapsedEventArgs e)
+        private void UpdateTimerElapsed(object sender, ElapsedEventArgs e)
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (doc != null && doc.IsEditable && this.isSupported)
@@ -262,10 +236,10 @@ namespace BasicCompletion
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "BasicCompletion");
+            string dataPath = Path.Combine(PathHelper.DataDir, "BasicCompletion");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -273,8 +247,8 @@ namespace BasicCompletion
         /// </summary> 
         public void AddEventHandlers()
         {
-            UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(this.SciControlCharAdded);
-            UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(this.SciControlTextChanged);
+            UITools.Manager.OnCharAdded += this.SciControlCharAdded;
+            UITools.Manager.OnTextChanged += this.SciControlTextChanged;
             EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Command | EventType.UIStarted | EventType.UIClosing;
             EventManager.AddEventHandler(this, EventType.Completion, HandlingPriority.Low);
             EventManager.AddEventHandler(this, eventTypes);
@@ -289,7 +263,7 @@ namespace BasicCompletion
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
+                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (Settings)obj;
             }
         }
@@ -305,19 +279,19 @@ namespace BasicCompletion
         /// <summary>
         /// Adds base keywords from config file to hashtable
         /// </summary>
-        public void AddBaseKeywords(String language)
+        public void AddBaseKeywords(string language)
         {
-            List<String> keywords = new List<String>();
+            List<string> keywords = new List<string>();
             Language lang = ScintillaControl.Configuration.GetLanguage(language);
-            for (Int32 i = 0; i < lang.usekeywords.Length; i++)
+            for (int i = 0; i < lang.usekeywords.Length; i++)
             {
                 UseKeyword usekeyword = lang.usekeywords[i];
-                KeywordClass kc = ScintillaControl.Configuration.GetKeywordClass(usekeyword.cls);
-                if (kc != null && kc.val != null)
+                var kc = ScintillaControl.Configuration.GetKeywordClass(usekeyword.cls);
+                if (kc?.val != null)
                 {
-                    String entry = Regex.Replace(kc.val, @"\t|\n|\r", " ");
-                    String[] words = entry.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
-                    for (Int32 j = 0; j < words.Length; j++)
+                    string entry = Regex.Replace(kc.val, @"\t|\n|\r", " ");
+                    string[] words = entry.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
+                    for (int j = 0; j < words.Length; j++)
                     {
                         if (words[j].Length > 3 && !keywords.Contains(words[j]) && !words[j].StartsWithOrdinal("\x5E"))
                         {
@@ -334,24 +308,24 @@ namespace BasicCompletion
         /// </summary>
         public void LoadProjectKeywords(IProject project)
         {
-            String projDir = Path.GetDirectoryName(project.ProjectPath);
-            String complFile = Path.Combine(projDir, "COMPLETION");
+            string projDir = Path.GetDirectoryName(project.ProjectPath);
+            string complFile = Path.Combine(projDir, "COMPLETION");
             if (File.Exists(complFile))
             {
                 try
                 {
-                    String text = File.ReadAllText(complFile);
-                    String wordCharsRegex = "[A-Za-z0-9_$]{2,}";
+                    string text = File.ReadAllText(complFile);
+                    string wordCharsRegex = "[A-Za-z0-9_$]{2,}";
                     MatchCollection matches = Regex.Matches(text, wordCharsRegex);
-                    Dictionary<Int32, String> words = new Dictionary<Int32, String>();
-                    for (Int32 i = 0; i < matches.Count; i++)
+                    Dictionary<int, string> words = new Dictionary<int, string>();
+                    for (int i = 0; i < matches.Count; i++)
                     {
-                        String word = matches[i].Value;
-                        Int32 hash = word.GetHashCode();
+                        string word = matches[i].Value;
+                        int hash = word.GetHashCode();
                         if (words.ContainsKey(hash)) continue;
                         words.Add(hash, word);
                     }
-                    String[] keywords = new String[words.Values.Count];
+                    string[] keywords = new string[words.Values.Count];
                     words.Values.CopyTo(keywords, 0);
                     this.projKeywords = keywords;
                 }
@@ -364,21 +338,21 @@ namespace BasicCompletion
         /// </summary>
         public void AddDocumentKeywords(ITabbedDocument document)
         {
-            String textLang = document.SciControl.ConfigurationLanguage;
+            string textLang = document.SciControl.ConfigurationLanguage;
             Language language = ScintillaControl.Configuration.GetLanguage(textLang);
             if (language.characterclass != null)
             {
-                String wordCharsRegex = "[" + language.characterclass.Characters + "]{2,}";
+                string wordCharsRegex = "[" + language.characterclass.Characters + "]{2,}";
                 MatchCollection matches = Regex.Matches(document.SciControl.Text, wordCharsRegex);
-                Dictionary<Int32, String> words = new Dictionary<Int32, String>();
-                for (Int32 i = 0; i < matches.Count; i++)
+                Dictionary<int, string> words = new Dictionary<int, string>();
+                for (int i = 0; i < matches.Count; i++)
                 {
-                    String word = matches[i].Value;
-                    Int32 hash = word.GetHashCode();
+                    string word = matches[i].Value;
+                    int hash = word.GetHashCode();
                     if (words.ContainsKey(hash)) continue;
                     words.Add(hash, word);
                 }
-                String[] keywords = new String[words.Values.Count];
+                string[] keywords = new string[words.Values.Count];
                 words.Values.CopyTo(keywords, 0);
                 this.fileTable[document.FileName] = keywords;
             }
@@ -387,51 +361,51 @@ namespace BasicCompletion
         /// <summary>
         /// Gets the completion list items combining base and doc keywords
         /// </summary>
-        public List<ICompletionListItem> GetCompletionListItems(String lang, String file)
+        public List<ICompletionListItem> GetCompletionListItems(string lang, string file)
         {
-            List<String> allWords = new List<String>();
+            List<string> allWords = new List<string>();
             if (this.baseTable.ContainsKey(lang))
             {
-                List<String> baseWords = this.baseTable[lang] as List<String>;
+                List<string> baseWords = this.baseTable[lang] as List<string>;
                 allWords.AddRange(baseWords);
             }
             if (this.fileTable.ContainsKey(file))
             {
-                String[] fileWords = this.fileTable[file] as string[];
-                for (Int32 i = 0; i < fileWords.Length; i++)
+                string[] fileWords = this.fileTable[file] as string[];
+                for (int i = 0; i < fileWords.Length; i++)
                 {
                     if (!allWords.Contains(fileWords[i])) allWords.Add(fileWords[i]);
                 }
             }
             if (PluginBase.CurrentProject != null && this.projKeywords != null)
             {
-                for (Int32 i = 0; i < this.projKeywords.Length; i++)
+                for (int i = 0; i < this.projKeywords.Length; i++)
                 {
                     if (!allWords.Contains(this.projKeywords[i])) allWords.Add(this.projKeywords[i]);
                 }
             }
             List<ICompletionListItem> items = new List<ICompletionListItem>();
-            for (Int32 j = 0; j < allWords.Count; j++) items.Add(new CompletionItem(allWords[j]));
+            for (int j = 0; j < allWords.Count; j++) items.Add(new CompletionItem(allWords[j]));
             return items;
         }
 
         /// <summary>
         /// Shows the completion list automatically after typing three chars
         /// </summary>
-        private void SciControlCharAdded(ScintillaControl sci, Int32 value)
+        private void SciControlCharAdded(ScintillaControl sci, int value)
         {
             if (this.isSupported && !settingObject.DisableAutoCompletion)
             {
-                String lang = sci.ConfigurationLanguage;
+                string lang = sci.ConfigurationLanguage;
                 AutoInsert insert = settingObject.AutoInsertType;
                 Language config = ScintillaControl.Configuration.GetLanguage(lang);
-                String characters = config.characterclass.Characters;
+                string characters = config.characterclass.Characters;
                 // Do not autocomplete in word
-                Char c = sci.CurrentChar;
+                char c = sci.CurrentChar;
                 if (characters.Contains(c)) return;
                 // Autocomplete after typing word chars only
                 if (!characters.Contains((char)value)) return;
-                String curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
+                string curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
                 if (curWord == null || curWord.Length < 3) return;
                 List<ICompletionListItem> items = this.GetCompletionListItems(lang, sci.FileName);
                 if (items != null && items.Count > 0)
@@ -449,7 +423,7 @@ namespace BasicCompletion
         /// <summary>
         /// Starts the timer for the document keywords updating
         /// </summary>
-        private void SciControlTextChanged(ScintillaControl sci, Int32 position, Int32 length, Int32 linesAdded)
+        private void SciControlTextChanged(ScintillaControl sci, int position, int length, int linesAdded)
         {
             if (this.isSupported)
             {
@@ -470,34 +444,26 @@ namespace BasicCompletion
     /// </summary>
     public class CompletionItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        private string label;
         public CompletionItem(string label)
         {
-            this.label = label;
+            Label = label;
         }
-        public string Label
+
+        public string Label { get; }
+
+        public string Description => TextHelper.GetString("Info.CompletionItemDesc");
+
+        public Bitmap Icon => (Bitmap)PluginBase.MainForm.FindImage("315");
+
+        public string Value => Label;
+
+        int IComparable.CompareTo(object obj)
         {
-            get { return label; }
+            return string.Compare(Label, (obj as ICompletionListItem).Label, true);
         }
-        public string Description
+        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
         {
-            get { return TextHelper.GetString("Info.CompletionItemDesc"); }
-        }
-        public Bitmap Icon
-        {
-            get { return (Bitmap)PluginBase.MainForm.FindImage("315"); }
-        }
-        public string Value
-        {
-            get { return label; }
-        }
-        Int32 IComparable.CompareTo(Object obj)
-        {
-            return String.Compare(Label, (obj as ICompletionListItem).Label, true);
-        }
-        Int32 IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
-        {
-            return String.Compare(Label, other.Label, true);
+            return string.Compare(Label, other.Label, true);
         }
     }
 

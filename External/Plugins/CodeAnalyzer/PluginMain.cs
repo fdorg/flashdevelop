@@ -12,14 +12,9 @@ namespace CodeAnalyzer
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "CodeAnalyzer";
-        private String pluginGuid = "a6bab962-9ee8-4ed7-b5f7-08c3367eaf5e";
-        private String pluginDesc = "Integrates Flex PMD code analyzer into FlashDevelop.";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem analyzeMenuItem;
         private ToolStripMenuItem creatorMenuItem;
-        private String settingFilename;
+        private string settingFilename;
         private Settings settingObject;
 
         #region Required Properties
@@ -27,60 +22,39 @@ namespace CodeAnalyzer
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "CodeAnalyzer";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "a6bab962-9ee8-4ed7-b5f7-08c3367eaf5e";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Integrates Flex PMD code analyzer into FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => this.settingObject;
+
         #endregion
         
         #region Required Methods
@@ -107,7 +81,7 @@ namespace CodeAnalyzer
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -130,10 +104,10 @@ namespace CodeAnalyzer
         /// </summary>
         private void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "CodeAnalyzer");
+            string dataPath = Path.Combine(PathHelper.DataDir, "CodeAnalyzer");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -150,8 +124,8 @@ namespace CodeAnalyzer
         private void CreateMenuItem()
         {
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("FlashToolsMenu");
-            this.creatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.RulesetCreator"), null, new EventHandler(this.OpenCreator));
-            this.analyzeMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.AnalyzeProject"), null, new EventHandler(this.AnalyzeProject), Keys.None);
+            this.creatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.RulesetCreator"), null, OpenCreator);
+            this.analyzeMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.AnalyzeProject"), null, AnalyzeProject, Keys.None);
             PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.AnalyzeProject", this.analyzeMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.RulesetCreator", this.creatorMenuItem);
             viewMenu.DropDownItems.Insert(2, this.analyzeMenuItem);
@@ -162,21 +136,21 @@ namespace CodeAnalyzer
         /// <summary>
         /// Opens the ruleset creator page
         /// </summary>
-        private void OpenCreator(Object sender, EventArgs e)
+        private void OpenCreator(object sender, EventArgs e)
         {
-            String url = "http://www.flashdevelop.org/flexpmd/index.html";
+            string url = "http://www.flashdevelop.org/flexpmd/index.html";
             PluginBase.MainForm.CallCommand("Browse", url);
         }
 
         /// <summary>
         /// Analyzes the current project
         /// </summary>
-        private void AnalyzeProject(Object sender, EventArgs e)
+        private void AnalyzeProject(object sender, EventArgs e)
         {
             if (PluginBase.CurrentProject != null)
             {
-                String pmdJar = Path.Combine(PathHelper.ToolDir, "flexpmd", "flex-pmd-command-line-1.2.jar");
-                String ruleFile = Path.Combine(this.GetProjectPath(), "Ruleset.xml");
+                string pmdJar = Path.Combine(PathHelper.ToolDir, "flexpmd", "flex-pmd-command-line-1.2.jar");
+                string ruleFile = Path.Combine(this.GetProjectPath(), "Ruleset.xml");
                 if (!File.Exists(ruleFile)) ruleFile = settingObject.PMDRuleset; // Use default...
                 PMDRunner.Analyze(pmdJar, this.GetProjectPath(), this.GetSourcePath(), ruleFile);
             }
@@ -185,21 +159,21 @@ namespace CodeAnalyzer
         /// <summary>
         /// Gets the first available source path
         /// </summary>
-        private String GetSourcePath()
+        private string GetSourcePath()
         {
-            IProject project = PluginBase.CurrentProject;
+            var project = PluginBase.CurrentProject;
             if (project.SourcePaths.Length > 0)
             {
-                String first = project.GetAbsolutePath(project.SourcePaths[0]);
+                string first = project.GetAbsolutePath(project.SourcePaths[0]);
                 return Path.Combine(this.GetProjectPath(), first);
             }
-            else return Path.Combine(this.GetProjectPath(), "src");
+            return Path.Combine(this.GetProjectPath(), "src");
         }
 
         /// <summary>
         /// Gets the root directory of a project
         /// </summary>
-        private String GetProjectPath()
+        private string GetProjectPath()
         {
             return Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
         }
@@ -213,10 +187,10 @@ namespace CodeAnalyzer
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
+                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (Settings)obj;
             }
-            if (String.IsNullOrEmpty(this.settingObject.PMDRuleset))
+            if (string.IsNullOrEmpty(this.settingObject.PMDRuleset))
             {
                 this.settingObject.PMDRuleset = Path.Combine(PathHelper.ToolDir, "flexpmd", "default-ruleset.xml");
             }

@@ -9,9 +9,9 @@ namespace PluginCore.Managers
     /// </summary>
     public static class EventManager
     {
-        private static List<EventObject> highObjects;
-        private static List<EventObject> normalObjects;
-        private static List<EventObject> lowObjects;
+        private static readonly List<EventObject> highObjects;
+        private static readonly List<EventObject> normalObjects;
+        private static readonly List<EventObject> lowObjects;
         private static EventObject[] eventObjectsSnapshot;
         private static bool snapshotInvalid;
 
@@ -39,7 +39,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static void AddEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
         {
-            if (handler == null)
+            if (handler is null)
             {
                 throw new ArgumentNullException(nameof(handler));
             }
@@ -56,20 +56,17 @@ namespace PluginCore.Managers
         /// </summary>
         public static void RemoveEventHandler(IEventHandler handler)
         {
-            var eventObjectsList = new[] { highObjects, normalObjects, lowObjects };
-            for (int i = 0; i < eventObjectsList.Length; i++)
+            var eventObjectsList = new[] {highObjects, normalObjects, lowObjects};
+            foreach (var eventObjects in eventObjectsList)
             {
-                var eventObjects = eventObjectsList[i];
                 lock (eventLock)
                 {
-                    for (int j = 0; j < eventObjects.Count; j++)
+                    for (var i = 0; i < eventObjects.Count; i++)
                     {
-                        if (eventObjects[j].Handler == handler)
-                        {
-                            snapshotInvalid = true;
-                            eventObjects.RemoveAt(j);
-                            break;
-                        }
+                        if (eventObjects[i].Handler != handler) continue;
+                        snapshotInvalid = true;
+                        eventObjects.RemoveAt(i);
+                        break;
                     }
                 }
             }
@@ -83,19 +80,17 @@ namespace PluginCore.Managers
             var eventObjects = GetEventObjects(priority);
             lock (eventLock)
             {
-                for (int i = 0; i < eventObjects.Count; i++)
+                for (var i = 0; i < eventObjects.Count; i++)
                 {
                     var obj = eventObjects[i];
-                    if (obj.Handler == handler)
+                    if (obj.Handler != handler) continue;
+                    obj.Mask &= ~mask;
+                    if (obj.Mask == 0)
                     {
-                        obj.Mask &= ~mask;
-                        if (obj.Mask == 0)
-                        {
-                            snapshotInvalid = true;
-                            eventObjects.RemoveAt(i);
-                        }
-                        break;
+                        snapshotInvalid = true;
+                        eventObjects.RemoveAt(i);
                     }
+                    break;
                 }
             }
         }
@@ -134,7 +129,7 @@ namespace PluginCore.Managers
                 length = eventObjectsCopy.Length;
             }
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 var obj = eventObjectsCopy[i];
                 if ((obj.Mask & e.Type) > 0)
@@ -175,15 +170,15 @@ namespace PluginCore.Managers
 
         private sealed class EventObject
         {
-            internal IEventHandler Handler;
-            internal HandlingPriority Priority;
+            internal readonly IEventHandler Handler;
+            internal readonly HandlingPriority Priority;
             internal EventType Mask;
 
             internal EventObject(IEventHandler handler, EventType mask, HandlingPriority priority)
             {
-                this.Handler = handler;
-                this.Priority = priority;
-                this.Mask = mask;
+                Handler = handler;
+                Priority = priority;
+                Mask = mask;
             }
         }
     }

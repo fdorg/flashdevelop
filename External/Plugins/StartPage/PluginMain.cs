@@ -17,16 +17,11 @@ namespace StartPage
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "StartPage";
-        private String pluginGuid = "e4246322-bc55-4f4a-99c8-aaeeed0a7b9a";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a start page to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private Boolean justOpened = true;
-        private String defaultRssUrl = "";
-        private String defaultStartPageUrl = "";
+        private bool justOpened = true;
+        private string defaultRssUrl = "";
+        private string defaultStartPageUrl = "";
         private StartPageWebBrowser startPageWebBrowser;
-        private String settingFilename;
+        private string settingFilename;
         private Settings settingObject;
         private DockContent startPage;
         private Image pluginImage;
@@ -36,59 +31,38 @@ namespace StartPage
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "StartPage";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "e4246322-bc55-4f4a-99c8-aaeeed0a7b9a";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a start page to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => this.settingObject;
+
         #endregion
         
         #region Required Methods
@@ -107,15 +81,12 @@ namespace StartPage
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -149,7 +120,7 @@ namespace StartPage
                     break;
 
                 case EventType.RestoreSession:
-                    ISession session = ((DataEvent)e).Data as ISession;
+                    var session = (ISession) ((DataEvent)e).Data;
                     if (session.Type != SessionType.Startup) return; // handle only startup sessions
                     if (this.settingObject.ShowStartPageOnStartup == ShowStartPageOnStartupEnum.Always) e.Handled = true;
                     else if (session.Files.Count > 0) this.justOpened = false;
@@ -162,24 +133,24 @@ namespace StartPage
 
         #region Custom Methods
 
-        private String CurrentPageUrl { get { return this.settingObject.UseCustomStartPage ? this.settingObject.CustomStartPage : this.defaultStartPageUrl; } }
-        private String CurrentRssUrl { get { return this.settingObject.UseCustomRssFeed ? this.settingObject.CustomRssFeed : this.defaultRssUrl; } }
+        private string CurrentPageUrl => this.settingObject.UseCustomStartPage ? this.settingObject.CustomStartPage : this.defaultStartPageUrl;
+        private string CurrentRssUrl => this.settingObject.UseCustomRssFeed ? this.settingObject.CustomRssFeed : this.defaultRssUrl;
 
         /// <summary>
         /// Initializes important variables
         /// </summary>
         public void InitBasics()
         {
-            Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
-            String dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
-            String localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
-            String version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOfOrdinal(" for") - lenght);
-            String fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
+            int lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
+            string dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
+            string localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
+            string version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOfOrdinal(" for") - lenght);
+            string fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
             this.defaultStartPageUrl = Path.Combine(PathHelper.AppDir, "StartPage", fileWithArgs);
             this.defaultRssUrl = DistroConfig.DISTRIBUTION_RSS; // Default feed...
             if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
             this.settingFilename = Path.Combine(dataDir, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
             this.pluginImage = PluginBase.MainForm.FindImage("224");
         }
 
@@ -200,29 +171,22 @@ namespace StartPage
         {
             this.settingObject = new Settings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
 
         /// <summary>
         /// Creates a menu item for the plugin
         /// </summary>
         public void CreateMenuItem()
         {
-            String title = TextHelper.GetString("Label.ViewMenuItem");
+            string title = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, new EventHandler(this.ViewMenuClick));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, this.ViewMenuClick);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowStartPage", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -235,8 +199,8 @@ namespace StartPage
             this.startPageWebBrowser = new StartPageWebBrowser(this.CurrentPageUrl, this.CurrentRssUrl);
             this.startPage = PluginBase.MainForm.CreateCustomDocument(this.startPageWebBrowser);
             this.startPage.Icon = ImageKonverter.ImageToIcon(this.pluginImage);
-            this.startPage.Disposed += new EventHandler(this.PluginPanelDisposed);
-            this.startPage.Closing += new CancelEventHandler(this.PluginPanelClosing); 
+            this.startPage.Disposed += this.PluginPanelDisposed;
+            this.startPage.Closing += this.PluginPanelClosing; 
             this.startPage.Text = TextHelper.GetString("Title.StartPage");
         }
 
@@ -256,7 +220,7 @@ namespace StartPage
         /// <summary>
         /// Shows the start page.
         /// </summary>
-        private void ViewMenuClick(Object sender, EventArgs e)
+        private void ViewMenuClick(object sender, EventArgs e)
         {
             this.ShowStartPage();
         }
@@ -264,7 +228,7 @@ namespace StartPage
         /// <summary>
         /// Some internal event handling for closing.
         /// </summary>
-        private void PluginPanelClosing(Object sender, CancelEventArgs e)
+        private void PluginPanelClosing(object sender, CancelEventArgs e)
         {
             if (this.settingObject.ShowStartPageInsteadOfUntitled && PluginBase.MainForm.Documents.Length == 1)
             {
@@ -275,7 +239,7 @@ namespace StartPage
         /// <summary>
         /// Reset the start page reference.
         /// </summary>
-        private void PluginPanelDisposed(Object sender, EventArgs e)
+        private void PluginPanelDisposed(object sender, EventArgs e)
         {
             this.startPage = null;
         }
@@ -283,5 +247,4 @@ namespace StartPage
         #endregion
 
     }
-    
 }
