@@ -11,7 +11,6 @@ namespace PHPContext
 {
     public class PluginMain : IPlugin
     {
-        private string languageID = "PHP"; // change also in ContextSetting class
         private string associatedSyntax = "HTML"; // ie. coloring syntax file name
         private ContextSettings settingObject;
         private string settingFilename;
@@ -27,7 +26,7 @@ namespace PHPContext
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public string Name { get; } = "PHPContext";
+        public string Name { get; } = nameof(PHPContext);
 
         /// <summary>
         /// GUID of the plugin
@@ -64,9 +63,9 @@ namespace PHPContext
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace PHPContext
         {
             switch (e.Type)
             {
-                case EventType.UIStarted :
+                case EventType.UIStarted:
                     contextInstance = new Context(settingObject);
                     // Associate this context with a file type
                     ASContext.RegisterLanguage(contextInstance, associatedSyntax);
@@ -98,10 +97,10 @@ namespace PHPContext
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, languageID + "Context");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(PHPContext));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -114,11 +113,11 @@ namespace PHPContext
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new ContextSettings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new ContextSettings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = (ContextSettings) ObjectSerializer.Deserialize(settingFilename, settingObject);
-            if (this.settingObject.LanguageDefinitions == null) this.settingObject.LanguageDefinitions = @"Library\PHP\intrinsic";
-            this.settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
+            if (settingObject.LanguageDefinitions == null) settingObject.LanguageDefinitions = @"Library\PHP\intrinsic";
+            settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
         }
 
         /// <summary>
@@ -131,8 +130,8 @@ namespace PHPContext
         /// </summary>
         public void SaveSettings()
         {
-            this.settingObject.OnClasspathChanged -= SettingObjectOnClasspathChanged;
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+            settingObject.OnClasspathChanged -= SettingObjectOnClasspathChanged;
+            ObjectSerializer.Serialize(settingFilename, settingObject);
         }
 
         #endregion

@@ -30,7 +30,7 @@ namespace AirProperties
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "AirProperties";
+        public string Name { get; } = nameof(AirProperties);
 
         /// <summary>
         /// GUID of the plugin
@@ -73,10 +73,10 @@ namespace AirProperties
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.CreateMenuItems();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            CreateMenuItems();
+            AddEventHandlers();
         }
         
         /// <summary>
@@ -92,20 +92,18 @@ namespace AirProperties
             switch (e.Type)
             {
                 case EventType.Command:
-                    string cmd = ((DataEvent) e).Action;
+                    var cmd = ((DataEvent) e).Action;
                     if (cmd == "ProjectManager.Project" || cmd == "ASCompletion.ClassPath")
                     {
-                        this.UpdateMenuItems();
+                        UpdateMenuItems();
                     }
                     else if (cmd == "ProjectManager.Menu")
                     {
-                        object menu = ((DataEvent) e).Data;
-                        this.AddMenuItems(menu as ToolStripMenuItem);
+                        AddMenuItems(((DataEvent) e).Data as ToolStripMenuItem);
                     }
                     else if (cmd == "ProjectManager.ToolBar")
                     {
-                        object toolStrip = ((DataEvent) e).Data;
-                        this.AddToolBarItems(toolStrip as ToolStrip);
+                        AddToolBarItems(((DataEvent) e).Data as ToolStrip);
                     }
                     break;
             } 
@@ -120,50 +118,44 @@ namespace AirProperties
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "AirProperties");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            var path = Path.Combine(PathHelper.DataDir, nameof(AirProperties));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
         }
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.Command);
-        }
+        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command);
 
         /// <summary>
         /// Create and registers the menu item
         /// </summary>
         private void CreateMenuItems()
         {
-            Image image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
-            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, this.OpenWizard, null);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", this.pluginMenuItem);
-            this.pluginMenuItem.Enabled = false;
+            var image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
+            pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, OpenWizard, null);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", pluginMenuItem);
+            pluginMenuItem.Enabled = false;
         }
 
         /// <summary>
         /// Adds the necessary menu item to the project menu
         /// </summary>
-        private void AddMenuItems(ToolStripMenuItem projectMenu)
-        {
-            projectMenu.DropDownItems.Insert(projectMenu.DropDownItems.Count - 1, this.pluginMenuItem);
-        }
+        private void AddMenuItems(ToolStripDropDownItem menu) => menu.DropDownItems.Insert(menu.DropDownItems.Count - 1, pluginMenuItem);
 
         /// <summary>
         /// Adds the necessary project manager toolstrip button
         /// </summary>
         private void AddToolBarItems(ToolStrip toolStrip)
         {
-            this.pmMenuButton = new ToolStripButton();
-            this.pmMenuButton.Image = this.pluginMenuItem.Image;
-            this.pmMenuButton.Text = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.ProjectMenuItem");
-            this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            this.pmMenuButton.Click += this.OpenWizard;
-            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", this.pmMenuButton);
-            toolStrip.Items.Insert(6, this.pmMenuButton);
+            pmMenuButton = new ToolStripButton();
+            pmMenuButton.Image = pluginMenuItem.Image;
+            pmMenuButton.Text = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.ProjectMenuItem");
+            pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            pmMenuButton.Click += OpenWizard;
+            PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", pmMenuButton);
+            toolStrip.Items.Insert(6, pmMenuButton);
         }
 
         /// <summary>
@@ -172,7 +164,7 @@ namespace AirProperties
         public void UpdateMenuItems()
         {
             var pluginActive = false;
-            if (pluginMenuItem == null || pmMenuButton == null) return;
+            if (pluginMenuItem is null || pmMenuButton is null) return;
             if (PluginBase.CurrentProject != null)
             {
                 var project = (Project)PluginBase.CurrentProject;
@@ -210,8 +202,8 @@ namespace AirProperties
         /// </summary>
         public void LoadSettings()
         {
-            this.Settings = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            Settings = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else Settings = (Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
         }
 
@@ -221,7 +213,5 @@ namespace AirProperties
         public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
 
         #endregion
-
     }
-    
 }

@@ -36,7 +36,7 @@ namespace ResultsPanel
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "ResultsPanel";
+        public string Name { get; } = nameof(ResultsPanel);
 
         /// <summary>
         /// GUID of the plugin
@@ -72,20 +72,17 @@ namespace ResultsPanel
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreateMenuItem();
-            this.CreatePluginPanel();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreateMenuItem();
+            CreatePluginPanel();
         }
 
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
         /// <summary>
         /// Handles the incoming events
@@ -116,11 +113,11 @@ namespace ResultsPanel
                     break;
 
                 case EventType.ProcessStart:
-                    this.pluginUI.ClearOutput();
+                    pluginUI.ClearOutput();
                     break;
 
                 case EventType.ProcessEnd:
-                    this.pluginUI.DisplayOutput();
+                    pluginUI.DisplayOutput();
                     break;
 
                 case EventType.Trace:
@@ -132,7 +129,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Keys:
-                    KeyEvent ke = (KeyEvent) e;
+                    var ke = (KeyEvent) e;
                     switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
                     {
                         case null:
@@ -168,11 +165,11 @@ namespace ResultsPanel
         /// </summary>
         public void InitBasics()
         {
-            string dataDir = Path.Combine(PathHelper.DataDir, "ResultsPanel");
-            if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
-            this.settingFilename = Path.Combine(dataDir, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("127");
+            var path = Path.Combine(PathHelper.DataDir, nameof(ResultsPanel));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
+            pluginImage = PluginBase.MainForm.FindImage("127");
         }
 
         /// <summary>
@@ -185,8 +182,8 @@ namespace ResultsPanel
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
@@ -206,8 +203,7 @@ namespace ResultsPanel
         private void Scintilla_OnMouseHover(ScintillaControl sender, int position)
         {
             var document = DocumentManager.FindDocument(sender);
-            if (document == null)
-                return;
+            if (document is null) return;
 
             var results = new List<string>();
             foreach (var ui in ResultsPanelHelper.PluginUIs)
@@ -234,10 +230,10 @@ namespace ResultsPanel
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottomAutoHide);
-            ResultsPanelHelper.Initialize(this, this.pluginUI);
+            pluginUI = new PluginUI(this);
+            pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
+            pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
+            ResultsPanelHelper.Initialize(this, pluginUI);
         }
 
         /// <summary>
@@ -256,11 +252,11 @@ namespace ResultsPanel
             var viewMenu = (ToolStripMenuItem) PluginBase.MainForm.FindMenuItem("ViewMenu");
             viewMenu.DropDownItems.Add(viewItem);
 
-            this.contextMenuStrip = new PanelContextMenu();
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.contextMenuStrip.NextEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.contextMenuStrip.PreviousEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.contextMenuStrip.ClearEntries);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.contextMenuStrip.ClearIgnoredEntries);
+            contextMenuStrip = new PanelContextMenu();
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", contextMenuStrip.NextEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", contextMenuStrip.PreviousEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", contextMenuStrip.ClearEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", contextMenuStrip.ClearIgnoredEntries);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItemMainPanel);
         }
 
@@ -268,37 +264,26 @@ namespace ResultsPanel
         {
             viewItem.DropDownItems.Clear();
             viewItem.DropDownItems.Add(viewItemMainPanel);
-
-            if (ResultsPanelHelper.PluginUIs.Count > 0)
+            if (ResultsPanelHelper.PluginUIs.Count == 0) return;
+            viewItem.DropDownItems.Add(viewItemSeparator);
+            foreach (var ui in ResultsPanelHelper.PluginUIs)
             {
-                viewItem.DropDownItems.Add(viewItemSeparator);
-                foreach (var ui in ResultsPanelHelper.PluginUIs)
-                {
-                    viewItem.DropDownItems.Add(new ToolStripMenuItem(ui.Text) { Tag = ui.GroupData });
-                }
+                viewItem.DropDownItems.Add(new ToolStripMenuItem(ui.Text) { Tag = ui.GroupData });
             }
         }
 
         private void ViewItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            if (e.ClickedItem is ToolStripMenuItem)
+            if (!(e.ClickedItem is ToolStripMenuItem)) return;
+            var groupData = (string) e.ClickedItem.Tag;
+            if (groupData is null) pluginUI.ParentPanel.Show();
+            else
             {
-                string groupData = (string) e.ClickedItem.Tag;
-
-                if (groupData == null)
+                foreach (var ui in ResultsPanelHelper.PluginUIs)
                 {
-                    pluginUI.ParentPanel.Show();
-                }
-                else
-                {
-                    foreach (var ui in ResultsPanelHelper.PluginUIs)
-                    {
-                        if (ui.GroupData == groupData)
-                        {
-                            ui.ParentPanel.Show();
-                            break;
-                        }
-                    }
+                    if (ui.GroupData != groupData) continue;
+                    ui.ParentPanel.Show();
+                    break;
                 }
             }
         }

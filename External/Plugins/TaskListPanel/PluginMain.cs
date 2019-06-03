@@ -29,7 +29,7 @@ namespace TaskListPanel
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "TaskListPanel";
+        public string Name { get; } = nameof(TaskListPanel);
 
         /// <summary>
         /// GUID of the plugin
@@ -54,7 +54,7 @@ namespace TaskListPanel
         /// <summary>
         /// Object that contains the settings
         /// </summary>
-        public object Settings => this.settingObject;
+        public object Settings => settingObject;
 
         #endregion
         
@@ -65,11 +65,11 @@ namespace TaskListPanel
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreateMenuItem();
-            this.CreatePluginPanel();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreateMenuItem();
+            CreatePluginPanel();
         }
         
         /// <summary>
@@ -77,8 +77,8 @@ namespace TaskListPanel
         /// </summary>
         public void Dispose()
         {
-            this.SaveSettings();
-            this.pluginUI.Terminate();
+            SaveSettings();
+            pluginUI.Terminate();
         }
         
         /// <summary>
@@ -93,14 +93,14 @@ namespace TaskListPanel
                     break;
 
                 case EventType.ApplySettings:
-                    this.pluginUI.UpdateSettings();
+                    pluginUI.UpdateSettings();
                     break;
 
                 case EventType.Command:
-                    DataEvent de = (DataEvent)e;
+                    var de = (DataEvent)e;
                     if (de.Action == "ProjectManager.Project")
                     {
-                        this.pluginUI.InitProject();
+                        pluginUI.InitProject();
                     }
                     break;
             }
@@ -115,11 +115,11 @@ namespace TaskListPanel
         /// </summary>
         public void InitBasics()
         {
-            this.Description = TextHelper.GetString("Info.Description");
-            string dataPath = Path.Combine(PathHelper.DataDir, "TaskListPanel");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginImage = PluginBase.MainForm.FindImage("75");
+            Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(TaskListPanel));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            pluginImage = PluginBase.MainForm.FindImage("75");
         }
 
         /// <summary>
@@ -132,9 +132,8 @@ namespace TaskListPanel
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottomAutoHide);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
         }
 
         /// <summary>
@@ -142,8 +141,8 @@ namespace TaskListPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel), null);
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage, OpenPanel, null);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowTasks", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -153,8 +152,8 @@ namespace TaskListPanel
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
@@ -169,7 +168,5 @@ namespace TaskListPanel
         public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
-
     }
-    
 }

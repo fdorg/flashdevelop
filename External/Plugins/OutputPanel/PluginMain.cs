@@ -28,7 +28,7 @@ namespace OutputPanel
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "OutputPanel";
+        public string Name { get; } = nameof(OutputPanel);
 
         /// <summary>
         /// GUID of the plugin
@@ -54,7 +54,7 @@ namespace OutputPanel
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public object Settings => this.PluginSettings;
+        public object Settings => PluginSettings;
 
         #endregion
         
@@ -65,21 +65,18 @@ namespace OutputPanel
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreatePluginPanel();
-            this.CreateMenuItem();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreatePluginPanel();
+            CreateMenuItem();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
@@ -88,45 +85,44 @@ namespace OutputPanel
             switch (e.Type)
             {
                 case EventType.ProcessStart:
-                    if (this.PluginSettings.ClearMode == ClearModeAction.OnEveryProcess)
+                    if (PluginSettings.ClearMode == ClearModeAction.OnEveryProcess)
                     {
-                        this.pluginUI.ClearOutput(null, null);
+                        pluginUI.ClearOutput(null, null);
                     }
                     break;
 
                 case EventType.ProcessEnd:
-                    if (this.PluginSettings.ShowOnProcessEnd && !this.PluginSettings.ShowOnOutput)
+                    if (PluginSettings.ShowOnProcessEnd && !PluginSettings.ShowOnOutput)
                     {
-                        this.pluginUI.DisplayOutput();
+                        pluginUI.DisplayOutput();
                     }
                     break;
 
                 case EventType.Trace:
-                    this.pluginUI.AddTraces();
-                    if (this.PluginSettings.ShowOnOutput)
+                    pluginUI.AddTraces();
+                    if (PluginSettings.ShowOnOutput)
                     {
-                        this.pluginUI.DisplayOutput();
+                        pluginUI.DisplayOutput();
                     }
                     break;
 
                 case EventType.Keys:
-                    Keys keys = ((KeyEvent) e).Value;
-                    e.Handled = this.pluginUI.OnShortcut(keys);
+                    e.Handled = pluginUI.OnShortcut(((KeyEvent) e).Value);
                     break;
 
                 case EventType.ApplySettings:
-                    this.pluginUI.ApplyWrapText();
+                    pluginUI.ApplyWrapText();
                     break;
 
                 case EventType.UIStarted:
-                    this.pluginUI.UpdateAfterTheme();
+                    pluginUI.UpdateAfterTheme();
                     break;
 
                 case EventType.Command:
-                    var dataEvent = e as DataEvent;
-                    if (dataEvent.Action == "ProjectManager.BuildingProject" && this.PluginSettings.ClearMode == ClearModeAction.OnBuildStart)
+                    var de = (DataEvent) e;
+                    if (de.Action == "ProjectManager.BuildingProject" && PluginSettings.ClearMode == ClearModeAction.OnBuildStart)
                     {
-                        this.pluginUI.ClearOutput(null, null);
+                        pluginUI.ClearOutput(null, null);
                     }
                     break;
             }
@@ -157,11 +153,11 @@ namespace OutputPanel
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "OutputPanel");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("50");
+            var path = Path.Combine(PathHelper.DataDir, nameof(OutputPanel));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
+            pluginImage = PluginBase.MainForm.FindImage("50");
         }
 
         /// <summary>
@@ -178,9 +174,9 @@ namespace OutputPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            string label = TextHelper.GetString("Label.ViewMenuItem");
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, this.OpenPanel);
+            var label = TextHelper.GetString("Label.ViewMenuItem");
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var viewItem = new ToolStripMenuItem(label, pluginImage, OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowOutput", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -190,9 +186,8 @@ namespace OutputPanel
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.PluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottom);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            PluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottom);
         }
 
         /// <summary>
@@ -200,27 +195,21 @@ namespace OutputPanel
         /// </summary>
         public void LoadSettings()
         {
-            this.PluginSettings = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.PluginSettings);
-                this.PluginSettings = (Settings)obj;
-            }
+            PluginSettings = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else PluginSettings = (Settings) ObjectSerializer.Deserialize(settingFilename, PluginSettings);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.PluginSettings);
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, PluginSettings);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(object sender, EventArgs e) => this.PluginPanel.Show();
+        public void OpenPanel(object sender, EventArgs e) => PluginPanel.Show();
 
         #endregion
-        
     }
-    
 }

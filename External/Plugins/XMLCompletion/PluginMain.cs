@@ -24,7 +24,7 @@ namespace XMLCompletion
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "XMLCompletion";
+        public string Name { get; } = nameof(XMLCompletion);
 
         /// <summary>
         /// GUID of the plugin
@@ -60,9 +60,9 @@ namespace XMLCompletion
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
             XMLComplete.Init();
         }
         
@@ -92,11 +92,11 @@ namespace XMLCompletion
                     break;
 
                 case EventType.Command:
-                    DataEvent de = (DataEvent)e;
+                    var de = (DataEvent)e;
                     if (XMLComplete.Active && !settingObject.DisableZenCoding
                         && de.Action == "SnippetManager.Expand")
                     {
-                        Hashtable data = (Hashtable)de.Data;
+                        var data = (Hashtable)de.Data;
                         if (ZenCoding.expandSnippet(data))
                             de.Handled = true;
                     }
@@ -113,10 +113,10 @@ namespace XMLCompletion
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "XMLCompletion");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(XMLCompletion));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -133,16 +133,16 @@ namespace XMLCompletion
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
             else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
-            XMLCompletion.Settings.Instance = this.settingObject;
+            XMLCompletion.Settings.Instance = settingObject;
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
 

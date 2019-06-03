@@ -37,7 +37,7 @@ namespace CssCompletion
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "CssCompletion";
+        public string Name { get; } = nameof(CssCompletion);
 
         /// <summary>
         /// GUID of the plugin
@@ -74,32 +74,29 @@ namespace CssCompletion
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return;
+            var document = PluginBase.MainForm.CurrentDocument;
+            if (document is null || !document.IsEditable) return;
             switch (e.Type)
             {
                 case EventType.Keys:
                 {
                     Keys keys = ((KeyEvent) e).Value;
-                    if (this.IsSupported(document) && keys == (Keys.Control | Keys.Space))
+                    if (IsSupported(document) && keys == (Keys.Control | Keys.Space))
                     {
                         if (completion != null)
                         {
@@ -113,15 +110,15 @@ namespace CssCompletion
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (this.IsSupported(document))
+                    if (IsSupported(document))
                     {
-                        string ext = Path.GetExtension(document.FileName).ToLower();
+                        var ext = Path.GetExtension(document.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
-                        if (completion == null) completion = new Completion(config, settingObject);
+                        if (completion is null) completion = new Completion(config, settingObject);
                         completion.OnFileChanged(features);
                         if (features?.Syntax != null)
                         {
-                            ScintillaControl sci = document.SciControl;
+                            var sci = document.SciControl;
                             sci.SetProperty(features.Syntax, "1");
                             sci.Colourise(0, -1);
                         }
@@ -135,7 +132,7 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (this.IsSupported(document))
+                    if (IsSupported(document))
                     {
                         updateFile = document.FileName;
                         updateFeatures = features;
@@ -155,10 +152,10 @@ namespace CssCompletion
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "CssCompletion");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(CssCompletion));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
 
             updater = new Timer();
             updater.Interval = 100;
@@ -187,8 +184,7 @@ namespace CssCompletion
             UITools.Manager.OnCharAdded += SciControlCharAdded;
             UITools.Manager.OnTextChanged += SciControlTextChanged;
             CompletionList.OnInsert += CompletionList_OnInsert;
-            EventType eventTypes = EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Completion;
-            EventManager.AddEventHandler(this, eventTypes);
+            EventManager.AddEventHandler(this, EventType.Keys | EventType.FileSave | EventType.ApplySettings | EventType.SyntaxChange | EventType.FileSwitch | EventType.Completion);
         }
 
         /// <summary>
@@ -196,44 +192,32 @@ namespace CssCompletion
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
 
             enabledLanguages = new Dictionary<string, CssFeatures>();
             config = ConfigHelper.Parse(PathHelper.ResolvePath("tools/css/completion.ini"), false);
             foreach (var def in config)
             {
                 var section = def.Value;
-                if (section.ContainsKey("ext"))
-                {
-                    string[] exts = section["ext"].Trim().Split(',');
-                    var features = new CssFeatures(def.Key, section);
-                    foreach (string ext in exts)
-                        enabledLanguages.Add("." + ext, features);
-                }
+                if (!section.ContainsKey("ext")) continue;
+                var exts = section["ext"].Trim().Split(',');
+                var features = new CssFeatures(def.Key, section);
+                foreach (var ext in exts)
+                    enabledLanguages.Add("." + ext, features);
             }
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(settingFilename, settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Checks if the language should use basic completion 
         /// </summary>
-        public bool IsSupported(ITabbedDocument document)
-        {
-            return document.SciControl.ConfigurationLanguage == "css";
-        }
+        public bool IsSupported(ITabbedDocument document) => document.SciControl.ConfigurationLanguage == "css";
 
         #endregion
 
@@ -261,8 +245,5 @@ namespace CssCompletion
         }
 
         #endregion
-
     }
-
 }
-

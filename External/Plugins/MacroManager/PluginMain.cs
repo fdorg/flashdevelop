@@ -29,7 +29,7 @@ namespace MacroManager
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "MacroManager";
+        public string Name { get; } = nameof(MacroManager);
 
         /// <summary>
         /// GUID of the plugin
@@ -66,11 +66,11 @@ namespace MacroManager
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.CreateMainMenuItems();
-            this.RefreshMacroToolBarItems();
-            this.RefreshMacroMenuItems();
+            InitBasics();
+            LoadSettings();
+            CreateMainMenuItems();
+            RefreshMacroToolBarItems();
+            RefreshMacroMenuItems();
         }
         
         /// <summary>
@@ -83,30 +83,28 @@ namespace MacroManager
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            if (e.Type == EventType.UIStarted)
+            if (e.Type != EventType.UIStarted) return;
+            var initScript = Path.Combine(PathHelper.BaseDir, "InitScript.cs");
+            if (File.Exists(initScript))
             {
-                string initScript = Path.Combine(PathHelper.BaseDir, "InitScript.cs");
-                string autoImport = Path.Combine(PathHelper.BaseDir, "InitMacros.fdm");
-                if (File.Exists(initScript))
-                {
-                    string command = "Internal;" + initScript;
-                    PluginBase.MainForm.CallCommand("ExecuteScript", command);
-                }
-                if (File.Exists(autoImport))
-                {
-                    List<Macro> macros = new List<Macro>();
-                    object macrosObject = ObjectSerializer.Deserialize(autoImport, macros, false);
-                    macros = (List<Macro>)macrosObject;
-                    this.AppSettings.UserMacros.AddRange(macros);
-                    try { File.Delete(autoImport); }
-                    catch (Exception ex)
-                    {
-                        ErrorManager.ShowError("Could not delete import file: " + autoImport, ex);
-                    }
-                    this.RefreshMacroMenuItems();
-                }
-                this.RunAutoRunMacros();
+                var command = $"Internal;{initScript}";
+                PluginBase.MainForm.CallCommand("ExecuteScript", command);
             }
+            var autoImport = Path.Combine(PathHelper.BaseDir, "InitMacros.fdm");
+            if (File.Exists(autoImport))
+            {
+                var macros = new List<Macro>();
+                var macrosObject = ObjectSerializer.Deserialize(autoImport, macros, false);
+                macros = (List<Macro>)macrosObject;
+                AppSettings.UserMacros.AddRange(macros);
+                try { File.Delete(autoImport); }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError("Could not delete import file: " + autoImport, ex);
+                }
+                RefreshMacroMenuItems();
+            }
+            RunAutoRunMacros();
         }
 
         #endregion
@@ -123,12 +121,12 @@ namespace MacroManager
         /// </summary>
         private void InitBasics()
         {
-            this.toolbarItems = new List<ToolStripItem>();
-            this.toolbarSeparator = new ToolStripSeparator();
-            this.Description = TextHelper.GetString("Info.Description");
-            string dataPath = Path.Combine(PathHelper.DataDir, "MacroManager");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            toolbarItems = new List<ToolStripItem>();
+            toolbarSeparator = new ToolStripSeparator();
+            Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(MacroManager));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
             EventManager.AddEventHandler(this, EventType.UIStarted);
         }
 
@@ -137,11 +135,11 @@ namespace MacroManager
         /// </summary>
         private void CreateMainMenuItems()
         {
-            MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
-            this.macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
-            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F11);
-            PluginBase.MainForm.RegisterShortcutItem("MacrosMenu.EditMacros", this.editMenuItem);
-            mainMenu.Items.Insert(mainMenu.Items.Count - 2, this.macroMenuItem);
+            var mainMenu = PluginBase.MainForm.MenuStrip;
+            macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
+            editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, EditMenuItemClick, Keys.Control | Keys.F11);
+            PluginBase.MainForm.RegisterShortcutItem("MacrosMenu.EditMacros", editMenuItem);
+            mainMenu.Items.Insert(mainMenu.Items.Count - 2, macroMenuItem);
         }
 
         /// <summary>
@@ -149,13 +147,13 @@ namespace MacroManager
         /// </summary>
         public void RefreshMacroMenuItems()
         {
-            this.macroMenuItem.DropDownItems.Clear();
-            foreach (Macro macro in this.AppSettings.UserMacros)
+            macroMenuItem.DropDownItems.Clear();
+            foreach (Macro macro in AppSettings.UserMacros)
             {
                 if (!macro.AutoRun)
                 {
                     ToolStripMenuItem macroItem = new ToolStripMenuItem();
-                    macroItem.Click += this.MacroMenuItemClick;
+                    macroItem.Click += MacroMenuItemClick;
                     macroItem.ShortcutKeys = macro.Shortcut;
                     macroItem.Text = macro.Label;
                     macroItem.Tag = macro;
@@ -163,15 +161,15 @@ namespace MacroManager
                     {
                         macroItem.Image = PluginBase.MainForm.FindImage(macro.Image);
                     }
-                    this.macroMenuItem.DropDownItems.Add(macroItem);
+                    macroMenuItem.DropDownItems.Add(macroItem);
                     if (!PluginBase.MainForm.IgnoredKeys.Contains(macro.Shortcut))
                     {
                         PluginBase.MainForm.IgnoredKeys.Add(macro.Shortcut);
                     }
                 }
             }
-            this.macroMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            this.macroMenuItem.DropDownItems.Add(this.editMenuItem);
+            macroMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            macroMenuItem.DropDownItems.Add(editMenuItem);
         }
 
         /// <summary>
@@ -180,21 +178,21 @@ namespace MacroManager
         public void RefreshMacroToolBarItems()
         {
             ToolStrip toolStrip = PluginBase.MainForm.ToolStrip;
-            if (!toolStrip.Items.Contains(this.toolbarSeparator))
+            if (!toolStrip.Items.Contains(toolbarSeparator))
             {
-                toolStrip.Items.Add(this.toolbarSeparator);
+                toolStrip.Items.Add(toolbarSeparator);
             }
-            foreach (ToolStripItem item in this.toolbarItems)
+            foreach (ToolStripItem item in toolbarItems)
             {
                 toolStrip.Items.Remove(item);
             }
-            this.toolbarItems.Clear();
-            foreach (Macro macro in this.AppSettings.UserMacros)
+            toolbarItems.Clear();
+            foreach (Macro macro in AppSettings.UserMacros)
             {
                 if (!macro.AutoRun && macro.ShowInToolbar)
                 {
                     ToolStripButton macroButton = new ToolStripButton();
-                    macroButton.Click += this.MacroMenuItemClick;
+                    macroButton.Click += MacroMenuItemClick;
                     macroButton.ToolTipText = TextHelper.RemoveMnemonics(macro.Label);
                     macroButton.Tag = macro;
                     if (!string.IsNullOrEmpty(macro.Image))
@@ -206,12 +204,12 @@ namespace MacroManager
                     {
                         PluginBase.MainForm.IgnoredKeys.Add(macro.Shortcut);
                     }
-                    this.toolbarItems.Add(macroButton);
+                    toolbarItems.Add(macroButton);
                 }
             }
-            int index = toolStrip.Items.IndexOf(this.toolbarSeparator);
-            this.toolbarSeparator.Visible = this.toolbarItems.Count > 0;
-            foreach (ToolStripItem item in this.toolbarItems)
+            int index = toolStrip.Items.IndexOf(toolbarSeparator);
+            toolbarSeparator.Visible = toolbarItems.Count > 0;
+            foreach (ToolStripItem item in toolbarItems)
             {
                 toolStrip.Items.Insert(index + 1, item);
             }
@@ -222,27 +220,23 @@ namespace MacroManager
         /// </summary>
         private void LoadSettings()
         {
-            this.AppSettings = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
+            AppSettings = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else AppSettings = (Settings) ObjectSerializer.Deserialize(settingFilename, AppSettings);
+            if (AppSettings.UserMacros.Count == 0)
             {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.AppSettings);
-                this.AppSettings = (Settings)obj;
-            }
-            if (this.AppSettings.UserMacros.Count == 0)
-            {
-                Macro execScript = new Macro("&Execute Script", new string[1] { "ExecuteScript|Development;$(OpenFile)" }, string.Empty, Keys.None);
-                Macro execCommand = new Macro("E&xecute Command", new string[1] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }, string.Empty, Keys.None);
-                Macro execfCommand = new Macro("Execu&te Current File", new string[1] { "RunProcess|$(CurFile)" }, string.Empty, Keys.None);
-                Macro runSelected = new Macro("Execute &Selected Text", new string[1] { "RunProcess|$(SelText)" }, string.Empty, Keys.None);
-                Macro browseSelected = new Macro("&Browse Current File", new string[1] { "Browse|$(CurFile)" }, string.Empty, Keys.None);
-                Macro copyTextAsRtf = new Macro("&Copy Text As RTF", new string[1] { "ScintillaCommand|CopyRTF" }, string.Empty, Keys.None);
-                this.AppSettings.UserMacros.Add(execScript);
-                this.AppSettings.UserMacros.Add(execCommand);
-                this.AppSettings.UserMacros.Add(execfCommand);
-                this.AppSettings.UserMacros.Add(runSelected);
-                this.AppSettings.UserMacros.Add(browseSelected);
-                this.AppSettings.UserMacros.Add(copyTextAsRtf);
+                Macro execScript = new Macro("&Execute Script", new[] { "ExecuteScript|Development;$(OpenFile)" }, string.Empty, Keys.None);
+                Macro execCommand = new Macro("E&xecute Command", new[] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }, string.Empty, Keys.None);
+                Macro execfCommand = new Macro("Execu&te Current File", new[] { "RunProcess|$(CurFile)" }, string.Empty, Keys.None);
+                Macro runSelected = new Macro("Execute &Selected Text", new[] { "RunProcess|$(SelText)" }, string.Empty, Keys.None);
+                Macro browseSelected = new Macro("&Browse Current File", new[] { "Browse|$(CurFile)" }, string.Empty, Keys.None);
+                Macro copyTextAsRtf = new Macro("&Copy Text As RTF", new[] { "ScintillaCommand|CopyRTF" }, string.Empty, Keys.None);
+                AppSettings.UserMacros.Add(execScript);
+                AppSettings.UserMacros.Add(execCommand);
+                AppSettings.UserMacros.Add(execfCommand);
+                AppSettings.UserMacros.Add(runSelected);
+                AppSettings.UserMacros.Add(browseSelected);
+                AppSettings.UserMacros.Add(copyTextAsRtf);
             }
         }
 
@@ -253,7 +247,7 @@ namespace MacroManager
         {
             try
             {
-                foreach (Macro macro in this.AppSettings.UserMacros)
+                foreach (Macro macro in AppSettings.UserMacros)
                 {
                     if (macro.AutoRun)
                     {
@@ -376,9 +370,8 @@ namespace MacroManager
         /// <summary>
         /// Use shorten name for the macro item
         /// </summary>
-        public override string ToString() => "Macro";
+        public override string ToString() => nameof(Macro);
     }
 
     #endregion
-    
 }

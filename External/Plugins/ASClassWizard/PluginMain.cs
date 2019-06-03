@@ -37,7 +37,7 @@ namespace ASClassWizard
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name => "ASClassWizard";
+        public string Name => nameof(ASClassWizard);
 
         /// <summary>
         /// GUID of the plugin
@@ -71,8 +71,8 @@ namespace ASClassWizard
 
         public void Initialize()
         {
-            this.AddEventHandlers();
-            this.InitLocalization();
+            AddEventHandlers();
+            InitLocalization();
         }
         
         public void Dispose()
@@ -86,17 +86,17 @@ namespace ASClassWizard
             switch (e.Type)
             {
                 case EventType.Command:
-                    DataEvent evt = (DataEvent)e;
-                    if (evt.Action == "ProjectManager.CreateNewFile")
+                    var de = (DataEvent)e;
+                    if (de.Action == "ProjectManager.CreateNewFile")
                     {
                         project = (Project) PluginBase.CurrentProject;
                         if (project.Language.StartsWithOrdinal("as") || project.Language == "haxe")
                         {
-                            var table = (Hashtable) evt.Data;
+                            var table = (Hashtable) de.Data;
                             var templateFile = table["templatePath"] as string;
                             if (IsWizardTemplate(templateFile))
                             {
-                                evt.Handled = true;
+                                de.Handled = true;
                                 var fileName = Path.GetFileName(templateFile);
                                 var templateType = !string.IsNullOrEmpty(fileName) && fileName.IndexOf('.') is int p && p != -1
                                                  ? fileName.Substring(0, p)
@@ -273,8 +273,7 @@ namespace ASClassWizard
                 }
                 if (package != "") return package;
                 // search in Global classpath
-                var info = new Hashtable();
-                info["language"] = project.Language;
+                var info = new Hashtable {["language"] = project.Language};
                 var de = new DataEvent(EventType.Command, "ASCompletion.GetUserClasspath", info);
                 EventManager.DispatchEvent(this, de);
                 if (de.Handled && info.ContainsKey("cp") && info["cp"] is List<string> cps)
@@ -429,7 +428,7 @@ namespace ASClassWizard
                     }
                 }
             }
-            string access = "";
+            string access;
             string classMetadata = "";
             if (lastFileOptions.Language == "as3")
             {
@@ -475,20 +474,18 @@ namespace ASClassWizard
         private void AddImports(ICollection<string> imports, MemberModel member, ClassModel inClass)
         {
             AddImport(imports, member.Type, inClass);
-            if (member.Parameters != null)
+            if (member.Parameters == null) return;
+            foreach (var item in member.Parameters)
             {
-                foreach (var item in member.Parameters)
+                var types = ASContext.Context.DecomposeTypes(new[] {item.Type});
+                foreach (var type in types)
                 {
-                    var types = ASContext.Context.DecomposeTypes(new[] {item.Type});
-                    foreach (var type in types)
-                    {
-                        AddImport(imports, type, inClass);
-                    }
+                    AddImport(imports, type, inClass);
                 }
             }
         }
 
-        private void AddImport(ICollection<string> imports, string cname, ClassModel inClass)
+        private void AddImport(ICollection<string> imports, string cname, MemberModel inClass)
         {
             var aClass = processContext.ResolveType(cname, inClass.InFile);
             if (!aClass.IsVoid() && aClass.InFile.Package != "")

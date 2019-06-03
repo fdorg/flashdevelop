@@ -30,7 +30,7 @@ namespace SourceControl
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "SourceControl";
+        public string Name { get; } = nameof(SourceControl);
 
         /// <summary>
         /// GUID of the plugin
@@ -67,9 +67,9 @@ namespace SourceControl
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
         
         /// <summary>
@@ -78,7 +78,7 @@ namespace SourceControl
         public void Dispose()
         {
             ProjectWatcher.Dispose();
-            this.SaveSettings();
+            SaveSettings();
         }
         
         /// <summary>
@@ -90,13 +90,13 @@ namespace SourceControl
             {
                 case EventType.UIStarted:
                     ProjectWatcher.Init();
-                    this.ready = true;
+                    ready = true;
                     break;
 
                 // Catches Project change event and display the active project path
                 case EventType.Command:
-                    if (!this.ready) return;
-                    DataEvent de = e as DataEvent;
+                    if (!ready) return;
+                    DataEvent de = (DataEvent) e;
                     string cmd = de.Action;
                     if (!cmd.StartsWithOrdinal("ProjectManager.")) return;
                     switch (cmd)
@@ -265,9 +265,8 @@ namespace SourceControl
                 case EventType.FileTemplate:
                     try
                     {
-                        string file = ((TextEvent) e).Value;
-                        if (File.Exists(file))
-                            e.Handled = ProjectWatcher.HandleFileNew(file);   
+                        var file = ((TextEvent) e).Value;
+                        if (File.Exists(file)) e.Handled = ProjectWatcher.HandleFileNew(file);   
                     }
                     catch (Exception ex)
                     {
@@ -295,10 +294,10 @@ namespace SourceControl
         /// </summary>
         public void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, "SourceControl");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(SourceControl));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -315,19 +314,15 @@ namespace SourceControl
         public void LoadSettings()
         {
             SCSettings = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, SCSettings);
-                SCSettings = (Settings)obj;
-            }
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else SCSettings = (Settings) ObjectSerializer.Deserialize(settingFilename, SCSettings);
 
             #region Detect Git
 
             // Try to find git path from program files
             if (SCSettings.GITPath == "git.exe")
             {
-                string gitPath = PathHelper.FindFromProgramFiles(@"Git\bin\git.exe");
+                var gitPath = PathHelper.FindFromProgramFiles(@"Git\bin\git.exe");
                 if (File.Exists(gitPath)) SCSettings.GITPath = gitPath;
 
             }
@@ -384,23 +379,16 @@ namespace SourceControl
         {
             if (string.IsNullOrEmpty(path)) return;
             if (!Path.IsPathRooted(path)) return;
-            if (!File.Exists(path))
-            {
-                string msg = string.Format(TextHelper.GetString("FlashDevelop.Info.InvalidToolPath"), name, "SourceControl") + ":\n" + path;
-                TraceManager.AddAsync(msg, -3);
-            }
+            if (File.Exists(path)) return;
+            var msg = string.Format(TextHelper.GetString("FlashDevelop.Info.InvalidToolPath"), name, "SourceControl") + ":\n" + path;
+            TraceManager.AddAsync(msg, -3);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, SCSettings);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, SCSettings);
 
         #endregion
-
     }
-    
 }

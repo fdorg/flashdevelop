@@ -27,7 +27,7 @@ namespace DataEncoder
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public string Name { get; } = "DataEncoder";
+        public string Name { get; } = nameof(DataEncoder);
 
         /// <summary>
         /// GUID of the plugin
@@ -64,8 +64,8 @@ namespace DataEncoder
         /// </summary>
         public void Initialize()
         {
-            this.AddEventHandlers();
-            this.Description = TextHelper.GetString("Info.Description");
+            AddEventHandlers();
+            Description = TextHelper.GetString("Info.Description");
         }
         
         /// <summary>
@@ -84,21 +84,21 @@ namespace DataEncoder
             switch (e.Type)
             {
                 case EventType.FileEncode :
-                    DataEvent fe = (DataEvent)e;
-                    string ext = Path.GetExtension(fe.Action);
+                    var fe = (DataEvent)e;
+                    var ext = Path.GetExtension(fe.Action);
                     if (ext == ".fdb" || ext == ".fda" || ext == ".fdm")
                     {
-                        this.SaveBinaryFile(fe.Action, fe.Data as string);
+                        SaveBinaryFile(fe.Action, fe.Data as string);
                         fe.Handled = true;
                     }
                     break;
 
                 case EventType.FileDecode:
-                    DataEvent fd = (DataEvent)e;
-                    string ext1 = Path.GetExtension(fd.Action);
+                    var fd = (DataEvent)e;
+                    var ext1 = Path.GetExtension(fd.Action);
                     if (ext1 == ".fdb" || ext1 == ".fda" || ext1 == ".fdm")
                     {
-                        string text = this.LoadBinaryFile(fd.Action);
+                        var text = LoadBinaryFile(fd.Action);
                         if (text != null)
                         {
                             fd.Data = text;
@@ -108,26 +108,26 @@ namespace DataEncoder
                     break;
 
                 case EventType.FileSaving:
-                    TextEvent se = (TextEvent)e;
-                    if (this.IsFileOpen(se.Value))
+                    var se = (TextEvent)e;
+                    if (IsFileOpen(se.Value))
                     {
-                        if (!this.IsXmlSaveable(se.Value))
+                        if (!IsXmlSaveable(se.Value))
                         {
                             se.Handled = true;
                         }
                     }
-                    this.oldFileName = string.Empty;
+                    oldFileName = string.Empty;
                     break;
 
                 case EventType.FileRenaming:
-                    TextEvent re = (TextEvent)e;
-                    string[] files = re.Value.Split(';');
-                    this.oldFileName = files[0]; // Save for later..
-                    if (this.IsFileOpen(this.oldFileName))
+                    var te = (TextEvent)e;
+                    var files = te.Value.Split(';');
+                    oldFileName = files[0]; // Save for later..
+                    if (IsFileOpen(oldFileName))
                     {
-                        foreach (TypeData objType in this.objectTypes)
+                        foreach (var objType in objectTypes)
                         {
-                            if (objType.File == this.oldFileName)
+                            if (objType.File == oldFileName)
                             {
                                 objType.File = files[1];
                                 break;
@@ -152,8 +152,7 @@ namespace DataEncoder
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType events = EventType.FileSaving | EventType.FileEncode | EventType.FileDecode | EventType.FileRenaming;
-            EventManager.AddEventHandler(this, events);
+            EventManager.AddEventHandler(this, EventType.FileSaving | EventType.FileEncode | EventType.FileDecode | EventType.FileRenaming);
         }
 
         /// <summary>
@@ -170,7 +169,7 @@ namespace DataEncoder
                 xs.Serialize(stream, settings); // Obj -> XML
                 XmlTextWriter xw = new XmlTextWriter(stream, Encoding.UTF8);
                 xw.Formatting = Formatting.Indented; stream.Close();
-                this.objectTypes.Add(new TypeData(file, settings.GetType()));
+                objectTypes.Add(new TypeData(file, settings.GetType()));
                 return Encoding.UTF8.GetString(stream.ToArray());
             }
             catch (Exception ex)
@@ -187,12 +186,11 @@ namespace DataEncoder
         {
             try
             {
-                object settings = new object();
-                byte[] buffer = Encoding.UTF8.GetBytes(text);
-                MemoryStream stream = new MemoryStream(buffer);
-                TypeData typeData = this.GetFileObjectType(file);
-                XmlSerializer xs = XmlSerializer.FromTypes(new[]{typeData.Type})[0];
-                settings = xs.Deserialize(stream); // XML -> Obj
+                var buffer = Encoding.UTF8.GetBytes(text);
+                var stream = new MemoryStream(buffer);
+                var typeData = GetFileObjectType(file);
+                var xs = XmlSerializer.FromTypes(new[]{typeData.Type})[0];
+                var settings = xs.Deserialize(stream); // XML -> Obj
                 ObjectSerializer.Serialize(file, settings);
                 stream.Close();
             }
@@ -209,7 +207,7 @@ namespace DataEncoder
         {
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
-                if (document.IsEditable && document.FileName == file || document.FileName == this.oldFileName)
+                if (document.IsEditable && document.FileName == file || document.FileName == oldFileName)
                 {
                     try
                     {
@@ -233,7 +231,7 @@ namespace DataEncoder
         /// <returns></returns>
         private bool IsFileOpen(string file)
         {
-            foreach (TypeData objType in this.objectTypes)
+            foreach (var objType in objectTypes)
             {
                 if (file == objType.File) return true;
             }
@@ -245,7 +243,7 @@ namespace DataEncoder
         /// </summary>
         public TypeData GetFileObjectType(string file)
         {
-            foreach (TypeData objType in this.objectTypes)
+            foreach (var objType in objectTypes)
             {
                 if (file == objType.File) return objType;
             }
