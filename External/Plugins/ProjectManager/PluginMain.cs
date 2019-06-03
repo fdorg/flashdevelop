@@ -67,8 +67,6 @@ namespace ProjectManager
 
     public class PluginMain : IPlugin
     {
-        private string pluginDesc = "Adds project management and building to FlashDevelop.";
-
         private FDMenus menus;
         private FileActions fileActions;
         private BuildActions buildActions;
@@ -162,7 +160,7 @@ namespace ProjectManager
 
         public string Author => "FlashDevelop Team";
 
-        public string Description => pluginDesc;
+        public string Description { get; private set; } = "Adds project management and building to FlashDevelop.";
 
         public string Help => "www.flashdevelop.org/community/";
 
@@ -176,7 +174,7 @@ namespace ProjectManager
         public void Initialize()
         {
             LoadSettings();
-            pluginDesc = TextHelper.GetString("Info.Description");
+            Description = TextHelper.GetString("Info.Description");
             openFileQueue = new Queue<string>();
 
             Icons.Initialize(MainForm);

@@ -26,14 +26,9 @@ namespace HaXeContext
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private String pluginName = "HaxeContext";
-        private String pluginGuid = "ccf2c534-db6b-4c58-b90e-cd0b837e61c5";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Haxe context for the ASCompletion engine.";
-        private String pluginAuth = "FlashDevelop Team";
         private HaXeSettings settingObject;
         private Context contextInstance;
-        private String settingFilename;
+        private string settingFilename;
         private KeyValuePair<string, InstalledSDK> customSDK;
         private int logCount;
 
@@ -42,59 +37,38 @@ namespace HaXeContext
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "HaxeContext";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "ccf2c534-db6b-4c58-b90e-cd0b837e61c5";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Haxe context for the ASCompletion engine.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => this.settingObject;
 
         #endregion
 
@@ -127,7 +101,7 @@ namespace HaXeContext
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -142,8 +116,7 @@ namespace HaXeContext
                     }
                     else if (action == ProjectManagerEvents.BuildProject || action == ProjectManagerEvents.TestProject)
                     {
-                        var completionHandler = contextInstance.completionModeHandler as CompletionServerCompletionHandler;
-                        if (completionHandler != null && !completionHandler.IsRunning())
+                        if (contextInstance.completionModeHandler is CompletionServerCompletionHandler completionHandler && !completionHandler.IsRunning())
                             completionHandler.StartServer();
                     }
                     else if (action == ProjectManagerEvents.CleanProject)
@@ -238,10 +211,10 @@ namespace HaXeContext
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, nameof(HaXeContext));
+            string dataPath = Path.Combine(PathHelper.DataDir, nameof(HaXeContext));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -262,7 +235,7 @@ namespace HaXeContext
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
+                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (HaXeSettings)obj;
             }
         }
@@ -276,7 +249,7 @@ namespace HaXeContext
             {
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
                 var externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");
-                if (!String.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
+                if (!string.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
                 {
                     InstalledSDKContext.Current = this;
                     var sdk = new InstalledSDK(this);

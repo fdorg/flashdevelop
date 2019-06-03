@@ -25,7 +25,7 @@ namespace PluginCore.Managers
             asyncTimer = new Timer();
             asyncTimer.Interval = 200;
             asyncTimer.AutoReset = false;
-            asyncTimer.Elapsed += new ElapsedEventHandler(AsyncTimer_Elapsed);
+            asyncTimer.Elapsed += AsyncTimer_Elapsed;
             uniqueToken = 0;
         }
 
@@ -40,35 +40,23 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log
         /// </summary>
-        public static void Add(String message)
-        {
-            Add(message, 0);
-        }
+        public static void Add(string message) => Add(message, 0);
 
         /// <summary>
         /// Adds a new entry to the log
         /// </summary>
-        public static void Add(String message, Int32 state)
-        {
-            Add(new TraceItem(message, state));
-        }
+        public static void Add(string message, int state) => Add(new TraceItem(message, state));
 
         /// <summary>
         /// Adds a new entry to the log.
         /// </summary>
         /// <param name="groupData">The id of the trace group to output to, with optional arguments.</param>
-        public static void Add(string message, int state, string groupData)
-        {
-            Add(new TraceItem(message, state, groupData));
-        }
+        public static void Add(string message, int state, string groupData) => Add(new TraceItem(message, state, groupData));
 
         /// <summary>
         /// Adds a new entry to the log in an unsafe threading context
         /// </summary>
-        public static void AddAsync(String message)
-        {
-            AddAsync(message, 0);
-        }
+        public static void AddAsync(string message) => AddAsync(message, 0);
 
         /// <summary>
         /// Adds a new entry to the log (no overflow check for sync traces)
@@ -85,13 +73,13 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log in an unsafe threading context
         /// </summary>
-        public static void AddAsync(String message, Int32 state)
+        public static void AddAsync(string message, int state)
         {
-            if ((PluginBase.MainForm as Form).InvokeRequired)
+            if (((Form) PluginBase.MainForm).InvokeRequired)
             {
                 lock (asyncQueue)
                 {
-                    int count = asyncQueue.Count;
+                    var count = asyncQueue.Count;
                     if (count < maxQueue)
                     {
                         asyncQueue.Add(new TraceItem(message, state));
@@ -121,7 +109,7 @@ namespace PluginCore.Managers
         /// <param name="icon">The icon to be displayed in the panel. If this is <see langword="null"/>, the default icon is used.</param>
         public static void RegisterTraceGroup(string groupId, string title, bool showFilterButtons = true, bool allowMultiplePanels = false, Image icon = null)
         {
-            if (groupId == null) throw new ArgumentNullException(nameof(groupId));
+            if (groupId is null) throw new ArgumentNullException(nameof(groupId));
             traceGroups.Add(groupId, new TraceGroup(groupId, title, showFilterButtons, allowMultiplePanels, icon));
         }
 
@@ -131,9 +119,8 @@ namespace PluginCore.Managers
         /// <param name="groupId">The id of the trace group.</param>
         public static TraceGroup GetTraceGroup(string groupId)
         {
-            if (groupId == null) throw new ArgumentNullException(nameof(groupId));
-            TraceGroup value;
-            return traceGroups.TryGetValue(groupId, out value) ? value : null;
+            if (groupId is null) throw new ArgumentNullException(nameof(groupId));
+            return traceGroups.TryGetValue(groupId, out var value) ? value : null;
         }
 
         /// <summary>
@@ -143,7 +130,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupData(string groupId, params string[] args)
         {
-            if (args == null || args.Length == 0)
+            if (args is null || args.Length == 0)
             {
                 return groupId;
             }
@@ -157,7 +144,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupDataUnique(string groupId, params string[] args)
         {
-            if (args == null || args.Length == 0)
+            if (args is null || args.Length == 0)
             {
                 return CreateGroupData(groupId, uniqueToken++.ToString());
             }
@@ -169,25 +156,22 @@ namespace PluginCore.Managers
         /// </summary>
         public static bool ParseGroupData(string groupData, out string groupId, out string[] args)
         {
-            string[] data = groupData.Split(new[] { ':' }, 2);
+            var data = groupData.Split(new[] { ':' }, 2);
             if (data.Length > 1)
             {
                 groupId = data[0];
                 args = data[1].Split(',');
                 return true;
             }
-            else
-            {
-                groupId = groupData;
-                args = new string[0];
-                return false;
-            }
+            groupId = groupData;
+            args = new string[0];
+            return false;
         }
 
         /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
-        private static void AsyncTimer_Elapsed(Object sender, ElapsedEventArgs e)
+        private static void AsyncTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             lock (asyncQueue)
             {
@@ -197,7 +181,7 @@ namespace PluginCore.Managers
                     synchronizing = true;
                     try
                     {
-                        (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker) ProcessQueue);
+                        ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
                     }
                     catch (Exception)
                     {
@@ -219,18 +203,14 @@ namespace PluginCore.Managers
                 asyncQueue.Clear();
                 synchronizing = false;
             }
-            NotifyEvent ne = new NotifyEvent(EventType.Trace);
+            var ne = new NotifyEvent(EventType.Trace);
             EventManager.DispatchEvent(null, ne);
         }
 
         /// <summary>
         /// Gets a read only list from trace log
         /// </summary>
-        public static IList<TraceItem> TraceLog
-        {
-            get { return traceLog.AsReadOnly(); }
-        }
-
+        public static IList<TraceItem> TraceLog => traceLog.AsReadOnly();
     }
 
     public class TraceGroup

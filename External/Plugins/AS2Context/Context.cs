@@ -328,7 +328,7 @@ namespace AS2Context
         public override string DefaultInheritance(string package, string classname)
         {
             if (package.Length == 0 && classname == features.objectKey) return features.voidKey;
-            else return features.objectKey;
+            return features.objectKey;
         }
 
         /// <summary>

@@ -14,73 +14,47 @@ namespace DataEncoder
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "DataEncoder";
-        private String pluginGuid = "ca182923-bcdc-46bf-905c-aaa0bf64eebd";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Converts the file data for specific files to view them properly in FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private List<TypeData> objectTypes = new List<TypeData>();
-        private String oldFileName = String.Empty;
+        private readonly List<TypeData> objectTypes = new List<TypeData>();
+        private string oldFileName = string.Empty;
 
         #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "DataEncoder";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "ca182923-bcdc-46bf-905c-aaa0bf64eebd";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Converts the file data for specific files to view them properly in FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return null; }
-        }
-        
+        public object Settings => null;
+
         #endregion
         
         #region Required Methods
@@ -91,7 +65,7 @@ namespace DataEncoder
         public void Initialize()
         {
             this.AddEventHandlers();
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
         }
         
         /// <summary>
@@ -105,26 +79,26 @@ namespace DataEncoder
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.FileEncode :
                     DataEvent fe = (DataEvent)e;
-                    String ext = Path.GetExtension(fe.Action);
+                    string ext = Path.GetExtension(fe.Action);
                     if (ext == ".fdb" || ext == ".fda" || ext == ".fdm")
                     {
-                        this.SaveBinaryFile(fe.Action, fe.Data as String);
+                        this.SaveBinaryFile(fe.Action, fe.Data as string);
                         fe.Handled = true;
                     }
                     break;
 
                 case EventType.FileDecode:
                     DataEvent fd = (DataEvent)e;
-                    String ext1 = Path.GetExtension(fd.Action);
+                    string ext1 = Path.GetExtension(fd.Action);
                     if (ext1 == ".fdb" || ext1 == ".fda" || ext1 == ".fdm")
                     {
-                        String text = this.LoadBinaryFile(fd.Action);
+                        string text = this.LoadBinaryFile(fd.Action);
                         if (text != null)
                         {
                             fd.Data = text;
@@ -142,12 +116,12 @@ namespace DataEncoder
                             se.Handled = true;
                         }
                     }
-                    this.oldFileName = String.Empty;
+                    this.oldFileName = string.Empty;
                     break;
 
                 case EventType.FileRenaming:
                     TextEvent re = (TextEvent)e;
-                    String[] files = re.Value.Split(';');
+                    string[] files = re.Value.Split(';');
                     this.oldFileName = files[0]; // Save for later..
                     if (this.IsFileOpen(this.oldFileName))
                     {
@@ -171,7 +145,7 @@ namespace DataEncoder
         /**
         * Information messages.
         */
-        private readonly String CANT_SAVE_FILE = TextHelper.GetString("Info.CantSaveFile");
+        private readonly string CANT_SAVE_FILE = TextHelper.GetString("Info.CantSaveFile");
 
         /// <summary>
         /// Adds the required event handlers
@@ -185,11 +159,11 @@ namespace DataEncoder
         /// <summary>
         /// Loads the serialized binary file
         /// </summary>
-        public String LoadBinaryFile(String file)
+        public string LoadBinaryFile(string file)
         {
             try
             {
-                Object settings = new Object();
+                object settings = new object();
                 MemoryStream stream = new MemoryStream();
                 settings = ObjectSerializer.Deserialize(file, settings, false);
                 XmlSerializer xs = XmlSerializer.FromTypes(new[]{settings.GetType()})[0];
@@ -209,12 +183,12 @@ namespace DataEncoder
         /// <summary>
         /// Saves the serialized binary file
         /// </summary>
-        public void SaveBinaryFile(String file, String text)
+        public void SaveBinaryFile(string file, string text)
         {
             try
             {
-                Object settings = new Object();
-                Byte[] buffer = Encoding.UTF8.GetBytes(text);
+                object settings = new object();
+                byte[] buffer = Encoding.UTF8.GetBytes(text);
                 MemoryStream stream = new MemoryStream(buffer);
                 TypeData typeData = this.GetFileObjectType(file);
                 XmlSerializer xs = XmlSerializer.FromTypes(new[]{typeData.Type})[0];
@@ -231,7 +205,7 @@ namespace DataEncoder
         /// <summary>
         /// Checks if the syntax is ok to save
         /// </summary>
-        private Boolean IsXmlSaveable(String file)
+        private bool IsXmlSaveable(string file)
         {
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
@@ -257,7 +231,7 @@ namespace DataEncoder
         /// Checks if a file is open already
         /// </summary>
         /// <returns></returns>
-        private Boolean IsFileOpen(String file)
+        private bool IsFileOpen(string file)
         {
             foreach (TypeData objType in this.objectTypes)
             {
@@ -269,7 +243,7 @@ namespace DataEncoder
         /// <summary>
         /// Gets the file type for file
         /// </summary>
-        public TypeData GetFileObjectType(String file)
+        public TypeData GetFileObjectType(string file)
         {
             foreach (TypeData objType in this.objectTypes)
             {
@@ -287,12 +261,12 @@ namespace DataEncoder
     public class TypeData
     {
         public Type Type;
-        public String File;
+        public string File;
 
-        public TypeData(String file, Type type)
+        public TypeData(string file, Type type)
         {
-            this.File = file;
-            this.Type = type;
+            File = file;
+            Type = type;
         }
     }
 

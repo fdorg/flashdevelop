@@ -24,7 +24,7 @@ namespace CssCompletion
 
         [DisplayName("Disable Auto Completion"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableAutoCompletion")]
-        public Boolean DisableAutoCompletion
+        public bool DisableAutoCompletion
         {
             get { return this.disableAutoCompletion; }
             set { this.disableAutoCompletion = value; }
@@ -32,7 +32,7 @@ namespace CssCompletion
 
         [DisplayName("Disable Insert Colon"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableInsertColon")]
-        public Boolean DisableInsertColon
+        public bool DisableInsertColon
         {
             get { return this.disableInsertColon; }
             set { this.disableInsertColon = value; }
@@ -40,7 +40,7 @@ namespace CssCompletion
 
         [DisplayName("Disable Compile To CSS On Save"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableCompileOnSave")]
-        public Boolean DisableCompileOnSave
+        public bool DisableCompileOnSave
         {
             get { return this.disableCompileOnSave; }
             set { this.disableCompileOnSave = value; }
@@ -48,7 +48,7 @@ namespace CssCompletion
 
         [DisplayName("Disable Minify CSS On Save"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableMinifyOnSave")]
-        public Boolean DisableMinifyOnSave
+        public bool DisableMinifyOnSave
         {
             get { return this.disableMinifyOnSave; }
             set { this.disableMinifyOnSave = value; }
@@ -56,7 +56,7 @@ namespace CssCompletion
 
         [DisplayName("Enable Verbose Compilation"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.EnableVerboseCompilation")]
-        public Boolean EnableVerboseCompilation
+        public bool EnableVerboseCompilation
         {
             get { return this.enableVerboseCompilation; }
             set { this.enableVerboseCompilation = value; }

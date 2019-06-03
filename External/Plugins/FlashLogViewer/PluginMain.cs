@@ -14,14 +14,8 @@ namespace FlashLogViewer
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "FlashLogViewer";
-        private String pluginGuid = "2cf76544-5736-11dc-8314-0800200c9a66";
-        private String pluginHelp = "http://www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a Flash Player main and policy log panel to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String settingFilename;
+        private string settingFilename;
         private Settings settingObject;
-        private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Image pluginImage;
 
@@ -30,60 +24,39 @@ namespace FlashLogViewer
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "FlashLogViewer";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "2cf76544-5736-11dc-8314-0800200c9a66";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a Flash Player main and policy log panel to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "http://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -111,7 +84,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             StartType startType = this.settingObject.TrackingStartType;
             switch (e.Type)
@@ -143,20 +116,17 @@ namespace FlashLogViewer
         /// <summary>
         /// Accessor for the plugin panel
         /// </summary>
-        public DockContent PluginPanel
-        {
-            get { return this.pluginPanel; }
-        }
+        public DockContent PluginPanel { get; set; }
 
         /// <summary>
         /// Initializes important variables
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "FlashLogViewer");
+            string dataPath = Path.Combine(PathHelper.DataDir, "FlashLogViewer");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
             this.pluginImage = PluginBase.MainForm.FindImage("412");
         }
 
@@ -186,7 +156,7 @@ namespace FlashLogViewer
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            this.PluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottomAutoHide);
         }
 
         /// <summary>
@@ -196,28 +166,18 @@ namespace FlashLogViewer
         {
             this.settingObject = new Settings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
-        {
-            this.pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => PluginPanel.Show();
 
         #endregion
 

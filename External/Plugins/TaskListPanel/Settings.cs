@@ -15,10 +15,10 @@ namespace TaskListPanel
     public class Settings
     {
         private ExploringMode exploringMode = ExploringMode.Light;
-        private Int32[] images = new Int32[] { 229, 197, 197 };
-        private String[] extensions = new String[] { ".txt" };
-        private String[] groups = new String[] { "TODO", "FIXME", "BUG" };
-        private String[] excluded = new String[0] {};
+        private int[] images = new int[] { 229, 197, 197 };
+        private string[] extensions = new string[] { ".txt" };
+        private string[] groups = new string[] { "TODO", "FIXME", "BUG" };
+        private string[] excluded = new string[0] {};
 
         /// <summary> 
         /// Exploring mode, the way we should operate
@@ -37,8 +37,8 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Excluded Paths")]
         [LocalizedDescription("TaskListPanel.Description.ExcludedPaths")]
-        [DefaultValue(new String[0] {})]
-        public String[] ExcludedPaths
+        [DefaultValue(new string[0] {})]
+        public string[] ExcludedPaths
         {
             get { return this.excluded; }
             set { this.excluded = value; }
@@ -49,8 +49,8 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("File Extensions")]
         [LocalizedDescription("TaskListPanel.Description.FileExtensions")]
-        [DefaultValue(new String[] { ".txt" })]
-        public String[] FileExtensions
+        [DefaultValue(new string[] { ".txt" })]
+        public string[] FileExtensions
         {
             get { return this.extensions; }
             set { this.extensions = value; }
@@ -61,8 +61,8 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Group Values")]
         [LocalizedDescription("TaskListPanel.Description.GroupValues")]
-        [DefaultValue(new String[] { "TODO", "FIXME", "BUG" })]
-        public String[] GroupValues
+        [DefaultValue(new string[] { "TODO", "FIXME", "BUG" })]
+        public string[] GroupValues
         {
             get { return this.groups; }
             set { this.groups = value; }
@@ -73,8 +73,8 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Image Indexes")]
         [LocalizedDescription("TaskListPanel.Description.ImageIndexes")]
-        [DefaultValue(new Int32[] { 229, 197, 197 })]
-        public Int32[] ImageIndexes
+        [DefaultValue(new int[] { 229, 197, 197 })]
+        public int[] ImageIndexes
         {
             get { return this.images; }
             set { this.images = value; }

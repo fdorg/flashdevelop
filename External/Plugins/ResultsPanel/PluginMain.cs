@@ -17,13 +17,8 @@ namespace ResultsPanel
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "ResultsPanel";
-        private String pluginGuid = "24df7cd8-e5f0-4171-86eb-7b2a577703ba";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a results panel for console info to FlashDevelop";
-        private String pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
-        private String settingFilename;
+        private string settingFilename;
         internal PluginUI pluginUI;
         internal Image pluginImage;
         internal PanelContextMenu contextMenuStrip;
@@ -36,58 +31,37 @@ namespace ResultsPanel
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "ResultsPanel";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "24df7cd8-e5f0-4171-86eb-7b2a577703ba";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a results panel for console info to FlashDevelop";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => settingObject;
 
         #endregion
 
@@ -116,7 +90,7 @@ namespace ResultsPanel
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -194,20 +168,17 @@ namespace ResultsPanel
         /// </summary>
         public void InitBasics()
         {
-            String dataDir = Path.Combine(PathHelper.DataDir, "ResultsPanel");
+            string dataDir = Path.Combine(PathHelper.DataDir, "ResultsPanel");
             if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
             this.settingFilename = Path.Combine(dataDir, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
             this.pluginImage = PluginBase.MainForm.FindImage("127");
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Loads the plugin settings
@@ -216,11 +187,7 @@ namespace ResultsPanel
         {
             this.settingObject = new Settings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
@@ -269,7 +236,7 @@ namespace ResultsPanel
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottomAutoHide);
             ResultsPanelHelper.Initialize(this, this.pluginUI);
         }
 

@@ -9,10 +9,10 @@ namespace FileExplorer
     [Serializable]
     public class Settings
     {
-        private Int32 sortOrder = 0;
-        private Int32 sortColumn = 0;
-        private String filePath = "C:\\";
-        private Boolean synchronizeToProject = true;
+        private int sortOrder = 0;
+        private int sortColumn = 0;
+        private string filePath = "C:\\";
+        private bool synchronizeToProject = true;
 
         /// <summary> 
         /// Get and sets the filePath.
@@ -20,7 +20,7 @@ namespace FileExplorer
         [DisplayName("Active Path")]
         [LocalizedDescription("FileExplorer.Description.FilePath"), DefaultValue("C:\\")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String FilePath 
+        public string FilePath 
         {
             get { return this.filePath; }
             set { this.filePath = value; }
@@ -31,7 +31,7 @@ namespace FileExplorer
         /// </summary>
         [DisplayName("Synchronize To Project")]
         [LocalizedDescription("FileExplorer.Description.SynchronizeToProject"), DefaultValue(true)]
-        public Boolean SynchronizeToProject
+        public bool SynchronizeToProject
         {
             get { return this.synchronizeToProject; }
             set { this.synchronizeToProject = value; }
@@ -42,7 +42,7 @@ namespace FileExplorer
         /// </summary>
         [DisplayName("Active Column")]
         [LocalizedDescription("FileExplorer.Description.SortColumn"), DefaultValue(0)]
-        public Int32 SortColumn
+        public int SortColumn
         {
             get { return this.sortColumn; }
             set { this.sortColumn = value; }
@@ -53,7 +53,7 @@ namespace FileExplorer
         /// </summary>
         [DisplayName("Sort Order")]
         [LocalizedDescription("FileExplorer.Description.SortOrder"), DefaultValue(0)]
-        public Int32 SortOrder
+        public int SortOrder
         {
             get { return this.sortOrder; }
             set { this.sortOrder = value; }

@@ -24,14 +24,8 @@ namespace AS3Context
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private String pluginName = "AS3Context";
-        private String pluginGuid = "ccf2c534-db6b-4c58-b90e-cd0b837e61c4";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "ActionScript 3 context for the ASCompletion engine.";
-        private String pluginAuth = "FlashDevelop Team";
-        static private AS3Settings settingObject;
         private Context contextInstance;
-        private String settingFilename;
+        private string settingFilename;
         private bool inMXML;
         private Image pluginIcon;
         private ProfilerUI profilerUI;
@@ -43,64 +37,41 @@ namespace AS3Context
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "AS3Context";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "ccf2c534-db6b-4c58-b90e-cd0b837e61c4";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "ActionScript 3 context for the ASCompletion engine.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        Object IPlugin.Settings
-        {
-            get { return settingObject; }
-        }
+        object IPlugin.Settings => Settings;
 
-        static public AS3Settings Settings
-        {
-            get { return settingObject; }
-        }
+        public static AS3Settings Settings { get; set; }
+
         #endregion
         
         #region Required Methods
@@ -130,7 +101,7 @@ namespace AS3Context
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (priority == HandlingPriority.Low)
             {
@@ -156,16 +127,16 @@ namespace AS3Context
                             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3")
                                 e.Handled = OpenVirtualFileModel((string) de.Data);
                         }
-                        else if (!settingObject.DisableFDB && action == "AS3Context.StartDebugger")
+                        else if (!Settings.DisableFDB && action == "AS3Context.StartDebugger")
                         {
                             string workDir = (PluginBase.CurrentProject != null)
                                 ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath)
                                 : Environment.CurrentDirectory;
 
-                            string flexSdk = settingObject.GetDefaultSDK().Path;
+                            string flexSdk = Settings.GetDefaultSDK().Path;
 
                             // if the default sdk is not defined ask for project sdk
-                            if (String.IsNullOrEmpty(flexSdk))
+                            if (string.IsNullOrEmpty(flexSdk))
                             {
                                 flexSdk = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
                             }
@@ -199,7 +170,7 @@ namespace AS3Context
                 switch (e.Type)
                 {
                     case EventType.UIStarted:
-                        contextInstance = new Context(settingObject);
+                        contextInstance = new Context(Settings);
                         ValidateSettings();
                         AddToolbarItems();
                         // Associate this context with AS3 language
@@ -335,10 +306,10 @@ namespace AS3Context
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "AS3Context");
+            string dataPath = Path.Combine(PathHelper.DataDir, "AS3Context");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
             this.pluginIcon = PluginBase.MainForm.FindImage("123");
         }
 
@@ -349,7 +320,7 @@ namespace AS3Context
         {
             profilerUI = new ProfilerUI();
             profilerUI.Text = TextHelper.GetString("Title.Profiler");
-            profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerUI, pluginGuid, pluginIcon, DockState.Hidden);
+            profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerUI, Guid, pluginIcon, DockState.Hidden);
             profilerPanel.VisibleState = DockState.Float;
             profilerUI.PanelRef = profilerPanel;
         }
@@ -424,14 +395,14 @@ namespace AS3Context
         /// </summary>
         public void LoadSettings()
         {
-            settingObject = new AS3Settings();
+            Settings = new AS3Settings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
-                settingObject = (AS3Settings)obj;
+                object obj = ObjectSerializer.Deserialize(this.settingFilename, Settings);
+                Settings = (AS3Settings)obj;
             }
-            if (settingObject.AS3ClassPath == null) settingObject.AS3ClassPath = @"Library\AS3\intrinsic";
+            if (Settings.AS3ClassPath == null) Settings.AS3ClassPath = @"Library\AS3\intrinsic";
         }
 
         /// <summary>
@@ -439,7 +410,7 @@ namespace AS3Context
         /// </summary>
         private void ValidateSettings()
         {
-            if (settingObject.InstalledSDKs == null || settingObject.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
+            if (Settings.InstalledSDKs == null || Settings.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
             {
                 InstalledSDK sdk;
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
@@ -508,10 +479,10 @@ namespace AS3Context
                 //
                 // TODO: Resolve Apache Flex SDK
                 //
-                if (settingObject.InstalledSDKs != null)
+                if (Settings.InstalledSDKs != null)
                 {
                     char[] slashes = new char[] { '/', '\\' };
-                    foreach (InstalledSDK oldSdk in settingObject.InstalledSDKs)
+                    foreach (InstalledSDK oldSdk in Settings.InstalledSDKs)
                     {
                         string oldPath = oldSdk.Path.TrimEnd(slashes);
                         foreach (InstalledSDK newSdk in sdks)
@@ -524,19 +495,19 @@ namespace AS3Context
                             }
                         }
                     }
-                    sdks.InsertRange(0, settingObject.InstalledSDKs);
+                    sdks.InsertRange(0, Settings.InstalledSDKs);
                 }
-                settingObject.InstalledSDKs = sdks.ToArray();
+                Settings.InstalledSDKs = sdks.ToArray();
             }
             else
             {
-                foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                foreach (InstalledSDK sdk in Settings.InstalledSDKs)
                 {
                     sdk.Validate();
                 }
             }
-            settingObject.OnClasspathChanged += SettingObjectOnClasspathChanged;
-            settingObject.OnInstalledSDKsChanged += settingObjectOnInstalledSDKsChanged;
+            Settings.OnClasspathChanged += SettingObjectOnClasspathChanged;
+            Settings.OnInstalledSDKsChanged += settingObjectOnInstalledSDKsChanged;
         }
 
         /// <summary>
@@ -565,7 +536,7 @@ namespace AS3Context
         /// </summary>
         public void SaveSettings()
         {
-            ObjectSerializer.Serialize(this.settingFilename, settingObject);
+            ObjectSerializer.Serialize(this.settingFilename, Settings);
         }
 
         /// <summary>

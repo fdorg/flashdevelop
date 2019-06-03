@@ -14,7 +14,7 @@ namespace BasicCompletion
     [Serializable]
     public class Settings
     {
-        private Boolean disableAutoCompletion = false;
+        private bool disableAutoCompletion = false;
         private AutoInsert autoInsertType = AutoInsert.CPP;
 
         /// <summary> 
@@ -33,7 +33,7 @@ namespace BasicCompletion
         /// </summary>
         [DisplayName("Disable Auto Completion"), DefaultValue(false)]
         [LocalizedDescription("BasicCompletion.Description.DisableAutoCompletion")]
-        public Boolean DisableAutoCompletion
+        public bool DisableAutoCompletion
         {
             get { return this.disableAutoCompletion; }
             set { this.disableAutoCompletion = value; }

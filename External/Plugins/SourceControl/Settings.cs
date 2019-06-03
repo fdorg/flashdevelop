@@ -9,22 +9,22 @@ namespace SourceControl
     [Serializable]
     public class Settings
     {
-        private String gitPath;
-        private String svnPath;
-        private String hgPath;
-        private String tortoiseSVNProcPath;
-        private String tortoiseGitProcPath;
-        private String tortoiseHGProcPath;
-        private Boolean enableSVN;
-        private Boolean enableGIT;
-        private Boolean enableHG;
+        private string gitPath;
+        private string svnPath;
+        private string hgPath;
+        private string tortoiseSVNProcPath;
+        private string tortoiseGitProcPath;
+        private string tortoiseHGProcPath;
+        private bool enableSVN;
+        private bool enableGIT;
+        private bool enableHG;
 
 
         [DefaultValue(false)]
         [DisplayName("Enable SVN")]
         [LocalizedCategory("SourceControl.Category.SVN")]
         [LocalizedDescription("SourceControl.Description.EnableSVN")]
-        public Boolean EnableSVN
+        public bool EnableSVN
         {
             get { return this.enableSVN; }
             set { this.enableSVN = value; }
@@ -35,7 +35,7 @@ namespace SourceControl
         [LocalizedCategory("SourceControl.Category.SVN")]
         [LocalizedDescription("SourceControl.Description.SVNPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String SVNPath
+        public string SVNPath
         {
             get { return this.svnPath ?? "svn.exe"; }
             set { this.svnPath = value; }
@@ -46,7 +46,7 @@ namespace SourceControl
         [LocalizedCategory("SourceControl.Category.SVN")]
         [LocalizedDescription("SourceControl.Description.TortoiseSVNProcPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String TortoiseSVNProcPath
+        public string TortoiseSVNProcPath
         {
             get { return this.tortoiseSVNProcPath ?? "TortoiseProc.exe"; }
             set { this.tortoiseSVNProcPath = value; }
@@ -56,7 +56,7 @@ namespace SourceControl
         [DisplayName("Enable GIT")]
         [LocalizedCategory("SourceControl.Category.GIT")]
         [LocalizedDescription("SourceControl.Description.EnableGIT")]
-        public Boolean EnableGIT
+        public bool EnableGIT
         {
             get { return this.enableGIT; }
             set { this.enableGIT = value; }
@@ -67,7 +67,7 @@ namespace SourceControl
         [LocalizedCategory("SourceControl.Category.GIT")]
         [LocalizedDescription("SourceControl.Description.GITPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String GITPath
+        public string GITPath
         {
             get { return this.gitPath ?? "git.exe"; }
             set { this.gitPath = value; }
@@ -78,7 +78,7 @@ namespace SourceControl
         [LocalizedCategory("SourceControl.Category.GIT")]
         [LocalizedDescription("SourceControl.Description.TortoiseGITProcPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String TortoiseGITProcPath
+        public string TortoiseGITProcPath
         {
             get { return this.tortoiseGitProcPath ?? "TortoiseGitProc.exe"; }
             set { this.tortoiseGitProcPath = value; }
@@ -88,7 +88,7 @@ namespace SourceControl
         [DisplayName("Enable HG")]
         [LocalizedCategory("SourceControl.Category.HG")]
         [LocalizedDescription("SourceControl.Description.EnableHG")]
-        public Boolean EnableHG
+        public bool EnableHG
         {
             get { return this.enableHG; }
             set { this.enableHG = value; }
@@ -99,7 +99,7 @@ namespace SourceControl
         [LocalizedCategory("SourceControl.Category.HG")]
         [LocalizedDescription("SourceControl.Description.HGPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String HGPath
+        public string HGPath
         {
             get { return this.hgPath ?? "hg.exe"; }
             set { this.hgPath = value; }
@@ -110,7 +110,7 @@ namespace SourceControl
         [LocalizedCategory("SourceControl.Category.HG")]
         [LocalizedDescription("SourceControl.Description.TortoiseHGProcPath")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String TortoiseHGProcPath
+        public string TortoiseHGProcPath
         {
             get { return this.tortoiseHGProcPath ?? "thgw.exe"; }
             set { this.tortoiseHGProcPath = value; }

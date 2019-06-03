@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Drawing;
 using System.Text;
-using PluginCore;
 using PluginCore.PluginCore.Utilities;
 
 namespace ScintillaNet

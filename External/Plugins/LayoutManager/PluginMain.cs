@@ -14,12 +14,7 @@ namespace LayoutManager
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "LayoutManager";
-        private String pluginGuid = "3450fd43-3112-4b3f-a02a-e6bdbadcb971";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a panel layout manager to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String settingFilename;
+        private string settingFilename;
         private Settings settingObject;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
@@ -30,60 +25,39 @@ namespace LayoutManager
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "LayoutManager";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "3450fd43-3112-4b3f-a02a-e6bdbadcb971";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a panel layout manager to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -103,20 +77,17 @@ namespace LayoutManager
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.FileOpening:
-                    TextEvent te = e as TextEvent;
+                    TextEvent te = (TextEvent) e;
                     if (te.Value.EndsWithOrdinal(".fdl") && File.Exists(te.Value))
                     {
                         te.Handled = true;
@@ -135,10 +106,10 @@ namespace LayoutManager
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "LayoutManager");
+            string dataPath = Path.Combine(PathHelper.DataDir, "LayoutManager");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            this.Description = TextHelper.GetString("Info.Description");
             this.pluginImage = PluginBase.MainForm.FindImage("46");
         }
 
@@ -155,9 +126,9 @@ namespace LayoutManager
         /// </summary>
         public void CreateMenuItem()
         {
-            String label = TextHelper.GetString("Label.ViewMenuItem");
+            string label = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, new EventHandler(this.OpenPanel));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, this.OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowLayouts", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -169,7 +140,7 @@ namespace LayoutManager
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.Guid, this.pluginImage, DockState.DockBottomAutoHide);
         }
 
         /// <summary>
@@ -179,29 +150,19 @@ namespace LayoutManager
         {
             this.settingObject = new Settings();
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
             LayoutManager.Settings.Instance = this.settingObject;
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
-        {
-            this.pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
 
