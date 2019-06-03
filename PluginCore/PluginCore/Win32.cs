@@ -63,7 +63,7 @@ namespace PluginCore
 
         public struct COPYDATASTRUCT
         {
-            public Int32 dwData;
+            public IntPtr dwData;
             public Int32 cbData;
             public IntPtr lpData;
         }
