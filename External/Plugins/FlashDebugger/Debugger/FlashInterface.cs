@@ -288,13 +288,13 @@ namespace FlashDebugger
                         {
                             case 1://SuspendReason_.Breakpoint:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (BreakpointEvent != null)
+                                if (BreakpointEvent is DebuggerEventHandler breakpointEvent)
                                 {
                                     m_RequestPause = true;
                                     // trigger only for main worker here (if we are main worker, or if we are not and are not suspended)
                                     if (ActiveSession == 1 || !isDebuggerSuspended)
                                     {
-                                        Frame[] frames = m_Session.getFrames();
+                                        var frames = m_Session.getFrames();
                                         Location loc = null;
                                         if (frames.Length > 0)
                                         {
@@ -303,7 +303,7 @@ namespace FlashDebugger
                                         if (loc != null && m_BreakPointManager.ShouldBreak(loc.getFile(), loc.getLine(), frames[0]))
                                         {
                                             ActiveSession = 1;
-                                            BreakpointEvent(this);
+                                            breakpointEvent(this);
                                         }
                                         else
                                         {
@@ -324,9 +324,9 @@ namespace FlashDebugger
 
                             case 3://SuspendReason_.Fault:
                                 m_CurrentState = DebuggerState.ExceptionHalt;
-                                if (FaultEvent != null)
+                                if (FaultEvent is DebuggerEventHandler faultEvent)
                                 {
-                                    FaultEvent(this);
+                                    faultEvent(this);
                                 }
                                 else
                                 {
@@ -346,9 +346,9 @@ namespace FlashDebugger
                                 clearBreakpoints();
                                 UpdateBreakpoints(m_BreakPointManager.BreakPoints);
 
-                                if (ScriptLoadedEvent != null)
+                                if (ScriptLoadedEvent is DebuggerEventHandler scriptLoadedEvent)
                                 {
-                                    ScriptLoadedEvent(this);
+                                    scriptLoadedEvent(this);
                                 }
                                 else
                                 {
@@ -358,9 +358,9 @@ namespace FlashDebugger
 
                             case 5://SuspendReason_.Step:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (StepEvent != null)
+                                if (StepEvent is DebuggerEventHandler stepEvent)
                                 {
-                                    StepEvent(this);
+                                    stepEvent(this);
                                 }
                                 else
                                 {
@@ -370,9 +370,9 @@ namespace FlashDebugger
 
                             case 4://SuspendReason_.StopRequest:
                                 m_CurrentState = DebuggerState.PauseHalt;
-                                if (PauseEvent != null)
+                                if (PauseEvent is DebuggerEventHandler pauseEvent)
                                 {
-                                    PauseEvent(this);
+                                    pauseEvent(this);
                                 }
                                 else
                                 {
@@ -382,9 +382,9 @@ namespace FlashDebugger
 
                             case 2://SuspendReason_.Watch:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (WatchpointEvent != null)
+                                if (WatchpointEvent is DebuggerEventHandler watchPointEvent)
                                 {
-                                    WatchpointEvent(this);
+                                    watchPointEvent(this);
                                 }
                                 else
                                 {
@@ -398,9 +398,9 @@ namespace FlashDebugger
 
                             default:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (UnknownHaltEvent != null)
+                                if (UnknownHaltEvent is DebuggerEventHandler unknownHaltEvent)
                                 {
-                                    UnknownHaltEvent(this);
+                                    unknownHaltEvent(this);
                                 }
                                 else
                                 {
@@ -737,7 +737,8 @@ namespace FlashDebugger
                             if (ActiveSession == be.isolateId || !isDebuggerSuspended)
                             {
                                 ActiveSession = be.isolateId;
-                                if (FaultEvent != null) FaultEvent(this); else ii.i_Session.resume();
+                                if (FaultEvent is DebuggerEventHandler faultEvent) faultEvent(this);
+                                else ii.i_Session.resume();
                             }
                             else
                             {
@@ -749,7 +750,8 @@ namespace FlashDebugger
                             if (ActiveSession == be.isolateId || !isDebuggerSuspended)
                             {
                                 ActiveSession = be.isolateId;
-                                if (StepEvent != null) StepEvent(this); else ii.i_Session.resume();
+                                if (StepEvent is DebuggerEventHandler stepEvent) stepEvent(this);
+                                else ii.i_Session.resume();
                             }
                             else
                             {
@@ -761,7 +763,8 @@ namespace FlashDebugger
                             if (ActiveSession == be.isolateId || !isDebuggerSuspended)
                             {
                                 ActiveSession = be.isolateId;
-                                if (PauseEvent != null) PauseEvent(this); else ii.i_Session.resume();
+                                if (PauseEvent is DebuggerEventHandler pauseEvent) pauseEvent(this);
+                                else ii.i_Session.resume();
                             }
                             else
                             {
@@ -773,7 +776,8 @@ namespace FlashDebugger
                             if (ActiveSession == be.isolateId || !isDebuggerSuspended)
                             {
                                 ActiveSession = be.isolateId;
-                                if (WatchpointEvent != null) WatchpointEvent(this); else ii.i_Session.resume();
+                                if (WatchpointEvent is DebuggerEventHandler watchpointEvent) watchpointEvent(this);
+                                else ii.i_Session.resume();
                             }
                             else
                             {

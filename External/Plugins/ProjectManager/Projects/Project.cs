@@ -93,8 +93,7 @@ namespace ProjectManager.Projects
         protected bool AllowedSaving(string fileName)
         {
             if (ReadOnly && fileName == ProjectPath) return false;
-            if (BeforeSave != null) return BeforeSave(this, fileName);
-            else return true;
+            return BeforeSave is BeforeSaveHandler saveHandler && saveHandler(this, fileName);
         }
 
         public virtual void PropertiesChanged() 

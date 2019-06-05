@@ -5672,12 +5672,12 @@ namespace ScintillaNet
                                 BeforeDelete?.Invoke(this, scn.position, scn.length);
                                 notify = false;
                             }
-                            if (notify && Modified != null && scn.text != null)
+                            if (notify && scn.text != null && Modified is ModifiedHandler modified)
                             {
                                 try
                                 {
-                                    string text = MarshalStr(scn.text, scn.length);
-                                    Modified(this, scn.position, scn.modificationType, text, scn.length, scn.linesAdded, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
+                                    var text = MarshalStr(scn.text, scn.length);
+                                    modified(this, scn.position, scn.modificationType, text, scn.length, scn.linesAdded, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
                                 }
                                 catch { }
                             }

@@ -343,18 +343,17 @@ namespace PluginCore.Controls
         
         private void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
         {
-            if (OnTextChanged != null && !DisableEvents) 
-                OnTextChanged(sci, position, length, linesAdded);
+            if (!DisableEvents) OnTextChanged?.Invoke(sci, position, length, linesAdded);
         }
+
         private void OnTextDeleted(ScintillaControl sci, int position, int length, int linesAdded)
         {
-            if (OnTextChanged != null && !DisableEvents) 
-                OnTextChanged(sci, position, -length, linesAdded);
+            if (!DisableEvents) OnTextChanged?.Invoke(sci, position, -length, linesAdded);
         }
 
         private void OnChar(ScintillaControl sci, int value)
         {
-            if (sci == null || DisableEvents) return;
+            if (sci is null || DisableEvents) return;
             if (!CompletionList.Active && !callTip.CallTipActive)
             {
                 SendChar(sci, value);
@@ -373,7 +372,6 @@ namespace PluginCore.Controls
             if (callTip.CallTipActive) callTip.OnChar(sci, value);
             if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
-            return;
         }
 
         public void SendChar(ScintillaControl sci, int value)
@@ -451,13 +449,13 @@ namespace PluginCore.Controls
             }
             
             // switches
-            else if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
+            if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
             {
                 return false;
             }
 
             // handle special keys
-            bool handled = false;
+            var handled = false;
             if (callTip.CallTipActive) handled |= callTip.HandleKeys(sci, key);
             if (CompletionList.Active) handled |= CompletionList.HandleKeys(sci, key);
             return handled;
@@ -469,11 +467,11 @@ namespace PluginCore.Controls
         /// </summary>
         public int LineHeight(ScintillaControl sci)
         {
-            if (sci == null) return 0;
+            if (sci is null) return 0;
             // evaluate the font size
-            Font tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
-            Graphics g = sci.CreateGraphics();
-            SizeF textSize = g.MeasureString("S", tempFont);
+            var tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
+            var g = sci.CreateGraphics();
+            var textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);
         }
 
