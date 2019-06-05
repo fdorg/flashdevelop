@@ -368,15 +368,13 @@ namespace ASCompletion.Model
         private void NotifyProgress(string state, int value, int max)
         {
             ExplorationProgressHandler handler = OnExplorationProgress;
-            if (handler != null)
-                handler(state, value, max);
+            handler?.Invoke(state, value, max);
         }
 
         private void NotifyDone(string path)
         {
             ExplorationDoneHandler handler = OnExplorationDone;
-            if (handler != null)
-                handler(path);
+            handler?.Invoke(path);
         }
 
         private FileModel GetFileModel(string filename)

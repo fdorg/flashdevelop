@@ -1286,10 +1286,7 @@ namespace SevenZip.Compression.LZMA
                     CodeOneBlock(out processedInSize, out processedOutSize, out finished);
                     if (finished)
                         return;
-                    if (progress != null)
-                    {
-                        progress.SetProgress(processedInSize, processedOutSize);
-                    }
+                    progress?.SetProgress(processedInSize, processedOutSize);
                 }
             }
             finally

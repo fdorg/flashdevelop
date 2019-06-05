@@ -46,29 +46,26 @@ namespace AS3Context
         static public void AddProjectManifests()
         {
             AS3Project project = PluginBase.CurrentProject as AS3Project;
-            if (project != null)
-            {
-                //-compiler.namespaces.namespace http://e4xu.googlecode.com run\manifest.xml
-                if (project.CompilerOptions.Additional != null)
-                    foreach (string line in project.CompilerOptions.Additional)
+            //-compiler.namespaces.namespace http://e4xu.googlecode.com run\manifest.xml
+            if (project?.CompilerOptions.Additional != null)
+                foreach (string line in project.CompilerOptions.Additional)
+                {
+                    string temp = line.Trim();
+                    if (temp.StartsWithOrdinal("-compiler.namespaces.namespace") || temp.StartsWithOrdinal("-namespace"))
                     {
-                        string temp = line.Trim();
-                        if (temp.StartsWithOrdinal("-compiler.namespaces.namespace") || temp.StartsWithOrdinal("-namespace"))
-                        {
-                            int p = temp.IndexOf(' ');
-                            if (p < 0) p = temp.IndexOf('=');
-                            if (p < 0) continue;
-                            temp = temp.Substring(p + 1).Trim();
-                            p = temp.IndexOf(' ');
-                            if (p < 0) p = temp.IndexOf(',');
-                            if (p < 0) continue;
-                            string uri = temp.Substring(0, p);
-                            string path = temp.Substring(p + 1).Trim();
-                            if (path.StartsWith('\"')) path = path.Substring(1, path.Length - 2);
-                            AddManifest(uri, PathHelper.ResolvePath(path, project.Directory));
-                        }
+                        int p = temp.IndexOf(' ');
+                        if (p < 0) p = temp.IndexOf('=');
+                        if (p < 0) continue;
+                        temp = temp.Substring(p + 1).Trim();
+                        p = temp.IndexOf(' ');
+                        if (p < 0) p = temp.IndexOf(',');
+                        if (p < 0) continue;
+                        string uri = temp.Substring(0, p);
+                        string path = temp.Substring(p + 1).Trim();
+                        if (path.StartsWith('\"')) path = path.Substring(1, path.Length - 2);
+                        AddManifest(uri, PathHelper.ResolvePath(path, project.Directory));
                     }
-            }
+                }
         }
 
         /// <summary>

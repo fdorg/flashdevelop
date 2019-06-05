@@ -65,15 +65,12 @@ namespace AS3Context.Controls
 
         void objectsGrid_Open(object sender, EventArgs e)
         {
-            if (objectsGrid.SelectedNode != null)
+            ObjectRefsNode node = objectsGrid.SelectedNode?.Tag as ObjectRefsNode;
+            if (node != null && node.Line.Length > 0)
             {
-                ObjectRefsNode node = objectsGrid.SelectedNode.Tag as ObjectRefsNode;
-                if (node != null && node.Line.Length > 0)
-                {
-                    fileToOpen = node.Path.Replace(';', Path.DirectorySeparatorChar);
-                    lineToOpen = int.Parse(node.Line) - 1;
-                    delayOpen.Start();
-                }
+                fileToOpen = node.Path.Replace(';', Path.DirectorySeparatorChar);
+                lineToOpen = int.Parse(node.Line) - 1;
+                delayOpen.Start();
             }
         }
 

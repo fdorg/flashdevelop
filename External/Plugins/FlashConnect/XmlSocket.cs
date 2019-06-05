@@ -95,7 +95,7 @@ namespace FlashConnect
                     */
                     so.Data.Append(Encoding.ASCII.GetString(so.Buffer, 0, bytesReceived));
                     String contents = so.Data.ToString();
-                    if (this.DataReceived != null) this.DataReceived(this, new DataReceivedEventArgs(contents, so.Client));
+                    DataReceived?.Invoke(this, new DataReceivedEventArgs(contents, so.Client));
                     /**
                     * Check packet
                     */

@@ -110,7 +110,7 @@ namespace ProjectManager.Projects
         public void OnClasspathChanged()
         {
             absClasspaths = null;
-            if (ClasspathChanged != null) ClasspathChanged(this);
+            ClasspathChanged?.Invoke(this);
         }
 
         #region Simple Properties

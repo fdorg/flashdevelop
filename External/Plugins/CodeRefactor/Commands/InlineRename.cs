@@ -378,7 +378,7 @@ namespace CodeRefactor.Commands
             if (refs == null)
             {
                 Highlight(start, end - start);
-                if (Update != null) Update(this, /*prevName,*/ newName);
+                Update?.Invoke(this, /*prevName,*/ newName);
             }
             else
             {
@@ -514,7 +514,7 @@ namespace CodeRefactor.Commands
         {
             UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
 
-            if (Update != null) Update(this, /*prevName,*/ newName);
+            Update?.Invoke(this, /*prevName,*/ newName);
         }
 
         /// <summary>
@@ -526,7 +526,7 @@ namespace CodeRefactor.Commands
             sci.EndUndoAction();
             sci.Undo();
 
-            if (Apply != null) Apply(this, oldName, newName);
+            Apply?.Invoke(this, oldName, newName);
         }
 
         /// <summary>
@@ -538,7 +538,7 @@ namespace CodeRefactor.Commands
             sci.EndUndoAction();
             sci.Undo();
 
-            if (Cancel != null) Cancel(this);
+            Cancel?.Invoke(this);
         }
 
         #endregion
@@ -998,7 +998,7 @@ namespace CodeRefactor.Commands
             if (refs == null)
             {
                 Highlight(start, end - start);
-                if (Update != null) Update(this, /*prevName,*/ newName);
+                Update?.Invoke(this, /*prevName,*/ newName);
             }
             else
             {

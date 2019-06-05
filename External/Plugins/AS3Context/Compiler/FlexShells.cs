@@ -516,7 +516,7 @@ namespace AS3Context.Compiler
                 }
                 if (silentChecking)
                 {
-                    if (SyntaxError != null) SyntaxError(line);
+                    SyntaxError?.Invoke(line);
                     return;
                 }
                 TraceManager.Add(line, -3);

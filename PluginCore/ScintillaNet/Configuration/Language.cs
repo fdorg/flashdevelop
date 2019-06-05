@@ -80,10 +80,11 @@ namespace ScintillaNet.Configuration
                 usestyles[i].language = this;
                 usestyles[i].init(utility, _parent);
             }
-            if (lexer != null) lexer.init(utility, _parent);
+
+            lexer?.init(utility, _parent);
             if (characterclass == null) characterclass = new CharacterClass();
             characterclass.init(utility, _parent);
-            if (editorstyle != null) editorstyle.init(utility, _parent);
+            editorstyle?.init(utility, _parent);
         }
 
         public void AddExtension(string extension)

@@ -289,10 +289,7 @@ namespace AirProperties.Controls
 
             private void cclb_ItemCheck(object sender, ItemCheckEventArgs e)
             {
-                if (ccbParent.ItemCheck != null)
-                {
-                    ccbParent.ItemCheck(sender, e);
-                }
+                ccbParent.ItemCheck?.Invoke(sender, e);
             }
 
         } // end internal class Dropdown
@@ -382,9 +379,9 @@ namespace AirProperties.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }

@@ -244,8 +244,7 @@ namespace Ude.Core
             bestGuess = -1;
             inputState = InputState.PureASCII;
             lastChar = 0x00;
-            if (escCharsetProber != null)
-                escCharsetProber.Reset();
+            escCharsetProber?.Reset();
             for (int i = 0; i < PROBERS_NUM; i++)
                 if (charsetProbers[i] != null)
                     charsetProbers[i].Reset();

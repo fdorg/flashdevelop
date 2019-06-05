@@ -39,9 +39,9 @@ namespace ProjectManager.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -221,7 +221,7 @@ namespace ProjectManager.Controls
 
         private void OnChanged()
         {
-            if (Changed != null) Changed(this, new EventArgs());
+            Changed?.Invoke(this, new EventArgs());
         }
 
         private void SetButtons()

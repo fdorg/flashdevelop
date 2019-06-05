@@ -38,7 +38,7 @@ namespace SourceControl.Managers
         {
             try
             {
-                if (updateTimer != null) updateTimer.Stop();
+                updateTimer?.Stop();
 
                 lock (watchers)
                 {

@@ -57,7 +57,7 @@ namespace ScintillaNet.Configuration
             {
                 if (list != null) return;
                 list = new ArrayList();
-                if (ChildScintilla != null) ChildScintilla.CollectScintillaNodes(list);
+                ChildScintilla?.CollectScintillaNodes(list);
             }
             else if (list == null) return;
             ConfigFile cf;
@@ -68,7 +68,7 @@ namespace ScintillaNet.Configuration
                     cf = includedFiles[i];
                     if (cf == null) continue;
                     if (cf.ChildScintilla != null) list.Add(cf.ChildScintilla);
-                    if( cf.ChildScintilla != null ) cf.ChildScintilla.CollectScintillaNodes(list);
+                    cf.ChildScintilla?.CollectScintillaNodes(list);
                     if( cf.includedFiles != null && cf.includedFiles.Length > 0) cf.CollectScintillaNodes(list);
                 }
             }

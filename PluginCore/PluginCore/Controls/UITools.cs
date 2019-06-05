@@ -378,7 +378,7 @@ namespace PluginCore.Controls
 
         public void SendChar(ScintillaControl sci, int value)
         {
-            if (OnCharAdded != null) OnCharAdded(sci, value);   
+            OnCharAdded?.Invoke(sci, value);
         }
         
         private bool HandleKeys(Keys key)

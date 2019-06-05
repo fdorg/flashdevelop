@@ -129,8 +129,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.OnReadyStateChange (int newState)
     {
-      if (OnReadyStateChangeDelegate!=null)
-        OnReadyStateChangeDelegate(newState);
+        OnReadyStateChangeDelegate?.Invoke(newState);
     }
 
     public event _IShockwaveFlashEvents_OnProgressEventHandler OnProgressDelegate = null;
@@ -148,8 +147,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.OnProgress (int percentDone)
     {
-      if (OnProgressDelegate!=null)
-        OnProgressDelegate(percentDone);
+        OnProgressDelegate?.Invoke(percentDone);
     }
 
     public event _IShockwaveFlashEvents_FSCommandEventHandler FSCommandDelegate = null;
@@ -167,8 +165,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.FSCommand (string command, string args)
     {
-      if (FSCommandDelegate!=null)
-        FSCommandDelegate(command, args);
+        FSCommandDelegate?.Invoke(command, args);
     }
 
     public event _IShockwaveFlashEvents_FlashCallEventHandler FlashCallDelegate = null;
@@ -186,8 +183,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.FlashCall (string request)
     {
-      if (FlashCallDelegate!=null)
-        FlashCallDelegate(request);
+        FlashCallDelegate?.Invoke(request);
     }
   }
 

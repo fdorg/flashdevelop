@@ -242,7 +242,7 @@ namespace PluginCore.Controls
         
         public void LabelMouseLeave(Object sender, System.EventArgs e)
         {
-            if (tip != null) tip.SetToolTip(label, "");
+            tip?.SetToolTip(label, "");
         }
         
         protected override void OnPaint(PaintEventArgs e)

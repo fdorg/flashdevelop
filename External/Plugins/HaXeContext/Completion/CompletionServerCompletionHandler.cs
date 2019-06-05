@@ -71,8 +71,8 @@ namespace HaXeContext
             catch(Exception ex)
             {
                 TraceManager.AddAsync(ex.Message);
-                if (!failure && FallbackNeeded != null)
-                    FallbackNeeded(false);
+                if (!failure)
+                    FallbackNeeded?.Invoke(false);
                 failure = true;
                 return string.Empty;
             }
@@ -108,8 +108,8 @@ namespace HaXeContext
             TraceManager.AddAsync(e.Data, 2);
             if (Regex.IsMatch(e.Data, "Error.*--wait"))
             {
-                if (!failure && FallbackNeeded != null) 
-                    FallbackNeeded(true);
+                if (!failure) 
+                    FallbackNeeded?.Invoke(true);
                 failure = true;
             }
         }

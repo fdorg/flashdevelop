@@ -138,16 +138,14 @@ namespace PluginCore
         private static string GetAttribute(XmlNode node, string name)
         {
             var attr = node.Attributes[name];
-            if (attr != null) return attr.Value;
-            return null;
+            return attr?.Value;
         }
 
         private static string[] GetList(XmlNode node, string attribute)
         {
             // build targets, ie. html5, flash, android for openfl
             var attr = node.Attributes[attribute];
-            if (attr == null) return null;
-            else return attr.Value.Split(',');
+            return attr?.Value.Split(',');
         }
 
         private static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
