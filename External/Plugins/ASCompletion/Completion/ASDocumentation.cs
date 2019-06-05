@@ -20,7 +20,7 @@ namespace ASCompletion.Completion
         public string InfoTip;
         public string Return;
         public bool IsFunctionWithArguments;
-        public List<string> ParamName; // TODO: change ArrayList for List<string>
+        public List<string> ParamName;
         public List<string> ParamDesc;
         public List<string> TagName;
         public List<string> TagDesc;
