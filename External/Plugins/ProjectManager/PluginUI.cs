@@ -276,7 +276,7 @@ namespace ProjectManager
         /// <summary>
         /// Customize the context menu
         /// </summary>
-        private void tree_AfterSelect(Object sender, TreeViewEventArgs e)
+        private void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (tree.SelectedNodes.Count == 0) return;
             Project project = Tree.ProjectOf(tree.SelectedNodes[0] as GenericNode);

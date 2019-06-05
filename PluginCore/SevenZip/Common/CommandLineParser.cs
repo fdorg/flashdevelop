@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using PluginCore;
 
 namespace SevenZip.CommandLineParser
@@ -48,7 +49,7 @@ namespace SevenZip.CommandLineParser
     {
         public bool ThereIs;
         public bool WithMinus;
-        public ArrayList PostStrings = new ArrayList();
+        public List<string> PostStrings = new List<string>();
         public int PostCharIndex;
         public SwitchResult()
         {
@@ -58,8 +59,8 @@ namespace SevenZip.CommandLineParser
 
     public class Parser
     {
-        public ArrayList NonSwitchStrings = new ArrayList();
-        SwitchResult[] _switches;
+        public List<string> NonSwitchStrings = new List<string>();
+        readonly SwitchResult[] _switches;
 
         public Parser(int numSwitches)
         {
@@ -68,7 +69,7 @@ namespace SevenZip.CommandLineParser
                 _switches[i] = new SwitchResult();
         }
 
-        bool ParseString(string srcString, SwitchForm[] switchForms)
+        bool ParseString(string srcString, IList<SwitchForm> switchForms)
         {
             int len = srcString.Length;
             if (len == 0)
@@ -187,7 +188,7 @@ namespace SevenZip.CommandLineParser
             }
         }
 
-        public SwitchResult this[int index] { get { return _switches[index]; } }
+        public SwitchResult this[int index] => _switches[index];
 
         public static int ParseCommand(CommandForm[] commandForms, string commandString,
             out string postString)
@@ -214,8 +215,8 @@ namespace SevenZip.CommandLineParser
             return -1;
         }
 
-        static bool ParseSubCharsCommand(int numForms, CommandSubCharsSet[] forms,
-            string commandString, ArrayList indices)
+        static bool ParseSubCharsCommand(int numForms, IList<CommandSubCharsSet> forms,
+            string commandString, IList indices)
         {
             indices.Clear();
             int numUsedChars = 0;
@@ -258,8 +259,8 @@ namespace SevenZip.CommandLineParser
 
     public class CommandForm
     {
-        public string IDString = "";
-        public bool PostStringMode = false;
+        public string IDString;
+        public bool PostStringMode;
         public CommandForm(string idString, bool postStringMode)
         {
             IDString = idString;

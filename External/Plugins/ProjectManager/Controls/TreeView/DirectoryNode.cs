@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -303,7 +304,7 @@ namespace ProjectManager.Controls.TreeView
             if (Tree.PathToSelect == node.BackingPath)
             {
                 // use SelectedNode so multiselect treeview can handle painting
-                Tree.SelectedNodes = new ArrayList(new object[]{node});
+                Tree.SelectedNodes = new List<TreeNode> {node};
             }
         }
 

@@ -7,10 +7,10 @@ namespace AirProperties
     {
         public static void RemoveRow(this TableLayoutPanel tableLayoutPanel, int rowNumber)
         {
-            ArrayList controls = new ArrayList(tableLayoutPanel.Controls);
-            foreach (Control control in controls)
+            var controls = new List<Control>((IEnumerable<Control>) tableLayoutPanel.Controls);
+            foreach (var control in controls)
             {
-                int row = tableLayoutPanel.GetRow(control);
+                var row = tableLayoutPanel.GetRow(control);
                 if (row == rowNumber)
                 {
                     tableLayoutPanel.Controls.Remove(control);
@@ -19,7 +19,7 @@ namespace AirProperties
             tableLayoutPanel.RowStyles.RemoveAt(rowNumber);
             foreach (Control control in tableLayoutPanel.Controls)
             {
-                int row = tableLayoutPanel.GetRow(control);
+                var row = tableLayoutPanel.GetRow(control);
                 if (row > rowNumber)
                 {
                     tableLayoutPanel.SetRow(control, row - 1);
@@ -31,5 +31,4 @@ namespace AirProperties
         }
 
     }
-
 }

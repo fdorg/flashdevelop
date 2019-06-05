@@ -20,10 +20,10 @@ namespace ASCompletion.Completion
         public string InfoTip;
         public string Return;
         public bool IsFunctionWithArguments;
-        public ArrayList ParamName; // TODO: change ArrayList for List<string>
-        public ArrayList ParamDesc;
-        public ArrayList TagName;
-        public ArrayList TagDesc;
+        public List<string> ParamName; // TODO: change ArrayList for List<string>
+        public List<string> ParamDesc;
+        public List<string> TagName;
+        public List<string> TagDesc;
     }
     
     public class ASDocumentation
@@ -35,7 +35,7 @@ namespace ASCompletion.Completion
         #endregion
         
         #region Comment generation
-        static public bool OnChar(ScintillaControl sci, int value, int position, int style)
+        public static bool OnChar(ScintillaControl sci, int value, int position, int style)
         {
             if (style == 3 || style == 124)
             {
@@ -51,7 +51,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static private bool HandleDocTagCompletion(ScintillaControl sci)
+        private static bool HandleDocTagCompletion(ScintillaControl sci)
         {
             if (ASContext.CommonSettings.JavadocTags == null || ASContext.CommonSettings.JavadocTags.Length == 0)
                 return false;
@@ -113,7 +113,7 @@ namespace ASCompletion.Completion
         private static readonly Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
 
-        static public CommentBlock ParseComment(string comment)
+        public static CommentBlock ParseComment(string comment)
         {
             // cleanup
             comment = comment.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&nbsp;", " ");
@@ -158,8 +158,8 @@ namespace ASCompletion.Completion
             
             if (tags[0].Index > 0) cb.Description = comment.Substring(0, tags[0].Index).Trim();
             else cb.Description = "";
-            cb.TagName = new ArrayList();
-            cb.TagDesc = new ArrayList();
+            cb.TagName = new List<string>();
+            cb.TagDesc = new List<string>();
 
             for(int i = 0; i < tags.Count; i++)
             {
@@ -175,8 +175,8 @@ namespace ASCompletion.Completion
                     {
                         Group mVar = mParam.Groups["var"];
                         if (cb.ParamName == null) {
-                            cb.ParamName = new ArrayList();
-                            cb.ParamDesc = new ArrayList();
+                            cb.ParamName = new List<string>();
+                            cb.ParamDesc = new List<string>();
                         }
                         cb.ParamName.Add(mVar.Value);
                         cb.ParamDesc.Add(desc.Substring(mVar.Index + mVar.Length).TrimStart());
@@ -198,7 +198,7 @@ namespace ASCompletion.Completion
             
         }
         
-        static public string GetTipDetails(MemberModel member, string highlightParam)
+        public static string GetTipDetails(MemberModel member, string highlightParam)
         {
             try
             {
@@ -213,7 +213,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public string RemoveHTMLTags(string tip) => re_tags.Replace(tip, "");
+        public static string RemoveHTMLTags(string tip) => re_tags.Replace(tip, "");
 
         /// <summary>
         /// Short contextual details to display in tips
@@ -221,9 +221,9 @@ namespace ASCompletion.Completion
         /// <param name="member">Member data</param>
         /// <param name="highlightParam">Parameter to detail</param>
         /// <returns></returns>
-        static public string GetTipShortDetails(MemberModel member, string highlightParam)
+        public static string GetTipShortDetails(MemberModel member, string highlightParam)
         {
-            if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
+            if (member?.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
@@ -240,7 +240,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="cb">Parsed comments</param>
         /// <returns>Formated comments</returns>
-        static public string GetTipShortDetails(CommentBlock cb, string highlightParam)
+        public static string GetTipShortDetails(CommentBlock cb, string highlightParam)
         {
             string details = "";
             
@@ -249,10 +249,10 @@ namespace ASCompletion.Completion
             {
                 for(int i=0; i<cb.ParamName.Count; i++)
                 {
-                    if (highlightParam == (string)cb.ParamName[i])
+                    if (highlightParam == cb.ParamName[i])
                     {
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
-                                + " " + Get2LinesOf((string)cb.ParamDesc[i], true).TrimStart();
+                                + " " + Get2LinesOf(cb.ParamDesc[i], true).TrimStart();
                         return details;
                     }
                 }
@@ -269,7 +269,7 @@ namespace ASCompletion.Completion
             return details;
         }
 
-        static private string GetShortcutDocs()
+        private static string GetShortcutDocs()
         {
             Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
             string foreColorString = themeForeColor != Color.Empty ? DataConverter.ColorToHex(themeForeColor).Replace("0x", "#") : "#666666:MULTIPLY";
@@ -279,9 +279,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Split multiline text and return 2 lines or less of text
         /// </summary>
-        static public string Get2LinesOf(string text) => Get2LinesOf(text, false);
+        public static string Get2LinesOf(string text) => Get2LinesOf(text, false);
 
-        static public string Get2LinesOf(string text, bool alwaysAddShortcutDocs)
+        public static string Get2LinesOf(string text, bool alwaysAddShortcutDocs)
         {
             string[] lines = text.Split('\n');
             text = "";
@@ -310,7 +310,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="cb">Parsed comments</param>
         /// <returns>Formated comments</returns>
-        static public string GetTipFullDetails(CommentBlock cb, string highlightParam)
+        public static string GetTipFullDetails(CommentBlock cb, string highlightParam)
         {
             string details = "";
             if (cb.Description.Length > 0) 
@@ -326,10 +326,10 @@ namespace ASCompletion.Completion
             {
                 bool hasUsage = false;
                 for(int i=0; i<cb.TagName.Count; i++)
-                if ((string)cb.TagName[i] == "usage") 
+                if (cb.TagName[i] == "usage") 
                 {
                     hasUsage = true;
-                    details += "\n    "+(string)cb.TagDesc[i];
+                    details += "\n    "+cb.TagDesc[i];
                 }
                 if (hasUsage) details += "\n";
             }
@@ -341,14 +341,14 @@ namespace ASCompletion.Completion
                 for(int i=0; i<cb.ParamName.Count; i++)
                 {
                     details += "\n    ";
-                    if (highlightParam == (string)cb.ParamName[i])
+                    if (highlightParam == cb.ParamName[i])
                     {
                         details += MethodCallTip.HLBgStyleBeg 
                                 + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd + " "
-                                + (string)cb.ParamDesc[i] 
+                                + cb.ParamDesc[i] 
                                 + MethodCallTip.HLBgStyleEnd;
                     }
-                    else details += cb.ParamName[i] + ": " + (string)cb.ParamDesc[i];
+                    else details += cb.ParamName[i] + ": " + cb.ParamDesc[i];
                 }
             }
             

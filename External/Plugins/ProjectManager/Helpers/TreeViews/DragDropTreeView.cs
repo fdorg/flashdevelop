@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
@@ -21,7 +22,7 @@ namespace System.Windows.Forms
         {
             // can't drag the root node
             if (!base.SelectedNodes.Contains(base.Nodes[0]))
-                DoDragDrop(BeginDragNodes(base.SelectedNodes), DragDropEffects.All);
+                DoDragDrop(BeginDragNodes(SelectedNodes), DragDropEffects.All);
             else
                 base.OnItemDrag(e);
         }
@@ -29,9 +30,9 @@ namespace System.Windows.Forms
         /// <summary>
         /// Constructs draggable DataObjects from a list of dragged nodes.
         /// </summary>
-        protected virtual DataObject BeginDragNodes(ArrayList nodes)
+        protected virtual DataObject BeginDragNodes(List<TreeNode> nodes)
         {
-            DataObject data = new DataObject();
+            var data = new DataObject();
             data.SetData(nodes);
             return data;
         }
@@ -82,7 +83,7 @@ namespace System.Windows.Forms
                 targetNode = ChangeDropTarget(targetNode);
 
                 if (draggedNodes != null && targetNode != null)
-                    DragNodes(draggedNodes,targetNode,e.Effect);
+                    DragNodes(draggedNodes, targetNode, e.Effect);
             }
             else if (IsFileDrop(e.Data))
             {
@@ -100,7 +101,7 @@ namespace System.Windows.Forms
                     paths[i] = aFiledrop.GetValue(i) as string;
 
                 // queue the copy/move operation so we don't hang this thread and block the calling app
-                BeginInvoke(new OnFileDropHandler(OnFileDrop),new object[]{paths,targetNode});
+                BeginInvoke(new OnFileDropHandler(OnFileDrop), paths, targetNode);
 
                 // somehow querycontinuedrag doesn't work in this case
                 UnhighlightTarget();
@@ -151,10 +152,7 @@ namespace System.Windows.Forms
         /// node if you know for a fact that it doesn't make sense to drop things on
         /// the target node.
         /// </summary>
-        protected virtual TreeNode ChangeDropTarget(TreeNode targetNode)
-        {
-            return targetNode;
-        }
+        protected virtual TreeNode ChangeDropTarget(TreeNode targetNode) => targetNode;
 
         private ArrayList Simplify(ArrayList nodes)
         {
@@ -173,15 +171,9 @@ namespace System.Windows.Forms
             return false;
         }
 
-        private bool IsOurDrag(IDataObject o)
-        {
-            return (o.GetDataPresent(typeof(ArrayList)));
-        }
+        private bool IsOurDrag(IDataObject o) => (o.GetDataPresent(typeof(ArrayList)));
 
-        private bool IsFileDrop(IDataObject o)
-        {
-            return (o.GetDataPresent(DataFormats.FileDrop));
-        }
+        private bool IsFileDrop(IDataObject o) => (o.GetDataPresent(DataFormats.FileDrop));
 
         private void HighlightTarget(TreeNode node)
         {

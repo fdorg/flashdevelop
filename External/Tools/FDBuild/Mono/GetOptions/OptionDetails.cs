@@ -61,7 +61,7 @@ namespace Mono.GetOptions
                         this.MaxOccurs = option.MaxOccurs;
                         return;
                     }
-                    object[] objArray1 = new object[] { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", this.MemberInfo.ToString(), "] option" } ;
+                    object[] objArray1 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", this.MemberInfo.ToString(), "] option" } ;
                     throw new InvalidOperationException(string.Concat(objArray1));
                 }
                 this.BooleanOption = true;
@@ -73,7 +73,7 @@ namespace Mono.GetOptions
                     }
                     else
                     {
-                        object[] objArray2 = new object[] { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", this.MemberInfo.ToString(), "] option" } ;
+                        object[] objArray2 = { "MaxOccurs set to non default value (", option.MaxOccurs, ") for a [", this.MemberInfo.ToString(), "] option" } ;
                         throw new InvalidOperationException(string.Concat(objArray2));
                     }
                 }
@@ -110,7 +110,7 @@ namespace Mono.GetOptions
             {
                 parameterValue = "";
             }
-            char[] chArray1 = new char[] { ',' } ;
+            char[] chArray1 = { ',' } ;
             string[] textArray1 = parameterValue.Split(chArray1);
             this.Occurred(textArray1.Length);
             string[] textArray2 = textArray1;
@@ -120,7 +120,7 @@ namespace Mono.GetOptions
                 object obj1 = null;
                 if (OptionDetails.Verbose)
                 {
-                    string[] textArray3 = new string[] { "<", this.LongForm, "> set to [", text1, "]" } ;
+                    string[] textArray3 = { "<", this.LongForm, "> set to [", text1, "]" } ;
                     Console.WriteLine(string.Concat(textArray3));
                 }
                 if ((this.Values != null) && (text1 != null))

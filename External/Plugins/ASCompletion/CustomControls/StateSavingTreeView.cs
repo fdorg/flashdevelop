@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -8,10 +9,10 @@ namespace System.Windows.Forms
         public string highlight;
         public string TopPath;
         public string BottomPath;
-        public ArrayList ExpandedPaths;
+        public List<string> ExpandedPaths;
         public TreeState()
         {
-            ExpandedPaths = new ArrayList();
+            ExpandedPaths = new List<string>();
         }
     }
 

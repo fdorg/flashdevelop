@@ -207,7 +207,7 @@ namespace ProjectManager.Controls.TreeView
         /// Configure ourself to be a menu relevant to the given Project with the
         /// given selected treeview nodes.
         /// </summary>
-        public void Configure(ArrayList nodes, Project inProject)
+        public void Configure(List<TreeNode> nodes, Project inProject)
         {
             base.Items.Clear();
             project = inProject;

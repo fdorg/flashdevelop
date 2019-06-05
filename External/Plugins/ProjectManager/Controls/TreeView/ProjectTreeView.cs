@@ -233,7 +233,7 @@ namespace ProjectManager.Controls.TreeView
         {
             get
             {
-                ArrayList paths = new ArrayList();
+                var paths = new List<string>();
                 foreach (GenericNode node in SelectedNodes)
                 {
                     paths.Add(node.BackingPath);
@@ -246,12 +246,12 @@ namespace ProjectManager.Controls.TreeView
                             if (mappedNode is FileNode)
                                 paths.Add(mappedNode.BackingPath);*/
                 }
-                return paths.ToArray(typeof(string)) as string[];
+                return paths.ToArray();
             }
             set
             {
-                ArrayList nodes = new ArrayList();
-                foreach (string path in value)
+                var nodes = new List<TreeNode>();
+                foreach (var path in value)
                     if (nodeMap.ContainsKey(path))
                         nodes.Add(nodeMap[path]);
                 SelectedNodes = nodes;
@@ -445,7 +445,7 @@ namespace ProjectManager.Controls.TreeView
                 base.OnItemDrag(e);
         }
 
-        protected override DataObject BeginDragNodes(ArrayList nodes)
+        protected override DataObject BeginDragNodes(List<TreeNode> nodes)
         {
             DataObject data = base.BeginDragNodes(nodes);
 

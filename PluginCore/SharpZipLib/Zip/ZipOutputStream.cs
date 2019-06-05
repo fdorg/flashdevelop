@@ -42,7 +42,7 @@
 //  22-02-2010  Z-1648  Zero byte entries would create invalid zip files
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
@@ -843,12 +843,12 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// The entries for the archive.
         /// </summary>
-        ArrayList entries  = new ArrayList();
+        List<ZipEntry> entries  = new List<ZipEntry>();
         
         /// <summary>
         /// Used to track the crc of data added to entries.
         /// </summary>
-        Crc32 crc = new Crc32();
+        readonly Crc32 crc = new Crc32();
         
         /// <summary>
         /// The current entry being added.

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -557,7 +556,7 @@ namespace BookmarkPanel
             {
                 return;
             }
-            ArrayList deleteItems = new ArrayList();
+            var deleteItems = new List<KeyValuePair<string, int>>();
             foreach (ListViewItem item in this.listView.SelectedItems)
             {
                 deleteItems.Add(new KeyValuePair<String,Int32>(item.Group.Name, (Int32)item.Tag));
