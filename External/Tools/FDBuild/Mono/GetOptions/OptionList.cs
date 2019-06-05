@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mono.GetOptions
 {
     using Mono;
