@@ -302,22 +302,19 @@ namespace PluginCore.Controls
         /// </summary>  
         public static void Hide(char trigger)
         {
-            if (completionList != null && isActive)
-            {
-                Hide();
-                if (OnCancel != null)
-                {
-                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                    if (!doc.IsEditable) return;
-                    OnCancel(doc.SciControl, currentPos, currentWord, trigger, null);
-                }
-            }
+            if (!isActive || completionList == null) return;
+            Hide();
+            var onCancel = OnCancel;
+            if (onCancel is null) return;
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (!doc.IsEditable) return;
+            onCancel(doc.SciControl, currentPos, currentWord, trigger, null);
         }
 
         /// <summary>
         /// 
         /// </summary> 
-        static public void SelectWordInList(string tail)
+        public static void SelectWordInList(string tail)
         {
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             if (!doc.IsEditable)

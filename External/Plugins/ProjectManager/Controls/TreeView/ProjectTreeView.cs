@@ -144,14 +144,14 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void DefWndProc(ref Message m)
         {
-            if (m.Msg == 515 && DoubleClick != null) // WM_LBUTTONDBLCLK - &H203
+            if (m.Msg == 515 && DoubleClick is EventHandler doubleClick) // WM_LBUTTONDBLCLK - &H203
             {
                 // ok, we only want the base treeview to handle double-clicking to expand things
                 // if there's one node selected and it's a folder.
                 if (SelectedNodes.Count == 1 && SelectedNode is DirectoryNode)
                     base.DefWndProc(ref m);
                 else
-                    DoubleClick(this, EventArgs.Empty); // let someone else handle it!
+                    doubleClick(this, EventArgs.Empty); // let someone else handle it!
             }
             else base.DefWndProc(ref m);
         }
@@ -462,33 +462,31 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnMoveNode(TreeNode node, TreeNode targetNode)
         {
-            if (MovePath != null && node is GenericNode genericNode)
+            if (node is GenericNode genericNode && MovePath is DragPathEventHandler movePath)
             {
-                string fromPath = genericNode.BackingPath;
-                string toPath = ((GenericNode) targetNode).BackingPath;
-
-                MovePath(fromPath, toPath);
+                var fromPath = genericNode.BackingPath;
+                var toPath = ((GenericNode) targetNode).BackingPath;
+                movePath(fromPath, toPath);
             }
         }
 
         protected override void OnCopyNode(TreeNode node, TreeNode targetNode)
         {
-            if (CopyPath != null && node is GenericNode genericNode)
+            if (node is GenericNode genericNode && CopyPath is DragPathEventHandler copePath)
             {
-                string fromPath = genericNode.BackingPath;
-                string toPath = ((GenericNode) targetNode).BackingPath;
-
-                CopyPath(fromPath, toPath);
+                var fromPath = genericNode.BackingPath;
+                var toPath = ((GenericNode) targetNode).BackingPath;
+                copePath(fromPath, toPath);
             }
         }
 
         protected override void OnFileDrop(string[] paths, TreeNode targetNode)
         {
-            if (CopyPath != null && targetNode is GenericNode node)
+            if (targetNode is GenericNode node && CopyPath is DragPathEventHandler copePath)
             {
-                string toPath = node.BackingPath;
-                foreach (string fromPath in paths)
-                    CopyPath(fromPath, toPath);
+                var toPath = node.BackingPath;
+                foreach (var fromPath in paths)
+                    copePath(fromPath, toPath);
             }
         }
 

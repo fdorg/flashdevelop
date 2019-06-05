@@ -113,7 +113,7 @@ namespace FlashConnect
                             String policy = "<cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>\0";
                             so.Client.Send(Encoding.ASCII.GetBytes(policy));
                         }
-                        else if (msg.EndsWithOrdinal("</flashconnect>\0")) this.XmlReceived(this, new XmlReceivedEventArgs(msg, so.Client));
+                        else if (msg.EndsWithOrdinal("</flashconnect>\0")) XmlReceived?.Invoke(this, new XmlReceivedEventArgs(msg, so.Client));
                         else ErrorManager.ShowWarning(INCORRECT_PKT + msg, null);
                     }
                     this.SetupReceiveCallback(so.Client);
