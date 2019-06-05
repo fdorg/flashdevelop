@@ -97,7 +97,7 @@ namespace ProjectManager.Controls.TreeView
             else ForeColorRequest = SystemColors.ControlText;
 
             // hook for plugins
-            if (OnFileNodeRefresh != null) OnFileNodeRefresh(this);
+            OnFileNodeRefresh?.Invoke(this);
         }
     }
 

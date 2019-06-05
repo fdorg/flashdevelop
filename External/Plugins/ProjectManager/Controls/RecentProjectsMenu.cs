@@ -132,7 +132,8 @@ namespace ProjectManager.Controls
                 RemoveOpenedProject(projectPath);
                 return;
             }
-            if (ProjectSelected != null) ProjectSelected(projectPath);
+
+            ProjectSelected?.Invoke(projectPath);
         }
 
     }

@@ -1415,10 +1415,7 @@ namespace AirProperties
                     TextBox filePath = (TextBox)controls[0];
                     UpdateIcon(OpenIconFileDialog.FileName, ref filePath, new Point(Convert.ToInt32(size), Convert.ToInt32(size)), false);
                     PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
-                    if (selectedFileType != null)
-                    {
-                        selectedFileType.SetIconPath(Convert.ToInt16(size), filePath.Text);
-                    } 
+                    selectedFileType?.SetIconPath(Convert.ToInt16(size), filePath.Text);
                 }
             }
         }

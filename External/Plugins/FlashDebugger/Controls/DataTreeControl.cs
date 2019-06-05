@@ -261,7 +261,7 @@ namespace FlashDebugger.Controls
                 var obj = exp.evaluate(ctx);
                 node.Variable = (Variable)obj;
                 if (!watchMode) PanelsHelper.watchUI.UpdateElements();
-                if (ValueChanged != null) ValueChanged(this, EventArgs.Empty);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
             {

@@ -268,7 +268,7 @@ namespace ScintillaNet
         protected override void Dispose(bool disposing)
         {
             EventManager.RemoveEventHandler(this);
-            if (highlightDelay != null) highlightDelay.Stop();
+            highlightDelay?.Stop();
             base.Dispose(disposing);
         }
 
@@ -777,7 +777,8 @@ namespace ScintillaNet
                 KeywordClass kc = sciConfiguration.GetKeywordClass(usekeyword.cls);
                 if (kc != null) KeyWords(usekeyword.key, kc.val);
             }
-            if (UpdateSync != null) this.UpdateSync(this);
+
+            UpdateSync?.Invoke(this);
         }
 
         /// <summary>
@@ -807,7 +808,7 @@ namespace ScintillaNet
             set
             {
                 fileName = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -849,7 +850,7 @@ namespace ScintillaNet
             set
             {
                 isHiliteSelected = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -865,7 +866,7 @@ namespace ScintillaNet
             set
             {
                 isBraceMatching = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -881,7 +882,7 @@ namespace ScintillaNet
             set
             {
                 useHighlightGuides = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -897,7 +898,7 @@ namespace ScintillaNet
             set
             {
                 smartIndent = value;
-                if (UpdateSync != null) this.UpdateSync(this);
+                UpdateSync?.Invoke(this);
             }
         }
 
@@ -5080,7 +5081,7 @@ namespace ScintillaNet
         {
             SPerform(2519, 0, 0);
             // Invoke UI update after copy...
-            if (UpdateUI != null) UpdateUI(this);
+            UpdateUI?.Invoke(this);
         }
 
         /// <summary>
@@ -5509,7 +5510,7 @@ namespace ScintillaNet
                 Int32 message = (m.WParam.ToInt32() >> 16) & 0xffff;
                 if (message == (int)Enums.Command.SetFocus || message == (int)Enums.Command.KillFocus)
                 {
-                    if (FocusChanged != null) FocusChanged(this);
+                    FocusChanged?.Invoke(this);
                 }
             }
             else if (m.Msg == WM_NOTIFY)
@@ -5520,155 +5521,155 @@ namespace ScintillaNet
                     switch (scn.nmhdr.code)
                     {
                         case (uint)Enums.ScintillaEvents.StyleNeeded:
-                            if (StyleNeeded != null) StyleNeeded(this, scn.position);
+                            StyleNeeded?.Invoke(this, scn.position);
                             break;
 
                         case (uint)Enums.ScintillaEvents.CharAdded:
-                            if (CharAdded != null) CharAdded(this, scn.ch);
+                            CharAdded?.Invoke(this, scn.ch);
                             break;
 
                         case (uint)Enums.ScintillaEvents.SavePointReached:
-                            if (SavePointReached != null) SavePointReached(this);
+                            SavePointReached?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.SavePointLeft:
-                            if (SavePointLeft != null) SavePointLeft(this);
+                            SavePointLeft?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.ModifyAttemptRO:
-                            if (ModifyAttemptRO != null) ModifyAttemptRO(this);
+                            ModifyAttemptRO?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.Key:
-                            if (Key != null) Key(this, scn.ch, scn.modifiers);
+                            Key?.Invoke(this, scn.ch, scn.modifiers);
                             break;
 
                         case (uint)Enums.ScintillaEvents.DoubleClick:
-                            if (DoubleClick != null) DoubleClick(this);
+                            DoubleClick?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.UpdateUI:
-                            if (UpdateUI != null) UpdateUI(this);
+                            UpdateUI?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.MacroRecord:
-                            if (MacroRecord != null) MacroRecord(this, scn.message, scn.wParam, scn.lParam);
+                            MacroRecord?.Invoke(this, scn.message, scn.wParam, scn.lParam);
                             break;
 
                         case (uint)Enums.ScintillaEvents.MarginClick:
-                            if (MarginClick != null) MarginClick(this, scn.modifiers, scn.position, scn.margin);
+                            MarginClick?.Invoke(this, scn.modifiers, scn.position, scn.margin);
                             break;
 
                         case (uint)Enums.ScintillaEvents.NeedShown:
-                            if (NeedShown != null) NeedShown(this, scn.position, scn.length);
+                            NeedShown?.Invoke(this, scn.position, scn.length);
                             break;
 
                         case (uint)Enums.ScintillaEvents.Painted:
-                            if (Painted != null) Painted(this);
+                            Painted?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.UserListSelection:
-                            if (UserListSelection != null) UserListSelection(this, scn.listType, MarshalStr(scn.text));
+                            UserListSelection?.Invoke(this, scn.listType, MarshalStr(scn.text));
                             break;
 
                         case (uint)Enums.ScintillaEvents.URIDropped:
-                            if (URIDropped != null) URIDropped(this, MarshalStr(scn.text));
+                            URIDropped?.Invoke(this, MarshalStr(scn.text));
                             break;
 
                         case (uint)Enums.ScintillaEvents.DwellStart:
-                            if (DwellStart != null) DwellStart(this, scn.position, scn.x, scn.y);
+                            DwellStart?.Invoke(this, scn.position, scn.x, scn.y);
                             break;
 
                         case (uint)Enums.ScintillaEvents.DwellEnd:
-                            if (DwellEnd != null) DwellEnd(this, scn.position, scn.x, scn.y);
+                            DwellEnd?.Invoke(this, scn.position, scn.x, scn.y);
                             break;
 
                         case (uint)Enums.ScintillaEvents.Zoom:
-                            if (Zoom != null) Zoom(this);
+                            Zoom?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.HotspotClick:
-                            if (HotSpotClick != null) HotSpotClick(this, scn.modifiers, scn.position);
+                            HotSpotClick?.Invoke(this, scn.modifiers, scn.position);
                             break;
 
                         case (uint)Enums.ScintillaEvents.HotspotDoubleClick:
-                            if (HotSpotDoubleClick != null) HotSpotDoubleClick(this, scn.modifiers, scn.position);
+                            HotSpotDoubleClick?.Invoke(this, scn.modifiers, scn.position);
                             break;
 
                         case (uint)Enums.ScintillaEvents.CalltipClick:
-                            if (CallTipClick != null) CallTipClick(this, scn.position);
+                            CallTipClick?.Invoke(this, scn.position);
                             break;
 
                         case (uint)Enums.ScintillaEvents.AutoCSelection:
-                            if (AutoCSelection != null) AutoCSelection(this, MarshalStr(scn.text));
+                            AutoCSelection?.Invoke(this, MarshalStr(scn.text));
                             break;
 
                         case (uint)Enums.ScintillaEvents.IndicatorClick:
-                            if (IndicatorClick != null) IndicatorClick(this, scn.position);
+                            IndicatorClick?.Invoke(this, scn.position);
                             break;
 
                         case (uint)Enums.ScintillaEvents.IndicatorRelease:
-                            if (IndicatorRelease != null) IndicatorRelease(this, scn.position);
+                            IndicatorRelease?.Invoke(this, scn.position);
                             break;
 
                         case (uint)Enums.ScintillaEvents.AutoCCharDeleted:
-                            if (AutoCCharDeleted != null) AutoCCharDeleted(this);
+                            AutoCCharDeleted?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.AutoCCancelled:
-                            if (AutoCCancelled != null) AutoCCancelled(this);
+                            AutoCCancelled?.Invoke(this);
                             break;
 
                         case (uint)Enums.ScintillaEvents.Modified:
                             bool notify = false;
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.InsertText) > 0)
                             {
-                                if (TextInserted != null) TextInserted(this, scn.position, scn.length, scn.linesAdded);
+                                TextInserted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
                                 notify = true;
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.DeleteText) > 0)
                             {
-                                if (TextDeleted != null) TextDeleted(this, scn.position, scn.length, scn.linesAdded);
+                                TextDeleted?.Invoke(this, scn.position, scn.length, scn.linesAdded);
                                 notify = true;
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeStyle) > 0)
                             {
-                                if (StyleChanged != null) StyleChanged(this, scn.position, scn.length);
+                                StyleChanged?.Invoke(this, scn.position, scn.length);
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeFold) > 0)
                             {
-                                if (FoldChanged != null) FoldChanged(this, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
+                                FoldChanged?.Invoke(this, scn.line, scn.foldLevelNow, scn.foldLevelPrev);
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.UserPerformed) > 0)
                             {
-                                if (UserPerformed != null) UserPerformed(this);
+                                UserPerformed?.Invoke(this);
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.UndoPerformed) > 0)
                             {
-                                if (UndoPerformed != null) UndoPerformed(this);
+                                UndoPerformed?.Invoke(this);
                                 notify = true;
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.RedoPerformed) > 0)
                             {
-                                if (RedoPerformed != null) RedoPerformed(this);
+                                RedoPerformed?.Invoke(this);
                                 notify = true;
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.LastStepInUndoRedo) > 0)
                             {
-                                if (LastStepInUndoRedo != null) LastStepInUndoRedo(this);
+                                LastStepInUndoRedo?.Invoke(this);
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.ChangeMarker) > 0)
                             {
-                                if (MarkerChanged != null) MarkerChanged(this, scn.line);
+                                MarkerChanged?.Invoke(this, scn.line);
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeInsert) > 0)
                             {
-                                if (BeforeInsert != null) BeforeInsert(this, scn.position, scn.length);
+                                BeforeInsert?.Invoke(this, scn.position, scn.length);
                                 notify = false;
                             }
                             if ((scn.modificationType & (uint)Enums.ModificationFlags.BeforeDelete) > 0)
                             {
-                                if (BeforeDelete != null) BeforeDelete(this, scn.position, scn.length);
+                                BeforeDelete?.Invoke(this, scn.position, scn.length);
                                 notify = false;
                             }
                             if (notify && Modified != null && scn.text != null)
@@ -5719,7 +5720,7 @@ namespace ScintillaNet
         {
             if (lastSelectionStart != sci.SelectionStart || lastSelectionEnd != sci.SelectionEnd || lastSelectionLength != sci.SelText.Length)
             {
-                if (SelectionChanged != null) SelectionChanged(sci);
+                SelectionChanged?.Invoke(sci);
                 switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
@@ -6839,7 +6840,7 @@ namespace ScintillaNet
                 }
             }
             DragFinish(hDrop);
-            if (URIDropped != null) URIDropped(this, files);
+            URIDropped?.Invoke(this, files);
         }
 
 

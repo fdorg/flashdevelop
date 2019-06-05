@@ -84,9 +84,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         protected virtual void OnProgressMessageEvent(TarEntry entry, string message)
         {
             ProgressMessageHandler handler = ProgressMessageEvent;
-            if (handler != null) {
-                handler(this, entry, message);
-            }
+            handler?.Invoke(this, entry, message);
         }
         
         #region Constructors
@@ -796,10 +794,8 @@ namespace ICSharpCode.SharpZipLib.Tar
                         tarOut.Flush();
                         tarOut.Close();
                     }
-        
-                    if ( tarIn != null ) {
-                        tarIn.Close();
-                    }
+
+                    tarIn?.Close();
                 }
             }
         }

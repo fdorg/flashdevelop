@@ -156,10 +156,7 @@ namespace FlashDebugger
         {
             if (m.Msg == Win32.WM_KEYDOWN && m.WParam.ToInt32() == Win32.VK_ESCAPE)
             {
-                if (KeyDownEvent != null)
-                {
-                    KeyDownEvent(null, null);
-                }
+                KeyDownEvent?.Invoke(null, null);
             }
             if (m.Msg == Win32.WM_LBUTTONDOWN)
             {
@@ -171,10 +168,8 @@ namespace FlashDebugger
                         return false;
                     }
                 }
-                if (MouseDownEvent != null)
-                {
-                    MouseDownEvent(MouseButtons.Left, new Point(m.LParam.ToInt32()));
-                }
+
+                MouseDownEvent?.Invoke(MouseButtons.Left, new Point(m.LParam.ToInt32()));
             }
             return false;
         }

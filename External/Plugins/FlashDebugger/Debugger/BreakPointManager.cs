@@ -274,10 +274,8 @@ namespace FlashDebugger
                 // TMP
                 if (PluginMain.debugManager.FlashInterface.isDebuggerStarted) PluginMain.debugManager.FlashInterface.UpdateBreakpoints(this.BreakPoints);
             }
-            if (ChangeBreakPointEvent != null)
-            {
-                ChangeBreakPointEvent(this, new BreakPointArgs(filefullpath, line, exp, bDeleted, bEnabled));
-            }
+
+            ChangeBreakPointEvent?.Invoke(this, new BreakPointArgs(filefullpath, line, exp, bDeleted, bEnabled));
         }
 
         internal void SetBreakPointCondition(string filefullpath, int line, string exp)
@@ -297,10 +295,7 @@ namespace FlashDebugger
                 {
                     int oldline = info.Line; 
                     info.Line += linesAdded;
-                    if (UpdateBreakPointEvent != null)
-                    {
-                        UpdateBreakPointEvent(this, new UpdateBreakPointArgs(info.FileFullPath, oldline+1, info.Line+1));
-                    }
+                    UpdateBreakPointEvent?.Invoke(this, new UpdateBreakPointArgs(info.FileFullPath, oldline+1, info.Line+1));
                 }
             }
         }
@@ -349,10 +344,7 @@ namespace FlashDebugger
                 foreach (BreakPointInfo info in m_BreakPointList)
                 {
                     info.FileFullPath = m_Project.GetAbsolutePath(info.FileFullPath);
-                    if (ChangeBreakPointEvent != null)
-                    {
-                        ChangeBreakPointEvent(this, new BreakPointArgs(info.FileFullPath, info.Line, info.Exp, info.IsDeleted, info.IsEnabled));
-                    }
+                    ChangeBreakPointEvent?.Invoke(this, new BreakPointArgs(info.FileFullPath, info.Line, info.Exp, info.IsDeleted, info.IsEnabled));
                 }
             }
         }
@@ -383,10 +375,7 @@ namespace FlashDebugger
                         m_BreakPointList.Add(info);
                     }
 
-                    if (ChangeBreakPointEvent != null)
-                    {
-                        ChangeBreakPointEvent(this, new BreakPointArgs(info.FileFullPath, info.Line, info.Exp, info.IsDeleted, info.IsEnabled));
-                    }
+                    ChangeBreakPointEvent?.Invoke(this, new BreakPointArgs(info.FileFullPath, info.Line, info.Exp, info.IsDeleted, info.IsEnabled));
                 }
             }
         }

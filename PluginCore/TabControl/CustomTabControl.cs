@@ -54,26 +54,14 @@ namespace System.Windows.Forms
 		{
 			base.Dispose(disposing);
 			if (disposing) {
-				if (this._BackImage != null){
-					this._BackImage.Dispose();
-				}
-				if (this._BackBufferGraphics != null){
-					this._BackBufferGraphics.Dispose();
-				}
-				if (this._BackBuffer != null){
-					this._BackBuffer.Dispose();
-				}
-				if (this._TabBufferGraphics != null){
-					this._TabBufferGraphics.Dispose();
-				}
-				if (this._TabBuffer != null){
-					this._TabBuffer.Dispose();
-				}
-				
-				if (this._StyleProvider != null){
-					this._StyleProvider.Dispose();
-				}
-			}
+                _BackImage?.Dispose();
+                _BackBufferGraphics?.Dispose();
+                _BackBuffer?.Dispose();
+                _TabBufferGraphics?.Dispose();
+                _TabBuffer?.Dispose();
+
+                _StyleProvider?.Dispose();
+            }
 		}
 
 		#endregion
@@ -461,24 +449,17 @@ namespace System.Windows.Forms
 					this._BackImage.Dispose();
 					this._BackImage = null;
 				}
-				if (this._BackBufferGraphics != null){
-					this._BackBufferGraphics.Dispose();
-				}
-				if (this._BackBuffer != null){
-					this._BackBuffer.Dispose();
-				}
 
-				this._BackBuffer = new Bitmap(this.Width, this.Height);
+                _BackBufferGraphics?.Dispose();
+                _BackBuffer?.Dispose();
+
+                this._BackBuffer = new Bitmap(this.Width, this.Height);
 				this._BackBufferGraphics = Graphics.FromImage(this._BackBuffer);
 
-				if (this._TabBufferGraphics != null){
-					this._TabBufferGraphics.Dispose();
-				}
-				if (this._TabBuffer != null){
-					this._TabBuffer.Dispose();
-				}
+                _TabBufferGraphics?.Dispose();
+                _TabBuffer?.Dispose();
 
-				this._TabBuffer = new Bitmap(this.Width, this.Height);
+                this._TabBuffer = new Bitmap(this.Width, this.Height);
 				this._TabBufferGraphics = Graphics.FromImage(this._TabBuffer);
 
 				if (this._BackImage != null){
@@ -626,28 +607,24 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected virtual void OnTabImageClick(TabControlEventArgs e){
-			if (this.TabImageClick != null){
-				this.TabImageClick(this, e);
-			}
-		}
+		protected virtual void OnTabImageClick(TabControlEventArgs e)
+        {
+            TabImageClick?.Invoke(this, e);
+        }
 
-		protected virtual void OnTabClosing(TabControlCancelEventArgs e){
-			if (this.TabClosing != null){
-				this.TabClosing(this, e);
-			}
-		}		
+		protected virtual void OnTabClosing(TabControlCancelEventArgs e)
+        {
+            TabClosing?.Invoke(this, e);
+        }		
 		
 		protected virtual void OnHScroll(ScrollEventArgs e){
 			//	repaint the moved tabs
 			this.Invalidate();
 			
 			//	Raise the event
-			if (this.HScroll != null){
-				this.HScroll(this, e);
-			}
-			
-			if (e.Type == ScrollEventType.EndScroll){
+            HScroll?.Invoke(this, e);
+
+            if (e.Type == ScrollEventType.EndScroll){
 				this._oldValue = e.NewValue;
 			}
 		}

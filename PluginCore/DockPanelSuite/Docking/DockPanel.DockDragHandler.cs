@@ -773,8 +773,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     if (!Outline.FlagTestDrop && DragSource.IsDockStateValid(DockState.Float))
                     {
                         FloatWindow floatWindow = DockHelper.FloatWindowAtPoint(Control.MousePosition, DockPanel);
-                        if (floatWindow != null)
-                            floatWindow.TestDrop(DragSource, Outline);
+                        floatWindow?.TestDrop(DragSource, Outline);
                     }
                 }
                 else

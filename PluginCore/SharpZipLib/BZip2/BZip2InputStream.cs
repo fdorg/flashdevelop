@@ -146,9 +146,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public override void Flush()
         {
-            if (baseStream != null) {
-                baseStream.Flush();
-            }
+            baseStream?.Flush();
         }
         
         /// <summary>
@@ -230,8 +228,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public override void Close()
         {
-            if ( IsStreamOwner && (baseStream != null) ) {
-                baseStream.Close();
+            if ( IsStreamOwner ) {
+                baseStream?.Close();
             }
         }
         /// <summary>

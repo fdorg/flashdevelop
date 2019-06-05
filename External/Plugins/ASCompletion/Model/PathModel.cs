@@ -227,10 +227,13 @@ namespace ASCompletion.Model
                     DoScheduledOperations();
 
                     foreach (FileModel file in files.Values)
-                        if (file != null) file.Check();
+                    {
+                        file?.Check();
+                    }
                 }
             }
-            if (Owner != null) Owner.RefreshContextCache(Path);
+
+            Owner?.RefreshContextCache(Path);
         }
 
         #endregion

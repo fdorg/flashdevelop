@@ -12,10 +12,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected override void StartDrag()
             {
                 DockWindow window = Parent as DockWindow;
-                if (window == null)
-                    return;
 
-                window.DockPanel.BeginDrag(window, window.RectangleToScreen(Bounds));
+                window?.DockPanel.BeginDrag(window, window.RectangleToScreen(Bounds));
             }
         }
     }

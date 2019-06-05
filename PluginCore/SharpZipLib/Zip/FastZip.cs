@@ -492,10 +492,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         void ProcessDirectory(object sender, DirectoryEventArgs e)
         {
             if ( !e.HasMatchingFiles && CreateEmptyDirectories ) {
-                if ( events_ != null ) {
-                    events_.OnProcessDirectory(e.Name, e.HasMatchingFiles);
-                }
-                
+                events_?.OnProcessDirectory(e.Name, e.HasMatchingFiles);
+
                 if ( e.ContinueRunning ) {
                     if (e.Name != sourceDirectory_) {
                         ZipEntry entry = entryFactory_.MakeDirectoryEntry(e.Name);
@@ -507,8 +505,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         
         void ProcessFile(object sender, ScanEventArgs e)
         {
-            if ( (events_ != null) && (events_.ProcessFile != null) ) {
-                events_.ProcessFile(sender, e);
+            if ( (events_ != null) ) {
+                events_.ProcessFile?.Invoke(sender, e);
             }
             
             if ( e.ContinueRunning ) {

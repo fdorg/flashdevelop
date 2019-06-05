@@ -53,11 +53,8 @@ namespace ScintillaNet.Configuration
                 // Caution: It is not programmatically guaranteed that there is a default.
                 if (!name.Equals("default"))
                 {
-                    if (language != null)
-                    {
-                        StyleClass defaultCls = language.usestyles[0]; // First should be default...
-                        if (defaultCls != null) return defaultCls;
-                    }
+                    StyleClass defaultCls = language?.usestyles[0]; // First should be default...
+                    if (defaultCls != null) return defaultCls;
                     return _parent.MasterScintilla.GetStyleClass("default");
                 }
                 return null;

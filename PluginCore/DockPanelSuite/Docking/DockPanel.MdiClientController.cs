@@ -34,11 +34,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     lock (this)
                     {
-                        if (Site != null && Site.Container != null)
-                            Site.Container.Remove(this);
+                        Site?.Container?.Remove(this);
 
-                        if (Disposed != null)
-                            Disposed(this, EventArgs.Empty);
+                        Disposed?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -172,12 +170,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                     // If the component is dropped onto a form during design-time,
                     // set the ParentForm property.
                     IDesignerHost host = (value.GetService(typeof(IDesignerHost)) as IDesignerHost);
-                    if (host != null)
-                    {
-                        Form parent = host.RootComponent as Form;
-                        if (parent != null)
-                            ParentForm = parent;
-                    }
+                    Form parent = host?.RootComponent as Form;
+                    if (parent != null)
+                        ParentForm = parent;
                 }
             }
 
@@ -199,22 +194,19 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected virtual void OnHandleAssigned(EventArgs e)
             {
                 // Raise the HandleAssigned event.
-                if (HandleAssigned != null)
-                    HandleAssigned(this, e);
+                HandleAssigned?.Invoke(this, e);
             }
 
             protected virtual void OnMdiChildActivate(EventArgs e)
             {
                 // Raise the MdiChildActivate event
-                if (MdiChildActivate != null)
-                    MdiChildActivate(this, e);
+                MdiChildActivate?.Invoke(this, e);
             }
 
             protected virtual void OnLayout(LayoutEventArgs e)
             {
                 // Raise the Layout event
-                if (Layout != null)
-                    Layout(this, e);
+                Layout?.Invoke(this, e);
             }
 
             public event PaintEventHandler Paint;
@@ -222,8 +214,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected virtual void OnPaint(PaintEventArgs e)
             {
                 // Raise the Paint event.
-                if (Paint != null)
-                    Paint(this, e);
+                Paint?.Invoke(this, e);
             }
 
             protected override void WndProc(ref Message m)

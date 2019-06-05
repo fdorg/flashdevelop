@@ -195,7 +195,7 @@ namespace ProjectManager
             {
                 String parent = Path.GetDirectoryName(path);
                 WatcherNode node = tree.NodeMap[parent] as WatcherNode;
-                if (node != null) node.UpdateLater();
+                node?.UpdateLater();
             }
             catch { }
         }

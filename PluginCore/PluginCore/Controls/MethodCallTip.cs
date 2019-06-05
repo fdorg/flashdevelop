@@ -155,7 +155,7 @@ namespace PluginCore.Controls
 
         public new void UpdateTip(ScintillaControl sci)
         {
-            if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+            OnUpdateCallTip?.Invoke(sci, currentPos);
         }
 
         public bool HandleKeys(ScintillaControl sci, Keys key)
@@ -194,7 +194,10 @@ namespace PluginCore.Controls
                         sci.CharRight();
                         currentPos = sci.CurrentPos;
                         if (sci.CurrentLine != currentLine) Hide();
-                        else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+                        else
+                        {
+                            OnUpdateCallTip?.Invoke(sci, currentPos);
+                        }
                     }
                     return true;
 
@@ -207,7 +210,10 @@ namespace PluginCore.Controls
                         else
                         {
                             if (sci.CurrentLine != currentLine) Hide();
-                            else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+                            else
+                            {
+                                OnUpdateCallTip?.Invoke(sci, currentPos);
+                            }
                         }
                     }
                     return true;
@@ -216,8 +222,11 @@ namespace PluginCore.Controls
                     currentPos = sci.CurrentPos - 1;
                     if (currentPos + deltaPos <= startPos)
                         Hide();
-                    else if (OnUpdateCallTip != null)
-                        OnUpdateCallTip.Invoke(sci, currentPos);
+                    else
+                    {
+                        OnUpdateCallTip?.Invoke(sci, currentPos);
+                    }
+
                     return false;
 
                 case Keys.Tab:

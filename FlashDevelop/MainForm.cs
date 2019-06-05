@@ -1887,7 +1887,7 @@ namespace FlashDevelop
             for (int i = 0, length = LayoutManager.PluginPanels.Count; i < length; i++)
             {
                 DockablePanel panel = LayoutManager.PluginPanels[i] as DockablePanel;
-                if (panel != null) panel.RefreshIcon();
+                panel?.RefreshIcon();
             }
         }
         
@@ -4098,7 +4098,7 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 String registeredItem = ((ItemData)button.Tag).Tag;
                 ShortcutItem item = ShortcutManager.GetRegisteredItem(registeredItem);
-                if (item.Item != null) item.Item.PerformClick();
+                item.Item?.PerformClick();
             }
             catch (Exception ex)
             {

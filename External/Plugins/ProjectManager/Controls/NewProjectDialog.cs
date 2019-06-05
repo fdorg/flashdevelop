@@ -491,7 +491,7 @@ namespace ProjectManager.Controls
             {
                 lastTemplate = TemplateDirectory;
 
-                if (previewBox.Image != null) previewBox.Image.Dispose();
+                previewBox.Image?.Dispose();
 
                 string projectImage = Path.Combine(TemplateDirectory,"Project.png");
                 if (File.Exists(projectImage)) SetProjectImage(projectImage);

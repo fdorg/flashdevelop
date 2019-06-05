@@ -311,10 +311,7 @@ namespace Mono.GetOptions
                     finally
                     {
                         IDisposable disposable1 = enumerator1 as IDisposable;
-                        if (disposable1 != null)
-                        {
-                            disposable1.Dispose();
-                        }
+                        disposable1?.Dispose();
                     }
                 Label_00DA:
                     if (!flag1)
@@ -336,10 +333,7 @@ namespace Mono.GetOptions
                 finally
                 {
                     IDisposable disposable2 = enumerator2 as IDisposable;
-                    if (disposable2 != null)
-                    {
-                        disposable2.Dispose();
-                    }
+                    disposable2?.Dispose();
                 }
                 IEnumerator enumerator3 = this.argumentsTail.GetEnumerator();
             Label_0151:
@@ -355,10 +349,7 @@ namespace Mono.GetOptions
                 finally
                 {
                     IDisposable disposable3 = enumerator3 as IDisposable;
-                    if (disposable3 != null)
-                    {
-                        disposable3.Dispose();
-                    }
+                    disposable3?.Dispose();
                 }
                 return (string[]) this.arguments.ToArray(typeof(string));
             }
@@ -456,10 +447,7 @@ namespace Mono.GetOptions
             finally
             {
                 IDisposable disposable1 = enumerator1 as IDisposable;
-                if (disposable1 != null)
-                {
-                    disposable1.Dispose();
-                }
+                disposable1?.Dispose();
             }
             num1 += 2;
             IEnumerator enumerator2 = list1.GetEnumerator();
@@ -489,10 +477,7 @@ namespace Mono.GetOptions
             finally
             {
                 IDisposable disposable2 = enumerator2 as IDisposable;
-                if (disposable2 != null)
-                {
-                    disposable2.Dispose();
-                }
+                disposable2?.Dispose();
             }
         }
 
@@ -521,10 +506,7 @@ namespace Mono.GetOptions
             finally
             {
                 IDisposable disposable1 = enumerator1 as IDisposable;
-                if (disposable1 != null)
-                {
-                    disposable1.Dispose();
-                }
+                disposable1?.Dispose();
             }
             Console.WriteLine();
         }

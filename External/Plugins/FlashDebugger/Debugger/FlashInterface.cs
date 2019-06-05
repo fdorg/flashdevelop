@@ -95,10 +95,7 @@ namespace FlashDebugger
             {
                 // todo
                 m_activeSession = value;
-                if (ThreadsEvent != null)
-                {
-                    ThreadsEvent(this);
-                }
+                ThreadsEvent?.Invoke(this);
             }
         }
 
@@ -673,10 +670,7 @@ namespace FlashDebugger
                 if (e is TraceEvent)
                 {
                     dumpTraceLine(e.information);
-                    if (TraceEvent != null)
-                    {
-                        TraceEvent(this, e.information);
-                    }
+                    TraceEvent?.Invoke(this, e.information);
                 }
                 else if (e is SwfLoadedEvent)
                 {
@@ -726,11 +720,11 @@ namespace FlashDebugger
                                 if (ActiveSession == be.isolateId || !isDebuggerSuspended)
                                 {
                                     ActiveSession = be.isolateId;
-                                    if (BreakpointEvent != null) BreakpointEvent(this);
+                                    BreakpointEvent?.Invoke(this);
                                 }
                                 else
                                 {
-                                    if (ThreadsEvent != null) ThreadsEvent(this);
+                                    ThreadsEvent?.Invoke(this);
                                 }
                             }
                             else
@@ -747,7 +741,7 @@ namespace FlashDebugger
                             }
                             else
                             {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
+                                ThreadsEvent?.Invoke(this);
                             }
                         }
                         else if (ii.i_Session.suspendReason() == 5) //SuspendReason_.Step
@@ -759,7 +753,7 @@ namespace FlashDebugger
                             }
                             else
                             {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
+                                ThreadsEvent?.Invoke(this);
                             }
                         }
                         else if (ii.i_Session.suspendReason() == 4) //SuspendReason_.StopRequest
@@ -771,7 +765,7 @@ namespace FlashDebugger
                             }
                             else
                             {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
+                                ThreadsEvent?.Invoke(this);
                             }
                         }
                         else if (ii.i_Session.suspendReason() == 2) //SuspendReason_.Watch
@@ -783,7 +777,7 @@ namespace FlashDebugger
                             }
                             else
                             {
-                                if (ThreadsEvent != null) ThreadsEvent(this);
+                                ThreadsEvent?.Invoke(this);
                             }
                         }
                     }
@@ -941,10 +935,7 @@ namespace FlashDebugger
 
             i_Session.resume();
 
-            if (ThreadsEvent != null)
-            {
-                ThreadsEvent(this);
-            }
+            ThreadsEvent?.Invoke(this);
         }
 
         /// <summary> Perform the tasks need for when an isolate has exited
@@ -952,10 +943,7 @@ namespace FlashDebugger
         internal virtual void dumpIsolateExitEvent(IsolateExitEvent e)
         {
             removeRunningIsolate(e.isolate.getId());
-            if (ThreadsEvent != null)
-            {
-                ThreadsEvent(this);
-            }
+            ThreadsEvent?.Invoke(this);
 
         }
 
@@ -1253,7 +1241,8 @@ namespace FlashDebugger
                     m_Session.clearBreakpoint(l);
                 }
             }
-            if (breakpointLocations != null) breakpointLocations.Clear();
+
+            breakpointLocations?.Clear();
             if (IsolateSessions != null)
                 foreach (IsolateInfo ii in IsolateSessions.Values)
                 {
@@ -1296,10 +1285,7 @@ namespace FlashDebugger
 
         public void setProgress(int current, int total)
         {
-            if (ProgressEvent != null)
-            {
-                ProgressEvent(this, current, total);
-            }
+            ProgressEvent?.Invoke(this, current, total);
         }
 
     }

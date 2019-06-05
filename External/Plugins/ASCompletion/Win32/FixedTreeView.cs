@@ -56,8 +56,8 @@ namespace System.Windows.Forms
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
-            if (clickedNode != null && NodeClicked != null)
-                NodeClicked(this, clickedNode);
+            if (clickedNode != null)
+                NodeClicked?.Invoke(this, clickedNode);
         }
 
         // custom tooltip

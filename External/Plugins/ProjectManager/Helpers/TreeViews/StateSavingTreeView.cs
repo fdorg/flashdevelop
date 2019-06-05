@@ -44,8 +44,7 @@ namespace System.Windows.Forms
             foreach (string path in expandedPaths)
             {
                 TreeNode node = FindClosestPath(path);
-                if (node != null)
-                    node.Expand();
+                node?.Expand();
             }
         }
 
@@ -110,11 +109,9 @@ namespace System.Windows.Forms
             TreeNode bottomNode = FindClosestPath(bottomPath);
             TreeNode topNode = FindClosestPath(topPath);
 
-            if (bottomNode != null)
-                bottomNode.EnsureVisible();
+            bottomNode?.EnsureVisible();
 
-            if (topNode != null)
-                topNode.EnsureVisible();
+            topNode?.EnsureVisible();
 
             // manually scroll all the way to the left
             if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);
