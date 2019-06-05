@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using PluginCore.PluginCore.Utilities;
