@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -15,7 +16,7 @@ namespace System.Windows.Forms
     {
         string topPath;
         string bottomPath;
-        ArrayList expandedPaths = new ArrayList();
+        readonly List<string> expandedPaths = new List<string>();
 
         public void BeginStatefulUpdate()
         {

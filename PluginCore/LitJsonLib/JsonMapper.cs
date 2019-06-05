@@ -387,7 +387,7 @@ namespace LitJson
                     list = (IList) Activator.CreateInstance (inst_type);
                     elem_type = t_data.ElementType;
                 } else {
-                    list = new ArrayList ();
+                    list = new List<object>();
                     elem_type = inst_type.GetElementType ();
                 }
 
