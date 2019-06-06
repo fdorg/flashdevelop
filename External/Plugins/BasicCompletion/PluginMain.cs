@@ -14,7 +14,6 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
-using ScintillaNet.Configuration;
 using Timer = System.Timers.Timer;
 
 namespace BasicCompletion
