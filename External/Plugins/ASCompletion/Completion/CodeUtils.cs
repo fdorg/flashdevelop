@@ -7,7 +7,6 @@
         /// </summary>
         public static bool IsTypeDecl(string line, string[] typesKeywords)
         {
-            var max = line.Length - 1;
             foreach (string keyword in typesKeywords)
             {
                 var p = line.IndexOf(keyword);
