@@ -200,15 +200,14 @@ namespace AirProperties
             }
         }
 
-        private ArrayList FillArray(XmlNode arrayNode)
+        private List<object> FillArray(XmlNode arrayNode)
         {
-            var arr = new ArrayList(arrayNode.ChildNodes.Count);
+            var arr = new List<object>(arrayNode.ChildNodes.Count);
             foreach (XmlNode childNode in arrayNode.ChildNodes)
             {
                 if (childNode.NodeType != XmlNodeType.Element) continue;
                 arr.Add(GetValue(childNode));
             }
-
             return arr;
         }
 

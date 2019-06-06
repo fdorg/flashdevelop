@@ -11,19 +11,13 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace FlashViewer
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "FlashViewer";
-        private String pluginGuid = "cba5ca4c-db80-43c2-9219-a15ee4d76aac";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Displays flash movies in FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
         private List<Form> popups = new List<Form>();
-        private String settingFilename;
+        private string settingFilename;
         private Settings settingObject;
         private Icon playerIcon;
 
@@ -32,60 +26,39 @@ namespace FlashViewer
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(FlashViewer);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "cba5ca4c-db80-43c2-9219-a15ee4d76aac";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Displays flash movies in FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -95,32 +68,29 @@ namespace FlashViewer
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.Command : 
-                    this.HandleCommand(((DataEvent)e));
+                    HandleCommand(((DataEvent)e));
                     break;
 
                 case EventType.FileOpening : 
-                    this.HandleFileOpening(((TextEvent)e));
+                    HandleFileOpening(((TextEvent)e));
                     break;
             }
         }
@@ -134,14 +104,14 @@ namespace FlashViewer
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "FlashViewer");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            var path = Path.Combine(PathHelper.DataDir, nameof(FlashViewer));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
             Assembly assembly = Assembly.GetExecutingAssembly();
-            String resource = "FlashViewer.Resources.Player.ico";
+            string resource = "FlashViewer.Resources.Player.ico";
             Stream stream = assembly.GetManifestResourceStream(resource);
-            this.pluginDesc = TextHelper.GetString("Info.Description");
-            this.playerIcon = new Icon(stream);
+            Description = TextHelper.GetString("Info.Description");
+            playerIcon = new Icon(stream);
         }
 
         /// <summary>
@@ -158,118 +128,111 @@ namespace FlashViewer
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
-            String oldPath = this.settingObject.PlayerPath;
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
+            string oldPath = settingObject.PlayerPath;
             // Recheck after installer update if auto config is not disabled
-            if (!this.settingObject.DisableAutoConfig && PluginBase.MainForm.RefreshConfig)
+            if (!settingObject.DisableAutoConfig && PluginBase.MainForm.RefreshConfig)
             {
-                this.settingObject.PlayerPath = null;
+                settingObject.PlayerPath = null;
             }
             // Try to find player path from AppMan archive
-            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            if (string.IsNullOrEmpty(settingObject.PlayerPath))
             {
-                String appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
+                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flashsa");
                 if (Directory.Exists(appManDir))
                 {
-                    String[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
-                    foreach (String exeFile in exeFiles)
+                    string[] exeFiles = Directory.GetFiles(appManDir, "*.exe", SearchOption.AllDirectories);
+                    foreach (string exeFile in exeFiles)
                     {
-                        this.settingObject.PlayerPath = exeFile;
+                        settingObject.PlayerPath = exeFile;
                     }
                 }
             }
             // Try to find player path from: Tools/flexlibs/
-            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            if (string.IsNullOrEmpty(settingObject.PlayerPath))
             {
-                String playerPath11 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.0\win\FlashPlayerDebugger.exe");
-                String playerPath111 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.1\win\FlashPlayerDebugger.exe");
-                String playerPath112 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.2\win\FlashPlayerDebugger.exe");
-                String playerPath113 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.3\win\FlashPlayerDebugger.exe");
-                String playerPath114 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.4\win\FlashPlayerDebugger.exe");
-                String playerPath115 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.5\win\FlashPlayerDebugger.exe");
-                String playerPath116 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.6\win\FlashPlayerDebugger.exe");
-                String playerPath117 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.7\win\FlashPlayerDebugger.exe");
-                String playerPath118 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.8\win\FlashPlayerDebugger.exe");
-                String playerPath119 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.9\win\FlashPlayerDebugger.exe");
-                if (File.Exists(playerPath119)) this.settingObject.PlayerPath = playerPath119;
-                else if (File.Exists(playerPath118)) this.settingObject.PlayerPath = playerPath118;
-                else if (File.Exists(playerPath117)) this.settingObject.PlayerPath = playerPath117;
-                else if (File.Exists(playerPath116)) this.settingObject.PlayerPath = playerPath116;
-                else if (File.Exists(playerPath115)) this.settingObject.PlayerPath = playerPath115;
-                else if (File.Exists(playerPath114)) this.settingObject.PlayerPath = playerPath114;
-                else if (File.Exists(playerPath113)) this.settingObject.PlayerPath = playerPath113;
-                else if (File.Exists(playerPath112)) this.settingObject.PlayerPath = playerPath112;
-                else if (File.Exists(playerPath111)) this.settingObject.PlayerPath = playerPath111;
-                else if (File.Exists(playerPath11)) this.settingObject.PlayerPath = playerPath11;
+                string playerPath11 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.0\win\FlashPlayerDebugger.exe");
+                string playerPath111 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.1\win\FlashPlayerDebugger.exe");
+                string playerPath112 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.2\win\FlashPlayerDebugger.exe");
+                string playerPath113 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.3\win\FlashPlayerDebugger.exe");
+                string playerPath114 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.4\win\FlashPlayerDebugger.exe");
+                string playerPath115 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.5\win\FlashPlayerDebugger.exe");
+                string playerPath116 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.6\win\FlashPlayerDebugger.exe");
+                string playerPath117 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.7\win\FlashPlayerDebugger.exe");
+                string playerPath118 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.8\win\FlashPlayerDebugger.exe");
+                string playerPath119 = Path.Combine(PathHelper.ToolDir, @"flexlibs\runtimes\player\11.9\win\FlashPlayerDebugger.exe");
+                if (File.Exists(playerPath119)) settingObject.PlayerPath = playerPath119;
+                else if (File.Exists(playerPath118)) settingObject.PlayerPath = playerPath118;
+                else if (File.Exists(playerPath117)) settingObject.PlayerPath = playerPath117;
+                else if (File.Exists(playerPath116)) settingObject.PlayerPath = playerPath116;
+                else if (File.Exists(playerPath115)) settingObject.PlayerPath = playerPath115;
+                else if (File.Exists(playerPath114)) settingObject.PlayerPath = playerPath114;
+                else if (File.Exists(playerPath113)) settingObject.PlayerPath = playerPath113;
+                else if (File.Exists(playerPath112)) settingObject.PlayerPath = playerPath112;
+                else if (File.Exists(playerPath111)) settingObject.PlayerPath = playerPath111;
+                else if (File.Exists(playerPath11)) settingObject.PlayerPath = playerPath11;
             }
             // Try to find player path from: Tools/flexsdk/
-            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            if (string.IsNullOrEmpty(settingObject.PlayerPath))
             {
-                String playerPath10 = Path.Combine(PathHelper.ToolDir, @"flexsdk\runtimes\player\10\win\FlashPlayer.exe");
-                String playerPath101 = Path.Combine(PathHelper.ToolDir, @"flexsdk\runtimes\player\10.1\win\FlashPlayerDebugger.exe");
-                String playerPath102 = Path.Combine(PathHelper.ToolDir, @"flexsdk\runtimes\player\10.2\win\FlashPlayerDebugger.exe");
-                if (File.Exists(playerPath102)) this.settingObject.PlayerPath = playerPath102;
-                else if (File.Exists(playerPath101)) this.settingObject.PlayerPath = playerPath101;
-                else if (File.Exists(playerPath10)) this.settingObject.PlayerPath = playerPath10;
+                string playerPath10 = Path.Combine(PathHelper.ToolDir, @"flexsdk\runtimes\player\10\win\FlashPlayer.exe");
+                string playerPath101 = Path.Combine(PathHelper.ToolDir, @"flexsdk\runtimes\player\10.1\win\FlashPlayerDebugger.exe");
+                string playerPath102 = Path.Combine(PathHelper.ToolDir, @"flexsdk\runtimes\player\10.2\win\FlashPlayerDebugger.exe");
+                if (File.Exists(playerPath102)) settingObject.PlayerPath = playerPath102;
+                else if (File.Exists(playerPath101)) settingObject.PlayerPath = playerPath101;
+                else if (File.Exists(playerPath10)) settingObject.PlayerPath = playerPath10;
             }
             // Try to find player path from: FlexSDK
-            if (String.IsNullOrEmpty(this.settingObject.PlayerPath))
+            if (string.IsNullOrEmpty(settingObject.PlayerPath))
             {
-                String compiler = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
-                String playerPath10 = Path.Combine(compiler, @"runtimes\player\10\win\FlashPlayer.exe");
-                String playerPath101 = Path.Combine(compiler, @"runtimes\player\10.1\win\FlashPlayerDebugger.exe");
-                String playerPath102 = Path.Combine(compiler, @"runtimes\player\10.2\win\FlashPlayerDebugger.exe");
-                if (File.Exists(playerPath102)) this.settingObject.PlayerPath = playerPath102;
-                else if (File.Exists(playerPath101)) this.settingObject.PlayerPath = playerPath101;
-                else if (File.Exists(playerPath10)) this.settingObject.PlayerPath = playerPath10;
+                string compiler = PluginBase.MainForm.ProcessArgString("$(CompilerPath)");
+                string playerPath10 = Path.Combine(compiler, @"runtimes\player\10\win\FlashPlayer.exe");
+                string playerPath101 = Path.Combine(compiler, @"runtimes\player\10.1\win\FlashPlayerDebugger.exe");
+                string playerPath102 = Path.Combine(compiler, @"runtimes\player\10.2\win\FlashPlayerDebugger.exe");
+                if (File.Exists(playerPath102)) settingObject.PlayerPath = playerPath102;
+                else if (File.Exists(playerPath101)) settingObject.PlayerPath = playerPath101;
+                else if (File.Exists(playerPath10)) settingObject.PlayerPath = playerPath10;
             }
             // After detection, if the path is incorrect, keep old valid path or clear it
-            if (this.settingObject.PlayerPath == null || !File.Exists(this.settingObject.PlayerPath))
+            if (settingObject.PlayerPath is null || !File.Exists(settingObject.PlayerPath))
             {
-                if (!String.IsNullOrEmpty(oldPath) && File.Exists(oldPath)) this.settingObject.PlayerPath = oldPath;
-                else this.settingObject.PlayerPath = String.Empty;
+                if (!string.IsNullOrEmpty(oldPath) && File.Exists(oldPath)) settingObject.PlayerPath = oldPath;
+                else settingObject.PlayerPath = string.Empty;
             }
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Handles the Command event and displays the movie
         /// </summary>
-        public void HandleCommand(DataEvent evnt)
+        public void HandleCommand(DataEvent e)
         {
             try
             {
-                if (evnt.Action.StartsWithOrdinal("FlashViewer."))
+                if (e.Action.StartsWithOrdinal("FlashViewer."))
                 {
-                    String action = evnt.Action;
-                    String[] args = evnt.Data != null ? evnt.Data.ToString().Split(',') : null;
+                    string action = e.Action;
+                    string[] args = e.Data?.ToString().Split(',');
                     
-                    if (args == null || String.IsNullOrEmpty(args[0]))
+                    if (args is null || string.IsNullOrEmpty(args[0]))
                     {
                         if (action == "FlashViewer.GetFlashPlayer")
                         {
-                            evnt.Data = PathHelper.ResolvePath(this.settingObject.PlayerPath);
-                            evnt.Handled = true;
+                            e.Data = PathHelper.ResolvePath(settingObject.PlayerPath);
+                            e.Handled = true;
                         }
                         return;
                     }
 
                     if (action == "FlashViewer.Default")
                     {
-                        switch (this.settingObject.DisplayStyle)
+                        switch (settingObject.DisplayStyle)
                         {
                             case ViewStyle.Popup:
                                 action = "FlashViewer.Popup";
@@ -287,34 +250,34 @@ namespace FlashViewer
                     switch (action)
                     {
                         case "FlashViewer.Popup":
-                            Int32 width = 800;
-                            Int32 height = 600;
+                            int width = 800;
+                            int height = 600;
                             if (args.Length >= 3)
                             {
-                                Int32.TryParse(args[1], out width);
-                                Int32.TryParse(args[2], out height);
+                                int.TryParse(args[1], out width);
+                                int.TryParse(args[2], out height);
                             }
-                            this.CreatePopup(args[0], new Size(width, height));
+                            CreatePopup(args[0], new Size(width, height));
                             break;
 
                         case "FlashViewer.Document":
-                            this.CreateDocument(args[0]);
+                            CreateDocument(args[0]);
                             break;
 
                         case "FlashViewer.External":
-                            this.LaunchExternal(args[0]);
+                            LaunchExternal(args[0]);
                             break;
 
                         case "FlashViewer.GetDisplayStyle":
-                            evnt.Data = this.settingObject.DisplayStyle.ToString();
+                            e.Data = settingObject.DisplayStyle.ToString();
                             break;
 
                         case "FlashViewer.SetDisplayStyle":
-                            ViewStyle vs = (ViewStyle)Enum.Parse(typeof(ViewStyle), evnt.Data.ToString());
-                            this.settingObject.DisplayStyle = vs;
+                            ViewStyle vs = (ViewStyle)Enum.Parse(typeof(ViewStyle), e.Data.ToString());
+                            settingObject.DisplayStyle = vs;
                             break;
                     }
-                    evnt.Handled = true;
+                    e.Handled = true;
                 }
             }
             catch (Exception ex)
@@ -326,36 +289,36 @@ namespace FlashViewer
         /// <summary>
         /// Handles the FileOpen event and displays the movie
         /// </summary>
-        public void HandleFileOpening(TextEvent evnt)
+        public void HandleFileOpening(TextEvent e)
         {
-            if (File.Exists(evnt.Value) && Path.GetExtension(evnt.Value) == ".swf")
+            if (File.Exists(e.Value) && Path.GetExtension(e.Value) == ".swf")
             {
-                switch (this.settingObject.DisplayStyle)
+                switch (settingObject.DisplayStyle)
                 {
                     case ViewStyle.Popup : 
-                        this.CreatePopup(evnt.Value, new Size(550, 400));
+                        CreatePopup(e.Value, new Size(550, 400));
                         break;
 
                     case ViewStyle.Document : 
-                        this.CreateDocument(evnt.Value);
+                        CreateDocument(e.Value);
                         break;
 
                     case ViewStyle.External:
-                        this.LaunchExternal(evnt.Value);
+                        LaunchExternal(e.Value);
                         break;
                 }
-                evnt.Handled = true;
+                e.Handled = true;
             }
         }
 
         /// <summary>
         /// Displays the flash movie in a popup
         /// </summary>
-        public void CreatePopup(String file, Size size)
+        public void CreatePopup(string file, Size size)
         {
             FlashView flashView;
             if (!File.Exists(file)) return;
-            foreach (Form form in this.popups)
+            foreach (Form form in popups)
             {
                 flashView = form.Controls[0] as FlashView;
                 if (flashView != null && flashView.MoviePath.Equals(file, StringComparison.OrdinalIgnoreCase))
@@ -363,7 +326,7 @@ namespace FlashViewer
                     form.Controls.Remove(flashView);
                     flashView.Dispose();
                     flashView = CreateFlashView(file);
-                    if (flashView == null) return;
+                    if (flashView is null) return;
                     flashView.Dock = DockStyle.Fill;
                     form.Controls.Add(flashView);
                     form.Activate();
@@ -371,69 +334,67 @@ namespace FlashViewer
                 }
             }
             Form popup = new Form();
-            popup.Icon = this.playerIcon;
+            popup.Icon = playerIcon;
             popup.Text = Path.GetFileName(file);
             popup.ClientSize = new Size(size.Width, size.Height);
             popup.StartPosition = FormStartPosition.CenterScreen;
-            flashView = this.CreateFlashView(null);
-            if (flashView == null) return;
+            flashView = CreateFlashView(null);
+            if (flashView is null) return;
             flashView.Size = popup.ClientSize;
             flashView.Dock = DockStyle.Fill;
             popup.Controls.Add(flashView);
             flashView.MoviePath = file;
             popup.Show();
-            popup.FormClosing += this.PopupFormClosing;
+            popup.FormClosing += PopupFormClosing;
             popup.Disposed += delegate { NotifyDisposed(file); };
-            this.popups.Add(popup);
+            popups.Add(popup);
         }
 
         /// <summary>
         /// Removes the popup from the tracking
         /// </summary>
-        private void PopupFormClosing(Object sender, FormClosingEventArgs e)
-        {
-            popups.Remove(sender as Form);
-        }
+        private void PopupFormClosing(object sender, FormClosingEventArgs e) => popups.Remove(sender as Form);
 
         /// <summary>
         /// Displays the flash movie in a document
         /// </summary>
-        public void CreateDocument(String file)
+        public void CreateDocument(string file)
         {
             FlashView flashView;
             if (!File.Exists(file)) return;
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+            foreach (var document in PluginBase.MainForm.Documents)
             {
                 if (!document.IsEditable)
                 {
-                    foreach (Control ctrl in document.Controls) if (ctrl is FlashView)
-                    {
-                        flashView = ctrl as FlashView;
-                        if (flashView != null && flashView.MoviePath.Equals(file, StringComparison.OrdinalIgnoreCase))
+                    foreach (Control ctrl in document.Controls)
+                        if (ctrl is FlashView view)
                         {
-                            document.Controls.Remove(flashView);
-                            flashView.Dispose();
-                            flashView = CreateFlashView(file);
-                            if (flashView == null) return;
-                            flashView.Dock = DockStyle.Fill;
-                            document.Controls.Add(flashView);
-                            document.Activate();
-                            return;
+                            flashView = view;
+                            if (flashView.MoviePath.Equals(file, StringComparison.OrdinalIgnoreCase))
+                            {
+                                document.Controls.Remove(flashView);
+                                flashView.Dispose();
+                                flashView = CreateFlashView(file);
+                                if (flashView is null) return;
+                                flashView.Dock = DockStyle.Fill;
+                                document.Controls.Add(flashView);
+                                document.Activate();
+                                return;
+                            }
                         }
-                    }
                 }
             }
-            flashView = this.CreateFlashView(null);
-            if (flashView == null) return;
+            flashView = CreateFlashView(null);
+            if (flashView is null) return;
             flashView.Dock = DockStyle.Fill;
-            DockContent flashDoc = PluginBase.MainForm.CreateCustomDocument(flashView);
+            var flashDoc = PluginBase.MainForm.CreateCustomDocument(flashView);
             flashDoc.Text = Path.GetFileName(file);
             flashView.MoviePath = file;
             flashDoc.Disposed += delegate { NotifyDisposed(file); };
         }
-        private void NotifyDisposed(String file)
+        private void NotifyDisposed(string file)
         {
-            DataEvent de = new DataEvent(EventType.Command, "FlashViewer.Closed", file);
+            var de = new DataEvent(EventType.Command, "FlashViewer.Closed", file);
             EventManager.DispatchEvent(this, de);
         }
 
@@ -448,7 +409,7 @@ namespace FlashViewer
             }
             catch (Exception ex)
             {
-                String msg = TextHelper.GetString("Info.FlashMissing");
+                string msg = TextHelper.GetString("Info.FlashMissing");
                 ErrorManager.ShowWarning(msg, ex);
                 return null;
             }
@@ -457,11 +418,11 @@ namespace FlashViewer
         /// <summary>
         /// Displays the flash movie in an external player
         /// </summary>
-        public void LaunchExternal(String file)
+        public void LaunchExternal(string file)
         {
             try
             {
-                String player = PathHelper.ResolvePath(this.settingObject.PlayerPath);
+                var player = PathHelper.ResolvePath(settingObject.PlayerPath);
                 if (File.Exists(player)) ProcessHelper.StartAsync(player, file); 
                 else ProcessHelper.StartAsync(file);
             }
@@ -472,7 +433,5 @@ namespace FlashViewer
         }
 
         #endregion
-
     }
-    
 }

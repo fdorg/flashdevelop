@@ -13,7 +13,7 @@ namespace AS3Context.Compiler
             if (ignoreMessage) return false;
             try
             {
-                if (debugger != null) debugger.Cleanup();
+                debugger?.Cleanup();
                 startMessage = message;
                 debugger = new FdbWrapper();
                 debugger.OnStarted += new LineEvent(debugger_OnStarted);

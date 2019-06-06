@@ -747,9 +747,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             _data = newData;
             SetShort(ref index, headerID);
             SetShort(ref index, addLength);
-            if ( fieldData != null ) {
-                fieldData.CopyTo(newData, index);
-            }
+            fieldData?.CopyTo(newData, index);
         }
 
         /// <summary>
@@ -968,9 +966,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public void Dispose()
         {
-            if ( _newEntry != null ) {
-                _newEntry.Close();
-            }
+            _newEntry?.Close();
         }
 
         #endregion

@@ -86,8 +86,7 @@ namespace ASCompletion.Context
             get { return context; }
             set
             {
-                if (value == null) context = defaultContext;
-                else context = value;
+                context = value ?? defaultContext;
                 // update GUI
                 if (Panel != null && context.CurrentModel != null)
                 {

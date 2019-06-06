@@ -154,7 +154,7 @@ namespace StartPage.Controls
 
             public void PageReady()
             {
-                if (DocumentCompleted != null) DocumentCompleted(this, null);
+                DocumentCompleted?.Invoke(this, null);
             }
 
             /// <summary>

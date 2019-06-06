@@ -12,7 +12,7 @@ namespace BridgeSettings
         const int DEFAULT_PORT_NUM = 8009;
         const string DEFAULT_IP = "127.0.0.1";
         const string DEFAULT_SHARED_DRIVE = "Y:\\";
-        static private string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
+        private static string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
 
         private bool active = false;
         private string ip = DEFAULT_IP;
@@ -65,7 +65,7 @@ namespace BridgeSettings
             {
                 if (Regex.IsMatch(value ?? "", "[H-Z]:\\\\", RegexOptions.IgnoreCase))
                 {
-                    sharedDrive = Char.ToUpper(value[0]) + ":\\";
+                    sharedDrive = char.ToUpper(value[0]) + ":\\";
                 }
             }
         }

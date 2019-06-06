@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace System.Windows.Forms
@@ -14,14 +15,14 @@ namespace System.Windows.Forms
         bool multiSelect;
         bool ignoreNextMultiSelect;
 
-        ArrayList selectedNodes;
-        Hashtable originalColor;
+        readonly List<TreeNode> selectedNodes;
+        readonly Hashtable originalColor;
         TreeNode beginRange;
-        Timer labelEditTimer;
+        readonly Timer labelEditTimer;
 
         public MultiSelectTreeView()
         {
-            selectedNodes = new ArrayList();
+            selectedNodes = new List<TreeNode>();
             originalColor = new Hashtable();
             labelEditTimer = new Timer();
             labelEditTimer.Interval = 1500;
@@ -79,14 +80,13 @@ namespace System.Windows.Forms
         /// <summary>
         /// Gets or sets an ArrayList containing the current selected TreeNodes.
         /// </summary>
-        public ArrayList SelectedNodes
+        public List<TreeNode> SelectedNodes
         {
             get
             {
                 if (multiSelect)
                     return selectedNodes;
-                else
-                    return new ArrayList(new object[]{base.SelectedNode});
+                return new List<TreeNode> {SelectedNode};
             }
             set
             {
@@ -97,9 +97,9 @@ namespace System.Windows.Forms
                 }
                 else if (value.Count > 0)
                 {
-                    SelectedNode = value[0] as TreeNode;
+                    SelectedNode = value[0];
                     UnselectAllExcept(SelectedNode);
-                    foreach (TreeNode node in value)
+                    foreach (var node in value)
                         SelectNode(node);
                 }
                 else SelectedNode = null;
@@ -110,8 +110,7 @@ namespace System.Windows.Forms
         // mouse UP which causes stupid focus rectangle drawing and flickering.
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            TreeNode clickedNode = base.GetNodeAt(e.X, e.Y);
-
+            TreeNode clickedNode = GetNodeAt(e.X, e.Y);
             if (clickedNode != null)
             {
                 // if you clicked on an already-selected group of nodes, don't unselect
@@ -263,7 +262,7 @@ namespace System.Windows.Forms
 
         private void UnselectAllExcept(TreeNode node)
         {
-            foreach (TreeNode selectedNode in selectedNodes.Clone() as ArrayList)
+            foreach (var selectedNode in selectedNodes.ToArray())
                 if (selectedNode != node)
                     UnselectNode(selectedNode);
         }

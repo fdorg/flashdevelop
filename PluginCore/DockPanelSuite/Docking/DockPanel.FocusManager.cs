@@ -53,8 +53,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 public event HookEventHandler HookInvoked;
                 protected void OnHookInvoked(HookEventArgs e)
                 {
-                    if (HookInvoked != null)
-                        HookInvoked(this, e);
+                    HookInvoked?.Invoke(this, e);
                 }
 
                 public LocalWindowsHook(Win32.HookType hook)
@@ -392,13 +391,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (m_activePane == value)
                     return;
 
-                if (m_activePane != null)
-                    m_activePane.SetIsActivated(false);
+                m_activePane?.SetIsActivated(false);
 
                 m_activePane = value;
 
-                if (m_activePane != null)
-                    m_activePane.SetIsActivated(true);
+                m_activePane?.SetIsActivated(true);
             }
 
             private IDockContent m_activeContent = null;
@@ -414,8 +411,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (m_activeContent == value)
                     return;
 
-                if (m_activeContent != null)
-                    m_activeContent.DockHandler.SetIsActivated(false);
+                m_activeContent?.DockHandler.SetIsActivated(false);
 
                 m_activeContent = value;
 
@@ -453,13 +449,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (m_activeDocumentPane == value)
                     return;
 
-                if (m_activeDocumentPane != null)
-                    m_activeDocumentPane.SetIsActiveDocumentPane(false);
+                m_activeDocumentPane?.SetIsActiveDocumentPane(false);
 
                 m_activeDocumentPane = value;
 
-                if (m_activeDocumentPane != null)
-                    m_activeDocumentPane.SetIsActiveDocumentPane(true);
+                m_activeDocumentPane?.SetIsActiveDocumentPane(true);
             }
 
             private IDockContent m_activeDocument = null;
@@ -529,8 +523,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnActiveDocumentChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[ActiveDocumentChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object ActiveContentChangedEvent = new object();
@@ -544,8 +537,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected void OnActiveContentChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[ActiveContentChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object ActivePaneChangedEvent = new object();
@@ -559,8 +551,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnActivePaneChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[ActivePaneChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
     }
 }

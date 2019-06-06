@@ -19,8 +19,8 @@ namespace PluginCore.Utilities
         {
             public SIANativeWindow()
             {
-                CreateParams cp = new CreateParams();
-                cp.Caption = _theInstance._id; //The window title is the same as the Id
+                var cp = new CreateParams {Caption = _theInstance._id};
+                //The window title is the same as the Id
                 CreateHandle(cp);
             }
 
@@ -30,12 +30,12 @@ namespace PluginCore.Utilities
                 if (m.Msg == Win32.WM_COPYDATA)
                 {
                     //convert the message LParam to the WM_COPYDATA structure
-                    Win32.COPYDATASTRUCT data = (Win32.COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof(Win32.COPYDATASTRUCT));
+                    var data = (Win32.COPYDATASTRUCT)Marshal.PtrToStructure(m.LParam, typeof(Win32.COPYDATASTRUCT));
                     object obj = null;
                     if (data.cbData > 0 && data.lpData != IntPtr.Zero)
                     {
                         //copy the native byte array to a .net byte array
-                        byte[] buffer = new byte[data.cbData];
+                        var buffer = new byte[data.cbData];
                         Marshal.Copy(data.lpData, buffer, 0, buffer.Length);
                         //deserialize the buffer to a new object
                         obj = Deserialize(buffer);
@@ -48,7 +48,7 @@ namespace PluginCore.Utilities
         }
 
         //Singleton 
-        static SingleInstanceApp _theInstance = new SingleInstanceApp();
+        static readonly SingleInstanceApp _theInstance = new SingleInstanceApp();
 
         //this is a uniqe id used to identify the application
         string _id;
@@ -62,11 +62,9 @@ namespace PluginCore.Utilities
         private void Dispose()
         {
             //release the mutex handle
-            if (_instanceCounter != null) 
-                _instanceCounter.Close();
+            _instanceCounter?.Close();
             //and destroy the window
-            if (_notifcationWindow != null)
-                _notifcationWindow.DestroyHandle();
+            _notifcationWindow?.DestroyHandle();
         }
 
         private void Init()
@@ -77,28 +75,22 @@ namespace PluginCore.Utilities
         //returns a uniqe Id representing the application. This is basically the name of the .exe 
         private static string GetAppId()
         {
-            string fileName = Path.GetFileName(Application.ExecutablePath);
-            string justName = fileName.Split('.')[0];
+            var fileName = Path.GetFileName(Application.ExecutablePath);
+            var justName = fileName.Split('.')[0];
             return justName;
         }
 
         //notify event handler
-        private void OnNewInstanceMessage(object message)
-        {
-            if (NewInstanceMessage != null)
-                NewInstanceMessage(this, message);
-        }
+        private void OnNewInstanceMessage(object message) => NewInstanceMessage?.Invoke(this, message);
 
         private SingleInstanceApp()
         {
             _id = "SIA_" + GetAppId();
            
             //string identity = "Everyone";
-            string identity = Environment.UserDomainName + "\\" + Environment.UserName;
-
-            MutexAccessRule rule = new MutexAccessRule(identity, MutexRights.FullControl, AccessControlType.Allow);
-
-            MutexSecurity security = new MutexSecurity();
+            var identity = Environment.UserDomainName + "\\" + Environment.UserName;
+            var rule = new MutexAccessRule(identity, MutexRights.FullControl, AccessControlType.Allow);
+            var security = new MutexSecurity();
             try
             {
                 security.AddAccessRule(rule);
@@ -110,109 +102,80 @@ namespace PluginCore.Utilities
             }
         }
 
-        private bool Exists
-        {
-            get
-            {
-                return !_firstInstance;
-            }
-        }
+        private bool Exists => !_firstInstance;
 
         //send a notification to the already existing instance that a new instance was started
         private bool NotifyPreviousInstance(object message)
         {
             //First, find the window of the previous instance
-            IntPtr handle = Win32.FindWindow(null, _id);
-            if (handle != IntPtr.Zero)
+            var handle = Win32.FindWindow(null, _id);
+            if (handle == IntPtr.Zero) return false;
+            //create a GCHandle to hold the serialized object. 
+            var bufferHandle = new GCHandle();
+            try
             {
-                //create a GCHandle to hold the serialized object. 
-                GCHandle bufferHandle = new GCHandle();
+                var data = new Win32.COPYDATASTRUCT();
+                if (message != null)
+                {
+                    //serialize the object into a byte array
+                    var buffer = Serialize(message);
+                    //pin the byte array in memory
+                    bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+
+                    data.dwData = IntPtr.Zero;
+                    data.cbData = buffer.Length;
+                    //get the address of the pinned buffer
+                    data.lpData = bufferHandle.AddrOfPinnedObject();
+                }
+
+                var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
                 try
                 {
-                    byte[] buffer;
-                    Win32.COPYDATASTRUCT data = new Win32.COPYDATASTRUCT();
-                    if (message != null)
-                    {
-                        //serialize the object into a byte array
-                        buffer = Serialize(message);
-                        //pin the byte array in memory
-                        bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-
-                        data.dwData = 0;
-                        data.cbData = buffer.Length;
-                        //get the address of the pinned buffer
-                        data.lpData = bufferHandle.AddrOfPinnedObject();
-                    }
-
-                    GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-                    try
-                    {
-                        Win32.SendMessage(handle, Win32.WM_COPYDATA, IntPtr.Zero, dataHandle.AddrOfPinnedObject());
-                        Win32.SetForegroundWindow(handle); // Give focus to first instance
-                        return true;
-                    }
-                    finally
-                    {
-                        dataHandle.Free();
-                    }
+                    Win32.SendMessage(handle, Win32.WM_COPYDATA, IntPtr.Zero, dataHandle.AddrOfPinnedObject());
+                    Win32.SetForegroundWindow(handle); // Give focus to first instance
+                    return true;
                 }
                 finally
                 {
-                    if (bufferHandle.IsAllocated) bufferHandle.Free();
+                    dataHandle.Free();
                 }
             }
-            return false;
+            finally
+            {
+                if (bufferHandle.IsAllocated) bufferHandle.Free();
+            }
         }
 
         //2 utility methods for object serialization\deserialization
         private static object Deserialize(byte[] buffer)
         {
-            using (MemoryStream stream = new MemoryStream(buffer))
+            using (var stream = new MemoryStream(buffer))
             {
                 return new BinaryFormatter().Deserialize(stream);
             }
         }
 
-        private static byte[] Serialize(Object obj)
+        private static byte[] Serialize(object obj)
         {
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 new BinaryFormatter().Serialize(stream, obj);
                 return stream.ToArray();
             }
         }
 
-        public static bool AlreadyExists
-        {
-            get
-            {
-                return _theInstance.Exists;
-            }
-        }
+        public static bool AlreadyExists => _theInstance.Exists;
 
         public static bool NotifyExistingInstance(object message)
         {
-            if (_theInstance.Exists)
-            {
-                return _theInstance.NotifyPreviousInstance(message);
-            }
-            return false;
+            return _theInstance.Exists && _theInstance.NotifyPreviousInstance(message);
         }
 
-        public static bool NotifyExistingInstance()
-        {
-            return NotifyExistingInstance(null);
-        }
+        public static bool NotifyExistingInstance() => NotifyExistingInstance(null);
 
-        public static void Initialize()
-        {
-            _theInstance.Init();
-        }
+        public static void Initialize() => _theInstance.Init();
 
-        public static void Close()
-        {
-            _theInstance.Dispose();
-        }
+        public static void Close() => _theInstance.Dispose();
 
         public static event NewInstanceMessageEventHandler NewInstanceMessage;
     }

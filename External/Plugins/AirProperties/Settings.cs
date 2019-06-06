@@ -7,15 +7,15 @@ namespace AirProperties
     [Serializable]
     public class Settings
     {
-        private Boolean renameIcons = true;
-        private Boolean useUniformFilenames = true;
-        private Boolean selectPropertiesFileOnLoad = false;
-        private String projectIconsFolder = @"bin\icons";
-        private String packageIconsFolder = "icons";
+        private bool renameIcons = true;
+        private bool useUniformFilenames = true;
+        private bool selectPropertiesFileOnLoad = false;
+        private string projectIconsFolder = @"bin\icons";
+        private string packageIconsFolder = "icons";
 
         [DisplayName("Project Icons Folder")]
         [LocalizedDescription("AirProperties.Description.ProjectIconsFolder"), DefaultValue(@"bin\icons")]
-        public String ProjectIconsFolder 
+        public string ProjectIconsFolder 
         {
             get { return this.projectIconsFolder; }
             set { this.projectIconsFolder = value; }
@@ -23,7 +23,7 @@ namespace AirProperties
 
         [DisplayName("Package Icons Folder")]
         [LocalizedDescription("AirProperties.Description.PackageIconsFolder"), DefaultValue(@"icons")]
-        public String PackageIconsFolder
+        public string PackageIconsFolder
         {
             get { return this.packageIconsFolder; }
             set { this.packageIconsFolder = value; }
@@ -31,7 +31,7 @@ namespace AirProperties
 
         [DisplayName("Use Uniform File Names")]
         [LocalizedDescription("AirProperties.Description.UseUniformFileNames"), DefaultValue(true)]
-        public Boolean UseUniformFilenames
+        public bool UseUniformFilenames
         {
             get { return this.useUniformFilenames; }
             set { this.useUniformFilenames = value; }
@@ -39,7 +39,7 @@ namespace AirProperties
 
         [DisplayName("Rename Icons With Size")]
         [LocalizedDescription("AirProperties.Description.RenameIconsWithSize"), DefaultValue(true)]
-        public Boolean RenameIconsWithSize
+        public bool RenameIconsWithSize
         {
             get { return this.renameIcons; }
             set { this.renameIcons = value; }
@@ -47,7 +47,7 @@ namespace AirProperties
 
         [DisplayName("Select Properties File On Open")]
         [LocalizedDescription("AirProperties.Description.SelectPropertiesFileOnOpen"), DefaultValue(false)]
-        public Boolean SelectPropertiesFileOnOpen
+        public bool SelectPropertiesFileOnOpen
         {
             get { return this.selectPropertiesFileOnLoad; }
             set { this.selectPropertiesFileOnLoad = value; }

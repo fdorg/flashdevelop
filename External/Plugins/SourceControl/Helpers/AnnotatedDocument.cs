@@ -397,8 +397,8 @@ namespace SourceControl.Helpers
                 if (disposing)
                 {
                     documents.Remove(this);
-                    if (command != null) command.Dispose();
-                    if (tooltip != null) tooltip.Dispose();
+                    command?.Dispose();
+                    tooltip?.Dispose();
                     if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
                     if (sci != null)
                     {

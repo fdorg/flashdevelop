@@ -61,8 +61,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (disposing)
             {
-                if (DockPanel != null)
-                    DockPanel.RemoveFloatWindow(this);
+                DockPanel?.RemoveFloatWindow(this);
                 m_dockPanel = null;
             }
             base.Dispose(disposing);

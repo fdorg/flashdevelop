@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -8,10 +9,10 @@ namespace System.Windows.Forms
         public string highlight;
         public string TopPath;
         public string BottomPath;
-        public ArrayList ExpandedPaths;
+        public List<string> ExpandedPaths;
         public TreeState()
         {
-            ExpandedPaths = new ArrayList();
+            ExpandedPaths = new List<string>();
         }
     }
 
@@ -74,8 +75,7 @@ namespace System.Windows.Forms
             foreach (string path in State.ExpandedPaths)
             {
                 TreeNode node = FindClosestPath(path);
-                if (node != null)
-                    node.Expand();
+                node?.Expand();
             }
         }
 
@@ -140,11 +140,9 @@ namespace System.Windows.Forms
             TreeNode bottomNode = FindClosestPath(State.BottomPath);
             TreeNode topNode = FindClosestPath(State.TopPath);
 
-            if (bottomNode != null)
-                bottomNode.EnsureVisible();
+            bottomNode?.EnsureVisible();
 
-            if (topNode != null)
-                topNode.EnsureVisible();
+            topNode?.EnsureVisible();
 
             // manually scroll all the way to the left
             if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);

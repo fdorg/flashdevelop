@@ -9,9 +9,9 @@ namespace FlashViewer
     [Serializable]
     public class Settings
     {
-        private String playerPath = String.Empty;
+        private string playerPath = string.Empty;
         private ViewStyle displayStyle = ViewStyle.External;
-        private Boolean disableAutoConfig = false;
+        private bool disableAutoConfig = false;
 
         /// <summary> 
         /// Get and sets the playerPath
@@ -19,7 +19,7 @@ namespace FlashViewer
         [DisplayName("External Player Path")]
         [LocalizedDescription("FlashViewer.Description.PlayerPath"), DefaultValue("")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String PlayerPath
+        public string PlayerPath
         {
             get { return this.playerPath; }
             set { this.playerPath = value; }
@@ -41,7 +41,7 @@ namespace FlashViewer
         /// </summary>
         [DisplayName("Disable Auto-Configure")]
         [LocalizedDescription("FlashViewer.Description.DisableAutoConfig"), DefaultValue(false)]
-        public Boolean DisableAutoConfig
+        public bool DisableAutoConfig
         {
             get { return this.disableAutoConfig; }
             set { this.disableAutoConfig = value; }

@@ -294,8 +294,8 @@ namespace Ookii.Dialogs
         {
             try
             {
-                if( disposing && _downlevelDialog != null )
-                    _downlevelDialog.Dispose();
+                if( disposing )
+                    _downlevelDialog?.Dispose();
             }
             finally
             {

@@ -217,8 +217,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                         rectSource.Height = rectTarget.Height;
 
                     LayoutAnimateWindow(rectSource);
-                    if (Parent != null)
-                        Parent.Update();
+                    Parent?.Update();
 
                     remainPixels -= speedFactor;
 

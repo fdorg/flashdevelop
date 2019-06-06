@@ -71,7 +71,7 @@ namespace SourceControl.Sources.Subversion
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
         override protected void Runner_Output(object sender, string line)

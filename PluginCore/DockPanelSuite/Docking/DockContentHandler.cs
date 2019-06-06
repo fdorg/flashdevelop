@@ -41,10 +41,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 lock(this)
                 {
                     DockPanel = null;
-                    if (m_autoHideTab != null)
-                        m_autoHideTab.Dispose();
-                    if (m_tab != null)
-                        m_tab.Dispose();
+                    m_autoHideTab?.Dispose();
+                    m_tab?.Dispose();
 
                     Form.Disposed -= new EventHandler(Form_Disposed);
                     Form.TextChanged -= new EventHandler(Form_TextChanged);
@@ -225,8 +223,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 Pane = null;
 
-                if (m_dockPanel != null)
-                    m_dockPanel.RemoveContent(Content);
+                m_dockPanel?.RemoveContent(Content);
 
                 if (m_tab != null)
                 {
@@ -312,8 +309,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     return;
 
                 m_tabText = value;
-                if (Pane != null)
-                    Pane.RefreshChanges();
+                Pane?.RefreshChanges();
             }
         }
 
@@ -327,8 +323,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     return;
 
                 m_tabColor = value;
-                if (Pane != null)
-                    Pane.RefreshChanges();
+                Pane?.RefreshChanges();
             }
         }
 
@@ -490,8 +485,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 throw new InvalidOperationException(Strings.DockContentHandler_SetDockState_InvalidState);
 
             DockPanel dockPanel = DockPanel;
-            if (dockPanel != null)
-                dockPanel.SuspendLayout(true);
+            dockPanel?.SuspendLayout(true);
 
             SuspendSetDockState();
 
@@ -560,7 +554,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             ResumeSetDockState();
 
-            if (dockPanel != null) dockPanel.ResumeLayout(true, true);
+            dockPanel?.ResumeLayout(true, true);
         }
 
         private static void RefreshDockPane(DockPane pane)
@@ -884,11 +878,9 @@ namespace WeifenLuo.WinFormsUI.Docking
         public void Close()
         {
             DockPanel dockPanel = DockPanel;
-            if (dockPanel != null)
-                dockPanel.SuspendLayout(true);
+            dockPanel?.SuspendLayout(true);
             Form.Close();
-            if (dockPanel != null)
-                dockPanel.ResumeLayout(true, true);
+            dockPanel?.ResumeLayout(true, true);
 
         }
 
@@ -918,8 +910,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnDockStateChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[DockStateChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object IsActivatedChangedEvent = new object();
@@ -931,8 +922,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnIsActivatedChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler) Events[IsActivatedChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
         #endregion
 
@@ -947,8 +937,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DockPanel.RefreshAutoHideStrip();
             else if (Pane != null)
             {
-                if (Pane.FloatWindow != null)
-                    Pane.FloatWindow.SetText();
+                Pane.FloatWindow?.SetText();
                 Pane.RefreshChanges();
             }
         }

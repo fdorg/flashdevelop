@@ -303,10 +303,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void UpdateHistory()
         {
-            if (current != null)
-            {
-                current.AddNewClipboardData();
-            }
+            current?.AddNewClipboardData();
         }
 
         /// <summary>

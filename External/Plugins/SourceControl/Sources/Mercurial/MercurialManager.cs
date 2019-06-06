@@ -100,7 +100,7 @@ namespace SourceControl.Sources.Mercurial
         void Status_OnResult(Status status)
         {
             ignoreDirty = false;
-            if (OnChange != null) OnChange(this);
+            OnChange?.Invoke(this);
         }
 
         public bool SetPathDirty(string path, string rootPath)

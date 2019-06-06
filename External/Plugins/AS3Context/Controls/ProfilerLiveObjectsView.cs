@@ -70,8 +70,7 @@ namespace AS3Context.Controls
         {
             if (listView.SelectedItems.Count == 1)
             {
-                if (OnViewObject != null)
-                    OnViewObject(listView.SelectedItems[0].Tag as TypeItem);
+                OnViewObject?.Invoke(listView.SelectedItems[0].Tag as TypeItem);
             }
         }
 

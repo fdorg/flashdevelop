@@ -89,9 +89,9 @@ namespace ProjectManager.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -1313,7 +1313,7 @@ namespace ProjectManager.Controls
 
         private void btnGlobalClasspaths_Click(object sender, EventArgs e)
         {
-            if (OpenGlobalClasspaths != null) OpenGlobalClasspaths(this,new EventArgs());
+            OpenGlobalClasspaths?.Invoke(this,new EventArgs());
         }
 
         private void outputBrowseButton_Click(object sender, EventArgs e)

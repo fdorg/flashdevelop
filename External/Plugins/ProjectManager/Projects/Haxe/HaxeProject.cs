@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -21,50 +22,43 @@ namespace ProjectManager.Projects.Haxe
             movieOptions = new HaxeMovieOptions();
         }
 
-        public override string Language { get { return "haxe"; } }
-        public override string LanguageDisplayName { get { return "Haxe"; } }
-        public override bool IsCompilable { get { return true; } }
-        public override bool ReadOnly { get { return false; } }
-        public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }
-        public override bool RequireLibrary { get { return IsFlashOutput; } }
-        public override string DefaultSearchFilter { get { return "*.hx;*.hxp"; } }
+        public override string Language => "haxe";
+        public override string LanguageDisplayName => "Haxe";
+        public override bool IsCompilable => true;
+        public override bool ReadOnly => false;
+        public override bool HasLibraries => OutputType == OutputType.Application && IsFlashOutput;
+        public override bool RequireLibrary => IsFlashOutput;
+        public override string DefaultSearchFilter => "*.hx;*.hxp";
 
-        public override String LibrarySWFPath
+        public override string LibrarySWFPath
         {
             get
             {
-                string projectName = RemoveDiacritics(Name);
+                var projectName = RemoveDiacritics(Name);
                 return Path.Combine("obj", projectName + "Resources.swf");
             }
         }
 
         public string[] RawHXML
         {
-            get { return rawHXML; }
-            set { ParseHXML(value); }
+            get => rawHXML;
+            set => ParseHXML(value);
         }
 
-        public new HaxeOptions CompilerOptions { get { return (HaxeOptions)base.CompilerOptions; } }
+        public new HaxeOptions CompilerOptions => (HaxeOptions)base.CompilerOptions;
 
-        public string HaxeTarget
-        {
-            get
-            {
-                if (!MovieOptions.HasPlatformSupport) return null;
-                return MovieOptions.PlatformSupport.HaxeTarget;
-            }
-        }
+        public string HaxeTarget => MovieOptions.HasPlatformSupport ? MovieOptions.PlatformSupport.HaxeTarget : null;
 
-        public bool IsFlashOutput { get { return HaxeTarget == "swf"; } }
+        public bool IsFlashOutput => HaxeTarget == "swf";
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
-            bool isInjectionTarget = (UsesInjection && path == GetAbsolutePath(InputPath));
             if (export != null) return export;
+            var isInjectionTarget = (UsesInjection && path == GetAbsolutePath(InputPath));
             if (IsLibraryAsset(path) && !isInjectionTarget)
                 return GetAsset(path).ID;
 
-            String dirName = inFile;
+            var dirName = inFile;
             if (FileInspector.IsHaxeFile(inFile, Path.GetExtension(inFile).ToLower()))
                 dirName = ProjectPath;
 
@@ -156,7 +150,7 @@ namespace ProjectManager.Projects.Haxe
 
         public string[] BuildHXML(string[] paths, string outfile, bool release)
         {
-            List<String> pr = new List<String>();
+            var pr = new List<string>();
             var isFlash = IsFlashOutput;
 
             if (rawHXML != null)
@@ -174,7 +168,7 @@ namespace ProjectManager.Projects.Haxe
                     }
 
                 // libraries
-                foreach (string lib in CompilerOptions.Libraries)
+                foreach (var lib in CompilerOptions.Libraries)
                     if (lib.Length > 0)
                     {
                         if (lib.Trim().StartsWith("-lib", StringComparison.Ordinal)) pr.Add(lib);
@@ -182,36 +176,32 @@ namespace ProjectManager.Projects.Haxe
                     }
 
                 // class paths
-                List<String> classPaths = new List<String>();
-                foreach (string cp in paths)
-                    classPaths.Add(cp);
-                foreach (string cp in this.Classpaths)
-                    classPaths.Add(cp);
-                foreach (string cp in classPaths)
+                var classPaths = paths.ToList();
+                classPaths.AddRange(Classpaths);
+                foreach (var cp in classPaths)
                 {
-                    String ccp = String.Join("/", cp.Split('\\'));
+                    var ccp = string.Join("/", cp.Split('\\'));
                     pr.Add("-cp " + Quote(ccp));
                 }
 
                 // compilation mode
-                string mode = HaxeTarget;
+                var mode = HaxeTarget;
                 //throw new SystemException("Unknown mode");
 
                 if (mode != null)
                 {
-                    outfile = String.Join("/", outfile.Split('\\'));
+                    outfile = string.Join("/", outfile.Split('\\'));
                     pr.Add("-" + mode + " " + Quote(outfile));
                 }
 
                 // flash options
                 if (isFlash)
                 {
-                    string htmlColor = this.MovieOptions.Background.Substring(1);
-
+                    var htmlColor = MovieOptions.Background.Substring(1);
                     if (htmlColor.Length > 0)
                         htmlColor = ":" + htmlColor;
 
-                    pr.Add("-swf-header " + string.Format("{0}:{1}:{2}{3}", MovieOptions.Width, MovieOptions.Height, MovieOptions.Fps, htmlColor));
+                    pr.Add("-swf-header " + $"{MovieOptions.Width}:{MovieOptions.Height}:{MovieOptions.Fps}{htmlColor}");
 
                     if (!UsesInjection && LibraryAssets.Count > 0)
                         pr.Add("-swf-lib " + Quote(LibrarySWFPath));
@@ -220,23 +210,23 @@ namespace ProjectManager.Projects.Haxe
                         pr.Add("--flash-strict");
 
                     // haxe compiler uses Flash version directly
-                    string version = MovieOptions.Version;
+                    var version = MovieOptions.Version;
                     if (version != null) pr.Add("-swf-version " + version);
                 }
 
                 // defines
-                foreach (string def in CompilerOptions.Directives)
+                foreach (var def in CompilerOptions.Directives)
                     pr.Add("-D " + Quote(def));
 
                 // add project files marked as "always compile"
-                foreach (string relTarget in CompileTargets)
+                foreach (var relTarget in CompileTargets)
                 {
-                    string absTarget = GetAbsolutePath(relTarget);
+                    var absTarget = GetAbsolutePath(relTarget);
                     // guess the class name from the file name
-                    foreach (string cp in classPaths)
+                    foreach (var cp in classPaths)
                         if (absTarget.StartsWith(cp, StringComparison.OrdinalIgnoreCase))
                         {
-                            string className = GetClassName(absTarget, cp);
+                            var className = GetClassName(absTarget, cp);
                             if (CompilerOptions.MainClass != className)
                                 pr.Add(className);
                         }
@@ -247,17 +237,14 @@ namespace ProjectManager.Projects.Haxe
                     pr.Add("-main " + CompilerOptions.MainClass);
                 
                 // extra options
-                foreach (string opt in CompilerOptions.Additional)
+                foreach (var opt in CompilerOptions.Additional)
                 {
-                    String p = opt.Trim();
-                    if (p == "" || p[0] == '#')
-                        continue;
+                    var p = opt.Trim();
+                    if (p == "" || p[0] == '#') continue;
                     char[] space = { ' ' };
-                    string[] parts = p.Split(space, 2);
-                    if (parts.Length == 1)
-                        pr.Add(p);
-                    else
-                        pr.Add(parts[0] + ' ' + Quote(parts[1]));
+                    var parts = p.Split(space, 2);
+                    if (parts.Length == 1) pr.Add(p);
+                    else pr.Add(parts[0] + ' ' + Quote(parts[1]));
                 }
             }
 
@@ -279,7 +266,7 @@ namespace ProjectManager.Projects.Haxe
 
         private string GetClassName(string absTarget, string cp)
         {
-            string className = absTarget.Substring(cp.Length);
+            var className = absTarget.Substring(cp.Length);
             className = className.Substring(0, className.LastIndexOf('.'));
             className = Regex.Replace(className, "[\\\\/]+", ".");
             if (className.StartsWith(".", StringComparison.Ordinal)) className = className.Substring(1);
@@ -290,50 +277,45 @@ namespace ProjectManager.Projects.Haxe
 
         public static HaxeProject Load(string path)
         {
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             if (ext == ".hxml")
             {
-                HaxeProject hxproj = new HaxeProject(path);
-                hxproj.RawHXML = File.ReadAllLines(path);
-                return hxproj;
+                return new HaxeProject(path) {RawHXML = File.ReadAllLines(path)};
             }
 
-            HaxeProjectReader reader = new HaxeProjectReader(path);
+            var reader = new HaxeProjectReader(path);
 
             try
             {
                 return reader.ReadProject();
             }
-            catch (XmlException exception)
+            catch (XmlException e)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.",
-                    exception.LineNumber, exception.LinePosition);
-                throw new Exception(format, exception);
+                var format = $"Error in XML Document line {e.LineNumber}, position {e.LinePosition}.";
+                throw new Exception(format, e);
             }
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {
-            string ext = Path.GetExtension(fileName).ToLower();
+            var ext = Path.GetExtension(fileName).ToLower();
             if (ext != ".hxproj") return;
 
             if (!AllowedSaving(fileName)) return;
             try
             {
-                HaxeProjectWriter writer = new HaxeProjectWriter(this, fileName);
+                var writer = new HaxeProjectWriter(this, fileName);
                 writer.WriteProject();
                 writer.Flush();
                 writer.Close();
-                if (saveHXML && OutputType != OutputType.CustomBuild) {
-                    StreamWriter hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
-                    foreach( string e in BuildHXML(new string[0],this.OutputPath,true) )
-                        hxml.WriteLine(e);
+                if (saveHXML && OutputType != OutputType.CustomBuild)
+                {
+                    var hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
+                    foreach(var line in BuildHXML(new string[0], OutputPath,true))
+                        hxml.WriteLine(line);
                     hxml.Close();
                 }
             }
@@ -389,19 +371,19 @@ namespace ProjectManager.Projects.Haxe
 
         private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
         {
-            Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
+            var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
             {
                 if (line == null) break;
-                string trimmedLine = line.Trim();
-                Match m = reHxOp.Match(trimmedLine);
+                var trimmedLine = line.Trim();
+                var m = reHxOp.Match(trimmedLine);
                 if (m.Success)
                 {
-                    string op = m.Groups[1].Value;
+                    var op = m.Groups[1].Value;
                     if (op == "-next")
                         break; // ignore the rest
 
-                    string value = m.Groups[2].Value.Trim();
+                    var value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
                         case "D": defs.Add(value); break;
@@ -424,7 +406,7 @@ namespace ProjectManager.Projects.Haxe
                         case "-connect": break; // ignore
                         case "-each": break; // ignore
                         case "-cwd":
-                            cwd = this.CleanPath(value, cwd);
+                            cwd = CleanPath(value, cwd);
                             break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
@@ -441,7 +423,7 @@ namespace ProjectManager.Projects.Haxe
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    string subhxml = this.GetAbsolutePath(CleanPath(trimmedLine, cwd));
+                    var subhxml = GetAbsolutePath(CleanPath(trimmedLine, cwd));
                     if (File.Exists(subhxml))
                     {
                         ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output, cwd);

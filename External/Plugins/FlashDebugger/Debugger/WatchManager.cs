@@ -135,42 +135,27 @@ namespace FlashDebugger.Debugger
 
         protected void OnExpressionAdded(string expr, int index)
         {
-            if (ExpressionAdded != null)
-            {
-                ExpressionAdded(this, new WatchExpressionArgs(expr, index));
-            }
+            ExpressionAdded?.Invoke(this, new WatchExpressionArgs(expr, index));
         }
 
         protected void OnExpressionRemoved(string expr, int index)
         {
-            if (ExpressionRemoved != null)
-            {
-                ExpressionRemoved(this, new WatchExpressionArgs(expr, index));
-            }
+            ExpressionRemoved?.Invoke(this, new WatchExpressionArgs(expr, index));
         }
 
         protected void OnExpressionReplaced(string oldExpr, string newExpr, int index)
         {
-            if (ExpressionReplaced != null)
-            {
-                ExpressionReplaced(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
-            }
+            ExpressionReplaced?.Invoke(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
         }
 
         protected void OnExpressionsCleared(EventArgs e)
         {
-            if (ExpressionsCleared != null)
-            {
-                ExpressionsCleared(this, e);
-            }
+            ExpressionsCleared?.Invoke(this, e);
         }
 
         protected void OnExpressionsLoaded(EventArgs e)
         {
-            if (ExpressionsLoaded != null)
-            {
-                ExpressionsLoaded(this, e);
-            }
+            ExpressionsLoaded?.Invoke(this, e);
         }
     }
 

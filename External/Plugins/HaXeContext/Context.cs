@@ -28,19 +28,19 @@ namespace HaXeContext
     public class Context : AS2Context.Context
     {
         #region initialization
-        new static readonly protected Regex re_CMD_BuildCommand =
+        protected new static readonly Regex re_CMD_BuildCommand =
             new Regex("@haxe[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
 
-        static readonly protected Regex re_genericType =
+        protected static readonly Regex re_genericType =
             new Regex("(?<gen>[^<]+)<(?<type>.+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        static readonly protected Regex re_Template =
+        protected static readonly Regex re_Template =
             new Regex("<(?<name>[a-z]+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        static public string FLASH_OLD = "flash";
-        static public string FLASH_NEW = "flash9";
-        static private string currentEnv;
-        static private string currentSDK;
+        public static string FLASH_OLD = "flash";
+        public static string FLASH_NEW = "flash9";
+        private static string currentEnv;
+        private static string currentSDK;
         
         private readonly HaXeSettings haxeSettings;
         private readonly Func<string, InstalledSDK> getCustomSDK;

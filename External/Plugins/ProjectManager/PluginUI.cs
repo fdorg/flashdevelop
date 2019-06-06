@@ -176,11 +176,11 @@ namespace ProjectManager
         /// <summary>
         /// Instructions panel link clicked
         /// </summary>
-        private void link_LinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string action = e.Link.LinkData as string;
-            if (action == "create" && NewProject != null) NewProject(sender, e);
-            else if (action == "open" && OpenProject != null) OpenProject(sender, e);
+            if (action == "create" && NewProject is EventHandler newProject) newProject(sender, e);
+            else if (action == "open" && OpenProject is EventHandler openProject) openProject(sender, e);
             else if (action != null && action.StartsWith("import|")) ImportProject?.Invoke(sender, e);
         }
 
@@ -195,7 +195,7 @@ namespace ProjectManager
             {
                 String parent = Path.GetDirectoryName(path);
                 WatcherNode node = tree.NodeMap[parent] as WatcherNode;
-                if (node != null) node.UpdateLater();
+                node?.UpdateLater();
             }
             catch { }
         }
@@ -217,18 +217,19 @@ namespace ProjectManager
         /// <summary>
         /// Happens if you back out
         /// </summary>
-        private void tree_AfterLabelEdit(Object sender, NodeLabelEditEventArgs e)
+        private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             string languageDisplayName = "(" + project.LanguageDisplayName + ")";
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
             {
+                var rename = Rename;
                 if (e.Node is ProjectNode)
                 {
                     var oldName = project.ProjectPath;
                     string label = e.Label;
                     int index = label.IndexOf(languageDisplayName);
                     if (index != -1) label = label.Remove(index).Trim();
-                    string newName = string.Empty;
+                    string newName;
                     try
                     {
                         newName = Path.Combine(project.Directory, label);
@@ -240,7 +241,7 @@ namespace ProjectManager
                         isEditingLabel = false;
                         return;
                     }
-                    if (Rename(oldName, newName))
+                    if (rename(oldName, newName))
                     {
                         PluginBase.MainForm.OpenEditableDocument(newName);
                         try
@@ -254,7 +255,7 @@ namespace ProjectManager
                     }
                     else e.CancelEdit = true;
                 }
-                else if (!Rename(((GenericNode) e.Node).BackingPath, e.Label))
+                else if (!rename(((GenericNode) e.Node).BackingPath, e.Label))
                     e.CancelEdit = true;
             }
             else e.CancelEdit = true;
@@ -275,7 +276,7 @@ namespace ProjectManager
         /// <summary>
         /// Customize the context menu
         /// </summary>
-        private void tree_AfterSelect(Object sender, TreeViewEventArgs e)
+        private void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (tree.SelectedNodes.Count == 0) return;
             Project project = Tree.ProjectOf(tree.SelectedNodes[0] as GenericNode);

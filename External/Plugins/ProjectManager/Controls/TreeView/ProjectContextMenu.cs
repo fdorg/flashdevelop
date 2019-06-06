@@ -171,7 +171,7 @@ namespace ProjectManager.Controls.TreeView
             ToolStripMenuItem item = new ToolStripMenuItem("New " + actualName + "...", image);
             item.Click += delegate
             {
-                if (AddFileFromTemplate != null) AddFileFromTemplate(file, false);
+                AddFileFromTemplate?.Invoke(file, false);
             };
             return item;
         }
@@ -192,9 +192,9 @@ namespace ProjectManager.Controls.TreeView
             String nlabel = TextHelper.GetString("Label.New");
             String flabel = TextHelper.GetString("Label.File");
             ToolStripMenuItem item = new ToolStripMenuItem(nlabel + " " + actual + " " + flabel + "...", image);
-            item.Click += delegate 
+            item.Click += delegate
             {
-                if (AddFileFromTemplate != null) AddFileFromTemplate(file, true);
+                AddFileFromTemplate?.Invoke(file, true);
             };
             return item;
         }
@@ -207,7 +207,7 @@ namespace ProjectManager.Controls.TreeView
         /// Configure ourself to be a menu relevant to the given Project with the
         /// given selected treeview nodes.
         /// </summary>
-        public void Configure(ArrayList nodes, Project inProject)
+        public void Configure(List<TreeNode> nodes, Project inProject)
         {
             base.Items.Clear();
             project = inProject;

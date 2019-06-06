@@ -80,10 +80,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         internal void ResetAutoHideStripControl()
         {
-            if (m_autoHideStripControl != null)
-            {
-                m_autoHideStripControl.Dispose();
-            }
+            m_autoHideStripControl?.Dispose();
             m_autoHideStripControl = null;
         }
 
@@ -743,8 +740,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             FloatWindows.Remove(floatWindow);
 
             if (FloatWindows.Count != 0) return;
-            if (ParentForm == null) return;
-            ParentForm.Focus();
+            ParentForm?.Focus();
         }
 
         public void SetPaneIndex(DockPane pane, int index)
@@ -1014,8 +1010,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnContentAdded(DockContentEventArgs e)
         {
             EventHandler<DockContentEventArgs> handler = (EventHandler<DockContentEventArgs>)Events[ContentAddedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object ContentRemovedEvent = new object();
@@ -1029,8 +1024,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnContentRemoved(DockContentEventArgs e)
         {
             EventHandler<DockContentEventArgs> handler = (EventHandler<DockContentEventArgs>)Events[ContentRemovedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
     }
 }

@@ -26,14 +26,9 @@ namespace HaXeContext
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private String pluginName = "HaxeContext";
-        private String pluginGuid = "ccf2c534-db6b-4c58-b90e-cd0b837e61c5";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Haxe context for the ASCompletion engine.";
-        private String pluginAuth = "FlashDevelop Team";
         private HaXeSettings settingObject;
         private Context contextInstance;
-        private String settingFilename;
+        private string settingFilename;
         private KeyValuePair<string, InstalledSDK> customSDK;
         private int logCount;
 
@@ -42,59 +37,38 @@ namespace HaXeContext
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary>
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = "HaxeContext";
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "ccf2c534-db6b-4c58-b90e-cd0b837e61c5";
 
         /// <summary>
         /// Author of the plugin
         /// </summary>
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary>
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Haxe context for the ASCompletion engine.";
 
         /// <summary>
         /// Web address for help
         /// </summary>
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
+        public object Settings => settingObject;
 
         #endregion
 
@@ -105,10 +79,9 @@ namespace HaXeContext
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
             LintingManager.RegisterLinter("haxe", new DiagnosticsLinter(settingObject));
         }
 
@@ -117,7 +90,7 @@ namespace HaXeContext
         /// </summary>
         public void Dispose()
         {
-            this.SaveSettings();
+            SaveSettings();
             if (Context.TemporaryOutputFile != null && File.Exists(Context.TemporaryOutputFile))
             {
                 File.Delete(Context.TemporaryOutputFile);
@@ -127,13 +100,12 @@ namespace HaXeContext
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.Command:
-                    DataEvent de = e as DataEvent;
-                    if (de == null) return;
+                    if (!(e is DataEvent de)) return;
                     var action = de.Action;
                     if (action == ProjectManagerEvents.RunCustomCommand)
                     {
@@ -142,8 +114,7 @@ namespace HaXeContext
                     }
                     else if (action == ProjectManagerEvents.BuildProject || action == ProjectManagerEvents.TestProject)
                     {
-                        var completionHandler = contextInstance.completionModeHandler as CompletionServerCompletionHandler;
-                        if (completionHandler != null && !completionHandler.IsRunning())
+                        if (contextInstance.completionModeHandler is CompletionServerCompletionHandler completionHandler && !completionHandler.IsRunning())
                             completionHandler.StartServer();
                     }
                     else if (action == ProjectManagerEvents.CleanProject)
@@ -238,10 +209,10 @@ namespace HaXeContext
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, nameof(HaXeContext));
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(HaXeContext));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            Description = TextHelper.GetString("Info.Description");
         }
 
         /// <summary>
@@ -258,13 +229,9 @@ namespace HaXeContext
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new HaXeSettings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (HaXeSettings)obj;
-            }
+            settingObject = new HaXeSettings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = (HaXeSettings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
@@ -272,20 +239,18 @@ namespace HaXeContext
         /// </summary>
         private void ValidateSettings()
         {
-            if (settingObject.InstalledSDKs == null || settingObject.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
+            if (settingObject.InstalledSDKs is null || settingObject.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
             {
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
                 var externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");
-                if (!String.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
+                if (!string.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
                 {
                     InstalledSDKContext.Current = this;
-                    var sdk = new InstalledSDK(this);
-                    sdk.Path = externalSDK;
-                    sdks.Add(sdk);
+                    sdks.Add(new InstalledSDK(this) {Path = externalSDK});
                 }
                 if (settingObject.InstalledSDKs != null)
                 {
-                    char[] slashes = new char[] { '/', '\\' };
+                    char[] slashes = { '/', '\\' };
                     foreach (InstalledSDK oldSdk in settingObject.InstalledSDKs)
                     {
                         string oldPath = oldSdk.Path.TrimEnd(slashes);
@@ -321,18 +286,12 @@ namespace HaXeContext
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged()
-        {
-            if (contextInstance != null) contextInstance.BuildClassPath();
-        }
+        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        private void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        private void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         bool OpenVirtualFileModel(string virtualPath)
         {
@@ -341,20 +300,16 @@ namespace HaXeContext
             var container = virtualPath.Substring(0, p);
             if (!File.Exists(container)) return false;
             var ext = Path.GetExtension(container).ToLower();
-            if (ext == ".swf" || ext == ".swc")
-            {
-                var ctx = ASCompletion.Context.ASContext.GetLanguageContext("as3") ?? contextInstance;
-                var path = new PathModel(container, ctx);
-                var parser = new ContentParser(path.Path);
-                parser.Run();
-                AbcConverter.Convert(parser, path, ctx);
-                var fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
-                FileModel model;
-                if (!path.TryGetFile(fileName, out model)) return false;
-                ASComplete.OpenVirtualFile(model);
-                return true;
-            }
-            return false;
+            if (ext != ".swf" && ext != ".swc") return false;
+            var ctx = ASCompletion.Context.ASContext.GetLanguageContext("as3") ?? contextInstance;
+            var path = new PathModel(container, ctx);
+            var parser = new ContentParser(path.Path);
+            parser.Run();
+            AbcConverter.Convert(parser, path, ctx);
+            var fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
+            if (!path.TryGetFile(fileName, out var model)) return false;
+            ASComplete.OpenVirtualFile(model);
+            return true;
         }
 
         private InstalledSDK GetCustomSDK(string path)
@@ -363,8 +318,7 @@ namespace HaXeContext
             if (customSDK.Key == path) sdk = customSDK.Value;
             else
             {
-                sdk = new InstalledSDK(this);
-                sdk.Path = path;
+                sdk = new InstalledSDK(this) {Path = path};
                 if (sdk.IsValid) customSDK = new KeyValuePair<string, InstalledSDK>(path, sdk);
                 else sdk = null;
             }
@@ -380,7 +334,7 @@ namespace HaXeContext
             sdk.Owner = this;
             sdk.ClassPath = null;
 
-            string path = GetSDKPath(sdk);
+            var path = GetSDKPath(sdk);
             if (path == "") return false;
 
             bool result = 
@@ -395,12 +349,11 @@ namespace HaXeContext
 
         private string GetSDKPath(InstalledSDK sdk)
         {
-            IProject project = PluginBase.CurrentProject;
-            string path = sdk.Path;
-            if (project != null)
-                path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
-            else
-                path = PathHelper.ResolvePath(path);
+            var project = PluginBase.CurrentProject;
+            var path = sdk.Path;
+            path = project != null
+                ? PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath))
+                : PathHelper.ResolvePath(path);
 
             try
             {
@@ -421,35 +374,29 @@ namespace HaXeContext
 
         private bool ValidateHaxeShimSDK(InstalledSDK sdk, string path, string projectPath = "")
         {
-            bool result = false;
-
-            string haxePath = Path.Combine(path, "haxe.exe");
+            var result = false;
+            var haxePath = Path.Combine(path, "haxe.exe");
             if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
-            if (File.Exists(haxePath))
+            if (!File.Exists(haxePath)) return result;
+            var p = StartHiddenProcess(haxePath, "--run show-version", projectPath);
+            var output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            if (p.ExitCode == 0)
             {
-                Process p = StartHiddenProcess(haxePath, "--run show-version", projectPath);
-                string output = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-
-                if (p.ExitCode == 0)
+                var mVer = Regex.Match(output, "^-D haxe-ver=([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*-cp (.*)\\s*");
+                if (mVer.Success)
                 {
-                    Match mVer = Regex.Match(output, "^-D haxe-ver=([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*-cp (.*)\\s*");
-                    if (mVer.Success)
-                    {
-                        sdk.Version = mVer.Groups[1].Value;
-                        sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[3].Value).TrimEnd(Path.DirectorySeparatorChar);
-                        // Get pre-release version from class path, if present
-                        Match mSuffix = Regex.Match(mVer.Groups[3].Value, ".*/" + sdk.Version + "(-[0-9A-Za-z.-]+)/");
-                        if (mSuffix.Success) sdk.Version += mSuffix.Groups[1].Value;
-                        if (mVer.Groups[2].Success) sdk.Version += "+git." + mVer.Groups[2].Value;
-                        sdk.Name = "Haxe Shim " + sdk.Version;
-                        result = true;
-                    }
+                    sdk.Version = mVer.Groups[1].Value;
+                    sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[3].Value).TrimEnd(Path.DirectorySeparatorChar);
+                    // Get pre-release version from class path, if present
+                    var mSuffix = Regex.Match(mVer.Groups[3].Value, ".*/" + sdk.Version + "(-[0-9A-Za-z.-]+)/");
+                    if (mSuffix.Success) sdk.Version += mSuffix.Groups[1].Value;
+                    if (mVer.Groups[2].Success) sdk.Version += "+git." + mVer.Groups[2].Value;
+                    sdk.Name = "Haxe Shim " + sdk.Version;
+                    result = true;
                 }
-
-                p.Close();
             }
-
+            p.Close();
             return result;
         }
 
@@ -481,18 +428,12 @@ namespace HaXeContext
                 p.Close();
             }
 
-            string[] lookup = new string[] {
+            string[] lookup = {
                 Path.Combine(path, "CHANGES.txt"),
                 Path.Combine(path, Path.Combine("extra", "CHANGES.txt")),
                 Path.Combine(path, Path.Combine("doc", "CHANGES.txt"))
             };
-            string descriptor = null;
-            foreach (string p in lookup)
-                if (File.Exists(p))
-                {
-                    descriptor = p;
-                    break;
-                }
+            var descriptor = lookup.FirstOrDefault(File.Exists);
             if (descriptor != null)
             {
                 string raw = File.ReadAllText(descriptor);
@@ -526,14 +467,10 @@ namespace HaXeContext
 
         private bool ValidateUnknownHaxeSDK(InstalledSDK sdk, string path)
         {
-            string haxePath = Path.Combine(path, "haxe.exe");
-            if (File.Exists(haxePath))
-            {
-                sdk.Version = "0.0.0";
-                sdk.Name = "Haxe ?";
-                return true;
-            }
-            return false;
+            if (!File.Exists(Path.Combine(path, "haxe.exe"))) return false;
+            sdk.Version = "0.0.0";
+            sdk.Name = "Haxe ?";
+            return true;
         }
 
         private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
@@ -547,12 +484,9 @@ namespace HaXeContext
             pi.UseShellExecute = false;
             pi.CreateNoWindow = true;
             pi.WindowStyle = ProcessWindowStyle.Hidden;
-
             return Process.Start(pi);
         }
 
         #endregion
-
     }
-
 }

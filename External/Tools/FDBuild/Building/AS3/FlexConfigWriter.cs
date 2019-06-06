@@ -3,7 +3,7 @@ using System.Text;
 using System.Xml;
 using ProjectManager.Projects.AS3;
 using System.IO;
-using System.Collections;
+using System.Linq;
 
 
 namespace FDBuild.Building.AS3
@@ -264,8 +264,7 @@ namespace FDBuild.Building.AS3
             WriteAttributeString("append", "true");
 
             // build classpaths
-            ArrayList classPaths = new ArrayList(project.AbsoluteClasspaths);
-
+            var classPaths = project.AbsoluteClasspaths.ToList();
             foreach (string extraClassPath in extraClasspaths)
                 if (Directory.Exists(extraClassPath))
                     classPaths.Add(extraClassPath);

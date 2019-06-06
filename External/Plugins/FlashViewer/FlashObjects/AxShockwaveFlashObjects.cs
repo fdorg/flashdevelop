@@ -816,28 +816,24 @@ namespace AxShockwaveFlashObjects {
             }
         }
         
-        internal void RaiseOnOnReadyStateChange(object sender, _IShockwaveFlashEvents_OnReadyStateChangeEvent e) {
-            if ((this.OnReadyStateChange != null)) {
-                this.OnReadyStateChange(sender, e);
-            }
+        internal void RaiseOnOnReadyStateChange(object sender, _IShockwaveFlashEvents_OnReadyStateChangeEvent e)
+        {
+            OnReadyStateChange?.Invoke(sender, e);
         }
         
-        internal void RaiseOnOnProgress(object sender, _IShockwaveFlashEvents_OnProgressEvent e) {
-            if ((this.OnProgress != null)) {
-                this.OnProgress(sender, e);
-            }
+        internal void RaiseOnOnProgress(object sender, _IShockwaveFlashEvents_OnProgressEvent e)
+        {
+            OnProgress?.Invoke(sender, e);
         }
         
-        internal void RaiseOnFSCommand(object sender, _IShockwaveFlashEvents_FSCommandEvent e) {
-            if ((this.FSCommand != null)) {
-                this.FSCommand(sender, e);
-            }
+        internal void RaiseOnFSCommand(object sender, _IShockwaveFlashEvents_FSCommandEvent e)
+        {
+            FSCommand?.Invoke(sender, e);
         }
         
-        internal void RaiseOnFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e) {
-            if ((this.FlashCall != null)) {
-                this.FlashCall(sender, e);
-            }
+        internal void RaiseOnFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        {
+            FlashCall?.Invoke(sender, e);
         }
     }
     

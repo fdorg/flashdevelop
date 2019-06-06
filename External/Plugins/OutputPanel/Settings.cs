@@ -10,11 +10,11 @@ namespace OutputPanel
     [Serializable]
     public class Settings
     {
-        private Boolean showOnOutput = false;
-        private Boolean showOnProcessEnd = false;
-        private Boolean useLegacyColoring = false;
+        private bool showOnOutput = false;
+        private bool showOnProcessEnd = false;
+        private bool useLegacyColoring = false;
         private List<HighlightMarker> highlightMarkers;
-        private Boolean wrapOutput = false;
+        private bool wrapOutput = false;
         private ClearModeAction clearMode = ClearModeAction.OnEveryProcess;
 
         /// <summary> 
@@ -22,7 +22,7 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Show On Output")] 
         [LocalizedDescription("OutputPanel.Description.ShowOnOutput"), DefaultValue(false)]
-        public Boolean ShowOnOutput 
+        public bool ShowOnOutput 
         {
             get { return this.showOnOutput; }
             set { this.showOnOutput = value; }
@@ -33,7 +33,7 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Show On Process End")] 
         [LocalizedDescription("OutputPanel.Description.ShowOnProcessEnd"), DefaultValue(false)]
-        public Boolean ShowOnProcessEnd 
+        public bool ShowOnProcessEnd 
         {
             get { return this.showOnProcessEnd; }
             set { this.showOnProcessEnd = value; }
@@ -44,7 +44,7 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Wrap Output")]
         [LocalizedDescription("OutputPanel.Description.WrapOutput"), DefaultValue(false)]
-        public Boolean WrapOutput
+        public bool WrapOutput
         {
             get { return this.wrapOutput; }
             set { this.wrapOutput = value; }
@@ -55,7 +55,7 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Use Legacy Coloring")]
         [LocalizedDescription("OutputPanel.Description.UseLegacyColoring"), DefaultValue(false)]
-        public Boolean UseLegacyColoring
+        public bool UseLegacyColoring
         {
             get { return this.useLegacyColoring; }
             set { this.useLegacyColoring = value; }
@@ -105,18 +105,18 @@ namespace OutputPanel
     [Serializable]
     public class HighlightMarker
     {
-        public String marker = "Info:";
+        public string marker = "Info:";
         public LogLevel level = LogLevel.Debug;
         
         public HighlightMarker(){}
-        public HighlightMarker(String marker, LogLevel level)
+        public HighlightMarker(string marker, LogLevel level)
         {
             this.marker = marker;
             this.level = level;
         }
 
         [LocalizedDescription("OutputPanel.Description.Marker")]
-        public String Marker
+        public string Marker
         {
             get { return this.marker; }
             set { this.marker = value; }

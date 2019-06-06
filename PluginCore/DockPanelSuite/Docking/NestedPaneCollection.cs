@@ -42,11 +42,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return;
 
             NestedPaneCollection oldNestedPanes = (pane.NestedPanesContainer == null) ? null : pane.NestedPanesContainer.NestedPanes;
-            if (oldNestedPanes != null)
-                oldNestedPanes.InternalRemove(pane);
+            oldNestedPanes?.InternalRemove(pane);
             Items.Add(pane);
-            if (oldNestedPanes != null)
-                oldNestedPanes.CheckFloatWindowDispose();
+            oldNestedPanes?.CheckFloatWindowDispose();
         }
 
         private void CheckFloatWindowDispose()

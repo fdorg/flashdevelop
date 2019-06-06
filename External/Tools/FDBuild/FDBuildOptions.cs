@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using Mono.GetOptions;
 using System.IO;
 
@@ -6,7 +6,7 @@ namespace FDBuild
 {
     public class FDBuildOptions : Options
     {
-        ArrayList extraClasspaths;
+        readonly List<string> extraClasspaths;
         string language;
         public string ProjectFile;
 
@@ -14,7 +14,7 @@ namespace FDBuild
         {
             NoTrace = false;
             ProjectFile = "";
-            extraClasspaths = new ArrayList();
+            extraClasspaths = new List<string>();
             ProcessArgs(args);
         }
 
@@ -73,9 +73,6 @@ namespace FDBuild
             }
         }
 
-        public string[] ExtraClasspaths
-        {
-            get { return extraClasspaths.ToArray(typeof(string)) as string[]; }
-        }
+        public string[] ExtraClasspaths => extraClasspaths.ToArray();
     }
 }

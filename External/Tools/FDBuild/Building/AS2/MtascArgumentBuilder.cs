@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Collections;
+using System.Linq;
 using ProjectManager.Projects.AS2;
 
 namespace ProjectManager.Building.AS2
@@ -17,11 +17,8 @@ namespace ProjectManager.Building.AS2
         public void AddClassPaths(params string[] extraClassPaths)
         {
             // build classpaths
-            ArrayList classPaths = new ArrayList(project.AbsoluteClasspaths);
-
-            foreach (string extraClassPath in extraClassPaths)
-                classPaths.Add(extraClassPath);
-
+            var classPaths = project.AbsoluteClasspaths.ToList();
+            classPaths.AddRange(extraClassPaths);
             foreach (string classPath in classPaths)
                 if (Directory.Exists(classPath)) Add("-cp", "\"" + classPath + "\""); // surround with quotes
         }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mono.GetOptions
 {
     using Mono;
@@ -18,9 +20,9 @@ namespace Mono.GetOptions
             this.appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
             this.appAboutDetails = "Add a [assembly: Mono.About(\"Here goes the short about details\")] to your assembly";
             this.appUsageComplement = "Add a [assembly: Mono.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
-            this.list = new ArrayList();
-            this.arguments = new ArrayList();
-            this.argumentsTail = new ArrayList();
+            this.list = new List<OptionDetails>();
+            this.arguments = new List<string>();
+            this.argumentsTail = new List<string>();
             this.argumentProcessor = null;
             this.HasSecondLevelHelp = false;
             this.bannerAlreadyShown = false;
@@ -75,8 +77,8 @@ namespace Mono.GetOptions
 
         public string[] ExpandResponseFiles(string[] args)
         {
-            ArrayList list1 = new ArrayList();
-            string[] textArray1 = args;
+            var list1 = new List<string>();
+            var textArray1 = args;
             for (int num1 = 0; num1 < textArray1.Length; num1++)
             {
                 string text1 = textArray1[num1];
@@ -88,7 +90,7 @@ namespace Mono.GetOptions
                         StreamReader reader1 = new StreamReader(text1.Substring(1));
                         while ((text2 = reader1.ReadLine()) != null)
                         {
-                            list1.AddRange(text2.Split(new char[0]));
+                            list1.AddRange(text2.Split());
                         }
                         reader1.Close();
                     }
@@ -107,13 +109,10 @@ namespace Mono.GetOptions
                     list1.Add(text1);
                 }
             }
-            return (string[]) list1.ToArray(typeof(string));
+            return list1.ToArray();
         }
 
-        private object[] GetAssemblyAttributes(Type type)
-        {
-            return this.entry.GetCustomAttributes(type, false);
-        }
+        private object[] GetAssemblyAttributes(Type type) => this.entry.GetCustomAttributes(type, false);
 
         private string[] GetAssemblyAttributeStrings(Type type)
         {
@@ -151,10 +150,7 @@ namespace Mono.GetOptions
             }
         }
 
-        private static int IndexOfAny(string where, params char[] what)
-        {
-            return where.IndexOfAny(what);
-        }
+        private static int IndexOfAny(string where, params char[] what) => @where.IndexOfAny(what);
 
         private void Initialize(Options optionBundle)
         {
@@ -184,7 +180,7 @@ namespace Mono.GetOptions
             {
                 MemberInfo info1 = infoArray1[num1];
                 object[] objArray1 = info1.GetCustomAttributes(typeof(OptionAttribute), true);
-                if ((objArray1 != null) && (objArray1.Length > 0))
+                if (objArray1.Length > 0)
                 {
                     OptionDetails details1 = new OptionDetails(info1, (OptionAttribute) objArray1[0], optionBundle);
                     this.list.Add(details1);
@@ -193,7 +189,7 @@ namespace Mono.GetOptions
                 else
                 {
                     objArray1 = info1.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
-                    if ((objArray1 != null) && (objArray1.Length > 0))
+                    if (objArray1.Length > 0)
                     {
                         this.AddArgumentProcessor(info1);
                     }
@@ -208,9 +204,9 @@ namespace Mono.GetOptions
 
         public string[] NormalizeArgs(string[] args)
         {
-            bool flag1 = true;
-            ArrayList list1 = new ArrayList();
-            string[] textArray1 = this.ExpandResponseFiles(args);
+            var flag1 = true;
+            var list1 = new List<string>();
+            var textArray1 = ExpandResponseFiles(args);
             for (int num2 = 0; num2 < textArray1.Length; num2++)
             {
                 string text1 = textArray1[num2];
@@ -262,7 +258,7 @@ namespace Mono.GetOptions
                 list1.Add(text1);
             Label_0155:;
             }
-            return (string[]) list1.ToArray(typeof(string));
+            return list1.ToArray();
         }
 
         public string[] ProcessArgs(string[] args)
@@ -311,10 +307,7 @@ namespace Mono.GetOptions
                     finally
                     {
                         IDisposable disposable1 = enumerator1 as IDisposable;
-                        if (disposable1 != null)
-                        {
-                            disposable1.Dispose();
-                        }
+                        disposable1?.Dispose();
                     }
                 Label_00DA:
                     if (!flag1)
@@ -336,10 +329,7 @@ namespace Mono.GetOptions
                 finally
                 {
                     IDisposable disposable2 = enumerator2 as IDisposable;
-                    if (disposable2 != null)
-                    {
-                        disposable2.Dispose();
-                    }
+                    disposable2?.Dispose();
                 }
                 IEnumerator enumerator3 = this.argumentsTail.GetEnumerator();
             Label_0151:
@@ -355,12 +345,9 @@ namespace Mono.GetOptions
                 finally
                 {
                     IDisposable disposable3 = enumerator3 as IDisposable;
-                    if (disposable3 != null)
-                    {
-                        disposable3.Dispose();
-                    }
+                    disposable3?.Dispose();
                 }
-                return (string[]) this.arguments.ToArray(typeof(string));
+                return arguments.ToArray();
             }
             catch (Exception exception1)
             {
@@ -382,7 +369,7 @@ namespace Mono.GetOptions
             }
             else
             {
-                object[] objArray1 = new object[] { argument } ;
+                object[] objArray1 = { argument } ;
                 this.argumentProcessor.Invoke(this.optionBundle, objArray1);
             }
         }
@@ -414,7 +401,7 @@ namespace Mono.GetOptions
         {
             if (!this.bannerAlreadyShown)
             {
-                string[] textArray1 = new string[] { this.appTitle, "  ", this.appVersion, " - ", this.appCopyright } ;
+                string[] textArray1 = { this.appTitle, "  ", this.appVersion, " - ", this.appCopyright } ;
                 Console.WriteLine(string.Concat(textArray1));
             }
             this.bannerAlreadyShown = true;
@@ -425,19 +412,18 @@ namespace Mono.GetOptions
             this.ShowTitleLines();
             Console.WriteLine(this.Usage);
             Console.WriteLine("Options:");
-            ArrayList list1 = new ArrayList(this.list.Count);
-            int num1 = 0;
-            IEnumerator enumerator1 = this.list.GetEnumerator();
+            var list1 = new List<string>(list.Count);
+            var num1 = 0;
+            var enumerator1 = this.list.GetEnumerator();
         Label_003B:
             try
             {
                 if (enumerator1.MoveNext())
                 {
-                    OptionDetails details1 = (OptionDetails) enumerator1.Current;
+                    OptionDetails details1 = enumerator1.Current;
                     if (details1.SecondLevelHelp == showSecondLevelHelp)
                     {
-                        char[] chArray1 = new char[] { '\n' } ;
-                        string[] textArray1 = details1.ToString().Split(chArray1);
+                        string[] textArray1 = details1.ToString().Split('\n');
                         string[] textArray3 = textArray1;
                         for (int num4 = 0; num4 < textArray3.Length; num4++)
                         {
@@ -455,11 +441,8 @@ namespace Mono.GetOptions
             }
             finally
             {
-                IDisposable disposable1 = enumerator1 as IDisposable;
-                if (disposable1 != null)
-                {
-                    disposable1.Dispose();
-                }
+                IDisposable disposable1 = enumerator1;
+                disposable1?.Dispose();
             }
             num1 += 2;
             IEnumerator enumerator2 = list1.GetEnumerator();
@@ -471,8 +454,7 @@ namespace Mono.GetOptions
                     return;
                 }
                 string text2 = (string) enumerator2.Current;
-                char[] chArray2 = new char[] { '\t' } ;
-                string[] textArray2 = text2.Split(chArray2);
+                string[] textArray2 = text2.Split('\t');
                 Console.Write(textArray2[0].PadRight(num1));
                 Console.WriteLine(textArray2[1]);
                 if (textArray2.Length > 2)
@@ -489,10 +471,7 @@ namespace Mono.GetOptions
             finally
             {
                 IDisposable disposable2 = enumerator2 as IDisposable;
-                if (disposable2 != null)
-                {
-                    disposable2.Dispose();
-                }
+                disposable2?.Dispose();
             }
         }
 
@@ -521,10 +500,7 @@ namespace Mono.GetOptions
             finally
             {
                 IDisposable disposable1 = enumerator1 as IDisposable;
-                if (disposable1 != null)
-                {
-                    disposable1.Dispose();
-                }
+                disposable1?.Dispose();
             }
             Console.WriteLine();
         }
@@ -537,21 +513,9 @@ namespace Mono.GetOptions
 
 
         // Properties
-        public string AboutDetails
-        {
-            get
-            {
-                return this.appAboutDetails;
-            }
-        }
+        public string AboutDetails => this.appAboutDetails;
 
-        public string Usage
-        {
-            get
-            {
-                return ("Usage: " + this.appExeName + " [options] " + this.appUsageComplement);
-            }
-        }
+        public string Usage => ("Usage: " + this.appExeName + " [options] " + this.appUsageComplement);
 
 
         // Fields
@@ -564,16 +528,15 @@ namespace Mono.GetOptions
         private string appUsageComplement;
         private string appVersion;
         private MethodInfo argumentProcessor;
-        private ArrayList arguments;
-        private ArrayList argumentsTail;
+        private readonly List<string> arguments;
+        private readonly List<string> argumentsTail;
         private bool bannerAlreadyShown;
         private bool breakSingleDashManyLettersIntoManyOptions;
         private bool endOptionProcessingWithDoubleDash;
         private Assembly entry;
         private bool HasSecondLevelHelp;
-        private ArrayList list;
+        private readonly List<OptionDetails> list;
         private Options optionBundle;
         private OptionsParsingMode parsingMode;
     }
 }
-
