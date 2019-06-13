@@ -5,7 +5,7 @@
 		}
 		
 		private function f3():Function {
-			
+			return null;
 		}
 		
 		private function f1(f:Function):void {}

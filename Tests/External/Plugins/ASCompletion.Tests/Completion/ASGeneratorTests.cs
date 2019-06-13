@@ -303,10 +303,21 @@ namespace ASCompletion.Completion
 
                 [
                     Test,
-                    TestCaseSource(nameof(PromoteLocalTestCases)),
                     TestCaseSource(nameof(PromoteLocalWithExplicitScopeTestCases)),
                 ]
-                public string AS3(string fileName)
+                public string PromoteLocalWithExplicitScope(string fileName)
+                {
+                    ASContext.CommonSettings.GenerateScope = true;
+                    var result = PromoteLocalImpl(fileName);
+                    ASContext.CommonSettings.GenerateScope = false;
+                    return result;
+                }
+
+                [
+                    Test,
+                    TestCaseSource(nameof(PromoteLocalWithExplicitScopeTestCases)),
+                ]
+                public string PromoteLocalImpl(string fileName)
                 {
                     SetAs3Features(sci);
                     SetSrc(sci, ReadAllTextAS3(fileName));
@@ -321,7 +332,7 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateFunction : GenerateJob
+            public class GenerateFunctionTests : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
@@ -435,169 +446,13 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
 
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsFalse"))
-                                .SetName("Generate private function");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.FunctionPublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsFalse"))
-                                .SetName("Generate public function");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103"))
-                                .SetName("Issue103. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_2"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_2"))
-                                .SetName("Issue103. Case 2")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_3"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_3"))
-                                .SetName("Issue103. Case 3")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_4"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_4"))
-                                .SetName("Issue103. Case 4")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_5"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_5"))
-                                .SetName("Issue103. Case 5")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_6"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_6"))
-                                .SetName("Issue103. Case 6")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_7"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_7"))
-                                .SetName("Issue103. Case 7")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_8"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_8"))
-                                .SetName("Issue103. Case 8")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_9"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_9"))
-                                .SetName("Issue103. Case 9")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_10"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_10"))
-                                .SetName("Issue103. Case 10")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_11"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_11"))
-                                .SetName("Issue103. Case 11")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_12"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_12"))
-                                .SetName("Issue103. Case 12")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13"))
-                                .SetName("Issue103. Case 13")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
-                            .SetName("Issue103. Case 14")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14_1"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1"))
-                            .SetName("Issue103. Case 14.1")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_15"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_15"))
-                                .SetName("Issue103. Case 15")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_16"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_16"))
-                                .SetName("Issue103. Case 16")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_17"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_17"))
-                                .SetName("Issue103. Case 17")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_18"))
-                                .SetName("Issue103. Case 18")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_19"))
-                                .SetName("Issue103. Case 19")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_20"))
-                                .SetName("Issue103. Case 20")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_21"))
-                                .SetName("Issue103. Case 21")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_22"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_22"))
-                                .SetName("Issue103. Case 22")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645"))
-                                .SetName("Issue1645. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645_2"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
-                                .SetName("Issue1645. Case 2")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1780_1"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1780_1"))
-                                .SetName("foo(Math.round(1.5))")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1780_2"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1780_2"))
-                                .SetName("foo(round(1.5))")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1836"), GeneratorJobType.FunctionPublic)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1836"))
-                                .SetName("Issue 1836. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1836");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => HaxeImpl(sourceText, job, sci);
-
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetAs3Features(sci);
                     return Common(sourceText, job, sci);
                 }
 
-                internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string GenerateFunction(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetHaxeFeatures(sci);
                     return Common(sourceText, job, sci);
@@ -615,12 +470,12 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateFunctionWithReturnDefaultValue : GenerateJob
+            public class GenerateFunctionWithReturnDefaultValueTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateFunctionSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunctionTests.DeclarationModifierOrder;
                     ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.ReturnDefaultValue;
                 }
 
@@ -667,62 +522,20 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
-                            .SetName("Issue103. Case 13")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
-                            .SetName("Issue103. Case 14")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14_1"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14_1"))
-                            .SetName("Issue103. Case 14.1")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_18"))
-                            .SetName("Issue103. Case 18")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_19"))
-                            .SetName("Issue103. Case 19")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_20"))
-                            .SetName("Issue103. Case 20")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_21"))
-                            .SetName("Issue103. Case 21")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645_2"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645_2"))
-                            .SetName("Issue1645. Case 2")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.HaxeImpl(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunctionTests.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
-            public class GenerateFunctionWithExplicitScope : GenerateJob
+            public class GenerateFunctionWithExplicitScopeTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateFunctionSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunctionTests.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateFunctionWithExplicitScopeTestCases
                 {
                     get
                     {
@@ -765,64 +578,21 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsTrue"))
-                            .SetName("Generate private function");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.FunctionPublic)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsTrue"))
-                            .SetName("Generate public function");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.HaxeImpl(sourceText, job, sci);
+                [Test, TestCaseSource(nameof(GenerateFunctionWithExplicitScopeTestCases))]
+                public string GenerateFunctionWithExplicitScope(string sourceText, GeneratorJobType job) => GenerateFunctionTests.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
-            public class GenerateFunctionWithDefaultModifierDeclaration : GenerateJob
+            public class GenerateFunctionWithProtectedDeclarationTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateFunctionSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
-                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunctionWithDefaultModifier"))
-                            .SetName("Generate private function with default modifier declaration");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticFunction"), GeneratorJobType.Function)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticFunctionWithDefaultModifier"))
-                            .SetName("Generate private static function with default modifier declaration");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.HaxeImpl(sourceText, job, sci);
-            }
-
-            [TestFixture]
-            public class GenerateFunctionWithProtectedDeclaration : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void GenerateFunctionSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunctionTests.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateProtectedDeclarations = true;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateFunctionWithProtectedDeclarationTestCases
                 {
                     get
                     {
@@ -832,17 +602,17 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
+                [Test, TestCaseSource(nameof(GenerateFunctionWithProtectedDeclarationTestCases))]
+                public string GenerateFunctionWithProtectedDeclaration(string sourceText, GeneratorJobType job) => GenerateFunctionTests.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
-            public class AssignStatementToVar : GenerateJob
+            public class AssignStatementToVarTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void AssignStatementToVarSetUp() => ASContext.Context.Settings.GenerateImports = true;
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> AssignStatementToVarTestCases
                 {
                     get
                     {
@@ -1050,7 +820,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                static IEnumerable<TestCaseData> AS3Issue1764TestCases
+                static IEnumerable<TestCaseData> AssignStatementToVarIssue1764TestCases
                 {
                     get
                     {
@@ -1089,7 +859,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                static IEnumerable<TestCaseData> AS3Issue2151TestCases
+                static IEnumerable<TestCaseData> AssignStatementToVarIssue2151TestCases
                 {
                     get
                     {
@@ -1100,7 +870,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                static IEnumerable<TestCaseData> AS3Issue2153TestCases
+                static IEnumerable<TestCaseData> AssignStatementToVarIssue2153TestCases
                 {
                     get
                     {
@@ -1121,191 +891,15 @@ namespace ASCompletion.Completion
 
                 [
                     Test,
-                    TestCaseSource(nameof(AS3TestCases)),
-                    TestCaseSource(nameof(AS3Issue1764TestCases)),
-                    TestCaseSource(nameof(AS3Issue2151TestCases)),
-                    TestCaseSource(nameof(AS3Issue2153TestCases)),
+                    TestCaseSource(nameof(AssignStatementToVarTestCases)),
+                    TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
+                    TestCaseSource(nameof(AssignStatementToVarIssue2151TestCases)),
+                    TestCaseSource(nameof(AssignStatementToVarIssue2153TestCases)),
                 ]
-                public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
-
-                internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
+                public string AssignStatementToVar(string sourceText, GeneratorJobType job, bool isUseTabs)
                 {
                     sci.IsUseTabs = isUseTabs;
                     SetAs3Features(sci);
-                    return Common(sourceText, job, sci);
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useSpaces"))
-                                .SetName("Assign statement to var. Use spaces instead of tabs.");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useTabs"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useTabs"))
-                                .SetName("Assign statement to var. Use tabs instead of spaces.");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromFieldOfItemOfArray"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromFieldOfItemOfArray"))
-                                .SetName("from a[0][0].length");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap"))
-                                .SetName("from new Map<String, Int>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap2"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap2"))
-                                .SetName("from new Map<Map<String, Int>, Int>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap3"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap3"))
-                                .SetName("from new Map<String, Array<Map<String, Int>>>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap4"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap4"))
-                                .SetName("from new Map<String, Array<Map<String, Int->Int->Int>>>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback_useSpaces"))
-                                .SetName("from callback");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback2_useSpaces"))
-                                .SetName("from callback 2");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback3_useSpaces"))
-                                .SetName("from callback 3");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromClass_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromClass_useSpaces"))
-                                .SetName("from Class");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray_useSpaces"))
-                                .SetName("from new Array<Int>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray2_useSpaces"))
-                                .SetName("from new Array<Int->Int>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray3_useSpaces"))
-                                .SetName("from new Array<{name:String, factory:String->{x:Int, y:Int}}>()");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromDynamic_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromDynamic_useSpaces"))
-                                .SetName("from {}");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCastExp"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCastExp"))
-                                .SetName("cast(d, String)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCastExp2"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCastExp2"))
-                                .SetName("cast (d, String)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCastExp3"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCastExp3"))
-                                .SetName("cast ( d, String )");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1696_1"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1696_1"))
-                                .SetName("issue 1696")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_1"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_1"))
-                                .SetName("from (function foo():haxe.ds.Vector<haxe.Timer->Type.ValueType> ...)()")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_2"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_2"))
-                                .SetName("from (function foo():haxe.ds.Vector<haxe.Timer> ...)()")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_3"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_3"))
-                                .SetName("from (function foo():haxe.Timer ...)()")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_4"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_4"))
-                                .SetName("from (function foo():haxe.Timer->{v:haxe.ds.Vector<Int>->Type.ValueType} ...)()")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1749_6"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1749_6"))
-                                .SetName("Issue 1749. Modulo")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1766"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1766"))
-                                .SetName("from [1 => '1', 2 = '2']")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_operator_is"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_operator_is"))
-                                .SetName("Issue 1918. (v is String)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1918");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_unsafecast"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_unsafecast"))
-                                .SetName("Issue 1908. Unsafe cast")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
-                            .SetName("Issue 1908. untyped")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1880_1"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1880_1"))
-                            .SetName("~/regex/|")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs)
-                {
-                    SetHaxeFeatures(sci);
-                    return HaxeImpl(sourceText, job, isUseTabs, sci);
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCasesSdk330
-                {
-                    get
-                    {
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1992_typecheck"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1992_typecheck"))
-                            .SetName("Issue 1992. from (v:Iterable<Dynamic>)")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1992_typecheck_2"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1992_typecheck_2"))
-                            .SetName("Issue 1992. from (v:Iterable<Iterable<Dynamic>>)")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCasesSdk330))]
-                public string HaxeSdk330(string sourceText, GeneratorJobType job, bool isUseTabs)
-                {
-                    SetHaxeFeatures(sci);
-                    ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = "3.3.0"}};
-                    return HaxeImpl(sourceText, job, isUseTabs, sci);
-                }
-
-                internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
-                {
-                    sci.IsUseTabs = isUseTabs;
-                    SetSrc(sci, sourceText);
-                    return Common(sourceText, job, sci);
-                }
-
-                internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
-                {
                     SetSrc(sci, sourceText);
                     var list = new MemberList();
                     list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
@@ -1317,7 +911,7 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateVariable : GenerateJob
+            public class GenerateVariableTests : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "inline", "override" };
 
@@ -1327,7 +921,7 @@ namespace ASCompletion.Completion
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateVariableTestCases
                 {
                     get
                     {
@@ -1378,65 +972,12 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.Variable)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateVariable_generateExplicitScopeIsFalse"))
-                            .SetName("Generate private variable");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.Variable)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticVariable"))
-                            .SetName("Generate private static variable");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.VariablePublic)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_generateExplicitScopeIsFalse"))
-                            .SetName("Generate public variable");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.VariablePublic)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse"))
-                            .SetName("Generate public static variable");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forSomeType"), GeneratorJobType.VariablePublic)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forSomeType"))
-                            .SetName("From SomeType.foo|");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType"), GeneratorJobType.VariablePublic)
-                            .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType"))
-                            .SetName("From CurrentType.foo|");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_1"), GeneratorJobType.Variable)
-                            .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_1"))
-                            .SetName("Generate Variable. Issue 1460. Case 1")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
-                            .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_2"))
-                            .SetName("Generate Variable. Issue 1460. Case 2")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
-                            .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
-                            .SetName("Generate Variable. Issue 1460. Case 3")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant"), GeneratorJobType.Constant)
-                            .Returns(ReadAllTextHaxe("AfterGenerateConstant"))
-                            .SetName("Generate constant");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
-                            .Returns(ReadAllTextHaxe("AfterGenerateConstant_issue1460"))
-                            .SetName("Generate Constant. Issue 1460. Case 4")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => HaxeImpl(sourceText, job, sci);
+                [Test, TestCaseSource(nameof(GenerateVariableTestCases))]
+                public string GenerateVariable(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, job, sci);
-                }
-                
-                internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
                     return Common(sourceText, job, sci);
                 }
 
@@ -1449,16 +990,16 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateVariableWithExplicitScope : GenerateJob
+            public class GenerateVariableWithExplicitScopeTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariableTests.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateVariableWithExplicitScopeTestCases
                 {
                     get
                     {
@@ -1489,51 +1030,21 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateVariable_generateExplicitScopeIsTrue"))
-                                .SetName("Generate private variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_generateExplicitScopeIsTrue"))
-                                .SetName("Generate public variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue"))
-                                .SetName("Generate public static variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forSomeType"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forSomeType"))
-                                .SetName("From SomeType.foo| variable");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType"), GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType"))
-                                .SetName("From CurrentType.foo| variable");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.HaxeImpl(sourceText, job, sci);
+                [Test, TestCaseSource(nameof(GenerateVariableWithExplicitScopeTestCases))]
+                public string GenerateVariableWithExplicitScope(string sourceText, GeneratorJobType job) => GenerateVariableTests.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
-            public class GenerateVariableWithDefaultModifierDeclaration : GenerateJob
+            public class GenerateVariableWithDefaultModifierDeclarationTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariableTests.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateVariableWithDefaultModifierDeclarationTestCases
                 {
                     get
                     {
@@ -1548,39 +1059,21 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateVariableWithDefaultModifier"))
-                                .SetName("Generate private variable with default modifier declration");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable"), GeneratorJobType.Variable)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticVariableWithDefaultModifier"))
-                                .SetName("Generate private static variable with default modifier declration");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.HaxeImpl(sourceText, job, sci);
+                [Test, TestCaseSource(nameof(GenerateVariableWithDefaultModifierDeclarationTestCases))]
+                public string GenerateVariableWithDefaultModifierDeclaration(string sourceText, GeneratorJobType job) => GenerateVariableTests.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
-            public class GenerateVariableWithProtectedDeclaration : GenerateJob
+            public class GenerateVariableWithProtectedDeclarationTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariableTests.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateProtectedDeclarations = true;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateVariableWithProtectedDeclarationTestCases
                 {
                     get
                     {
@@ -1591,21 +1084,21 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
+                [Test, TestCaseSource(nameof(GenerateVariableWithProtectedDeclarationTestCases))]
+                public string GenerateVariableWithProtectedDeclaration(string sourceText, GeneratorJobType job) => GenerateVariableTests.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
-            public class GenerateVariableWithGenerateImports : GenerateJob
+            public class GenerateVariableWithGenerateImportsTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariableTests.DeclarationModifierOrder;
                     ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateVariableWithGenerateTestCases
                 {
                     get
                     {
@@ -1622,41 +1115,19 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string fileName, GeneratorJobType job)
+                [Test, TestCaseSource(nameof(GenerateVariableWithGenerateTestCases))]
+                public string GenerateVariableWithGenerate(string fileName, GeneratorJobType job)
                 {
                     SetAs3Features(sci);
                     SetCurrentFileName(GetFullPathAS3(fileName));
-                    return GenerateVariable.Common(ReadAllTextAS3(fileName), job, sci);
-                }
-                
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData("BeforeGeneratePublicVariable_issue1734_1", GeneratorJobType.VariablePublic)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_issue1734_1"))
-                                .SetName("Issue1734. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1734");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName, GeneratorJobType job)
-                {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return GenerateVariable.Common(ReadAllTextHaxe(fileName), job, sci);
+                    return GenerateVariableTests.Common(ReadAllTextAS3(fileName), job, sci);
                 }
             }
 
             [TestFixture]
-            public class GenerateEventHandler : GenerateJob
+            public class GenerateEventHandlerTests : GenerateJob
             {
-                internal static readonly string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
-
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateEventHandlerTestCases
                 {
                     get
                     {
@@ -1679,40 +1150,13 @@ namespace ASCompletion.Completion
 
                 [
                     Test, 
-                    TestCaseSource(nameof(AS3TestCases)),
+                    TestCaseSource(nameof(GenerateEventHandlerTestCases)),
                 ]
-                public string AS3(string sourceText, string[] autoRemove) => AS3Impl(sourceText, autoRemove, sci);
+                public string GenerateEventHandler(string sourceText, string[] autoRemove) => GenerateEventHandlerImpl(sourceText, autoRemove, sci);
 
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new string[0])
-                            .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withoutAutoRemove"))
-                            .SetName("Generate event handler without auto remove");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                            .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove"))
-                            .SetName("Generate event handler with auto remove");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove) => HaxeImpl(sourceText, autoRemove, sci);
-
-                internal static string AS3Impl(string sourceText, string[] autoRemove, ScintillaControl sci)
+                internal static string GenerateEventHandlerImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, autoRemove, sci);
-                }
-
-                internal static string HaxeImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sourceText, autoRemove, sci);
-                }
-
-                static string Common(string sourceText, string[] autoRemove, ScintillaControl sci)
-                {
                     ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
                     SetSrc(sci, sourceText);
                     var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
@@ -1725,12 +1169,12 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateEventHandlerWithExplicitScope : GenerateJob
+            public class GenerateEventHandlerWithExplicitScopeTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateEventHandlerSetup() => ASContext.CommonSettings.GenerateScope = true;
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateEventHandlerWithExplicitScopeTestCases
                 {
                     get
                     {
@@ -1741,59 +1185,14 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, string[] autoRemove) => GenerateEventHandler.AS3Impl(sourceText, autoRemove, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue"))
-                                .SetName("Generate event handler with auto remove");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.HaxeImpl(sourceText, autoRemove, sci);
+                [Test, TestCaseSource(nameof(GenerateEventHandlerWithExplicitScopeTestCases))]
+                public string GenerateEventHandlerWithExplicitScope(string sourceText, string[] autoRemove) => GenerateEventHandlerTests.GenerateEventHandlerImpl(sourceText, autoRemove, sci);
             }
 
             [TestFixture]
-            public class GenerateEventHandlerWithDefaultModifierDeclaration : GenerateJob
+            public class GenerateGetterSetterTests : GenerateJob
             {
-                [TestFixtureSetUp]
-                public void GenerateEventHandlerSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateEventHandler.DeclarationModifierOrder;
-                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateEventHandlerWithDefaultModifier"))
-                                .SetName("Generate private event handler with default modifier declaration");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePrivateStaticEventHandler"), new string[0])
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticEventHandlerWithDefaultModifier"))
-                                .SetName("Generate private static event handler with default modifier declaration");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.HaxeImpl(sourceText, autoRemove, sci);
-            }
-
-            [TestFixture]
-            public class GenerateGetterSetter : GenerateJob
-            {
-                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
-
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateGetterSetterTestCases
                 {
                     get
                     {
@@ -1832,60 +1231,15 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string fileName, GeneratorJobType job) => AS3Impl(fileName, sci, job);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData("BeforeGenerateGetterSetter", GeneratorJobType.GetterSetter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter"))
-                            .SetName("Generate getter and setter");
-                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue221", GeneratorJobType.GetterSetter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue221"))
-                            .SetName("issue 221");
-                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_1", GeneratorJobType.Setter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_1"))
-                            .SetName("issue set");
-                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_2", GeneratorJobType.Getter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_2"))
-                            .SetName("issue get 1");
-                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_3", GeneratorJobType.Getter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_3"))
-                            .SetName("issue get 2");
-                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_4", GeneratorJobType.Getter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_4"))
-                            .SetName("issue get 3");
-                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_5", GeneratorJobType.Getter)
-                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_5"))
-                            .SetName("issue get 4");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName, GeneratorJobType job) => HaxeImpl(fileName, sci, job);
-
-                internal static string AS3Impl(string fileName, ScintillaControl sci, GeneratorJobType job)
+                [Test, TestCaseSource(nameof(GenerateGetterSetterTestCases))]
+                public string GenerateGetterSetter(string fileName, GeneratorJobType job)
                 {
                     SetAs3Features(sci);
                     SetCurrentFileName(GetFullPathAS3(fileName));
-                    return Common(ReadAllTextAS3(fileName), sci, job);
-                }
-
-                internal static string HaxeImpl(string fileName, ScintillaControl sci, GeneratorJobType job)
-                {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return Common(ReadAllTextHaxe(fileName), sci, job);
-                }
-
-                static string Common(string sourceText, ScintillaControl sci, GeneratorJobType job)
-                {
-                    SetSrc(sci, sourceText);
+                    SetSrc(sci, ReadAllTextAS3(fileName));
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => it is GeneratorItem && ((GeneratorItem)it).Job == job);
+                    var item = options.Find(it => it is GeneratorItem generatorItem && generatorItem.Job == job);
                     Assert.NotNull(item);
                     var value = item.Value;
                     return sci.Text;
@@ -1893,36 +1247,7 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateGetterSetterWithDefaultModifierDeclaration : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void GenerateEventHandlerSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateGetterSetter.DeclarationModifierOrder;
-                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter", GeneratorJobType.GetterSetter)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateGetterSetterWithDefaultModifier"))
-                                .SetName("Generate private getter and setter with default modifier declaration");
-                        yield return
-                            new TestCaseData("BeforeGeneratePrivateStaticGetterSetter", GeneratorJobType.GetterSetter)
-                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticGetterSetterWithDefaultModifier"))
-                                .SetName("Generate private static getter and setter with default modifier declaration");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName, GeneratorJobType job) => GenerateGetterSetter.HaxeImpl(fileName, sci, job);
-            }
-
-            [TestFixture]
-            public class GenerateOverride : GenerateJob
+            public class GenerateOverrideTests : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
@@ -1933,7 +1258,7 @@ namespace ASCompletion.Completion
                     ASContext.Context.Settings.GenerateImports = true;
                 }
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GenerateOverrideTestCases
                 {
                     get
                     {
@@ -1967,133 +1292,10 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
-                {
-                    return AS3Impl(sourceText, ofClassName, memberName, memberFlags, sci);
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetNull"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideGetNull"))
-                                .SetName("Override var foo(get, null)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideNullSet"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideNullSet"))
-                                .SetName("Override var foo(null, set)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideGetSet"))
-                                .SetName("Override var foo(get, set)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet_2"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideGetSet_2"))
-                                .SetName("Override var foo(get, set). If the getter is already overridden.");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet_3"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideGetSet_3"))
-                                .SetName("Override var foo(get, set). If the setter is already overridden.");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideIssue793"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideIssue793"))
-                                .SetName("issue #793")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/793");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverridePublicFunction"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverridePublicFunction"))
-                                .SetName("Override public function");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverridePrivateFunction"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverridePrivateFunction"))
-                                .SetName("Override private function");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunctionWithTypeParams"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunctionWithTypeParams"))
-                                .SetName("override function with type parameters");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_1"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_1"))
-                                .SetName("override function foo(c:haxe.Timer->Void)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_2"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_2"))
-                                .SetName("override function foo(c:haxe.Timer->(Type.ValueType->Void))")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_3"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_3"))
-                                .SetName("override function foo(c:haxe.Timer->{v:Type.ValueType, s:String}->Void)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_4"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_4"))
-                                .SetName("override function foo(c:haxe.Timer->({v:Type.ValueType, s:String}->Void))")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_5"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_5"))
-                                .SetName("override function foo(c:{v:Type.ValueType, t:haxe.Timer})")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_6"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_6"))
-                                .SetName("override function foo(c:{v:Type.ValueType, t:{t:haxe.Timer}}})")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_1"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_1"))
-                                .SetName("override function foo(v:Array<haxe.Timer->String>)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_2"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_2"))
-                                .SetName("override function foo(v:Array<haxe.Timer->Type.ValueType->String>)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_3"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_3"))
-                                .SetName("override function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String)")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_4"), "flash.display.DisplayObjectContainer", "addChild", FlagType.Function)
-                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_4"))
-                            .SetName("override function addChild(child:DisplayObject)")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_5"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_5"))
-                            .SetName("override var foo(get, set):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_2134_1"), "flash.utils.Proxy", "callProperty", FlagType.Function)
-                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_2134_1"))
-                            .SetName("override function callProperty()")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_2231_1"), "Foo", "foo", FlagType.Getter)
-                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_2231_1"))
-                            .SetName("override function foo(get):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2231");
-                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_2231_2"), "Foo", "foo", FlagType.Setter)
-                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_2231_2"))
-                            .SetName("override function foo(set):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2231");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
-                {
-                    return HaxeImpl(sourceText, ofClassName, memberName, memberFlags, sci);
-                }
-
-                internal static string AS3Impl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
+                [Test, TestCaseSource(nameof(GenerateOverrideTestCases))]
+                public string GenerateOverride(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, ofClassName, memberName, memberFlags, sci);
-                }
-
-                internal static string HaxeImpl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sourceText, ofClassName, memberName, memberFlags, sci);
-                }
-
-                static string Common(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
-                {
                     SetSrc(sci, sourceText);
                     var ofClass = ASContext.Context.CurrentModel.Classes.Find(model => model.Name == ofClassName);
                     if (ofClass == null)
@@ -2116,47 +1318,6 @@ namespace ASCompletion.Completion
                     var member = ofClass.Members.Search(memberName, memberFlags, 0);
                     ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
                     return sci.Text;
-                }
-            }
-
-            [TestFixture]
-            public class GenerateOverrideWithDefaultModifierDeclaration : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void GenerateOverrideSetUp()
-                {
-                    ASContext.Context.Settings.GenerateImports = true;
-                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateOverride.DeclarationModifierOrder;
-                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetNull"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideGetNullWithDefaultModifier"))
-                                .SetName("Override var foo(get, null) with default modifier declaration");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideNullSet"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideNullSetWithDefaultModifier"))
-                                .SetName("Override var foo(null, set) with default modifier declaration");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterOverrideGetSetWithDefaultModifier"))
-                                .SetName("Override var foo(get, set) with default modifier declaration");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeOverridePrivateFunction"), "Foo", "foo", FlagType.Function)
-                                .Returns(ReadAllTextHaxe("AfterOverridePrivateFunctionWithDefaultModifier"))
-                                .SetName("Override private function with default modifier");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
-                {
-                    return GenerateOverride.HaxeImpl(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
             }
 

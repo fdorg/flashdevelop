@@ -1,6 +1,6 @@
 ﻿package;
 import haxe.Constraints.Function;
-public class Main {
+public class Issue1645 {
 	public function new() {
 		f1(f3);
 	}
