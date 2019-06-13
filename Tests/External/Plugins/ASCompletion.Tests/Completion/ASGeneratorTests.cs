@@ -35,44 +35,6 @@ namespace ASCompletion.Completion
         static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.generated.as3.{fileName}.as";
 
         static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
-        
-        public class GetBodyStart : ASGeneratorTests
-        {
-            static IEnumerable<TestCaseData> GetBodyStartTestCases
-            {
-                get
-                {
-                    yield return new TestCaseData("function test():void{\r\n\t\t\t\r\n}", 0, 1, "function test():void{\r\n\t\t\t\r\n}", 26).SetName("SimpleCase");
-                    // Should we reindent the second line?
-                    yield return new TestCaseData("function test():void{\r\n\t\t\t}", 0, 1, "function test():void{\r\n\t\t\t\r\n}", 26).SetName("EndOnSecondLine");
-                    yield return new TestCaseData("function test():void{\r\n}", 0, 1, "function test():void{\r\n\t\r\n}", 24).SetName("EndOnSecondLineNoExtraIndent");
-                    yield return new TestCaseData("function test():void{\r\n\t\t\t//comment}", 0, 1, "function test():void{\r\n\t\t\t//comment}", 26).SetName("CharOnSecondLine");
-                    yield return new TestCaseData("function test():void{}", 0, 0, "function test():void{\r\n\t\r\n}", 24).SetName("EndOnSameDeclarationLine");
-                    yield return new TestCaseData("function test():void\r\n\r\n{}\r\n", 0, 2, "function test():void\r\n\r\n{\r\n\t\r\n}\r\n", 28).SetName("EndOnSameLine");
-                    yield return new TestCaseData("function test():void {trace(1);}", 0, 0, "function test():void {\r\n\ttrace(1);}", 25).SetName("TextOnStartLine");
-                    yield return new TestCaseData("function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n}", 0, 1, "function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n\t\r\n}", 60)
-                        .SetName("BracketInCommentsOrText");
-                    yield return new TestCaseData("function test():void/*áéíóú*/\r\n{}", 0, 1, "function test():void/*áéíóú*/\r\n{\r\n\t\r\n}", 40).SetName("MultiByteCharacters");
-                    yield return new TestCaseData("function tricky():void {} function test():void{\r\n\t\t\t}", 0, 1, "function tricky():void {} function test():void{\r\n\t\t\t}", 49)
-                        .SetName("WithAnotherMemberInTheSameLine")
-                        .Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line, but we could change the method to use positions and try to get the proper position before.");
-                    yield return new TestCaseData("function test<T:{}>(arg:T):void{\r\n\r\n}", 0, 1, "function test<T:{}>(arg:T):void{\r\n\r\n}", 34).SetName("BracketsInGenericConstraint");
-                    yield return new TestCaseData("function test(arg:{x:Int}):void{\r\n\r\n}", 0, 1, "function test(arg:{x:Int}):void{\r\n\r\n}", 34).SetName("AnonymousStructures");
-                }
-            }
-
-            [Test, TestCaseSource(nameof(GetBodyStartTestCases))]
-            public void Common(string text, int lineStart, int lineEnd, string resultText, int bodyStart)
-            {
-                sci.Text = text;
-                sci.ConfigurationLanguage = "haxe";
-                sci.Colourise(0, -1);
-                int funcBodyStart = ASGenerator.GetBodyStart(lineStart, lineEnd, sci);
-
-                Assert.AreEqual(bodyStart, funcBodyStart);
-                Assert.AreEqual(resultText, sci.Text);
-            }
-        }
 
         [TestFixtureSetUp]
         public void Setup()
@@ -81,6 +43,41 @@ namespace ASCompletion.Completion
             SetAs3Features(sci);
         }
 
+        static IEnumerable<TestCaseData> GetBodyStartTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("function test():void{\r\n\t\t\t\r\n}", 0, 1, "function test():void{\r\n\t\t\t\r\n}", 26).SetName("SimpleCase");
+                // Should we reindent the second line?
+                yield return new TestCaseData("function test():void{\r\n\t\t\t}", 0, 1, "function test():void{\r\n\t\t\t\r\n}", 26).SetName("EndOnSecondLine");
+                yield return new TestCaseData("function test():void{\r\n}", 0, 1, "function test():void{\r\n\t\r\n}", 24).SetName("EndOnSecondLineNoExtraIndent");
+                yield return new TestCaseData("function test():void{\r\n\t\t\t//comment}", 0, 1, "function test():void{\r\n\t\t\t//comment}", 26).SetName("CharOnSecondLine");
+                yield return new TestCaseData("function test():void{}", 0, 0, "function test():void{\r\n\t\r\n}", 24).SetName("EndOnSameDeclarationLine");
+                yield return new TestCaseData("function test():void\r\n\r\n{}\r\n", 0, 2, "function test():void\r\n\r\n{\r\n\t\r\n}\r\n", 28).SetName("EndOnSameLine");
+                yield return new TestCaseData("function test():void {trace(1);}", 0, 0, "function test():void {\r\n\ttrace(1);}", 25).SetName("TextOnStartLine");
+                yield return new TestCaseData("function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n}", 0, 1, "function test(arg:String='{', arg2:String=\"{\"):void/*{*/{\r\n\t\r\n}", 60)
+                    .SetName("BracketInCommentsOrText");
+                yield return new TestCaseData("function test():void/*áéíóú*/\r\n{}", 0, 1, "function test():void/*áéíóú*/\r\n{\r\n\t\r\n}", 40).SetName("MultiByteCharacters");
+                yield return new TestCaseData("function tricky():void {} function test():void{\r\n\t\t\t}", 0, 1, "function tricky():void {} function test():void{\r\n\t\t\t}", 49)
+                    .SetName("WithAnotherMemberInTheSameLine")
+                    .Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line, but we could change the method to use positions and try to get the proper position before.");
+                yield return new TestCaseData("function test<T:{}>(arg:T):void{\r\n\r\n}", 0, 1, "function test<T:{}>(arg:T):void{\r\n\r\n}", 34).SetName("BracketsInGenericConstraint");
+                yield return new TestCaseData("function test(arg:{x:Int}):void{\r\n\r\n}", 0, 1, "function test(arg:{x:Int}):void{\r\n\r\n}", 34).SetName("AnonymousStructures");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetBodyStartTestCases))]
+        public void GetBodyStart(string text, int lineStart, int lineEnd, string resultText, int bodyStart)
+        {
+            sci.Text = text;
+            sci.ConfigurationLanguage = "haxe";
+            sci.Colourise(0, -1);
+            int funcBodyStart = ASGenerator.GetBodyStart(lineStart, lineEnd, sci);
+
+            Assert.AreEqual(bodyStart, funcBodyStart);
+            Assert.AreEqual(resultText, sci.Text);
+        }
+        
         static IEnumerable<TestCaseData> GenerateFieldFromParameterTestCases
         {
             get
@@ -427,7 +424,7 @@ namespace ASCompletion.Completion
         [Test, TestCaseSource(nameof(GenerateFunctionTestCases))]
         public string GenerateFunction(string sourceText, GeneratorJobType job) => GenerateFunctionImpl(sourceText, job, sci);
 
-        internal static string GenerateFunctionImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
+        static string GenerateFunctionImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
         {
             SetSrc(sci, sourceText);
             var options = new List<ICompletionListItem>();
@@ -911,7 +908,7 @@ namespace ASCompletion.Completion
         [Test, TestCaseSource(nameof(GenerateVariableTestCases))]
         public string GenerateVariable(string sourceText, GeneratorJobType job) => GenerateVariableImpl(sourceText, job, sci);
 
-        internal static string GenerateVariableImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
+        static string GenerateVariableImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
         {
             SetSrc(sci, sourceText);
             ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
@@ -1018,6 +1015,7 @@ namespace ASCompletion.Completion
             ASContext.Context.Settings.GenerateImports = false;
             return sci.Text;
         }
+
         static IEnumerable<TestCaseData> GenerateEventHandlerTestCases
         {
             get
@@ -1042,7 +1040,7 @@ namespace ASCompletion.Completion
         [Test, TestCaseSource(nameof(GenerateEventHandlerTestCases))]
         public string GenerateEventHandler(string sourceText, string[] autoRemove) => GenerateEventHandlerImpl(sourceText, autoRemove, sci);
 
-        internal static string GenerateEventHandlerImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
+        static string GenerateEventHandlerImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
         {
             ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
             SetSrc(sci, sourceText);
