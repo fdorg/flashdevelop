@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ASCompletion;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -17,16 +18,12 @@ using ScintillaNet;
 namespace HaXeContext.Generators
 {
     [TestFixture]
-    public class CodeGeneratorTests : ASGeneratorTests.GenerateJob
+    public class CodeGeneratorTests : ASCompletionTests
     {
-        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.code.{fileName}.hx";
-
-        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
-
         static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\";
         static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
 
-        internal static void SetCurrentFile(string fileName)
+        internal static void SetCurrentFileName(string fileName)
         {
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
@@ -36,6 +33,10 @@ namespace HaXeContext.Generators
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
         }
 
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.code.{fileName}.hx";
+
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        
         [TestFixtureSetUp]
         public void Setup()
         {
@@ -2075,7 +2076,7 @@ namespace HaXeContext.Generators
         static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
-            SetCurrentFile(fileName);
+            SetCurrentFileName(fileName);
             var context = (Context)ASContext.GetLanguageContext("haxe");
             context.CurrentModel = ASContext.Context.CurrentModel;
             context.completionCache.IsDirty = true;
@@ -2214,7 +2215,7 @@ namespace HaXeContext.Generators
         public bool HandleOverride(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            SetCurrentFile(fileName);
+            SetCurrentFileName(fileName);
             return ASGenerator.HandleGeneratorCompletion(sci, false, ASContext.Context.Features.overrideKey);
         }
 
@@ -2292,7 +2293,7 @@ namespace HaXeContext.Generators
         public int ParseFunctionParameters(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            SetCurrentFile(fileName);
+            SetCurrentFileName(fileName);
             return ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Count;
         }
 
@@ -2361,7 +2362,7 @@ namespace HaXeContext.Generators
         public List<MemberModel> ParseFunctionParameters2(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            SetCurrentFile(fileName);
+            SetCurrentFileName(fileName);
             var context = (Context)ASContext.GetLanguageContext("haxe");
             context.CurrentModel = ASContext.Context.CurrentModel;
             context.completionCache.IsDirty = true;
@@ -2470,8 +2471,8 @@ namespace HaXeContext.Generators
                     }
                 });
             EventManager.AddEventHandler(handler, EventType.Command);
-            SetCurrentFileName(GetFullPath(fileName));
             SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFileName(GetFullPath(fileName));
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
