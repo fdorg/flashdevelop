@@ -2059,6 +2059,82 @@ namespace HaXeContext.Generators
             return ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Count;
         }
 
+        static IEnumerable<TestCaseData> ParseFunctionParametersTestCases2
+        {
+            get
+            {
+                yield return new TestCaseData("ParseFunctionParameters_String")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "String", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(\"string\")");
+                yield return new TestCaseData("ParseFunctionParameters_String_2")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "String", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo('string')");
+                yield return new TestCaseData("ParseFunctionParameters_Boolean")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Bool", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(true)");
+                yield return new TestCaseData("ParseFunctionParameters_Boolean_false")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Bool", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(false)");
+                yield return new TestCaseData("ParseFunctionParameters_Digit")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Int", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(1)");
+                yield return new TestCaseData("ParseFunctionParameters_Digit_2")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Float", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(1)");
+                yield return new TestCaseData("ParseFunctionParameters_Array")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Array", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(new Array())");
+                yield return new TestCaseData("ParseFunctionParameters_TypedArray")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Array<Int>", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(new Array<Int>())");
+                yield return new TestCaseData("ParseFunctionParameters_TypedArray_2")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Array<Int->{x:Int, y:Int}>", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(new Array<Int->{x:Int, y:Int}>())");
+                yield return new TestCaseData("ParseFunctionParameters_ArrayInitializer")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Array<T>", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo([])");
+                yield return new TestCaseData("ParseFunctionParameters_ArrayInitializer_2")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Array<T>", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo([{v:[1,2,3,4]}])");
+                yield return new TestCaseData("ParseFunctionParameters_ObjectInitializer")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Dynamic", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo({})");
+                yield return new TestCaseData("ParseFunctionParameters_ObjectInitializer_2")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Dynamic", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo({key:'value'})");
+                yield return new TestCaseData("ParseFunctionParameters_ObjectInitializer_3")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Dynamic", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo({v:[{key:'value'}]})");
+                yield return new TestCaseData("ParseFunctionParameters_ArrayAccess")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Int", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(a[0][0].length)");
+                yield return new TestCaseData("ParseFunctionParameters_Function")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Function", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(function() {})");
+                yield return new TestCaseData("ParseFunctionParameters_Math.random.1.5")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "Float", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(Math.random(1.5))");
+                yield return new TestCaseData("ParseFunctionParameters_complexExpr")
+                    .Returns(new List<MemberModel> { new ClassModel { Name = "DisplayObject", InFile = FileModel.Ignore } })
+                    .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseFunctionParametersTestCases2))]
+        public List<MemberModel> ParseFunctionParameters2(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFile(fileName);
+            var context = ((Context)ASContext.GetLanguageContext("haxe"));
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            context.GetTopLevelElements();
+            var visibleExternalElements = context.GetVisibleExternalElements();
+            ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
+            var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
+            return result;
+        }
+
         static IEnumerable<TestCaseData> DisableVoidTypeDeclarationForFunctionsIssue2613TestCases
         {
             get
@@ -2163,6 +2239,373 @@ namespace HaXeContext.Generators
             ASGenerator.ContextualGenerator(sci, options);
             var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
             var value = item.Value;
+        }
+
+        static IEnumerable<TestCaseData> ChangeConstructorDeclarationTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_String")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_String"))
+                    .SetName("new Foo(\"\") -> function new(string:String)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_String2")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_String2"))
+                    .SetName("new Foo(\"\", \"\") -> function new(string:String, string1:String)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_Digit"))
+                    .SetName("new Foo(1) -> function new(int:Int)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit_2")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_Digit_2"))
+                    .SetName("new Foo(1.0) -> function new(float:Float)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_Boolean"))
+                    .SetName("new Foo(true) -> function new(bool:Bool)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
+                    .SetName("new Foo(strings[0][0]) -> function new(string:String)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_Dynamic"))
+                    .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_issue1712_1"))
+                    .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+                yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
+                    .Returns(ReadAllText("AfterChangeConstructorDeclaration_issue1712_2"))
+                    .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ChangeConstructorDeclarationTestCases))]
+        public string ChangeConstructorDeclaration(string fileName)
+        {
+            SetCurrentFileName(GetFullPath(fileName));
+            SetSrc(sci, ReadAllText(fileName));
+            ASGenerator.GenerateJob(GeneratorJobType.ChangeConstructorDecl, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
+            return sci.Text;
+        }
+
+        static IEnumerable<TestCaseData> GenerateDelegateMethodsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateDelegateMethod")
+                    .Returns(ReadAllText("AfterGenerateDelegateMethod"));
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GenerateDelegateMethodsTestCases))]
+        public string GenerateDelegateMethods(string fileName)
+        {
+            SetCurrentFileName(GetFullPath(fileName));
+            SetSrc(sci, ReadAllText(fileName));
+            var type = ASContext.Context.ResolveType(ASContext.Context.CurrentMember.Type, ASContext.Context.CurrentModel);
+            var selectedMembers = type.Members.Items.ToDictionary(it => it, it => ASContext.Context.ResolveType(it.Type, it.InFile));
+            ASGenerator.GenerateDelegateMethods(sci, ASContext.Context.CurrentMember, selectedMembers, type, ASContext.Context.CurrentClass);
+            return sci.Text;
+        }
+
+        static IEnumerable<TestCaseData> AvoidKeywordTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("import").Returns("importValue");
+                yield return new TestCaseData("new").Returns("newValue");
+                yield return new TestCaseData("extends").Returns("extendsValue");
+                yield return new TestCaseData("implements").Returns("implementsValue");
+                yield return new TestCaseData("using").Returns("usingValue");
+                yield return new TestCaseData("var").Returns("varValue");
+                yield return new TestCaseData("function").Returns("functionValue");
+                yield return new TestCaseData("cast").Returns("castValue");
+                yield return new TestCaseData("return").Returns("returnValue");
+                yield return new TestCaseData("break").Returns("breakValue");
+                yield return new TestCaseData("continue").Returns("continueValue");
+                yield return new TestCaseData("if").Returns("ifValue");
+                yield return new TestCaseData("else").Returns("elseValue");
+                yield return new TestCaseData("for").Returns("forValue");
+                yield return new TestCaseData("in").Returns("inValue");
+                yield return new TestCaseData("while").Returns("whileValue");
+                yield return new TestCaseData("do").Returns("doValue");
+                yield return new TestCaseData("switch").Returns("switchValue");
+                yield return new TestCaseData("case").Returns("caseValue");
+                yield return new TestCaseData("default").Returns("defaultValue");
+                yield return new TestCaseData("untyped").Returns("untypedValue");
+                yield return new TestCaseData("null").Returns("nullValue");
+                yield return new TestCaseData("true").Returns("trueValue");
+                yield return new TestCaseData("false").Returns("falseValue");
+                yield return new TestCaseData("try").Returns("tryValue");
+                yield return new TestCaseData("catch").Returns("catchValue");
+                yield return new TestCaseData("throw").Returns("throwValue");
+                yield return new TestCaseData("trace").Returns("traceValue");
+                yield return new TestCaseData("macro").Returns("macroValue");
+                yield return new TestCaseData("dynamic").Returns("dynamicValue");
+                yield return new TestCaseData("private").Returns("privateValue");
+                yield return new TestCaseData("public").Returns("publicValue");
+                yield return new TestCaseData("inline").Returns("inlineValue");
+                yield return new TestCaseData("extern").Returns("externValue");
+                yield return new TestCaseData("static").Returns("staticValue");
+                yield return new TestCaseData("override").Returns("overrideValue");
+                yield return new TestCaseData("class").Returns("classValue");
+                yield return new TestCaseData("interface").Returns("interfaceValue");
+                yield return new TestCaseData("typedef").Returns("typedefValue");
+                yield return new TestCaseData("enum").Returns("enumValue");
+                yield return new TestCaseData("abstract").Returns("abstractValue");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(AvoidKeywordTestCases))]
+        public string AvoidKeyword(string sourceText) => ASGenerator.AvoidKeyword(sourceText);
+
+        static IEnumerable<TestCaseData> GetEndOfStatementTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("foo(/*:)*/)\nbar()\n   ")
+                    .Returns("foo(/*:)*/)\n".Length);
+                yield return new TestCaseData("foo(\"(.)(.) <-- :)\")\nbar()\n   ")
+                    .Returns("foo(\"(.)(.) <-- :)\")\n".Length);
+                yield return new TestCaseData("foo('(.)(.) <-- :)')\nbar()\n   ")
+                    .Returns("foo('(.)(.) <-- :)')\n".Length);
+                yield return new TestCaseData("foo('\\'(.)(.) <-- :)\\'')\nbar()\n   ")
+                    .Returns("foo('\\'(.)(.) <-- :)\\'')\n".Length);
+            }
+        }
+
+        static IEnumerable<TestCaseData> GetStartOfStatementTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(" new Array<Int>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Map<String, Int>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)", new ASResult { Type = new ClassModel { Flags = FlagType.Class }, Context = new ASExpr { WordBefore = "new", WordBeforePosition = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" [1 => 1, 2 => 2]$(EntryPoint)", new ASResult { Type = ClassModel.VoidClass, Context = new ASExpr { PositionExpression = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" (1 > 2 ? 1 : 2)$(EntryPoint)", new ASResult { Type = ClassModel.VoidClass, Context = new ASExpr { PositionExpression = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" {v:1 > 2 ? 1 : 2}$(EntryPoint)", new ASResult { Type = ClassModel.VoidClass, Context = new ASExpr { PositionExpression = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" [new Array<String>()]$(EntryPoint)", new ASResult { Type = ClassModel.VoidClass, Context = new ASExpr { PositionExpression = 1 } })
+                    .Returns(1);
+                yield return new TestCaseData(" test(type:Class<Dynamic>)$(EntryPoint)", new ASResult { Type = ClassModel.VoidClass, Context = new ASExpr { PositionExpression = 1 } })
+                    .Returns(1);
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetStartOfStatementTestCases))]
+        public int GetStartOfStatement(string sourceText, ASResult expr)
+        {
+            SetSrc(sci, sourceText);
+            return ASGenerator.GetStartOfStatement(expr);
+        }
+
+        [Test, TestCaseSource(nameof(GetEndOfStatementTestCases))]
+        public int GetEndOfStatement(string sourceText)
+        {
+            SetSrc(sci, sourceText);
+            return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
+        }
+
+        static ClassModel GetImplementInterfaceModel()
+        {
+            var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
+            interfaceModel.Members.Add(new MemberList
+                    {
+                        new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
+                        new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "default"},
+                                new MemberModel {Name = "null"}
+                            }
+                        },
+                        new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "null"},
+                                new MemberModel {Name = "default"}
+                            }
+                        },
+                        new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "get"},
+                                new MemberModel {Name = "set"}
+                            }
+                        },
+                        new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel {Name = "get"},
+                                new MemberModel {Name = "never"}
+                            }
+                        },
+                        new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
+                        new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
+                                new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
+                            }
+                        },
+                        new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
+                        {
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
+                                new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
+                                {
+                                    Value = "1"
+                                }
+                            }
+                        },
+                        new MemberModel("testMethodWithTypeParams", "Float", FlagType.Function, Visibility.Public)
+                        {
+                            Template = "<K:IOtherInterface>",
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("arg", "K", FlagType.Variable, Visibility.Default)
+                            }
+                        }
+                    });
+
+            return interfaceModel;
+        }
+
+        static IEnumerable<TestCaseData> ImplementInterfaceHaxeTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
+                        new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 }, GetImplementInterfaceModel())
+                    .Returns(ReadAllText("ImplementInterfaceNoMembers"))
+                    .SetName("Full");
+
+                yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
+                        new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 },
+                        new ClassModel
+                        {
+                            InFile = new FileModel(),
+                            Name = "ITest",
+                            Type = "ITest",
+                            Members = new MemberList
+                            {
+                                        new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
+                                        {
+                                            Parameters = new List<MemberModel>
+                                            {
+                                                new MemberModel {Name = "get"},
+                                                new MemberModel {Name = "set"}
+                                            }
+                                        }
+                            }
+                        })
+                    .Returns(ReadAllText("ImplementInterfaceNoMembersInsertSingleProperty"))
+                    .SetName("SingleProperty");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
+        public string ImplementInterface(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
+        {
+            sci.Text = sourceText;
+            ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
+            ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
+            return sci.Text;
+        }
+        
+        static IEnumerable<TestCaseData> PromoteLocalTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforePromoteLocal")
+                    .Returns(ReadAllText("AfterPromoteLocal_generateExplicitScopeIsFalse"))
+                    .SetName("Promote to class member");
+            }
+        }
+
+        static IEnumerable<TestCaseData> PromoteLocalWithExplicitScopeTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforePromoteLocal")
+                    .Returns(ReadAllText("AfterPromoteLocal_generateExplicitScopeIsTrue"))
+                    .SetName("Promote to class member");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(PromoteLocalWithExplicitScopeTestCases)),
+        ]
+        public string PromoteLocalWithExplicitScope(string fileName)
+        {
+            ASContext.CommonSettings.GenerateScope = true;
+            var result = PromoteLocal(fileName);
+            ASContext.CommonSettings.GenerateScope = false;
+            return result;
+        }
+
+        static IEnumerable<TestCaseData> PromoteLocalWithDefaultModifierDeclarationTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforePromoteLocal")
+                    .Returns(ReadAllText("AfterPromoteLocalWithDefaultModifier"))
+                    .SetName("Promote to private class member with default modifier declaration");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(PromoteLocalWithDefaultModifierDeclarationTestCases)),
+        ]
+        public string PromoteLocalWithDefaultModifierDeclaration(string fileName)
+        {
+            ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
+            var result = PromoteLocal(fileName);
+            ASContext.CommonSettings.GenerateDefaultModifierDeclaration = false;
+            return result;
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(PromoteLocalTestCases)),
+        ]
+        public string PromoteLocal(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
+            ASGenerator.contextMember = expr.Context.LocalVars[0];
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.PromoteLocal);
+            var value = item.Value;
+            return sci.Text;
         }
     }
 }

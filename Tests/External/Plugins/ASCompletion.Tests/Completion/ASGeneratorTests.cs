@@ -62,7 +62,7 @@ namespace ASCompletion.Completion
         public class GenerateJob : ASGeneratorTests
         {
             [TestFixture]
-            public class FieldFromParameter : GenerateJob
+            public class FieldFromParameterTests : GenerateJob
             {
                 static IEnumerable<TestCaseData> GenerateFieldFromParameterTestCases
                 {
@@ -179,14 +179,14 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class ImplementInterface : GenerateJob
+            public class ImplementInterfaceTests : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
                 [TestFixtureSetUp]
                 public void ImplementInterfaceSetup() => ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
 
-                static ClassModel GetAs3ImplementInterfaceModel()
+                static ClassModel GetImplementInterfaceModel()
                 {
                     var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
                     interfaceModel.Members.Add(new MemberList
@@ -214,83 +214,12 @@ namespace ASCompletion.Completion
                     return interfaceModel;
                 }
 
-                static ClassModel GetHaxeImplementInterfaceModel()
-                {
-                    var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
-                    interfaceModel.Members.Add(new MemberList
-                    {
-                        new MemberModel("normalVariable", "Int", FlagType.Variable, Visibility.Public),
-                        new MemberModel("ro", "Int", FlagType.Getter, Visibility.Public)
-                        {
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel {Name = "default"},
-                                new MemberModel {Name = "null"}
-                            }
-                        },
-                        new MemberModel("wo", "Int", FlagType.Getter, Visibility.Public)
-                        {
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel {Name = "null"},
-                                new MemberModel {Name = "default"}
-                            }
-                        },
-                        new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
-                        {
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel {Name = "get"},
-                                new MemberModel {Name = "set"}
-                            }
-                        },
-                        new MemberModel("y", "Int", FlagType.Getter, Visibility.Public)
-                        {
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel {Name = "get"},
-                                new MemberModel {Name = "never"}
-                            }
-                        },
-                        new MemberModel("testMethod", "Float", FlagType.Function, Visibility.Public),
-                        new MemberModel("testMethodArgs", "Int", FlagType.Function, Visibility.Public)
-                        {
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel("arg", "Float", FlagType.Variable, Visibility.Default),
-                                new MemberModel("arg2", "Bool", FlagType.Variable, Visibility.Default)
-                            }
-                        },
-                        new MemberModel("testPrivateMethod", "Float", FlagType.Function, Visibility.Private)
-                        {
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel("?arg", "String", FlagType.Variable, Visibility.Default),
-                                new MemberModel("?arg2", "Int", FlagType.Variable, Visibility.Default)
-                                {
-                                    Value = "1"
-                                }
-                            }
-                        },
-                        new MemberModel("testMethodWithTypeParams", "Float", FlagType.Function, Visibility.Public)
-                        {
-                            Template = "<K:IOtherInterface>",
-                            Parameters = new List<MemberModel>
-                            {
-                                new MemberModel("arg", "K", FlagType.Variable, Visibility.Default)
-                            }
-                        }
-                    });
-
-                    return interfaceModel;
-                }
-
-                static IEnumerable<TestCaseData> ImplementInterfaceAs3TestCases
+                static IEnumerable<TestCaseData> ImplementInterfaceTestCases
                 {
                     get
                     {
                         yield return new TestCaseData("package generatortest {\r\n\tpublic class ImplementTest{}\r\n}",
-                            new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 }, GetAs3ImplementInterfaceModel())
+                            new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 }, GetImplementInterfaceModel())
                             .Returns(ReadAllTextAS3("ImplementInterfaceNoMembers"))
                             .SetName("Full");
 
@@ -308,7 +237,7 @@ namespace ASCompletion.Completion
                                     {LineFrom = 7, LineTo = 9}
                                 }
                             },
-                            GetAs3ImplementInterfaceModel())
+                            GetImplementInterfaceModel())
                             .Returns(ReadAllTextAS3("ImplementInterfacePublicMemberBehindPrivate"))
                             .SetName("FullWithPublicMemberBehindPrivate");
 
@@ -327,57 +256,16 @@ namespace ASCompletion.Completion
                                     }
                                 }
                             },
-                            GetAs3ImplementInterfaceModel())
+                            GetImplementInterfaceModel())
                             .Returns(ReadAllTextAS3("ImplementInterfaceNoPublicMember"))
                             .SetName("FullWithoutPublicMember");
                     }
                 }
 
-                static IEnumerable<TestCaseData> ImplementInterfaceHaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
-                            new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 }, GetHaxeImplementInterfaceModel())
-                            .Returns(ReadAllTextHaxe("ImplementInterfaceNoMembers"))
-                            .SetName("Full");
-
-                        yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
-                            new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 },
-                            new ClassModel
-                            {
-                                InFile = new FileModel(), Name = "ITest", Type = "ITest",
-                                Members = new MemberList
-                                {
-                                    new MemberModel("x", "Int", FlagType.Getter, Visibility.Public)
-                                    {
-                                        Parameters = new List<MemberModel>
-                                        {
-                                            new MemberModel {Name = "get"},
-                                            new MemberModel {Name = "set"}
-                                        }
-                                    }
-                                }
-                            })
-                            .Returns(ReadAllTextHaxe("ImplementInterfaceNoMembersInsertSingleProperty"))
-                            .SetName("SingleProperty");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
-                public string AS3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
+                [Test, TestCaseSource(nameof(ImplementInterfaceTestCases))]
+                public string ImplementInterface(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
                     SetAs3Features(sci);
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
-                    sci.Text = sourceText;
-                    ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
-                    return sci.Text;
-                }
-
-                [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
-                public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
-                {
-                    SetHaxeFeatures(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
                     sci.Text = sourceText;
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
@@ -386,56 +274,42 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class PromoteLocal : GenerateJob
+            public class PromoteLocalTests : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
                 [TestFixtureSetUp]
                 public void PromoteLocalWithSetup() => ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> PromoteLocalTestCases
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforePromoteLocal"))
-                                .Returns(ReadAllTextAS3("AfterPromoteLocal_generateExplicitScopeIsFalse"))
-                                .SetName("Promote to class member");
+                        yield return new TestCaseData("BeforePromoteLocal")
+                            .Returns(ReadAllTextAS3("AfterPromoteLocal_generateExplicitScopeIsFalse"))
+                            .SetName("Promote to class member");
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
+                static IEnumerable<TestCaseData> PromoteLocalWithExplicitScopeTestCases
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforePromoteLocal"))
-                                .Returns(ReadAllTextHaxe("AfterPromoteLocal_generateExplicitScopeIsFalse"))
-                                .SetName("Promote to class member");
+                        yield return new TestCaseData("BeforePromoteLocal")
+                            .Returns(ReadAllTextAS3("AfterPromoteLocal_generateExplicitScopeIsTrue"))
+                            .SetName("Promote to class member");
                     }
                 }
 
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => HaxeImpl(sourceText, sci);
-
-                internal static string AS3Impl(string sourceText, ScintillaControl sci)
+                [
+                    Test,
+                    TestCaseSource(nameof(PromoteLocalTestCases)),
+                    TestCaseSource(nameof(PromoteLocalWithExplicitScopeTestCases)),
+                ]
+                public string AS3(string fileName)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, sci);
-                }
-
-                internal static string HaxeImpl(string sourceText, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sourceText, sci);
-                }
-
-                static string Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
+                    SetSrc(sci, ReadAllTextAS3(fileName));
                     var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
                     ASGenerator.contextMember = expr.Context.LocalVars[0];
                     var options = new List<ICompletionListItem>();
@@ -444,70 +318,6 @@ namespace ASCompletion.Completion
                     var value = item.Value;
                     return sci.Text;
                 }
-            }
-
-            [TestFixture]
-            public class PromoteLocalWithExplicitScope : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void PromoteLocalWithSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
-                    ASContext.CommonSettings.GenerateScope = true;
-                }
-
-                static IEnumerable<TestCaseData> AS3TestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforePromoteLocal"))
-                                .Returns(ReadAllTextAS3("AfterPromoteLocal_generateExplicitScopeIsTrue"))
-                                .SetName("Promote to class member");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => PromoteLocal.AS3Impl(sourceText, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforePromoteLocal"))
-                                .Returns(ReadAllTextHaxe("AfterPromoteLocal_generateExplicitScopeIsTrue"))
-                                .SetName("Promote to class member");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => PromoteLocal.HaxeImpl(sourceText, sci);
-            }
-
-            [TestFixture]
-            public class PromoteLocalWithDefaultModifierDeclaration : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void PromoteLocalWithSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
-                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforePromoteLocal"))
-                                .Returns(ReadAllTextHaxe("AfterPromoteLocalWithDefaultModifier"))
-                                .SetName("Promote to private class member with default modifier declaration");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => PromoteLocal.HaxeImpl(sourceText, sci);
             }
 
             [TestFixture]
@@ -2351,69 +2161,62 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GetStatementReturnType : GenerateJob
+            public class GetStatementReturnTypeTests : GenerateJob
             {
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GetStatementReturnTypeTestCases
                 {
                     get
                     {
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfStringInitializer"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfStringInitializer")
                             .Returns(new ClassModel {Name = "String", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of \"\"");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfDigit")
                             .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of 1");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfDigit_2"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfDigit_2")
                             .Returns(new ClassModel {Name = "Number", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of 1.0");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfObjectInitializer"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfObjectInitializer")
                             .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of {}");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewArray"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfNewArray")
                             .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of new Array()");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayInitializer"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfArrayInitializer")
                             .Returns(new ClassModel {Name = "Array", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of []");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewVector"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfNewVector")
                             .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of new Vector.<int>()");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfVectorInitializer"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfVectorInitializer")
                             .Returns(new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of new <int>[]");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfTwoDimensionalVectorInitializer"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfTwoDimensionalVectorInitializer")
                             .Returns(new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of new new <Vector.<int>>[new <int>[0]]");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfVector"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfItemOfVector")
                             .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of vector[0]");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfTwoDimensionalVector"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfItemOfTwoDimensionalVector")
                             .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of vector[0][0]");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfItemOfMultidimensionalVector"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfItemOfMultidimensionalVector")
                             .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of vector[0][0][0][0]");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayAccess"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfArrayAccess")
                             .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of v[0][0].length");
-                        yield return new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewObject"))
+                        yield return new TestCaseData("GetStatementReturnTypeOfNewObject")
                             .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
                             .SetName("Get statement return type of new Object");
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public ClassModel AS3(string sourceText) => AS3Impl(sourceText, sci);
-
-                public static ClassModel AS3Impl(string sourceText, ScintillaControl sci)
+                [Test, TestCaseSource(nameof(GetStatementReturnTypeTestCases))]
+                public ClassModel GetStatementReturnType(string fileName)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, sci);
-                }
-
-                public static ClassModel Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
+                    SetSrc(sci, ReadAllTextAS3(fileName));
                     var currentLine = sci.CurrentLine;
                     var returnType = ASGenerator.GetStatementReturnType(sci, ASContext.Context.CurrentClass, sci.GetLine(currentLine), sci.PositionFromLine(currentLine));
                     var result = returnType.Resolve.Type;
@@ -2422,184 +2225,92 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class ParseFunctionParameters : GenerateJob
+            public class ParseFunctionParametersTests : GenerateJob
             {
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
                 {
                     get
                     {
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_String"))
+                        yield return new TestCaseData("ParseFunctionParameters_String")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(\"string\")");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean"))
+                        yield return new TestCaseData("ParseFunctionParameters_Boolean")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(true)");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
+                        yield return new TestCaseData("ParseFunctionParameters_Boolean_false")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(false)");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
+                        yield return new TestCaseData("ParseFunctionParameters_Digit")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(1)");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit_2"))
+                        yield return new TestCaseData("ParseFunctionParameters_Digit_2")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(1.0)");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
+                        yield return new TestCaseData("ParseFunctionParameters_Array")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Array())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayInitializer"))
+                        yield return new TestCaseData("ParseFunctionParameters_ArrayInitializer")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo([])");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Object"))
+                        yield return new TestCaseData("ParseFunctionParameters_Object")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Object())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ObjectInitializer"))
+                        yield return new TestCaseData("ParseFunctionParameters_ObjectInitializer")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo({})");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Vector"))
+                        yield return new TestCaseData("ParseFunctionParameters_Vector")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Vector.<int>())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_VectorInitializer"))
+                        yield return new TestCaseData("ParseFunctionParameters_VectorInitializer")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new <int>[])");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_TwoDimensionalVectorInitializer"))
+                        yield return new TestCaseData("ParseFunctionParameters_TwoDimensionalVectorInitializer")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new <Vector.<int>>[new <int>[]])");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_MultidimensionalVectorInitializer"))
+                        yield return new TestCaseData("ParseFunctionParameters_MultidimensionalVectorInitializer")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<Vector.<int>>>", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>>[new <int>[]]])");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
+                        yield return new TestCaseData("ParseFunctionParameters_ArrayAccess")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(v[0][0].length)");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_uint"))
+                        yield return new TestCaseData("ParseFunctionParameters_uint")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "uint", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(0xFF0000)");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite"))
+                        yield return new TestCaseData("ParseFunctionParameters_Sprite")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Sprite())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2"))
+                        yield return new TestCaseData("ParseFunctionParameters_Sprite2")
                             .Returns(new List<MemberModel>
                             {
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
                             })
                             .SetName("Parse function parameters of foo(new Sprite(), new Sprite())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2_withComments"))
+                        yield return new TestCaseData("ParseFunctionParameters_Sprite2_withComments")
                             .Returns(new List<MemberModel>
                             {
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
                             })
                             .SetName("Parse function parameters of foo(/*new MovieClip()*/new Sprite(), /*new MovieClip()*/new Sprite())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2_withComments2"))
+                        yield return new TestCaseData("ParseFunctionParameters_Sprite2_withComments2")
                             .Returns(new List<MemberModel>
                             {
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
                             })
                             .SetName("Parse function parameters of foo(/*)*/new Sprite(), /*(((((*/new Sprite())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_XML"))
+                        yield return new TestCaseData("ParseFunctionParameters_XML")
                             .Returns(new List<MemberModel> {new ClassModel {Name = "XML", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(<xml param = '10' />)");
                     }
                 }
 
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_String"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(\"string\")");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_String_2"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo('string')");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(true)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean_false"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(false)");
-                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit"))
-                            .Returns(new List<MemberModel> {new ClassModel {Name = "Int", InFile = FileModel.Ignore}})
-                            .SetName("Parse function parameters of foo(1)");
-                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit_2"))
-                            .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
-                            .SetName("Parse function parameters of foo(1)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Array"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Array())");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_TypedArray"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array<Int>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Array<Int>())");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_TypedArray_2"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array<Int->{x:Int, y:Int}>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Array<Int->{x:Int, y:Int}>())");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ArrayInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array<T>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo([])");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ArrayInitializer_2"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array<T>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo([{v:[1,2,3,4]}])");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ObjectInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Dynamic", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo({})");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ObjectInitializer_2"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Dynamic", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo({key:'value'})");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ObjectInitializer_3"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Dynamic", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo({v:[{key:'value'}]})");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ArrayAccess"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Int", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(a[0][0].length)");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Function"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Function", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(function() {})");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Math.random.1.5"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(Math.random(1.5))");
-                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_complexExpr"))
-                            .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
-                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public List<MemberModel> AS3(string sourceText) => AS3Impl(sourceText, sci);
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public List<MemberModel> Haxe(string sourceText) => HaxeImpl(sourceText, sci);
-
-                internal static List<MemberModel> AS3Impl(string sourceText, ScintillaControl sci)
+                [Test, TestCaseSource(nameof(ParseFunctionParametersTestCases))]
+                public List<MemberModel> ParseFunctionParameters(string fileName)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, sci);
-                }
-
-                internal static List<MemberModel> HaxeImpl(string sourceText, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sourceText, sci);
-                }
-
-                internal static List<MemberModel> Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
+                    SetSrc(sci, ReadAllTextAS3(fileName));
                     var list = new MemberList();
                     list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
                     list.Merge(ASContext.Context.CurrentModel.Imports);
@@ -2610,12 +2321,12 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class ChangeConstructorDeclaration : GenerateJob
+            public class ChangeConstructorDeclarationTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void ChangeConstructorDeclarationSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
 
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> ChangeConstructorDeclarationTestCases
                 {
                     get
                     {
@@ -2655,74 +2366,21 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string fileName) => AS3Impl(fileName, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String"))
-                            .SetName("new Foo(\"\") -> function new(string:String)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_String2")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_String2"))
-                            .SetName("new Foo(\"\", \"\") -> function new(string:String, string1:String)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit"))
-                            .SetName("new Foo(1) -> function new(int:Int)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Digit_2")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Digit_2"))
-                            .SetName("new Foo(1.0) -> function new(float:Float)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Boolean"))
-                            .SetName("new Foo(true) -> function new(bool:Bool)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
-                            .SetName("new Foo(strings[0][0]) -> function new(string:String)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
-                            .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_1"))
-                            .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
-                        yield return new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
-                            .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_2"))
-                            .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
-
-                internal string AS3Impl(string fileName, ScintillaControl sci)
+                [Test, TestCaseSource(nameof(ChangeConstructorDeclarationTestCases))]
+                public string ChangeConstructorDeclaration(string fileName)
                 {
                     SetAs3Features(sci);
                     SetCurrentFileName(GetFullPathAS3(fileName));
-                    return Common(ReadAllTextAS3(fileName), sci);
-                }
-
-                internal string HaxeImpl(string fileName, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return Common(ReadAllTextHaxe(fileName), sci);
-                }
-
-                internal string Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
+                    SetSrc(sci, ReadAllTextAS3(fileName));
                     ASGenerator.GenerateJob(GeneratorJobType.ChangeConstructorDecl, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
             }
 
             [TestFixture]
-            public class GetStartOfStatement : GenerateJob
+            public class GetStartOfStatementTests : GenerateJob
             {
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> GetStartOfStatementTestCases
                 {
                     get
                     {
@@ -2750,128 +2408,19 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public int AS3(string sourceText, ASResult expr) => AS3Impl(sci, sourceText, expr);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(" new Array<Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" [1 => 1, 2 => 2]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr{PositionExpression = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" (1 > 2 ? 1 : 2)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" {v:1 > 2 ? 1 : 2}$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" [new Array<String>()]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
-                                .Returns(1);
-                        yield return
-                            new TestCaseData(" test(type:Class<Dynamic>)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
-                                .Returns(1);
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public int Haxe(string sourceText, ASResult expr) => HaxeImpl(sci, sourceText, expr);
-
-                internal static int AS3Impl(ScintillaControl sci, string sourceText, ASResult expr)
+                [Test, TestCaseSource(nameof(GetStartOfStatementTestCases))]
+                public int GetStartOfStatement(string sourceText, ASResult expr)
                 {
                     SetAs3Features(sci);
-                    return Common(sci, sourceText, expr);
-                }
-
-                internal static int HaxeImpl(ScintillaControl sci, string sourceText, ASResult expr)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sci, sourceText, expr);
-                }
-
-                internal static int Common(ScintillaControl sci, string sourceText, ASResult expr)
-                {
                     SetSrc(sci, sourceText);
                     return ASGenerator.GetStartOfStatement(expr);
                 }
             }
 
             [TestFixture]
-            public class GetEndOfStatement : GenerateJob
-            {
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData("foo(/*:)*/)\nbar()\n   ")
-                                .Returns("foo(/*:)*/)\n".Length);
-                        yield return
-                            new TestCaseData("foo(\"(.)(.) <-- :)\")\nbar()\n   ")
-                                .Returns("foo(\"(.)(.) <-- :)\")\n".Length);
-                        yield return
-                            new TestCaseData("foo('(.)(.) <-- :)')\nbar()\n   ")
-                                .Returns("foo('(.)(.) <-- :)')\n".Length);
-                        yield return
-                            new TestCaseData("foo('\\'(.)(.) <-- :)\\'')\nbar()\n   ")
-                                .Returns("foo('\\'(.)(.) <-- :)\\'')\n".Length);
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
-
-                internal static int HaxeImpl(string sourceText, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sci, sourceText);
-                }
-
-                internal static int Common(ScintillaControl sci, string sourceText)
-                {
-                    SetSrc(sci, sourceText);
-                    return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
-                }
-            }
-
-            [TestFixture]
             public class AvoidKeywordTests : GenerateJob
             {
-                static IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> AvoidKeywordTestCases
                 {
                     get
                     {
@@ -2927,112 +2476,11 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return new TestCaseData("import").Returns("importValue");
-                        yield return new TestCaseData("new").Returns("newValue");
-                        yield return new TestCaseData("extends").Returns("extendsValue");
-                        yield return new TestCaseData("implements").Returns("implementsValue");
-                        yield return new TestCaseData("using").Returns("usingValue");
-                        yield return new TestCaseData("var").Returns("varValue");
-                        yield return new TestCaseData("function").Returns("functionValue");
-                        yield return new TestCaseData("cast").Returns("castValue");
-                        yield return new TestCaseData("return").Returns("returnValue");
-                        yield return new TestCaseData("break").Returns("breakValue");
-                        yield return new TestCaseData("continue").Returns("continueValue");
-                        yield return new TestCaseData("if").Returns("ifValue");
-                        yield return new TestCaseData("else").Returns("elseValue");
-                        yield return new TestCaseData("for").Returns("forValue");
-                        yield return new TestCaseData("in").Returns("inValue");
-                        yield return new TestCaseData("while").Returns("whileValue");
-                        yield return new TestCaseData("do").Returns("doValue");
-                        yield return new TestCaseData("switch").Returns("switchValue");
-                        yield return new TestCaseData("case").Returns("caseValue");
-                        yield return new TestCaseData("default").Returns("defaultValue");
-                        yield return new TestCaseData("untyped").Returns("untypedValue");
-                        yield return new TestCaseData("null").Returns("nullValue");
-                        yield return new TestCaseData("true").Returns("trueValue");
-                        yield return new TestCaseData("false").Returns("falseValue");
-                        yield return new TestCaseData("try").Returns("tryValue");
-                        yield return new TestCaseData("catch").Returns("catchValue");
-                        yield return new TestCaseData("throw").Returns("throwValue");
-                        yield return new TestCaseData("trace").Returns("traceValue");
-                        yield return new TestCaseData("macro").Returns("macroValue");
-                        yield return new TestCaseData("dynamic").Returns("dynamicValue");
-                        yield return new TestCaseData("private").Returns("privateValue");
-                        yield return new TestCaseData("public").Returns("publicValue");
-                        yield return new TestCaseData("inline").Returns("inlineValue");
-                        yield return new TestCaseData("extern").Returns("externValue");
-                        yield return new TestCaseData("static").Returns("staticValue");
-                        yield return new TestCaseData("override").Returns("overrideValue");
-                        yield return new TestCaseData("class").Returns("classValue");
-                        yield return new TestCaseData("interface").Returns("interfaceValue");
-                        yield return new TestCaseData("typedef").Returns("typedefValue");
-                        yield return new TestCaseData("enum").Returns("enumValue");
-                        yield return new TestCaseData("abstract").Returns("abstractValue");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => HaxeImpl(sourceText, sci);
-
-                internal static string AS3Impl(string sourceText, ScintillaControl sci)
+                [Test, TestCaseSource(nameof(AvoidKeywordTestCases))]
+                public string AvoidKeyword(string sourceText)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText);
-                }
-
-                internal static string HaxeImpl(string sourceText, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sourceText);
-                }
-
-                internal static string Common(string sourceText) => ASGenerator.AvoidKeyword(sourceText);
-            }
-
-            [TestFixture]
-            public class GenerateDelegateMethods : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void GenerateDelegateMethodsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData("BeforeGenerateDelegateMethod")
-                                .Returns(ReadAllTextHaxe("AfterGenerateDelegateMethod"));
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
-
-                internal string HaxeImpl(string fileName, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return Common(ReadAllTextHaxe(fileName), sci);
-                }
-
-                internal string Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
-                    var type = ASContext.Context.ResolveType(ASContext.Context.CurrentMember.Type, ASContext.Context.CurrentModel);
-                    var selectedMembers = new Dictionary<MemberModel, ClassModel>();
-                    foreach (var it in type.Members.Items)
-                    {
-                        selectedMembers[it] = ASContext.Context.ResolveType(it.Type, it.InFile);
-                    }
-                    ASGenerator.GenerateDelegateMethods(sci, ASContext.Context.CurrentMember, selectedMembers, type, ASContext.Context.CurrentClass);
-                    return sci.Text;
+                    return ASGenerator.AvoidKeyword(sourceText);
                 }
             }
 
