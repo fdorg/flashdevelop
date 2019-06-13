@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using ASCompletion.Settings;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Managers;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
@@ -1860,6 +1863,90 @@ namespace HaXeContext.Generators
             return null;
         }
 
+        static IEnumerable<TestCaseData> Issue1984_1987_1995_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ContextualGenerator_issue1984_1", false)
+                    .SetName("Issue1984. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_2", false)
+                    .SetName("Issue1984. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_3", false)
+                    .SetName("Issue1984. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_4", false)
+                    .SetName("Issue1984. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_5", false)
+                    .SetName("Issue1984. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_6", false)
+                    .SetName("Issue1984. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_7", false)
+                    .SetName("Issue1984. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_8", false)
+                    .SetName("Issue1984. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_9", false)
+                    .SetName("Issue1984. Case 9")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1984_10", false)
+                    .SetName("Issue1984. Case 10")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1984");
+                yield return new TestCaseData("ContextualGenerator_issue1987_1", false)
+                    .SetName("Issue1987. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1987");
+                yield return new TestCaseData("ContextualGenerator_issue1987_2", false)
+                    .SetName("Issue1987. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1987");
+                yield return new TestCaseData("ContextualGenerator_issue1987_3", false)
+                    .SetName("Issue1987. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1987");
+                yield return new TestCaseData("ContextualGenerator_issue1987_4", false)
+                    .SetName("Issue1987. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1987");
+                yield return new TestCaseData("ContextualGenerator_issue1995_1", false)
+                    .SetName("Issue1995. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_2", false)
+                    .SetName("Issue1995. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_3", false)
+                    .SetName("Issue1995. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_4", true)
+                    .SetName("Issue1995. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_5", true)
+                    .SetName("Issue1995. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_6", false)
+                    .SetName("Issue1995. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_7", false)
+                    .SetName("Issue1995. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                yield return new TestCaseData("ContextualGenerator_issue1995_8", false)
+                    .SetName("Issue1995. Case 8")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2005");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(Issue1984_1987_1995_TestCases))]
+        public void HasContextualGenerator(string fileName, bool hasGenerator)
+        {
+            SetCurrentFileName(GetFullPath(fileName));
+            SetSrc(sci, ReadAllText(fileName));
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            if (hasGenerator) Assert.IsNotEmpty(options);
+            else Assert.IsEmpty(options);
+        }
+
         static IEnumerable<TestCaseData> HandleOverrideTestCases
         {
             get
@@ -1941,7 +2028,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2230TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2352TestCases)),
         ]
-        public string  AssignStatementToVarIssue2230(string fileName, GeneratorJobType job, bool hasGenerator)
+        public string AssignStatementToVarIssue2230(string fileName, GeneratorJobType job, bool hasGenerator)
         {
             ((HaXeSettings) ASContext.Context.Settings).DisableTypeDeclaration = true;
             var result = ContextualGenerator(sci, fileName, job, hasGenerator);
@@ -2001,6 +2088,81 @@ namespace HaXeContext.Generators
             var result = ContextualGenerator(sci, fileName, job, hasGenerator);
             ((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration = false;
             return result;
+        }
+
+        static IEnumerable<TestCaseData> GenerateFieldFromParameterTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateFieldFromParameter", GeneratorJobType.FieldFromParameter, Visibility.Private)
+                    .Returns(ReadAllText("AfterGenerateFieldFromParameter"));
+                yield return new TestCaseData("BeforeGenerateFieldFromOptionalParameter", GeneratorJobType.FieldFromParameter, Visibility.Private)
+                    .Returns(ReadAllText("AfterGenerateFieldFromOptionalParameter"));
+                yield return new TestCaseData("BeforeGenerateFieldFromOptionalUntypedParameter", GeneratorJobType.FieldFromParameter, Visibility.Private)
+                    .Returns(ReadAllText("AfterGenerateFieldFromOptionalUntypedParameter"));
+                yield return new TestCaseData("BeforeGenerateFieldFromOptionalParameter2", GeneratorJobType.FieldFromParameter, Visibility.Private)
+                    .Returns(ReadAllText("AfterGenerateFieldFromOptionalParameter2"));
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(GenerateFieldFromParameterTestCases))
+        ]
+        public string GenerateFieldFromParameter(string fileName, GeneratorJobType job, Visibility scope)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            ASGenerator.SetJobContext(null, null, ASContext.Context.CurrentMember.Parameters.First(), null);
+            ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, new Hashtable {["scope"] = scope});
+            return sci.Text;
+        }
+        static IEnumerable<TestCaseData> GenerateClassTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue1762_1", "$(Boundary)dynamicValue:Dynamic$(Boundary)")
+                    .SetName("Issue1762. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1762");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_1", string.Empty)
+                    .SetName("Issue2255. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_2", string.Empty)
+                    .SetName("Issue2255. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2255_3", string.Empty)
+                    .SetName("Issue2255. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GenerateClassTestCases))]
+        public void GenerateClass(string fileName, string constructorArgs)
+        {
+            var handler = Substitute.For<IEventHandler>();
+            handler
+                .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                .Do(it =>
+                {
+                    var e = it.ArgAt<NotifyEvent>(1);
+                    switch (e.Type)
+                    {
+                        case EventType.Command:
+                            EventManager.RemoveEventHandler(handler);
+                            e.Handled = true;
+                            var de = (DataEvent)e;
+                            var info = (Hashtable)de.Data;
+                            var actualArgs = (string)info[nameof(constructorArgs)];
+                            Assert.AreEqual(constructorArgs, actualArgs);
+                            break;
+                    }
+                });
+            EventManager.AddEventHandler(handler, EventType.Command);
+            SetCurrentFileName(GetFullPath(fileName));
+            SetSrc(sci, ReadAllText(fileName));
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
+            var value = item.Value;
         }
     }
 }
