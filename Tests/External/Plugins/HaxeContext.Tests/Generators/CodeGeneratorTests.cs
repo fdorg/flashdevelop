@@ -1495,15 +1495,18 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateFunction_issue103_13", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13"))
                     .SetName("Issue103. Case 13")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103")
+                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
                 yield return new TestCaseData("BeforeGenerateFunction_issue103_14", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14"))
                     .SetName("Issue103. Case 14")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103")
+                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
                 yield return new TestCaseData("BeforeGenerateFunction_issue103_14_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14_1"))
                     .SetName("Issue103. Case 14.1")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103")
+                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
                 yield return new TestCaseData("BeforeGenerateFunction_issue103_15", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_issue103_15"))
                     .SetName("Issue103. Case 15")
@@ -1543,7 +1546,8 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateFunction_issue1645_2", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
                     .SetName("Issue1645. Case 2")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645")
+                    .Ignore("ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode");
                 yield return new TestCaseData("BeforeGenerateFunction_issue1780_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGenerateFunction_issue1780_1"))
                     .SetName("foo(Math.round(1.5))")
@@ -1556,38 +1560,6 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateFunction_issue1836"))
                     .SetName("Issue 1836. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1836");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_13", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_13"))
-                    .SetName("Issue103. Case 13")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_14", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_14"))
-                    .SetName("Issue103. Case 14")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_14_1", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_14_1"))
-                    .SetName("Issue103. Case 14.1")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_18", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_18"))
-                    .SetName("Issue103. Case 18")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_19", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_19"))
-                    .SetName("Issue103. Case 19")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_20", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_20"))
-                    .SetName("Issue103. Case 20")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue103_21", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue103_21"))
-                    .SetName("Issue103. Case 21")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
-                yield return new TestCaseData("BeforeGenerateFunction_issue1645_2", GeneratorJobType.Function, true)
-                    .Returns(ReadAllText("AfterGenerateFunction_issue1645_2"))
-                    .SetName("Issue1645. Case 2")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
             }
         }
 

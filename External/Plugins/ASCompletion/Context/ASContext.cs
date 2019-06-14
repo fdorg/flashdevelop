@@ -83,7 +83,7 @@ namespace ASCompletion.Context
         //static private int setCount = 0;
         public static IASContext Context
         {
-            get { return context; }
+            get => context;
             set
             {
                 context = value ?? defaultContext;
