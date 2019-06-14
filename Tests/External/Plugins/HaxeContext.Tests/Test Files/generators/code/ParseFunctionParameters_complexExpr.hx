@@ -1,6 +1,6 @@
 ﻿package;
 import flash.display.Sprite;
-class Main {
+class ParseFunctionParameters_complexExpr {
 	public function new() {
 		foo$(EntryPoint)(new Sprite().addChild(new Sprite()));
 	}
