@@ -1,5 +1,5 @@
 ﻿package;
-class Main {
+class ParseFunctionParameters_ObjectInitializer {
 	public function new() {
 		foo$(EntryPoint)({});
 	}

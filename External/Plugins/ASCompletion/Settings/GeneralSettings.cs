@@ -301,7 +301,7 @@ namespace ASCompletion.Settings
         const bool DEFAULT_GENERATE_SCOPE = false;
         const HandlerNamingConventions DEFAULT_HANDLER_CONVENTION = HandlerNamingConventions.target_eventName;
 
-        static public string[] DEFAULT_EVENTAUTOREMOVE = new string[] {
+        static public string[] DEFAULT_EVENTAUTOREMOVE = {
               "Event.ADDED_TO_STAGE", "Event.REMOVED_FROM_STAGE",
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };

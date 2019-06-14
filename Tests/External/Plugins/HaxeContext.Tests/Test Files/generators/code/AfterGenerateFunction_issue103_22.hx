@@ -5,7 +5,7 @@ public class Main {
 	}
 	
 	function test():AInt {
-		
+		return 0;
 	}
 	
 	function foo(v:AInt) {}

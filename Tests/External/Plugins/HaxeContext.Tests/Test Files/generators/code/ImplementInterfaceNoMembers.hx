@@ -27,18 +27,18 @@ class ImplementTest{
 	}
 	
 	public function testMethod():Float {
-		
+		return Math.NaN;
 	}
 	
 	public function testMethodArgs(arg:Float, arg2:Bool):Int {
-		
+		return 0;
 	}
 	
 	function testPrivateMethod(?arg:String, ?arg2:Int = 1):Float {
-		
+		return Math.NaN;
 	}
 	
 	public function testMethodWithTypeParams<K:IOtherInterface>(arg:K):Float {
-		
+		return Math.NaN;
 	}
 }
