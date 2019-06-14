@@ -2683,10 +2683,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        [
-            Test,
-            TestCaseSource(nameof(PromoteLocalWithExplicitScopeTestCases)),
-        ]
+        [Test, TestCaseSource(nameof(PromoteLocalWithExplicitScopeTestCases))]
         public string PromoteLocalWithExplicitScope(string fileName)
         {
             ASContext.CommonSettings.GenerateScope = true;
@@ -2705,10 +2702,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        [
-            Test,
-            TestCaseSource(nameof(PromoteLocalWithDefaultModifierDeclarationTestCases)),
-        ]
+        [Test, TestCaseSource(nameof(PromoteLocalWithDefaultModifierDeclarationTestCases))]
         public string PromoteLocalWithDefaultModifierDeclaration(string fileName)
         {
             ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
@@ -2717,10 +2711,7 @@ namespace HaXeContext.Generators
             return result;
         }
 
-        [
-            Test,
-            TestCaseSource(nameof(PromoteLocalTestCases)),
-        ]
+        [Test, TestCaseSource(nameof(PromoteLocalTestCases))]
         public string PromoteLocal(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
@@ -2866,10 +2857,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        [
-            Test,
-            TestCaseSource(nameof(AssignStatementToVariableTestCases))
-        ]
+        [Test, TestCaseSource(nameof(AssignStatementToVariableTestCases))]
         public string AssignStatementToVariable(string fileName, GeneratorJobType job, bool isUseTabs)
         {
             sci.IsUseTabs = isUseTabs;
