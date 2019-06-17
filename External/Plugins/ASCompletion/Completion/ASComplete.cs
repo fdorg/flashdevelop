@@ -3071,14 +3071,23 @@ namespace ASCompletion.Completion
 
         protected virtual void InferType(ScintillaControl sci, ASExpr local, MemberModel member)
         {
-            // is it a simple affectation inference?
+            var lineStartPosition = sci.PositionFromLine(member.LineFrom);
+            var lineEndPosition = sci.LineEndPosition(member.LineFrom);
+            for (var i = lineStartPosition; i < lineEndPosition; i++)
+            {
+                if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
+                var c = (char) sci.CharAt(i);
+                if (c == '=' || c == ';') break;
+                if (c == '_' || c == ',' || c == '(' || c == ')') continue;
+                if (char.IsPunctuation(c)) return;
+            }
             var text = sci.GetLine(member.LineFrom);
             var m = Regex.Match(text, "=([^;]+)");
             if (!m.Success) return;
             var rvalue = m.Groups[1];
             if (rvalue.Length == 0) return;
             var offset = rvalue.Length - rvalue.Value.TrimStart().Length;
-            var rvalueStart = sci.PositionFromLine(member.LineFrom) + rvalue.Index + offset;
+            var rvalueStart = lineStartPosition + rvalue.Index + offset;
             InferVariableType(sci, text, rvalueStart, local, member);
         }
 

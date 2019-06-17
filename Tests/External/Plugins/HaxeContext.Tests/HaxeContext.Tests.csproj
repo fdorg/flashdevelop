@@ -1737,6 +1737,7 @@
     <EmbeddedResource Include="Test Files\generators\code\ImplementInterfaceNoMembers.hx" />
     <EmbeddedResource Include="Test Files\generators\code\ImplementInterfaceNoMembersInsertSingleProperty.hx" />
     <EmbeddedResource Include="Test Files\generators\code\ImplementInterfaceNoPublicMember.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue2788_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
