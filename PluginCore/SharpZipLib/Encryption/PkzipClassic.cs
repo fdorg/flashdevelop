@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// </summary>
         /// <param name="seed">The seed value to initialise keys with.</param>
         /// <returns>A new key value.</returns>
-        static public byte[] GenerateKeys(byte[] seed)
+        public static byte[] GenerateKeys(byte[] seed)
         {
             if ( seed == null ) {
                 throw new ArgumentNullException("seed");

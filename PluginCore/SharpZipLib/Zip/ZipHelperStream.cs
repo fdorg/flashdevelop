@@ -199,7 +199,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>
         /// The underlying stream is closed only if <see cref="IsStreamOwner"/> is true.
         /// </remarks>
-        override public void Close()
+        public override void Close()
         {
             Stream toClose = stream_;
             stream_ = null;

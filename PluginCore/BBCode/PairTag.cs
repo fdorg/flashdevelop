@@ -23,7 +23,7 @@ namespace PluginCore.BBCode
         }
 
 
-        override public string ToString()
+        public override string ToString()
         {
             return "[pairTag"
                    + " openerMatch='" + (_openerMatch == null ? "null" : _openerMatch.ToString()) + "'"

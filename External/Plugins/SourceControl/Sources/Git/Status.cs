@@ -79,7 +79,7 @@ namespace SourceControl.Sources.Git
             return true;
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -92,7 +92,7 @@ namespace SourceControl.Sources.Git
             OnResult?.Invoke(this);
         }
 
-        override protected void Runner_Output(object sender, string line)
+        protected override void Runner_Output(object sender, string line)
         {
             int fileIndex = 3;
             if (line.Length < fileIndex) return;
@@ -123,7 +123,7 @@ namespace SourceControl.Sources.Git
 
     class StatusNode
     {
-        static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
+        public static StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
         public bool HasChildren;
         public string Name;

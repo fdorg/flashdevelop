@@ -16,13 +16,13 @@ namespace AS3Context.Controls
 {
     public partial class ProfilerUI : DockPanelControl, IThemeHandler
     {
-        static private readonly byte[] RESULT_OK = Encoding.Default.GetBytes("<flashconnect status=\"0\"/>\0");
-        static private readonly byte[] RESULT_IGNORED = Encoding.Default.GetBytes("<flashconnect status=\"3\"/>\0");
-        static private readonly byte[] RESULT_GC = Encoding.Default.GetBytes("<flashconnect status=\"4\"/>\0");
+        private static readonly byte[] RESULT_OK = Encoding.Default.GetBytes("<flashconnect status=\"0\"/>\0");
+        private static readonly byte[] RESULT_IGNORED = Encoding.Default.GetBytes("<flashconnect status=\"3\"/>\0");
+        private static readonly byte[] RESULT_GC = Encoding.Default.GetBytes("<flashconnect status=\"4\"/>\0");
 
-        static private ProfilerUI instance;
-        static private bool gcWanted;
-        static private byte[] snapshotWanted;
+        private static ProfilerUI instance;
+        private static bool gcWanted;
+        private static byte[] snapshotWanted;
         public DockContent PanelRef;
         private bool autoStart;
         private bool running;
@@ -379,7 +379,7 @@ namespace AS3Context.Controls
             return flashConnect != null ? (FlashConnect.Settings)flashConnect.Settings : new FlashConnect.Settings();
         }
 
-        static private string CheckResource(string fileName, string resName)
+        private static string CheckResource(string fileName, string resName)
         {
             string fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
             if (!File.Exists(fullPath))

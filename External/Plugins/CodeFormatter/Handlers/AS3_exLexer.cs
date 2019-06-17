@@ -155,7 +155,7 @@ public class AS3_exLexer : Lexer {
         private IToken lastDefaultCnlToken = null;
         
         // override
-        override public IToken NextToken()
+        public override IToken NextToken()
         {
             IToken result = base.NextToken();
             if (result!=null && result.Channel != AS3_exParser.CHANNEL_WHITESPACE )
@@ -165,7 +165,7 @@ public class AS3_exLexer : Lexer {
             return result;      
         }
         
-        override public void Reset()
+        public override void Reset()
         {
             base.Reset(); // reset all recognizer state variables
             if (input is ANTLRStringStream)
@@ -600,7 +600,7 @@ public class AS3_exLexer : Lexer {
 
     }
     
-    override public string GrammarFileName
+    public override string GrammarFileName
     {
         get { return "AS3_ex.g3";} 
     }
@@ -5341,7 +5341,7 @@ public class AS3_exLexer : Lexer {
     }
     // $ANTLR end "XML_TEXT"
 
-    override public void mTokens() // throws RecognitionException 
+    public override void mTokens() // throws RecognitionException 
     {
         // AS3_ex.g3:1:8: ( AS | BREAK | CASE | CATCH | CLASS | CONST | CONTINUE | DEFAULT | DELETE | DO | ELSE | EXTENDS | FALSE | FINALLY | FOR | FUNCTION | IF | IMPLEMENTS | IMPORT | IN | INSTANCEOF | INTERFACE | INTERNAL | IS | NATIVE | NEW | NULL | PACKAGE | PRIVATE | PROTECTED | PUBLIC | RETURN | SUPER | SWITCH | THIS | THROW | TO | TRUE | TRY | TYPEOF | USE | VAR | VOID | WHILE | WITH | EACH | GET | SET | NAMESPACE | INCLUDE | DYNAMIC | FINAL | OVERRIDE | STATIC | SEMI | LCURLY | RCURLY | LPAREN | RPAREN | LBRACK | RBRACK | DOT | COMMA | LT | GT | LTE | EQ | NEQ | SAME | NSAME | PLUS | SUB | STAR | DIV | MOD | INC | DEC | SHL | AND | OR | XOR | NOT | INV | LAND | LOR | QUE | COLON | ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | LAND_ASSIGN | LOR_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | ELLIPSIS | XML_ELLIPSIS | XML_TEND | XML_E_TEND | XML_NS_OP | XML_AT | XML_LS_STD | XML_LS_END | EOL | WHITESPACE | COMMENT_MULTILINE | COMMENT_SINGLELINE | SINGLE_QUOTE_LITERAL | DOUBLE_QUOTE_LITERAL | REGULAR_EXPR_LITERAL | HEX_NUMBER_LITERAL | DEC_NUMBER_LITERAL | IDENTIFIER | XML_COMMENT | XML_CDATA | XML_PI | XML_TEXT )
         int alt30 = 120;
@@ -6278,7 +6278,7 @@ public class AS3_exLexer : Lexer {
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "1472:10: fragment DEC_NUMBER : ( ( NUMBER )+ '.' ( NUMBER )* | '.' ( NUMBER )+ | ( NUMBER )+ );"; }
         }
@@ -6906,7 +6906,7 @@ public class AS3_exLexer : Lexer {
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "1:1: Tokens : ( AS | BREAK | CASE | CATCH | CLASS | CONST | CONTINUE | DEFAULT | DELETE | DO | ELSE | EXTENDS | FALSE | FINALLY | FOR | FUNCTION | IF | IMPLEMENTS | IMPORT | IN | INSTANCEOF | INTERFACE | INTERNAL | IS | NATIVE | NEW | NULL | PACKAGE | PRIVATE | PROTECTED | PUBLIC | RETURN | SUPER | SWITCH | THIS | THROW | TO | TRUE | TRY | TYPEOF | USE | VAR | VOID | WHILE | WITH | EACH | GET | SET | NAMESPACE | INCLUDE | DYNAMIC | FINAL | OVERRIDE | STATIC | SEMI | LCURLY | RCURLY | LPAREN | RPAREN | LBRACK | RBRACK | DOT | COMMA | LT | GT | LTE | EQ | NEQ | SAME | NSAME | PLUS | SUB | STAR | DIV | MOD | INC | DEC | SHL | AND | OR | XOR | NOT | INV | LAND | LOR | QUE | COLON | ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | LAND_ASSIGN | LOR_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | ELLIPSIS | XML_ELLIPSIS | XML_TEND | XML_E_TEND | XML_NS_OP | XML_AT | XML_LS_STD | XML_LS_END | EOL | WHITESPACE | COMMENT_MULTILINE | COMMENT_SINGLELINE | SINGLE_QUOTE_LITERAL | DOUBLE_QUOTE_LITERAL | REGULAR_EXPR_LITERAL | HEX_NUMBER_LITERAL | DEC_NUMBER_LITERAL | IDENTIFIER | XML_COMMENT | XML_CDATA | XML_PI | XML_TEXT );"; }
         }

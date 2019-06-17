@@ -131,9 +131,8 @@ namespace PluginCore.BBCode
             c.fontSize = this.fontSize;
             c.isAbsFontSize = this.isAbsFontSize;
             c.foreColor = this.foreColor == null ? null : this.foreColor.clone();
-            c.backColor = this.backColor == null ? null : this.backColor.clone();
-
-            return c;
+            c.backColor = this.backColor == null ? null : this.backColor.cpublic
+override        return c;
         }
 
         override public string ToString()

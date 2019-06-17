@@ -24,12 +24,12 @@ namespace AS3Context.Compiler
     /// </summary>
     public class FlexShells
     {
-        static public event SyntaxErrorHandler SyntaxError;
+        public static event SyntaxErrorHandler SyntaxError;
 
-        static readonly public Regex re_SplitParams = 
+        public static readonly Regex re_SplitParams = 
             new Regex("[\\s](?<switch>[-+][A-z0-9\\-\\.]+)", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        static private readonly string[] PATH_SWITCHES = { 
+        private static readonly string[] PATH_SWITCHES = { 
             "-compiler.context-root","-context-root",
             "-compiler.defaults-css-url","-defaults-css-url",
             "-compiler.external-library-path","-external-library-path","-el",
@@ -44,17 +44,17 @@ namespace AS3Context.Compiler
             "-output","-o","-runtime-shared-libraries","-rsl",
             "-namespace","-compiler.namespaces.namespace"};
         
-        static private string ascPath;
-        static private string mxmlcPath;
-        static private string flexShellsJar = "Flex4Shells.jar";
-        static private string flexShellsPath;
-        static private bool running;
-        static private bool silentChecking;
-        static private string checkedSDK;
-        static private bool isFlex4SDK;
-        static private string currentSDK;
+        private static string ascPath;
+        private static string mxmlcPath;
+        private static string flexShellsJar = "Flex4Shells.jar";
+        private static string flexShellsPath;
+        private static bool running;
+        private static bool silentChecking;
+        private static string checkedSDK;
+        private static bool isFlex4SDK;
+        private static string currentSDK;
         
-        static private string CheckResource(string resName, string fileName)
+        private static string CheckResource(string resName, string fileName)
         {
             string fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
             if (!File.Exists(fullPath))
@@ -79,7 +79,7 @@ namespace AS3Context.Compiler
             return fullPath;
         }
 
-        static public FlexShells Instance 
+        public static FlexShells Instance 
         {
             get {
                 if (instance == null) instance = new FlexShells();
@@ -87,7 +87,7 @@ namespace AS3Context.Compiler
             }
         }
         
-        static private FlexShells instance;
+        private static FlexShells instance;
 
         private FlexShells()
         {

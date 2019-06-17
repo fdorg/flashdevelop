@@ -483,7 +483,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="newName">
         /// The new name to place into the header buffer.
         /// </param>
-        static public void AdjustEntryName(byte[] buffer, string newName)
+        public static void AdjustEntryName(byte[] buffer, string newName)
         {
             TarHeader.GetNameBytes(newName, buffer, 0, TarHeader.NAMELEN);
         }
@@ -497,7 +497,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="name">
         /// The tar entry name.
         /// </param>
-        static public void NameTarHeader(TarHeader header, string name)
+        public static void NameTarHeader(TarHeader header, string name)
         {
             if ( header == null ) {
                 throw new ArgumentNullException("header");

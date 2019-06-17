@@ -49,13 +49,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             get {   return m_tabStripControl;   }
         }
 
-        internal protected DockPane(IDockContent content, DockState visibleState, bool show)
+        protected internal DockPane(IDockContent content, DockState visibleState, bool show)
         {
             InternalConstruct(content, visibleState, false, Rectangle.Empty, null, DockAlignment.Right, 0.5, show);
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
-        internal protected DockPane(IDockContent content, FloatWindow floatWindow, bool show)
+        protected internal DockPane(IDockContent content, FloatWindow floatWindow, bool show)
         {
             if (floatWindow == null)
                 throw new ArgumentNullException("floatWindow");
@@ -63,7 +63,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             InternalConstruct(content, DockState.Float, false, Rectangle.Empty, floatWindow.NestedPanes.GetDefaultPreviousPane(this), DockAlignment.Right, 0.5, show);
         }
 
-        internal protected DockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion, bool show)
+        protected internal DockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion, bool show)
         {
             if (previousPane == null)
                 throw(new ArgumentNullException("previousPane"));
@@ -71,7 +71,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
-        internal protected DockPane(IDockContent content, Rectangle floatWindowBounds, bool show)
+        protected internal DockPane(IDockContent content, Rectangle floatWindowBounds, bool show)
         {
             InternalConstruct(content, DockState.Float, true, floatWindowBounds, null, DockAlignment.Right, 0.5, show);
         }

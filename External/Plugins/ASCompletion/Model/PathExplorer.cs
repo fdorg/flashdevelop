@@ -22,19 +22,19 @@ namespace ASCompletion.Model
         public delegate void ExplorationProgressHandler(string state, int value, int max);
         public delegate void ExplorationDoneHandler(string path);
 
-        static public bool IsWorking
+        public static bool IsWorking
         {
             get { return explorerThread != null; }
         }
 
-        static private bool uistarted;
-        static private bool contextUpdating;
-        static private Queue<PathExplorer> waiting = new Queue<PathExplorer>();
-        static private volatile Thread explorerThread;
-        static private volatile bool stopExploration;
-        static private volatile int toWait = 1000; // initial delay before exploring the filesystem
+        private static bool uistarted;
+        private static bool contextUpdating;
+        private static Queue<PathExplorer> waiting = new Queue<PathExplorer>();
+        private static volatile Thread explorerThread;
+        private static volatile bool stopExploration;
+        private static volatile int toWait = 1000; // initial delay before exploring the filesystem
 
-        static public void OnUIStarted()
+        public static void OnUIStarted()
         {
             if (!uistarted)
             {
@@ -46,7 +46,7 @@ namespace ASCompletion.Model
             }
         }
 
-        static public void StopBackgroundExploration()
+        public static void StopBackgroundExploration()
         {
             // signal to stop cleanly
             stopExploration = true;
@@ -67,22 +67,22 @@ namespace ASCompletion.Model
             lock (waiting) { waiting.Clear(); }
         }
 
-        static public void ClearAll()
+        public static void ClearAll()
         {
             lock (waiting) { waiting.Clear(); }
         }
 
-        static public void BeginUpdate()
+        public static void BeginUpdate()
         {
             contextUpdating = true;
         }
 
-        static public void EndUpdate()
+        public static void EndUpdate()
         {
             contextUpdating = false;
         }
 
-        static public void ClearPersistentCache()
+        public static void ClearPersistentCache()
         {
             string cacheDir = GetCachePath();
             try

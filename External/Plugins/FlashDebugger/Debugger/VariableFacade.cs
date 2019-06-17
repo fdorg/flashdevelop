@@ -36,7 +36,7 @@ namespace FlashDebugger
             return m_var.getScope();
         }
 
-        virtual public string Path
+        public virtual string Path
         {
             get
             {
@@ -51,7 +51,7 @@ namespace FlashDebugger
         }
 
         /// <summary> Our lone get context (i.e. parent) interface </summary>
-        virtual public int Context
+        public virtual int Context
         {
             get
             {
@@ -60,7 +60,7 @@ namespace FlashDebugger
             
         }
 
-        virtual public Variable Variable
+        public virtual Variable Variable
         {
             get
             {

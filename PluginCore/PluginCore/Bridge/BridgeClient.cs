@@ -7,9 +7,9 @@ namespace PluginCore.Bridge
     public class BridgeClient : ServerSocket
     {
         #region configuration
-        static private string ip;
+        private static string ip;
 
-        static public string BridgeIP
+        public static string BridgeIP
         {
             get
             {
@@ -23,7 +23,7 @@ namespace PluginCore.Bridge
             }
         }
 
-        static public int BridgePort { get { return BridgeManager.Settings.Port; } }
+        public static int BridgePort { get { return BridgeManager.Settings.Port; } }
 
         static string DetectIP()
         {

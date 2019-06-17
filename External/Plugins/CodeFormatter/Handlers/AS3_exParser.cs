@@ -345,11 +345,11 @@ public class AS3_exParser : Parser
         }
     }
 
-    override public string[] TokenNames {
+    public override string[] TokenNames {
         get { return tokenNames; }
     }
 
-    override public string GrammarFileName {
+    public override string GrammarFileName {
         get { return "AS3_ex.g3"; }
     }
 
@@ -1048,7 +1048,7 @@ public class AS3_exParser : Parser
     public class booleanLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -1162,7 +1162,7 @@ public class AS3_exParser : Parser
     public class numericLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -1276,7 +1276,7 @@ public class AS3_exParser : Parser
     public class stringLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -1390,7 +1390,7 @@ public class AS3_exParser : Parser
     public class regularExpresionLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -1461,7 +1461,7 @@ public class AS3_exParser : Parser
     public class identifierLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -1571,7 +1571,7 @@ public class AS3_exParser : Parser
     public class xmlNameLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -1856,7 +1856,7 @@ public class AS3_exParser : Parser
     public class literal_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2031,7 +2031,7 @@ public class AS3_exParser : Parser
     public class xmlMarkup_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2159,7 +2159,7 @@ public class AS3_exParser : Parser
     public class xmlComment_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2230,7 +2230,7 @@ public class AS3_exParser : Parser
     public class xmlCDATA_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2301,7 +2301,7 @@ public class AS3_exParser : Parser
     public class xmlPI_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2372,7 +2372,7 @@ public class AS3_exParser : Parser
     public class xmlExprEval_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2461,7 +2461,7 @@ public class AS3_exParser : Parser
     public class xmlTextElement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2587,7 +2587,7 @@ public class AS3_exParser : Parser
     public class xmlText_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -2825,7 +2825,7 @@ public class AS3_exParser : Parser
     public class xmlPrimaryExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -3012,7 +3012,7 @@ public class AS3_exParser : Parser
     public class xmlPropertyIdentifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -3215,7 +3215,7 @@ public class AS3_exParser : Parser
     public class xmlAttributeIdentifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -3487,7 +3487,7 @@ public class AS3_exParser : Parser
     public class xmlPropertySelector_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -3597,7 +3597,7 @@ public class AS3_exParser : Parser
     public class xmlQualifiedIdentifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -3730,7 +3730,7 @@ public class AS3_exParser : Parser
     public class xmlInitialiser_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -3836,7 +3836,7 @@ public class AS3_exParser : Parser
     public class xmlElement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4103,7 +4103,7 @@ public class AS3_exParser : Parser
     public class xmlAttributes_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4205,7 +4205,7 @@ public class AS3_exParser : Parser
     public class xmlTagName_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4311,7 +4311,7 @@ public class AS3_exParser : Parser
     public class xmlAttribute_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4449,7 +4449,7 @@ public class AS3_exParser : Parser
     public class xmlElementContent_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4551,7 +4551,7 @@ public class AS3_exParser : Parser
     public class xmlElementContentHelper_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4830,7 +4830,7 @@ public class AS3_exParser : Parser
     public class xmlListInitialiser_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -4975,7 +4975,7 @@ public class AS3_exParser : Parser
     public class semic_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -5146,7 +5146,7 @@ public class AS3_exParser : Parser
     public class fileContents_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -5331,7 +5331,7 @@ public class AS3_exParser : Parser
     public class packageDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -5513,7 +5513,7 @@ public class AS3_exParser : Parser
     public class mxmlEmbedded_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -5735,7 +5735,7 @@ public class AS3_exParser : Parser
     public class packageElement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -5975,7 +5975,7 @@ public class AS3_exParser : Parser
     public class importDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6109,7 +6109,7 @@ public class AS3_exParser : Parser
     public class classOrInterfaceDecl_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6319,7 +6319,7 @@ public class AS3_exParser : Parser
     public class directive_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6498,7 +6498,7 @@ public class AS3_exParser : Parser
     public class conditionalDirAndBindingDecls_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6617,7 +6617,7 @@ public class AS3_exParser : Parser
     public class xmlKeyword_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6693,7 +6693,7 @@ public class AS3_exParser : Parser
     public class conditionalCompilerOption_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6778,7 +6778,7 @@ public class AS3_exParser : Parser
     public class defaultXMLNamespaceDirective_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -6913,7 +6913,7 @@ public class AS3_exParser : Parser
     public class bindingDecl_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -7214,7 +7214,7 @@ public class AS3_exParser : Parser
     public class includeDirective_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -7303,7 +7303,7 @@ public class AS3_exParser : Parser
     public class bindingDeclArg_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -7630,7 +7630,7 @@ public class AS3_exParser : Parser
     public class interfaceDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -7772,7 +7772,7 @@ public class AS3_exParser : Parser
     public class interfaceBody_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -7904,7 +7904,7 @@ public class AS3_exParser : Parser
     public class classDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -8095,7 +8095,7 @@ public class AS3_exParser : Parser
     public class classBody_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -8227,7 +8227,7 @@ public class AS3_exParser : Parser
     public class classBodyElement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -8437,7 +8437,7 @@ public class AS3_exParser : Parser
     public class interfaceElement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -8647,7 +8647,7 @@ public class AS3_exParser : Parser
     public class interfaceFunctionDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -8988,7 +8988,7 @@ public class AS3_exParser : Parser
     public class propertyDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -9241,7 +9241,7 @@ public class AS3_exParser : Parser
     public class functionDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -9581,7 +9581,7 @@ public class AS3_exParser : Parser
     public class functionExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -9749,7 +9749,7 @@ public class AS3_exParser : Parser
     public class formalParameterList_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -10020,7 +10020,7 @@ public class AS3_exParser : Parser
     public class formalEllipsisParameter_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -10098,7 +10098,7 @@ public class AS3_exParser : Parser
     public class functionBody_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -10273,7 +10273,7 @@ public class AS3_exParser : Parser
     public class memberModifiers_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -10386,7 +10386,7 @@ public class AS3_exParser : Parser
     public class memberModifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -10466,7 +10466,7 @@ public class AS3_exParser : Parser
     public class statement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -11075,7 +11075,7 @@ public class AS3_exParser : Parser
     public class blockStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -11242,7 +11242,7 @@ public class AS3_exParser : Parser
     public class throwStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -11340,7 +11340,7 @@ public class AS3_exParser : Parser
     public class constantVarStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -11461,7 +11461,7 @@ public class AS3_exParser : Parser
     public class useNamespaceDirective_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -11633,7 +11633,7 @@ public class AS3_exParser : Parser
     public class namespaceDirective_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -11767,7 +11767,7 @@ public class AS3_exParser : Parser
     public class tryStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12026,7 +12026,7 @@ public class AS3_exParser : Parser
     public class catchClause_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12149,7 +12149,7 @@ public class AS3_exParser : Parser
     public class finallyClause_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12243,7 +12243,7 @@ public class AS3_exParser : Parser
     public class labelledStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12343,7 +12343,7 @@ public class AS3_exParser : Parser
     public class switchStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12519,7 +12519,7 @@ public class AS3_exParser : Parser
     public class switchBlockStatementGroup_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12668,7 +12668,7 @@ public class AS3_exParser : Parser
     public class switchLabel_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12819,7 +12819,7 @@ public class AS3_exParser : Parser
     public class withStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -12963,7 +12963,7 @@ public class AS3_exParser : Parser
     public class returnStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13080,7 +13080,7 @@ public class AS3_exParser : Parser
     public class breakStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13197,7 +13197,7 @@ public class AS3_exParser : Parser
     public class continueStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13314,7 +13314,7 @@ public class AS3_exParser : Parser
     public class forStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13458,7 +13458,7 @@ public class AS3_exParser : Parser
     public class forInStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13602,7 +13602,7 @@ public class AS3_exParser : Parser
     public class forEachInStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13757,7 +13757,7 @@ public class AS3_exParser : Parser
     public class forControl_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -13925,7 +13925,7 @@ public class AS3_exParser : Parser
     public class forInControl_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14010,7 +14010,7 @@ public class AS3_exParser : Parser
     public class forInDecl_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14144,7 +14144,7 @@ public class AS3_exParser : Parser
     public class forInit_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14278,7 +14278,7 @@ public class AS3_exParser : Parser
     public class forUpdate_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14345,7 +14345,7 @@ public class AS3_exParser : Parser
     public class doWhileStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14521,7 +14521,7 @@ public class AS3_exParser : Parser
     public class whileStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14644,7 +14644,7 @@ public class AS3_exParser : Parser
     public class ifStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14902,7 +14902,7 @@ public class AS3_exParser : Parser
     public class emptyStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -14973,7 +14973,7 @@ public class AS3_exParser : Parser
     public class variableStatement_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15164,7 +15164,7 @@ public class AS3_exParser : Parser
     public class variableDeclarationList_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15303,7 +15303,7 @@ public class AS3_exParser : Parser
     public class variableDeclarationNoInList_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15442,7 +15442,7 @@ public class AS3_exParser : Parser
     public class variableDeclaration_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15559,7 +15559,7 @@ public class AS3_exParser : Parser
     public class variableDeclarationNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15674,7 +15674,7 @@ public class AS3_exParser : Parser
     public class variableIdentifierDecl_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15778,7 +15778,7 @@ public class AS3_exParser : Parser
     public class type_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -15926,7 +15926,7 @@ public class AS3_exParser : Parser
     public class typeList_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16065,7 +16065,7 @@ public class AS3_exParser : Parser
     public class standardQualifiedName_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16190,7 +16190,7 @@ public class AS3_exParser : Parser
     public class qualifiedName_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16288,7 +16288,7 @@ public class AS3_exParser : Parser
     public class typePostfixSyntax_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16462,7 +16462,7 @@ public class AS3_exParser : Parser
     public class qualifiedIdentifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16533,7 +16533,7 @@ public class AS3_exParser : Parser
     public class parExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16642,7 +16642,7 @@ public class AS3_exParser : Parser
     public class expression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16788,7 +16788,7 @@ public class AS3_exParser : Parser
     public class expressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -16927,7 +16927,7 @@ public class AS3_exParser : Parser
     public class assignmentExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -17048,7 +17048,7 @@ public class AS3_exParser : Parser
     public class assignmentExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -17169,7 +17169,7 @@ public class AS3_exParser : Parser
     public class assignmentOperator_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -17247,7 +17247,7 @@ public class AS3_exParser : Parser
     public class assignmentOperator_int_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -17612,7 +17612,7 @@ public class AS3_exParser : Parser
     public class conditionalExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -17759,7 +17759,7 @@ public class AS3_exParser : Parser
     public class conditionalExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -17901,7 +17901,7 @@ public class AS3_exParser : Parser
     public class logicalORExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18038,7 +18038,7 @@ public class AS3_exParser : Parser
     public class logicalORExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18168,7 +18168,7 @@ public class AS3_exParser : Parser
     public class logicalANDExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18305,7 +18305,7 @@ public class AS3_exParser : Parser
     public class logicalANDExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18435,7 +18435,7 @@ public class AS3_exParser : Parser
     public class bitwiseORExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18572,7 +18572,7 @@ public class AS3_exParser : Parser
     public class bitwiseORExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18702,7 +18702,7 @@ public class AS3_exParser : Parser
     public class bitwiseXORExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18839,7 +18839,7 @@ public class AS3_exParser : Parser
     public class bitwiseXORExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -18969,7 +18969,7 @@ public class AS3_exParser : Parser
     public class bitwiseANDExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -19106,7 +19106,7 @@ public class AS3_exParser : Parser
     public class bitwiseANDExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -19236,7 +19236,7 @@ public class AS3_exParser : Parser
     public class equalityExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -19382,7 +19382,7 @@ public class AS3_exParser : Parser
     public class equalityExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -19521,7 +19521,7 @@ public class AS3_exParser : Parser
     public class relationalExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -19799,7 +19799,7 @@ public class AS3_exParser : Parser
     public class relationalExpressionNoIn_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20018,7 +20018,7 @@ public class AS3_exParser : Parser
     public class shiftExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20328,7 +20328,7 @@ public class AS3_exParser : Parser
     public class additiveExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20474,7 +20474,7 @@ public class AS3_exParser : Parser
     public class multiplicativeExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20631,7 +20631,7 @@ public class AS3_exParser : Parser
     public class unaryExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20762,7 +20762,7 @@ public class AS3_exParser : Parser
     public class unaryOp_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20842,7 +20842,7 @@ public class AS3_exParser : Parser
     public class postfixExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -20940,7 +20940,7 @@ public class AS3_exParser : Parser
     public class postfixOp_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -21020,7 +21020,7 @@ public class AS3_exParser : Parser
     public class memberExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -21249,7 +21249,7 @@ public class AS3_exParser : Parser
     public class newExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -21327,7 +21327,7 @@ public class AS3_exParser : Parser
     public class leftHandSideExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -21615,7 +21615,7 @@ public class AS3_exParser : Parser
     public class eitherIdentifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -21856,7 +21856,7 @@ public class AS3_exParser : Parser
     public class typeSpecifier_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22023,7 +22023,7 @@ public class AS3_exParser : Parser
     public class notQuiteReservedWord_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22103,7 +22103,7 @@ public class AS3_exParser : Parser
     public class allKeywords_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22214,7 +22214,7 @@ public class AS3_exParser : Parser
     public class reservedWord_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22294,7 +22294,7 @@ public class AS3_exParser : Parser
     public class arguments_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22487,7 +22487,7 @@ public class AS3_exParser : Parser
     public class suffix_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22593,7 +22593,7 @@ public class AS3_exParser : Parser
     public class indexSuffix_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22682,7 +22682,7 @@ public class AS3_exParser : Parser
     public class propertyReferenceSuffix_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -22933,7 +22933,7 @@ public class AS3_exParser : Parser
     public class primaryExpression_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23000,7 +23000,7 @@ public class AS3_exParser : Parser
     public class primaryExpressionHelper_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23306,7 +23306,7 @@ public class AS3_exParser : Parser
     public class objectLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23418,7 +23418,7 @@ public class AS3_exParser : Parser
     public class propertyNameAndValueList_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23566,7 +23566,7 @@ public class AS3_exParser : Parser
     public class propertyNameAndValue_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23654,7 +23654,7 @@ public class AS3_exParser : Parser
     public class propertyName_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23794,7 +23794,7 @@ public class AS3_exParser : Parser
     public class arrayLiteral_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -23902,7 +23902,7 @@ public class AS3_exParser : Parser
     public class elementList_return : ParserRuleReturnScope
     {
         private object tree;
-        override public object Tree
+        public override object Tree
         {
             get { return tree; }
             set { tree = (object) value; }
@@ -27806,7 +27806,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "()* loopback of 1548:80: ({...}? => (s= SUB | d= DOT | c= COLON ) {...}? => (I2= IDENTIFIER | allKeywords ) )*"; }
         }
@@ -28592,7 +28592,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "()* loopback of 1849:3: ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )*"; }
         }
@@ -28945,7 +28945,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "1864:1: packageElement : ( conditionalCompilerOption l= LCURLY ( packageElement )* r= RCURLY | classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive );"; }
         }
@@ -29285,7 +29285,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "1993:5: ( eitherIdentifier E= ASSIGN )?"; }
         }
@@ -29483,7 +29483,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "2075:1: classBodyElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( classBodyElement )* r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive );"; }
         }
@@ -29819,7 +29819,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "2093:1: interfaceElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( interfaceElement )* r= RCURLY | propertyDeclaration | interfaceFunctionDeclaration | statement | directive );"; }
         }
@@ -30151,7 +30151,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "2226:8: ( statement | functionDeclaration )"; }
         }
@@ -30381,7 +30381,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "2273:5: ( blockStatement | directive | namespaceDirective | constantVarStatement | tryStatement | switchStatement | withStatement | returnStatement | breakStatement | continueStatement | forStatement | forInStatement | forEachInStatement | doWhileStatement | whileStatement | ifStatement | variableStatement | throwStatement | labelledStatement | expression semic | emptyStatement )"; }
         }
@@ -30836,7 +30836,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "()* loopback of 2465:6: ( statement )*"; }
         }
@@ -30982,7 +30982,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "3017:7: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpression | conditionalExpression )"; }
         }
@@ -31473,7 +31473,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "3032:8: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpressionNoIn | conditionalExpressionNoIn )"; }
         }
@@ -31944,7 +31944,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "3052:1: assignmentOperator_int : ( ASSIGN | s= STAR a= ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | ( ( '>' '>' '=' )=>t1= '>' t2= '>' t3= '=' {...}? -> SHR_ASSIGN ) | ( ( '>' '>' '>' '=' )=>t1= '>' t2= '>' t3= '>' t4= '=' {...}? -> SHU_ASSIGN ) | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | LOR_ASSIGN | LAND_ASSIGN );"; }
         }
@@ -32025,7 +32025,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "3335:1: unaryExpression : ( postfixExpression | op= ( NOT | INV ) unaryExpression | unaryOp postfixExpression );"; }
         }
@@ -32133,7 +32133,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "()* loopback of 3376:5: ( arguments | L= LBRACK expression R= RBRACK | E= XML_ELLIPSIS eitherIdentifier | D= DOT ( eitherIdentifier | parExpression ) | typePostfixSyntax | op= XML_NS_OP expression )*"; }
         }
@@ -32305,7 +32305,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "3521:1: primaryExpressionHelper : (T= THIS | S= SUPER | literal | arrayLiteral | objectLiteral | ( identifierLiteral x= XML_NS_OP )? identifierLiteral | xmlPrimaryExpression | parExpression | l= LT type g= GT ( arrayLiteral )? );"; }
         }
@@ -32577,7 +32577,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
+        public override string Description
         {
             get { return "3530:48: ( arrayLiteral )?"; }
         }
