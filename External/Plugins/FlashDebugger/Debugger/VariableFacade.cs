@@ -1,4 +1,3 @@
-using System;
 using flash.tools.debugger;
 using flash.tools.debugger.events;
 

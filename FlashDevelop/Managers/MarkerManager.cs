@@ -1,4 +1,3 @@
-using System;
 using PluginCore.Controls;
 using ScintillaNet;
 

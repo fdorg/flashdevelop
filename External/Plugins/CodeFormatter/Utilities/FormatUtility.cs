@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using CodeFormatter.Handlers;
 using CodeFormatter.Preferences;

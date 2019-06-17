@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 /**
  * Credit: http://www.ko-sw.com/Blog/post/An-Ultra-Fast-CSS-Minify-Algorithm.aspx

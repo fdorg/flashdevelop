@@ -1,5 +1,3 @@
-using System;
-
 namespace PluginCore.Utilities
 {
     public class LineEndDetector

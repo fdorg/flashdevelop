@@ -1,6 +1,5 @@
 // IMatchFinder.cs
 
-using System;
 using System.IO;
 
 namespace SevenZip.Compression.LZ

@@ -1,5 +1,3 @@
-using System;
-
 namespace PluginCore.BBCode
 {
     public interface IPairTag

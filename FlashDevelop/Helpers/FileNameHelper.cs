@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using PluginCore.Helpers;
 
@@ -9,147 +8,68 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the system image file
         /// </summary>
-        public static string Images
-        {
-            get
-            {
-                return GetSettingFile("Images.png");
-            }
-        }
+        public static string Images => GetSettingFile("Images.png");
 
         /// <summary>
         /// Path to the large system image file
         /// </summary>
-        public static string Images32
-        {
-            get
-            {
-                return GetSettingFile("Images32.png");
-            }
-        }
+        public static string Images32 => GetSettingFile("Images32.png");
 
         /// <summary>
         /// Path to the toolbar file
         /// </summary>
-        public static string ToolBar
-        {
-            get
-            {
-                return GetSettingFile("ToolBar.xml");
-            }
-        }
+        public static string ToolBar => GetSettingFile("ToolBar.xml");
 
         /// <summary>
         /// Path to the main menu file
         /// </summary>
-        public static string MainMenu
-        {
-            get 
-            {
-                return GetSettingFile("MainMenu.xml");
-            }
-        }
+        public static string MainMenu => GetSettingFile("MainMenu.xml");
 
         /// <summary>
         /// Path to the scintilla menu file
         /// </summary>
-        public static string ScintillaMenu
-        {
-            get
-            {
-                return GetSettingFile("ScintillaMenu.xml");
-            }
-        }
+        public static string ScintillaMenu => GetSettingFile("ScintillaMenu.xml");
 
         /// <summary>
         /// Path to the tab menu file
         /// </summary>
-        public static string TabMenu
-        {
-            get
-            {
-                return GetSettingFile("TabMenu.xml");
-            }
-        }
+        public static string TabMenu => GetSettingFile("TabMenu.xml");
 
         /// <summary>
         /// Path to the session file
         /// </summary>
-        public static string SessionData
-        {
-            get
-            {
-                return Path.Combine(PathHelper.SettingDir, "SessionData.fdb");
-            }
-        }
+        public static string SessionData => Path.Combine(PathHelper.SettingDir, "SessionData.fdb");
 
         /// <summary>
         /// Path to the panel layout file
         /// </summary>
-        public static string LayoutData
-        {
-            get
-            {
-                return Path.Combine(PathHelper.SettingDir, "LayoutData.fdl");
-            }
-        }
+        public static string LayoutData => Path.Combine(PathHelper.SettingDir, "LayoutData.fdl");
 
         /// <summary>
         /// Path to the setting file
         /// </summary>
-        public static string SettingData
-        {
-            get
-            {
-                return Path.Combine(PathHelper.SettingDir, "SettingData.fdb");
-            }
-        }
+        public static string SettingData => Path.Combine(PathHelper.SettingDir, "SettingData.fdb");
 
         /// <summary>
         /// Path to the shortcut file
         /// </summary>
-        public static string ShortcutData
-        {
-            get
-            {
-                //Alternative: Path.Combine(PathHelper.ShortcutsDir, "CURRENT");
-                return Path.Combine(PathHelper.SettingDir, "ShortcutData.fda");
-            }
-        }
+        public static string ShortcutData => Path.Combine(PathHelper.SettingDir, "ShortcutData.fda");
 
         /// <summary>
         /// Path to the argument file
         /// </summary>
-        public static string UserArgData
-        {
-            get
-            {
-                return Path.Combine(PathHelper.SettingDir, "UserArgData.fda");
-            }
-        }
+        public static string UserArgData => Path.Combine(PathHelper.SettingDir, "UserArgData.fda");
 
         /// <summary>
         /// Path to the recovery directory
         /// </summary>
-        public static string RecoveryDir
-        {
-            get
-            {
-                return Path.Combine(PathHelper.SettingDir, "Recovery");
-            }
-        }
+        public static string RecoveryDir => Path.Combine(PathHelper.SettingDir, "Recovery");
 
         /// <summary>
         /// Path to the file state directory
         /// </summary>
-        public static string FileStateDir
-        {
-            get
-            {
-                return Path.Combine(PathHelper.SettingDir, "FileStates");
-            }
-        }
-        
+        public static string FileStateDir => Path.Combine(PathHelper.SettingDir, "FileStates");
+
         /// <summary>
         /// Selects correct setting file from user dir or app dir.
         /// </summary>
@@ -163,5 +83,4 @@ namespace FlashDevelop.Helpers
         }
 
     }
-
 }
