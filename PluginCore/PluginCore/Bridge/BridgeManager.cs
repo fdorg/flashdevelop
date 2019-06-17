@@ -5,15 +5,15 @@ namespace PluginCore.Bridge
 {
     public class BridgeManager
     {
-        private static IBridgeSettings settings;
-        private static BridgeClient remoteClient;
+        static private IBridgeSettings settings;
+        static private BridgeClient remoteClient;
 
         #region Properties
 
         /// <summary>
         /// Enable delegation to host system
         /// </summary>
-        public static bool Active
+        static public bool Active
         {
             get { return settings != null ? settings.Active : false; }
         }
@@ -21,7 +21,7 @@ namespace PluginCore.Bridge
         /// <summary>
         /// Bridge configuration is externalized in a plugin
         /// </summary>
-        public static IBridgeSettings Settings
+        static public IBridgeSettings Settings
         {
             get { return settings; }
             set { settings = value; }
@@ -34,7 +34,7 @@ namespace PluginCore.Bridge
         /// <summary>
         /// Check if the provided file type should always be executed under Windows
         /// </summary>
-        public static bool AlwaysOpenLocal(string path)
+        static public bool AlwaysOpenLocal(string path)
         {
             if (!Active) return true;
             string ext = Path.GetExtension(path).ToLower();
@@ -46,7 +46,7 @@ namespace PluginCore.Bridge
         /// <summary>
         /// Open a shared document by the associated application of the host
         /// </summary>
-        public static void RemoteOpen(string shared)
+        static public void RemoteOpen(string shared)
         {
             if (remoteClient == null || !remoteClient.Connected)
                 remoteClient = new BridgeClient();

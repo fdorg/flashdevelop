@@ -156,7 +156,7 @@ namespace SourceControl.Managers
         static Image iconSkin;
         static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
 
-        public static void Init()
+        static public void Init()
         {
             iconSkin = GetSkin();
 
@@ -176,7 +176,7 @@ namespace SourceControl.Managers
             return PluginBase.MainForm.GetAutoAdjustedImage(ProjectWatcher.Skin); //can be changed by external SC-Plugin
         }
 
-        public static void Reset()
+        static public void Reset()
         {
             foreach (OverlayMap map in maps.Values)
                 map.Clear();
@@ -187,7 +187,7 @@ namespace SourceControl.Managers
             maps.Add(status, new OverlayMap());
         }
 
-        public static void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
+        static public void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
         {
             if (!maps.ContainsKey(status)) return;
             OverlayMap map = maps[status];

@@ -521,7 +521,7 @@ namespace AS3Context
         /// <summary>
         /// Explore the possible locations for the Macromedia Flash IDE classpath
         /// </summary>
-        public static string FindAuthoringConfigurationPath(string flashPath)
+        static public string FindAuthoringConfigurationPath(string flashPath)
         {
             if (flashPath is null)
             {

@@ -17,12 +17,12 @@ namespace AS3Context
 
     public class AbcConverter
     {
-        public static List<string> ExcludedASDocs = getDefaultExcludedASDocs();
+        static public List<string> ExcludedASDocs = getDefaultExcludedASDocs();
 
-        public static Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
-        private static Regex reDocFile = new Regex("[/\\\\]([-_.$a-z0-9]+)\\.xml", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        static private Regex reDocFile = new Regex("[/\\\\]([-_.$a-z0-9]+)\\.xml", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public static Dictionary<string, Dictionary<string, ASDocItem>> Docs = new Dictionary<string, Dictionary<string, ASDocItem>>();
+        static public Dictionary<string, Dictionary<string, ASDocItem>> Docs = new Dictionary<string, Dictionary<string, ASDocItem>>();
 
         private static Dictionary<string, FileModel> genericTypes;
         private static Dictionary<string, string> imports;

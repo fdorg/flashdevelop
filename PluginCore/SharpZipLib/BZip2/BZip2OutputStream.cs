@@ -379,7 +379,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 #if NET_1_0 || NET_1_1 || NETCF_1_0
         protected virtual void Dispose(bool disposing)
 #else       
-        protected override void Dispose(bool disposing)
+        override protected void Dispose(bool disposing)
 #endif          
         {
             try {

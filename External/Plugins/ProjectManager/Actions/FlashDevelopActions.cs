@@ -9,7 +9,7 @@ namespace ProjectManager.Actions
 {
     public class FlashDevelopActions
     {
-        private static bool nameAsked;
+        static private bool nameAsked;
         private IMainForm mainForm;
 
         public FlashDevelopActions(IMainForm mainForm)

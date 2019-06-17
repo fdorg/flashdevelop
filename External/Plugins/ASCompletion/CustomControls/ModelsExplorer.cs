@@ -22,16 +22,16 @@ namespace ASCompletion
     {
         #region Docking
 
-        private static string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
-        private static DockContent panelCtrl;
+        static private string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
+        static private DockContent panelCtrl;
 
-        public static void CreatePanel()
+        static public void CreatePanel()
         {
             Image panelIcon = PluginBase.MainForm.FindImage("202");
             panelCtrl = PluginBase.MainForm.CreateDockablePanel(Instance, panelGuid, panelIcon, DockState.Hidden);
             panelCtrl.VisibleState = DockState.Float;
         }
-        public static void Open()
+        static public void Open()
         {
             panelCtrl.Show();
             Instance.filterTextBox.Focus();
@@ -93,17 +93,17 @@ namespace ASCompletion
 
         #region Initialization
 
-        public static bool HasFocus
+        static public bool HasFocus
         {
             get { return instance != null && instance.filterTextBox.Focused; }
         }
 
-        public static ModelsExplorer Instance
+        static public ModelsExplorer Instance
         {
             get { return instance ?? new ModelsExplorer(); }
         }
 
-        private static ModelsExplorer instance;
+        static private ModelsExplorer instance;
         private IASContext current;
         private Dictionary<string, TreeNodeCollection> packages;
         private TreeNodeCollection rootNodes;

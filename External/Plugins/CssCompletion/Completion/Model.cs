@@ -106,12 +106,12 @@ namespace CssCompletion
     /// </summary>
     public class CompletionItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        public static Bitmap TagIcon;
-        public static Bitmap PropertyIcon;
-        public static Bitmap VariableIcon;
-        public static Bitmap ValueIcon;
-        public static Bitmap PseudoIcon;
-        public static Bitmap PrefixesIcon;
+        static public Bitmap TagIcon;
+        static public Bitmap PropertyIcon;
+        static public Bitmap VariableIcon;
+        static public Bitmap ValueIcon;
+        static public Bitmap PseudoIcon;
+        static public Bitmap PrefixesIcon;
 
         private string label;
         private string description;

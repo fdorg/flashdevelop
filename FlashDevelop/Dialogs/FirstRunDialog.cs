@@ -254,7 +254,7 @@ namespace FlashDevelop.Dialogs
             string result = text;
             if (result == null) return string.Empty;
             result = result.Replace("$(AppDir)", PathHelper.AppDir);
-            result = result.Replace("$(UserAppDir)", PathHelpenewAstaticir);
+            result = result.Replace("$(UserAppDir)", PathHelper.UserAppDir);
             result = result.Replace("$(BaseDir)", PathHelper.BaseDir);
             return result;
         }

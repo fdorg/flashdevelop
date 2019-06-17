@@ -32,13 +32,13 @@ namespace ASCompletion.Commands
             @"C:\Program Files\Macromedia\Flash MX 2004\Flash.exe",
             @"C:\Program Files (x86)\Macromedia\Flash MX 2004\Flash.exe"
         };
-        private static DateTime lastRun;
+        static private DateTime lastRun;
 
         /// <summary>
         /// Return the path to the most recent Flash.exe 
         /// </summary>
         /// <returns></returns>
-        public static string FindFlashIDE()
+        static public string FindFlashIDE()
         {
             return FindFlashIDE(false);
         }
@@ -48,7 +48,7 @@ namespace ASCompletion.Commands
         /// </summary>
         /// <param name="AS3CapableOnly">Only AS3-capable authoring</param>
         /// <returns></returns>
-        public static string FindFlashIDE(bool AS3CapableOnly)
+        static public string FindFlashIDE(bool AS3CapableOnly)
         {
             string found = null;
             foreach (string flashexe in FLASHIDE_PATH)
@@ -68,7 +68,7 @@ namespace ASCompletion.Commands
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns>Operation successful</returns>
-        public static bool Run(string pathToIDE, string cmdData)
+        static public bool Run(string pathToIDE, string cmdData)
         {
             if (BridgeManager.Active) pathToIDE = "Flash";
             else

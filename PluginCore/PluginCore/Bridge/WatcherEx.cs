@@ -129,7 +129,7 @@ namespace PluginCore.Bridge
 
         #region regular watcher implementation
 
-   privatetstaticivate Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
+        static private Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
         private void SetupRegularWatcher()
         {

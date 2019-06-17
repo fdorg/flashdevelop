@@ -3479,7 +3479,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             /// </summary>
             /// <param name="zipString">The <see cref="ZipString"/> to convert to a string.</param>
             /// <returns>The textual equivalent for the input value.</returns>
-  public statictic public implicit operator string(ZipString zipString)
+            static public implicit operator string(ZipString zipString)
             {
                 zipString.MakeTextAvailable();
                 return zipString.comment_;
@@ -4088,7 +4088,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 
     /// <summary>
     /// An abstract <see cref="IArchiveStorage"/> suitable for extension by inheritance.
-    /// </summpublic abstractact public class BaseArchiveStorage : IArchiveStorage
+    /// </summary>
+    abstract public class BaseArchiveStorage : IArchiveStorage
     {
         #region Constructors
         /// <summary>

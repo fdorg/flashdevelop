@@ -8,7 +8,7 @@ namespace PluginCore.Controls
 {
     public class MessageBar : UserControl
     {
-        public static bool Locked;
+        static public bool Locked;
 
         const string WarningIcon = "196";
         const string QuestionIcon = "222";
@@ -64,12 +64,14 @@ namespace PluginCore.Controls
             }
             bar.Visible = true;
         }
-        public statictic public void ShowWarning(string message)
+        
+        static public void ShowWarning(string message)
         {
             if (Locked) return;
             CreateBar(PluginBase.MainForm.CurrentDocument, message, WarningIcon);
         }
-public statictic public void HideWarning()
+
+        static public void HideWarning()
         {
             HideBar(PluginBase.MainForm.CurrentDocument);
         }
@@ -116,7 +118,8 @@ public statictic public void HideWarning()
                 UseVisualStyleBackColor = true
             };
         }
-public statictic public void HideBar(ITabbedDocument target)
+
+        static public void HideBar(ITabbedDocument target)
         {
             foreach (Control ctrl in target.Controls)
             {

@@ -23,14 +23,14 @@ namespace AS3Context
 {
     public class Context : AS2Context.Context
     {
-        protected static readonly Regex re_genericType =
+        static readonly protected Regex re_genericType =
             new Regex("(?<gen>[^<]+)\\.<(?<type>.+)>$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         
         // C:\path\to\Main.as$raw$:31: col: 1:  Error #1084: Syntax error: expecting rightbrace before end of program.
-        protected static readonly Regex re_syntaxError =
+        static readonly protected Regex re_syntaxError =
             new Regex("(?<filename>.*)\\$raw\\$:(?<line>[0-9]+): col: (?<col>[0-9]+):(?<desc>.*)", RegexOptions.Compiled);
         
-        protected static readonly Regex re_customAPI =
+        static readonly protected Regex re_customAPI =
             new Regex("[/\\\\](playerglobal|airglobal|builtin)\\.swc", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         #region initialization

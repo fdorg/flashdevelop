@@ -38,7 +38,7 @@ namespace ICSharpCode.SharpZipLib.LZW {
     /// <summary>
     /// This class contains constants used for LZW
     /// </summary>
-    public sealed class LzwConstants {
+    sealed public class LzwConstants {
         /// <summary>
         /// Magic number found at start of LZW header: 0x1f 0x9d
         /// </summary>

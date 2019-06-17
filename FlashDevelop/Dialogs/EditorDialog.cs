@@ -1632,7 +1632,8 @@ namespace FlashDevelop.Dialogs
             this.colorDialog.Color = ColorTranslator.FromHtml(this.errorLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
             {
-                this.errorLineTextBox.Text = "0x" + this.colorDialog.Color.ToArgb().ToString("X8").Substring(2, 6new static      }
+                this.errorLineTextBox.Text = "0x" + this.colorDialog.Color.ToArgb().ToString("X8").Substring(2, 6);
+            }
         }
 
         /// <summary>

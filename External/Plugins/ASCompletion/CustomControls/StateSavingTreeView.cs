@@ -50,13 +50,13 @@ namespace System.Windows.Forms
             RestoreScrollState();
         }
 
-        public new void BeginUpdate()
+        new public void BeginUpdate()
         {
             Win32.SendMessage(Handle, Win32.WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             base.BeginUpdate();
         }
 
-        public new void EndUpdate()
+        new public void EndUpdate()
         {
             base.EndUpdate();
             Win32.SendMessage(Handle, Win32.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);

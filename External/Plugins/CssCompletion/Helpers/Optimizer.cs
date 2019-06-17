@@ -10,14 +10,14 @@ namespace CssCompletion
 {
     public class Optimizer
     {
-        public static void ProcessFile(string fileName, CssFeatures features, Settings settings)
+        static public void ProcessFile(string fileName, CssFeatures features, Settings settings)
         {
             if (settings.DisableCompileOnSave) return;
             if (!string.IsNullOrEmpty(features.Compile)) CompileFile(fileName, features, settings);
             else CompressFile(fileName, features, settings);
         }
 
-        public static void CompressFile(string fileName, CssFeatures features, Settings settings)
+        static public void CompressFile(string fileName, CssFeatures features, Settings settings)
         {
             if (settings.DisableMinifyOnSave) return;
             try
@@ -35,7 +35,7 @@ namespace CssCompletion
             }
         }
 
-        public static void CompileFile(string fileName, CssFeatures features, Settings settings)
+        static public void CompileFile(string fileName, CssFeatures features, Settings settings)
         {
             EventManager.DispatchEvent(features, new NotifyEvent(EventType.ProcessStart));
 

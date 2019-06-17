@@ -27,7 +27,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static void AddSciEvent(string value)
+        static public void AddSciEvent(string value)
         {
             ITabbedDocument document = DocumentManager.FindDocument(value);
             if (document != null && document.IsEditable)
@@ -37,7 +37,7 @@ namespace FlashDebugger
             }
         }
 
-        public static void InitMarkers(ScintillaControl sci)
+        static public void InitMarkers(ScintillaControl sci)
         {
             sci.ModEventMask |= (int)ModificationFlags.ChangeMarker;
             sci.MarkerChanged += SciControl_MarkerChanged;
@@ -61,7 +61,7 @@ namespace FlashDebugger
             sci.Modified += sci_Modified;
         }
 
-        public static void sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
+        static public void sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
         {
             if (linesAdded != 0)
             {
@@ -73,7 +73,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static void SciControl_MarkerChanged(ScintillaControl sender, int line)
+        static public void SciControl_MarkerChanged(ScintillaControl sender, int line)
         {
             if (line < 0) return;
             ITabbedDocument document = DocumentManager.FindDocument(sender);
@@ -93,7 +93,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static void ApplyHighlights(ScintillaControl sender, int line, bool notify)
+        static public void ApplyHighlights(ScintillaControl sender, int line, bool notify)
         {
             bool bCurrentLine = IsMarkerSet(sender, markerCurrentLine, line);
             bool bBpActive = IsMarkerSet(sender, markerBPEnabled, line);
@@ -129,7 +129,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static void SciControl_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
+        static public void SciControl_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
         {
             if (margin != BreakpointMargin) return;
             //if (PluginMain.debugManager.FlashInterface.isDebuggerStarted && !PluginMain.debugManager.FlashInterface.isDebuggerSuspended) return;
@@ -148,7 +148,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static void RemoveSciEvent(string value)
+        static public void RemoveSciEvent(string value)
         {
             ITabbedDocument document = DocumentManager.FindDocument(Path.GetFileName(value));
             if (document != null && document.IsEditable)
@@ -167,19 +167,19 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static void ToggleMarker(ScintillaControl sci, int marker, int line)
+        static public void ToggleMarker(ScintillaControl sci, int marker, int line)
         {
             int lineMask = sci.MarkerGet(line);
             if ((lineMask & GetMarkerMask(marker)) == 0) sci.MarkerAdd(line, marker);
             else sci.MarkerDelete(line, marker);
         }
 
-        public static bool IsBreakPointEnabled(ScintillaControl sci, int line)
+        static public bool IsBreakPointEnabled(ScintillaControl sci, int line)
         {
             return IsMarkerSet(sci, markerBPEnabled, line);
         }
 
-        public static bool IsMarkerSet(ScintillaControl sci, int marker, int line)
+        static public bool IsMarkerSet(ScintillaControl sci, int marker, int line)
         {
             return (sci.MarkerGet(line) & GetMarkerMask(marker)) != 0;
         }
@@ -187,7 +187,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static int GetMarkerMask(int marker)
+        static public int GetMarkerMask(int marker)
         {
             return 1 << marker;
         }
@@ -297,7 +297,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static ScintillaControl GetScintillaControl(string name)
+        static public ScintillaControl GetScintillaControl(string name)
         {
             ITabbedDocument[] documents = PluginBase.MainForm.Documents;
             foreach (ITabbedDocument docment in documents)
@@ -311,7 +311,7 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        public static int GetScintillaControlIndex(ScintillaControl sci)
+        static public int GetScintillaControlIndex(ScintillaControl sci)
         {
             ITabbedDocument[] documents = PluginBase.MainForm.Documents;
             for (int i = 0; i < documents.Length; i++)
@@ -321,7 +321,7 @@ namespace FlashDebugger
             return -1;
         }
 
-        public static ITabbedDocument GetDocument(string filefullpath)
+        static public ITabbedDocument GetDocument(string filefullpath)
         {
             ITabbedDocument[] documents = PluginBase.MainForm.Documents;
             foreach (ITabbedDocument document in documents)
@@ -332,12 +332,12 @@ namespace FlashDebugger
             return null;
         }
 
-        public static void ActivateDocument(string filefullpath)
+        static public void ActivateDocument(string filefullpath)
         {
             ActivateDocument(filefullpath, -1, false);
         }
 
-        public static ScintillaControl ActivateDocument(string filefullpath, int line, bool bSelectLine)
+        static public ScintillaControl ActivateDocument(string filefullpath, int line, bool bSelectLine)
         {
             var doc = PluginBase.MainForm.OpenEditableDocument(filefullpath, false) as ITabbedDocument;
             if (doc == null || doc.FileName != filefullpath) return null;
@@ -361,20 +361,20 @@ namespace FlashDebugger
 
         #region Breakpoint Management
 
-        internal static void RunToCursor_Click(object sender, EventArgs e)
+        static internal void RunToCursor_Click(object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, sci.CurrentLine);
             PluginMain.debugManager.Continue_Click(sender, e);
         }
 
-        internal static void ToggleBreakPoint_Click(object sender, EventArgs e)
+        static internal void ToggleBreakPoint_Click(object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             ToggleMarker(sci, markerBPEnabled, sci.CurrentLine);
         }
 
-        internal static void DeleteAllBreakPoints_Click(object sender, EventArgs e)
+        static internal void DeleteAllBreakPoints_Click(object sender, EventArgs e)
         {
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 if (doc.IsEditable)
@@ -387,7 +387,7 @@ namespace FlashDebugger
             PluginMain.breakPointManager.ClearAll();
         }
 
-        internal static void ToggleBreakPointEnable_Click(object sender, EventArgs e)
+        static internal void ToggleBreakPointEnable_Click(object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             int line = sci.CurrentLine;
@@ -403,7 +403,7 @@ namespace FlashDebugger
             }
         }
 
-        internal static void DisableAllBreakPoints_Click(object sender, EventArgs e)
+        static internal void DisableAllBreakPoints_Click(object sender, EventArgs e)
         {
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
@@ -416,7 +416,7 @@ namespace FlashDebugger
             }
         }
 
-        internal static void EnableAllBreakPoints_Click(object sender, EventArgs e)
+        static internal void EnableAllBreakPoints_Click(object sender, EventArgs e)
         {
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {

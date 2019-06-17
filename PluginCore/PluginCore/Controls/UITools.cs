@@ -16,9 +16,9 @@ namespace PluginCore.Controls
         public delegate void LineEventHandler(ScintillaControl sender, int line);
 
         #region Singleton Instance
-        private static UITools manager;
+        static private UITools manager;
 
-        public static UITools Manager
+        static public UITools Manager
         {
             get
             {
@@ -30,27 +30,27 @@ namespace PluginCore.Controls
             }
         }
 
-        public static CodeTip CodeTip
+        static public CodeTip CodeTip
         {
             get { return manager.codeTip; }
         }
 
-        public static RichToolTip Tip
+        static public RichToolTip Tip
         {
             get { return manager.simpleTip; }
         }
 
-        public static RichToolTip ErrorTip
+        static public RichToolTip ErrorTip
         {
             get { return manager.errorTip; }
         }
 
-        public static MethodCallTip CallTip
+        static public MethodCallTip CallTip
         {
             get { return manager.callTip; }
         }
 
-        public static void Init()
+        static public void Init()
         {
             if (manager == null)
             {

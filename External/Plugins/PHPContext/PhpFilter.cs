@@ -12,7 +12,7 @@ namespace PHPContext
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        public static string FilterSource(string src, List<InlineRange> phpRanges)
+        static public string FilterSource(string src, List<InlineRange> phpRanges)
         {
             StringBuilder sb = new StringBuilder();
             int len = src.Length - 1;
@@ -80,7 +80,7 @@ namespace PHPContext
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static void FilterSource(FileModel model, List<InlineRange> phpRanges)
+        static public void FilterSource(FileModel model, List<InlineRange> phpRanges)
         {
             model.InlinedIn = "html";
             model.InlinedRanges = phpRanges;

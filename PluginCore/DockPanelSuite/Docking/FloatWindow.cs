@@ -12,12 +12,12 @@ namespace WeifenLuo.WinFormsUI.Docking
         private NestedPaneCollection m_nestedPanes;
         internal const int WM_CHECKDISPOSE = (int)(Win32.Msgs.WM_USER + 1);
 
-        protected internal FloatWindow(DockPanel dockPanel, DockPane pane)
+        internal protected FloatWindow(DockPanel dockPanel, DockPane pane)
         {
             InternalConstruct(dockPanel, pane, false, Rectangle.Empty);
         }
 
-        protected internal FloatWindow(DockPanel dockPanel, DockPane pane, Rectangle bounds)
+        internal protected FloatWindow(DockPanel dockPanel, DockPane pane, Rectangle bounds)
         {
             InternalConstruct(dockPanel, pane, true, bounds);
         }

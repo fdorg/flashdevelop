@@ -587,7 +587,8 @@ namespace FlashDevelop.Dialogs
                 InitialDirectory = PathHelper.ShortcutsDir,
                 Title = " " + TextHelper.GetString("Title.OpenFileDialog")
             })
-            new static         if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     this.listView.BeginUpdate();
                     ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);

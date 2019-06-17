@@ -24,18 +24,18 @@ namespace AS3Context
     #region MXML Filter
     class MxmlFilter
     {
-        private static readonly Regex tagName = new Regex("<(?<name>[a-z][a-z0-9_:]*)[\\s>]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        public static string OLD_MX = "http://www.adobe.com/2006/mxml";
-        public static string BETA_MX = "library://ns.adobe.com/flex/halo";
-        public static string NEW_MX = "library://ns.adobe.com/flex/mx";
+        static private readonly Regex tagName = new Regex("<(?<name>[a-z][a-z0-9_:]*)[\\s>]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        static public string OLD_MX = "http://www.adobe.com/2006/mxml";
+        static public string BETA_MX = "library://ns.adobe.com/flex/halo";
+        static public string NEW_MX = "library://ns.adobe.com/flex/mx";
 
-        private static List<MxmlCatalog> catalogs = new List<MxmlCatalog>();
-        private static Dictionary<string, MxmlCatalogs> archive = new Dictionary<string, MxmlCatalogs>();
+        static private List<MxmlCatalog> catalogs = new List<MxmlCatalog>();
+        static private Dictionary<string, MxmlCatalogs> archive = new Dictionary<string, MxmlCatalogs>();
 
         /// <summary>
         /// Reset catalogs for new classpath definition
         /// </summary>
-        public static void ClearCatalogs()
+        static public void ClearCatalogs()
         {
             catalogs.Clear();
         }
@@ -43,7 +43,7 @@ namespace AS3Context
         /// <summary>
         /// Look in current project configuration for user-defined namespaces
         /// </summary>
-        public static void AddProjectManifests()
+        static public void AddProjectManifests()
         {
             AS3Project project = PluginBase.CurrentProject as AS3Project;
             //-compiler.namespaces.namespace http://e4xu.googlecode.com run\manifest.xml
@@ -71,7 +71,7 @@ namespace AS3Context
         /// <summary>
         /// Check if a catalog was already extracted from indicated SWC 
         /// </summary>
-        public static bool HasCatalog(string file)
+        static public bool HasCatalog(string file)
         {
             return archive.ContainsKey(file);
         }
@@ -79,7 +79,7 @@ namespace AS3Context
         /// <summary>
         /// Read a SWC catalog file
         /// </summary>
-        public static void AddCatalogs(string file, byte[] rawData)
+        static public void AddCatalogs(string file, byte[] rawData)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace AS3Context
         /// <summary>
         /// Add an archived SWC catalog
         /// </summary>
-        public static void AddCatalog(string file)
+        static public void AddCatalog(string file)
         {
             MxmlCatalogs cat = archive[file];
             if (cat.Count > 0)
@@ -122,7 +122,7 @@ namespace AS3Context
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="file"></param>
-        public static void AddManifest(string uri, string file)
+        static public void AddManifest(string uri, string file)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace AS3Context
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        public static string FilterSource(string name, string src, MxmlFilterContext ctx)
+        static public string FilterSource(string name, string src, MxmlFilterContext ctx)
         {
             List<InlineRange> as3ranges = ctx.as3ranges;
             MemberList mxmlMembers = ctx.mxmlMembers;
@@ -396,7 +396,7 @@ namespace AS3Context
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static void FilterSource(FileModel model, MxmlFilterContext ctx)
+        static public void FilterSource(FileModel model, MxmlFilterContext ctx)
         {
             ctx.model = model;
             model.InlinedIn = "xml";

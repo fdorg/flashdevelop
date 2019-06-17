@@ -23,7 +23,7 @@ namespace ProjectManager.Actions
     /// </summary>
     public class BuildActions
     {
-        public static int LatestSDKMatchQuality;
+        static public int LatestSDKMatchQuality;
         static bool setPlayerglobalHomeEnv;
 
         IMainForm mainForm;
@@ -142,7 +142,8 @@ namespace ProjectManager.Actions
 
             return FDBuild(project, runOutput, releaseMode, sdk);
         }
-public statictic public bool RunFlashIDE(Project project, bool runOutput, bool releaseMode)
+
+        static public bool RunFlashIDE(Project project, bool runOutput, bool releaseMode)
         {
             string cmd = (runOutput) ? "testmovie" : "buildmovie";
             if (!PluginMain.Settings.DisableExtFlashIntegration) cmd += "-fd";
@@ -252,28 +253,33 @@ public statictic public bool RunFlashIDE(Project project, bool runOutput, bool r
         public void SetStatusBar(string text) => mainForm.StatusLabel.Text = " " + text;
 
         /* SDK MANAGEMENT */
-public statictic public InstalledSDK GetProjectSDK(Project project)
+
+        static public InstalledSDK GetProjectSDK(Project project)
         {
             if (project == null) return null;
             InstalledSDK[] sdks = GetInstalledSDKs(project);
             return MatchSDK(sdks, project);
         }
-public statictic public string GetCompilerPath(Project project)
+
+        static public string GetCompilerPath(Project project)
         {
             return GetCompilerPath(project, GetProjectSDK(project));
         }
-public statictic public string GetCompilerPath(Project project, InstalledSDK sdk)
+
+        static public string GetCompilerPath(Project project, InstalledSDK sdk)
         {
             if (project == null) return null;
             project.CurrentSDK = PathHelper.ResolvePath(sdk.Path, project.Directory);
             if (project == PluginBase.CurrentProject) PluginBase.CurrentSDK = sdk;
             return project.CurrentSDK;
         }
-public statictic public InstalledSDK MatchSDK(InstalledSDK[] sdks, IProject project)
+
+        static public InstalledSDK MatchSDK(InstalledSDK[] sdks, IProject project)
         {
             return MatchSDK(sdks, project.PreferredSDK);
         }
-public statictic public InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
+
+        static public InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
         {
             if (sdks == null) sdks = new InstalledSDK[] { };
 
@@ -366,11 +372,13 @@ public statictic public InstalledSDK MatchSDK(InstalledSDK[] sdks, string prefer
             if (sb.Length > sa.Length) score += 20;
             return score;
         }
-public statictic public InstalledSDK[] GetInstalledSDKs(IProject project)
+
+        static public InstalledSDK[] GetInstalledSDKs(IProject project)
         {
             return GetInstalledSDKs(project.Language);
         }
-public statictic public InstalledSDK[] GetInstalledSDKs(string language)
+
+        static public InstalledSDK[] GetInstalledSDKs(string language)
         {
             Hashtable infos = new Hashtable();
             infos["language"] = language;

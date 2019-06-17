@@ -33,7 +33,7 @@ namespace ASCompletion.Model
             Position = copy.Position;
         }
 
-        public override string ToString()
+        override public string ToString()
         {
             return Text;
         }

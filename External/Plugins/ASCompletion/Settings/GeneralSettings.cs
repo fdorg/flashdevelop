@@ -15,7 +15,7 @@ namespace ASCompletion.Settings
 
         const bool DEFAULT_SMARTTIPS = true;
         const bool DEFAULT_JAVADOCS = true;
-        public static string[] DEFAULT_TAGS = new string[] {
+        static public string[] DEFAULT_TAGS = new string[] {
             "author","copy","default","deprecated","eventType","example","exampleText","exception",
             "haxe","inheritDoc","internal","link","mtasc","mxmlc","param","private","return","see",
             "serial","serialData","serialField","since","throws","usage","version"
@@ -301,7 +301,7 @@ namespace ASCompletion.Settings
         const bool DEFAULT_GENERATE_SCOPE = false;
         const HandlerNamingConventions DEFAULT_HANDLER_CONVENTION = HandlerNamingConventions.target_eventName;
 
-        public static string[] DEFAULT_EVENTAUTOREMOVE = {
+        static public string[] DEFAULT_EVENTAUTOREMOVE = {
               "Event.ADDED_TO_STAGE", "Event.REMOVED_FROM_STAGE",
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };

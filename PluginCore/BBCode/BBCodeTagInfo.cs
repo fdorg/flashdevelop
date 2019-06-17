@@ -39,7 +39,7 @@ namespace PluginCore.BBCode
         }
 
 
-        public override string ToString()
+        override public string ToString()
         {
             return "[bbCodeTagInfo"
                    + " isTagOpener=" + _isTagOpener

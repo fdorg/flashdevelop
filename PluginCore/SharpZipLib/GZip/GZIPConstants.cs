@@ -42,7 +42,7 @@ namespace ICSharpCode.SharpZipLib.GZip
     /// <summary>
     /// This class contains constants used for gzip.
     /// </summary>
-    public sealed class GZipConstants
+    sealed public class GZipConstants
     {
         /// <summary>
         /// Magic number found at start of GZIP header

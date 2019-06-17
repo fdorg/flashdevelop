@@ -178,15 +178,15 @@ namespace XMLCompletion
 
     public class ZenCoding
     {
-        private static ZenLang lang;
-        private static bool inited;
-        private static ZenSettings settings;
-        private static Timer delayOpenConfig;
-        private static FileSystemWatcher watcherConfig;
-        private static Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
+        static private ZenLang lang;
+        static private bool inited;
+        static private ZenSettings settings;
+        static private Timer delayOpenConfig;
+        static private FileSystemWatcher watcherConfig;
+        static private Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
 
         #region initialization
-        private static void init()
+        static private void init()
         {
             if (!inited)
             {
@@ -276,7 +276,7 @@ namespace XMLCompletion
         #endregion
 
         #region expansion
-        public static bool expandSnippet(Hashtable data)
+        static public bool expandSnippet(Hashtable data)
         {
             if (data["snippet"] == null)
             {
@@ -327,7 +327,7 @@ namespace XMLCompletion
             return false;
         }
 
-        public static string expandExpression(string expr)
+        static public string expandExpression(string expr)
         {
             init(); // load config
             if (lang == null) return null;

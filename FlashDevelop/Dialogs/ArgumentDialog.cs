@@ -482,7 +482,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the argument dialog
         /// </summary>
-        public new static void Show()
+        public static new void Show()
         {
             using (ArgumentDialog argumentDialog = new ArgumentDialog())
             {

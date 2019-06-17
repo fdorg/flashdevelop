@@ -15,10 +15,10 @@ namespace ProjectManager.Controls.TreeView
     /// </summary>
     public class FileNode : GenericNode
     {
-        public static readonly Dictionary<string, FileNodeFactory> FileAssociations 
+        static public readonly Dictionary<string, FileNodeFactory> FileAssociations 
             = new Dictionary<string, FileNodeFactory>();
 
-        public static event FileNodeRefresh OnFileNodeRefresh;
+        static public event FileNodeRefresh OnFileNodeRefresh;
 
         protected FileNode(string filePath) : base(filePath)
         {

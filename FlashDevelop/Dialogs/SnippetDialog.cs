@@ -668,7 +668,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the snippets dialog
         /// </summary>
-        public new static void Show()
+        public static new void Show()
         {
             SnippetDialog snippetDialog = new SnippetDialog();
             snippetDialog.CenterToParent();

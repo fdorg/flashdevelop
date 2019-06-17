@@ -61,7 +61,7 @@ namespace SourceControl.Sources.Subversion
             return true;
         }
 
-        protected override void Runner_ProcessEnded(object sender, int exitCode)
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
@@ -74,7 +74,7 @@ namespace SourceControl.Sources.Subversion
             OnResult?.Invoke(this);
         }
 
-        protected override void Runner_Output(object sender, string line)
+        override protected void Runner_Output(object sender, string line)
         {
             int fileIndex = 30;
             if (line.Length < fileIndex) return;

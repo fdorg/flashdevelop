@@ -9,29 +9,29 @@ namespace FlashDebugger
 {
     internal class PanelsHelper
     {
-        public static string localsGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
-        public static DockContent localsPanel;
-        public static LocalsUI localsUI;
+        static public string localsGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
+        static public DockContent localsPanel;
+        static public LocalsUI localsUI;
 
-        public static string breakPointGuid = "6ee0f809-a3f7-4365-96c7-3bdf89f3aaa4";
-        public static DockContent breakPointPanel;
-        public static BreakPointUI breakPointUI;
+        static public string breakPointGuid = "6ee0f809-a3f7-4365-96c7-3bdf89f3aaa4";
+        static public DockContent breakPointPanel;
+        static public BreakPointUI breakPointUI;
 
-        public static string stackframeGuid = "49eb0b7e-f601-4860-a190-ae48e122a661";
-        public static DockContent stackframePanel;
-        public static StackframeUI stackframeUI;
+        static public string stackframeGuid = "49eb0b7e-f601-4860-a190-ae48e122a661";
+        static public DockContent stackframePanel;
+        static public StackframeUI stackframeUI;
 
-        public static string watchGuid = "c4a0c90a-236c-4a41-8ece-85486a23960f";
-        public static DockContent watchPanel;
-        public static WatchUI watchUI;
+        static public string watchGuid = "c4a0c90a-236c-4a41-8ece-85486a23960f";
+        static public DockContent watchPanel;
+        static public WatchUI watchUI;
 
-        public static string immediateGuid = "7ce31ab1-5a40-42d5-ad32-5df567707afc";
-        public static DockContent immediatePanel;
-        public static ImmediateUI immediateUI;
+        static public string immediateGuid = "7ce31ab1-5a40-42d5-ad32-5df567707afc";
+        static public DockContent immediatePanel;
+        static public ImmediateUI immediateUI;
 
-        public static string threadsGuid = "49eb0b7e-f601-4860-a190-ae48e122a662";
-        public static DockContent threadsPanel;
-        public static ThreadsUI threadsUI;
+        static public string threadsGuid = "49eb0b7e-f601-4860-a190-ae48e122a662";
+        static public DockContent threadsPanel;
+        static public ThreadsUI threadsUI;
 
         public PanelsHelper(PluginMain pluginMain, Image pluginImage)
         {

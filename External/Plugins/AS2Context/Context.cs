@@ -21,17 +21,17 @@ namespace AS2Context
     public class Context: ASContext
     {
         #region regular_expressions_definitions
-        protected static readonly Regex re_CMD_BuildCommand =
+        static readonly protected Regex re_CMD_BuildCommand =
             new Regex("@mtasc[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
-        protected static readonly Regex re_SplitParams =
+        static readonly protected Regex re_SplitParams =
             new Regex("[\\s](?<switch>\\-[A-z]+)", RegexOptions.Compiled | RegexOptions.Singleline);
-        protected static readonly Regex re_level =
+        static protected readonly Regex re_level =
             new Regex("^_level[0-9]+$", RegexOptions.Compiled | RegexOptions.Singleline);
-        protected static readonly Regex re_token =
+        static protected readonly Regex re_token =
             new Regex("^[a-z$_][a-z0-9$_]*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        protected static readonly Regex re_package =
+        static protected readonly Regex re_package =
             new Regex("^[a-z$_][a-z0-9$_.]*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        protected static readonly Regex re_lastDot =
+        static protected readonly Regex re_lastDot =
             new Regex("\\.[^<]", RegexOptions.RightToLeft | RegexOptions.Compiled);
         #endregion
 
@@ -1278,7 +1278,7 @@ namespace AS2Context
         
         #region command line compiler
 
-        public override bool CanBuild => cFile != null && cFile != FileModel.Ignore;
+        override public bool CanBuild => cFile != null && cFile != FileModel.Ignore;
 
         /// <summary>
         /// Retrieve the context's default compiler path

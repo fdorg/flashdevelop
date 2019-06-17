@@ -63,7 +63,7 @@ public class MXMLLexer : Lexer {
           return mRawTokens;
        }
        
-       public override void Reset()
+       override public void Reset()
        {
           base.Reset(); // reset all recognizer state variables
           if (input is ANTLRStringStream)
@@ -91,7 +91,7 @@ public class MXMLLexer : Lexer {
 
     }
     
-    public override string GrammarFileName
+    override public string GrammarFileName
     {
         get { return "MXMLLexer.g3";} 
     }
@@ -2289,7 +2289,7 @@ public class MXMLLexer : Lexer {
     }
     // $ANTLR end "EOL_HELPER"
 
-    public override void mTokens() // throws RecognitionException 
+    override public void mTokens() // throws RecognitionException 
     {
         // MXMLLexer.g3:1:8: ( DOCUMENT )
         // MXMLLexer.g3:1:10: DOCUMENT
@@ -2492,7 +2492,7 @@ public class MXMLLexer : Lexer {
 
         }
 
-        public override string Description
+        override public string Description
         {
             get { return "108:7: ( START_TAG ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )* END_TAG | EMPTY_ELEMENT )"; }
         }
@@ -2604,7 +2604,7 @@ public class MXMLLexer : Lexer {
 
         }
 
-        public override string Description
+        override public string Description
         {
             get { return "()* loopback of 109:13: ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )*"; }
         }

@@ -134,7 +134,8 @@ namespace FlashDevelop.Dialogs
 
         /// <summary>
         /// When user clicks the link, open the Github commit in the browser.
-        /// </summary>new staticprivate void VersionLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        /// </summary>
+        private void VersionLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string target = e.Link.LinkData as string;
             if (target != null) Process.Start(target);

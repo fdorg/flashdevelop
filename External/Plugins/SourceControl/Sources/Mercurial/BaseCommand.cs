@@ -13,8 +13,8 @@ namespace SourceControl.Sources.Mercurial
 {
     class BaseCommand
     {
-        private static string resolvedCmd;
-        private static string qualifiedCmd;
+        static private string resolvedCmd;
+        static private string qualifiedCmd;
 
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -49,7 +49,7 @@ namespace SourceControl.Sources.Mercurial
             return resolve ?? ResolveHGPath(cmd);
         }
 
-        private static string ResolveHGPath(string cmd)
+        static private string ResolveHGPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

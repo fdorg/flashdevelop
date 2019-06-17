@@ -43,7 +43,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Random numbers used to randomise repetitive blocks
         /// </summary>
-        public static readonly int[] RandomNumbers = {
+        public readonly static int[] RandomNumbers = {
             619, 720, 127, 481, 931, 816, 813, 233, 566, 247,
             985, 724, 205, 454, 863, 491, 741, 242, 949, 214,
             733, 859, 335, 708, 621, 574,  73, 654, 730, 472,

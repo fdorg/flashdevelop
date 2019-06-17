@@ -104,7 +104,7 @@ namespace PluginCore.BBCode
             }
         }
 
-        public override string ToString()
+        override public string ToString()
         {
             return "[bbCodeTagMatch"
                    + " isTagOpener=" + this.isTagOpener

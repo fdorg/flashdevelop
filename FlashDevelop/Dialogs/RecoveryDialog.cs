@@ -159,7 +159,7 @@ namespace FlashDevelop.Dialogs
             this.Close();
         }
 
-    new/staticummary>
+        /// <summary>
         /// Gets the files from the recovery folder
         /// </summary>
         private static string[] GetRecoveryFiles()

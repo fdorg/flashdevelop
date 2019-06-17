@@ -6,7 +6,7 @@ namespace FlashDebugger.Controls
 {
     public class DataTreeModel : TreeModel
     {
-        private static char[] chTrims = { '.' };
+        static private char[] chTrims = { '.' };
 
         public string GetFullPath(Node node)
         {
