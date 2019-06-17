@@ -9,7 +9,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the system image file
         /// </summary>
-        public static String Images
+        public static string Images
         {
             get
             {
@@ -20,7 +20,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the large system image file
         /// </summary>
-        public static String Images32
+        public static string Images32
         {
             get
             {
@@ -31,7 +31,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the toolbar file
         /// </summary>
-        public static String ToolBar
+        public static string ToolBar
         {
             get
             {
@@ -42,7 +42,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the main menu file
         /// </summary>
-        public static String MainMenu
+        public static string MainMenu
         {
             get 
             {
@@ -53,7 +53,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the scintilla menu file
         /// </summary>
-        public static String ScintillaMenu
+        public static string ScintillaMenu
         {
             get
             {
@@ -64,7 +64,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the tab menu file
         /// </summary>
-        public static String TabMenu
+        public static string TabMenu
         {
             get
             {
@@ -75,7 +75,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the session file
         /// </summary>
-        public static String SessionData
+        public static string SessionData
         {
             get
             {
@@ -86,7 +86,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the panel layout file
         /// </summary>
-        public static String LayoutData
+        public static string LayoutData
         {
             get
             {
@@ -97,7 +97,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the setting file
         /// </summary>
-        public static String SettingData
+        public static string SettingData
         {
             get
             {
@@ -108,7 +108,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the shortcut file
         /// </summary>
-        public static String ShortcutData
+        public static string ShortcutData
         {
             get
             {
@@ -120,7 +120,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the argument file
         /// </summary>
-        public static String UserArgData
+        public static string UserArgData
         {
             get
             {
@@ -131,7 +131,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the recovery directory
         /// </summary>
-        public static String RecoveryDir
+        public static string RecoveryDir
         {
             get
             {
@@ -142,7 +142,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Path to the file state directory
         /// </summary>
-        public static String FileStateDir
+        public static string FileStateDir
         {
             get
             {
@@ -153,7 +153,7 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Selects correct setting file from user dir or app dir.
         /// </summary>
-        public static String GetSettingFile(String file)
+        public static string GetSettingFile(string file)
         {
             var standalone = Globals.MainForm.StandaloneMode;
             var appDirSettingFile = Path.Combine(PathHelper.AppDir, "Settings", file);

@@ -9,7 +9,7 @@ namespace FlashDevelop.Managers
     class FilePollManager
     {
         private static Timer FilePollTimer;
-        private static Boolean YesToAll = false;
+        private static bool YesToAll = false;
 
         /// <summary>
         /// Initialize the file change polling
@@ -28,7 +28,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static void CheckSettingValues()
         {
-            Int32 interval = Globals.Settings.FilePollInterval;
+            int interval = Globals.Settings.FilePollInterval;
             if (interval == 0) Globals.Settings.FilePollInterval = 3000;
         }
 
@@ -53,9 +53,9 @@ namespace FlashDevelop.Managers
                         casted.Reload(false);
                         return;
                     }
-                    String dlgTitle = TextHelper.GetString("Title.InfoDialog");
-                    String dlgMessage = TextHelper.GetString("Info.FileIsModifiedOutside");
-                    String formatted = String.Format(dlgMessage, "\n", casted.FileName);
+                    string dlgTitle = TextHelper.GetString("Title.InfoDialog");
+                    string dlgMessage = TextHelper.GetString("Info.FileIsModifiedOutside");
+                    string formatted = string.Format(dlgMessage, "\n", casted.FileName);
                     MessageBoxManager.Cancel = TextHelper.GetString("Label.YesToAll");
                     MessageBoxManager.Register(); // Use custom labels...
                     DialogResult result = MessageBox.Show(Globals.MainForm, formatted, " " + dlgTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
@@ -74,7 +74,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// After an interval check if the files have changed
         /// </summary>
-        private static void FilePollTimerTick(Object sender, EventArgs e)
+        private static void FilePollTimerTick(object sender, EventArgs e)
         {
             try
             {

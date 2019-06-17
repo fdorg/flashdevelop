@@ -93,7 +93,7 @@ namespace PluginCore.Controls
             rtfCacheList = new List<string>();
         }
 
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme)
             {

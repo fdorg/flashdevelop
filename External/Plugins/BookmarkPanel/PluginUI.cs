@@ -246,7 +246,7 @@ namespace BookmarkPanel
         /// </summary>
         public void UpdateSettings()
         {
-            Boolean useGrouping = PluginBase.Settings.UseListViewGrouping;
+            bool useGrouping = PluginBase.Settings.UseListViewGrouping;
             this.listView.ShowGroups = useGrouping;
             this.listView.GridLines = !useGrouping;
         }
@@ -275,7 +275,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Removes bookmarks on context menu item clicking
         /// </summary>
-        private void RemoveBookmarksItemClick(Object sender, EventArgs e)
+        private void RemoveBookmarksItemClick(object sender, EventArgs e)
         {
             this.DeleteMarkers(false);
         }
@@ -283,7 +283,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Starts bookmarks searching on search button ckicking
         /// </summary>
-        private void SearchButtonClick(Object sender, EventArgs e)
+        private void SearchButtonClick(object sender, EventArgs e)
         {
             this.SearchBookmarks();
         }
@@ -291,7 +291,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Removes bookmarks on Delete key
         /// </summary>
-        private void ListViewKeyUp(Object sender, KeyEventArgs e)
+        private void ListViewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -302,7 +302,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Starts bookmarks searching on Enter key
         /// </summary>
-        private void SearchBoxKeyUp(Object sender, KeyEventArgs e)
+        private void SearchBoxKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
@@ -313,13 +313,13 @@ namespace BookmarkPanel
         /// <summary>
         /// Double click on an item in the list view
         /// </summary>
-        private void ListViewDoubleClick(Object sender, EventArgs e)
+        private void ListViewDoubleClick(object sender, EventArgs e)
         {
             if (this.listView.SelectedItems.Count > 0)
             {
                 ListViewItem item = this.listView.SelectedItems[0];
-                String filename = item.Group.Name;
-                Int32 line = (Int32)item.Tag;
+                string filename = item.Group.Name;
+                int line = (int)item.Tag;
                 ITabbedDocument document = DocumentManager.FindDocument(filename);
                 if (document != null && document.IsEditable)
                 {
@@ -332,9 +332,9 @@ namespace BookmarkPanel
         /// <summary>
         /// Updates context menu on opening
         /// </summary>
-        private void ContextMenuStripOpening(Object sender, CancelEventArgs e)
+        private void ContextMenuStripOpening(object sender, CancelEventArgs e)
         {
-            Int32 count = this.listView.SelectedItems.Count;
+            int count = this.listView.SelectedItems.Count;
             if (count > 0) this.removeBookmarksItem.Text = TextHelper.GetString((count > 1) ? "Label.RemoveBookmarks" : "Label.RemoveBookmark");
             else e.Cancel = true;
         }
@@ -357,7 +357,7 @@ namespace BookmarkPanel
                 }
                 else
                 {
-                    String message = TextHelper.GetString("Info.NothingToBookmark");
+                    string message = TextHelper.GetString("Info.NothingToBookmark");
                     this.SetStatus(message);
                 }
             }
@@ -366,7 +366,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Shows or hides status strip message
         /// </summary>
-        private void SetStatus(String message)
+        private void SetStatus(string message)
         {
             if (message != null)
             {
@@ -379,14 +379,14 @@ namespace BookmarkPanel
             {
                 this.statusLabel.Image = null;
                 this.statusStrip.Visible = false;
-                this.statusLabel.Text = String.Empty;
+                this.statusLabel.Text = string.Empty;
             }
         }
 
         /// <summary>
         /// Clear status on timeout
         /// </summary>
-        private void ClearStatusTimeout(Object tag)
+        private void ClearStatusTimeout(object tag)
         {
             this.SetStatus(null);
         }
@@ -396,9 +396,9 @@ namespace BookmarkPanel
         /// </summary>
         private List<SearchMatch> GetResults(ScintillaControl sci)
         {
-            if (this.searchBox.Text != String.Empty)
+            if (this.searchBox.Text != string.Empty)
             {
-                String pattern = this.searchBox.Text;
+                string pattern = this.searchBox.Text;
                 FRSearch search = new FRSearch(pattern);
                 search.IsEscaped = false;
                 search.WholeWord = false;
@@ -416,9 +416,9 @@ namespace BookmarkPanel
         /// </summary>
         private void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)
         {
-            for (Int32 i = 0; i < matches.Count; i++)
+            for (int i = 0; i < matches.Count; i++)
             {
-                Int32 line = matches[i].Line - 1;
+                int line = matches[i].Line - 1;
                 sci.EnsureVisible(line);
                 sci.MarkerAdd(line, 0);
             }
@@ -472,24 +472,24 @@ namespace BookmarkPanel
         /// <summary>
         /// Update document bookmarks
         /// </summary>
-        private void UpdateMarkers(String filename)
+        private void UpdateMarkers(string filename)
         {
             ITabbedDocument document = DocumentManager.FindDocument(filename);
             if (document == null || !document.IsEditable) return;
             ScintillaControl sci = document.SciControl;
             ListViewGroup group = this.FindGroup(document.FileName);
             if (group == null) return;
-            List<Int32> markers = this.GetMarkers(document.SciControl);
+            List<int> markers = this.GetMarkers(document.SciControl);
             if (this.NeedRefresh(document.SciControl, markers, group.Items))
             {
-                Int32 index = 0;
+                int index = 0;
                 ListViewItem item;
                 this.listView.BeginUpdate();
                 this.RemoveItemsFromGroup(group);
                 ListViewItem[] items = new ListViewItem[markers.Count];
-                foreach (Int32 marker in markers)
+                foreach (int marker in markers)
                 {
-                    item = new ListViewItem(new String[]{(marker + 1).ToString(), sci.GetLine(marker).Trim()}, 0);
+                    item = new ListViewItem(new string[]{(marker + 1).ToString(), sci.GetLine(marker).Trim()}, 0);
                     item.ToolTipText = sci.GetLine(marker).Trim();
                     item.Name = group.Name;
                     item.Group = group;
@@ -507,12 +507,12 @@ namespace BookmarkPanel
         /// <summary>
         /// Checks if bookmark list view needs updating
         /// </summary>
-        private Boolean NeedRefresh(ScintillaControl sci, List<Int32> markers, ListView.ListViewItemCollection items)
+        private bool NeedRefresh(ScintillaControl sci, List<int> markers, ListView.ListViewItemCollection items)
         {
             if (items.Count != markers.Count) return true;
             foreach (ListViewItem item in items)
             {
-                Int32 marker = (Int32)item.Tag;
+                int marker = (int)item.Tag;
                 if (!markers.Contains(marker)) return true;
                 if (sci.GetLine(marker).Trim() != item.SubItems[1].Text) return true;
             }
@@ -522,10 +522,10 @@ namespace BookmarkPanel
         /// <summary>
         /// Return all the bookmark markers from a scintilla document
         /// </summary>
-        private List<Int32> GetMarkers(ScintillaControl sci)
+        private List<int> GetMarkers(ScintillaControl sci)
         {
-            Int32 line = -1;
-            List<Int32> markerLines = new List<Int32>();
+            int line = -1;
+            List<int> markerLines = new List<int>();
             while (line < sci.LineCount)
             {
                 line = sci.MarkerNext(line + 1, 1);
@@ -548,10 +548,10 @@ namespace BookmarkPanel
         /// <summary>
         /// Remove selected bookmarks from opened documents
         /// </summary>
-        private void DeleteMarkers(Boolean confirm)
+        private void DeleteMarkers(bool confirm)
         {
-            String message = TextHelper.GetString("Info.RemoveBookmarks");
-            String title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.RemoveBookmarks");
+            string title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             if (confirm && (MessageBox.Show(title, message, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK))
             {
                 return;
@@ -559,10 +559,10 @@ namespace BookmarkPanel
             var deleteItems = new List<KeyValuePair<string, int>>();
             foreach (ListViewItem item in this.listView.SelectedItems)
             {
-                deleteItems.Add(new KeyValuePair<String,Int32>(item.Group.Name, (Int32)item.Tag));
+                deleteItems.Add(new KeyValuePair<string,int>(item.Group.Name, (int)item.Tag));
                 item.Group.Tag = null; // dirty
             }
-            foreach (KeyValuePair<String,Int32> entry in deleteItems)
+            foreach (KeyValuePair<string,int> entry in deleteItems)
             {
                 foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
                 {
@@ -579,7 +579,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Create a new ListViewGroup and assign to the current listview
         /// </summary>
-        public void CreateDocument(String filename)
+        public void CreateDocument(string filename)
         {
             ListViewGroup group = new ListViewGroup();
             group.Header = Path.GetFileName(filename);
@@ -593,7 +593,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Remove the group and all associated subitems
         /// </summary>
-        public void CloseDocument(String filename)
+        public void CloseDocument(string filename)
         {
             ListViewGroup group = FindGroup(filename);
             if (group != null)
@@ -608,7 +608,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Find a group from a given ITabbedDocument
         /// </summary>
-        public ListViewGroup FindGroup(String filename)
+        public ListViewGroup FindGroup(string filename)
         {
             foreach (ListViewGroup group in this.listView.Groups)
             {
@@ -638,12 +638,12 @@ namespace BookmarkPanel
         /// <summary>
         /// Method to call on timeout
         /// </summary>
-        public delegate void TimeoutDelegate(String tag);
+        public delegate void TimeoutDelegate(string tag);
 
         /// <summary>
         /// Sets the specified timeout
         /// </summary>
-        public void SetTimeout(TimeoutDelegate timeoutHandler, String tag)
+        public void SetTimeout(TimeoutDelegate timeoutHandler, string tag)
         {
             this.SetTimeout(timeoutHandler, tag, 200);
         }
@@ -651,7 +651,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Waits for timeout and calls method
         /// </summary>
-        public void SetTimeout(TimeoutDelegate timeoutHandler, String tag, Int32 timeout)
+        public void SetTimeout(TimeoutDelegate timeoutHandler, string tag, int timeout)
         {
             TagTimer timer = new TagTimer();
             timer.Interval = timeout;
@@ -664,12 +664,12 @@ namespace BookmarkPanel
         /// <summary>
         /// Handles the elapsed event
         /// </summary>
-        private void TimerElapsed(Object sender, EventArgs e)
+        private void TimerElapsed(object sender, EventArgs e)
         {
             TagTimer timer = ((TagTimer)sender);
             timer.Enabled = false;
             timer.Stop();
-            timer.TimeoutHandler(timer.Tag as String);
+            timer.TimeoutHandler(timer.Tag as string);
         }
 
         private class TagTimer : System.Windows.Forms.Timer

@@ -18,16 +18,16 @@ namespace FlashDevelop.Dialogs
 {
     public class EditorDialog : SmartForm, IThemeHandler
     {
-        private String languageFile;
+        private string languageFile;
         private XmlDocument languageDoc;
         private XmlElement editorStyleNode;
         private XmlElement defaultStyleNode;
         private XmlElement currentStyleNode;
-        private Boolean isItemSaved = true;
-        private Boolean isEditorSaved = true;
-        private Boolean isLoadingEditor = false;
-        private Boolean isLanguageSaved = true;
-        private Boolean isLoadingItem = false;
+        private bool isItemSaved = true;
+        private bool isEditorSaved = true;
+        private bool isLoadingEditor = false;
+        private bool isLanguageSaved = true;
+        private bool isLoadingItem = false;
         private System.Windows.Forms.Label sizeLabel;
         private System.Windows.Forms.Label fontLabel;
         private System.Windows.Forms.Button okButton;
@@ -980,7 +980,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the path to the language directory
         /// </summary>
-        private String LangDir
+        private string LangDir
         {
             get { return Path.Combine(PathHelper.SettingDir, "Languages"); }
         }
@@ -988,9 +988,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Constant xml file style paths
         /// </summary>
-        private const String stylePath = "Scintilla/languages/language/use-styles/style";
-        private const String editorStylePath = "Scintilla/languages/language/editor-style";
-        private const String defaultStylePath = "Scintilla/languages/language/use-styles/style[@name='default']";
+        private const string stylePath = "Scintilla/languages/language/use-styles/style";
+        private const string editorStylePath = "Scintilla/languages/language/editor-style";
+        private const string defaultStylePath = "Scintilla/languages/language/use-styles/style[@name='default']";
 
         /// <summary>
         /// Applies the localized texts to the form
@@ -1094,10 +1094,10 @@ namespace FlashDevelop.Dialogs
             this.modifiedLineButton.ImageIndex = this.bookmarkLineButton.ImageIndex = 1;
             this.disabledLineButton.ImageIndex = this.highlightWordBackButton.ImageIndex = 1;
             this.errorLineButton.ImageIndex = this.debugLineButton.ImageIndex = 1; 
-            String[] languageFiles = Directory.GetFiles(this.LangDir, "*.xml");
-            foreach (String language in languageFiles)
+            string[] languageFiles = Directory.GetFiles(this.LangDir, "*.xml");
+            foreach (string language in languageFiles)
             {
-                String languageName = Path.GetFileNameWithoutExtension(language);
+                string languageName = Path.GetFileNameWithoutExtension(language);
                 this.languageDropDown.Items.Add(languageName);
             }
             InstalledFontCollection fonts = new InstalledFontCollection();
@@ -1106,9 +1106,9 @@ namespace FlashDevelop.Dialogs
             {
                 this.fontNameComboBox.Items.Add(font.GetName(1033));
             }
-            Boolean foundSyntax = false;
-            String curSyntax = ArgsProcessor.GetCurSyntax();
-            foreach (Object item in this.languageDropDown.Items)
+            bool foundSyntax = false;
+            string curSyntax = ArgsProcessor.GetCurSyntax();
+            foreach (object item in this.languageDropDown.Items)
             {
                 if (item.ToString().ToLower() == curSyntax)
                 {
@@ -1124,7 +1124,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Loads language to be edited
         /// </summary>
-        private void LoadLanguage(String newLanguage, Boolean promptToSave)
+        private void LoadLanguage(string newLanguage, bool promptToSave)
         {
             if (!this.isLanguageSaved && promptToSave)
             {
@@ -1152,7 +1152,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Loads the language item
         /// </summary>
-        private void LoadLanguageItem(String item)
+        private void LoadLanguageItem(string item)
         {
             if (!this.isItemSaved) this.SaveCurrentItem();
             this.isLoadingItem = true;
@@ -1165,8 +1165,8 @@ namespace FlashDevelop.Dialogs
             this.italicsCheckBox.CheckState = CheckState.Indeterminate;
             if (this.currentStyleNode.Attributes["font"] != null)
             {
-                String[] fonts = this.currentStyleNode.Attributes["font"].Value.Split(',');
-                foreach (String font in fonts)
+                string[] fonts = this.currentStyleNode.Attributes["font"].Value.Split(',');
+                foreach (string font in fonts)
                 {
                     if (IsFontInstalled(font))
                     {
@@ -1190,12 +1190,12 @@ namespace FlashDevelop.Dialogs
             if (this.currentStyleNode.Attributes["bold"] != null)
             {
                 this.boldCheckBox.CheckState = CheckState.Unchecked;
-                this.boldCheckBox.Checked = Boolean.Parse(this.currentStyleNode.Attributes["bold"].Value);
+                this.boldCheckBox.Checked = bool.Parse(this.currentStyleNode.Attributes["bold"].Value);
             }
             if (this.currentStyleNode.Attributes["italics"] != null)
             {
                 this.italicsCheckBox.CheckState = CheckState.Unchecked;
-                this.italicsCheckBox.Checked = Boolean.Parse(this.currentStyleNode.Attributes["italics"].Value);
+                this.italicsCheckBox.Checked = bool.Parse(this.currentStyleNode.Attributes["italics"].Value);
             }
             this.UpdateSampleText();
             this.isLoadingItem = false;
@@ -1205,7 +1205,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if font is installed
         /// </summary>
-        private static Boolean IsFontInstalled(String fontName)
+        private static bool IsFontInstalled(string fontName)
         {
             using (var testFont = new Font(fontName, 9))
             {
@@ -1326,7 +1326,7 @@ namespace FlashDevelop.Dialogs
             if (this.editorStyleNode.Attributes["colorize-marker-back"] != null)
             {
                 this.colorizeCheckBox.CheckState = CheckState.Unchecked;
-                this.colorizeCheckBox.Checked = Boolean.Parse(this.editorStyleNode.Attributes["colorize-marker-back"].Value);
+                this.colorizeCheckBox.Checked = bool.Parse(this.editorStyleNode.Attributes["colorize-marker-back"].Value);
             }
             this.isLoadingEditor = false;
             this.isEditorSaved = true;
@@ -1383,13 +1383,13 @@ namespace FlashDevelop.Dialogs
             try
             {
                 FontStyle fs = FontStyle.Regular;
-                String fontName = this.fontNameComboBox.Text;
+                string fontName = this.fontNameComboBox.Text;
                 if (fontName == "") fontName = this.defaultStyleNode.Attributes["font"].Value;
-                String fontSize = this.fontSizeComboBox.Text;
+                string fontSize = this.fontSizeComboBox.Text;
                 if (fontSize == "") fontSize = this.defaultStyleNode.Attributes["size"].Value;
-                String foreColor = this.foregroundTextBox.Text;
+                string foreColor = this.foregroundTextBox.Text;
                 if (foreColor == "") foreColor = this.defaultStyleNode.Attributes["fore"].Value;
-                String backColor = this.backgroundTextBox.Text;
+                string backColor = this.backgroundTextBox.Text;
                 if (backColor == "") backColor = this.defaultStyleNode.Attributes["back"].Value;
                 if (this.boldCheckBox.CheckState == CheckState.Checked) fs |= FontStyle.Bold;
                 else if (this.boldCheckBox.CheckState == CheckState.Indeterminate)
@@ -1424,8 +1424,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PromptToSaveLanguage()
         {
-            String message = TextHelper.GetString("Info.SaveCurrentLanguage");
-            String caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.SaveCurrentLanguage");
+            string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             if (MessageBox.Show(message, caption, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 this.SaveCurrentLanguage();
@@ -1435,11 +1435,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// After item has been changed, update controls
         /// </summary>
-        private void ItemsSelectedIndexChanged(Object sender, EventArgs e)
+        private void ItemsSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
-                String style = this.itemListView.SelectedItems[0].Text;
+                string style = this.itemListView.SelectedItems[0].Text;
                 this.LoadLanguageItem(style);
             }
         }
@@ -1447,7 +1447,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void ItemForegroundButtonClick(Object sender, EventArgs e)
+        private void ItemForegroundButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.foregroundTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1459,7 +1459,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void ItemBackgroundButtonClick(Object sender, EventArgs e)
+        private void ItemBackgroundButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.backgroundTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1471,7 +1471,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void SelectionForeButtonClick(Object sender, EventArgs e)
+        private void SelectionForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.selectionForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1483,7 +1483,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void SelectionBackButtonClick(Object sender, EventArgs e)
+        private void SelectionBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.selectionBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1495,7 +1495,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void CaretlineBackButtonClick(Object sender, EventArgs e)
+        private void CaretlineBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.caretlineBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1507,7 +1507,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void CaretForeButtonClick(Object sender, EventArgs e)
+        private void CaretForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.caretForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1519,7 +1519,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void MarkerBackButtonClick(Object sender, EventArgs e)
+        private void MarkerBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.markerBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1531,7 +1531,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void MarkerForeButtonClick(Object sender, EventArgs e)
+        private void MarkerForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.markerForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1543,7 +1543,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void MarginBackButtonClick(Object sender, EventArgs e)
+        private void MarginBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.marginForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1555,7 +1555,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void MarginForeButtonClick(Object sender, EventArgs e)
+        private void MarginForeButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.marginForeTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1567,7 +1567,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void PrintMarginButtonClick(Object sender, EventArgs e)
+        private void PrintMarginButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.printMarginTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1579,7 +1579,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void HighlightBackButtonClick(Object sender, EventArgs e)
+        private void HighlightBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.highlightBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1591,7 +1591,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void HighlightWordBackButtonClick(Object sender, EventArgs e)
+        private void HighlightWordBackButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.highlightWordBackTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1603,7 +1603,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void ModifiedLineButtonClick(Object sender, EventArgs e)
+        private void ModifiedLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.modifiedLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1615,7 +1615,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void BookmarkLineButtonClick(Object sender, EventArgs e)
+        private void BookmarkLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.bookmarkLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1627,7 +1627,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void ErrorLineButtonClick(Object sender, EventArgs e)
+        private void ErrorLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.errorLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1639,7 +1639,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void DebugLineButtonClick(Object sender, EventArgs e)
+        private void DebugLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.debugLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1651,7 +1651,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When color has been selected, update controls
         /// </summary>
-        private void DisabledLineButtonClick(Object sender, EventArgs e)
+        private void DisabledLineButtonClick(object sender, EventArgs e)
         {
             this.colorDialog.Color = ColorTranslator.FromHtml(this.disabledLineTextBox.Text);
             if (this.colorDialog.ShowDialog() == DialogResult.OK)
@@ -1663,7 +1663,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When style item has been changed, update controls
         /// </summary>
-        private void LanguageItemChanged(Object sender, EventArgs e)
+        private void LanguageItemChanged(object sender, EventArgs e)
         {
             if (!this.isLoadingItem)
             {
@@ -1677,7 +1677,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When editor item has been changed, update controls
         /// </summary>
-        private void EditorItemChanged(Object sender, EventArgs e)
+        private void EditorItemChanged(object sender, EventArgs e)
         {
             if (!this.isLoadingEditor)
             {
@@ -1708,7 +1708,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// After index has been changed, load the selected language
         /// </summary>
-        private void LanguagesSelectedIndexChanged(Object sender, EventArgs e)
+        private void LanguagesSelectedIndexChanged(object sender, EventArgs e)
         {
             this.LoadLanguage(this.languageDropDown.Text, true);
         }
@@ -1716,10 +1716,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Opens the revert settings dialog
         /// </summary>
-        private void RevertLanguagesClick(Object sender, EventArgs e)
+        private void RevertLanguagesClick(object sender, EventArgs e)
         {
-            String caption = TextHelper.GetString("Title.ConfirmDialog");
-            String message = TextHelper.GetString("Info.RevertSettingsFiles");
+            string caption = TextHelper.GetString("Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.RevertSettingsFiles");
             DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
@@ -1745,7 +1745,7 @@ namespace FlashDevelop.Dialogs
             this.LoadLanguage(this.languageDropDown.Text, true);
             if (this.itemListView.SelectedIndices.Count > 0)
             {
-                String language = this.itemListView.SelectedItems[0].Text;
+                string language = this.itemListView.SelectedItems[0].Text;
                 this.LoadLanguageItem(language);
             }
             Globals.MainForm.RefreshSciConfig();
@@ -1754,12 +1754,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Makes the current style as the default
         /// </summary>
-        private void MakeAsDefaultStyleClick(Object sender, EventArgs e)
+        private void MakeAsDefaultStyleClick(object sender, EventArgs e)
         {
             this.Enabled = false;
             this.isLanguageSaved = true;
-            String[] confFiles = Directory.GetFiles(this.LangDir, "*.xml");
-            foreach (String confFile in confFiles)
+            string[] confFiles = Directory.GetFiles(this.LangDir, "*.xml");
+            foreach (string confFile in confFiles)
             {
                 try
                 {
@@ -1837,15 +1837,15 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Opens the export settings dialog
         /// </summary>
-        private void ExportLanguagesClick(Object sender, EventArgs e)
+        private void ExportLanguagesClick(object sender, EventArgs e)
         {
             if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                String xmlFile = "";
-                String[] langFiles = Directory.GetFiles(this.LangDir);
+                string xmlFile = "";
+                string[] langFiles = Directory.GetFiles(this.LangDir);
                 ZipFile zipFile = ZipFile.Create(this.saveFileDialog.FileName);
                 zipFile.BeginUpdate();
-                foreach (String langFile in langFiles)
+                foreach (string langFile in langFiles)
                 {
                     xmlFile = Path.GetFileName(langFile);
                     zipFile.Add(langFile, "$(BaseDir)\\Settings\\Languages\\" + xmlFile);
@@ -1858,7 +1858,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the current language
         /// </summary>
-        private void SaveButtonClick(Object sender, EventArgs e)
+        private void SaveButtonClick(object sender, EventArgs e)
         {
             this.SaveCurrentLanguage();
             Globals.MainForm.RefreshSciConfig();
@@ -1867,7 +1867,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog without saving
         /// </summary>
-        private void CancelButtonClick(Object sender, EventArgs e)
+        private void CancelButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -1875,7 +1875,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog and saves changes
         /// </summary>
-        private void OkButtonClick(Object sender, EventArgs e)
+        private void OkButtonClick(object sender, EventArgs e)
         {
             if (!this.isLanguageSaved) this.SaveCurrentLanguage();
             Globals.MainForm.RefreshSciConfig();

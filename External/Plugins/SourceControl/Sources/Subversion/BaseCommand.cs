@@ -38,7 +38,7 @@ namespace SourceControl.Sources.Subversion
             catch (Exception ex)
             {
                 runner = null;
-                String label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
@@ -65,7 +65,7 @@ namespace SourceControl.Sources.Subversion
             {
                 (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
                 {
-                    ErrorManager.ShowInfo(String.Join("\n", errors.ToArray()));
+                    ErrorManager.ShowInfo(string.Join("\n", errors.ToArray()));
                 });
             }
         }

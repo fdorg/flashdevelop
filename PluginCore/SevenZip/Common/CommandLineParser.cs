@@ -89,7 +89,7 @@ namespace SevenZip.CommandLineParser
                     int switchLen = switchForms[switchIndex].IDString.Length;
                     if (switchLen <= maxLen || pos + switchLen > len)
                         continue;
-                    if (String.Compare(switchForms[switchIndex].IDString, 0,
+                    if (string.Compare(switchForms[switchIndex].IDString, 0,
                             srcString, pos, switchLen, true) == 0)
                     {
                         matchedSwitchIndex = switchIndex;
@@ -152,7 +152,7 @@ namespace SevenZip.CommandLineParser
                                 matchedSwitch.PostStrings.Add(srcString.Substring(pos));
                                 return true;
                             }
-                            String stringSwitch = srcString.Substring(pos, minLen);
+                            string stringSwitch = srcString.Substring(pos, minLen);
                             pos += minLen;
                             for (int i = minLen; i < switchForm.MaxLen && pos < len; i++, pos++)
                             {

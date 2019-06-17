@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -118,7 +117,7 @@ namespace ProjectManager.Projects
             WriteOption("testMovieCommand", project.TestMovieCommand ?? "");
             if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
             {
-                WriteOption("defaultBuildTargets", String.Join(",", project.MovieOptions.DefaultBuildTargets));
+                WriteOption("defaultBuildTargets", string.Join(",", project.MovieOptions.DefaultBuildTargets));
             }
             WriteEndElement();
         }

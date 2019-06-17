@@ -1778,9 +1778,9 @@ namespace CodeFormatter
             Pref_MXML_TagsCanFormat = "mx:List,fx:List";
             Pref_MXML_TagsCannotFormat = "mx:String,fx:String";
             Pref_MXML_TagsDoNotFormatInside = ".*:Model,.*:XML";
-            List<String> eventAttrs = GetEvents();
+            List<string> eventAttrs = GetEvents();
             StringBuilder asTags = new StringBuilder();
-            foreach (String tag in eventAttrs) 
+            foreach (string tag in eventAttrs) 
             {
                 asTags.Append(".*:");
                 asTags.Append(tag);
@@ -1801,7 +1801,7 @@ namespace CodeFormatter
         private List<AttrGroup> CreateDefaultGroups()
         {
             List<AttrGroup> groups = new List<AttrGroup>();
-            List<String> attrs = new List<String>();
+            List<string> attrs = new List<string>();
             attrs.Add("allowDisjointSelection");
             attrs.Add("allowMultipleSelection");
             attrs.Add("allowThumbOverlap");
@@ -1934,7 +1934,7 @@ namespace CodeFormatter
             groups.Add(new AttrGroup("properties", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
             attrs = GetEvents();
             groups.Add(new AttrGroup("events", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
-            attrs = new List<String>();
+            attrs = new List<string>();
             attrs.Add("backgroundAlpha");
             attrs.Add("backgroundAttachment");
             attrs.Add("backgroundColor");
@@ -2095,7 +2095,7 @@ namespace CodeFormatter
             attrs.Add("verticalScrollBarStyleName");
             attrs.Add("weekDayStyleName");
             groups.Add(new AttrGroup("styles", attrs, MXMLPrettyPrinter.MXML_Sort_AscByCase, MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT, true));
-            attrs = new List<String>();
+            attrs = new List<string>();
             attrs.Add("addedEffect");
             attrs.Add("completeEffect");
             attrs.Add("creationCompleteEffect");
@@ -2114,9 +2114,9 @@ namespace CodeFormatter
             return groups;
         }
 
-        public static List<String> GetEvents()
+        public static List<string> GetEvents()
         {
-            List<String> attrs = new List<String>();
+            List<string> attrs = new List<string>();
             attrs.Add("add");
             attrs.Add("added");
             attrs.Add("activate");

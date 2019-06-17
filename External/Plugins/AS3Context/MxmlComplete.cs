@@ -222,7 +222,7 @@ namespace AS3Context
                     {
                         string uri = mxmlContext.namespaces[ns];
                         if (ns != "fx")
-                            snip += String.Format("\n\t@namespace {0} \"{1}\";", ns, uri);
+                            snip += string.Format("\n\t@namespace {0} \"{1}\";", ns, uri);
                     }
                     snip += "\n\t$(EntryPoint)\n</" + tagContext.Name + ">";
                     SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snip);
@@ -284,12 +284,12 @@ namespace AS3Context
                 }
                 else if (startFound)
                 {
-                    if (Char.IsWhiteSpace(currChar))
+                    if (char.IsWhiteSpace(currChar))
                         break;
 
                     caBuilder.Insert(0, currChar);
                 }
-                else if (possibleStartFound && !Char.IsWhiteSpace(currChar))
+                else if (possibleStartFound && !char.IsWhiteSpace(currChar))
                 {
                     startFound = true;
                     caBuilder.Insert(0, currChar);

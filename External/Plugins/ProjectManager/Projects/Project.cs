@@ -128,7 +128,7 @@ namespace ProjectManager.Projects
         public PathCollection CompileTargets { get { return compileTargets; } }
         public HiddenPathCollection HiddenPaths { get { return hiddenPaths; } }
         public AssetCollection LibraryAssets { get { return libraryAssets; } }
-        public virtual String LibrarySWFPath { get { return OutputPath; } }
+        public virtual string LibrarySWFPath { get { return OutputPath; } }
         public Dictionary<string, string> Storage { get { return storage; } }
         public List<string> ExternalLibraries { get; } = new List<string>();
 
@@ -316,7 +316,7 @@ namespace ProjectManager.Projects
 
         #region Path Helpers
 
-        public String[] GetHiddenPaths()
+        public string[] GetHiddenPaths()
         {
             return this.hiddenPaths.ToArray();
         }
@@ -356,14 +356,14 @@ namespace ProjectManager.Projects
         /// <summary>
         /// Replace accented characters and remove whitespace
         /// </summary>
-        public static String RemoveDiacritics(String s)
+        public static string RemoveDiacritics(string s)
         {
-            String normalizedString = s.Normalize(NormalizationForm.FormD);
+            string normalizedString = s.Normalize(NormalizationForm.FormD);
             StringBuilder stringBuilder = new StringBuilder();
 
             for (int i = 0; i < normalizedString.Length; i++)
             {
-                Char c = normalizedString[i];
+                char c = normalizedString[i];
                 if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                     stringBuilder.Append(c);
             }

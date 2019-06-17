@@ -34,7 +34,7 @@ namespace FlashDebugger
             Application.AddMessageFilter(m_MouseMessageFilter);
         }
 
-        public void Show(Point point, Variable variable, String path)
+        public void Show(Point point, Variable variable, string path)
         {
             m_ToolTip.Location = point;
             m_ToolTip.SetVariable(variable, path);
@@ -70,7 +70,7 @@ namespace FlashDebugger
             }
         }
 
-        private void Manager_OnMouseHover(ScintillaControl sci, Int32 position)
+        private void Manager_OnMouseHover(ScintillaControl sci, int position)
         {
             if (m_ToolTip == null)
                 Initialize();
@@ -81,7 +81,7 @@ namespace FlashDebugger
             {
                 if (debugManager.CurrentLocation != null && debugManager.CurrentLocation.getFile() != null)
                 {
-                    String localPath = debugManager.GetLocalPath(debugManager.CurrentLocation.getFile());
+                    string localPath = debugManager.GetLocalPath(debugManager.CurrentLocation.getFile());
                     if (localPath == null || localPath != PluginBase.MainForm.CurrentDocument.FileName)
                     {
                         return;
@@ -95,8 +95,8 @@ namespace FlashDebugger
                     return;
                 }
                 position = sci.WordEndPosition(position, true);
-                String leftword = GetWordAtPosition(sci, position);
-                if (leftword != String.Empty)
+                string leftword = GetWordAtPosition(sci, position);
+                if (leftword != string.Empty)
                 {
                     try
                     {
@@ -114,14 +114,14 @@ namespace FlashDebugger
             }
         }
 
-        private String GetWordAtPosition(ScintillaControl sci, Int32 position)
+        private string GetWordAtPosition(ScintillaControl sci, int position)
         {
             int insideBrackets = 0;
-            Char c;
+            char c;
             StringBuilder sb = new StringBuilder();
-            for (Int32 startPosition = position - 1; startPosition >= 0; startPosition--)
+            for (int startPosition = position - 1; startPosition >= 0; startPosition--)
             {
-                c = (Char)sci.CharAt(startPosition);
+                c = (char)sci.CharAt(startPosition);
                 if (c == ')')
                 {
                     insideBrackets++;
@@ -130,7 +130,7 @@ namespace FlashDebugger
                 {
                     insideBrackets--;
                 }
-                else if (!(Char.IsLetterOrDigit(c) || c == '_' || c == '$' || c == '.') && insideBrackets == 0)
+                else if (!(char.IsLetterOrDigit(c) || c == '_' || c == '$' || c == '.') && insideBrackets == 0)
                 {
                     break;
                 }

@@ -31,7 +31,7 @@ namespace CodeFormatter.InfoCollector
          */
         public static bool isASWhitespace(char ch)
         {
-            if (Char.IsWhiteSpace(ch))
+            if (char.IsWhiteSpace(ch))
                 return true;
             if (ch == '\u00A0')
                 return true;
@@ -44,7 +44,7 @@ namespace CodeFormatter.InfoCollector
          * @param input
          * @return
          */
-        public static String asTrim(String input)
+        public static string asTrim(string input)
         {
             input = input.Replace('\u00a0', ' ');
             return input.Trim();
@@ -121,7 +121,7 @@ namespace CodeFormatter.InfoCollector
         //      return results;
         //    }
 
-        private static String getCommonTreeText(CommonTree tree)
+        private static string getCommonTreeText(CommonTree tree)
         {
             if (tree==null)
                 return "";
@@ -130,8 +130,8 @@ namespace CodeFormatter.InfoCollector
             {
                 return tree.Token.Text;
             }
-            String buffer="";
-            foreach (Object obj in children)
+            string buffer="";
+            foreach (object obj in children)
             {
                 if (obj is CommonTree)
                 {
@@ -141,7 +141,7 @@ namespace CodeFormatter.InfoCollector
             return buffer;
         }
 
-        public static String getTreeText(ParserRuleReturnScope tree)
+        public static string getTreeText(ParserRuleReturnScope tree)
         {
             return getCommonTreeText((CommonTree)tree.Tree);
         }
@@ -341,9 +341,9 @@ namespace CodeFormatter.InfoCollector
             return getHiddenTokens(getFirstTreeToken((CommonTree)tree.Tree), rawTokens, crossLineBoundaries, false);
         }
 
-        public static String findPreWhitespace(String text)
+        public static string findPreWhitespace(string text)
         {
-            String buffer = "";
+            string buffer = "";
             for (int i = 0; i < text.Length; i++)
             {
                 char ch = text[i];

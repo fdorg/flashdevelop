@@ -100,7 +100,7 @@ namespace PluginCore.Helpers
                     if (scale >= 1.5)
                     {
                         double noPad = ctrl.Height * multi;
-                        ctrl.Height = (Int32)noPad;
+                        ctrl.Height = (int)noPad;
                     }
                 }
                 AdjustForHighDPI(ctrl, multi);
@@ -114,7 +114,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Keep track and adjust forms only once
         /// </summary>
-        private static Boolean IsAdjusted(Control control)
+        private static bool IsAdjusted(Control control)
         {
             if (control is Form)
             {

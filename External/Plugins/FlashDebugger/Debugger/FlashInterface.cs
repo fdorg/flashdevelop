@@ -105,13 +105,13 @@ namespace FlashDebugger
 
         private Session m_Session = null;
         private DebuggerState m_CurrentState = DebuggerState.Initializing;
-        private Boolean m_RequestPause;
-        private Boolean m_RequestResume;
-        private Boolean m_RequestStop;
-        private Boolean m_RequestDetach;
-        private Boolean m_StepResume;
+        private bool m_RequestPause;
+        private bool m_RequestResume;
+        private bool m_RequestStop;
+        private bool m_RequestDetach;
+        private bool m_StepResume;
         private EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
-        private Boolean m_SuspendWaiting;
+        private bool m_SuspendWaiting;
         private int m_activeSession; // 1 is m_session else lookup runningIsolates
 
         // Isolates 
@@ -142,7 +142,7 @@ namespace FlashDebugger
         {
             public IsolateSession i_Session = null;
             public Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
-            public Boolean requestPause;
+            public bool requestPause;
         }
 
         // breakpoint mappings
@@ -850,7 +850,7 @@ namespace FlashDebugger
         }
 
         // pretty print a trace statement to the console
-        internal virtual void dumpTraceLine(String s)
+        internal virtual void dumpTraceLine(string s)
         {
             TraceManager.AddAsync(s, 1);
         }
@@ -868,7 +868,7 @@ namespace FlashDebugger
             }
             else
             {
-                String name = e.name();
+                string name = e.name();
                 sb.Append(TextHelper.GetString("Info.LinePrefixWhenDisplayingFault")); //$NON-NLS-1$
                 sb.Append(' ');
                 sb.Append(name);
@@ -897,7 +897,7 @@ namespace FlashDebugger
         {
             // now rip off any trailing ? options
             int at = e.path.lastIndexOf('?');
-            String name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
+            string name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
             StringBuilder sb = new StringBuilder();
             sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfLoaded"));
             sb.Append(' ');
@@ -916,7 +916,7 @@ namespace FlashDebugger
         {
             // now rip off any trailing ? options
             int at = e.path.lastIndexOf('?');
-            String name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
+            string name = (at > -1) ? e.path.substring(0, (at) - (0)) : e.path;
             StringBuilder sb = new StringBuilder();
             sb.Append(TextHelper.GetString("Info.LinePrefixWhenSwfUnloaded")); //$NON-NLS-1$
             sb.Append(' ');
@@ -1197,7 +1197,7 @@ namespace FlashDebugger
                     {
                         foreach (SourceFile src in swf.getSourceList(m_Session))
                         {
-                            String localPath = PluginMain.debugManager.GetLocalPath(src);
+                            string localPath = PluginMain.debugManager.GetLocalPath(src);
                             if (localPath != null && files.ContainsKey(localPath) && files[localPath] > src.getId())
                             {
                                 files[localPath] = src.getId();
@@ -1254,7 +1254,7 @@ namespace FlashDebugger
                 }
         }
 
-        private static String replaceInlineReferences(String text, IDictionary parameters)
+        private static string replaceInlineReferences(string text, IDictionary parameters)
         {
             if (parameters == null) return text;
             int depth = 100;
@@ -1272,8 +1272,8 @@ namespace FlashDebugger
                 {
                     return null; // FIXME
                 }
-                String name = text.Substring(o + 2, (c) - (o + 2));
-                String value = null;
+                string name = text.Substring(o + 2, (c) - (o + 2));
+                string value = null;
                 if (parameters.Contains(name) && (parameters[name] != null))
                 {
                     value = parameters[name].ToString();

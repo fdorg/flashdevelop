@@ -8,12 +8,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Calculates the MD5 checksum
         /// </summary>
-        public static String CalculateMD5(String input)
+        public static string CalculateMD5(string input)
         {
-            Byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            Byte[] hash = MD5.Compute(inputBytes);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hash = MD5.Compute(inputBytes);
             StringBuilder builder = new StringBuilder();
-            for (Int32 i = 0; i < hash.Length; i++)
+            for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("X2"));
             }
@@ -23,12 +23,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Calculates the SHA-1 checksum
         /// </summary>
-        public static String CalculateSHA1(String input)
+        public static string CalculateSHA1(string input)
         {
-            Byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            Byte[] hash = SHA1.Compute(inputBytes);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hash = SHA1.Compute(inputBytes);
             StringBuilder builder = new StringBuilder();
-            for (Int32 i = 0; i < hash.Length; i++)
+            for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("X2"));
             }

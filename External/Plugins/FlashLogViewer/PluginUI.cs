@@ -15,7 +15,7 @@ namespace FlashLogViewer
     public class PluginUI : DockPanelControl
     {
         private Form popupForm;
-        private Boolean tracking;
+        private bool tracking;
         private Timer refreshTimer;
         private ToolStrip toolStrip;
         private RichTextBox logTextBox;
@@ -30,7 +30,7 @@ namespace FlashLogViewer
         private DateTime policyLogWrited;
         private DateTime flashLogWrited;
         private PluginMain pluginMain;
-        private String curLogFile;
+        private string curLogFile;
         private Regex reWarning;
         private Regex reFilter;
         private Regex reError;
@@ -130,7 +130,7 @@ namespace FlashLogViewer
             // logComboBox
             //
             this.logComboBox.Enabled = false;
-            this.logComboBox.Items.AddRange(new Object[] { TextHelper.GetString("Label.FlashLog"), TextHelper.GetString("Label.PolicyLog") });
+            this.logComboBox.Items.AddRange(new object[] { TextHelper.GetString("Label.FlashLog"), TextHelper.GetString("Label.PolicyLog") });
             this.logComboBox.Name = "logComboBox";
             this.logComboBox.Size = new System.Drawing.Size(120, 28);
             this.logComboBox.SelectedIndex = 0;
@@ -195,9 +195,9 @@ namespace FlashLogViewer
         /// <summary>
         /// Ensures the update interval is valid and gets it
         /// </summary>
-        public Int32 GetUpdateInterval()
+        public int GetUpdateInterval()
         {
-            Int32 interval = this.Settings.UpdateInterval;
+            int interval = this.Settings.UpdateInterval;
             if (interval == 0) this.Settings.UpdateInterval = interval = 100;
             return interval;
         }
@@ -207,9 +207,9 @@ namespace FlashLogViewer
         /// </summary>
         private void InitializeSettings()
         {
-            String mmConfigFile = PathHelper.ResolveMMConfig();
-            String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            String flashLogDir = Path.Combine(userAppDir, "Macromedia", "Flash Player", "Logs");
+            string mmConfigFile = PathHelper.ResolveMMConfig();
+            string userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string flashLogDir = Path.Combine(userAppDir, "Macromedia", "Flash Player", "Logs");
             try
             {
                 if (!File.Exists(this.Settings.FlashLogFile))
@@ -240,7 +240,7 @@ namespace FlashLogViewer
             {
                 if (!File.Exists(mmConfigFile))
                 {
-                    String contents = "PolicyFileLog=1\r\nPolicyFileLogAppend=0\r\nErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n";
+                    string contents = "PolicyFileLog=1\r\nPolicyFileLogAppend=0\r\nErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n";
                     File.WriteAllText(mmConfigFile, contents, Encoding.UTF8);
                 }
             }
@@ -306,7 +306,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButtonClick(Object sender, System.EventArgs e)
+        private void ClearFilterButtonClick(object sender, System.EventArgs e)
         {
             this.lastPosition = 0;
             this.filterComboBox.Text = "";
@@ -316,7 +316,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Clears the output control text
         /// </summary>
-        private void ClearOutput(Object sender, System.EventArgs e)
+        private void ClearOutput(object sender, System.EventArgs e)
         {
             this.logTextBox.Clear();
             try
@@ -331,7 +331,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Wraps the output texts in the control
         /// </summary>
-        private void WrapText(Object sender, System.EventArgs e)
+        private void WrapText(object sender, System.EventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             item.Checked = !item.Checked;
@@ -341,7 +341,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Copies the output to clipboard
         /// </summary>
-        private void CopyOutput(Object sender, System.EventArgs e)
+        private void CopyOutput(object sender, System.EventArgs e)
         {
             this.logTextBox.Copy();
         }
@@ -357,7 +357,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Refreshes the output window and filters it if needed
         /// </summary>
-        public void RefreshDisplay(Boolean forceScroll)
+        public void RefreshDisplay(bool forceScroll)
         {
             using (StreamReader s = new StreamReader(File.Open(this.curLogFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), Encoding.UTF8))
             {
@@ -403,7 +403,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Enables or disables the tracking of the log file
         /// </summary>
-        public void EnableTracking(Boolean enable)
+        public void EnableTracking(bool enable)
         {
             this.tracking = enable;
             this.refreshTimer.Enabled = this.tracking;
@@ -423,7 +423,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Makes the plugin panel top most form of FD
         /// </summary>
-        private void TopMostButtonClick(Object sender, EventArgs e)
+        private void TopMostButtonClick(object sender, EventArgs e)
         {
             this.topMostButton.Checked = !this.topMostButton.Checked;
             if (this.topMostButton.Checked)
@@ -453,7 +453,7 @@ namespace FlashLogViewer
         /// <summary>
         /// If the user shows the plugin panel from view menu, restore
         /// </summary>
-        private void PluginPanelVisibleChanged(Object sender, EventArgs e)
+        private void PluginPanelVisibleChanged(object sender, EventArgs e)
         {
             this.pluginMain.PluginPanel.VisibleChanged -= new EventHandler(this.PluginPanelVisibleChanged);
             this.popupForm.Close();
@@ -462,7 +462,7 @@ namespace FlashLogViewer
         /// <summary>
         /// After the popup form has been closed, show plugin panel
         /// </summary>
-        private void PopupFormClosed(Object sender, FormClosedEventArgs e)
+        private void PopupFormClosed(object sender, FormClosedEventArgs e)
         {
             this.topMostButton.Checked = false;
             this.pluginMain.PluginPanel.Controls.Add(this);
@@ -472,7 +472,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Enables or disables the tracking of the log file
         /// </summary>
-        private void ToggleButtonClick(Object sender, EventArgs e)
+        private void ToggleButtonClick(object sender, EventArgs e)
         {
             this.tracking = !this.tracking;
             this.EnableTracking(this.tracking);
@@ -481,7 +481,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Polls for changes in the current log file
         /// </summary>
-        private void RefreshTimerTick(Object sender, EventArgs e)
+        private void RefreshTimerTick(object sender, EventArgs e)
         {
             DateTime writeTime = DateTime.Now;
             try
@@ -510,7 +510,7 @@ namespace FlashLogViewer
         /// <summary>
         /// If log file has been changed, refreshes the display
         /// </summary>
-        private void LogComboBoxIndexChanged(Object sender, EventArgs e)
+        private void LogComboBoxIndexChanged(object sender, EventArgs e)
         {
             this.lastPosition = 0;
             this.logTextBox.Clear();
@@ -525,7 +525,7 @@ namespace FlashLogViewer
         /// <summary>
         /// If the filter text has been changed, refreshes the display
         /// </summary>
-        private void FilterTextBoxTextChanged(Object sender, EventArgs e)
+        private void FilterTextBoxTextChanged(object sender, EventArgs e)
         {
             if (!this.tracking) return;
             if (this.filterComboBox.Text.Length == 0) this.reFilter = null;
@@ -571,7 +571,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Filters the contents of the output
         /// </summary>
-        private Boolean PassesFilter(String logLine)
+        private bool PassesFilter(string logLine)
         {
             if (reFilter == null) return true;
             else return reFilter.IsMatch(logLine);

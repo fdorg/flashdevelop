@@ -7,7 +7,7 @@ namespace SourceControl.Sources.Subversion
     {
         public MoveCommand(string fromPath, string toPath)
         {
-            string args = String.Format("move \"{0}\" \"{1}\"", Path.GetFileName(fromPath), toPath);
+            string args = string.Format("move \"{0}\" \"{1}\"", Path.GetFileName(fromPath), toPath);
 
             Run(args, Path.GetDirectoryName(fromPath));
         }

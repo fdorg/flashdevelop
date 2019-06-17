@@ -66,7 +66,7 @@ namespace Ude.Core
         }
 
         public SMModel(BitPackage classTable, int classFactor,
-            BitPackage stateTable, int[] charLenTable, String name)
+            BitPackage stateTable, int[] charLenTable, string name)
         {
             this.classTable = classTable;
             this.classFactor = classFactor;

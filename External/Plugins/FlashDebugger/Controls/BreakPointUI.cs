@@ -138,13 +138,13 @@ namespace FlashDebugger
                 string filefullpath = (string)row.Cells["FilePath"].Value;
                 int line = int.Parse((string)row.Cells["Line"].Value) - 1;
                 ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
-                bool value = (Boolean)row.Cells["Enable"].EditedFormattedValue;
+                bool value = (bool)row.Cells["Enable"].EditedFormattedValue;
                 if (doc != null)
                 {
                     // This logic should be handled by BPManager, so we'll just work arround bad BPs and ignore them
                     if (line < 0 || (doc.SciControl != null && line >= doc.SciControl.LineCount)) return;
                     int marker = value ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled;
-                    Boolean m = ScintillaHelper.IsMarkerSet(doc.SciControl, marker, line);
+                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, marker, line);
                     if (!m)
                     {
                         doc.SciControl.MarkerAdd(line, marker);
@@ -188,13 +188,13 @@ namespace FlashDebugger
             dgv.Rows.Clear();
         }
 
-        public new Boolean Enabled
+        public new bool Enabled
         {
             get { return dgv.Enabled; }
             set { dgv.Enabled = value; }
         }
 
-        private void AddItem(string filename, int line, string exp, Boolean enable)
+        private void AddItem(string filename, int line, string exp, bool enable)
         {
             DataGridViewRow dgvrow;
             int i = ItemIndex(filename, line);
@@ -363,7 +363,7 @@ namespace FlashDebugger
                 ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
                 if (doc != null)
                 {
-                    Boolean m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
+                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
                     doc.SciControl.MarkerDelete(line, m ? ScintillaHelper.markerBPDisabled : ScintillaHelper.markerBPEnabled);
                 }
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, true, false);
@@ -384,7 +384,7 @@ namespace FlashDebugger
                 ITabbedDocument doc = ScintillaHelper.GetDocument(filefullpath);
                 if (doc != null)
                 {
-                    Boolean m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
+                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, ScintillaHelper.markerBPDisabled, line);
                     doc.SciControl.MarkerDelete(line, m ? ScintillaHelper.markerBPDisabled : ScintillaHelper.markerBPEnabled);
                 }
                 else breakPointManager.SetBreakPointInfo(filefullpath, line, true, false);
@@ -407,7 +407,7 @@ namespace FlashDebugger
                 if (doc != null)
                 {
                     int newMarker = value ? ScintillaHelper.markerBPEnabled : ScintillaHelper.markerBPDisabled;
-                    Boolean m = ScintillaHelper.IsMarkerSet(doc.SciControl, newMarker, line);
+                    bool m = ScintillaHelper.IsMarkerSet(doc.SciControl, newMarker, line);
                     if (!m)
                     {
                         doc.SciControl.MarkerAdd(line, newMarker);

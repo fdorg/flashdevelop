@@ -218,7 +218,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
             
             if (header != ZipConstants.LocalHeaderSignature) {
-                throw new ZipException("Wrong Local header signature: 0x" + String.Format("{0:X}", header));
+                throw new ZipException("Wrong Local header signature: 0x" + string.Format("{0:X}", header));
             }
             
             short versionRequiredToExtract = (short)inputBuffer.ReadLeShort();

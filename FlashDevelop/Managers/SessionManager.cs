@@ -14,12 +14,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Saves the current session to a file
         /// </summary>
-        public static void SaveSession(String file)
+        public static void SaveSession(string file)
         {
             Session session = GetCurrentSession();
             SaveSession(file, session);
         }
-        public static void SaveSession(String file, Session session)
+        public static void SaveSession(string file, Session session)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Loads and restores the saved session 
         /// </summary>
-        public static void RestoreSession(String file, SessionType type)
+        public static void RestoreSession(string file, SessionType type)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace FlashDevelop.Managers
                 ErrorManager.ShowError(ex);
             }
         }
-        public static void RestoreSession(String file, Session session)
+        public static void RestoreSession(string file, Session session)
         {
             try
             {
@@ -61,9 +61,9 @@ namespace FlashDevelop.Managers
                     EventManager.DispatchEvent(Globals.MainForm, te);
                     if (!te.Handled)
                     {
-                        for (Int32 i = 0; i < session.Files.Count; i++)
+                        for (int i = 0; i < session.Files.Count; i++)
                         {
-                            String fileToOpen = session.Files[i];
+                            string fileToOpen = session.Files[i];
                             if (File.Exists(fileToOpen)) Globals.MainForm.OpenEditableDocument(fileToOpen);
                         }
                         RestoreDocks(session);
@@ -92,7 +92,7 @@ namespace FlashDevelop.Managers
             try
             {
                 DockPane prevPane;
-                for (Int32 i = 0; i < session.Nested.Count; i++)
+                for (int i = 0; i < session.Nested.Count; i++)
                 {
                     NestedDock nestedDock = session.Nested[i];
                     DockContent dockContent = DocumentManager.FindDocument(nestedDock.FileName) as DockContent;
@@ -125,7 +125,7 @@ namespace FlashDevelop.Managers
         {
             Session session = new Session();
             ITabbedDocument[] documents = Globals.MainForm.Documents;
-            for (Int32 i = 0; i < documents.Length; i++)
+            for (int i = 0; i < documents.Length; i++)
             {
                 ITabbedDocument document = documents[i];
                 if (document.IsEditable && !document.IsUntitled)
@@ -152,8 +152,8 @@ namespace FlashDevelop.Managers
                 DockContent content = document as DockContent;
                 double prop = content.Pane.NestedDockingStatus.Proportion;
                 DockAlignment align = content.Pane.NestedDockingStatus.Alignment;
-                Int32 paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);
-                Int32 nestIndex = content.DockPanel.Panes.IndexOf(content.Pane.NestedDockingStatus.PreviousPane);
+                int paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);
+                int nestIndex = content.DockPanel.Panes.IndexOf(content.Pane.NestedDockingStatus.PreviousPane);
                 if (nestIndex > -1)
                 {
                     NestedDock dock = new NestedDock(document.FileName, nestIndex, paneIndex, align, prop);
@@ -167,24 +167,24 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class Session : ISession
     {
-        private Int32 index = 0;
-        private List<String> files = new List<String>();
+        private int index = 0;
+        private List<string> files = new List<string>();
         private List<NestedDock> nested = new List<NestedDock>();
         private SessionType type = SessionType.Startup;
 
         public Session() {}
-        public Session(Int32 index, List<String> files)
+        public Session(int index, List<string> files)
         {
             this.index = index;
             this.files = files;
         }
-        public Session(Int32 index, List<String> files, SessionType type)
+        public Session(int index, List<string> files, SessionType type)
         {
             this.index = index;
             this.files = files;
             this.type = type;
         }
-        public Int32 Index
+        public int Index
         {
             get { return this.index; }
             set { this.index = value; }
@@ -194,7 +194,7 @@ namespace FlashDevelop.Managers
             get { return this.type; }
             set { this.type = value; }
         }
-        public List<String> Files
+        public List<string> Files
         {
             get { return this.files; }
             set { this.files = value; }
@@ -210,14 +210,14 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class NestedDock
     {
-        private Int32 nest = -1;
-        private Int32 index = -1;
-        private String file = "";
+        private int nest = -1;
+        private int index = -1;
+        private string file = "";
         private double prop = 0.5;
         private DockAlignment align = DockAlignment.Right;
 
         public NestedDock() { }
-        public NestedDock(String file, Int32 nest, Int32 index, DockAlignment align, double prop)
+        public NestedDock(string file, int nest, int index, DockAlignment align, double prop)
         {
             this.file = file;
             this.nest = nest;
@@ -225,17 +225,17 @@ namespace FlashDevelop.Managers
             this.align = align;
             this.prop = prop;
         }
-        public String FileName
+        public string FileName
         {
             get { return this.file; }
             set { this.file = value; }
         }
-        public Int32 PaneIndex
+        public int PaneIndex
         {
             get { return this.index; }
             set { this.index = value; }
         }
-        public Int32 NestIndex
+        public int NestIndex
         {
             get { return this.nest; }
             set { this.nest = value; }

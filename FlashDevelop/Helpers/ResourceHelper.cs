@@ -9,9 +9,9 @@ namespace FlashDevelop.Helpers
         /// <summary>
         /// Gets the specified resource as an stream
         /// </summary> 
-        public static Stream GetStream(String name)
+        public static Stream GetStream(string name)
         {
-            String prefix = "FlashDevelop.Resources.";
+            string prefix = "FlashDevelop.Resources.";
             Assembly assembly = Assembly.GetExecutingAssembly();
             return assembly.GetManifestResourceStream(prefix + name);
         }

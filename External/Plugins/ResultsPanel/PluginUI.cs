@@ -64,7 +64,7 @@ namespace ResultsPanel
             //this.logCount = TraceManager.TraceLog.Count;
             this.logCount = 0;
             this.allListViewItems = new List<ListViewItem>();
-            this.ignoredEntries = new Dictionary<String, Boolean>();
+            this.ignoredEntries = new Dictionary<string, bool>();
             this.errorCount = 0;
             this.warningCount = 0;
             this.messageCount = 0;
@@ -854,7 +854,7 @@ namespace ResultsPanel
         /// </summary>
         private int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
-            String text = sci.GetLine(line) ?? "";
+            string text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
             return sci.MBSafeTextLength(text.Substring(0, length));
         }
@@ -1242,7 +1242,7 @@ namespace ResultsPanel
         /**
         * Finds if a string contains invalid characters for a path
         */
-        private static Regex badCharacters = new Regex("[" + Regex.Escape(new String(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        private static Regex badCharacters = new Regex("[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
 
         /**
         * Match standard file entry -- filename:line:description

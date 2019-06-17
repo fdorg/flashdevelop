@@ -48,8 +48,8 @@ namespace AS3Context.Controls
         {
             graph.Values = new List<float>();
             graph.MaxValue = 1;
-            memLabel.Text = String.Format(TextHelper.GetString("Label.MemoryDisplay"), FormatMemory(0), FormatMemory(0));
-            statsLabel.Text = String.Format(TextHelper.GetString("Label.MemoryStats"), "\n", FormatMemory(0), FormatMemory(0));
+            memLabel.Text = string.Format(TextHelper.GetString("Label.MemoryDisplay"), FormatMemory(0), FormatMemory(0));
+            statsLabel.Text = string.Format(TextHelper.GetString("Label.MemoryStats"), "\n", FormatMemory(0), FormatMemory(0));
         }
 
         /// <summary>
@@ -63,9 +63,9 @@ namespace AS3Context.Controls
             graph.Values.Add((float)mem);
             if (mem > graph.MaxValue) graph.MaxValue = mem;
             string raw = TextHelper.GetString("Label.MemoryDisplay");
-            memLabel.Text = String.Format(raw, FormatMemory(mem), FormatMemory((int)graph.MaxValue));
+            memLabel.Text = string.Format(raw, FormatMemory(mem), FormatMemory((int)graph.MaxValue));
             raw = TextHelper.GetString("Label.MemoryStats");
-            statsLabel.Text = String.Format(raw, "\n", FormatMemory(mem), FormatMemory((int)graph.MaxValue));
+            statsLabel.Text = string.Format(raw, "\n", FormatMemory(mem), FormatMemory((int)graph.MaxValue));
             graph.Invalidate();
         }
 

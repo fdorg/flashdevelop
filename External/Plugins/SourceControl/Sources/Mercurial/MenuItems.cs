@@ -63,7 +63,7 @@ namespace SourceControl.Sources.Mercurial
 
         private string GetPaths()
         {
-            return String.Join("*", GetPathsArray());
+            return string.Join("*", GetPathsArray());
         }
 
         private string[] GetPathsArray()

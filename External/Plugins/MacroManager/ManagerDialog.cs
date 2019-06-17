@@ -193,7 +193,7 @@ namespace MacroManager
         /// </summary>
         private void InitializeItemGroups()
         {
-            String macroGroup = TextHelper.GetString("Group.Macros");
+            string macroGroup = TextHelper.GetString("Group.Macros");
             this.macroGroup = new ListViewGroup(macroGroup, HorizontalAlignment.Left);
             this.listView.Groups.Add(this.macroGroup);
         }
@@ -216,7 +216,7 @@ namespace MacroManager
         /// <summary>
         /// Hides the export item if there are no items selected
         /// </summary>
-        private void ContextMenuOpening(Object sender, CancelEventArgs e)
+        private void ContextMenuOpening(object sender, CancelEventArgs e)
         {
             if (this.listView.SelectedItems.Count == 0) this.exportItem.Visible = false;
             else this.exportItem.Visible = true;
@@ -282,11 +282,11 @@ namespace MacroManager
         /// <summary>
         /// Adds a new empty macro to the list
         /// </summary>
-        private void AddButtonClick(Object sender, EventArgs e)
+        private void AddButtonClick(object sender, EventArgs e)
         {
-            String untitled = TextHelper.GetString("Info.Untitled");
+            string untitled = TextHelper.GetString("Info.Untitled");
             ListViewItem item = new ListViewItem(untitled, 0);
-            item.Tag = new Macro(untitled, new String[0], String.Empty, Keys.None);
+            item.Tag = new Macro(untitled, new string[0], string.Empty, Keys.None);
             this.macroGroup.Items.Add(item);
             this.listView.Items.Add(item);
         }
@@ -294,7 +294,7 @@ namespace MacroManager
         /// <summary>
         /// Deletes the delected macro[s] from the list
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        private void DeleteButtonClick(object sender, EventArgs e)
         {
             foreach (ListViewItem item in this.listView.SelectedItems)
             {
@@ -310,7 +310,7 @@ namespace MacroManager
         /// <summary>
         /// Activates correct macros and controls
         /// </summary>
-        private void ListViewIndexChanged(Object sender, EventArgs e)
+        private void ListViewIndexChanged(object sender, EventArgs e)
         {
             if (this.listView.SelectedIndices.Count == 1)
             {
@@ -325,7 +325,7 @@ namespace MacroManager
         /// <summary>
         /// Updates the label of the selected macro
         /// </summary>
-        private void PropertyValueChanged(Object sender, PropertyValueChangedEventArgs e)
+        private void PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             if (this.listView.SelectedIndices.Count == 1)
             {
@@ -337,7 +337,7 @@ namespace MacroManager
         /// <summary>
         /// Closes the macro editoe dialog
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
+        private void CloseButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -345,7 +345,7 @@ namespace MacroManager
         /// <summary>
         /// Exports the current macro list into a file
         /// </summary>
-        private void ExportMacros(Object sender, EventArgs e)
+        private void ExportMacros(object sender, EventArgs e)
         {
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
@@ -366,7 +366,7 @@ namespace MacroManager
         /// <summary>
         /// Imports an macro list from a file
         /// </summary>
-        private void ImportMacros(Object sender, EventArgs e)
+        private void ImportMacros(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -376,7 +376,7 @@ namespace MacroManager
                 {
                     this.SaveUserMacros();
                     List<Macro> macros = new List<Macro>();
-                    Object macrosObject = ObjectSerializer.Deserialize(ofd.FileName, macros, false);
+                    object macrosObject = ObjectSerializer.Deserialize(ofd.FileName, macros, false);
                     macros = (List<Macro>)macrosObject;
                     this.pluginMain.AppSettings.UserMacros.AddRange(macros);
                     this.PopulateMacroList(this.pluginMain.AppSettings.UserMacros);
@@ -387,7 +387,7 @@ namespace MacroManager
         /// <summary>
         /// Loads the macros from the settings
         /// </summary>
-        private void DialogLoad(Object sender, EventArgs e)
+        private void DialogLoad(object sender, EventArgs e)
         {
             this.LoadUserMacros();
         }
@@ -395,7 +395,7 @@ namespace MacroManager
         /// <summary>
         /// Saves the macros when the dialog is closed
         /// </summary>
-        private void DialogClosed(Object sender, FormClosedEventArgs e)
+        private void DialogClosed(object sender, FormClosedEventArgs e)
         {
             this.SaveUserMacros();
             this.pluginMain.RefreshMacroToolBarItems();

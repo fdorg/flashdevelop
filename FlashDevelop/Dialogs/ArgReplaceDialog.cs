@@ -16,11 +16,11 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Panel bottomPanel;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.FlowLayoutPanel argsPanel;
-        private System.Collections.Generic.Dictionary<String, String> argDictionary = new Dictionary<String, String>();
+        private System.Collections.Generic.Dictionary<string, string> argDictionary = new Dictionary<string, string>();
         private System.Text.RegularExpressions.Regex regex;
-        public System.String text;
+        public string text;
 
-        public ArgReplaceDialog(String text, Regex regex)
+        public ArgReplaceDialog(string text, Regex regex)
         {
             this.text = text;
             this.regex = regex;
@@ -129,7 +129,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Accessor for the dictionary
         /// </summary>
-        public Dictionary<String, String> Dictionary
+        public Dictionary<string, string> Dictionary
         {
             get { return this.argDictionary; }
         }
@@ -158,8 +158,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeInterface()
         {
-            String value;
-            String argument;
+            string value;
+            string argument;
             ArgEditor argEditor;
             Match match = this.regex.Match(this.text);
             while (match.Success)
@@ -193,7 +193,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Accept dialog...
         /// </summary>
-        private void OkButtonClick(Object sender, EventArgs e)
+        private void OkButtonClick(object sender, EventArgs e)
         {
             this.BuildDictionary();
             this.Close();
@@ -202,7 +202,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Cancel dialog...
         /// </summary>
-        private void CancelButtonClick(Object sender, EventArgs e)
+        private void CancelButtonClick(object sender, EventArgs e)
         {
             this.text = null;
             this.Close();
@@ -211,7 +211,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Select first arg editor when form recieves focus
         /// </summary>
-        private void OnDialogActivated(Object sender, EventArgs e)
+        private void OnDialogActivated(object sender, EventArgs e)
         {
             this.argsPanel.Controls[0].Focus();
         }

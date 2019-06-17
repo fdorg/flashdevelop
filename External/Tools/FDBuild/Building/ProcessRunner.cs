@@ -12,7 +12,7 @@ namespace ProjectManager.Building
         public static bool Run(string fileName, string arguments, bool ignoreExitCode, bool mergeErrors)
         {
             // CrossOver native call
-            Boolean isNative = fileName == "FDEXE.sh" || Path.GetExtension(fileName) == ".command";
+            bool isNative = fileName == "FDEXE.sh" || Path.GetExtension(fileName) == ".command";
 
             Process process = new Process();
             process.StartInfo.UseShellExecute = false;

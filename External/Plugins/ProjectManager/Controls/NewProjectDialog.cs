@@ -296,10 +296,10 @@ namespace ProjectManager.Controls
             }
 
             ListViewGroup group = null;
-            List<String> templateDirs = ProjectPaths.GetAllProjectDirs();
+            List<string> templateDirs = ProjectPaths.GetAllProjectDirs();
             templateDirs.Sort(CompareFolderNames);
             ListViewItem lastItem = null;
-            String lastTemplate = null;
+            string lastTemplate = null;
 
             foreach (string templateDir in templateDirs)
             {
@@ -340,7 +340,7 @@ namespace ProjectManager.Controls
 
         void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(lastTemplate))
+            if (!string.IsNullOrEmpty(lastTemplate))
             {
                 foreach (ListViewItem item in projectListView.Items)
                 {
@@ -513,7 +513,7 @@ namespace ProjectManager.Controls
             UpdateStatusBar();
         }
 
-        private void SetProjectImage(String projectImage)
+        private void SetProjectImage(string projectImage)
         {
             Image image = Image.FromFile(projectImage);
             Bitmap empty = new Bitmap(this.previewBox.Width, this.previewBox.Height);

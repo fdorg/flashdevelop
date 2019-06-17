@@ -14,8 +14,8 @@ namespace FlashDebugger
     {
         internal Variable m_var;
         internal long m_context;
-        internal String m_name;
-        internal String m_path;
+        internal string m_name;
+        internal string m_path;
 
         public java.lang.String getQualifiedName()
         {
@@ -37,7 +37,7 @@ namespace FlashDebugger
             return m_var.getScope();
         }
 
-        virtual public String Path
+        virtual public string Path
         {
             get
             {
@@ -75,12 +75,12 @@ namespace FlashDebugger
             init(context, v, null);
         }
 
-        public VariableFacade(long context, String name)
+        public VariableFacade(long context, string name)
         {
             init(context, null, name);
         }
         
-        internal virtual void  init(long context, Variable v, String name)
+        internal virtual void  init(long context, Variable v, string name)
         {
             m_var = v;
             m_context = context;
@@ -123,7 +123,7 @@ namespace FlashDebugger
             return m_var.setValue(session, type, value);
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return (m_var == null)?m_name:m_var.ToString();
         }

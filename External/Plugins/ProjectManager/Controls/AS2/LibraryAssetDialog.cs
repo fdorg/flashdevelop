@@ -7,9 +7,9 @@ namespace ProjectManager.Controls.AS2
 {
     public class LibraryAssetDialog : System.Windows.Forms.Form
     {
-        Boolean isAS3;
-        Boolean isSWC;
-        Boolean modified;
+        bool isAS3;
+        bool isSWC;
+        bool modified;
         LibraryAsset asset;
 
         #region Windows Form Designer

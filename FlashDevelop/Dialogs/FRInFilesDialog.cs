@@ -494,7 +494,7 @@ namespace FlashDevelop.Dialogs
         public void UpdateSettings()
         {
             FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-            Boolean useGroups = Globals.MainForm.Settings.UseListViewGrouping;
+            bool useGroups = Globals.MainForm.Settings.UseListViewGrouping;
             this.resultsView.ShowGroups = useGroups;
             this.resultsView.GridLines = !useGroups;
         }
@@ -545,7 +545,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Changes the redirection setting and updates the check state.
         /// </summary>
-        private void RedirectCheckBoxCheckChanged(Object sender, EventArgs e)
+        private void RedirectCheckBoxCheckChanged(object sender, EventArgs e)
         {
             Globals.Settings.RedirectFilesResults = !Globals.Settings.RedirectFilesResults;
             this.redirectCheckBox.Checked = Globals.Settings.RedirectFilesResults;
@@ -645,11 +645,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Handles the double click event from results view
         /// </summary>
-        private void ResultsViewDoubleClick(Object sender, System.EventArgs e)
+        private void ResultsViewDoubleClick(object sender, System.EventArgs e)
         {
             if (this.resultsView.SelectedItems.Count < 1) return;
             ListViewItem item = this.resultsView.SelectedItems[0];
-            var data = (KeyValuePair<String, SearchMatch>)item.Tag;
+            var data = (KeyValuePair<string, SearchMatch>)item.Tag;
             if (File.Exists(data.Key))
             {
                 Globals.MainForm.Activate();
@@ -664,7 +664,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Cancels the find or replace lookup
         /// </summary>
-        private void CancelButtonClick(Object sender, System.EventArgs e)
+        private void CancelButtonClick(object sender, System.EventArgs e)
         {
             runner?.CancelAsync();
         }
@@ -672,7 +672,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        private void RunnerProgress(Int32 percentDone)
+        private void RunnerProgress(int percentDone)
         {
             this.progressBar.Value = percentDone;
         }
@@ -686,12 +686,12 @@ namespace FlashDevelop.Dialogs
             this.resultsView.Items.Clear();
             if (results == null)
             {
-                String message = TextHelper.GetString("Info.FindLookupCanceled");
+                string message = TextHelper.GetString("Info.FindLookupCanceled");
                 this.infoLabel.Text = message;
             }
             else if (results.Count == 0)
             {
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
             else
@@ -750,12 +750,12 @@ namespace FlashDevelop.Dialogs
             this.resultsView.Items.Clear();
             if (results == null)
             {
-                String message = TextHelper.GetString("Info.ReplaceLookupCanceled");
+                string message = TextHelper.GetString("Info.ReplaceLookupCanceled");
                 this.infoLabel.Text = message;
             }
             else if (results.Count == 0)
             {
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
             else
@@ -829,7 +829,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Setups the resultsView.Columns for find and replace
         /// </summary>
-        private void SetupResultsView(Boolean finding)
+        private void SetupResultsView(bool finding)
         {
             if (finding && this.resultsView.Columns.Count != 4)
             {
@@ -846,7 +846,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(Object sender, CancelEventArgs e)
+        private void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             runner?.CancelAsync();
@@ -857,10 +857,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Setups the dialog on load
         /// </summary>
-        private void DialogLoaded(Object sender, System.EventArgs e)
+        private void DialogLoaded(object sender, System.EventArgs e)
         {
             this.cancelButton.Enabled = false;
-            String message = TextHelper.GetString("Info.NoMatches");
+            string message = TextHelper.GetString("Info.NoMatches");
             this.infoLabel.Text = message;
             this.CenterToParent();
         }
@@ -868,7 +868,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Process shortcuts
         /// </summary>
-        protected override Boolean ProcessDialogKey(Keys keyData)
+        protected override bool ProcessDialogKey(Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.F))
             {
@@ -881,7 +881,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, EventArgs e)
+        private void VisibleChange(object sender, EventArgs e)
         {
             if (this.Visible)
             {
@@ -905,16 +905,16 @@ namespace FlashDevelop.Dialogs
         private void UpdateDialogArguments()
         {
             IProject project = PluginBase.CurrentProject;
-            Boolean doRefresh = lastProject != null && lastProject != project;
+            bool doRefresh = lastProject != null && lastProject != project;
             if (project != null)
             {
-                String path = Path.GetDirectoryName(project.ProjectPath);
-                if (String.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
+                string path = Path.GetDirectoryName(project.ProjectPath);
+                if (string.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
                 {
                     this.folderComboBox.Text = path;
                 }
             }
-            else if (String.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
+            else if (string.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
             {
                 this.folderComboBox.Text = Globals.MainForm.WorkingDirectory;
             }
@@ -926,12 +926,12 @@ namespace FlashDevelop.Dialogs
             {
                 if (project != null)
                 {
-                    String filter = project.DefaultSearchFilter;
+                    string filter = project.DefaultSearchFilter;
                     this.extensionComboBox.Text = filter;
                 }
                 else
                 {
-                    String def = Globals.Settings.DefaultFileExtension;
+                    string def = Globals.Settings.DefaultFileExtension;
                     this.extensionComboBox.Text = "*." + def;
                 }
             }
@@ -942,7 +942,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the ui based on the running state
         /// </summary> 
-        private void UpdateUIState(Boolean running)
+        private void UpdateUIState(bool running)
         {
             if (running)
             {
@@ -962,22 +962,22 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets search config for find and replace
         /// </summary>
-        private FRConfiguration GetFRConfig(String path, String mask, Boolean recursive)
+        private FRConfiguration GetFRConfig(string path, string mask, bool recursive)
         {
             if (path.Trim() != "<Project>") return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
             if (PluginBase.CurrentProject == null) return null;
-            var allFiles = new List<String>();
+            var allFiles = new List<string>();
             var project = PluginBase.CurrentProject;
             var projPath = Path.GetDirectoryName(project.ProjectPath);
             var walker = new PathWalker(projPath, mask, recursive);
             var projFiles = walker.GetFiles();
-            foreach (String file in projFiles)
+            foreach (string file in projFiles)
             {
                 if (!IsFileHidden(file, project)) allFiles.Add(file);
             }
             foreach (var sp in project.SourcePaths)
             {
-                String sourcePath = project.GetAbsolutePath(sp);
+                string sourcePath = project.GetAbsolutePath(sp);
                 if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
                 {
                     walker = new PathWalker(sourcePath, mask, recursive);
@@ -990,12 +990,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Check if file is hidden in project
         /// </summary>
-        private bool IsFileHidden(String file, IProject project)
+        private bool IsFileHidden(string file, IProject project)
         {
-            String[] hiddenPaths = project.GetHiddenPaths();
-            foreach (String hiddenPath in hiddenPaths)
+            string[] hiddenPaths = project.GetHiddenPaths();
+            foreach (string hiddenPath in hiddenPaths)
             {
-                String absHiddenPath = project.GetAbsolutePath(hiddenPath);
+                string absHiddenPath = project.GetAbsolutePath(hiddenPath);
                 if (Directory.Exists(absHiddenPath) && file.StartsWithOrdinal(absHiddenPath)) return true;
             }
             return false;
@@ -1006,7 +1006,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private bool IsValidPattern()
         {
-            String pattern = this.findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             if (pattern.Length == 0) return false;
             if (this.regexCheckBox.Checked)
             {
@@ -1047,7 +1047,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private FRSearch GetFRSearch()
         {
-            String pattern = this.findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             FRSearch search = new FRSearch(pattern);
             search.IsRegex = this.regexCheckBox.Checked;
             search.IsEscaped = this.escapedCheckBox.Checked;

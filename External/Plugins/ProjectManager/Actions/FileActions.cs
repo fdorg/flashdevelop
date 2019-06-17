@@ -253,7 +253,7 @@ namespace ProjectManager.Actions
             }
             catch (Exception exception)
             {
-                String msg = TextHelper.GetString("Info.CouldNotAddFolder");
+                string msg = TextHelper.GetString("Info.CouldNotAddFolder");
                 ErrorManager.ShowInfo(msg + " " + exception.Message);
             }
         }
@@ -350,7 +350,7 @@ namespace ProjectManager.Actions
                     DisableWatchers();
                     if (!FileHelper.Recycle(path))
                     {
-                        String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                        string error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
 
@@ -399,7 +399,7 @@ namespace ProjectManager.Actions
                             {
                                 if (!FileHelper.Recycle(path))
                                 {
-                                    String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                                    string error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                                     throw new Exception(error + " " + path);
                                 }
                             }
@@ -423,8 +423,8 @@ namespace ProjectManager.Actions
         {
             if (FolderHelper.IsIllegalFolderName(newName)) // is name illegal (ie. CON, AUX etc..)
             {
-                String message = TextHelper.GetString("Info.ReservedDirName");
-                ErrorManager.ShowInfo(String.Format(message, newName));
+                string message = TextHelper.GetString("Info.ReservedDirName");
+                ErrorManager.ShowInfo(string.Format(message, newName));
                 return false;
             }
 
@@ -527,7 +527,7 @@ namespace ProjectManager.Actions
                 {
                     if (!FileHelper.Recycle(toPath))
                     {
-                        String message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                        string message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(message + " " + toPath);
                     }
                 }
@@ -572,7 +572,7 @@ namespace ProjectManager.Actions
                 {
                     string copyPath = Path.Combine(
                         Path.GetDirectoryName(toPath),
-                        String.Format(TextHelper.GetString("Label.CopyOf"), Path.GetFileNameWithoutExtension(fromPath))
+                        string.Format(TextHelper.GetString("Label.CopyOf"), Path.GetFileNameWithoutExtension(fromPath))
                         ) + Path.GetExtension(fromPath);
 
                     int copies = 1;
@@ -581,13 +581,13 @@ namespace ProjectManager.Actions
                         copies++;
                         copyPath = Path.Combine(
                             Path.GetDirectoryName(toPath),
-                            String.Format(TextHelper.GetString("Label.CopyOf") + " ({1})", Path.GetFileNameWithoutExtension(fromPath), copies)
+                            string.Format(TextHelper.GetString("Label.CopyOf") + " ({1})", Path.GetFileNameWithoutExtension(fromPath), copies)
                             ) + Path.GetExtension(fromPath);
                     }
 
                     // offer to choose the new name
                     string label = TextHelper.GetString("Info.NewDuplicateName");
-                    string title = String.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
+                    string title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
                     string suggestion = Path.GetFileNameWithoutExtension(copyPath);
                     using (LineEntryDialog askName = new LineEntryDialog(title, label, suggestion))
                     {

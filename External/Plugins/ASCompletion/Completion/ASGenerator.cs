@@ -237,7 +237,7 @@ namespace ASCompletion.Completion
                     else
                     {
                         // insert a default handler name, then "generate event handlers" suggestion
-                        Match m = Regex.Match(text, String.Format(patternEvent, ""), RegexOptions.IgnoreCase);
+                        Match m = Regex.Match(text, string.Format(patternEvent, ""), RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
                             int regexIndex = m.Index + sci.PositionFromLine(sci.CurrentLine);
@@ -1030,13 +1030,13 @@ namespace ASCompletion.Completion
             var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
             foreach (var interf in interfaces)
             {
-                options.Add(new GeneratorItem(String.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.Member, found.InClass, interf));
+                options.Add(new GeneratorItem(string.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.Member, found.InClass, interf));
             }
         }
 
         private static void ShowDelegateList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            string label = String.Format(TextHelper.GetString("ASCompletion.Label.GenerateHandler"), "Delegate");
+            string label = string.Format(TextHelper.GetString("ASCompletion.Label.GenerateHandler"), "Delegate");
             options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.Member, found.InClass));
         }
 
@@ -1124,7 +1124,7 @@ namespace ASCompletion.Completion
 
         #region code generation
 
-        public static void SetJobContext(String contextToken, String contextParam, MemberModel contextMember, Match contextMatch)
+        public static void SetJobContext(string contextToken, string contextParam, MemberModel contextMember, Match contextMatch)
         {
             ASGenerator.contextToken = contextToken;
             ASGenerator.contextParam = contextParam;
@@ -3548,7 +3548,7 @@ namespace ASCompletion.Completion
             else if (member.Flags == FlagType.Function)
                 kind = features.functionKey;
 
-            Regex reMember = new Regex(String.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
+            Regex reMember = new Regex(string.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
 
             for (int i = member.LineFrom; i <= member.LineTo; i++)
             {

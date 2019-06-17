@@ -13,7 +13,7 @@ namespace ProjectManager.Controls
 {
     public class ClasspathControl : UserControl
     {
-        String language;
+        string language;
         Project project; // if not null, use relative paths
 
         public event EventHandler Changed;
@@ -401,7 +401,7 @@ namespace ProjectManager.Controls
 
             public override string ToString()
             {
-                String projPath = TextHelper.GetString("Info.ProjectDirectory");
+                string projPath = TextHelper.GetString("Info.ProjectDirectory");
                 return (Classpath == ".") ? projPath : Classpath;
             }
 

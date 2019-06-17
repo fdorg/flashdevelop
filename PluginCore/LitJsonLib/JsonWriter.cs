@@ -219,7 +219,7 @@ namespace LitJson
 
         private void PutString (string str)
         {
-            Put (String.Empty);
+            Put (string.Empty);
 
             writer.Write ('"');
 
@@ -278,7 +278,7 @@ namespace LitJson
         public override string ToString ()
         {
             if (inst_string_builder == null)
-                return String.Empty;
+                return string.Empty;
 
             return inst_string_builder.ToString ();
         }

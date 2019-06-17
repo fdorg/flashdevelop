@@ -18,7 +18,7 @@ namespace CodeRefactor.Controls
         private CheckedListBox checkedListBox;
         private Dictionary<MemberModel, ClassModel> members;
         public Dictionary<MemberModel, ClassModel> checkedMembers;
-        private Dictionary<String, MemberModel> members2;
+        private Dictionary<string, MemberModel> members2;
 
         public DelegateMethodsDialog()
         {
@@ -107,16 +107,16 @@ namespace CodeRefactor.Controls
         /// </summary>
         public void FillData(Dictionary<MemberModel, ClassModel> members, ClassModel cm)
         {
-            String label;
+            string label;
             this.members = members;
-            String separatorInserted = null;
-            members2 = new Dictionary<String, MemberModel>();
+            string separatorInserted = null;
+            members2 = new Dictionary<string, MemberModel>();
             System.Windows.Forms.CheckedListBox.ObjectCollection items = checkedListBox.Items;
             Dictionary<MemberModel, ClassModel>.KeyCollection keys = members.Keys;
             items.Clear(); // Clear items...
             foreach (MemberModel member in keys)
             {
-                String qname = members[member].QualifiedName;
+                string qname = members[member].QualifiedName;
                 if (separatorInserted != qname)
                 {
                     separatorInserted = qname;
@@ -143,7 +143,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(Object sender, CancelEventArgs e)
+        private void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             PluginBase.MainForm.CurrentDocument.Activate();

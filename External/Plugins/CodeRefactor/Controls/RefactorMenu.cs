@@ -10,7 +10,7 @@ namespace CodeRefactor.Controls
 {
     public class RefactorMenu : ToolStripMenuItem
     {
-        public RefactorMenu(Boolean createSurroundMenu)
+        public RefactorMenu(bool createSurroundMenu)
         {
             this.Text = TextHelper.GetString("Label.Refactor");
             this.RenameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;

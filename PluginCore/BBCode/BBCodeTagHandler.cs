@@ -6,13 +6,13 @@ namespace PluginCore.BBCode
     public class BBCodeTagHandler : IPairTagMatchHandler
     {
 
-        protected delegate Boolean DHandler(BBCodeTagMatch tm);
+        protected delegate bool DHandler(BBCodeTagMatch tm);
 
 
 
         public BBCodeTagHandler()
         {
-            _handlers = new Dictionary<String, DHandler>();
+            _handlers = new Dictionary<string, DHandler>();
 
             _handlers["B"] = new DHandler(_hadleTag_B);
             _handlers["I"] = new DHandler(_hadleTag_I);
@@ -30,13 +30,13 @@ namespace PluginCore.BBCode
         }
 
 
-        protected Dictionary<String, DHandler> _handlers;
+        protected Dictionary<string, DHandler> _handlers;
 
         private BBCodeTagMatch _tm;
-        private String _tmName;
+        private string _tmName;
 
 
-        public Boolean handleTag(IPairTagMatch tagMatch)
+        public bool handleTag(IPairTagMatch tagMatch)
         {
             if (!isHandleable(tagMatch))
                 return false;
@@ -47,7 +47,7 @@ namespace PluginCore.BBCode
             return _handlers[_tmName](_tm);
         }
 
-        public Boolean isHandleable(IPairTagMatch tagMatch)
+        public bool isHandleable(IPairTagMatch tagMatch)
         {
             _tm = tagMatch as BBCodeTagMatch;
             if (_tm == null || !_tm.isTagOpener)
@@ -66,63 +66,63 @@ namespace PluginCore.BBCode
 
 
 
-        protected Boolean _hadleTag_B(BBCodeTagMatch tm)
+        protected bool _hadleTag_B(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isBold = StateMode.ON;
             return true;
         }
 
-        protected Boolean _hadleTag_I(BBCodeTagMatch tm)
+        protected bool _hadleTag_I(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isItalic = StateMode.ON;
             return true;
         }
 
-        protected Boolean _hadleTag_S(BBCodeTagMatch tm)
+        protected bool _hadleTag_S(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isStriked = StateMode.ON;
             return true;
         }
 
-        protected Boolean _hadleTag_U(BBCodeTagMatch tm)
+        protected bool _hadleTag_U(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isUnderlined = StateMode.ON;
             return true;
         }
 
 
-        protected Boolean _hadleTag_NotB(BBCodeTagMatch tm)
+        protected bool _hadleTag_NotB(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isBold = StateMode.OFF;
             return true;
         }
 
-        protected Boolean _hadleTag_NotI(BBCodeTagMatch tm)
+        protected bool _hadleTag_NotI(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isItalic = StateMode.OFF;
             return true;
         }
 
-        protected Boolean _hadleTag_NotS(BBCodeTagMatch tm)
+        protected bool _hadleTag_NotS(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isStriked = StateMode.OFF;
             return true;
         }
 
-        protected Boolean _hadleTag_NotU(BBCodeTagMatch tm)
+        protected bool _hadleTag_NotU(BBCodeTagMatch tm)
         {
             tm.bbCodeStyle.isUnderlined = StateMode.OFF;
             return true;
         }
 
 
-        protected Boolean _hadleTag_Font(BBCodeTagMatch tm)
+        protected bool _hadleTag_Font(BBCodeTagMatch tm)
         {
             if (tm.tagParam == null || tm.tagParam.Length < 2)
                 return false;
 
-            String fontName = tm.tagParam;
-            String tmpSymbol = fontName.Substring(0, 1);
+            string fontName = tm.tagParam;
+            string tmpSymbol = fontName.Substring(0, 1);
             if (tmpSymbol == "\"" || tmpSymbol == "'")
                 fontName = fontName.Substring(1);
 
@@ -134,15 +134,15 @@ namespace PluginCore.BBCode
             return true;
         }
 
-        protected Boolean _hadleTag_Size(BBCodeTagMatch tm)
+        protected bool _hadleTag_Size(BBCodeTagMatch tm)
         {
             if (string.IsNullOrEmpty(tm.tagParam))
                 return false;
 
             tm.bbCodeStyle.isAbsFontSize = true;
 
-            String p = tm.tagParam;
-            String firstSymbol = p.Substring(0, 1);
+            string p = tm.tagParam;
+            string firstSymbol = p.Substring(0, 1);
             if (firstSymbol == "+" || firstSymbol == "-")
             {
                 //  p = p.Substring(1);
@@ -153,7 +153,7 @@ namespace PluginCore.BBCode
             return true;
         }
 
-        protected Boolean _hadleTag_Color(BBCodeTagMatch tm)
+        protected bool _hadleTag_Color(BBCodeTagMatch tm)
         {
             BBCodeStyle.Color c = _extractTagColor(tm.tagParam);
             if (c == null)
@@ -163,7 +163,7 @@ namespace PluginCore.BBCode
             return true;
         }
 
-        protected Boolean _hadleTag_BgColor(BBCodeTagMatch tm)
+        protected bool _hadleTag_BgColor(BBCodeTagMatch tm)
         {
             BBCodeStyle.Color c = _extractTagColor(tm.tagParam);
             if (c == null)
@@ -174,16 +174,16 @@ namespace PluginCore.BBCode
         }
 
 
-        protected BBCodeStyle.Color _extractTagColor(String tagColorParam)
+        protected BBCodeStyle.Color _extractTagColor(string tagColorParam)
         {
             if (string.IsNullOrEmpty(tagColorParam) || tagColorParam.Substring(0, 1) != "#")
                 return null;
 
-            String p = tagColorParam.Substring(1);
+            string p = tagColorParam.Substring(1);
             int colonIndex = p.IndexOf(':');
 
-            String colorStr = null;
-            String modeStr = null;
+            string colorStr = null;
+            string modeStr = null;
 
             if (p.Length >= 8 && (colonIndex < 0 || colonIndex == 8))
             {

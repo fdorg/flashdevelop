@@ -796,12 +796,12 @@ namespace ProjectManager.Controls
 
         private Project project;
         private CompilerOptions optionsCopy;
-        private Boolean propertiesChanged;
-        private Boolean platformChanged;
-        private Boolean classpathsChanged;
-        private Boolean assetsChanged;
-        private Boolean sdkChanged;
-        private Boolean isPropertyGridReadOnly;
+        private bool propertiesChanged;
+        private bool platformChanged;
+        private bool classpathsChanged;
+        private bool assetsChanged;
+        private bool sdkChanged;
+        private bool isPropertyGridReadOnly;
         private LanguagePlatform langPlatform;
 
         public event EventHandler OpenGlobalClasspaths;
@@ -882,7 +882,7 @@ namespace ProjectManager.Controls
             this.groupBox3.Text = TextHelper.GetStringWithoutEllipsis("Label.ProjectClasspaths");
             this.groupBox5.Text = TextHelper.GetString("Info.PostBuildCmdLine");
             this.dimensionsLabel.Text = TextHelper.GetString("Label.Dimensions");
-            this.label3.Text = String.Format(TextHelper.GetString("Info.GlobalClasspaths"), "\n");
+            this.label3.Text = string.Format(TextHelper.GetString("Info.GlobalClasspaths"), "\n");
             this.agressiveTip.SetToolTip(this.alwaysExecuteCheckBox, TextHelper.GetString("ToolTip.AlwaysExecute"));
             this.btnGlobalClasspaths.Text = TextHelper.GetString("Label.EditGlobalClasspaths");
             this.alwaysExecuteCheckBox.Text = TextHelper.GetString("Info.AlwaysExecute");
@@ -977,7 +977,7 @@ namespace ProjectManager.Controls
             if (IsExternalConfiguration())
             {
                 classpathControl.Enabled = false;
-                label2.Text = String.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), langPlatform.Name);
+                label2.Text = string.Format(TextHelper.GetString("Info.ProjectClasspathsDisabled"), langPlatform.Name);
                 return;
             }
 
@@ -1490,7 +1490,7 @@ namespace ProjectManager.Controls
         {
             Value = value;
             Label = localizePrefix != null ? TextHelper.GetString(localizePrefix + value) : value.ToString();
-            if (String.IsNullOrEmpty(Label)) Label = value.ToString();
+            if (string.IsNullOrEmpty(Label)) Label = value.ToString();
         }
 
         public override string ToString()

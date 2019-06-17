@@ -16,15 +16,15 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateFlaggedButtons()
         {
-            Int32 count = StripBarManager.Items.Count;
+            int count = StripBarManager.Items.Count;
             if (Globals.CurrentDocument == null) return;
-            for (Int32 i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 ToolStripItem item = StripBarManager.Items[i];
-                String[] actions = ((ItemData)item.Tag).Flags.Split('+');
-                for (Int32 j = 0; j < actions.Length; j++)
+                string[] actions = ((ItemData)item.Tag).Flags.Split('+');
+                for (int j = 0; j < actions.Length; j++)
                 {
-                    Boolean value = ValidateFlagAction(item, actions[j]);
+                    bool value = ValidateFlagAction(item, actions[j]);
                     ExecuteFlagAction(item, actions[j], value);
                 }
             }
@@ -33,7 +33,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Checks the flagged CommandBar item
         /// </summary>
-        public static Boolean ValidateFlagAction(ToolStripItem item, String action)
+        public static bool ValidateFlagAction(ToolStripItem item, string action)
         {
             IMainForm mainForm = PluginBase.MainForm;
             ITabbedDocument document = mainForm.CurrentDocument;
@@ -144,7 +144,7 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("TracksBoolean"))
             {
-                Boolean value = (Boolean)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
+                bool value = (bool)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
                 if (!value) return false;
             }
             if (sci != null)
@@ -199,41 +199,41 @@ namespace FlashDevelop.Managers
                 }
                 if (action.Contains("SyntaxIs?"))
                 {
-                    String[] chunks = action.Split('?');
+                    string[] chunks = action.Split('?');
                     if (chunks.Length == 2)
                     {
-                        String language = document.SciControl.ConfigurationLanguage;
+                        string language = document.SciControl.ConfigurationLanguage;
                         if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
                     }
                 }
                 if (action.Contains("DistroIs?"))
                 {
-                    String[] chunks = action.Split('?');
+                    string[] chunks = action.Split('?');
                     if (chunks.Length == 2)
                     {
-                        String distro = DistroConfig.DISTRIBUTION_NAME;
+                        string distro = DistroConfig.DISTRIBUTION_NAME;
                         if (chunks[chunks.Length - 1] != distro) return false;
                     }
                 }
                 if (action.Contains("IsActiveSyntax"))
                 {
-                    String language = document.SciControl.ConfigurationLanguage;
+                    string language = document.SciControl.ConfigurationLanguage;
                     if (((ItemData)item.Tag).Tag != language) return false;
                 }
                 if (action.Contains("IsActiveEncoding"))
                 {
-                    Int32 codepage = document.SciControl.Encoding.CodePage;
+                    int codepage = document.SciControl.Encoding.CodePage;
                     if (codepage == Encoding.Default.CodePage) codepage = 0;
                     if (((ItemData)item.Tag).Tag != codepage.ToString()) return false;
                 }
                 if (action.Contains("IsActiveEOL"))
                 {
-                    Int32 eolMode = document.SciControl.EOLMode;
+                    int eolMode = document.SciControl.EOLMode;
                     if (((ItemData)item.Tag).Tag != eolMode.ToString()) return false;
                 }
                 if (action.Contains("IsDefaultEncoding"))
                 {
-                    Int32 codepage = document.SciControl.Encoding.CodePage;
+                    int codepage = document.SciControl.Encoding.CodePage;
                     if (codepage != Encoding.Default.CodePage) return false;
                 }
             }
@@ -243,7 +243,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Modifies the specified CommandBar item
         /// </summary>
-        public static void ExecuteFlagAction(ToolStripItem item, String action, Boolean value)
+        public static void ExecuteFlagAction(ToolStripItem item, string action, bool value)
         {
             if (action.StartsWithOrdinal("Check:"))
             {
@@ -286,9 +286,9 @@ namespace FlashDevelop.Managers
             {
                 ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 reopenMenu.DropDownItems.Clear();
-                for (Int32 i = 0; i < Globals.PreviousDocuments.Count; i++)
+                for (int i = 0; i < Globals.PreviousDocuments.Count; i++)
                 {
-                    String file = Globals.PreviousDocuments[i];
+                    string file = Globals.PreviousDocuments[i];
                     ToolStripMenuItem item = new ToolStripMenuItem();
                     item.Click += new EventHandler(Globals.MainForm.Reopen);
                     item.Tag = file; item.Text = PathHelper.GetCompactPath(file);
@@ -297,8 +297,8 @@ namespace FlashDevelop.Managers
                 }
                 if (Globals.PreviousDocuments.Count > 0)
                 {
-                    String cleanLabel = TextHelper.GetString("Label.CleanReopenList");
-                    String clearLabel = TextHelper.GetString("Label.ClearReopenList");
+                    string cleanLabel = TextHelper.GetString("Label.CleanReopenList");
+                    string clearLabel = TextHelper.GetString("Label.ClearReopenList");
                     reopenMenu.DropDownItems.Add(new ToolStripSeparator());
                     reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, new EventHandler(Globals.MainForm.CleanReopenList)));
                     reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, new EventHandler(Globals.MainForm.ClearReopenList)));
@@ -315,7 +315,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Adds a new menu item to the reopen menu
         /// </summary>
-        public static void AddNewReopenMenuItem(String file)
+        public static void AddNewReopenMenuItem(string file)
         {
             try
             {
@@ -335,29 +335,29 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the active encoding name from the current codepage
         /// </summary>
-        public static String GetActiveEncodingName()
+        public static string GetActiveEncodingName()
         {
             ITabbedDocument document = Globals.CurrentDocument;
             if (document != null && document.IsEditable)
             {
-                Int32 codepage = document.SciControl.Encoding.CodePage;
+                int codepage = document.SciControl.Encoding.CodePage;
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(document.FileName);
                 if (codepage == info.CodePage)
                 {
                     if (ScintillaManager.IsUnicode(info.CodePage))
                     {
-                        String name = "Unicode (" + info.Charset + ")";
+                        string name = "Unicode (" + info.Charset + ")";
                         return info.ContainsBOM ? name + " (BOM)" : name;
                     }
                     else
                     {
-                        String name = TextHelper.GetStringWithoutMnemonics("Label.8Bits");
+                        string name = TextHelper.GetStringWithoutMnemonics("Label.8Bits");
                         return name + " (" + info.Charset + ")";
                     }
                 }
                 else // Opened in different encoding...
                 {
-                    Boolean hasBOM = document.SciControl.SaveBOM;
+                    bool hasBOM = document.SciControl.SaveBOM;
                     if (codepage == Encoding.UTF8.CodePage)
                     {
                         return GetLabelAsPlainText("Label.UTF8", true, hasBOM);
@@ -383,9 +383,9 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a label as plain text by removing the accelerator key
         /// </summary>
-        public static String GetLabelAsPlainText(String name, Boolean unicode, Boolean hasBOM)
+        public static string GetLabelAsPlainText(string name, bool unicode, bool hasBOM)
         {
-            String label = TextHelper.GetStringWithoutMnemonics(name);
+            string label = TextHelper.GetStringWithoutMnemonics(name);
             if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }

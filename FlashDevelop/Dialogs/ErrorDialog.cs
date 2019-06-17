@@ -14,7 +14,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.TextBox infoTextBox;
-        private static Int32 errorCount = 1;
+        private static int errorCount = 1;
 
         public ErrorDialog()
         {
@@ -164,7 +164,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the form error dialog
         /// </summary>
-        private void ContinueButtonClick(Object sender, EventArgs e)
+        private void ContinueButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -172,7 +172,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Exits the application entirely
         /// </summary>
-        private void ExitButtonClick(Object sender, EventArgs e)
+        private void ExitButtonClick(object sender, EventArgs e)
         {
             Environment.Exit(1);
         }

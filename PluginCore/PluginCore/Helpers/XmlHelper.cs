@@ -9,7 +9,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the value of the specified XmlNode.
         /// </summary>
-        public static String GetValue(XmlNode node)
+        public static string GetValue(XmlNode node)
         {
             if (node != null && node.FirstChild != null) return node.FirstChild.Value;
             else return null;
@@ -18,7 +18,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the specified attribute from the specified XmlNode.
         /// </summary>
-        public static String GetAttribute(XmlNode node, String attName)
+        public static string GetAttribute(XmlNode node, string attName)
         {
             if (node != null && node.Attributes[attName] != null) return node.Attributes[attName].Value;
             else return null;
@@ -27,7 +27,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks that if the XmlNode has a value.
         /// </summary>
-        public static Boolean HasValue(XmlNode node)
+        public static bool HasValue(XmlNode node)
         {
             return (node != null && node.FirstChild != null && node.FirstChild.Value != null);
         }
@@ -35,7 +35,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks if the XmlNode has the specified attribute.
         /// </summary>
-        public static Boolean HasAttribute(XmlNode node, String attName)
+        public static bool HasAttribute(XmlNode node, string attName)
         {
             return (node != null && node.Attributes[attName] != null);
         }
@@ -43,7 +43,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Reads a xml file and returns it as a XmlNode. Returns null on failure.
         /// </summary>
-        public static XmlNode LoadXmlDocument(String file)
+        public static XmlNode LoadXmlDocument(string file)
         {
             try
             {

@@ -34,35 +34,35 @@ namespace FlashDebugger.Controls
             this.watchManager.ExpressionsLoaded += WatchManager_ExpressionsLoaded;
         }
 
-        private void TreeControlResize(Object sender, EventArgs e)
+        private void TreeControlResize(object sender, EventArgs e)
         {
-            Int32 w = this.treeControl.Width / 2;
+            int w = this.treeControl.Width / 2;
             this.treeControl.Tree.Columns[0].Width = w;
             this.treeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        private void WatchManager_ExpressionAdded(Object sender, WatchExpressionArgs e)
+        private void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)
         {
             treeControl.Nodes.Insert(e.Position, GetExpressionNode(e.Expression));
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionRemoved(Object sender, WatchExpressionArgs e)
+        private void WatchManager_ExpressionRemoved(object sender, WatchExpressionArgs e)
         {
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionReplaced(Object sender, WatchExpressionReplaceArgs e)
+        private void WatchManager_ExpressionReplaced(object sender, WatchExpressionReplaceArgs e)
         {
             treeControl.Nodes[e.Position] = GetExpressionNode(e.NewExpression);
         }
 
-        private void WatchManager_ExpressionsCleared(Object sender, EventArgs e)
+        private void WatchManager_ExpressionsCleared(object sender, EventArgs e)
         {
             treeControl.Nodes.Clear();
         }
 
-        private void WatchManager_ExpressionsLoaded(Object sender, EventArgs e)
+        private void WatchManager_ExpressionsLoaded(object sender, EventArgs e)
         {
             UpdateElements();
         }

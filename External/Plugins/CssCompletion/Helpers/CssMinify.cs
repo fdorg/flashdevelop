@@ -72,7 +72,7 @@ namespace CssCompletion
                 if (aPrevState == CssState.Punctuation && i > 0
                     && theCss[aPrevPos] == '}' && theCss[i] != '}')
                 {
-                    if (Char.IsDigit(theCss[i])) aRet.Append(' ');
+                    if (char.IsDigit(theCss[i])) aRet.Append(' ');
                     else aRet.Append('\n'); // keep blocks on new lines
                 }
 

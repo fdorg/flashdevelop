@@ -17,7 +17,7 @@ namespace PluginCore.Controls
         private Label label;
         private InertButton buttonClose;
         InertButton[] optionButtons;
-        private String currentMessage;
+        private string currentMessage;
 
         public MessageBar() : this(WarningIcon) //warning
         {
@@ -65,7 +65,7 @@ namespace PluginCore.Controls
             bar.Visible = true;
         }
         
-        static public void ShowWarning(String message)
+        static public void ShowWarning(string message)
         {
             if (Locked) return;
             CreateBar(PluginBase.MainForm.CurrentDocument, message, WarningIcon);
@@ -204,10 +204,10 @@ namespace PluginCore.Controls
             label.Image = PluginBase.MainForm.FindImage16(icon);
         }
 
-        public void Update(String message)
+        public void Update(string message)
         {
             currentMessage = message;
-            Int32 p = message.IndexOf('\r');
+            int p = message.IndexOf('\r');
             if (p < 0) p = message.IndexOf('\n');
             if (p >= 0) message = message.Substring(0, p) + " ...";
             label.Text = "      " + message;
@@ -218,18 +218,18 @@ namespace PluginCore.Controls
             this.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
         }
         
-        public void ButtonCloseClick(Object sender, System.EventArgs e)
+        public void ButtonCloseClick(object sender, System.EventArgs e)
         {
             MessageBarClick(null, null);
         }
         
-        public void MessageBarClick(Object sender, System.EventArgs e)
+        public void MessageBarClick(object sender, System.EventArgs e)
         {
             currentMessage = "";
             Hide();
         }
         
-        public void LabelMouseEnter(Object sender, System.EventArgs e)
+        public void LabelMouseEnter(object sender, System.EventArgs e)
         {
             if (tip == null)
             {
@@ -240,7 +240,7 @@ namespace PluginCore.Controls
             tip.SetToolTip(label, currentMessage);
         }
         
-        public void LabelMouseLeave(Object sender, System.EventArgs e)
+        public void LabelMouseLeave(object sender, System.EventArgs e)
         {
             tip?.SetToolTip(label, "");
         }

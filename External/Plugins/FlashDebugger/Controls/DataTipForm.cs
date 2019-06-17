@@ -47,7 +47,7 @@ namespace FlashDebugger.Controls
             DataTree.ValueChanged += Tree_SizeChanged;
         }
 
-        public void SetVariable(Variable variable, String path)
+        public void SetVariable(Variable variable, string path)
         {
             SetVariable(variable);
             DataTree.Nodes[0].Tag = path;

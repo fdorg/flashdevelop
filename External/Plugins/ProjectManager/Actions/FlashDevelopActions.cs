@@ -20,12 +20,12 @@ namespace ProjectManager.Actions
         
         public Encoding GetDefaultEncoding()
         {
-            return Encoding.GetEncoding((Int32)mainForm.Settings.DefaultCodePage);
+            return Encoding.GetEncoding((int)mainForm.Settings.DefaultCodePage);
         }
 
         public string GetDefaultEOLMarker()
         {
-            return LineEndDetector.GetNewLineMarker((Int32)mainForm.Settings.EOLMode);
+            return LineEndDetector.GetNewLineMarker((int)mainForm.Settings.EOLMode);
         }
 
         public static void CheckAuthorName()
@@ -36,7 +36,7 @@ namespace ProjectManager.Actions
             {
                 if (arg.Key == "DefaultUser" && arg.Value == "...")
                 {
-                    String caption = TextHelper.GetString("Title.AuthorName");
+                    string caption = TextHelper.GetString("Title.AuthorName");
                     using (LineEntryDialog prompt = new LineEntryDialog(caption, "Author", ""))
                     {
                         if (prompt.ShowDialog() == DialogResult.OK)

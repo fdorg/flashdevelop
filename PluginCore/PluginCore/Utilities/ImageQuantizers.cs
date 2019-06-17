@@ -615,13 +615,13 @@ namespace PluginCore.PluginCore.Utilities
             // Define the source data pointers. The source row is a byte to
             // keep addition of the stride value easier (as this is in bytes)
             byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
-            Int32* pSourcePixel;
+            int* pSourcePixel;
 
             // Loop through each row
             for (int row = 0; row < height; row++)
             {
                 // Set the source pixel to the first pixel in this row
-                pSourcePixel = (Int32*)pSourceRow;
+                pSourcePixel = (int*)pSourceRow;
 
                 // And loop through each column
                 for (int col = 0; col < width; col++, pSourcePixel++)
@@ -653,8 +653,8 @@ namespace PluginCore.PluginCore.Utilities
                 // Define the source data pointers. The source row is a byte to
                 // keep addition of the stride value easier (as this is in bytes)
                 byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
-                Int32* pSourcePixel = (Int32*)pSourceRow;
-                Int32* pPreviousPixel = pSourcePixel;
+                int* pSourcePixel = (int*)pSourceRow;
+                int* pPreviousPixel = pSourcePixel;
 
                 // Now define the destination data pointers
                 byte* pDestinationRow = (byte*)outputData.Scan0.ToPointer();
@@ -670,7 +670,7 @@ namespace PluginCore.PluginCore.Utilities
                 for (int row = 0; row < height; row++)
                 {
                     // Set the source pixel to the first pixel in this row
-                    pSourcePixel = (Int32*)pSourceRow;
+                    pSourcePixel = (int*)pSourceRow;
 
                     // And set the destination pixel pointer to the first pixel in the row
                     pDestinationPixel = pDestinationRow;

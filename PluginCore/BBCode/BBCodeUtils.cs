@@ -14,12 +14,12 @@ namespace PluginCore.BBCode
 
     public class BBCodeUtils
     {
-        public static String assembleOutput(String input, IndexTree tree)
+        public static string assembleOutput(string input, IndexTree tree)
         {
             if (string.IsNullOrEmpty(input) || tree == null)
                 return null;
 
-            String outStr = "";
+            string outStr = "";
             List<IndexTree> flat = IndexTree.flattenTree(tree);
             int i = -1;
             int l = flat.Count;
@@ -77,7 +77,7 @@ namespace PluginCore.BBCode
             tf.Select(selStart, selEnd);
 
             FontStyle fontStyle = tf.Font.Style;
-            String fontName = tf.Font.Name;
+            string fontName = tf.Font.Name;
             float fontSize = tf.Font.Size;
 
 
@@ -122,7 +122,7 @@ namespace PluginCore.BBCode
             tf.SelectionFont = font;
         }
 
-        public static void applyStyleTreeToTextbox(RichTextBox tf, String input, IndexTree bbCodeTree)
+        public static void applyStyleTreeToTextbox(RichTextBox tf, string input, IndexTree bbCodeTree)
         {
             if (tf == null || bbCodeTree == null || string.IsNullOrEmpty(input))
                 return;
@@ -148,8 +148,8 @@ namespace PluginCore.BBCode
             bbCodeTree.data = rootPair;
 
             List<IndexTree> flatTree = IndexTree.flattenTree(bbCodeTree);
-            String flatText = assembleOutput(input, bbCodeTree);
-            String corrFlatText = _replaceEnclosures(flatText);
+            string flatText = assembleOutput(input, bbCodeTree);
+            string corrFlatText = _replaceEnclosures(flatText);
 
             IndexTree.normalizeTree(bbCodeTree);
             flatTree = IndexTree.flattenTree(bbCodeTree);
@@ -204,13 +204,13 @@ namespace PluginCore.BBCode
             }
         }
 
-        public static String bbCodeToRtf(String bbCodeText)
+        public static string bbCodeToRtf(string bbCodeText)
         {
             _init();
 
             return bbCodeToRtf(bbCodeText, tempRTB);
         }
-        public static String bbCodeToRtf(String bbCodeText, RichTextBox texbox)
+        public static string bbCodeToRtf(string bbCodeText, RichTextBox texbox)
         {
             _init();
 
@@ -220,7 +220,7 @@ namespace PluginCore.BBCode
             return texbox.Rtf;
         }
 
-        public static String rtfToText(String rtfText)
+        public static string rtfToText(string rtfText)
         {
             _init();
 
@@ -229,12 +229,12 @@ namespace PluginCore.BBCode
         }
 
 
-        private static String _replaceEnclosures(String input)
+        private static string _replaceEnclosures(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            String outStr = input;
+            string outStr = input;
             outStr = outStr.Replace("\\[", "[");
             outStr = outStr.Replace("\\]", "]");
             outStr = outStr.Replace("\\\\", "\\");

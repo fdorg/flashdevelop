@@ -58,12 +58,12 @@ namespace ASClassWizard.Wizards
             this.cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
         }
 
-        public String StartupPackage
+        public string StartupPackage
         {
             set { packageBox.Text = value; }
         }
 
-        public String StartupClassName
+        public string StartupClassName
         {
             set { classBox.Text = value; }
         }
@@ -110,7 +110,7 @@ namespace ASClassWizard.Wizards
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
             else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-            else if (project.Language == "haxe" && Char.IsLower(GetName()[0]))
+            else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
 
             if (errorMessage != "")

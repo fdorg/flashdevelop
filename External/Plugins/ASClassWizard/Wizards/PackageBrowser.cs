@@ -42,7 +42,7 @@ namespace ASClassWizard.Wizards
             set { this.project = value; }
         }
 
-        public String Package
+        public string Package
         {
             get { 
                 return this.browserView.SelectedNode != null ? 
@@ -96,7 +96,7 @@ namespace ASClassWizard.Wizards
             RefreshTree();
         }
 
-        private void onBeforeExpandNode(Object sender, TreeViewCancelEventArgs e)
+        private void onBeforeExpandNode(object sender, TreeViewCancelEventArgs e)
         {
             SimpleDirectoryNode newNode;
 

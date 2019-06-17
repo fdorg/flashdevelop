@@ -24,11 +24,11 @@ namespace FlashDevelop.Controls
             try
             {
                 // Sets a key in registry so that latest .NET browser control is used
-                String valueName = Path.GetFileName(Application.ExecutablePath);
-                String subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
+                string valueName = Path.GetFileName(Application.ExecutablePath);
+                string subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
                 RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
                 {
-                    Object value = emu.GetValue(valueName);
+                    object value = emu.GetValue(valueName);
                     if (value == null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
                 }
             }
@@ -210,7 +210,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// If the page tries to open a new window use a fd tab instead
         /// </summary>
-        private void WebBrowserNewWindow(Object sender, CancelEventArgs e)
+        private void WebBrowserNewWindow(object sender, CancelEventArgs e)
         {
             Globals.MainForm.CallCommand("Browse", this.webBrowser.StatusText);
             e.Cancel = true;
@@ -219,7 +219,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Handles the web browser property changed event
         /// </summary>
-        private void WebBrowserPropertyUpdated(Object sender, EventArgs e)
+        private void WebBrowserPropertyUpdated(object sender, EventArgs e)
         {
             this.backButton.Enabled = this.webBrowser.CanGoBack;
             this.forwardButton.Enabled = this.webBrowser.CanGoForward;
@@ -228,7 +228,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Handles the web browser navigated event
         /// </summary>
-        private void WebBrowserNavigated(Object sender, WebBrowserNavigatedEventArgs e)
+        private void WebBrowserNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
             this.addressComboBox.Text = this.webBrowser.Url.ToString();
             Globals.MainForm.OnScintillaControlUpdateControl(Globals.SciControl);
@@ -237,12 +237,12 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Handles the web browser title changed event
         /// </summary>
-        private void WebBrowserDocumentTitleChanged(Object sender, EventArgs e)
+        private void WebBrowserDocumentTitleChanged(object sender, EventArgs e)
         {
             if (this.webBrowser.DocumentTitle.Trim() == "")
             {
-                String domain = this.webBrowser.Document.Domain.Trim();
-                if (!String.IsNullOrEmpty(domain)) this.Parent.Text = domain;
+                string domain = this.webBrowser.Document.Domain.Trim();
+                if (!string.IsNullOrEmpty(domain)) this.Parent.Text = domain;
                 else this.Parent.Text = TextHelper.GetString("Info.UntitledFileStart");
             }
             else this.Parent.Text = this.webBrowser.DocumentTitle;
@@ -251,11 +251,11 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Handles the combo box index changed event
         /// </summary>
-        private void AddressComboBoxSelectedIndexChanged(Object sender, EventArgs e)
+        private void AddressComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.addressComboBox.SelectedItem != null)
             {
-                String url = this.addressComboBox.SelectedItem.ToString();
+                string url = this.addressComboBox.SelectedItem.ToString();
                 this.webBrowser.Navigate(url);
             }
         }
@@ -263,7 +263,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Browses to the previous page in history
         /// </summary>
-        private void BackButtonClick(Object sender, EventArgs e)
+        private void BackButtonClick(object sender, EventArgs e)
         {
             this.webBrowser.GoBack();
         }
@@ -271,7 +271,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Browses to the next page in history
         /// </summary>
-        private void ForwardButtonClick(Object sender, EventArgs e)
+        private void ForwardButtonClick(object sender, EventArgs e)
         {
             this.webBrowser.GoForward();
         }
@@ -279,7 +279,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Reloads the current pages contents
         /// </summary>
-        private void RefreshButtonClick(Object sender, EventArgs e)
+        private void RefreshButtonClick(object sender, EventArgs e)
         {
             this.webBrowser.Refresh();
         }
@@ -287,9 +287,9 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Browses to the specified url on click
         /// </summary>
-        private void BrowseButtonClick(Object sender, EventArgs e)
+        private void BrowseButtonClick(object sender, EventArgs e)
         {
-            String url = this.addressComboBox.Text;
+            string url = this.addressComboBox.Text;
             if (!this.addressComboBox.Items.Contains(url))
             {
                 this.addressComboBox.Items.Insert(0, url);
@@ -300,11 +300,11 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Handles the combo box key press event
         /// </summary>
-        private void AddressComboBoxKeyPress(Object sender, KeyPressEventArgs e)
+        private void AddressComboBoxKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (Char)Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                String url = this.addressComboBox.Text;
+                string url = this.addressComboBox.Text;
                 if (!this.addressComboBox.Items.Contains(url))
                 {
                     this.addressComboBox.Items.Insert(0, url);
@@ -324,7 +324,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Redirect events to MainForm.
         /// </summary>
-        public override Boolean PreProcessMessage(ref Message msg)
+        public override bool PreProcessMessage(ref Message msg)
         {
             return Globals.MainForm.PreProcessMessage(ref msg);
         }

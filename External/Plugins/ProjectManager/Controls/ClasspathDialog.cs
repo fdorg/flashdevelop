@@ -153,7 +153,7 @@ namespace ProjectManager.Controls
             {
                 if (value == null) return;
                 string label = TextHelper.GetString("Title.GlobalClasspathsBox");
-                groupBox1.Text = String.Format(label, value.ToUpper());
+                groupBox1.Text = string.Format(label, value.ToUpper());
                 classpathControl.Language = value;
             }
             get { return classpathControl.Language; }
@@ -182,7 +182,7 @@ namespace ProjectManager.Controls
         private void classpathControl_IndexChanged(object sender, EventArgs e)
         {
             SaveClasspath();
-            Int32 index = classpathControl.LanguageBox.SelectedIndex;
+            int index = classpathControl.LanguageBox.SelectedIndex;
             this.Language = classpathControl.LanguageBox.Items[index].ToString().ToLower();
             this.Classpaths = this.settings.GetGlobalClasspaths(this.Language).ToArray();
         }
@@ -192,7 +192,7 @@ namespace ProjectManager.Controls
             if (pathChanged)
             {
                 pathChanged = false;
-                List<String> cps = new List<String>();
+                List<string> cps = new List<string>();
                 cps.AddRange(this.Classpaths);
                 this.settings.SetGlobalClasspaths(this.Language, cps);
             }

@@ -17,23 +17,23 @@ namespace XMLCompletion
 
     public struct XMLContextTag
     {
-        public String Tag;
-        public String Name;
-        public String NameSpace;
-        public Int32 Position;
-        public Boolean Closing;
-        public Boolean Closed;
+        public string Tag;
+        public string Name;
+        public string NameSpace;
+        public int Position;
+        public bool Closing;
+        public bool Closed;
     }
 
     public class HTMLTag : IComparable
     {
-        public String Tag;
-        public String Name;
-        public String NS;
+        public string Tag;
+        public string Name;
+        public string NS;
         public List<string> Attributes;
-        public Boolean IsLeaf;
+        public bool IsLeaf;
 
-        public HTMLTag(String tag, String ns, Boolean isLeaf)
+        public HTMLTag(string tag, string ns, bool isLeaf)
         {
             Name = tag;
             NS = ns ?? "";
@@ -44,26 +44,26 @@ namespace XMLCompletion
         /// <summary>
         /// Compares tags
         /// </summary>
-        public Int32 CompareTo(Object obj)
+        public int CompareTo(object obj)
         {
             if (!(obj is HTMLTag)) throw new InvalidCastException("This object is not of type HTMLTag");
-            return String.Compare(Tag, ((HTMLTag)obj).Tag);
+            return string.Compare(Tag, ((HTMLTag)obj).Tag);
         }
     }
 
     public interface IHtmlCompletionListItem : ICompletionListItem
     {
-        String Name { get; }
+        string Name { get; }
     }
 
     public class HtmlTagItem : IHtmlCompletionListItem
     {
-        private String name;
-        private String tag;
-        private String label;
-        private String uri;
+        private string name;
+        private string tag;
+        private string label;
+        private string uri;
 
-        public HtmlTagItem(String name, String tag, String uri)
+        public HtmlTagItem(string name, string tag, string uri)
         {
             this.name = name;
             this.label = tag;
@@ -71,7 +71,7 @@ namespace XMLCompletion
             this.uri = uri;
         }
 
-        public HtmlTagItem(String name, String tag)
+        public HtmlTagItem(string name, string tag)
         {
             this.name = name;
             this.label = tag;
@@ -81,7 +81,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the name of the tag (without namespace)
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return name; }
         }
@@ -89,7 +89,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public String Label
+        public string Label
         {
             get { return label; }
         }
@@ -97,7 +97,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public String Description
+        public string Description
         {
             get { return "<" + tag + ">" + (uri != null ? " - " + uri : ""); }
         }
@@ -113,7 +113,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public String Value
+        public string Value
         {
             get { return tag; }
         }
@@ -122,16 +122,16 @@ namespace XMLCompletion
 
     public class NamespaceItem : ICompletionListItem
     {
-        private String label;
-        private String uri;
+        private string label;
+        private string uri;
 
-        public NamespaceItem(String name, String uri)
+        public NamespaceItem(string name, string uri)
         {
             this.label = name;
             this.uri = uri;
         }
 
-        public NamespaceItem(String name)
+        public NamespaceItem(string name)
         {
             this.label = name;
         }
@@ -139,7 +139,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public String Label
+        public string Label
         {
             get { return label; }
         }
@@ -147,7 +147,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public String Description
+        public string Description
         {
             get { return "xmlns:" + label + (uri != null ? " - " + uri : ""); }
         }
@@ -163,7 +163,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public String Value
+        public string Value
         {
             get { return label; }
         }
@@ -172,27 +172,27 @@ namespace XMLCompletion
 
     public class HtmlAttributeItem : IHtmlCompletionListItem
     {
-        private String name;
-        private String label;
-        private String desc;
+        private string name;
+        private string label;
+        private string desc;
         private Bitmap icon;
-        private String type;
-        private String className;
+        private string type;
+        private string className;
 
-        public HtmlAttributeItem(String name, String type, String className, String ns)
+        public HtmlAttributeItem(string name, string type, string className, string ns)
         {
             setName(name);
             setExt(type, className);
             if (!string.IsNullOrEmpty(ns)) label = ns + ":" + label;
         }
 
-        public HtmlAttributeItem(String name, String type, String className)
+        public HtmlAttributeItem(string name, string type, string className)
         {
             setName(name);
             setExt(type, className);
         }
 
-        private void setExt(String type, String className)
+        private void setExt(string type, string className)
         {
             this.type = type;
             this.className = className;
@@ -208,17 +208,17 @@ namespace XMLCompletion
             if (!string.IsNullOrEmpty(className)) this.desc += " - " + className;
         }
 
-        public HtmlAttributeItem(String name)
+        public HtmlAttributeItem(string name)
         {
             setName(name);
         }
 
-        private void setName(String name)
+        private void setName(string name)
         {
-            Int32 p = name.LastIndexOf(':');
+            int p = name.LastIndexOf(':');
             if (p > 0)
             {
-                String ic = name.Substring(p + 1);
+                string ic = name.Substring(p + 1);
                 if (ic == "s" || ic == "style")
                 {
                     this.icon = XMLComplete.StyleAttributeIcon;
@@ -253,7 +253,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the name of the item (without namespace)
         /// </summary>
-        public String Name
+        public string Name
         {
             get { return name; }
         }
@@ -261,7 +261,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public String Label
+        public string Label
         {
             get { return this.label; }
         }
@@ -269,7 +269,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public String Description
+        public string Description
         {
             get { return this.desc; }
         }
@@ -285,7 +285,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public String Value
+        public string Value
         {
             get { return this.label; }
         }
@@ -293,7 +293,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the class name of the attribute item
         /// </summary>
-        public String ClassName
+        public string ClassName
         {
             get { return this.className; }
         }
@@ -301,11 +301,11 @@ namespace XMLCompletion
 
     public class XMLBlockItem : ICompletionListItem
     {
-        private String desc;
-        private String label;
-        private String replace;
+        private string desc;
+        private string label;
+        private string replace;
  
-        public XMLBlockItem(String label, String desc, String replace)
+        public XMLBlockItem(string label, string desc, string replace)
         {
             this.desc = desc;
             this.label = label;
@@ -315,7 +315,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public String Label
+        public string Label
         {
             get { return this.label; }
         }
@@ -323,7 +323,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public String Description
+        public string Description
         {
             get { return this.desc; }
         }
@@ -339,13 +339,13 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public String Value
+        public string Value
         {
             get
             {
                 ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                Int32 position = sci.SelectionStart;
-                String[] rep = replace.Split('|');
+                int position = sci.SelectionStart;
+                string[] rep = replace.Split('|');
                 sci.ReplaceSel(rep[0]);
                 sci.ReplaceSel(rep[1]);
                 sci.SetSel(position + rep[0].Length, position + rep[0].Length);

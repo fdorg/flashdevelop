@@ -15,12 +15,12 @@ namespace AirProperties
         private static XmlDocument _descriptorFile;
         private static XmlNamespaceManager _namespaceManager;
         private static XmlNode _rootNode;
-        private static Boolean _isInitialised;
+        private static bool _isInitialised;
         private static Exception _lastException;
         private static AirVersion _version;
-        private static Boolean _unsupportedVersion;
-        private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "32.0";
+        private static bool _unsupportedVersion;
+        private const string _BaseAirNamespace = "http://ns.adobe.com/air/application/";
+        private const string _MaxSupportedVersion = "32.0";
 
         public enum AirVersion
         {
@@ -67,26 +67,26 @@ namespace AirProperties
 
         public static Exception LastException => _lastException;
 
-        public static Boolean IsInitialised => _isInitialised;
+        public static bool IsInitialised => _isInitialised;
 
         public static AirVersion MajorVersion => _version;
 
-        public static String Version
+        public static string Version
         {
             get
             {
                 if (_rootNode == null) return "0.0";
-                else return _rootNode.NamespaceURI.Replace(_BaseAirNamespace, String.Empty);
+                else return _rootNode.NamespaceURI.Replace(_BaseAirNamespace, string.Empty);
             }
         }
 
-        public static Boolean IsUnsupportedVersion => _unsupportedVersion;
+        public static bool IsUnsupportedVersion => _unsupportedVersion;
 
-        public static String MaxSupportedVersion => _MaxSupportedVersion;
+        public static string MaxSupportedVersion => _MaxSupportedVersion;
 
-        public static Boolean InitializeProperties(string filePath)
+        public static bool InitializeProperties(string filePath)
         {
-            Boolean result = false;
+            bool result = false;
             try
             {
                 _descriptorFile = new XmlDocument();
@@ -97,7 +97,7 @@ namespace AirProperties
                 // Determine if valid descriptor file, and which version of AIR is specified
                 if (!nsuri.StartsWithOrdinal(_BaseAirNamespace))
                 {
-                    throw new Exception(String.Format(TextHelper.GetString("Exception.Message.NotAirDescriptorFile"), filePath));
+                    throw new Exception(string.Format(TextHelper.GetString("Exception.Message.NotAirDescriptorFile"), filePath));
                 }
                 if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "1.0")) _version = AirVersion.V10;
                 else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "1.1")) _version = AirVersion.V11;
@@ -156,9 +156,9 @@ namespace AirProperties
             return result;
         }
 
-        public static Boolean CommitProperties(string filePath)
+        public static bool CommitProperties(string filePath)
         {
-            Boolean result = false;
+            bool result = false;
             try
             {
                 _descriptorFile.Save(filePath);
@@ -177,7 +177,7 @@ namespace AirProperties
             field.Text = GetAttribute(attribute);
         }
 
-        public static String GetAttribute(string attribute)
+        public static string GetAttribute(string attribute)
         {
             XmlNode propertyNode;
             if (attribute.Contains('/'))
@@ -232,14 +232,14 @@ namespace AirProperties
             }
         }
 
-        public static String GetProperty(string property)
+        public static string GetProperty(string property)
         {
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
             else return "";
         }
 
-        private static String GetProperty(string property, XmlNode rootNode)
+        private static string GetProperty(string property, XmlNode rootNode)
         {
             var propertyNode = rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
@@ -248,7 +248,7 @@ namespace AirProperties
 
         public static void GetProperty(string property, TextBox field)
         {
-            GetProperty(property, field, String.Empty);
+            GetProperty(property, field, string.Empty);
         }
 
         public static void GetProperty(string property, TextBox field, string locale)
@@ -256,7 +256,7 @@ namespace AirProperties
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
-                if (locale != String.Empty && propertyNode.HasChildNodes)
+                if (locale != string.Empty && propertyNode.HasChildNodes)
                 {
                     foreach (XmlNode childNode in propertyNode.ChildNodes)
                     {
@@ -297,7 +297,7 @@ namespace AirProperties
 
         public static void GetProperty(string property, ComboBox field, int defaultIndex)
         {
-            Boolean foundListItem = false;
+            bool foundListItem = false;
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
@@ -401,11 +401,11 @@ namespace AirProperties
         // Searches the specified property node for an element with the specified locale, creating one if none is found. 
         // Supplied element parameter is referenced to resulting element.
         // Returns true if the element already existed, false if it was created.
-        private static Boolean GetLocalizedElement(XmlNode propertyNode, String locale, ref XmlElement element)
+        private static bool GetLocalizedElement(XmlNode propertyNode, string locale, ref XmlElement element)
         {
-            Boolean found = false;
+            bool found = false;
             XmlElement localeElement = null;
-            if (locale != String.Empty)
+            if (locale != string.Empty)
             {
                 if (propertyNode.HasChildNodes)
                 {
@@ -430,16 +430,16 @@ namespace AirProperties
             return found;
         }
 
-        public static void SetProperty(string property, TextBox field, String locale)
+        public static void SetProperty(string property, TextBox field, string locale)
         {
             SetProperty(property, field, locale, false);
         }
 
-        public static void SetProperty(string property, TextBox field, String locale, Boolean isDefaultLocale)
+        public static void SetProperty(string property, TextBox field, string locale, bool isDefaultLocale)
         {
             XmlElement localeElement = null;
             // If no locale then just add/edit the node
-            if (locale == String.Empty)
+            if (locale == string.Empty)
             {
                 SetProperty(property, field);
                 return;
@@ -526,7 +526,7 @@ namespace AirProperties
                 var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
                 if (propertyNode != null)
                 {
-                    if (selectedItem.Value != String.Empty) propertyNode.InnerText = selectedItem.Value;
+                    if (selectedItem.Value != string.Empty) propertyNode.InnerText = selectedItem.Value;
                     else
                     {
                         // Remove the node, reverting to system default
@@ -536,7 +536,7 @@ namespace AirProperties
                 else
                 {
                     // Only add property if there is a value to add
-                    if (selectedItem.Value != String.Empty)
+                    if (selectedItem.Value != string.Empty)
                     {
                         var index = property.IndexOf('/');
                         var childName = property.Substring(index + 1, property.Length - (index + 1));
@@ -548,7 +548,7 @@ namespace AirProperties
             }
         }
 
-        public static void RemoveLocalizedProperty(string property, String locale)
+        public static void RemoveLocalizedProperty(string property, string locale)
         {
             XmlElement localeElement = null;
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
@@ -559,14 +559,14 @@ namespace AirProperties
             }
         }
 
-        public static void CreateLocalizedProperty(string property, String locale, Boolean isDefaultLocale)
+        public static void CreateLocalizedProperty(string property, string locale, bool isDefaultLocale)
         {
             XmlElement localeElement = null;
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 var elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
-                localeElement.InnerText = String.Empty;
+                localeElement.InnerText = string.Empty;
                 if (!elementExists)
                 {
                     // If there is any existing non-localised values, copy them to the localised element (will only occur for first localised element)
@@ -599,7 +599,7 @@ namespace AirProperties
                 var childName = property.Substring(index + 1, property.Length - (index + 1));
                 propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                 GetLocalizedElement(propertyNode, locale, ref localeElement);
-                localeElement.InnerText = String.Empty;
+                localeElement.InnerText = string.Empty;
                 propertyNode.AppendChild(localeElement);
                 GetParentNode(property).AppendChild(propertyNode);
             }
@@ -762,10 +762,10 @@ namespace AirProperties
         }
 
         // Creates a child node on the specified parent node, will also create sub-parent node (used for creating fileType properties)
-        private static void CreateChildNode(XmlNode parentNode, String childNodeName, String childNodeValue)
+        private static void CreateChildNode(XmlNode parentNode, string childNodeName, string childNodeValue)
         {
             XmlNode subParentNode;
-            if (childNodeValue == String.Empty) return;
+            if (childNodeValue == string.Empty) return;
             // Determine if there is a sub parent
             var index = childNodeName.IndexOf('/');
             if (index == -1) subParentNode = parentNode;
@@ -791,56 +791,56 @@ namespace AirProperties
         public class AirFileType
         {
 
-            private String _name;
-            private String _extension;
-            private String _description;
-            private String _contentType;
+            private string _name;
+            private string _extension;
+            private string _description;
+            private string _contentType;
             private readonly List<AirFileTypeIcon> _icons;
 
-            private Boolean _nameIsValid;
-            private Boolean _extensionIsValid;
-            private Boolean _descriptionIsValid;
-            private Boolean _contentTypeIsValid;
+            private bool _nameIsValid;
+            private bool _extensionIsValid;
+            private bool _descriptionIsValid;
+            private bool _contentTypeIsValid;
 
             public AirFileType()
             {
-                _name = String.Empty;
-                _extension = String.Empty;
-                _description = String.Empty;
-                _contentType = String.Empty;
+                _name = string.Empty;
+                _extension = string.Empty;
+                _description = string.Empty;
+                _contentType = string.Empty;
                 // According to Descriptor.xsd, 57x57 is not used for file icons
                 _icons = new List<AirFileTypeIcon> 
                 { 
-                    new AirFileTypeIcon(16, String.Empty, AirVersion.V10),
-                    new AirFileTypeIcon(29, String.Empty, AirVersion.V20),
-                    new AirFileTypeIcon(32, String.Empty, AirVersion.V10),
-                    new AirFileTypeIcon(36, String.Empty, AirVersion.V25),
-                    new AirFileTypeIcon(48, String.Empty, AirVersion.V10),
-                    new AirFileTypeIcon(72, String.Empty, AirVersion.V20),
-                    new AirFileTypeIcon(128, String.Empty, AirVersion.V10),
-                    new AirFileTypeIcon(512, String.Empty, AirVersion.V20)
+                    new AirFileTypeIcon(16, string.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(29, string.Empty, AirVersion.V20),
+                    new AirFileTypeIcon(32, string.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(36, string.Empty, AirVersion.V25),
+                    new AirFileTypeIcon(48, string.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(72, string.Empty, AirVersion.V20),
+                    new AirFileTypeIcon(128, string.Empty, AirVersion.V10),
+                    new AirFileTypeIcon(512, string.Empty, AirVersion.V20)
                 };
             }
 
-            public String Name
+            public string Name
             {
                 get { return _name; }
                 set { _name = value; }
             }
 
-            public String Extension
+            public string Extension
             {
                 get { return _extension; }
                 set { _extension = value; }
             }
 
-            public String Description
+            public string Description
             {
                 get { return _description; }
                 set { _description = value; }
             }
 
-            public String ContentType
+            public string ContentType
             {
                 get { return _contentType; }
                 set { _contentType = value; }
@@ -851,7 +851,7 @@ namespace AirProperties
                 get { return _icons; }
             }
 
-            public void SetIconPath(Int16 size, string path)
+            public void SetIconPath(short size, string path)
             {
                 foreach (AirFileTypeIcon icon in _icons)
                 {
@@ -863,7 +863,7 @@ namespace AirProperties
                 }
             }
 
-            public void SetIconIsValid(Int16 size, Boolean isValid)
+            public void SetIconIsValid(short size, bool isValid)
             {
                 foreach (AirFileTypeIcon icon in _icons)
                 {
@@ -875,40 +875,40 @@ namespace AirProperties
                 }
             }
 
-            public String GetIconPath(Int16 size)
+            public string GetIconPath(short size)
             {
                 foreach (AirFileTypeIcon icon in _icons)
                 {
                     if (icon.Size == size) return icon.FilePath;
                 }
-                return String.Empty;
+                return string.Empty;
             }
 
-            public Boolean NameIsValid
+            public bool NameIsValid
             {
                 get { return _nameIsValid; }
                 set { _nameIsValid = value; }
             }
 
-            public Boolean ExtensionIsValid
+            public bool ExtensionIsValid
             {
                 get { return _extensionIsValid; }
                 set { _extensionIsValid = value; }
             }
 
-            public Boolean DescriptionIsValid
+            public bool DescriptionIsValid
             {
                 get { return _descriptionIsValid; }
                 set { _descriptionIsValid = value; }
             }
 
-            public Boolean ContentTypeIsValid
+            public bool ContentTypeIsValid
             {
                 get { return _contentTypeIsValid; }
                 set { _contentTypeIsValid = value; }
             }
 
-            public Boolean IsValid
+            public bool IsValid
             {
                 get
                 {
@@ -922,12 +922,12 @@ namespace AirProperties
 
             public class AirFileTypeIcon
             {
-                private Int16 _size;
-                private Boolean _isValid = false;
-                private string _filePath = String.Empty;
+                private short _size;
+                private bool _isValid = false;
+                private string _filePath = string.Empty;
                 private AirVersion _minVersion = AirVersion.V10;
 
-                public AirFileTypeIcon(Int16 size, string filePath, AirVersion minVersion)
+                public AirFileTypeIcon(short size, string filePath, AirVersion minVersion)
                 {
                     _size = size;
                     _filePath = filePath;
@@ -935,12 +935,12 @@ namespace AirProperties
                     _isValid = true;
                 }
 
-                public Int16 Size
+                public short Size
                 {
                     get { return _size; }
                 }
 
-                public String FilePath
+                public string FilePath
                 {
                     get { return _filePath; }
                     set { _filePath = value; }
@@ -951,7 +951,7 @@ namespace AirProperties
                     get { return _minVersion; }
                 }
 
-                public Boolean IsValid
+                public bool IsValid
                 {
                     get { return _isValid; }
                     set { _isValid = value; }
@@ -961,7 +961,7 @@ namespace AirProperties
 
         public class AirApplicationIconField
         {
-            private string _size = String.Empty;
+            private string _size = string.Empty;
             private AirVersion _minVersion = AirVersion.V10;
 
             public AirApplicationIconField(string size, AirVersion minVersion)
@@ -970,7 +970,7 @@ namespace AirProperties
                 _minVersion = minVersion;
             }
 
-            public String Size
+            public string Size
             {
                 get { return _size; }
             }
@@ -985,24 +985,24 @@ namespace AirProperties
 
         public class AirExtension
         {
-            private string _extensionId = String.Empty;
+            private string _extensionId = string.Empty;
 
-            public String ExtensionId
+            public string ExtensionId
             {
                 get { return _extensionId; }
                 set { _extensionId = value; }
             }
 
-            public Boolean IsValid { get; set; }
+            public bool IsValid { get; set; }
 
-            public String Path { get; set; }
+            public string Path { get; set; }
         }
 
         public class AndroidPermission
         {
-            public String Constant { get; set; }
+            public string Constant { get; set; }
 
-            public String Description { get; set; }
+            public string Description { get; set; }
 
             public AndroidPermission(string constant, string description)
             {

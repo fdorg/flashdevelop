@@ -11,7 +11,7 @@ namespace FlashDebugger
     {
         private PluginMain pluginMain;
         private DataTreeControl treeControl;
-        private static Char[] chTrims = { '.' };
+        private static char[] chTrims = { '.' };
 
         public LocalsUI(PluginMain pluginMain)
         {
@@ -27,9 +27,9 @@ namespace FlashDebugger
             this.Controls.Add(this.treeControl);
         }
 
-        private void TreeControlResize(Object sender, EventArgs e)
+        private void TreeControlResize(object sender, EventArgs e)
         {
-            Int32 w = this.treeControl.Width / 2;
+            int w = this.treeControl.Width / 2;
             this.treeControl.Tree.Columns[0].Width = w;
             this.treeControl.Tree.Columns[1].Width = w - 8;
         }

@@ -84,7 +84,7 @@ namespace SourceControl.Sources.Git
             runner = null;
             if (exitCode != 0)
             {
-                String label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
+                string label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
                 TraceManager.AddAsync(label + " (" + exitCode + ")");
             }
 

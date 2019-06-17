@@ -251,7 +251,7 @@ namespace FlashDebugger
                 int i = 0;
                 foreach (Frame item in frames)
                 {
-                    String title = item.getCallSignature();
+                    string title = item.getCallSignature();
                     bool ownFile = false;
                     SourceFile sourceFile = item.getLocation().getFile();
                     if (sourceFile != null)
@@ -322,7 +322,7 @@ namespace FlashDebugger
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButton_Click(Object sender, System.EventArgs e)
+        private void ClearFilterButton_Click(object sender, System.EventArgs e)
         {
             this.clearFilterButton.Enabled = false;
             this.toolStripTextBoxFilter.Clear();
@@ -331,29 +331,29 @@ namespace FlashDebugger
         /// <summary>
         /// Filter the result on check change
         /// </summary>
-        private void ToolStripTextFieldFilter_Changed(Object sender, EventArgs e)
+        private void ToolStripTextFieldFilter_Changed(object sender, EventArgs e)
         {
             this.clearFilterButton.Enabled = this.toolStripTextBoxFilter.Text.Trim() != string.Empty;
             this.FilterResults();
         }
 
-        private void FilterOption_Click(Object sender, EventArgs e)
+        private void FilterOption_Click(object sender, EventArgs e)
         {
             if (clearFilterButton.Enabled) FilterResults();
         }
 
-        private void ContextMenuOpening(Object sender, System.ComponentModel.CancelEventArgs e)
+        private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             copyContextMenuItem.Enabled = setFrameContextMenuItem.Enabled = gotoSourceContextMenuItem.Enabled = lv.SelectedItems.Count > 0;
             copyAllContextMenuItem.Enabled = lv.Items.Count > 0;
         }
 
-        private void CopyTextClick(Object sender, EventArgs e)
+        private void CopyTextClick(object sender, EventArgs e)
         {
             Clipboard.SetText(lv.SelectedItems[0].SubItems[1].Text);
         }
 
-        private void CopyAllTextClick(Object sender, EventArgs e)
+        private void CopyAllTextClick(object sender, EventArgs e)
         {
             var sb = new StringBuilder();
             string filter = toolStripTextBoxFilter.Text.Trim();
@@ -368,7 +368,7 @@ namespace FlashDebugger
             Clipboard.SetText(sb.ToString());
         }
 
-        private void SetCurrentFrameClick(Object sender, EventArgs e)
+        private void SetCurrentFrameClick(object sender, EventArgs e)
         {
             int index = ((ListItemData)lv.SelectedItems[0].Tag).Index;
             if (index == -1) return;
@@ -382,7 +382,7 @@ namespace FlashDebugger
             ActiveItem();
         }
 
-        private void GotoSourceClick(Object sender, EventArgs e)
+        private void GotoSourceClick(object sender, EventArgs e)
         {
             var frame = ((ListItemData)lv.SelectedItems[0].Tag).Frame;
             if (frame == null) return;
@@ -391,7 +391,7 @@ namespace FlashDebugger
             ScintillaHelper.ActivateDocument(file, frame.getLocation().getLine() - 1, false);
         }
 
-        private void JustMyCodeClick(Object sender, EventArgs e)
+        private void JustMyCodeClick(object sender, EventArgs e)
         {
             justMyCode = justMyCodeContextMenuItem.Checked;
             FilterResults();

@@ -21,21 +21,21 @@ namespace FlashDevelop.Docking
     {
         private Timer focusTimer;
         private Timer backupTimer;
-        private String previousText;
-        private List<Int32> bookmarks;
+        private string previousText;
+        private List<int> bookmarks;
         private ScintillaControl editor;
         private ScintillaControl editor2;
         private ScintillaControl lastEditor;
         private SplitContainer splitContainer;
-        private Boolean useCustomIcon;
-        private Boolean isModified;
+        private bool useCustomIcon;
+        private bool isModified;
         private FileInfo fileInfo;
 
         public TabbedDocument()
         {
             this.focusTimer = new Timer();
             this.focusTimer.Interval = 100;
-            this.bookmarks = new List<Int32>();
+            this.bookmarks = new List<int>();
             this.focusTimer.Tick += new EventHandler(this.OnFocusTimer);
             this.ControlAdded += new ControlEventHandler(this.DocumentControlAdded);
             UITools.Manager.OnMarkerChanged += new UITools.LineEventHandler(this.OnMarkerChanged);
@@ -50,7 +50,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Disables the automatic update of the icon
         /// </summary>
-        public Boolean UseCustomIcon
+        public bool UseCustomIcon
         {
             get { return this.useCustomIcon; }
             set { this.useCustomIcon = value; }
@@ -59,7 +59,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Path of the document
         /// </summary>
-        public String FileName
+        public string FileName
         {
             get
             {
@@ -71,7 +71,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Do we contain a Browser control?
         /// </summary>
-        public Boolean IsBrowsable
+        public bool IsBrowsable
         {
             get
             {
@@ -86,12 +86,12 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Do we contain a ScintillaControl?
         /// </summary>
-        public Boolean IsEditable => this.SciControl != null;
+        public bool IsEditable => this.SciControl != null;
 
         /// <summary>
         /// Are we splitted in to two sci controls?
         /// </summary>
-        public Boolean IsSplitted
+        public bool IsSplitted
         {
             get
             {
@@ -112,12 +112,12 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Does this document have any bookmarks?
         /// </summary>
-        public Boolean HasBookmarks => bookmarks.Count > 0;
+        public bool HasBookmarks => bookmarks.Count > 0;
 
         /// <summary>
         /// Does this document's pane have any other documents?
         /// </summary> 
-        public Boolean IsAloneInPane
+        public bool IsAloneInPane
         {
             get
             {
@@ -176,11 +176,11 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Gets if the file is untitled
         /// </summary>
-        public Boolean IsUntitled
+        public bool IsUntitled
         {
             get
             {
-                String untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
+                string untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
                 if (this.IsEditable) return this.FileName.StartsWithOrdinal(untitledFileStart);
                 else return false;
             }
@@ -189,7 +189,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Sets or gets if the file is modified
         /// </summary> 
-        public Boolean IsModified
+        public bool IsModified
         {
             get { return this.isModified; }
             set 
@@ -217,7 +217,7 @@ namespace FlashDevelop.Docking
             }
             ButtonManager.UpdateFlaggedButtons();
         }
-        private void OnFocusTimer(Object sender, EventArgs e)
+        private void OnFocusTimer(object sender, EventArgs e)
         {
             this.focusTimer.Stop();
             if (this.SciControl != null && this.DockPanel.ActiveContent != null && this.DockPanel.ActiveContent == this)
@@ -230,7 +230,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// 
         /// </summary>
-        private void OnMarkerChanged(ScintillaControl sci, Int32 line)
+        private void OnMarkerChanged(ScintillaControl sci, int line)
         {
             if (sci != this.editor && sci != this.editor2) return;
             if (line == -1) // all markers cleared
@@ -239,8 +239,8 @@ namespace FlashDevelop.Docking
                 ButtonManager.UpdateFlaggedButtons();
                 return;
             }
-            Boolean hadBookmark = this.bookmarks.Contains(line);
-            Boolean hasBookmark = MarkerManager.HasMarker(sci, 0, line);
+            bool hadBookmark = this.bookmarks.Contains(line);
+            bool hasBookmark = MarkerManager.HasMarker(sci, 0, line);
             if (hadBookmark != hasBookmark) // any change?
             {
                 if (!hadBookmark && hasBookmark) this.bookmarks.Add(line);
@@ -252,7 +252,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Adds a new scintilla control to the document
         /// </summary>
-        public void AddEditorControls(String file, String text, Int32 codepage)
+        public void AddEditorControls(string file, string text, int codepage)
         {
             this.editor = ScintillaManager.CreateControl(file, text, codepage);
             this.editor.Dock = DockStyle.Fill;
@@ -267,7 +267,7 @@ namespace FlashDevelop.Docking
             this.splitContainer.Panel2.Controls.Add(this.editor2);
             this.splitContainer.Dock = DockStyle.Fill;
             this.splitContainer.Panel2Collapsed = true;
-            Int32 oldDoc = this.editor.DocPointer;
+            int oldDoc = this.editor.DocPointer;
             this.editor2.DocPointer = oldDoc;
             this.editor.SavePointLeft += delegate
             {
@@ -321,7 +321,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Checks if the the file is changed outside of fd
         /// </summary>
-        public Boolean CheckFileChange()
+        public bool CheckFileChange()
         {
             if (this.fileInfo == null)
             {
@@ -357,19 +357,19 @@ namespace FlashDevelop.Docking
             if (!this.IsEditable) return;
             if (!this.IsUntitled && FileHelper.FileIsReadOnly(this.FileName))
             {
-                String dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.MakeReadOnlyWritable");
+                string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.MakeReadOnlyWritable");
                 if (MessageBox.Show(Globals.MainForm, message, dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     ScintillaManager.MakeFileWritable(this.SciControl);
                 }
                 else return;
             }
-            String oldFile = this.SciControl.FileName;
-            Boolean otherFile = (this.SciControl.FileName != file);
+            string oldFile = this.SciControl.FileName;
+            bool otherFile = (this.SciControl.FileName != file);
             if (otherFile)
             {
-                String args = this.FileName + ";" + file;
+                string args = this.FileName + ";" + file;
                 RecoveryManager.RemoveTemporaryFile(this.FileName);
                 TextEvent renaming = new TextEvent(EventType.FileRenaming, args);
                 EventManager.DispatchEvent(this, renaming);
@@ -405,7 +405,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Saves an editable document
         /// </summary>
-        public void Save(String file)
+        public void Save(string file)
         {
             this.Save(file, null);
         }
@@ -418,17 +418,17 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Reloads an editable document
         /// </summary>
-        public void Reload(Boolean showQuestion)
+        public void Reload(bool showQuestion)
         {
             if (!this.IsEditable) return;
             if (showQuestion)
             {
-                String dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.AreYouSureToReload");
+                string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.AreYouSureToReload");
                 if (MessageBox.Show(Globals.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             Globals.MainForm.ReloadingDocument = true;
-            Int32 position = this.SciControl.CurrentPos;
+            int position = this.SciControl.CurrentPos;
             TextEvent te = new TextEvent(EventType.FileReload, this.FileName);
             EventManager.DispatchEvent(Globals.MainForm, te);
             if (!te.Handled)
@@ -468,13 +468,13 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Reverts the document to the orginal state
         /// </summary>
-        public void Revert(Boolean showQuestion)
+        public void Revert(bool showQuestion)
         {
             if (!this.IsEditable) return;
             if (showQuestion)
             {
-                String dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.AreYouSureToRevert");
+                string dlgTitle = TextHelper.GetString("Title.ConfirmDialog");
+                string message = TextHelper.GetString("Info.AreYouSureToRevert");
                 if (MessageBox.Show(Globals.MainForm, message, " " + dlgTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) return;
             }
             TextEvent te = new TextEvent(EventType.FileRevert, Globals.SciControl.FileName);
@@ -500,7 +500,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Saves a backup file after an interval
         /// </summary> 
-        private void BackupTimerTick(Object sender, EventArgs e)
+        private void BackupTimerTick(object sender, EventArgs e)
         {
             if (this.IsEditable && !this.IsUntitled && this.IsModified && this.previousText != this.SciControl.Text)
             {
@@ -512,7 +512,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Automatically updates the document icon
         /// </summary>
-        private void UpdateDocumentIcon(String file)
+        private void UpdateDocumentIcon(string file)
         {
             if (this.useCustomIcon) return;
             if (Win32.ShouldUseWin32() && !this.IsBrowsable) this.Icon = IconExtractor.GetFileIcon(file, true);
@@ -539,7 +539,7 @@ namespace FlashDevelop.Docking
         public void InitBookmarks()
         {
             this.bookmarks.Clear();
-            for (Int32 i = 0; i < editor.LineCount; i++) 
+            for (int i = 0; i < editor.LineCount; i++) 
             {
                 if (MarkerManager.HasMarker(SciControl, 0, i)) this.bookmarks.Add(i);
             }
@@ -557,7 +557,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Updates the document icon when a control is added
         /// </summary>
-        private void DocumentControlAdded(Object sender, ControlEventArgs e)
+        private void DocumentControlAdded(object sender, ControlEventArgs e)
         {
             this.UpdateToolTipText();
             this.UpdateDocumentIcon(this.FileName);

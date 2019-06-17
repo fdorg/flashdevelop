@@ -60,11 +60,11 @@ namespace AirProperties
         /// </summary>
         private void LoadDefaultLocales()
         {
-            Boolean isDefaultLocale;
+            bool isDefaultLocale;
             // Add defaults to available list
             AvailableListBox.Items.AddRange(_defaultLocales);
             // Check each selected against defaults
-            foreach (String locale in _applicationLocales)
+            foreach (string locale in _applicationLocales)
             {
                 isDefaultLocale = false;
                 foreach (ListItem defaultLocale in _defaultLocales)
@@ -132,7 +132,7 @@ namespace AirProperties
 
         private void AddNewButton_Click(object sender, EventArgs e)
         {
-            String newLocale = CustomLocaleField.Text.Trim();
+            string newLocale = CustomLocaleField.Text.Trim();
             if (newLocale.Length > 0)
             {
                 if (!_applicationLocales.Contains(newLocale) && _customLocaleIsValid)
@@ -167,9 +167,9 @@ namespace AirProperties
         // Simple validation to check if new locale is an extension of a default locale
         private void CustomLocaleField_Validating(object sender, CancelEventArgs e)
         {
-            String newLocale = CustomLocaleField.Text.Trim();
-            String baseLocale;
-            Boolean isValid = false;
+            string newLocale = CustomLocaleField.Text.Trim();
+            string baseLocale;
+            bool isValid = false;
             if (newLocale.Length > 0 && newLocale != TextHelper.GetString("Label.AddCustomLocale"))
             {
                 foreach (ListItem locale in _defaultLocales)

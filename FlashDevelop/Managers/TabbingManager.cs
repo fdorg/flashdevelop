@@ -9,7 +9,7 @@ namespace FlashDevelop.Managers
     {
         public static Timer TabTimer;
         public static List<ITabbedDocument> TabHistory;
-        public static Int32 SequentialIndex;
+        public static int SequentialIndex;
 
         static TabbingManager()
         {
@@ -23,7 +23,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Checks to see if the Control key has been released
         /// </summary>
-        private static void OnTabTimer(Object sender, EventArgs e)
+        private static void OnTabTimer(object sender, EventArgs e)
         {
             if ((Control.ModifierKeys & Keys.Control) == 0)
             {
@@ -39,8 +39,8 @@ namespace FlashDevelop.Managers
         public static void UpdateSequentialIndex(ITabbedDocument document)
         {
             ITabbedDocument[] documents = Globals.MainForm.Documents;
-            Int32 count = documents.Length;
-            for (Int32 i = 0; i < count; i++)
+            int count = documents.Length;
+            for (int i = 0; i < count; i++)
             {
                 if (document == documents[i])
                 {
@@ -53,12 +53,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Activates next document in tabs
         /// </summary>
-        public static void NavigateTabsSequentially(Int32 direction)
+        public static void NavigateTabsSequentially(int direction)
         {
             ITabbedDocument current = Globals.CurrentDocument;
             ITabbedDocument[] documents = Globals.MainForm.Documents;
-            Int32 count = documents.Length; if (count <= 1) return;
-            for (Int32 i = 0; i < count; i++)
+            int count = documents.Length; if (count <= 1) return;
+            for (int i = 0; i < count; i++)
             {
                 if (documents[i] == current)
                 {
@@ -79,9 +79,9 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Visual Studio style keyboard tab navigation: similar to Alt-Tab
         /// </summary>
-        public static void NavigateTabHistory(Int32 direction)
+        public static void NavigateTabHistory(int direction)
         {
-            Int32 currentIndex = 0;
+            int currentIndex = 0;
             if (TabHistory.Count < 1) return;
             if (direction != 0)
             {

@@ -10,27 +10,27 @@ namespace FlashDebugger
 {
     internal class PanelsHelper
     {
-        static public String localsGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
+        static public string localsGuid = "f9d8faf1-31f7-45ca-9c14-2cad27d7a19e";
         static public DockContent localsPanel;
         static public LocalsUI localsUI;
 
-        static public String breakPointGuid = "6ee0f809-a3f7-4365-96c7-3bdf89f3aaa4";
+        static public string breakPointGuid = "6ee0f809-a3f7-4365-96c7-3bdf89f3aaa4";
         static public DockContent breakPointPanel;
         static public BreakPointUI breakPointUI;
 
-        static public String stackframeGuid = "49eb0b7e-f601-4860-a190-ae48e122a661";
+        static public string stackframeGuid = "49eb0b7e-f601-4860-a190-ae48e122a661";
         static public DockContent stackframePanel;
         static public StackframeUI stackframeUI;
 
-        static public String watchGuid = "c4a0c90a-236c-4a41-8ece-85486a23960f";
+        static public string watchGuid = "c4a0c90a-236c-4a41-8ece-85486a23960f";
         static public DockContent watchPanel;
         static public WatchUI watchUI;
 
-        static public String immediateGuid = "7ce31ab1-5a40-42d5-ad32-5df567707afc";
+        static public string immediateGuid = "7ce31ab1-5a40-42d5-ad32-5df567707afc";
         static public DockContent immediatePanel;
         static public ImmediateUI immediateUI;
 
-        static public String threadsGuid = "49eb0b7e-f601-4860-a190-ae48e122a662";
+        static public string threadsGuid = "49eb0b7e-f601-4860-a190-ae48e122a662";
         static public DockContent threadsPanel;
         static public ThreadsUI threadsUI;
 

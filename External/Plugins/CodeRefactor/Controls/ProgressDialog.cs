@@ -90,13 +90,13 @@ namespace CodeRefactor.Controls
         public void Reset()
         {
             UpdateProgress(0);
-            UpdateStatusMessage(String.Empty);
+            UpdateStatusMessage(string.Empty);
         }
 
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        public void UpdateProgress(Int32 percentDone)
+        public void UpdateProgress(int percentDone)
         {
             this.progressBar.Value = percentDone;
         }
@@ -104,7 +104,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// 
         /// </summary>
-        public void UpdateStatusMessage(String message)
+        public void UpdateStatusMessage(string message)
         {
             this.labelStatus.Text = TextHelper.GetString("Info.Status") + " " + message;
             this.labelStatus.Update();
@@ -113,7 +113,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(Object sender, CancelEventArgs e)
+        private void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
             PluginBase.MainForm.CurrentDocument.Activate();
@@ -123,7 +123,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, System.EventArgs e)
+        private void VisibleChange(object sender, System.EventArgs e)
         {
             if (this.Visible)
             {
@@ -143,7 +143,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// 
         /// </summary>
-        public void SetTitle(String title)
+        public void SetTitle(string title)
         {
             this.Text = title;
         }

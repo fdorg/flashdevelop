@@ -254,7 +254,7 @@ namespace XMLCompletion
                 if (src == null)
                     return false;
 
-                String content;
+                string content;
                 using (StreamReader sr = new StreamReader(src))
                 {
                     content = sr.ReadToEnd();
@@ -299,7 +299,7 @@ namespace XMLCompletion
                         if (lastValid - 1 <= pos) break;
                         lastValid = pos + 1;
                     }
-                    else if (!Char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
+                    else if (!char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
                     pos--;
                     if (pos < 0) lastValid = 0;
                 }

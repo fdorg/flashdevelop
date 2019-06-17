@@ -45,7 +45,7 @@ namespace CodeFormatter.Handlers
             return count;
         }
 
-        public static String generateSpaceString(int spaces)
+        public static string generateSpaceString(int spaces)
         {
             StringBuilder buffer = new StringBuilder();
             for (int i=0;i<spaces;i++)
@@ -55,7 +55,7 @@ namespace CodeFormatter.Handlers
             return buffer.ToString();
         }
     
-        public static String generateIndent(int spaces)
+        public static string generateIndent(int spaces)
         {
             StringBuilder buffer = new StringBuilder();
             for (int i=0;i<spaces;i++)
@@ -95,11 +95,11 @@ namespace CodeFormatter.Handlers
             return true;
         }
 
-        public static String generateIndent(int spaces, bool useTabs, int tabSize)
+        public static string generateIndent(int spaces, bool useTabs, int tabSize)
         {
             if (spaces==0)
                 return "";
-            String buffer="";
+            string buffer="";
         
             if (useTabs)
             {
@@ -125,12 +125,12 @@ namespace CodeFormatter.Handlers
          * @param originalSource
          * @return
          */
-        public static bool validateNonWhitespaceCharCounts(String buffer, String originalSource)
+        public static bool validateNonWhitespaceCharCounts(string buffer, string originalSource)
         {
             //some reasonable way of validating.  Just count non-whitespace and make sure that we have at least as many
             //chars as before.  Could improve to keep counts of each char so that ordering doesn't matter.
-            Dictionary<char, Int32> originalCharMap = new Dictionary<char, Int32>();
-            Dictionary<char, Int32> newCharMap = new Dictionary<char, Int32>();
+            Dictionary<char, int> originalCharMap = new Dictionary<char, int>();
+            Dictionary<char, int> newCharMap = new Dictionary<char, int>();
         
             int originalCharCount=0;
             for (int i=0;i<originalSource.Length;i++)
@@ -175,8 +175,8 @@ namespace CodeFormatter.Handlers
 
             foreach (char charAsInt in originalCharMap.Keys)
             {
-                Int32 origCount=originalCharMap[charAsInt];
-                Int32 newCount=newCharMap[charAsInt];
+                int origCount=originalCharMap[charAsInt];
+                int newCount=newCharMap[charAsInt];
                 if (origCount!=newCount)
                     return false;
             }
@@ -187,10 +187,10 @@ namespace CodeFormatter.Handlers
             return true;
         }
     
-        public static bool validateNonWhitespaceIdentical(String s1, String s2)
+        public static bool validateNonWhitespaceIdentical(string s1, string s2)
         {
-            String newBuffer1 = "";
-            String newBuffer2 = "";
+            string newBuffer1 = "";
+            string newBuffer2 = "";
             for (int i=0;i<s1.Length;i++)
             {
                 char c=s1[i];

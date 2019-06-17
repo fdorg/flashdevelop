@@ -41,7 +41,7 @@ namespace FlashDebugger
                     throw new NotSupportedException(TextHelper.GetString("Error.NoScalar"));
             } 
             else
-                throw new NoSuchVariableException(System.String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+                throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
         }
 
         public Context createContext(Object par0)
@@ -74,7 +74,7 @@ namespace FlashDebugger
                     {
                         if (v.getName().Equals(par0)) return (Object)v;
                     }
-                    throw new NoSuchVariableException(System.String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+                    throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
                 }
 
                 if ((String)par0 == "this")
@@ -106,7 +106,7 @@ namespace FlashDebugger
                     return (Object)session.getGlobal(new String(fullClassName));
                 }
             }
-            throw new NoSuchVariableException(System.String.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+            throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
             //Value_.UNDEFINED;
         }
 

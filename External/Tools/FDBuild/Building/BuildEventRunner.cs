@@ -21,7 +21,7 @@ namespace ProjectManager.Building
         //parse line into command/argument pair
         private string[] tokenize(string line)
         {
-            string[] result = new String[2];
+            string[] result = new string[2];
 
             if (line.StartsWith("\"", StringComparison.Ordinal))
             {

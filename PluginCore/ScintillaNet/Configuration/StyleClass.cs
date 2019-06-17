@@ -228,12 +228,12 @@ namespace ScintillaNet.Configuration
                 Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0)
                 {
-                    if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
+                    if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(int.Parse(aColor.Substring(2), NumberStyles.HexNumber));
                     else 
                     {
                         try
                         {
-                            return TO_COLORREF(Int32.Parse(aColor));
+                            return TO_COLORREF(int.Parse(aColor));
                         }
                         catch(Exception){}
                     }
@@ -257,12 +257,12 @@ namespace ScintillaNet.Configuration
                     number = v.val;
                     v = _parent.MasterScintilla.GetValue(number);
                 }
-                if (number.IndexOfOrdinal("0x") == 0) return Int32.Parse(number.Substring(2), NumberStyles.HexNumber);
+                if (number.IndexOfOrdinal("0x") == 0) return int.Parse(number.Substring(2), NumberStyles.HexNumber);
                 else
                 {
                     try
                     {
-                        return Int32.Parse(number);
+                        return int.Parse(number);
                     }
                     catch(Exception){}
                 }
@@ -296,8 +296,8 @@ namespace ScintillaNet.Configuration
             }
             try  // Choose first font that is found...
             {
-                String[] fonts = name.Split(',');
-                foreach (String font in fonts)
+                string[] fonts = name.Split(',');
+                foreach (string font in fonts)
                 {
                     if (IsFontInstalled(font)) return font;
                 }

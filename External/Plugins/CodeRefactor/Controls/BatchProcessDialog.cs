@@ -138,7 +138,7 @@ namespace CodeRefactor.Controls
         {
             this.targetComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.operationComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-            this.targetComboBox.Items.AddRange(new Object[] 
+            this.targetComboBox.Items.AddRange(new object[] 
             {
                 TextHelper.GetString("Info.OpenFiles"),
                 TextHelper.GetString("Info.ProjectSources")
@@ -158,7 +158,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// 
         /// </summary>
-        private void ProcessButtonClick(Object sender, EventArgs e)
+        private void ProcessButtonClick(object sender, EventArgs e)
         {
             var item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
 
@@ -187,7 +187,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Closes the batch process dialog
         /// </summary>
-        private void CancelButtonClick(Object sender, EventArgs e)
+        private void CancelButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }

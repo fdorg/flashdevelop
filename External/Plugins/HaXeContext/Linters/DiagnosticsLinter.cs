@@ -32,7 +32,7 @@ namespace HaXeContext.Linters
             var total = files.Count();
             var list = new List<LintingResult>();
 
-            String untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
+            string untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             foreach (var file in files)
             {
                 if (!File.Exists(file) || file.StartsWithOrdinal(untitledFileStart))

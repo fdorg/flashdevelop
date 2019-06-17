@@ -11,25 +11,25 @@ namespace FlashDevelop.Utilities
 {
     class PluginServices
     {
-        public static List<String> KnownDLLs;
+        public static List<string> KnownDLLs;
         public static List<AvailablePlugin> AvailablePlugins;
-        public static Int32 REQUIRED_API_LEVEL = 1;
+        public static int REQUIRED_API_LEVEL = 1;
         
         static PluginServices()
         {
-            KnownDLLs = new List<String>();
+            KnownDLLs = new List<string>();
             AvailablePlugins = new List<AvailablePlugin>();
         }
 
         /// <summary>
         /// Finds plugins from the specified folder
         /// </summary>
-        public static void FindPlugins(String path)
+        public static void FindPlugins(string path)
         {
             EnsureUpdatedPlugins(path);
-            foreach (String fileOn in Directory.GetFiles(path, "*.dll"))
+            foreach (string fileOn in Directory.GetFiles(path, "*.dll"))
             {
-                String name = Path.GetFileNameWithoutExtension(fileOn);
+                string name = Path.GetFileNameWithoutExtension(fileOn);
                 if (name != "PluginCore" && !KnownDLLs.Contains(name))
                 {
                     KnownDLLs.Add(name);
@@ -41,9 +41,9 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Ensures that the plugins are updated before init
         /// </summary>
-        public static void EnsureUpdatedPlugins(String path)
+        public static void EnsureUpdatedPlugins(string path)
         {
-            foreach (String file in Directory.GetFiles(path))
+            foreach (string file in Directory.GetFiles(path))
             {
                 FileHelper.EnsureUpdatedFile(file);
             }
@@ -52,7 +52,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Finds a plugin from the plugin collection
         /// </summary>
-        public static AvailablePlugin Find(String guid)
+        public static AvailablePlugin Find(string guid)
         {
             foreach (AvailablePlugin plugin in AvailablePlugins)
             {
@@ -89,7 +89,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Adds a plugin to the plugin collection
         /// </summary>
-        private static void AddPlugin(String fileName)
+        private static void AddPlugin(string fileName)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace FlashDevelop.Utilities
             }
             catch (Exception ex)
             {
-                String message = TextHelper.GetString("Info.UnableToLoadPlugin");
+                string message = TextHelper.GetString("Info.UnableToLoadPlugin");
                 ErrorManager.ShowWarning(message + " \n" + fileName, ex);
             }
         }
@@ -131,11 +131,11 @@ namespace FlashDevelop.Utilities
 
     public class AvailablePlugin
     {
-        public Boolean IsActive = false;
-        public String Assembly = String.Empty;
+        public bool IsActive = false;
+        public string Assembly = string.Empty;
         public IPlugin Instance = null;
 
-        public AvailablePlugin(String assembly)
+        public AvailablePlugin(string assembly)
         {
             this.Assembly = assembly;
         }

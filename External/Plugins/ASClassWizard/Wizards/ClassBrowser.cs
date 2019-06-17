@@ -102,7 +102,7 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Filter the list
         /// </summary>
-        private void filterBox_TextChanged(Object sender, EventArgs e)
+        private void filterBox_TextChanged(object sender, EventArgs e)
         {
             this.itemList.BeginUpdate();
             this.itemList.Items.Clear();

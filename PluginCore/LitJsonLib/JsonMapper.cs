@@ -111,21 +111,21 @@ namespace LitJson
                 IDictionary<Type, ImporterFunc>> custom_importers_table;
 
         private static IDictionary<Type, ArrayMetadata> array_metadata;
-        private static readonly object array_metadata_lock = new Object ();
+        private static readonly object array_metadata_lock = new object ();
 
         private static IDictionary<Type,
                 IDictionary<Type, MethodInfo>> conv_ops;
-        private static readonly object conv_ops_lock = new Object ();
+        private static readonly object conv_ops_lock = new object ();
 
         private static IDictionary<Type, ObjectMetadata> object_metadata;
-        private static readonly object object_metadata_lock = new Object ();
+        private static readonly object object_metadata_lock = new object ();
 
         private static IDictionary<Type,
                 IList<PropertyMetadata>> type_properties;
-        private static readonly object type_properties_lock = new Object ();
+        private static readonly object type_properties_lock = new object ();
 
         private static JsonWriter      static_writer;
-        private static readonly object static_writer_lock = new Object ();
+        private static readonly object static_writer_lock = new object ();
         #endregion
 
 
@@ -311,7 +311,7 @@ namespace LitJson
             if (reader.Token == JsonToken.Null) {
 
                 if (! inst_type.IsClass)
-                    throw new JsonException (String.Format (
+                    throw new JsonException (string.Format (
                             "Can't assign null to an instance of type {0}",
                             inst_type));
 
@@ -363,7 +363,7 @@ namespace LitJson
                                            new object[] { reader.Value });
 
                 // No luck
-                throw new JsonException (String.Format (
+                throw new JsonException (string.Format (
                         "Can't assign value '{0}' (type {1}) to type {2}",
                         reader.Value, json_type, inst_type));
             }
@@ -376,7 +376,7 @@ namespace LitJson
                 ArrayMetadata t_data = array_metadata[inst_type];
 
                 if (! t_data.IsArray && ! t_data.IsList)
-                    throw new JsonException (String.Format (
+                    throw new JsonException (string.Format (
                             "Type {0} can't act as an array",
                             inst_type));
 
@@ -445,7 +445,7 @@ namespace LitJson
 
                     } else {
                         if (! t_data.IsDictionary)
-                            throw new JsonException (String.Format (
+                            throw new JsonException (string.Format (
                                     "The type {0} doesn't have the " +
                                     "property '{1}'", inst_type, property));
 
@@ -671,7 +671,7 @@ namespace LitJson
         {
             if (depth > max_nesting_depth)
                 throw new JsonException (
-                    String.Format ("Max allowed object depth reached while " +
+                    string.Format ("Max allowed object depth reached while " +
                                    "trying to export from type {0}",
                                    obj.GetType ()));
 
@@ -689,27 +689,27 @@ namespace LitJson
                 return;
             }
 
-            if (obj is String) {
+            if (obj is string) {
                 writer.Write ((string) obj);
                 return;
             }
 
-            if (obj is Double) {
+            if (obj is double) {
                 writer.Write ((double) obj);
                 return;
             }
 
-            if (obj is Int32) {
+            if (obj is int) {
                 writer.Write ((int) obj);
                 return;
             }
 
-            if (obj is Boolean) {
+            if (obj is bool) {
                 writer.Write ((bool) obj);
                 return;
             }
 
-            if (obj is Int64) {
+            if (obj is long) {
                 writer.Write ((long) obj);
                 return;
             }

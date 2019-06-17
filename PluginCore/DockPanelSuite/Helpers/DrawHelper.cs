@@ -33,7 +33,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             
             int curveSize = 6;
 
-            String tabStyle = PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
             if (tabStyle == "Rect" || tabStyle == "Block")
             {
                 curveSize = 1;

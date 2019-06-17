@@ -40,9 +40,9 @@ namespace AirProperties
         #endregion
                
         private PluginMain _pluginMain;
-        private String _propertiesFilePath;
-        private String _propertiesFile;
-        private Boolean _isPropertiesLoaded;
+        private string _propertiesFilePath;
+        private string _propertiesFile;
+        private bool _isPropertiesLoaded;
         private List<string> _locales = new List<string>();
         private List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
         private readonly List<PropertyManager.AirApplicationIconField> _iconFields;
@@ -57,7 +57,7 @@ namespace AirProperties
         private IphonePlistManager iPhoneAdditions;
         private IphonePlistManager iPhoneEntitlements;
 
-        public Boolean IsPropertiesLoaded
+        public bool IsPropertiesLoaded
         {
             get { return _isPropertiesLoaded; }
         }
@@ -107,7 +107,7 @@ namespace AirProperties
                 _propertiesFilePath = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
                 LoadProperties(true);
             }
-            String airVersion = PropertyManager.Version;
+            string airVersion = PropertyManager.Version;
             if (PropertyManager.IsUnsupportedVersion) airVersion += "*";
             SetTitle(PluginCore.PluginBase.CurrentProject.Name, airVersion);
         }
@@ -224,15 +224,15 @@ namespace AirProperties
         {
             SystemChromeField.Items.Add(new ListItem(TextHelper.GetString("SystemChrome.None"), "none"));
             SystemChromeField.Items.Add(new ListItem(TextHelper.GetString("SystemChrome.Standard"), "standard"));
-            AspectRatioField.Items.Add(new ListItem(String.Empty, String.Empty));
+            AspectRatioField.Items.Add(new ListItem(string.Empty, string.Empty));
             AspectRatioField.Items.Add(new ListItem(TextHelper.GetString("AspectRatio.Portrait"), "portrait"));
             AspectRatioField.Items.Add(new ListItem(TextHelper.GetString("AspectRatio.Landscape"), "landscape"));
-            RenderModeField.Items.Add(new ListItem(String.Empty, String.Empty));
+            RenderModeField.Items.Add(new ListItem(string.Empty, string.Empty));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.Auto"), "auto"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.CPU"), "cpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.GPU"), "gpu"));
             RenderModeField.Items.Add(new ListItem(TextHelper.GetString("RenderMode.Direct"), "direct"));
-            SoftKeyboardField.Items.Add(new ListItem(String.Empty, String.Empty));
+            SoftKeyboardField.Items.Add(new ListItem(string.Empty, string.Empty));
             SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.None"), "none"));
             SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.Pan"), "pan"));
             OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
@@ -418,18 +418,18 @@ namespace AirProperties
                 };
         }
 
-        private String GetSelectedLocale()
+        private string GetSelectedLocale()
         {
-            String item = (String)LocalesField.SelectedItem;
+            string item = (string)LocalesField.SelectedItem;
             if (item != null)
             {
-                if (item == TextHelper.GetString("Locale.Default")) return String.Empty;
+                if (item == TextHelper.GetString("Locale.Default")) return string.Empty;
                 else return item;
             }
-            else return String.Empty;
+            else return string.Empty;
         }
 
-        private Boolean GetSelectedLocaleIsDefault()
+        private bool GetSelectedLocaleIsDefault()
         {
             return LocalesField.SelectedIndex == 0;
         }
@@ -599,7 +599,7 @@ namespace AirProperties
                     appIconLabel.Location = new Point(3, 6);
                     appIconLabel.Size = new Size(43, 13);
                     appIconLabel.TabIndex = 0;
-                    appIconLabel.Text = String.Format("{0} x {0}", icon.Size);
+                    appIconLabel.Text = string.Format("{0} x {0}", icon.Size);
 
                     appIconField.Anchor = AnchorStyles.Left;
                     ValidationErrorProvider.SetIconPadding(appIconField, 36);
@@ -626,7 +626,7 @@ namespace AirProperties
             }
         }
 
-        private void LoadProperties(Boolean isDefault)
+        private void LoadProperties(bool isDefault)
         {
             string contentProperty;
             string[] minSizeProperty;
@@ -645,7 +645,7 @@ namespace AirProperties
                 {
                     if (PropertyManager.IsUnsupportedVersion)
                     {
-                        if (MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.UnsupportedAirDescriptorFile"),
+                        if (MessageBox.Show(string.Format(TextHelper.GetString("Alert.Message.UnsupportedAirDescriptorFile"),
                             _propertiesFile, PropertyManager.Version, PropertyManager.MaxSupportedVersion),
                             TextHelper.GetString("Alert.Title.UnsupportedAirDescriptorFile"),
                             MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != System.Windows.Forms.DialogResult.OK)
@@ -802,21 +802,21 @@ namespace AirProperties
             }
         }
 
-        private String LookupPropertiesFile()
+        private string LookupPropertiesFile()
         {
-            String path = Path.Combine(_propertiesFilePath, "application.xml");
+            string path = Path.Combine(_propertiesFilePath, "application.xml");
             if (File.Exists(path)) return path;
-            String[] files = Directory.GetFiles(_propertiesFilePath, "*-app.xml");
-            foreach (String file in files)
+            string[] files = Directory.GetFiles(_propertiesFilePath, "*-app.xml");
+            foreach (string file in files)
                 if (LooksLikeAIRProperties(file)) return file;
-            foreach (String srcPath in PluginCore.PluginBase.CurrentProject.SourcePaths)
+            foreach (string srcPath in PluginCore.PluginBase.CurrentProject.SourcePaths)
             {
                 files = Directory.GetFiles(ProjectPaths.GetAbsolutePath(_propertiesFilePath, srcPath), "*-app.xml");
-                foreach (String file in files)
+                foreach (string file in files)
                     if (LooksLikeAIRProperties(file)) return file;
             }
             files = Directory.GetFiles(_propertiesFilePath, "*.xml");
-            foreach (String file in files)
+            foreach (string file in files)
                 if (LooksLikeAIRProperties(file)) return file;
 
             // look if we stored a custom path in the project's lcoal storage
@@ -831,7 +831,7 @@ namespace AirProperties
         {
             try
             {
-                String src = File.ReadAllText(file);
+                string src = File.ReadAllText(file);
                 if (src.IndexOfOrdinal("xmlns=\"http://ns.adobe.com/air/") > 0) return true;
             }
             catch { }
@@ -840,7 +840,7 @@ namespace AirProperties
         
         private void SaveProperties()
         {
-            string supportedProfilesProperty = String.Empty;
+            string supportedProfilesProperty = string.Empty;
             if (File.Exists(_propertiesFile))
             {
                 // Details tab
@@ -857,7 +857,7 @@ namespace AirProperties
                     PropertyManager.SetProperty("versionLabel", VersionLabelField);
                     PropertyManager.SetProperty("versionNumber", VersionNoField);
                     // will cause any existing version property to be removed
-                    PropertyManager.SetProperty("version", String.Empty);
+                    PropertyManager.SetProperty("version", string.Empty);
                 }
                 // Installation tab
                 PropertyManager.SetAttribute("minimumPatchLevel", MinimumPatchLevelField);
@@ -1017,25 +1017,25 @@ namespace AirProperties
             }
         }
 
-        private Boolean CheckUniformFileNamePrefix(Boolean isApplicationIcon)
+        private bool CheckUniformFileNamePrefix(bool isApplicationIcon)
         {
-            Boolean isValid = true;
+            bool isValid = true;
             if (_pluginMain.Settings.UseUniformFilenames)
             {
 
                 if (isApplicationIcon)
                 {
-                    if (!ValidationErrorProvider.GetError(FileNameField).Equals(String.Empty))
+                    if (!ValidationErrorProvider.GetError(FileNameField).Equals(string.Empty))
                     {
-                        MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.FileNamePrefixInvalid"), "File Name"), TextHelper.GetString("Alert.Title.FileNamePrefixInvalid"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(string.Format(TextHelper.GetString("Alert.Message.FileNamePrefixInvalid"), "File Name"), TextHelper.GetString("Alert.Title.FileNamePrefixInvalid"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         isValid = false;
                     }
                 }
                 else
                 {
-                    if (!ValidationErrorProvider.GetError(FileTypeExtensionField).Equals(String.Empty))
+                    if (!ValidationErrorProvider.GetError(FileTypeExtensionField).Equals(string.Empty))
                     {
-                        MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.FileNamePrefixInvalid"), "Extension"), TextHelper.GetString("Alert.Title.FileNamePrefixInvalid"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(string.Format(TextHelper.GetString("Alert.Message.FileNamePrefixInvalid"), "Extension"), TextHelper.GetString("Alert.Title.FileNamePrefixInvalid"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         isValid = false;
                     }
                 }
@@ -1043,7 +1043,7 @@ namespace AirProperties
             return isValid;
         }
 
-        private void UpdateIcon(string fileName, ref TextBox fileNameTextBox, Point dimensions, Boolean isApplicationIcon)
+        private void UpdateIcon(string fileName, ref TextBox fileNameTextBox, Point dimensions, bool isApplicationIcon)
         {
 
             string projectPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
@@ -1088,7 +1088,7 @@ namespace AirProperties
             }
             else
             {
-                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X, dimensions.Y), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(string.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X, dimensions.Y), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -1106,12 +1106,12 @@ namespace AirProperties
                     fileTypeListItem.SubItems.Add(fileType.Extension);
                     if (fileType.IsValid)
                     {
-                        fileTypeListItem.ToolTipText = String.Empty;
+                        fileTypeListItem.ToolTipText = string.Empty;
                         fileTypeListItem.ImageIndex = 0;
                     }
                     else
                     {
-                        fileTypeListItem.ToolTipText = String.Format(TextHelper.GetString("Validation.InvalidFileType"), fileType.Name);
+                        fileTypeListItem.ToolTipText = string.Format(TextHelper.GetString("Validation.InvalidFileType"), fileType.Name);
                         fileTypeListItem.ImageIndex = 1;
                     }
                     FileTypesListView.Items.Add(fileTypeListItem);
@@ -1133,12 +1133,12 @@ namespace AirProperties
                     var extensionListItem = new ListViewItem(extension.ExtensionId);
                     if (extension.IsValid)
                     {
-                        extensionListItem.ToolTipText = String.Empty;
+                        extensionListItem.ToolTipText = string.Empty;
                         extensionListItem.ImageIndex = 0;
                     }
                     else
                     {
-                        extensionListItem.ToolTipText = String.Format(TextHelper.GetString("Validation.InvalidExtension"), extension.ExtensionId);
+                        extensionListItem.ToolTipText = string.Format(TextHelper.GetString("Validation.InvalidExtension"), extension.ExtensionId);
                         extensionListItem.ImageIndex = 1;
                     }
                     ExtensionsListView.Items.Add(extensionListItem);
@@ -1190,12 +1190,12 @@ namespace AirProperties
                 FileTypesListView.SelectedItems[0].SubItems[1].Text = selectedFileType.Extension;
                 if (selectedFileType.IsValid)
                 {
-                    FileTypesListView.SelectedItems[0].ToolTipText = String.Empty;
+                    FileTypesListView.SelectedItems[0].ToolTipText = string.Empty;
                     FileTypesListView.SelectedItems[0].ImageIndex = 0;
                 }
                 else
                 {
-                    FileTypesListView.SelectedItems[0].ToolTipText = String.Format(TextHelper.GetString("Validation.InvalidFileType"), selectedFileType.Name);
+                    FileTypesListView.SelectedItems[0].ToolTipText = string.Format(TextHelper.GetString("Validation.InvalidFileType"), selectedFileType.Name);
                     FileTypesListView.SelectedItems[0].ImageIndex = 1;
                 }
             }
@@ -1210,12 +1210,12 @@ namespace AirProperties
                 ExtensionsListView.SelectedItems[0].SubItems[0].Text = selectedExtension.ExtensionId;
                 if (selectedExtension.IsValid)
                 {
-                    ExtensionsListView.SelectedItems[0].ToolTipText = String.Empty;
+                    ExtensionsListView.SelectedItems[0].ToolTipText = string.Empty;
                     ExtensionsListView.SelectedItems[0].ImageIndex = 0;
                 }
                 else
                 {
-                    ExtensionsListView.SelectedItems[0].ToolTipText = String.Format(TextHelper.GetString("Validation.InvalidExtension"), selectedExtension.ExtensionId);
+                    ExtensionsListView.SelectedItems[0].ToolTipText = string.Format(TextHelper.GetString("Validation.InvalidExtension"), selectedExtension.ExtensionId);
                     ExtensionsListView.SelectedItems[0].ImageIndex = 1;
                 }
             }
@@ -1261,27 +1261,27 @@ namespace AirProperties
                 FileTypeIconField32.Text = "";
                 FileTypeIconField48.Text = "";
                 FileTypeIconField128.Text = "";
-                ValidationErrorProvider.SetError(FileTypeNameField, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeExtensionField, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeDescriptionField, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeContentTypeField, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeIconField16, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeIconField32, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeIconField48, String.Empty);
-                ValidationErrorProvider.SetError(FileTypeIconField128, String.Empty);
+                ValidationErrorProvider.SetError(FileTypeNameField, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeExtensionField, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeDescriptionField, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeContentTypeField, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeIconField16, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeIconField32, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeIconField48, string.Empty);
+                ValidationErrorProvider.SetError(FileTypeIconField128, string.Empty);
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V20)
                 {
-                    FileTypeIconField29.Text = String.Empty;
-                    FileTypeIconField72.Text = String.Empty;
-                    FileTypeIconField512.Text = String.Empty;
-                    ValidationErrorProvider.SetError(FileTypeIconField29, String.Empty);
-                    ValidationErrorProvider.SetError(FileTypeIconField72, String.Empty);
-                    ValidationErrorProvider.SetError(FileTypeIconField512, String.Empty);
+                    FileTypeIconField29.Text = string.Empty;
+                    FileTypeIconField72.Text = string.Empty;
+                    FileTypeIconField512.Text = string.Empty;
+                    ValidationErrorProvider.SetError(FileTypeIconField29, string.Empty);
+                    ValidationErrorProvider.SetError(FileTypeIconField72, string.Empty);
+                    ValidationErrorProvider.SetError(FileTypeIconField512, string.Empty);
                 }
                 if (PropertyManager.MajorVersion >= PropertyManager.AirVersion.V25)
                 {
-                    FileTypeIconField36.Text = String.Empty;
-                    ValidationErrorProvider.SetError(FileTypeIconField36, String.Empty);
+                    FileTypeIconField36.Text = string.Empty;
+                    ValidationErrorProvider.SetError(FileTypeIconField36, string.Empty);
                 }
             }
         }
@@ -1302,8 +1302,8 @@ namespace AirProperties
             {
                 ExtensionRemoveButton.Enabled = false;
                 ExtensionIdField.Enabled = false;
-                ExtensionIdField.Text = String.Empty;
-                ValidationErrorProvider.SetError(ExtensionIdField, String.Empty);
+                ExtensionIdField.Text = string.Empty;
+                ValidationErrorProvider.SetError(ExtensionIdField, string.Empty);
             }
         }
 
@@ -1391,7 +1391,7 @@ namespace AirProperties
         private void AppIconButtonClick(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
-            String size = btn.Name.Replace("AppIconButton", "");
+            string size = btn.Name.Replace("AppIconButton", "");
             if (CheckUniformFileNamePrefix(true) && OpenIconFileDialog.ShowDialog() == DialogResult.OK)
             {
                 Control[] controls = AppIconsPanel.Controls.Find("AppIconField" + size, true);
@@ -1406,7 +1406,7 @@ namespace AirProperties
         private void FileTypeIconButtonClick(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
-            String size = btn.Name.Replace("FileTypeIconButton", "");
+            string size = btn.Name.Replace("FileTypeIconButton", "");
             if (CheckUniformFileNamePrefix(false) && OpenIconFileDialog.ShowDialog() == DialogResult.OK)
             {
                 Control[] controls = FileTypeIconsPanel.Controls.Find("FileTypeIconField" + size, true);
@@ -1563,7 +1563,7 @@ namespace AirProperties
             {
                 if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
                 {
-                    SupportedLanguagesField.Text = String.Join(" ", locales.ToArray());
+                    SupportedLanguagesField.Text = string.Join(" ", locales.ToArray());
                 }
             }
         }
@@ -1634,7 +1634,7 @@ namespace AirProperties
         {
             if (IPhoneDeviceCombo.CheckedItems.Count == 0)
             {
-                String msg = TextHelper.GetString("Info.SelectAtleastOneItem");
+                string msg = TextHelper.GetString("Info.SelectAtleastOneItem");
                 ErrorManager.ShowWarning(msg, null);
                 IPhoneDeviceCombo.SetItemChecked(0, true);
             }
@@ -1676,7 +1676,7 @@ namespace AirProperties
                     var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
                     if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
                     {
-                        String msg = TextHelper.GetString("Info.CheckFileLocation");
+                        string msg = TextHelper.GetString("Info.CheckFileLocation");
                         ErrorManager.ShowWarning(msg, null);
                     }
                     else
@@ -1704,7 +1704,7 @@ namespace AirProperties
                     }
                     catch (Exception ex)
                     {
-                        String msg = TextHelper.GetString("Info.CouldNotLoadANE") + "\n" + ex.Message;
+                        string msg = TextHelper.GetString("Info.CouldNotLoadANE") + "\n" + ex.Message;
                         ErrorManager.ShowWarning(msg, null);
                         return;
                     }
@@ -1712,7 +1712,7 @@ namespace AirProperties
 
                     if (entry == null)
                     {
-                        String msg = TextHelper.GetString("Info.ANEDescFileNotFound");
+                        string msg = TextHelper.GetString("Info.ANEDescFileNotFound");
                         ErrorManager.ShowWarning(msg, null);
                         return;
                     }
@@ -1741,7 +1741,7 @@ namespace AirProperties
 
                     if (extensionId == null)
                     {
-                        String msg = TextHelper.GetString("Info.ExtensionIDNotFound");
+                        string msg = TextHelper.GetString("Info.ExtensionIDNotFound");
                         ErrorManager.ShowWarning(msg, null);
                         return;
                     }
@@ -1863,7 +1863,7 @@ namespace AirProperties
         }
 
         // validates that the supplied image URI is a PNG file
-        private Boolean ValidateImageExtension(String imageURI)
+        private bool ValidateImageExtension(string imageURI)
         {
             return imageURI.ToLower().EndsWithOrdinal(".png");
         }
@@ -1913,21 +1913,21 @@ namespace AirProperties
         private void ValidateAppIconField(object sender, CancelEventArgs e)
         {
             TextBox field = (TextBox)sender;
-            String size = field.Name.Replace("tbAppIcon", "");
+            string size = field.Name.Replace("tbAppIcon", "");
             field.Text = field.Text.Trim();
             if (field.Visible && field.Text.Length > 0 && (!Regex.IsMatch(field.Text, _AnyUriRegexPattern) || !ValidateImageExtension(field.Text)))
             {
-                this.ValidationErrorProvider.SetError(field, String.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
+                this.ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(field, String.Empty);
+            else this.ValidationErrorProvider.SetError(field, string.Empty);
         }
 
         private void ValidateFileTypeIconField(object sender, CancelEventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             TextBox field = (TextBox)sender;
-            String size = field.Name.Replace("FileTypeIconField", "");
+            string size = field.Name.Replace("FileTypeIconField", "");
             if (selectedFileType != null)
             {
                 field.Text = field.Text.Trim();
@@ -1935,13 +1935,13 @@ namespace AirProperties
                 if (field.Text.Length > 0 && (!Regex.IsMatch(field.Text, _AnyUriRegexPattern) || !ValidateImageExtension(field.Text)))
                 {
                     selectedFileType.SetIconIsValid(Convert.ToInt16(size), false);
-                    this.ValidationErrorProvider.SetError(field, String.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
+                    this.ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
                     e.Cancel = true;
                 }
                 else
                 {
                     selectedFileType.SetIconIsValid(Convert.ToInt16(size), true);
-                    this.ValidationErrorProvider.SetError(field, String.Empty);
+                    this.ValidationErrorProvider.SetError(field, string.Empty);
                 }
                 RefreshSelectedFileType();
             }
@@ -1951,7 +1951,7 @@ namespace AirProperties
         {
             if (!Regex.IsMatch(IDField.Text, _IdRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(IDField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), IDLabel.Text));
+                this.ValidationErrorProvider.SetError(IDField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), IDLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(IDField, "");
@@ -1961,7 +1961,7 @@ namespace AirProperties
         {
             if (VersionField.Text.Length == 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
-                this.ValidationErrorProvider.SetError(VersionField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
+                this.ValidationErrorProvider.SetError(VersionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(VersionField, "");
@@ -1972,7 +1972,7 @@ namespace AirProperties
             FileNameField.Text = FileNameField.Text.Trim();
             if (!Regex.IsMatch(FileNameField.Text, _FileNameRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(FileNameField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FileNameLabel.Text));
+                this.ValidationErrorProvider.SetError(FileNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FileNameLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(FileNameField, "");
@@ -1983,7 +1983,7 @@ namespace AirProperties
             InstallFolderField.Text = InstallFolderField.Text.Trim();
             if (InstallFolderField.Text.Length > 0 && !Regex.IsMatch(InstallFolderField.Text, _FilePathRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(InstallFolderField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), InstallFolderLabel.Text));
+                this.ValidationErrorProvider.SetError(InstallFolderField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InstallFolderLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(InstallFolderField, "");
@@ -1994,7 +1994,7 @@ namespace AirProperties
             ProgramMenuFolderField.Text = ProgramMenuFolderField.Text.Trim();
             if (ProgramMenuFolderField.Text.Length > 0 && !Regex.IsMatch(ProgramMenuFolderField.Text, _FilePathRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(ProgramMenuFolderField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), ProgramMenuFolderLabel.Text));
+                this.ValidationErrorProvider.SetError(ProgramMenuFolderField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ProgramMenuFolderLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(ProgramMenuFolderField, "");
@@ -2006,7 +2006,7 @@ namespace AirProperties
             ContentField.Text = ContentField.Text.Trim();
             if (!Regex.IsMatch(ContentField.Text, _AnyUriRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(ContentField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), ContentLabel.Text));
+                this.ValidationErrorProvider.SetError(ContentField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ContentLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(ContentField, "");
@@ -2017,7 +2017,7 @@ namespace AirProperties
             XField.Text = XField.Text.Trim();
             if (XField.Text.Length > 0 && !Regex.IsMatch(XField.Text, _CoordinateRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(XField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (X)"));
+                this.ValidationErrorProvider.SetError(XField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (X)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(XField, "");
@@ -2028,7 +2028,7 @@ namespace AirProperties
             YField.Text = YField.Text.Trim();
             if (YField.Text.Length > 0 && !Regex.IsMatch(YField.Text, _CoordinateRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(YField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (Y)"));
+                this.ValidationErrorProvider.SetError(YField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(YField, "");
@@ -2039,7 +2039,7 @@ namespace AirProperties
             WidthField.Text = WidthField.Text.Trim();
             if (WidthField.Text.Length > 0 && !Regex.IsMatch(WidthField.Text, _NumberRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(WidthField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (X)"));
+                this.ValidationErrorProvider.SetError(WidthField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (X)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(WidthField, "");
@@ -2050,7 +2050,7 @@ namespace AirProperties
             HeightField.Text = HeightField.Text.Trim();
             if (HeightField.Text.Length > 0 && !Regex.IsMatch(HeightField.Text, _NumberRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(HeightField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (Y)"));
+                this.ValidationErrorProvider.SetError(HeightField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(HeightField, "");
@@ -2063,7 +2063,7 @@ namespace AirProperties
             if (MinSizeXField.Text.Length > 0)
             {
                 if (!Regex.IsMatch(MinSizeXField.Text, _NumberRegexPattern)) isValid = false;
-                else if (MaxSizeXField.Text.Length > 0 && ValidationErrorProvider.GetError(MaxSizeXField).Equals(String.Empty))
+                else if (MaxSizeXField.Text.Length > 0 && ValidationErrorProvider.GetError(MaxSizeXField).Equals(string.Empty))
                 {
                     if (Convert.ToInt32(MinSizeXField.Text) > Convert.ToInt32(MaxSizeXField.Text)) isValid = false;
                 }
@@ -2074,7 +2074,7 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MinSizeXField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (X)"));
+                this.ValidationErrorProvider.SetError(MinSizeXField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (X)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(MinSizeXField, "");
@@ -2087,7 +2087,7 @@ namespace AirProperties
             if (MinSizeYField.Text.Length > 0)
             {
                 if (!Regex.IsMatch(MinSizeYField.Text, _NumberRegexPattern)) isValid = false;
-                else if (MaxSizeYField.Text.Length > 0 && ValidationErrorProvider.GetError(MaxSizeYField).Equals(String.Empty))
+                else if (MaxSizeYField.Text.Length > 0 && ValidationErrorProvider.GetError(MaxSizeYField).Equals(string.Empty))
                 {
                     if (Convert.ToInt32(MinSizeYField.Text) > Convert.ToInt32(MaxSizeYField.Text)) isValid = false;
                 }
@@ -2098,7 +2098,7 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MinSizeYField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (Y)"));
+                this.ValidationErrorProvider.SetError(MinSizeYField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(MinSizeYField, "");
@@ -2111,7 +2111,7 @@ namespace AirProperties
             if (MaxSizeXField.Text.Length > 0)
             {
                 if (!Regex.IsMatch(MaxSizeXField.Text, _NumberRegexPattern)) isValid = false;
-                else if (MinSizeXField.Text.Length > 0 && ValidationErrorProvider.GetError(MinSizeXField).Equals(String.Empty))
+                else if (MinSizeXField.Text.Length > 0 && ValidationErrorProvider.GetError(MinSizeXField).Equals(string.Empty))
                 {
                     if (Convert.ToInt32(MaxSizeXField.Text) < Convert.ToInt32(MinSizeXField.Text)) isValid = false;
                 }
@@ -2122,7 +2122,7 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MaxSizeXField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (X)"));
+                this.ValidationErrorProvider.SetError(MaxSizeXField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (X)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(MaxSizeXField, "");
@@ -2135,7 +2135,7 @@ namespace AirProperties
             if (MaxSizeYField.Text.Length > 0)
             {
                 if (!Regex.IsMatch(MaxSizeYField.Text, _NumberRegexPattern)) isValid = false;
-                else if (MinSizeYField.Text.Length > 0 && ValidationErrorProvider.GetError(MinSizeYField).Equals(String.Empty))
+                else if (MinSizeYField.Text.Length > 0 && ValidationErrorProvider.GetError(MinSizeYField).Equals(string.Empty))
                 {
                     if (Convert.ToInt32(MaxSizeYField.Text) < Convert.ToInt32(MinSizeYField.Text)) isValid = false;
                 }
@@ -2146,7 +2146,7 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MaxSizeYField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (Y)"));
+                this.ValidationErrorProvider.SetError(MaxSizeYField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(MaxSizeYField, "");
@@ -2162,7 +2162,7 @@ namespace AirProperties
                 if (FileTypeNameField.Text.Length == 0)
                 {
                     selectedFileType.NameIsValid = false;
-                    this.ValidationErrorProvider.SetError(FileTypeNameField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
+                    this.ValidationErrorProvider.SetError(FileTypeNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
                     e.Cancel = true;
                 }
                 else
@@ -2185,7 +2185,7 @@ namespace AirProperties
                 if (!Regex.IsMatch(FileTypeExtensionField.Text, _FileNameRegexPattern))
                 {
                     selectedFileType.ExtensionIsValid = false;
-                    this.ValidationErrorProvider.SetError(FileTypeExtensionField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTExtensionLabel.Text));
+                    this.ValidationErrorProvider.SetError(FileTypeExtensionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTExtensionLabel.Text));
                     e.Cancel = true;
                 }
                 else
@@ -2218,7 +2218,7 @@ namespace AirProperties
                 if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
                 {
                     selectedFileType.ContentTypeIsValid = false;
-                    this.ValidationErrorProvider.SetError(FileTypeContentTypeField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
+                    this.ValidationErrorProvider.SetError(FileTypeContentTypeField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
                     e.Cancel = true;
                 }
                 else
@@ -2247,7 +2247,7 @@ namespace AirProperties
             PublisherIdField.Text = PublisherIdField.Text.Trim();
             if (PublisherIdField.Text.Length > 0 && !Regex.IsMatch(PublisherIdField.Text, _PublisherRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(PublisherIdField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), PublisherIdLabel.Text));
+                this.ValidationErrorProvider.SetError(PublisherIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), PublisherIdLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(PublisherIdField, "");
@@ -2258,7 +2258,7 @@ namespace AirProperties
             VersionNoField.Text = VersionNoField.Text.Trim();
             if (VersionNoField.Text.Length > 0 && !Regex.IsMatch(VersionNoField.Text, _VersionRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(VersionNoField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionNoLabel.Text));
+                this.ValidationErrorProvider.SetError(VersionNoField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionNoLabel.Text));
                 e.Cancel = true;
             }
             else this.ValidationErrorProvider.SetError(VersionNoField, "");
@@ -2274,7 +2274,7 @@ namespace AirProperties
                 if (ExtensionIdField.Text.Length > 0 && !Regex.IsMatch(ExtensionIdField.Text, _ExtensionRegexPattern))
                 {
                     selectedExtension.IsValid = false;
-                    this.ValidationErrorProvider.SetError(ExtensionIdField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), ExtensionIdLabel.Text));
+                    this.ValidationErrorProvider.SetError(ExtensionIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ExtensionIdLabel.Text));
                     e.Cancel = true;
                 }
                 else

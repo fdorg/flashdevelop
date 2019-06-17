@@ -13,14 +13,14 @@ namespace PluginCore.Controls
         {
             return MeasureRichTextBox(richTextBox, true, richTextBox.Width, richTextBox.Height, richTextBox.WordWrap);
         }
-        public static Size MeasureRichTextBox(RichTextBox richTextBox, Boolean useSelfForTest, int width, int height, Boolean wordWrap)
+        public static Size MeasureRichTextBox(RichTextBox richTextBox, bool useSelfForTest, int width, int height, bool wordWrap)
         {
             Size outSize = new Size();
 
             if (richTextBox == null)
                 return outSize;
 
-            String rtf = richTextBox.Rtf;
+            string rtf = richTextBox.Rtf;
             if (rtf == null)
                 return outSize;
 

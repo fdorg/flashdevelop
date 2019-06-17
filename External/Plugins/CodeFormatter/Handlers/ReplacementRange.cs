@@ -7,8 +7,8 @@ namespace CodeFormatter.Handlers
     {
         public Point mRangeInFormattedDoc;
         private Point mRangeInOriginalDoc;
-        private String mAddedText;
-        private String mDeletedText;
+        private string mAddedText;
+        private string mDeletedText;
 
         public ReplacementRange(Point rangeInFormattedDoc, Point rangeInOrigDoc)
         {
@@ -18,7 +18,7 @@ namespace CodeFormatter.Handlers
             mDeletedText = "";
         }
 
-        public void setChangedText(String added, String removed)
+        public void setChangedText(string added, string removed)
         {
             if (added != null) mAddedText = added;
             if (removed != null) mDeletedText = removed;
@@ -31,11 +31,11 @@ namespace CodeFormatter.Handlers
         {
             return mRangeInOriginalDoc;
         }
-        public String getAddedText()
+        public string getAddedText()
         {
             return mAddedText;
         }
-        public String getDeletedText()
+        public string getDeletedText()
         {
             return mDeletedText;
         }

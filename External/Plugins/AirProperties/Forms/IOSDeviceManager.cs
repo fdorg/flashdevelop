@@ -141,9 +141,9 @@ namespace AirProperties.Forms
 
         public class DeviceClassification
         {
-            public String Name { get; set; }
+            public string Name { get; set; }
 
-            public String HardwareId { get; set; }
+            public string HardwareId { get; set; }
 
             public DeviceClassification[] SubClassifications { get; set; }
 

@@ -35,7 +35,7 @@ namespace FlashDevelop
         /// <summary>
         /// Quick reference to PreviousDocuments 
         /// </summary>
-        public static List<String> PreviousDocuments
+        public static List<string> PreviousDocuments
         {
             get { return Settings.PreviousDocuments; }
         }

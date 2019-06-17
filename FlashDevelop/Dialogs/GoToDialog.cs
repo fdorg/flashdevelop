@@ -136,7 +136,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, System.EventArgs e)
+        private void VisibleChange(object sender, System.EventArgs e)
         {
             if (this.Visible)
             {
@@ -148,7 +148,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Hides only the dialog when user closes it
         /// </summary>
-        private void DialogClosing(Object sender, System.ComponentModel.CancelEventArgs e)
+        private void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
             Globals.CurrentDocument.Activate();
@@ -158,19 +158,19 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Moves the cursor to the specified line
         /// </summary>
-        private void LineButtonClick(Object sender, System.EventArgs e)
+        private void LineButtonClick(object sender, System.EventArgs e)
         {
             if (Globals.SciControl == null) return;
             try
             {
-                Int32 line = Convert.ToInt32(this.lineTextBox.Text) - 1;
+                int line = Convert.ToInt32(this.lineTextBox.Text) - 1;
                 Globals.SciControl.EnsureVisibleEnforcePolicy(line);
                 Globals.SciControl.GotoLineIndent(line);
                 this.Close();
             }
             catch
             {
-                String message = TextHelper.GetString("Info.GiveProperInt32Value");
+                string message = TextHelper.GetString("Info.GiveProperInt32Value");
                 ErrorManager.ShowInfo(message);
             }
         }
@@ -178,20 +178,20 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Moves the cursor to the specified position
         /// </summary>
-        private void PositionButtonClick(Object sender, System.EventArgs e)
+        private void PositionButtonClick(object sender, System.EventArgs e)
         {
             if (Globals.SciControl == null) return;
             try
             {
-                Int32 pos = Convert.ToInt32(this.lineTextBox.Text) - 1;
-                Int32 line = Globals.SciControl.LineFromPosition(pos);
+                int pos = Convert.ToInt32(this.lineTextBox.Text) - 1;
+                int line = Globals.SciControl.LineFromPosition(pos);
                 Globals.SciControl.EnsureVisibleEnforcePolicy(line);
                 Globals.SciControl.GotoPos(pos);
                 this.Close();
             }
             catch
             {
-                String message = TextHelper.GetString("Info.GiveProperInt32Value");
+                string message = TextHelper.GetString("Info.GiveProperInt32Value");
                 ErrorManager.ShowInfo(message);
             }
         }
@@ -199,7 +199,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Hides the goto dialog
         /// </summary>
-        private void CancelButtonClick(Object sender, System.EventArgs e)
+        private void CancelButtonClick(object sender, System.EventArgs e)
         {
             this.Close();
         }

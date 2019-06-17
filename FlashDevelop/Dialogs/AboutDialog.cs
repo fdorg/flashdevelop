@@ -117,16 +117,16 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ApplyLocalizedTexts()
         {
-            String name = Application.ProductName;
-            String bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
+            string name = Application.ProductName;
+            string bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
             this.Text = " " + TextHelper.GetString("Title.AboutDialog") + " " + bit;
             this.versionLabel.Font = new Font(this.Font, FontStyle.Bold);
             this.versionLabel.Text = name;
             Regex shaRegex = new Regex("#([a-f0-9]*)");
-            String sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
-            String link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
-            Int32 lastChar = this.versionLabel.Text.Length;
-            Int32 firstChar = this.versionLabel.Text.IndexOf('(');
+            string sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
+            string link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
+            int lastChar = this.versionLabel.Text.Length;
+            int firstChar = this.versionLabel.Text.IndexOf('(');
             this.versionLabel.Links.Add(new LinkLabel.Link(firstChar, lastChar, link));
             ToolTip tooltip = new ToolTip();
             tooltip.SetToolTip(versionLabel, link);
@@ -135,16 +135,16 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When user clicks the link, open the Github commit in the browser.
         /// </summary>
-        private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        private void VersionLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string target = e.Link.LinkData as String;
+            string target = e.Link.LinkData as string;
             if (target != null) Process.Start(target);
         }
 
         /// <summary>
         /// Closes the about dialog
         /// </summary>
-        private void DialogKeyDown(Object sender, KeyEventArgs e)
+        private void DialogKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter || e.KeyData == Keys.Escape)
             {
@@ -155,7 +155,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the about dialog
         /// </summary>
-        private void DialogCloseClick(Object sender, EventArgs e)
+        private void DialogCloseClick(object sender, EventArgs e)
         {
             this.Close();
         }

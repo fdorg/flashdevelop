@@ -6,13 +6,13 @@ namespace PluginCore.Helpers
     public static class PlatformHelper
     {
         // INIT
-        private static Boolean isRunningOnWindows = (Environment.OSVersion.Platform != PlatformID.Unix) && (Environment.OSVersion.Platform != PlatformID.MacOSX);
-        private static Boolean isRunningOnMono = Type.GetType("Mono.Runtime") != null;
+        private static bool isRunningOnWindows = (Environment.OSVersion.Platform != PlatformID.Unix) && (Environment.OSVersion.Platform != PlatformID.MacOSX);
+        private static bool isRunningOnMono = Type.GetType("Mono.Runtime") != null;
 
         /// <summary>
         /// Checks if we are running on Windows
         /// </summary>
-        public static Boolean IsRunningOnWindows()
+        public static bool IsRunningOnWindows()
         {
             return isRunningOnWindows;
         }
@@ -20,7 +20,7 @@ namespace PluginCore.Helpers
         /// <summary>
         ///  Checks if we are running on Wine
         /// </summary>
-        public static Boolean isRunningOnWine()
+        public static bool isRunningOnWine()
         {
             return isRunningOnWindows && (Registry.LocalMachine.OpenSubKey(@"Software\Wine\") != null);
         }
@@ -28,7 +28,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks if we are running on Mono
         /// </summary>
-        public static Boolean IsRunningOnMono()
+        public static bool IsRunningOnMono()
         {
             return isRunningOnMono;
         }

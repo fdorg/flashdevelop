@@ -22,7 +22,7 @@ namespace ProjectManager
         LinkLabel help;
         ProjectTreeView tree;
         ProjectContextMenu menu;
-        Boolean isEditingLabel;
+        bool isEditingLabel;
 
         public event EventHandler NewProject;
         public event EventHandler OpenProject;
@@ -70,7 +70,7 @@ namespace ProjectManager
             #region Instructions
 
             help = new LinkLabel();
-            string[] helpParts = String.Format(TextHelper.GetString("Info.NoProjectsOpenLink"), "\n").Split('|');
+            string[] helpParts = string.Format(TextHelper.GetString("Info.NoProjectsOpenLink"), "\n").Split('|');
             string[] helpActions = { "create", "open", "import|FlashBuilder", "import|hxml" };
             var helpActionsLength = helpActions.Length;
             int[] linkStart = new int[helpActionsLength];
@@ -163,7 +163,7 @@ namespace ProjectManager
         /// <summary>
         /// A label of the project tree is currently beeing edited
         /// </summary> 
-        public Boolean IsEditingLabel
+        public bool IsEditingLabel
         {
             get { return this.isEditingLabel; }
             set { this.isEditingLabel = value; }
@@ -189,11 +189,11 @@ namespace ProjectManager
         /// ask it to refresh.  This is necessary because filesystemwatcher 
         /// doesn't always work over network shares.
         /// </summary>
-        public void WatchParentOf(String path)
+        public void WatchParentOf(string path)
         {
             try
             {
-                String parent = Path.GetDirectoryName(path);
+                string parent = Path.GetDirectoryName(path);
                 WatcherNode node = tree.NodeMap[parent] as WatcherNode;
                 node?.UpdateLater();
             }
@@ -203,7 +203,7 @@ namespace ProjectManager
         /// <summary>
         /// We don't want to trigger these while editing
         /// </summary>
-        private void tree_BeforeLabelEdit(Object sender, NodeLabelEditEventArgs e)
+        private void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (!e.CancelEdit)
             {
@@ -290,7 +290,7 @@ namespace ProjectManager
         /// A new file was created and we want it to be selected after
         /// the filesystemwatcher finds it and makes us refresh
         /// </summary>
-        private void NewFileCreated(String path)
+        private void NewFileCreated(string path)
         {
             tree.PathToSelect = path;
             WatchParentOf(path);
@@ -299,7 +299,7 @@ namespace ProjectManager
         /// <summary>
         /// 
         /// </summary>
-        private void RenameNode(Object sender, EventArgs e)
+        private void RenameNode(object sender, EventArgs e)
         {
             if (tree.SelectedNode is ProjectNode)
             {
@@ -313,7 +313,7 @@ namespace ProjectManager
         /// <summary>
         /// The project has changed, so refresh the tree
         /// </summary>
-        private void ProjectModified(String[] paths)
+        private void ProjectModified(string[] paths)
         {
             tree.RefreshTree(paths);
         }
@@ -325,6 +325,6 @@ namespace ProjectManager
     /// <summary>
     ///  Event delegates of the class
     /// </summary>
-    public delegate bool RenameEventHandler(String path, String newName);
+    public delegate bool RenameEventHandler(string path, string newName);
 
 }

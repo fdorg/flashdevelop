@@ -22,7 +22,7 @@ namespace PluginCore.Localization
         /// <see cref="String.Empty"/> is returned if the key does not exist.
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
-        public static String GetString(String key)
+        public static string GetString(string key)
         {
             return GetStringInternal(key, Assembly.GetCallingAssembly());
         }
@@ -34,7 +34,7 @@ namespace PluginCore.Localization
         /// returned from <see cref="TextHelper.GetString(String)"/>.
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
-        public static String GetStringWithoutMnemonics(String key)
+        public static string GetStringWithoutMnemonics(string key)
         {
             return RemoveMnemonics(GetStringInternal(key, Assembly.GetCallingAssembly()));
         }
@@ -46,7 +46,7 @@ namespace PluginCore.Localization
         /// from <see cref="TextHelper.GetString(String)"/>.
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
-        public static String GetStringWithoutEllipsis(String key)
+        public static string GetStringWithoutEllipsis(string key)
         {
             return RemoveEllipsis(GetStringInternal(key, Assembly.GetCallingAssembly()));
         }
@@ -58,7 +58,7 @@ namespace PluginCore.Localization
         /// string returned from <see cref="TextHelper.GetString(String)"/>.
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
-        public static String GetStringWithoutMnemonicsOrEllipsis(String key)
+        public static string GetStringWithoutMnemonicsOrEllipsis(string key)
         {
             return RemoveMnemonicsAndEllipsis(GetStringInternal(key, Assembly.GetCallingAssembly()));
         }
@@ -70,20 +70,20 @@ namespace PluginCore.Localization
         /// In both cases this method will return the string <code>"Close"</code>.
         /// </summary>
         /// <param name="text">A <see cref="String"/> instance to remove mnemonics from.</param>
-        public static String RemoveMnemonics(String text)
+        public static string RemoveMnemonics(string text)
         {
-            if (String.IsNullOrEmpty(text)) return String.Empty;
-            Int32 index = text.Length;
+            if (string.IsNullOrEmpty(text)) return string.Empty;
+            int index = text.Length;
             if (index > 4 &&
                 text[--index].Equals(')') &&
-                Char.IsUpper(text[--index]) &&
+                char.IsUpper(text[--index]) &&
                 text[--index].Equals('&') &&
                 text[--index].Equals('('))
             {
                 if (!text[--index].Equals(' ')) index++;
                 return text.Remove(index);
             }
-            return text.Replace("&", String.Empty);
+            return text.Replace("&", string.Empty);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace PluginCore.Localization
         /// returned from  <see cref="TextHelper.RemoveEllipsis(String)"/>.
         /// </summary>
         /// <param name="text">A <see cref="String"/> instance to remove mnemonics and ellipsis from.</param>
-        public static String RemoveMnemonicsAndEllipsis(String text)
+        public static string RemoveMnemonicsAndEllipsis(string text)
         {
             return RemoveMnemonics(RemoveEllipsis(text));
         }
@@ -112,20 +112,20 @@ namespace PluginCore.Localization
         /// <summary>
         /// Gets the specified localized string with the specified assembly's name as the default prefix.
         /// </summary>
-        static String GetStringInternal(String key, Assembly assembly)
+        static string GetStringInternal(string key, Assembly assembly)
         {
-            if (!ValidateStoredLocale()) return key ?? String.Empty;
-            String prefix = assembly.GetName().Name;
+            if (!ValidateStoredLocale()) return key ?? string.Empty;
+            string prefix = assembly.GetName().Name;
             // On different distro we need to use FlashDevelop prefix
             if (prefix == DistroConfig.DISTRIBUTION_NAME) prefix = "FlashDevelop";
-            String result = resourceManager.GetString(prefix + "." + key);
+            string result = resourceManager.GetString(prefix + "." + key);
             if (result == null)
             {
                 result = resourceManager.GetString(key);
                 if (result == null)
                 {
                     TraceManager.Add("No localized string found: " + key);
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
             // Replace FlashDevelop with distro name if needed
@@ -148,7 +148,7 @@ namespace PluginCore.Localization
             {
                 if (PluginBase.MainForm == null || PluginBase.MainForm.Settings == null) return false;
                 storedLocale = PluginBase.MainForm.Settings.LocaleVersion;
-                String path = "PluginCore.PluginCore.Resources." + storedLocale;
+                string path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }
             return true;

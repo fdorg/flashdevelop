@@ -91,11 +91,11 @@ namespace FlashDebugger.Controls.DataTree
 
     internal static class NodeExtensions
     {
-        public static String GetVariablePath(this Node node)
+        public static string GetVariablePath(this Node node)
         {
-            String ret = string.Empty;
-            if (node.Tag != null && node.Tag is String)
-                return (String)node.Tag; // fix for: live tip value has no parent
+            string ret = string.Empty;
+            if (node.Tag != null && node.Tag is string)
+                return (string)node.Tag; // fix for: live tip value has no parent
             if (node.Parent != null) ret = node.Parent.GetVariablePath();
             if (node is VariableNode)
             {

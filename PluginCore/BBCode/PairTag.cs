@@ -25,7 +25,7 @@ namespace PluginCore.BBCode
         }
 
 
-        override public String ToString()
+        override public string ToString()
         {
             return "[pairTag"
                    + " openerMatch='" + (_openerMatch == null ? "null" : _openerMatch.ToString()) + "'"
@@ -54,7 +54,7 @@ namespace PluginCore.BBCode
         private int _tagIndex;
 
 
-        public Boolean isTagOpener
+        public bool isTagOpener
         {
             get { return false; }
         }
@@ -66,11 +66,11 @@ namespace PluginCore.BBCode
         {
             get { return 0; }
         }
-        public String tagValue
+        public string tagValue
         {
             get { return ""; }
         }
-        public String tagName
+        public string tagName
         {
             get { return null; }
         }

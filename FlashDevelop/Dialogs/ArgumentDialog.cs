@@ -272,7 +272,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Hides the export item if there are no items selected
         /// </summary>
-        private void ContextMenuOpening(Object sender, CancelEventArgs e)
+        private void ContextMenuOpening(object sender, CancelEventArgs e)
         {
             if (this.argsListView.SelectedItems.Count == 0) this.exportItem.Visible = false;
             else this.exportItem.Visible = true;
@@ -298,7 +298,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeItemGroups()
         {
-            String argumentHeader = TextHelper.GetString("Group.Arguments");
+            string argumentHeader = TextHelper.GetString("Group.Arguments");
             this.argumentGroup = new ListViewGroup(argumentHeader, HorizontalAlignment.Left);
             this.argsListView.Groups.Add(this.argumentGroup);
         }
@@ -310,7 +310,7 @@ namespace FlashDevelop.Dialogs
         {
             this.argsListView.BeginUpdate();
             this.argsListView.Items.Clear();
-            String message = TextHelper.GetString("Info.Argument");
+            string message = TextHelper.GetString("Info.Argument");
             foreach (Argument argument in arguments)
             {
                 ListViewItem item = new ListViewItem();
@@ -330,12 +330,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Adds a new empty argument
         /// </summary>
-        private void AddButtonClick(Object sender, EventArgs e)
+        private void AddButtonClick(object sender, EventArgs e)
         {
             Argument argument = new Argument();
             ListViewItem item = new ListViewItem();
-            String message = TextHelper.GetString("Info.Argument");
-            String undefined = TextHelper.GetString("Info.Undefined");
+            string message = TextHelper.GetString("Info.Argument");
+            string undefined = TextHelper.GetString("Info.Undefined");
             item.ImageIndex = 0; argument.Key = undefined;
             item.Text = message + " $(" + undefined + ")";
             this.argsListView.Items.Add(item);
@@ -352,9 +352,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Removes the selected arguments
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        private void DeleteButtonClick(object sender, EventArgs e)
         {
-            Int32 selectedIndex = 0;
+            int selectedIndex = 0;
             if (this.argsListView.SelectedIndices.Count > 0)
             {
                 selectedIndex = this.argsListView.SelectedIndices[0];
@@ -372,7 +372,7 @@ namespace FlashDevelop.Dialogs
                 try { this.argsListView.Items[selectedIndex].Selected = true; }
                 catch
                 {
-                    Int32 last = this.argsListView.Items.Count - 1;
+                    int last = this.argsListView.Items.Count - 1;
                     this.argsListView.Items[last].Selected = true;
                 }
             }
@@ -382,7 +382,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog saving the arguments
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
+        private void CloseButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -390,7 +390,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Selected item has changed, updates the state
         /// </summary>
-        private void ArgsListViewSelectedIndexChanged(Object sender, EventArgs e)
+        private void ArgsListViewSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.argsListView.SelectedItems.Count == 1)
             {
@@ -417,10 +417,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the argument when text changes
         /// </summary>
-        private void TextBoxTextChange(Object sender, EventArgs e)
+        private void TextBoxTextChange(object sender, EventArgs e)
         {
             if (this.keyTextBox.Text == "") return;
-            String message = TextHelper.GetString("Info.Argument");
+            string message = TextHelper.GetString("Info.Argument");
             if (this.argsListView.SelectedItems.Count == 1)
             {
                 ListViewItem item = this.argsListView.SelectedItems[0];
@@ -434,7 +434,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Exports the current argument list into a file
         /// </summary>
-        private void ExportArguments(Object sender, EventArgs e)
+        private void ExportArguments(object sender, EventArgs e)
         {
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
@@ -455,7 +455,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Imports an argument list from a file
         /// </summary>
-        private void ImportArguments(Object sender, EventArgs e)
+        private void ImportArguments(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -474,7 +474,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Loads the arguments from the settings
         /// </summary>
-        private void DialogLoad(Object sender, EventArgs e)
+        private void DialogLoad(object sender, EventArgs e)
         {
             this.PopulateArgumentList(arguments);
         }
@@ -499,10 +499,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void LoadCustomArguments()
         {
-            String file = FileNameHelper.UserArgData;
+            string file = FileNameHelper.UserArgData;
             if (File.Exists(file))
             {
-                Object data = ObjectSerializer.Deserialize(file, arguments, false);
+                object data = ObjectSerializer.Deserialize(file, arguments, false);
                 arguments = (List<Argument>)data;
             }
             if (!File.Exists(file) || arguments.Count == 0)
@@ -516,7 +516,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void SaveCustomArguments()
         {
-            String file = FileNameHelper.UserArgData;
+            string file = FileNameHelper.UserArgData;
             ObjectSerializer.Serialize(file, arguments);
         }
 

@@ -4,15 +4,15 @@ using System.Xml;
 
 namespace FlashConnect
 {
-    public delegate void XmlReceivedEventHandler(Object sender, XmlReceivedEventArgs e);
-    public delegate void DataReceivedEventHandler(Object sender, DataReceivedEventArgs e);
+    public delegate void XmlReceivedEventHandler(object sender, XmlReceivedEventArgs e);
+    public delegate void DataReceivedEventHandler(object sender, DataReceivedEventArgs e);
     
     public class DataReceivedEventArgs : EventArgs
     {
-        private String text;
+        private string text;
         private Socket socket;
 
-        public DataReceivedEventArgs(String text, Socket socket) 
+        public DataReceivedEventArgs(string text, Socket socket) 
         {
             this.text = text;
             this.socket = socket;
@@ -21,7 +21,7 @@ namespace FlashConnect
         /// <summary>
         /// The message as text
         /// </summary>
-        public String Text 
+        public string Text 
         {
             get { return this.text; }
         }
@@ -41,7 +41,7 @@ namespace FlashConnect
         private XmlDocument document;
         private Socket socket;
 
-        public XmlReceivedEventArgs(String text, Socket socket) 
+        public XmlReceivedEventArgs(string text, Socket socket) 
         {
             this.socket = socket;
             this.document = new XmlDocument();

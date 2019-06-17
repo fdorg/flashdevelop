@@ -111,7 +111,7 @@ namespace PluginCore.BBCode
         public StateMode isStriked = StateMode.DEFAULT;
         public StateMode isUnderlined = StateMode.DEFAULT;
 
-        public String fontName = null;
+        public string fontName = null;
         public float fontSize = 0;
         public bool isAbsFontSize = true;
 
@@ -136,7 +136,7 @@ namespace PluginCore.BBCode
             return c;
         }
 
-        override public String ToString()
+        override public string ToString()
         {
             return "[bbCodeStyle"
                    + " isBold=" + isBold
@@ -209,7 +209,7 @@ namespace PluginCore.BBCode
                 return _colorChannelMixers[mode](back, fore);
             }
 
-            public static Mode ResolveColorMode(String modeStr)
+            public static Mode ResolveColorMode(string modeStr)
             {
                 if (string.IsNullOrEmpty(modeStr))
                     return Mode.NORMAL;
@@ -230,7 +230,7 @@ namespace PluginCore.BBCode
 
             private static bool _isInitedStatics = false;
             private static Dictionary<Mode, DColorChannelMixer> _colorChannelMixers;
-            private static Dictionary<String, Mode> _colorChannelMixersHash;
+            private static Dictionary<string, Mode> _colorChannelMixersHash;
 
             private static void _InitStatics()
             {

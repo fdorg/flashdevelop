@@ -15,14 +15,14 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Dictionary containing the loaded theme values
         /// </summary>
-        private static Dictionary<String, String> valueMap = new Dictionary<String, String>();
+        private static Dictionary<string, string> valueMap = new Dictionary<string, string>();
 
         /// <summary>
         /// Gets a value entry from the config.
         /// </summary>
-        public static String GetThemeValue(String id)
+        public static string GetThemeValue(string id)
         {
-            String result;
+            string result;
             if (valueMap.TryGetValue(id, out result)) return result;
             else return null;
         }
@@ -30,7 +30,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a color entry from the config.
         /// </summary>
-        public static Color GetThemeColor(String id)
+        public static Color GetThemeColor(string id)
         {
             try { return ColorTranslator.FromHtml(GetThemeValue(id)); }
             catch { return Color.Empty; }
@@ -39,23 +39,23 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Loads and applies the theme to MainForm.
         /// </summary>
-        public static void LoadTheme(String file)
+        public static void LoadTheme(string file)
         {
             try
             {
                 if (File.Exists(file))
                 {
                     valueMap.Clear();
-                    String[] lines = File.ReadAllLines(file);
-                    foreach (String rawLine in lines)
+                    string[] lines = File.ReadAllLines(file);
+                    foreach (string rawLine in lines)
                     {
-                        String line = rawLine.Trim();
+                        string line = rawLine.Trim();
                         if (line.Length < 2 || line.StartsWith('#')) continue;
-                        String[] entry = line.Split(new Char[] { '=' }, 2);
+                        string[] entry = line.Split(new char[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         valueMap[entry[0]] = entry[1];
                     }
-                    String currentFile = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                    string currentFile = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (file != currentFile) File.Copy(file, currentFile, true);
                 }
             }
@@ -68,7 +68,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Sets the use theme setting also to children
         /// </summary>
-        public static void SetUseTheme(Object obj, Boolean use)
+        public static void SetUseTheme(object obj, bool use)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Walks the control tree down and themes all controls.
         /// </summary>
-        public static void WalkControls(Object obj)
+        public static void WalkControls(object obj)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies the theme colors to the control.
         /// </summary>
-        public static void ThemeControl(Object obj)
+        public static void ThemeControl(object obj)
         {
             ThemeControl(obj, obj.GetType());
         }
@@ -202,15 +202,15 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies theme colors to the control based on type.
         /// </summary>
-        private static void ThemeControl(Object obj, Type type)
+        private static void ThemeControl(object obj, Type type)
         {
             try
             {
                 dynamic cast = obj;
                 // Apply colors of base type before applying for this type
-                Boolean useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
+                bool useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
                 if (useIn && type.BaseType != null) ThemeControl(obj, type.BaseType);
-                String name = ThemeHelper.GetFilteredTypeName(type);
+                string name = ThemeHelper.GetFilteredTypeName(type);
                 // Apply all basic style settings
                 ApplyPropColor(obj, name + ".BackColor");
                 ApplyPropColor(obj, name + ".ForeColor");
@@ -231,11 +231,11 @@ namespace FlashDevelop.Managers
                 ApplyPropColor(obj, name + ".ArrowColor");
                 // Set border style from border style key
                 PropertyInfo bstyle = type.GetProperty("BorderStyle");
-                Boolean force = GetThemeValue("ThemeManager.ForceBorderStyle") == "True";
+                bool force = GetThemeValue("ThemeManager.ForceBorderStyle") == "True";
                 if (bstyle != null && bstyle.CanWrite && (force || cast.BorderStyle != BorderStyle.None))
                 {
-                    String key = name + ".BorderStyle";
-                    String style = GetThemeValue(key);
+                    string key = name + ".BorderStyle";
+                    string style = GetThemeValue(key);
                     switch (style)
                     {
                         case "None":
@@ -255,8 +255,8 @@ namespace FlashDevelop.Managers
                 PropertyInfo fstyle = type.GetProperty("FlatStyle");
                 if (fstyle != null && fstyle.CanWrite)
                 {
-                    String key = name + ".FlatStyle";
-                    String style = GetThemeValue(key);
+                    string key = name + ".FlatStyle";
+                    string style = GetThemeValue(key);
                     switch (style)
                     {
                         case "Flat":
@@ -280,7 +280,7 @@ namespace FlashDevelop.Managers
                 {
                     Color color = Color.Empty;
                     Button parent = obj as Button;
-                    Boolean flat = GetThemeValue("Button.FlatStyle") == "Flat";
+                    bool flat = GetThemeValue("Button.FlatStyle") == "Flat";
                     if (flat)
                     {
                         color = GetThemeColor("Button.BorderColor");
@@ -297,7 +297,7 @@ namespace FlashDevelop.Managers
                 {
                     Color color = Color.Empty;
                     CheckBox parent = obj as CheckBox;
-                    Boolean flat = GetThemeValue("CheckBox.FlatStyle") == "Flat";
+                    bool flat = GetThemeValue("CheckBox.FlatStyle") == "Flat";
                     if (flat)
                     {
                         color = GetThemeColor("CheckBox.BorderColor");
@@ -338,7 +338,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Apply property color if defined and property is available
         /// </summary>
-        private static void ApplyPropColor(Object targObj, String propId)
+        private static void ApplyPropColor(object targObj, string propId)
         {
             Color color = GetThemeColor(propId);
             PropertyInfo prop = targObj.GetType().GetProperty(propId.Split('.')[1]);

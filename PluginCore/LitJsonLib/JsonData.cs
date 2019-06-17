@@ -188,7 +188,7 @@ namespace LitJson
             }
 
             set {
-                if (! (key is String))
+                if (! (key is string))
                     throw new ArgumentException (
                         "The key has to be a string");
 
@@ -330,31 +330,31 @@ namespace LitJson
 
         public JsonData (object obj)
         {
-            if (obj is Boolean) {
+            if (obj is bool) {
                 type = JsonType.Boolean;
                 inst_boolean = (bool) obj;
                 return;
             }
 
-            if (obj is Double) {
+            if (obj is double) {
                 type = JsonType.Double;
                 inst_double = (double) obj;
                 return;
             }
 
-            if (obj is Int32) {
+            if (obj is int) {
                 type = JsonType.Int;
                 inst_int = (int) obj;
                 return;
             }
 
-            if (obj is Int64) {
+            if (obj is long) {
                 type = JsonType.Long;
                 inst_long = (long) obj;
                 return;
             }
 
-            if (obj is String) {
+            if (obj is string) {
                 type = JsonType.String;
                 inst_string = (string) obj;
                 return;
@@ -373,27 +373,27 @@ namespace LitJson
 
 
         #region Implicit Conversions
-        public static implicit operator JsonData (Boolean data)
+        public static implicit operator JsonData (bool data)
         {
             return new JsonData (data);
         }
 
-        public static implicit operator JsonData (Double data)
+        public static implicit operator JsonData (double data)
         {
             return new JsonData (data);
         }
 
-        public static implicit operator JsonData (Int32 data)
+        public static implicit operator JsonData (int data)
         {
             return new JsonData (data);
         }
 
-        public static implicit operator JsonData (Int64 data)
+        public static implicit operator JsonData (long data)
         {
             return new JsonData (data);
         }
 
-        public static implicit operator JsonData (String data)
+        public static implicit operator JsonData (string data)
         {
             return new JsonData (data);
         }
@@ -401,7 +401,7 @@ namespace LitJson
 
 
         #region Explicit Conversions
-        public static explicit operator Boolean (JsonData data)
+        public static explicit operator bool (JsonData data)
         {
             if (data.type != JsonType.Boolean)
                 throw new InvalidCastException (
@@ -410,7 +410,7 @@ namespace LitJson
             return data.inst_boolean;
         }
 
-        public static explicit operator Double (JsonData data)
+        public static explicit operator double (JsonData data)
         {
             if (data.type != JsonType.Double)
                 throw new InvalidCastException (
@@ -419,7 +419,7 @@ namespace LitJson
             return data.inst_double;
         }
 
-        public static explicit operator Int32 (JsonData data)
+        public static explicit operator int (JsonData data)
         {
             if (data.type != JsonType.Int)
                 throw new InvalidCastException (
@@ -428,7 +428,7 @@ namespace LitJson
             return data.inst_int;
         }
 
-        public static explicit operator Int64 (JsonData data)
+        public static explicit operator long (JsonData data)
         {
             if (data.type != JsonType.Long)
                 throw new InvalidCastException (
@@ -437,7 +437,7 @@ namespace LitJson
             return data.inst_long;
         }
 
-        public static explicit operator String (JsonData data)
+        public static explicit operator string (JsonData data)
         {
             if (data.type != JsonType.String)
                 throw new InvalidCastException (
@@ -867,23 +867,23 @@ namespace LitJson
                 break;
 
             case JsonType.String:
-                inst_string = default (String);
+                inst_string = default (string);
                 break;
 
             case JsonType.Int:
-                inst_int = default (Int32);
+                inst_int = default (int);
                 break;
 
             case JsonType.Long:
-                inst_long = default (Int64);
+                inst_long = default (long);
                 break;
 
             case JsonType.Double:
-                inst_double = default (Double);
+                inst_double = default (double);
                 break;
 
             case JsonType.Boolean:
-                inst_boolean = default (Boolean);
+                inst_boolean = default (bool);
                 break;
             }
 

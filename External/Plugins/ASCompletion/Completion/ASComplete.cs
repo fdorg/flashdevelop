@@ -559,6 +559,7 @@ namespace ASCompletion.Completion
         
         private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open)
         {
+            var result = false;
             var selections = sci.GetSelections();
             for (var i = 0; i < selections; i++)
             {
@@ -568,8 +569,9 @@ namespace ASCompletion.Completion
                 if (GetCharRight(sci, true, ref closePosition) != brace.Close || !brace.ShouldRemove(startPosition, closePosition)) continue;
                 sci.SetSelectionNStart(i, startPosition - 1);
                 sci.SetSelectionNEnd(i, closePosition + 1);
+                result = true;
             }
-            return false;
+            return result;
         }
 
         #endregion

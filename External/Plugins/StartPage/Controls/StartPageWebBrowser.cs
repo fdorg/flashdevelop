@@ -13,15 +13,15 @@ namespace StartPage.Controls
 {
     public class StartPageWebBrowser : UserControl
     {
-        private String rssUrl = String.Empty;
-        private String pageUrl = String.Empty;
-        private Boolean showingStartPage = false;
+        private string rssUrl = string.Empty;
+        private string pageUrl = string.Empty;
+        private bool showingStartPage = false;
         private RecentProjectList recentProjectList;
         private StartPageActions startPageActions;
         private WebBrowserEx webBrowser;
         private DragDropPanel dndPanel;
 
-        public StartPageWebBrowser(String pageUrl, String rssUrl)
+        public StartPageWebBrowser(string pageUrl, string rssUrl)
         {
             this.rssUrl = rssUrl;
             this.pageUrl = pageUrl;
@@ -98,22 +98,22 @@ namespace StartPage.Controls
         public void SendProjectInfo()
         {
             this.recentProjectList.Update(ProjectManager.PluginMain.Settings.RecentProjects);
-            this.webBrowser.Document.InvokeScript("handleXmlData", new String[] { this.recentProjectList.ToXml(), null});
+            this.webBrowser.Document.InvokeScript("handleXmlData", new string[] { this.recentProjectList.ToXml(), null});
         }
         
         /// <summary>
         /// Updates the recent projects list
         /// </summary>
-        private void WebBrowserDocumentCompleted(Object sender, EventArgs e)
+        private void WebBrowserDocumentCompleted(object sender, EventArgs e)
         {
             this.recentProjectList.Update(ProjectManager.PluginMain.Settings.RecentProjects);
-            this.webBrowser.Document.InvokeScript("handleXmlData", new String[] { this.recentProjectList.ToXml(), this.rssUrl});
+            this.webBrowser.Document.InvokeScript("handleXmlData", new string[] { this.recentProjectList.ToXml(), this.rssUrl});
         }
 
         /// <summary>
         /// If the page tries to open a new window use a fd tab instead
         /// </summary>
-        private void WebBrowserNewWindow(Object sender, CancelEventArgs e)
+        private void WebBrowserNewWindow(object sender, CancelEventArgs e)
         {
             this.startPageActions.ShowURL(this.webBrowser.StatusText);
             e.Cancel = true;
@@ -122,7 +122,7 @@ namespace StartPage.Controls
         /// <summary>
         /// If we're not about to show the start page and it isn't a javascript call then open a new fd tab
         /// </summary>
-        private void WebBrowserNavigating(Object sender, WebBrowserNavigatingEventArgs e)
+        private void WebBrowserNavigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             if (this.IsDownloadable(e.Url.ToString())) return;
             if (!this.showingStartPage && !e.Url.ToString().StartsWithOrdinal("javascript"))
@@ -136,7 +136,7 @@ namespace StartPage.Controls
         /// <summary>
         /// Checks if the url is downloadable file
         /// </summary>
-        private Boolean IsDownloadable(String url)
+        private bool IsDownloadable(string url)
         {
             return url.EndsWithOrdinal(".exe") || url.EndsWithOrdinal(".zip");
         }
@@ -150,7 +150,7 @@ namespace StartPage.Controls
         {
             public event EventHandler DocumentCompleted;
 
-            private static String RELEASE_NOTES_URL = Path.Combine(PathHelper.DocDir, "index.html");
+            private static string RELEASE_NOTES_URL = Path.Combine(PathHelper.DocDir, "index.html");
 
             public void PageReady()
             {
@@ -160,7 +160,7 @@ namespace StartPage.Controls
             /// <summary>
             /// Called from webpage to browse any url in seperate browser control
             /// </summary>
-            public void ShowURL(String url)
+            public void ShowURL(string url)
             {
                 PluginBase.MainForm.CallCommand("Browse", url);
             }
@@ -217,7 +217,7 @@ namespace StartPage.Controls
             /// <summary>
             /// Called from webpage to open a project
             /// </summary>
-            public void OpenProject(String path)
+            public void OpenProject(string path)
             {
                 PluginBase.MainForm.OpenEditableDocument(path);
             }
@@ -244,7 +244,7 @@ namespace StartPage.Controls
         /// <summary>
         /// Redirect events to MainForm.
         /// </summary>
-        public override Boolean PreProcessMessage(ref Message msg)
+        public override bool PreProcessMessage(ref Message msg)
         {
             return ((Form)PluginBase.MainForm).PreProcessMessage(ref msg);
         }

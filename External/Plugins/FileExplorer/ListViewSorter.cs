@@ -8,7 +8,7 @@ namespace FileExplorer
 {
     public class ListViewSorter : IComparer
     {
-        private Int32 columnToSort;
+        private int columnToSort;
         private GenericComparer comparer;
         private SortOrder orderOfSort;
 
@@ -22,9 +22,9 @@ namespace FileExplorer
         /// <summary>
         /// Compares the two objects passed using a case insensitive comparison.
         /// </summary>
-        public Int32 Compare(Object x, Object y)
+        public int Compare(object x, object y)
         {
-            Int32 compareResult = 0;
+            int compareResult = 0;
             ListViewItem listviewX = (ListViewItem)x;
             ListViewItem listviewY = (ListViewItem)y;
             if (this.columnToSort == 0)
@@ -57,7 +57,7 @@ namespace FileExplorer
         /// <summary>
         /// Gets or sets the number of the column.
         /// </summary>
-        public Int32 SortColumn
+        public int SortColumn
         {
             set { this.columnToSort = value; }
             get { return this.columnToSort; }
@@ -79,7 +79,7 @@ namespace FileExplorer
         /// <summary>
         /// Checks if the item is a browser (button).
         /// </summary>
-        public Boolean ItemIsBrowser(ListViewItem item)
+        public bool ItemIsBrowser(ListViewItem item)
         {
             return (item.SubItems[0].Text == "[..]");
         }
@@ -87,26 +87,26 @@ namespace FileExplorer
         /// <summary>
         /// Checks if the item is a folder. 
         /// </summary>
-        public Boolean ItemIsFolder(ListViewItem item)
+        public bool ItemIsFolder(ListViewItem item)
         {
-            String path = item.Tag.ToString();
+            string path = item.Tag.ToString();
             return Directory.Exists(path);
         }
         
         /// <summary>
         /// Compares two supplied ListViewItems. 
         /// </summary>
-        public Int32 CompareFiles(ListViewItem x, ListViewItem y)
+        public int CompareFiles(ListViewItem x, ListViewItem y)
         {
-            String xVal = x.SubItems[0].Text;
-            String yVal = y.SubItems[0].Text;
+            string xVal = x.SubItems[0].Text;
+            string yVal = y.SubItems[0].Text;
             if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
             {
                 return 0;
             }
             if (this.ItemIsFolder(x) && this.ItemIsFolder(y)) 
             {
-                return String.Compare(xVal, yVal);
+                return string.Compare(xVal, yVal);
             }
             if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
             {
@@ -116,24 +116,24 @@ namespace FileExplorer
             {
                 return 1;
             }
-            return String.Compare(xVal, yVal);
+            return string.Compare(xVal, yVal);
         }
         
         /// <summary>
         /// Compares two supplied ListViewItems. 
         /// </summary>
-        public Int32 CompareSize(ListViewItem x, ListViewItem y)
+        public int CompareSize(ListViewItem x, ListViewItem y)
         {
-            String info = TextHelper.GetString("Info.Kilobytes");
-            String xVal = x.SubItems[1].Text.Replace(info, "").Trim();
-            String yVal = y.SubItems[1].Text.Replace(info, "").Trim();
+            string info = TextHelper.GetString("Info.Kilobytes");
+            string xVal = x.SubItems[1].Text.Replace(info, "").Trim();
+            string yVal = y.SubItems[1].Text.Replace(info, "").Trim();
             if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
             {
                 return 0;
             }
             if (this.ItemIsFolder(x) && this.ItemIsFolder(y))
             {
-                return String.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
+                return string.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
             }
             if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
             {
@@ -143,8 +143,8 @@ namespace FileExplorer
             {
                 return 1;
             }
-            Int32 numX = Int32.Parse(xVal);
-            Int32 numY = Int32.Parse(yVal);
+            int numX = int.Parse(xVal);
+            int numY = int.Parse(yVal);
             if (numX > numY) return -1;
             else if(numX < numY) return 1;
             else return 0;
@@ -153,17 +153,17 @@ namespace FileExplorer
         /// <summary>
         /// Compares two supplied ListViewItems. 
         /// </summary>
-        public Int32 CompareModified(ListViewItem x, ListViewItem y)
+        public int CompareModified(ListViewItem x, ListViewItem y)
         {
-            String xVal = x.SubItems[3].Text;
-            String yVal = y.SubItems[3].Text;
+            string xVal = x.SubItems[3].Text;
+            string yVal = y.SubItems[3].Text;
             if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
             {
                 return 0;
             }
             if (this.ItemIsFolder(x) && this.ItemIsFolder(y))
             {
-                return String.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
+                return string.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
             }
             if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
             {
@@ -179,17 +179,17 @@ namespace FileExplorer
         /// <summary>
         /// Compares two supplied ListViewItems. 
         /// </summary>
-        public Int32 CompareType(ListViewItem x, ListViewItem y)
+        public int CompareType(ListViewItem x, ListViewItem y)
         {
-            String xVal = x.SubItems[2].Text;
-            String yVal = y.SubItems[2].Text;
+            string xVal = x.SubItems[2].Text;
+            string yVal = y.SubItems[2].Text;
             if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
             {
                 return 0;
             }
             if (this.ItemIsFolder(x) && this.ItemIsFolder(y))
             {
-                return String.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
+                return string.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
             }
             if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
             {
@@ -199,7 +199,7 @@ namespace FileExplorer
             {
                 return 1;
             }
-            return String.Compare(xVal, yVal);
+            return string.Compare(xVal, yVal);
         }
 
     }

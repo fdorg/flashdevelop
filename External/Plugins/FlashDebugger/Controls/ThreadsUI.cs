@@ -75,7 +75,7 @@ namespace FlashDebugger
                 return;
             }
             // add primary -- flash specific
-            String title = "Main thread";
+            string title = "Main thread";
             int image = PluginMain.debugManager.FlashInterface.Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
             lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
             lv.Items[lv.Items.Count - 1].Tag = 1;

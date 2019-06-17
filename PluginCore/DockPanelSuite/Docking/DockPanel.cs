@@ -28,7 +28,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             ShowAutoHideContentOnHover = true;
 
-            String value = PluginCore.PluginBase.MainForm.GetThemeValue("DockPanel.ShowAutoHideContentOn");
+            string value = PluginCore.PluginBase.MainForm.GetThemeValue("DockPanel.ShowAutoHideContentOn");
             if (value == "Click") ShowAutoHideContentOnHover = false;
 
             m_focusManager = new FocusManagerImpl(this);

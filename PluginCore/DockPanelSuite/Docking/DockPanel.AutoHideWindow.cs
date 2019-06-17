@@ -305,7 +305,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 get
                 {
                     Rectangle rect = ClientRectangle;
-                    Boolean flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
+                    bool flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
 
                     // exclude the border and the splitter
                     if (DockState == DockState.DockBottomAutoHide)
@@ -333,7 +333,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected override void OnLayout(LayoutEventArgs levent)
             {
                 DockPadding.All = 0;
-                Boolean flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
+                bool flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
                 if (DockState == DockState.DockLeftAutoHide)
                 {
                     DockPadding.Right = flat ? 1 : 2;

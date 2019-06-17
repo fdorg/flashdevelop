@@ -123,10 +123,10 @@ namespace ProjectManager.Controls.TreeView
             {
                 for (int i = parts.Length - 1; i > 0; --i)
                 {
-                    String part = parts[i];
+                    string part = parts[i];
                     if (part != "" && part != "." && part != ".." && !excludes.Contains(part.ToLower()))
                     {
-                        if (Char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
+                        if (char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
                         else if (part.Length == 40 && reSHAHash.IsMatch(part)) label.Add(part);
                         else
                         {
@@ -138,7 +138,7 @@ namespace ProjectManager.Controls.TreeView
                 }
             }
             label.Reverse();
-            Text = String.Join("/", label.ToArray());
+            Text = string.Join("/", label.ToArray());
             ToolTipText = classpath;
         }
 

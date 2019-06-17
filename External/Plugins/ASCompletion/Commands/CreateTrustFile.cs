@@ -24,7 +24,7 @@ namespace ASCompletion.Commands
                 path += " ";
                 string separator = Path.DirectorySeparatorChar.ToString();
                 string appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string fixedPath = String.Format(FULLPATH, appDataDir, separator);
+                string fixedPath = string.Format(FULLPATH, appDataDir, separator);
                 if (!Directory.Exists(fixedPath)) Directory.CreateDirectory(fixedPath);
                 string file = Path.Combine(fixedPath, name);
                 if (File.Exists(file))

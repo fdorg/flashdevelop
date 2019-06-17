@@ -20,10 +20,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a snippet from a file in the snippets directory
         /// </summary>
-        public static String GetSnippet(String word, String syntax, Encoding current)
+        public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
-            String specific = Path.Combine(PathHelper.SnippetDir, syntax, word + ".fds");
+            string global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
+            string specific = Path.Combine(PathHelper.SnippetDir, syntax, word + ".fds");
             if (File.Exists(specific))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
@@ -40,12 +40,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Inserts text from the snippets class
         /// </summary>
-        public static Boolean InsertTextByWord(String word, Boolean emptyUndoBuffer)
+        public static bool InsertTextByWord(string word, bool emptyUndoBuffer)
         {
             ScintillaControl sci = Globals.SciControl;
             if (sci == null) return false;
-            Boolean canShowList = false; 
-            String snippet = null;
+            bool canShowList = false; 
+            string snippet = null;
             if (word == null)
             {
                 canShowList = true;
@@ -63,23 +63,23 @@ namespace FlashDevelop.Managers
             EventManager.DispatchEvent(Globals.MainForm, de);
             if (de.Handled) return true;
             snippet = (string)data["snippet"];
-            if (!String.IsNullOrEmpty(sci.SelText))
+            if (!string.IsNullOrEmpty(sci.SelText))
             {
                 // Remember the previous selection
                 ArgsProcessor.PrevSelText = sci.SelText;
             }
             if (snippet != null)
             {
-                Int32 endPos = sci.SelectionEnd;
-                Int32 startPos = sci.SelectionStart;
-                String curWord = sci.GetWordFromPosition(endPos);
+                int endPos = sci.SelectionEnd;
+                int startPos = sci.SelectionStart;
+                string curWord = sci.GetWordFromPosition(endPos);
                 if (startPos == endPos)
                 {
                     endPos = sci.WordEndPosition(sci.CurrentPos, true);
                     startPos = sci.WordStartPosition(sci.CurrentPos, true);
                     sci.SetSel(startPos, endPos);
                 }
-                if (!String.IsNullOrEmpty(curWord))
+                if (!string.IsNullOrEmpty(curWord))
                 {
                     // Remember the current word
                     ArgsProcessor.PrevSelWord = curWord;
@@ -92,18 +92,18 @@ namespace FlashDevelop.Managers
                 ICompletionListItem item;
                 List<ICompletionListItem> items = new List<ICompletionListItem>();
                 PathWalker walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
-                List<String> files = walker.GetFiles();
-                foreach (String file in files)
+                List<string> files = walker.GetFiles();
+                foreach (string file in files)
                 {
                     item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
                     items.Add(item);
                 }
-                String path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
+                string path = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage);
                 if (Directory.Exists(path))
                 {
                     walker = new PathWalker(path, "*.fds", false);
                     files = walker.GetFiles();
-                    foreach (String file in files)
+                    foreach (string file in files)
                     {
                         item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
                         items.Add(item);
@@ -112,11 +112,11 @@ namespace FlashDevelop.Managers
                 if (items.Count > 0)
                 {
                     items.Sort();
-                    if (!String.IsNullOrEmpty(sci.SelText)) word = sci.SelText;
+                    if (!string.IsNullOrEmpty(sci.SelText)) word = sci.SelText;
                     else
                     {
                         word = sci.GetWordFromPosition(sci.CurrentPos);
-                        if (word == null) word = String.Empty;
+                        if (word == null) word = string.Empty;
                     }
                     CompletionList.OnInsert += new InsertedTextHandler(HandleListInsert);
                     CompletionList.OnCancel += new InsertedTextHandler(HandleListInsert);
@@ -130,23 +130,23 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// On completion list insert or cancel, reset the previous selection
         /// </summary>
-        private static void HandleListInsert(ScintillaControl sender, Int32 position, String text, Char trigger, ICompletionListItem item)
+        private static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
             CompletionList.OnInsert -= new InsertedTextHandler(HandleListInsert);
             CompletionList.OnCancel -= new InsertedTextHandler(HandleListInsert);
-            ArgsProcessor.PrevSelText = String.Empty;
+            ArgsProcessor.PrevSelText = string.Empty;
         }
 
     }
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        private String word;
-        private String snippet;
-        private String fileName;
+        private string word;
+        private string snippet;
+        private string fileName;
         private Bitmap icon;
 
-        public SnippetItem(String word, String fileName)
+        public SnippetItem(string word, string fileName)
         {
             this.word = word;
             this.fileName = fileName;
@@ -155,7 +155,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Label of the snippet item
         /// </summary>
-        public String Label
+        public string Label
         {
             get { return this.word; }
         }
@@ -163,11 +163,11 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Description of the snippet item
         /// </summary>
-        public String Description
+        public string Description
         {
             get
             {
-                String desc = TextHelper.GetString("Info.SnippetItemDesc");
+                string desc = TextHelper.GetString("Info.SnippetItemDesc");
                 if (this.snippet == null)
                 {
                     this.snippet = FileHelper.ReadFile(this.fileName);
@@ -183,7 +183,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// String value if the snippet item
         /// </summary>
-        public String Value
+        public string Value
         {
             get
             {
@@ -214,12 +214,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Checks the validity of the completion list item 
         /// </summary> 
-        Int32 IComparable.CompareTo(Object obj)
+        int IComparable.CompareTo(object obj)
         {
-            if (obj as ICompletionListItem != null) return String.Compare(Label, (obj as ICompletionListItem).Label, true);
+            if (obj as ICompletionListItem != null) return string.Compare(Label, (obj as ICompletionListItem).Label, true);
             else
             {
-                String message = TextHelper.GetString("Info.CompareError");
+                string message = TextHelper.GetString("Info.CompareError");
                 throw new Exception(message);
             }
         }
@@ -227,9 +227,9 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Compares the completion list items
         /// </summary> 
-        Int32 IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
+        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
         {
-            return String.Compare(Label, other.Label, true);
+            return string.Compare(Label, other.Label, true);
         }
 
     }

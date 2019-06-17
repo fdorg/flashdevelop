@@ -8,8 +8,8 @@ namespace FlashDevelop.Managers
 {
     class PrintingManager
     {
-        public static Int32 PrintPageNumber = 0;
-        public static Int32 PrintPageLastChar = 0;
+        public static int PrintPageNumber = 0;
+        public static int PrintPageLastChar = 0;
         public static PrinterSettings PrinterSettings = null;
 
         /// <summary>
@@ -40,12 +40,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Handles the PrintPage event
         /// </summary>
-        public static void OnPrintDocumentPrintPage(Object sender, PrintPageEventArgs e)
+        public static void OnPrintDocumentPrintPage(object sender, PrintPageEventArgs e)
         {
             PrintPageNumber++;
             ITabbedDocument document = Globals.CurrentDocument;
-            String page = TextHelper.GetString("Info.PrintFooterPage");
-            String footer = page + PrintPageNumber + " - " + document.FileName;
+            string page = TextHelper.GetString("Info.PrintFooterPage");
+            string footer = page + PrintPageNumber + " - " + document.FileName;
             PrintPageLastChar = document.SciControl.FormatRange(false, e, PrintPageLastChar, document.SciControl.Length);
             e.Graphics.DrawLine(new Pen(Color.Black), 35, e.PageBounds.Height - 60, e.PageBounds.Width - 35, e.PageBounds.Height - 60);
             e.Graphics.DrawString(footer, new Font("Arial", 7), Brushes.Black, 35, e.PageBounds.Height - 55, StringFormat.GenericDefault);

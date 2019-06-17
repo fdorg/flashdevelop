@@ -9,7 +9,7 @@ using System.Xml.XPath;
 namespace AirProperties
 {
     /// <remarks>Not thread safe.</remarks>
-    class IphonePlistManager : IDictionary<string, Object>
+    class IphonePlistManager : IDictionary<string, object>
     {
 
         private Dictionary<string, object> backData = new Dictionary<string, object>();

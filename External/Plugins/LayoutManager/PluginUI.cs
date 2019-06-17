@@ -214,12 +214,12 @@ namespace LayoutManager
         /// <summary>
         /// Populates the list view on load
         /// </summary>
-        private void FormLoaded(Object sender, EventArgs e)
+        private void FormLoaded(object sender, EventArgs e)
         {
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
             this.infoListViewItem = new ListViewItem(TextHelper.GetString("Info.NoLayoutsFound"), 1);
-            String file = Path.Combine(this.GetLayoutsDir(), "DefaultLayout.fdl");
+            string file = Path.Combine(this.GetLayoutsDir(), "DefaultLayout.fdl");
             if (!File.Exists(file)) WriteDefaultLayout(file);
             this.PopulateLayoutsListView();
         }
@@ -262,10 +262,10 @@ namespace LayoutManager
         private void PopulateLayoutsListView()
         {
             this.layoutsListView.Items.Clear();
-            String[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
-            for (Int32 i = 0; i < layouts.Length; i++)
+            string[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
+            for (int i = 0; i < layouts.Length; i++)
             {
-                String label = Path.GetFileNameWithoutExtension(layouts[i]);
+                string label = Path.GetFileNameWithoutExtension(layouts[i]);
                 ListViewItem item = new ListViewItem(label, 0);
                 item.Tag = layouts[i]; // Store full path
                 this.layoutsListView.Items.Add(item);
@@ -276,7 +276,7 @@ namespace LayoutManager
         /// <summary>
         /// Shows the plugin settings
         /// </summary>
-        private void SettingsButtonClick(Object sender, EventArgs e)
+        private void SettingsButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace LayoutManager
         /// <summary>
         /// Loads the selected layout
         /// </summary>
-        private void LoadButtonClick(Object sender, EventArgs e)
+        private void LoadButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -307,14 +307,14 @@ namespace LayoutManager
         /// <summary>
         /// Deletes the selected layout
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        private void DeleteButtonClick(object sender, EventArgs e)
         {
             try
             {
                 ListViewItem item = GetSelectedItem();
                 if (!FileHelper.Recycle(item.Tag.ToString()))
                 {
-                    String message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                    string message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                     throw new Exception(message + " " + item.Tag.ToString());
                 }
                 this.PopulateLayoutsListView();
@@ -328,7 +328,7 @@ namespace LayoutManager
         /// <summary>
         /// Saves the selected layout
         /// </summary>
-        private void SaveButtonClick(Object sender, EventArgs e)
+        private void SaveButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -353,7 +353,7 @@ namespace LayoutManager
         /// <summary>
         /// Updates the ui when on index change
         /// </summary>
-        private void LayoutsListViewSelectedIndexChanged(Object sender, EventArgs e)
+        private void LayoutsListViewSelectedIndexChanged(object sender, EventArgs e)
         {
             this.UpdatePluginUI();
         }
@@ -361,7 +361,7 @@ namespace LayoutManager
         /// <summary>
         /// Loads the selected layout on double click
         /// </summary>
-        private void LayoutsListViewDoubleClick(Object sender, EventArgs e)
+        private void LayoutsListViewDoubleClick(object sender, EventArgs e)
         {
             ListViewItem item = this.GetSelectedItem();
             if (item != null && item.ImageIndex != 1)
@@ -398,13 +398,13 @@ namespace LayoutManager
         /// <summary>
         /// Gets the layouts directory
         /// </summary>
-        private String GetLayoutsDir()
+        private string GetLayoutsDir()
         {
-            String userPath = Settings.Instance.CustomLayoutPath;
+            string userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
             else
             {
-                String path = Path.Combine(this.GetDataDir(), "Layouts");
+                string path = Path.Combine(this.GetDataDir(), "Layouts");
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
                 return path;
             }
@@ -413,11 +413,11 @@ namespace LayoutManager
         /// <summary>
         /// Copies the default layout file to disk
         /// </summary> 
-        private void WriteDefaultLayout(String file)
+        private void WriteDefaultLayout(string file)
         {
             try
             {
-                String content;
+                string content;
                 Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 Stream src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
                 using (StreamReader sr = new StreamReader(src, true))
@@ -434,7 +434,7 @@ namespace LayoutManager
         /// <summary>
         /// Gets the plugin data directory
         /// </summary>
-        private String GetDataDir()
+        private string GetDataDir()
         {
             return Path.Combine(PathHelper.DataDir, "LayoutManager");
         }

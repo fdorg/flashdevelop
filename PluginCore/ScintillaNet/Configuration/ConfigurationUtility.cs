@@ -12,8 +12,8 @@ namespace ScintillaNet.Configuration
     {
         protected Assembly _assembly;
 
-        private const String coloringStart = "<!-- COLORING_START -->";
-        private const String coloringEnd = "<!-- COLORING_END -->";
+        private const string coloringStart = "<!-- COLORING_START -->";
+        private const string coloringEnd = "<!-- COLORING_END -->";
 
         protected virtual byte[] LoadFile(string filename, ConfigFile parent)
         {
@@ -86,15 +86,15 @@ namespace ScintillaNet.Configuration
                 {
                     try
                     {
-                        String original = File.ReadAllText(filename);
-                        String overriding = File.ReadAllText(filename + ".override");
-                        String tabContent = overriding.Replace("\n", "\n\t\t\t");
-                        Int32 indexStart = original.IndexOfOrdinal(coloringStart);
-                        Int32 indexEnd = original.IndexOfOrdinal(coloringEnd);
+                        string original = File.ReadAllText(filename);
+                        string overriding = File.ReadAllText(filename + ".override");
+                        string tabContent = overriding.Replace("\n", "\n\t\t\t");
+                        int indexStart = original.IndexOfOrdinal(coloringStart);
+                        int indexEnd = original.IndexOfOrdinal(coloringEnd);
                         if (indexStart > -1)
                         {
-                            String replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
-                            String finalContent = original.Replace(replaceTarget, tabContent);
+                            string replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
+                            string finalContent = original.Replace(replaceTarget, tabContent);
                             File.WriteAllText(filename, finalContent);
                             File.Delete(filename + ".override");
                         }
@@ -133,7 +133,7 @@ namespace ScintillaNet.Configuration
         {
             Scintilla configFile = new Scintilla();
             List<include> includes = new List<include>();
-            for (Int32 i = 0; i < files.Length; i++)
+            for (int i = 0; i < files.Length; i++)
             {
                 include inc = new include();
                 inc.file = files[i];

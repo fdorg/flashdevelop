@@ -173,7 +173,7 @@ namespace ProjectManager.Building
 
         private string GetSafeId(string id)
         {
-            return (project.Language == "haxe") ? Char.ToUpper(id[2]) + id.Substring(3) : id;
+            return (project.Language == "haxe") ? char.ToUpper(id[2]) + id.Substring(3) : id;
         }
 
         #endregion
