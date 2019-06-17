@@ -176,7 +176,7 @@ namespace FlashDebugger
                     }
                     catch (/*Expression*/Exception e)
                     {
-                        TraceManager.AddAsync("[Problem in breakpoint: "+e.ToString()+"]", 4);
+                        TraceManager.AddAsync("[Problem in breakpoint: "+e+"]", 4);
                         ErrorManager.ShowError(e);
                         return true;
                     }

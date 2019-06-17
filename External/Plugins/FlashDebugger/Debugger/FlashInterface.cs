@@ -469,7 +469,7 @@ namespace FlashDebugger
                             }
                             catch (Exception e)
                             {
-                                TraceManager.AddAsync("Isolate suspend exception: " + e.ToString());
+                                TraceManager.AddAsync("Isolate suspend exception: " + e);
                             }
                         }
                         kv.Value.requestPause = false;
@@ -887,7 +887,7 @@ namespace FlashDebugger
             if (e.isolateId == 1)
                 TraceManager.AddAsync(sb.ToString(), 3);
             else
-                TraceManager.AddAsync("Worker " + e.isolateId + ": " + sb.ToString(), 3);
+                TraceManager.AddAsync("Worker " + e.isolateId + ": " + sb, 3);
         }
 
         /// <summary> Called when a swf has been loaded by the player</summary>

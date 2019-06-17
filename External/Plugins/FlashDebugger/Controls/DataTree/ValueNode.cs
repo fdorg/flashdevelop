@@ -98,7 +98,7 @@ namespace FlashDebugger.Controls.DataTree
                 }
                 else if (type == VariableType_.FUNCTION)
                 {
-                    return "Function @" + m_Value.ToString();
+                    return "Function @" + m_Value;
                 }
                 temp = m_Value.ToString();
                 if (!m_bEditing)
@@ -177,7 +177,7 @@ namespace FlashDebugger.Controls.DataTree
                     }
                     else if (type == VariableType_.FUNCTION)
                     {
-                        return "Function - " + m_Value.ToString();
+                        return "Function - " + m_Value;
                     }
                 }
                 return "";

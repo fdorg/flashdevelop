@@ -315,7 +315,7 @@ namespace LayoutManager
                 if (!FileHelper.Recycle(item.Tag.ToString()))
                 {
                     string message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
-                    throw new Exception(message + " " + item.Tag.ToString());
+                    throw new Exception(message + " " + item.Tag);
                 }
                 this.PopulateLayoutsListView();
             }

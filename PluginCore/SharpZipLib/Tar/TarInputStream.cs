@@ -473,7 +473,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                                 throw new InvalidHeaderException("Failed to read long name entry");
                             }
                             
-                            longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead).ToString());
+                            longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead));
                             numToRead -= numRead;
                         }
                         

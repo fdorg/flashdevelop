@@ -43,7 +43,7 @@ namespace Mono.GetOptions
                 {
                     if (this.LongForm.IndexOf(':') >= 0)
                     {
-                        throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + this.MemberInfo.ToString() + " isn't]");
+                        throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + this.MemberInfo + " isn't]");
                     }
                     this.NeedsParameter = true;
                     if (option.MaxOccurs == 1)

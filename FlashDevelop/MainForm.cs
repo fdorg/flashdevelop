@@ -3619,7 +3619,7 @@ namespace FlashDevelop
                 FileInfo fileInfo = new FileInfo(this.CurrentDocument.FileName);
                 string message = TextHelper.GetString("Info.FileDetails");
                 string newline = LineEndDetector.GetNewLineMarker(Globals.SciControl.EOLMode);
-                string path = fileInfo.FullName.ToString();
+                string path = fileInfo.FullName;
                 string created = fileInfo.CreationTime.ToString();
                 string modified = fileInfo.LastWriteTime.ToString();
                 string size = fileInfo.Length.ToString();
