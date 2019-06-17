@@ -15,23 +15,23 @@ namespace Mono.GetOptions
         public OptionList(Options optionBundle)
         {
             this.optionBundle = null;
-            this.appTitle = "Add a [assembly: AssemblyTitle(\"Here goes the application name\")] to your assembly";
-            this.appCopyright = "Add a [assembly: AssemblyCopyright(\"(c)200n Here goes the copyright holder name\")] to your assembly";
-            this.appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
-            this.appAboutDetails = "Add a [assembly: Mono.About(\"Here goes the short about details\")] to your assembly";
-            this.appUsageComplement = "Add a [assembly: Mono.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
-            this.list = new List<OptionDetails>();
-            this.arguments = new List<string>();
-            this.argumentsTail = new List<string>();
-            this.argumentProcessor = null;
-            this.HasSecondLevelHelp = false;
-            this.bannerAlreadyShown = false;
-            this.Initialize(optionBundle);
+            appTitle = "Add a [assembly: AssemblyTitle(\"Here goes the application name\")] to your assembly";
+            appCopyright = "Add a [assembly: AssemblyCopyright(\"(c)200n Here goes the copyright holder name\")] to your assembly";
+            appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
+            appAboutDetails = "Add a [assembly: Mono.About(\"Here goes the short about details\")] to your assembly";
+            appUsageComplement = "Add a [assembly: Mono.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
+            list = new List<OptionDetails>();
+            arguments = new List<string>();
+            argumentsTail = new List<string>();
+            argumentProcessor = null;
+            HasSecondLevelHelp = false;
+            bannerAlreadyShown = false;
+            Initialize(optionBundle);
         }
 
         private void AddArgumentProcessor(MemberInfo memberInfo)
         {
-            if (this.argumentProcessor != null)
+            if (argumentProcessor != null)
             {
                 throw new NotSupportedException("More than one argument processor method found");
             }
@@ -48,30 +48,30 @@ namespace Mono.GetOptions
             {
                 throw new NotSupportedException("Argument processor method must have a string parameter");
             }
-            this.argumentProcessor = (MethodInfo) memberInfo;
+            argumentProcessor = (MethodInfo) memberInfo;
         }
 
         internal WhatToDoNext DoAbout()
         {
-            this.ShowAbout();
+            ShowAbout();
             return WhatToDoNext.AbandonProgram;
         }
 
         internal WhatToDoNext DoHelp()
         {
-            this.ShowHelp(false);
+            ShowHelp(false);
             return WhatToDoNext.AbandonProgram;
         }
 
         internal WhatToDoNext DoHelp2()
         {
-            this.ShowHelp(true);
+            ShowHelp(true);
             return WhatToDoNext.AbandonProgram;
         }
 
         internal WhatToDoNext DoUsage()
         {
-            this.ShowUsage();
+            ShowUsage();
             return WhatToDoNext.AbandonProgram;
         }
 
@@ -112,11 +112,11 @@ namespace Mono.GetOptions
             return list1.ToArray();
         }
 
-        private object[] GetAssemblyAttributes(Type type) => this.entry.GetCustomAttributes(type, false);
+        private object[] GetAssemblyAttributes(Type type) => entry.GetCustomAttributes(type, false);
 
         private string[] GetAssemblyAttributeStrings(Type type)
         {
-            object[] objArray1 = this.GetAssemblyAttributes(type);
+            object[] objArray1 = GetAssemblyAttributes(type);
             if ((objArray1 == null) || (objArray1.Length == 0))
             {
                 return new string[0];
@@ -134,7 +134,7 @@ namespace Mono.GetOptions
 
         private void GetAssemblyAttributeValue(Type type, ref string var)
         {
-            object[] objArray1 = this.GetAssemblyAttributes(type);
+            object[] objArray1 = GetAssemblyAttributes(type);
             if ((objArray1 != null) && (objArray1.Length > 0))
             {
                 var = objArray1[0].ToString();
@@ -143,7 +143,7 @@ namespace Mono.GetOptions
 
         private void GetAssemblyAttributeValue(Type type, string propertyName, ref string var)
         {
-            object[] objArray1 = this.GetAssemblyAttributes(type);
+            object[] objArray1 = GetAssemblyAttributes(type);
             if ((objArray1 != null) && (objArray1.Length > 0))
             {
                 var = (string) type.InvokeMember(propertyName, BindingFlags.GetProperty | (BindingFlags.GetField | (BindingFlags.Public | BindingFlags.Instance)), null, objArray1[0], new object[0]);
@@ -158,22 +158,22 @@ namespace Mono.GetOptions
             {
                 throw new ArgumentNullException("optionBundle");
             }
-            this.entry = Assembly.GetEntryAssembly();
-            this.appExeName = this.entry.GetName().Name;
-            this.appVersion = this.entry.GetName().Version.ToString();
+            entry = Assembly.GetEntryAssembly();
+            appExeName = entry.GetName().Name;
+            appVersion = entry.GetName().Version.ToString();
             this.optionBundle = optionBundle;
-            this.parsingMode = optionBundle.ParsingMode;
-            this.breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
-            this.endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
-            this.GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref this.appTitle);
-            this.GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref this.appCopyright);
-            this.GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref this.appDescription);
-            this.GetAssemblyAttributeValue(typeof(AboutAttribute), ref this.appAboutDetails);
-            this.GetAssemblyAttributeValue(typeof(UsageComplementAttribute), ref this.appUsageComplement);
-            this.appAuthors = this.GetAssemblyAttributeStrings(typeof(AuthorAttribute));
-            if (this.appAuthors.Length == 0)
+            parsingMode = optionBundle.ParsingMode;
+            breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
+            endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
+            GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
+            GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref appCopyright);
+            GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
+            GetAssemblyAttributeValue(typeof(AboutAttribute), ref appAboutDetails);
+            GetAssemblyAttributeValue(typeof(UsageComplementAttribute), ref appUsageComplement);
+            appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
+            if (appAuthors.Length == 0)
             {
-                this.appAuthors = new string[] { "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly" } ;
+                appAuthors = new string[] { "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly" } ;
             }
             MemberInfo[] infoArray1 = optionBundle.GetType().GetMembers();
             for (int num1 = 0; num1 < infoArray1.Length; num1++)
@@ -183,15 +183,15 @@ namespace Mono.GetOptions
                 if (objArray1.Length > 0)
                 {
                     OptionDetails details1 = new OptionDetails(info1, (OptionAttribute) objArray1[0], optionBundle);
-                    this.list.Add(details1);
-                    this.HasSecondLevelHelp = this.HasSecondLevelHelp || details1.SecondLevelHelp;
+                    list.Add(details1);
+                    HasSecondLevelHelp = HasSecondLevelHelp || details1.SecondLevelHelp;
                 }
                 else
                 {
                     objArray1 = info1.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
                     if (objArray1.Length > 0)
                     {
-                        this.AddArgumentProcessor(info1);
+                        AddArgumentProcessor(info1);
                     }
                 }
             }
@@ -199,7 +199,7 @@ namespace Mono.GetOptions
 
         internal bool MaybeAnOption(string arg)
         {
-            return (((this.parsingMode & OptionsParsingMode.Windows) > 0) && (arg[0] == '/')) || (((this.parsingMode & OptionsParsingMode.Linux) > 0) && (arg[0] == '-'));
+            return (((parsingMode & OptionsParsingMode.Windows) > 0) && (arg[0] == '/')) || (((parsingMode & OptionsParsingMode.Linux) > 0) && (arg[0] == '-'));
         }
 
         public string[] NormalizeArgs(string[] args)
@@ -214,11 +214,11 @@ namespace Mono.GetOptions
                 {
                     if (flag1)
                     {
-                        if (this.endOptionProcessingWithDoubleDash && (text1 == "--"))
+                        if (endOptionProcessingWithDoubleDash && (text1 == "--"))
                         {
                             flag1 = false;
                         }
-                        else if (((this.parsingMode & OptionsParsingMode.Linux) > 0) && (text1[0] == '-') && ((text1.Length > 1) && (text1[1] != '-')) && this.breakSingleDashManyLettersIntoManyOptions)
+                        else if (((parsingMode & OptionsParsingMode.Linux) > 0) && (text1[0] == '-') && ((text1.Length > 1) && (text1[1] != '-')) && breakSingleDashManyLettersIntoManyOptions)
                         {
                             CharEnumerator enumerator1 = text1.Substring(1).GetEnumerator();
                             while (true)
@@ -233,12 +233,12 @@ namespace Mono.GetOptions
                         }
                         else
                         {
-                            if (!this.MaybeAnOption(text1))
+                            if (!MaybeAnOption(text1))
                             {
                                 goto Label_014D;
                             }
                             char[] chArray1 = new char[] { ':', '=' } ;
-                            int num1 = OptionList.IndexOfAny(text1, chArray1);
+                            int num1 = IndexOfAny(text1, chArray1);
                             if (num1 < 0)
                             {
                                 list1.Add(text1);
@@ -250,7 +250,7 @@ namespace Mono.GetOptions
                     }
                     else
                     {
-                        this.argumentsTail.Add(text1);
+                        argumentsTail.Add(text1);
                     }
                 }
                 goto Label_0155;
@@ -263,8 +263,8 @@ namespace Mono.GetOptions
 
         public string[] ProcessArgs(string[] args)
         {
-            this.list.Sort();
-            args = this.NormalizeArgs(args);
+            list.Sort();
+            args = NormalizeArgs(args);
             try
             {
                 int num1 = args.Length;
@@ -285,7 +285,7 @@ namespace Mono.GetOptions
                     {
                         goto Label_00DA;
                     }
-                    IEnumerator enumerator1 = this.list.GetEnumerator();
+                    IEnumerator enumerator1 = list.GetEnumerator();
                 Label_0078:
                     try
                     {
@@ -312,10 +312,10 @@ namespace Mono.GetOptions
                 Label_00DA:
                     if (!flag1)
                     {
-                        this.ProcessNonOption(text2);
+                        ProcessNonOption(text2);
                     }
                 }
-                IEnumerator enumerator2 = this.list.GetEnumerator();
+                IEnumerator enumerator2 = list.GetEnumerator();
             Label_0102:
                 try
                 {
@@ -331,14 +331,14 @@ namespace Mono.GetOptions
                     IDisposable disposable2 = enumerator2 as IDisposable;
                     disposable2?.Dispose();
                 }
-                IEnumerator enumerator3 = this.argumentsTail.GetEnumerator();
+                IEnumerator enumerator3 = argumentsTail.GetEnumerator();
             Label_0151:
                 try
                 {
                     if (enumerator3.MoveNext())
                     {
                         string text3 = (string) enumerator3.Current;
-                        this.ProcessNonOption(text3);
+                        ProcessNonOption(text3);
                         goto Label_0151;
                     }
                 }
@@ -363,24 +363,24 @@ namespace Mono.GetOptions
             {
                 Console.WriteLine("argument [" + argument + "]");
             }
-            if (this.argumentProcessor == null)
+            if (argumentProcessor == null)
             {
-                this.arguments.Add(argument);
+                arguments.Add(argument);
             }
             else
             {
                 object[] objArray1 = { argument } ;
-                this.argumentProcessor.Invoke(this.optionBundle, objArray1);
+                argumentProcessor.Invoke(optionBundle, objArray1);
             }
         }
 
         private void ShowAbout()
         {
-            this.ShowTitleLines();
-            Console.WriteLine(this.appAboutDetails);
+            ShowTitleLines();
+            Console.WriteLine(appAboutDetails);
             StringBuilder builder1 = new StringBuilder("Authors: ");
             bool flag1 = true;
-            string[] textArray1 = this.appAuthors;
+            string[] textArray1 = appAuthors;
             for (int num1 = 0; num1 < textArray1.Length; num1++)
             {
                 string text1 = textArray1[num1];
@@ -399,22 +399,22 @@ namespace Mono.GetOptions
 
         public void ShowBanner()
         {
-            if (!this.bannerAlreadyShown)
+            if (!bannerAlreadyShown)
             {
-                string[] textArray1 = { this.appTitle, "  ", this.appVersion, " - ", this.appCopyright } ;
+                string[] textArray1 = { appTitle, "  ", appVersion, " - ", appCopyright } ;
                 Console.WriteLine(string.Concat(textArray1));
             }
-            this.bannerAlreadyShown = true;
+            bannerAlreadyShown = true;
         }
 
         private void ShowHelp(bool showSecondLevelHelp)
         {
-            this.ShowTitleLines();
-            Console.WriteLine(this.Usage);
+            ShowTitleLines();
+            Console.WriteLine(Usage);
             Console.WriteLine("Options:");
             var list1 = new List<string>(list.Count);
             var num1 = 0;
-            var enumerator1 = this.list.GetEnumerator();
+            var enumerator1 = list.GetEnumerator();
         Label_003B:
             try
             {
@@ -477,16 +477,16 @@ namespace Mono.GetOptions
 
         private void ShowTitleLines()
         {
-            this.ShowBanner();
-            Console.WriteLine(this.appDescription);
+            ShowBanner();
+            Console.WriteLine(appDescription);
             Console.WriteLine();
         }
 
         private void ShowUsage()
         {
-            Console.WriteLine(this.Usage);
+            Console.WriteLine(Usage);
             Console.Write("Short Options: ");
-            IEnumerator enumerator1 = this.list.GetEnumerator();
+            IEnumerator enumerator1 = list.GetEnumerator();
         Label_0021:
             try
             {
@@ -508,14 +508,14 @@ namespace Mono.GetOptions
         private void ShowUsage(string errorMessage)
         {
             Console.WriteLine("ERROR: " + errorMessage.TrimEnd());
-            this.ShowUsage();
+            ShowUsage();
         }
 
 
         // Properties
-        public string AboutDetails => this.appAboutDetails;
+        public string AboutDetails => appAboutDetails;
 
-        public string Usage => ("Usage: " + this.appExeName + " [options] " + this.appUsageComplement);
+        public string Usage => ("Usage: " + appExeName + " [options] " + appUsageComplement);
 
 
         // Fields

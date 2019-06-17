@@ -39,20 +39,20 @@ namespace AirProperties
         {
             InitializeComponent();
             InitializeLocalization();
-            this._applicationLocales = applicationLocales;
+            _applicationLocales = applicationLocales;
             LoadDefaultLocales();
         }
 
         private void InitializeLocalization()
         {
-            this.OKButton.Text = TextHelper.GetString("Label.Ok");
-            this.AddNewButton.Text = TextHelper.GetString("Label.Add");
-            this.CancelButton1.Text = TextHelper.GetString("Label.Cancel");
-            this.DefaultLocalesLabel.Text = TextHelper.GetString("Label.DefaultLocales");
-            this.SelectedLocalesLabel.Text = TextHelper.GetString("Label.SelectedLocales");
-            this.CustomLocaleField.Text = TextHelper.GetString("Label.AddCustomLocale");
-            this.LocalesGroupBox.Text = TextHelper.GetString("Label.Locales");
-            this.Text = " " + TextHelper.GetString("Title.LocaleManager");
+            OKButton.Text = TextHelper.GetString("Label.Ok");
+            AddNewButton.Text = TextHelper.GetString("Label.Add");
+            CancelButton1.Text = TextHelper.GetString("Label.Cancel");
+            DefaultLocalesLabel.Text = TextHelper.GetString("Label.DefaultLocales");
+            SelectedLocalesLabel.Text = TextHelper.GetString("Label.SelectedLocales");
+            CustomLocaleField.Text = TextHelper.GetString("Label.AddCustomLocale");
+            LocalesGroupBox.Text = TextHelper.GetString("Label.Locales");
+            Text = " " + TextHelper.GetString("Title.LocaleManager");
         }
 
         /// <summary>
@@ -117,17 +117,17 @@ namespace AirProperties
 
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (this.ValidateChildren())
+            if (ValidateChildren())
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void AddNewButton_Click(object sender, EventArgs e)

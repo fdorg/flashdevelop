@@ -2062,14 +2062,14 @@ namespace HaXeContext.Generators
                 if (job != (GeneratorJobType) (-1))
                 {
                     Assert.IsNotEmpty(options);
-                    var item = options.Find(it => it is ASCompletion.Completion.GeneratorItem generatorItem && generatorItem.Job == job);
+                    var item = options.Find(it => it is GeneratorItem generatorItem && generatorItem.Job == job);
                     Assert.IsNotNull(item);
                     var value = item.Value;
                 }
                 return sci.Text;
             }
             if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
-            if (options.Count > 0) Assert.IsFalse(options.Any(it => it is ASCompletion.Completion.GeneratorItem item && item.Job == job));
+            if (options.Count > 0) Assert.IsFalse(options.Any(it => it is GeneratorItem item && item.Job == job));
             return null;
         }
 

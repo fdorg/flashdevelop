@@ -268,7 +268,7 @@ namespace ProjectManager.Projects
         /// </summary>
         public string GetObjDirectory()
         {
-            string objPath = Path.Combine(this.Directory, "obj");
+            string objPath = Path.Combine(Directory, "obj");
             if (!System.IO.Directory.Exists(objPath))
                 System.IO.Directory.CreateDirectory(objPath);
             return objPath;
@@ -318,12 +318,12 @@ namespace ProjectManager.Projects
 
         public string[] GetHiddenPaths()
         {
-            return this.hiddenPaths.ToArray();
+            return hiddenPaths.ToArray();
         }
 
         public string GetRelativePath(string path)
         {
-            return ProjectPaths.GetRelativePath(this.Directory, path);
+            return ProjectPaths.GetRelativePath(Directory, path);
         }
 
         public void UpdateVars(bool silent)
@@ -338,7 +338,7 @@ namespace ProjectManager.Projects
             if (vars != null && path.IndexOf('$') >= 0)
                 foreach (BuildEventInfo arg in vars) 
                     path = path.Replace(arg.FormattedName, arg.Value);
-            return ProjectPaths.GetAbsolutePath(this.Directory, path);
+            return ProjectPaths.GetAbsolutePath(Directory, path);
         }
 
         /// <summary>

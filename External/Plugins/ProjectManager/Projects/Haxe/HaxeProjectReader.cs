@@ -12,7 +12,7 @@ namespace ProjectManager.Projects.Haxe
         public HaxeProjectReader(string filename)
             : base(filename, new HaxeProject(filename))
         {
-            this.project = base.Project as HaxeProject;
+            project = Project as HaxeProject;
         }
 
         public new HaxeProject ReadProject()

@@ -16,7 +16,7 @@ namespace FDBuild.Building.AS3
 
         public FlexConfigWriter(string libraryPath): base(libraryPath, new UTF8Encoding(false))
         {
-            base.Formatting = Formatting.Indented;
+            Formatting = Formatting.Indented;
         }
 
         public void WriteConfig(AS3Project project, double sdkVersion, string[] extraClasspaths, bool debugMode, bool asc2Mode)

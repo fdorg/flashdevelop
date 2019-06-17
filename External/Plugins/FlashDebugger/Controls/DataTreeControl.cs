@@ -170,7 +170,7 @@ namespace FlashDebugger.Controls
             Color grayText = PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
-            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
+            if (e.Node.IsSelected && ContainsFocus) e.TextColor = hiliteText;
             try
             {
                 if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
@@ -305,7 +305,7 @@ namespace FlashDebugger.Controls
             Color errorText = PluginBase.MainForm.GetThemeColor("DataTreeControl.ErrorText", Color.Red);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
-            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
+            if (e.Node.IsSelected && ContainsFocus) e.TextColor = hiliteText;
             try
             {
                 VariableNode variableNode = e.Node.Tag as VariableNode;
@@ -342,12 +342,12 @@ namespace FlashDebugger.Controls
             return _model.GetFullPath(node);
         }
 
-        private void CopyItemClick(object sender, System.EventArgs e)
+        private void CopyItemClick(object sender, EventArgs e)
         {
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
         }
-        private void ViewerItemClick(object sender, System.EventArgs e)
+        private void ViewerItemClick(object sender, EventArgs e)
         {
             if (viewerForm == null)
             {
@@ -653,7 +653,7 @@ namespace FlashDebugger.Controls
         
         #region Copy Value, ID, Tree
 
-        private void CopyItemValueClick(object sender, System.EventArgs e)
+        private void CopyItemValueClick(object sender, EventArgs e)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
             string value = node.Value;
@@ -663,7 +663,7 @@ namespace FlashDebugger.Controls
                 Clipboard.Clear();
         }
 
-        private void CopyItemIdClick(object sender, System.EventArgs e)
+        private void CopyItemIdClick(object sender, EventArgs e)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
             string id = node.Id;
@@ -673,7 +673,7 @@ namespace FlashDebugger.Controls
                 Clipboard.Clear();
         }
 
-        private void CopyItemTreeClick(object sender, System.EventArgs e)
+        private void CopyItemTreeClick(object sender, EventArgs e)
         {
             string exporterKey = (string) ((ToolStripItem) sender).Tag;
             CopyTreeInternal(exporterKey, 0);

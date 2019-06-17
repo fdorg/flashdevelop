@@ -7,7 +7,7 @@
         public GenericProjectReader(string filename)
             : base(filename, new GenericProject(filename))
         {
-            this.project = base.Project as GenericProject;
+            project = Project as GenericProject;
         }
 
         public new GenericProject ReadProject()

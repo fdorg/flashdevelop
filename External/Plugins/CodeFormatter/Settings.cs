@@ -190,8 +190,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AStyle.OptionsCPP")]
         public string Pref_AStyle_CPP
         {
-            get { return this.pref_AStyle_CPP; }
-            set { this.pref_AStyle_CPP = value; }
+            get { return pref_AStyle_CPP; }
+            set { pref_AStyle_CPP = value; }
         }
 
         [DefaultValue("")]
@@ -200,8 +200,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AStyle.OptionsOthers")]
         public string Pref_AStyle_Others
         {
-            get { return this.pref_AStyle_Others; }
-            set { this.pref_AStyle_Others = value; }
+            get { return pref_AStyle_Others; }
+            set { pref_AStyle_Others = value; }
         }
 
         ////////////////// AS3 ///////////////////////////////////////
@@ -212,8 +212,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeComma")]
         public int Pref_AS_SpacesBeforeComma
         {
-            get { return this.pref_AS_SpacesBeforeComma; }
-            set { this.pref_AS_SpacesBeforeComma = value; }
+            get { return pref_AS_SpacesBeforeComma; }
+            set { pref_AS_SpacesBeforeComma = value; }
         }
 
         [DefaultValue(1)]
@@ -222,8 +222,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterComma")]
         public int Pref_AS_SpacesAfterComma
         {
-            get { return this.pref_AS_SpacesAfterComma; }
-            set { this.pref_AS_SpacesAfterComma = value; }
+            get { return pref_AS_SpacesAfterComma; }
+            set { pref_AS_SpacesAfterComma = value; }
         }
 
         [DefaultValue(0)]
@@ -232,8 +232,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAroundColons")]
         public int Pref_AS_SpacesAroundColons
         {
-            get { return this.pref_AS_SpacesAroundColons; }
-            set { this.pref_AS_SpacesAroundColons = value; }
+            get { return pref_AS_SpacesAroundColons; }
+            set { pref_AS_SpacesAroundColons = value; }
         }
 
         [DefaultValue(true)]
@@ -242,8 +242,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseGlobalSpacesAroundColons")]
         public bool Pref_AS_UseGlobalSpacesAroundColons
         {
-            get { return this.pref_AS_UseGlobalSpacesAroundColons; }
-            set { this.pref_AS_UseGlobalSpacesAroundColons = value; }
+            get { return pref_AS_UseGlobalSpacesAroundColons; }
+            set { pref_AS_UseGlobalSpacesAroundColons = value; }
         }
 
         [DefaultValue(0)]
@@ -252,8 +252,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesBeforeColons")]
         public int Pref_AS_AdvancedSpacesBeforeColons
         {
-            get { return this.pref_AS_AdvancedSpacesBeforeColons; }
-            set { this.pref_AS_AdvancedSpacesBeforeColons = value; }
+            get { return pref_AS_AdvancedSpacesBeforeColons; }
+            set { pref_AS_AdvancedSpacesBeforeColons = value; }
         }
 
         [DefaultValue(0)]
@@ -262,8 +262,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesAfterColons")]
         public int Pref_AS_AdvancedSpacesAfterColons
         {
-            get { return this.pref_AS_AdvancedSpacesAfterColons; }
-            set { this.pref_AS_AdvancedSpacesAfterColons = value; }
+            get { return pref_AS_AdvancedSpacesAfterColons; }
+            set { pref_AS_AdvancedSpacesAfterColons = value; }
         }
 
         [DefaultValue(1)]
@@ -272,8 +272,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesBeforeFunctions")]
         public int Pref_AS_BlankLinesBeforeFunctions
         {
-            get { return this.pref_AS_BlankLinesBeforeFunctions; }
-            set { this.pref_AS_BlankLinesBeforeFunctions = value; }
+            get { return pref_AS_BlankLinesBeforeFunctions; }
+            set { pref_AS_BlankLinesBeforeFunctions = value; }
         }
 
         [DefaultValue(1)]
@@ -282,8 +282,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesBeforeClasses")]
         public int Pref_AS_BlankLinesBeforeClasses
         {
-            get { return this.pref_AS_BlankLinesBeforeClasses; }
-            set { this.pref_AS_BlankLinesBeforeClasses = value; }
+            get { return pref_AS_BlankLinesBeforeClasses; }
+            set { pref_AS_BlankLinesBeforeClasses = value; }
         }
 
         [DefaultValue(0)]
@@ -292,8 +292,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesBeforeProperties")]
         public int Pref_AS_BlankLinesBeforeProperties
         {
-            get { return this.pref_AS_BlankLinesBeforeProperties; }
-            set { this.pref_AS_BlankLinesBeforeProperties = value; }
+            get { return pref_AS_BlankLinesBeforeProperties; }
+            set { pref_AS_BlankLinesBeforeProperties = value; }
         }
 
         [DefaultValue(0)]
@@ -302,8 +302,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesBeforeControlStatements")]
         public int Pref_AS_BlankLinesBeforeControlStatements
         {
-            get { return this.pref_AS_BlankLinesBeforeControlStatements; }
-            set { this.pref_AS_BlankLinesBeforeControlStatements = value; }
+            get { return pref_AS_BlankLinesBeforeControlStatements; }
+            set { pref_AS_BlankLinesBeforeControlStatements = value; }
         }
 
         [DefaultValue(false)]
@@ -312,8 +312,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.KeepBlankLines")]
         public bool Pref_AS_KeepBlankLines
         {
-            get { return this.pref_AS_KeepBlankLines; }
-            set { this.pref_AS_KeepBlankLines = value; }
+            get { return pref_AS_KeepBlankLines; }
+            set { pref_AS_KeepBlankLines = value; }
         }
 
         [DefaultValue(1)]
@@ -322,8 +322,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesToKeep")]
         public int Pref_AS_BlankLinesToKeep
         {
-            get { return this.pref_AS_BlankLinesToKeep; }
-            set { this.pref_AS_BlankLinesToKeep = value; }
+            get { return pref_AS_BlankLinesToKeep; }
+            set { pref_AS_BlankLinesToKeep = value; }
         }
 
         [DefaultValue(true)]
@@ -332,8 +332,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.OpenBraceOnNewLine")]
         public bool Pref_AS_OpenBraceOnNewLine
         {
-            get { return this.pref_AS_OpenBraceOnNewLine; }
-            set { this.pref_AS_OpenBraceOnNewLine = value; }
+            get { return pref_AS_OpenBraceOnNewLine; }
+            set { pref_AS_OpenBraceOnNewLine = value; }
         }
 
         [DefaultValue(true)]
@@ -342,8 +342,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.ElseOnNewLine")]
         public bool Pref_AS_ElseOnNewLine
         {
-            get { return this.pref_AS_ElseOnNewLine; }
-            set { this.pref_AS_ElseOnNewLine = value; }
+            get { return pref_AS_ElseOnNewLine; }
+            set { pref_AS_ElseOnNewLine = value; }
         }
 
         [DefaultValue(true)]
@@ -352,8 +352,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.CatchOnNewLine")]
         public bool Pref_AS_CatchOnNewLine
         {
-            get { return this.pref_AS_CatchOnNewLine; }
-            set { this.pref_AS_CatchOnNewLine = value; }
+            get { return pref_AS_CatchOnNewLine; }
+            set { pref_AS_CatchOnNewLine = value; }
         }
 
         [DefaultValue(true)]
@@ -362,8 +362,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.ElseIfOnSameLine")]
         public bool Pref_AS_ElseIfOnSameLine
         {
-            get { return this.pref_AS_ElseIfOnSameLine; }
-            set { this.pref_AS_ElseIfOnSameLine = value; }
+            get { return pref_AS_ElseIfOnSameLine; }
+            set { pref_AS_ElseIfOnSameLine = value; }
         }
 
         [DefaultValue(200)]
@@ -372,8 +372,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MaxLineLength")]
         public int Pref_AS_MaxLineLength
         {
-            get { return this.pref_AS_MaxLineLength; }
-            set { this.pref_AS_MaxLineLength = value; }
+            get { return pref_AS_MaxLineLength; }
+            set { pref_AS_MaxLineLength = value; }
         }
 
         [DefaultValue(1)]
@@ -382,8 +382,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAroundAssignment")]
         public int Pref_AS_SpacesAroundAssignment
         {
-            get { return this.pref_AS_SpacesAroundAssignment; }
-            set { this.pref_AS_SpacesAroundAssignment = value; }
+            get { return pref_AS_SpacesAroundAssignment; }
+            set { pref_AS_SpacesAroundAssignment = value; }
         }
 
         [DefaultValue(1)]
@@ -392,8 +392,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAroundSymbolicOperator")]
         public int Pref_AS_SpacesAroundSymbolicOperator
         {
-            get { return this.pref_AS_SpacesAroundSymbolicOperator; }
-            set { this.pref_AS_SpacesAroundSymbolicOperator = value; }
+            get { return pref_AS_SpacesAroundSymbolicOperator; }
+            set { pref_AS_SpacesAroundSymbolicOperator = value; }
         }
 
         [DefaultValue(false)]
@@ -402,8 +402,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.KeepSingleLineCommentsOnColumnOne")]
         public bool Pref_AS_KeepSLCommentsOnColumn1
         {
-            get { return this.pref_AS_KeepSLCommentsOnColumn1; }
-            set { this.pref_AS_KeepSLCommentsOnColumn1 = value; }
+            get { return pref_AS_KeepSLCommentsOnColumn1; }
+            set { pref_AS_KeepSLCommentsOnColumn1 = value; }
         }
 
         [DefaultValue(false)]
@@ -412,8 +412,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BreakLinesBeforeComma")]
         public bool Pref_AS_BreakLinesBeforeComma
         {
-            get { return this.pref_AS_BreakLinesBeforeComma; }
-            set { this.pref_AS_BreakLinesBeforeComma = value; }
+            get { return pref_AS_BreakLinesBeforeComma; }
+            set { pref_AS_BreakLinesBeforeComma = value; }
         }
 
         [DefaultValue(WrapType.None)]
@@ -422,8 +422,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WrapExpressionMode")]
         public WrapType Pref_AS_WrapExpressionMode
         {
-            get { return this.pref_AS_WrapExpressionMode; }
-            set { this.pref_AS_WrapExpressionMode = value; }
+            get { return pref_AS_WrapExpressionMode; }
+            set { pref_AS_WrapExpressionMode = value; }
         }
 
         [DefaultValue(WrapType.None)]
@@ -432,8 +432,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WrapMethodDeclarationMode")]
         public WrapType Pref_AS_WrapMethodDeclMode
         {
-            get { return this.pref_AS_WrapMethodDeclMode; }
-            set { this.pref_AS_WrapMethodDeclMode = value; }
+            get { return pref_AS_WrapMethodDeclMode; }
+            set { pref_AS_WrapMethodDeclMode = value; }
         }
 
         [DefaultValue(WrapType.None)]
@@ -442,8 +442,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WrapMethodCallMode")]
         public WrapType Pref_AS_WrapMethodCallMode
         {
-            get { return this.pref_AS_WrapMethodCallMode; }
-            set { this.pref_AS_WrapMethodCallMode = value; }
+            get { return pref_AS_WrapMethodCallMode; }
+            set { pref_AS_WrapMethodCallMode = value; }
         }
 
         [DefaultValue(WrapType.None)]
@@ -452,8 +452,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WrapArrayDeclarationMode")]
         public WrapType Pref_AS_WrapArrayDeclMode
         {
-            get { return this.pref_AS_WrapArrayDeclMode; }
-            set { this.pref_AS_WrapArrayDeclMode = value; }
+            get { return pref_AS_WrapArrayDeclMode; }
+            set { pref_AS_WrapArrayDeclMode = value; }
         }
 
         [DefaultValue(WrapType.DontProcess)]
@@ -462,8 +462,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WrapXMLMode")]
         public WrapType Pref_AS_WrapXMLMode
         {
-            get { return this.pref_AS_WrapXMLMode; }
-            set { this.pref_AS_WrapXMLMode = value; }
+            get { return pref_AS_WrapXMLMode; }
+            set { pref_AS_WrapXMLMode = value; }
         }
 
         [DefaultValue(WrapIndent.Normal)]
@@ -472,8 +472,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WrapIndentStyle")]
         public WrapIndent Pref_AS_WrapIndentStyle
         {
-            get { return this.pref_AS_WrapIndentStyle; }
-            set { this.pref_AS_WrapIndentStyle = value; }
+            get { return pref_AS_WrapIndentStyle; }
+            set { pref_AS_WrapIndentStyle = value; }
         }
 
         [DefaultValue(true)]
@@ -482,8 +482,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.CollapseSpacesForAdjacentParens")]
         public bool Pref_AS_CollapseSpacesForAdjacentParens
         {
-            get { return this.pref_AS_CollapseSpacesForAdjacentParens; }
-            set { this.pref_AS_CollapseSpacesForAdjacentParens = value; }
+            get { return pref_AS_CollapseSpacesForAdjacentParens; }
+            set { pref_AS_CollapseSpacesForAdjacentParens = value; }
         }
 
         [DefaultValue(1)]
@@ -492,8 +492,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterLabel")]
         public int Pref_AS_SpacesAfterLabel
         {
-            get { return this.pref_AS_SpacesAfterLabel; }
-            set { this.pref_AS_SpacesAfterLabel = value; }
+            get { return pref_AS_SpacesAfterLabel; }
+            set { pref_AS_SpacesAfterLabel = value; }
         }
 
         [DefaultValue(false)]
@@ -502,8 +502,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.TrimTrailingWhitespace")]
         public bool Pref_AS_TrimTrailingWhitespace
         {
-            get { return this.pref_AS_TrimTrailingWhitespace; }
-            set { this.pref_AS_TrimTrailingWhitespace = value; }
+            get { return pref_AS_TrimTrailingWhitespace; }
+            set { pref_AS_TrimTrailingWhitespace = value; }
         }
 
         [DefaultValue(true)]
@@ -512,8 +512,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.PutEmptyStatementsOnNewLine")]
         public bool Pref_AS_PutEmptyStatementsOnNewLine
         {
-            get { return this.pref_AS_PutEmptyStatementsOnNewLine; }
-            set { this.pref_AS_PutEmptyStatementsOnNewLine = value; }
+            get { return pref_AS_PutEmptyStatementsOnNewLine; }
+            set { pref_AS_PutEmptyStatementsOnNewLine = value; }
         }
 
         [DefaultValue(1)]
@@ -522,8 +522,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeOpenControlParen")]
         public int Pref_AS_SpacesBeforeOpenControlParen
         {
-            get { return this.pref_AS_SpacesBeforeOpenControlParen; }
-            set { this.pref_AS_SpacesBeforeOpenControlParen = value; }
+            get { return pref_AS_SpacesBeforeOpenControlParen; }
+            set { pref_AS_SpacesBeforeOpenControlParen = value; }
         }
 
         [DefaultValue(true)]
@@ -532,8 +532,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AlwaysGenerateIndent")]
         public bool Pref_AS_AlwaysGenerateIndent
         {
-            get { return this.pref_AS_AlwaysGenerateIndent; }
-            set { this.pref_AS_AlwaysGenerateIndent = value; }
+            get { return pref_AS_AlwaysGenerateIndent; }
+            set { pref_AS_AlwaysGenerateIndent = value; }
         }
 
         [DefaultValue(false)]
@@ -542,8 +542,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.DontIndentPackageItems")]
         public bool Pref_AS_DontIndentPackageItems
         {
-            get { return this.pref_AS_DontIndentPackageItems; }
-            set { this.pref_AS_DontIndentPackageItems = value; }
+            get { return pref_AS_DontIndentPackageItems; }
+            set { pref_AS_DontIndentPackageItems = value; }
         }
 
         [DefaultValue(false)]
@@ -552,8 +552,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.LeaveExtraWhitespaceAroundVarDeclarations")]
         public bool Pref_AS_LeaveExtraWhitespaceAroundVarDecls
         {
-            get { return this.pref_AS_LeaveExtraWhitespaceAroundVarDecls; }
-            set { this.pref_AS_LeaveExtraWhitespaceAroundVarDecls = value; }
+            get { return pref_AS_LeaveExtraWhitespaceAroundVarDecls; }
+            set { pref_AS_LeaveExtraWhitespaceAroundVarDecls = value; }
         }
 
         [DefaultValue(0)]
@@ -562,8 +562,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParens")]
         public int Pref_AS_SpacesInsideParens
         {
-            get { return this.pref_AS_SpacesInsideParens; }
-            set { this.pref_AS_SpacesInsideParens = value; }
+            get { return pref_AS_SpacesInsideParens; }
+            set { pref_AS_SpacesInsideParens = value; }
         }
 
         [DefaultValue(true)]
@@ -572,8 +572,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseGlobalSpacesInsideParens")]
         public bool Pref_AS_UseGlobalSpacesInsideParens
         {
-            get { return this.pref_AS_UseGlobalSpacesInsideParens; }
-            set { this.pref_AS_UseGlobalSpacesInsideParens = value; }
+            get { return pref_AS_UseGlobalSpacesInsideParens; }
+            set { pref_AS_UseGlobalSpacesInsideParens = value; }
         }
 
         [DefaultValue(1)]
@@ -582,8 +582,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideArrayDeclarationBrackets")]
         public int Pref_AS_AdvancedSpacesInsideArrayDeclBrackets
         {
-            get { return this.pref_AS_AdvancedSpacesInsideArrayDeclBrackets; }
-            set { this.pref_AS_AdvancedSpacesInsideArrayDeclBrackets = value; }
+            get { return pref_AS_AdvancedSpacesInsideArrayDeclBrackets; }
+            set { pref_AS_AdvancedSpacesInsideArrayDeclBrackets = value; }
         }
 
         [DefaultValue(0)]
@@ -592,8 +592,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideArrayReferenceBrackets")]
         public int Pref_AS_AdvancedSpacesInsideArrayRefBrackets
         {
-            get { return this.pref_AS_AdvancedSpacesInsideArrayRefBrackets; }
-            set { this.pref_AS_AdvancedSpacesInsideArrayRefBrackets = value; }
+            get { return pref_AS_AdvancedSpacesInsideArrayRefBrackets; }
+            set { pref_AS_AdvancedSpacesInsideArrayRefBrackets = value; }
         }
 
         [DefaultValue(1)]
@@ -602,8 +602,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideLiteralBraces")]
         public int Pref_AS_AdvancedSpacesInsideLiteralBraces
         {
-            get { return this.pref_AS_AdvancedSpacesInsideLiteralBraces; }
-            set { this.pref_AS_AdvancedSpacesInsideLiteralBraces = value; }
+            get { return pref_AS_AdvancedSpacesInsideLiteralBraces; }
+            set { pref_AS_AdvancedSpacesInsideLiteralBraces = value; }
         }
 
         [DefaultValue(0)]
@@ -612,8 +612,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedSpacesInsideParens")]
         public int Pref_AS_AdvancedSpacesInsideParens
         {
-            get { return this.pref_AS_AdvancedSpacesInsideParens; }
-            set { this.pref_AS_AdvancedSpacesInsideParens = value; }
+            get { return pref_AS_AdvancedSpacesInsideParens; }
+            set { pref_AS_AdvancedSpacesInsideParens = value; }
         }
 
         [DefaultValue(false)]
@@ -622,8 +622,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseSpacesAroundEqualsInOptionalParameters")]
         public bool Pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters
         {
-            get { return this.pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters; }
-            set { this.pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters = value; }
+            get { return pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters; }
+            set { pref_AS_Tweak_UseSpacesAroundEqualsInOptionalParameters = value; }
         }
 
         [DefaultValue(0)]
@@ -632,8 +632,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAroundEqualsInOptionalParameters")]
         public int Pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters
         {
-            get { return this.pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters; }
-            set { this.pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters = value; }
+            get { return pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters; }
+            set { pref_AS_Tweak_SpacesAroundEqualsInOptionalParameters = value; }
         }
 
         [DefaultValue(true)]
@@ -642,8 +642,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.IndentMultilineComments")]
         public bool Pref_AS_IndentMultilineComments
         {
-            get { return this.pref_AS_IndentMultilineComments; }
-            set { this.pref_AS_IndentMultilineComments = value; }
+            get { return pref_AS_IndentMultilineComments; }
+            set { pref_AS_IndentMultilineComments = value; }
         }
 
         [DefaultValue(0)]
@@ -652,8 +652,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesBeforeImportBlock")]
         public int Pref_AS_BlankLinesBeforeImportBlock
         {
-            get { return this.pref_AS_BlankLinesBeforeImportBlock; }
-            set { this.pref_AS_BlankLinesBeforeImportBlock = value; }
+            get { return pref_AS_BlankLinesBeforeImportBlock; }
+            set { pref_AS_BlankLinesBeforeImportBlock = value; }
         }
 
         [DefaultValue(0)]
@@ -662,8 +662,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesAtFunctionStart")]
         public int Pref_AS_BlankLinesAtFunctionStart
         {
-            get { return this.pref_AS_BlankLinesAtFunctionStart; }
-            set { this.pref_AS_BlankLinesAtFunctionStart = value; }
+            get { return pref_AS_BlankLinesAtFunctionStart; }
+            set { pref_AS_BlankLinesAtFunctionStart = value; }
         }
 
         [DefaultValue(0)]
@@ -672,8 +672,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BlankLinesAtFunctionEnd")]
         public int Pref_AS_BlankLinesAtFunctionEnd
         {
-            get { return this.pref_AS_BlankLinesAtFunctionEnd; }
-            set { this.pref_AS_BlankLinesAtFunctionEnd = value; }
+            get { return pref_AS_BlankLinesAtFunctionEnd; }
+            set { pref_AS_BlankLinesAtFunctionEnd = value; }
         }
 
         [DefaultValue(true)]
@@ -682,8 +682,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.WhileOnNewLine")]
         public bool Pref_AS_WhileOnNewLine
         {
-            get { return this.pref_AS_WhileOnNewLine; }
-            set { this.pref_AS_WhileOnNewLine = value; }
+            get { return pref_AS_WhileOnNewLine; }
+            set { pref_AS_WhileOnNewLine = value; }
         }
 
         [DefaultValue(1)]
@@ -692,8 +692,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAroundEqualsInMetatags")]
         public int Pref_AS_Tweak_SpacesAroundEqualsInMetatags
         {
-            get { return this.pref_AS_Tweak_SpacesAroundEqualsInMetatags; }
-            set { this.pref_AS_Tweak_SpacesAroundEqualsInMetatags = value; }
+            get { return pref_AS_Tweak_SpacesAroundEqualsInMetatags; }
+            set { pref_AS_Tweak_SpacesAroundEqualsInMetatags = value; }
         }
 
         [DefaultValue(true)]
@@ -702,8 +702,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseSpacesAroundEqualsInMetatags")]
         public bool Pref_AS_Tweak_UseSpacesAroundEqualsInMetatags
         {
-            get { return this.pref_AS_Tweak_UseSpacesAroundEqualsInMetatags; }
-            set { this.pref_AS_Tweak_UseSpacesAroundEqualsInMetatags = value; }
+            get { return pref_AS_Tweak_UseSpacesAroundEqualsInMetatags; }
+            set { pref_AS_Tweak_UseSpacesAroundEqualsInMetatags = value; }
         }
 
         [DefaultValue(1)]
@@ -712,8 +712,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterColonsInDeclarations")]
         public int Pref_AS_AdvancedSpacesAfterColonsInDeclarations
         {
-            get { return this.pref_AS_AdvancedSpacesAfterColonsInDeclarations; }
-            set { this.pref_AS_AdvancedSpacesAfterColonsInDeclarations = value; }
+            get { return pref_AS_AdvancedSpacesAfterColonsInDeclarations; }
+            set { pref_AS_AdvancedSpacesAfterColonsInDeclarations = value; }
         }
 
         [DefaultValue(1)]
@@ -722,8 +722,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeColonsInDeclarations")]
         public int Pref_AS_AdvancedSpacesBeforeColonsInDeclarations
         {
-            get { return this.pref_AS_AdvancedSpacesBeforeColonsInDeclarations; }
-            set { this.pref_AS_AdvancedSpacesBeforeColonsInDeclarations = value; }
+            get { return pref_AS_AdvancedSpacesBeforeColonsInDeclarations; }
+            set { pref_AS_AdvancedSpacesBeforeColonsInDeclarations = value; }
         }
 
         [DefaultValue(1)]
@@ -732,8 +732,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesAfterColonsInFunctionTypes")]
         public int Pref_AS_AdvancedSpacesAfterColonsInFunctionTypes
         {
-            get { return this.pref_AS_AdvancedSpacesAfterColonsInFunctionTypes; }
-            set { this.pref_AS_AdvancedSpacesAfterColonsInFunctionTypes = value; }
+            get { return pref_AS_AdvancedSpacesAfterColonsInFunctionTypes; }
+            set { pref_AS_AdvancedSpacesAfterColonsInFunctionTypes = value; }
         }
 
         [DefaultValue(1)]
@@ -742,8 +742,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeColonsInFunctionTypes")]
         public int Pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes
         {
-            get { return this.pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes; }
-            set { this.pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes = value; }
+            get { return pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes; }
+            set { pref_AS_AdvancedSpacesBeforeColonsInFunctionTypes = value; }
         }
 
         [DefaultValue(false)]
@@ -752,8 +752,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseLineCommentWrapping")]
         public bool Pref_AS_UseLineCommentWrapping
         {
-            get { return this.pref_AS_UseLineCommentWrapping; }
-            set { this.pref_AS_UseLineCommentWrapping = value; }
+            get { return pref_AS_UseLineCommentWrapping; }
+            set { pref_AS_UseLineCommentWrapping = value; }
         }
 
         [DefaultValue(false)]
@@ -762,8 +762,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseMLCommentWrapping")]
         public bool Pref_AS_UseMLCommentWrapping
         {
-            get { return this.pref_AS_UseMLCommentWrapping; }
-            set { this.pref_AS_UseMLCommentWrapping = value; }
+            get { return pref_AS_UseMLCommentWrapping; }
+            set { pref_AS_UseMLCommentWrapping = value; }
         }
 
         [DefaultValue(true)]
@@ -772,8 +772,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MLCommentReflow")]
         public bool Pref_AS_MLCommentReflow
         {
-            get { return this.pref_AS_MLCommentReflow; }
-            set { this.pref_AS_MLCommentReflow = value; }
+            get { return pref_AS_MLCommentReflow; }
+            set { pref_AS_MLCommentReflow = value; }
         }
 
         [DefaultValue(true)]
@@ -782,8 +782,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.DocCommentReflow")]
         public bool Pref_AS_DocCommentReflow
         {
-            get { return this.pref_AS_DocCommentReflow; }
-            set { this.pref_AS_DocCommentReflow = value; }
+            get { return pref_AS_DocCommentReflow; }
+            set { pref_AS_DocCommentReflow = value; }
         }
 
         [DefaultValue(true)]
@@ -792,8 +792,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MLCommentHeaderOnSeparateLine")]
         public bool Pref_AS_MLCommentHeaderOnSeparateLine
         {
-            get { return this.pref_AS_MLCommentHeaderOnSeparateLine; }
-            set { this.pref_AS_MLCommentHeaderOnSeparateLine = value; }
+            get { return pref_AS_MLCommentHeaderOnSeparateLine; }
+            set { pref_AS_MLCommentHeaderOnSeparateLine = value; }
         }
 
         [DefaultValue(AsteriskMode.AsIs)]
@@ -802,8 +802,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MLCommentAsteriskMode")]
         public AsteriskMode Pref_AS_MLCommentAsteriskMode
         {
-            get { return this.pref_AS_MLCommentAsteriskMode; }
-            set { this.pref_AS_MLCommentAsteriskMode = value; }
+            get { return pref_AS_MLCommentAsteriskMode; }
+            set { pref_AS_MLCommentAsteriskMode = value; }
         }
 
         [DefaultValue(false)]
@@ -812,8 +812,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseDocCommentWrapping")]
         public bool Pref_AS_UseDocCommentWrapping
         {
-            get { return this.pref_AS_UseDocCommentWrapping; }
-            set { this.pref_AS_UseDocCommentWrapping = value; }
+            get { return pref_AS_UseDocCommentWrapping; }
+            set { pref_AS_UseDocCommentWrapping = value; }
         }
 
         [DefaultValue(0)]
@@ -822,8 +822,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.DocCommentHangingIndentTabs")]
         public int Pref_AS_DocCommentHangingIndentTabs
         {
-            get { return this.pref_AS_DocCommentHangingIndentTabs; }
-            set { this.pref_AS_DocCommentHangingIndentTabs = value; }
+            get { return pref_AS_DocCommentHangingIndentTabs; }
+            set { pref_AS_DocCommentHangingIndentTabs = value; }
         }
 
         [DefaultValue(true)]
@@ -832,8 +832,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.DocCommentKeepBlankLines")]
         public bool Pref_AS_DocCommentKeepBlankLines
         {
-            get { return this.pref_AS_DocCommentKeepBlankLines; }
-            set { this.pref_AS_DocCommentKeepBlankLines = value; }
+            get { return pref_AS_DocCommentKeepBlankLines; }
+            set { pref_AS_DocCommentKeepBlankLines = value; }
         }
 
         [DefaultValue(true)]
@@ -842,8 +842,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MLCommentKeepBlankLines")]
         public bool Pref_AS_MLCommentKeepBlankLines
         {
-            get { return this.pref_AS_MLCommentKeepBlankLines; }
-            set { this.pref_AS_MLCommentKeepBlankLines = value; }
+            get { return pref_AS_MLCommentKeepBlankLines; }
+            set { pref_AS_MLCommentKeepBlankLines = value; }
         }
 
         [DefaultValue(true)]
@@ -852,8 +852,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.LeaveSingleLineFunctions")]
         public bool Pref_AS_LeaveSingleLineFunctions
         {
-            get { return this.pref_AS_LeaveSingleLineFunctions; }
-            set { this.pref_AS_LeaveSingleLineFunctions = value; }
+            get { return pref_AS_LeaveSingleLineFunctions; }
+            set { pref_AS_LeaveSingleLineFunctions = value; }
         }
 
         [DefaultValue(false)]
@@ -862,8 +862,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UnindentExpressionTerminators")]
         public bool Pref_AS_UnindentExpressionTerminators
         {
-            get { return this.pref_AS_UnindentExpressionTerminators; }
-            set { this.pref_AS_UnindentExpressionTerminators = value; }
+            get { return pref_AS_UnindentExpressionTerminators; }
+            set { pref_AS_UnindentExpressionTerminators = value; }
         }
 
         [DefaultValue(true)]
@@ -872,8 +872,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NoNewCRsBeforeBreak")]
         public bool Pref_AS_NoNewCRsBeforeBreak
         {
-            get { return this.pref_AS_NoNewCRsBeforeBreak; }
-            set { this.pref_AS_NoNewCRsBeforeBreak = value; }
+            get { return pref_AS_NoNewCRsBeforeBreak; }
+            set { pref_AS_NoNewCRsBeforeBreak = value; }
         }
 
         [DefaultValue(true)]
@@ -882,8 +882,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NoNewCRsBeforeContinue")]
         public bool Pref_AS_NoNewCRsBeforeContinue
         {
-            get { return this.pref_AS_NoNewCRsBeforeContinue; }
-            set { this.pref_AS_NoNewCRsBeforeContinue = value; }
+            get { return pref_AS_NoNewCRsBeforeContinue; }
+            set { pref_AS_NoNewCRsBeforeContinue = value; }
         }
 
         [DefaultValue(true)]
@@ -892,8 +892,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NoNewCRsBeforeReturn")]
         public bool Pref_AS_NoNewCRsBeforeReturn
         {
-            get { return this.pref_AS_NoNewCRsBeforeReturn; }
-            set { this.pref_AS_NoNewCRsBeforeReturn = value; }
+            get { return pref_AS_NoNewCRsBeforeReturn; }
+            set { pref_AS_NoNewCRsBeforeReturn = value; }
         }
 
         [DefaultValue(true)]
@@ -902,8 +902,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NoNewCRsBeforeThrow")]
         public bool Pref_AS_NoNewCRsBeforeThrow
         {
-            get { return this.pref_AS_NoNewCRsBeforeThrow; }
-            set { this.pref_AS_NoNewCRsBeforeThrow = value; }
+            get { return pref_AS_NoNewCRsBeforeThrow; }
+            set { pref_AS_NoNewCRsBeforeThrow = value; }
         }
 
         [DefaultValue(true)]
@@ -912,8 +912,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NoNewCRsBeforeExpression")]
         public bool Pref_AS_NoNewCRsBeforeExpression
         {
-            get { return this.pref_AS_NoNewCRsBeforeExpression; }
-            set { this.pref_AS_NoNewCRsBeforeExpression = value; }
+            get { return pref_AS_NoNewCRsBeforeExpression; }
+            set { pref_AS_NoNewCRsBeforeExpression = value; }
         }
 
         [DefaultValue(false)]
@@ -922,8 +922,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.KeepRelativeIndentInDocComments")]
         public bool Pref_AS_KeepRelativeIndentInDocComments
         {
-            get { return this.pref_AS_KeepRelativeIndentInDocComments; }
-            set { this.pref_AS_KeepRelativeIndentInDocComments = value; }
+            get { return pref_AS_KeepRelativeIndentInDocComments; }
+            set { pref_AS_KeepRelativeIndentInDocComments = value; }
         }
 
         [DefaultValue(0)]
@@ -932,8 +932,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.TabsInHangingIndent")]
         public int Pref_AS_TabsInHangingIndent
         {
-            get { return this.pref_AS_TabsInHangingIndent; }
-            set { this.pref_AS_TabsInHangingIndent = value; }
+            get { return pref_AS_TabsInHangingIndent; }
+            set { pref_AS_TabsInHangingIndent = value; }
         }
 
         [DefaultValue(0)]
@@ -942,8 +942,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInOtherPlaces")]
         public int Pref_AS_AdvancedSpacesInsideParensInOtherPlaces
         {
-            get { return this.pref_AS_AdvancedSpacesInsideParensInOtherPlaces; }
-            set { this.pref_AS_AdvancedSpacesInsideParensInOtherPlaces = value; }
+            get { return pref_AS_AdvancedSpacesInsideParensInOtherPlaces; }
+            set { pref_AS_AdvancedSpacesInsideParensInOtherPlaces = value; }
         }
 
         [DefaultValue(0)]
@@ -952,8 +952,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInParameterLists")]
         public int Pref_AS_AdvancedSpacesInsideParensInParameterLists
         {
-            get { return this.pref_AS_AdvancedSpacesInsideParensInParameterLists; }
-            set { this.pref_AS_AdvancedSpacesInsideParensInParameterLists = value; }
+            get { return pref_AS_AdvancedSpacesInsideParensInParameterLists; }
+            set { pref_AS_AdvancedSpacesInsideParensInParameterLists = value; }
         }
 
         [DefaultValue(0)]
@@ -962,8 +962,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesInsideParensInArgumentLists")]
         public int Pref_AS_AdvancedSpacesInsideParensInArgumentLists
         {
-            get { return this.pref_AS_AdvancedSpacesInsideParensInArgumentLists; }
-            set { this.pref_AS_AdvancedSpacesInsideParensInArgumentLists = value; }
+            get { return pref_AS_AdvancedSpacesInsideParensInArgumentLists; }
+            set { pref_AS_AdvancedSpacesInsideParensInArgumentLists = value; }
         }
 
         [DefaultValue(0)]
@@ -972,8 +972,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeFormalParameters")]
         public int Pref_AS_SpacesBeforeFormalParameters
         {
-            get { return this.pref_AS_SpacesBeforeFormalParameters; }
-            set { this.pref_AS_SpacesBeforeFormalParameters = value; }
+            get { return pref_AS_SpacesBeforeFormalParameters; }
+            set { pref_AS_SpacesBeforeFormalParameters = value; }
         }
 
         [DefaultValue(0)]
@@ -982,8 +982,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.SpacesBeforeArguments")]
         public int Pref_AS_SpacesBeforeArguments
         {
-            get { return this.pref_AS_SpacesBeforeArguments; }
-            set { this.pref_AS_SpacesBeforeArguments = value; }
+            get { return pref_AS_SpacesBeforeArguments; }
+            set { pref_AS_SpacesBeforeArguments = value; }
         }
 
         [DefaultValue(false)]
@@ -992,8 +992,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseGnuBraceIndent")]
         public bool Pref_AS_UseGnuBraceIndent
         {
-            get { return this.pref_AS_UseGnuBraceIndent; }
-            set { this.pref_AS_UseGnuBraceIndent = value; }
+            get { return pref_AS_UseGnuBraceIndent; }
+            set { pref_AS_UseGnuBraceIndent = value; }
         }
 
         [DefaultValue(false)]
@@ -1002,8 +1002,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.EnsureLoopsHaveBraces")]
         public bool Pref_AS_EnsureLoopsHaveBraces
         {
-            get { return this.pref_AS_EnsureLoopsHaveBraces; }
-            set { this.pref_AS_EnsureLoopsHaveBraces = value; }
+            get { return pref_AS_EnsureLoopsHaveBraces; }
+            set { pref_AS_EnsureLoopsHaveBraces = value; }
         }
 
         [DefaultValue(1)]
@@ -1012,8 +1012,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AddBracesToLoops")]
         public int Pref_AS_AddBracesToLoops
         {
-            get { return this.pref_AS_AddBracesToLoops; }
-            set { this.pref_AS_AddBracesToLoops = value; }
+            get { return pref_AS_AddBracesToLoops; }
+            set { pref_AS_AddBracesToLoops = value; }
         }
 
         [DefaultValue(false)]
@@ -1022,8 +1022,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.EnsureSwitchCasesHaveBraces")]
         public bool Pref_AS_EnsureSwitchCasesHaveBraces
         {
-            get { return this.pref_AS_EnsureSwitchCasesHaveBraces; }
-            set { this.pref_AS_EnsureSwitchCasesHaveBraces = value; }
+            get { return pref_AS_EnsureSwitchCasesHaveBraces; }
+            set { pref_AS_EnsureSwitchCasesHaveBraces = value; }
         }
 
         [DefaultValue(1)]
@@ -1032,8 +1032,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AddBracesToCases")]
         public int Pref_AS_AddBracesToCases
         {
-            get { return this.pref_AS_AddBracesToCases; }
-            set { this.pref_AS_AddBracesToCases = value; }
+            get { return pref_AS_AddBracesToCases; }
+            set { pref_AS_AddBracesToCases = value; }
         }
 
         [DefaultValue(false)]
@@ -1042,8 +1042,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.EnsureConditionalsHaveBraces")]
         public bool Pref_AS_EnsureConditionalsHaveBraces
         {
-            get { return this.pref_AS_EnsureConditionalsHaveBraces; }
-            set { this.pref_AS_EnsureConditionalsHaveBraces = value; }
+            get { return pref_AS_EnsureConditionalsHaveBraces; }
+            set { pref_AS_EnsureConditionalsHaveBraces = value; }
         }
 
         [DefaultValue(1)]
@@ -1052,8 +1052,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AddBracesToConditionals")]
         public int Pref_AS_AddBracesToConditionals
         {
-            get { return this.pref_AS_AddBracesToConditionals; }
-            set { this.pref_AS_AddBracesToConditionals = value; }
+            get { return pref_AS_AddBracesToConditionals; }
+            set { pref_AS_AddBracesToConditionals = value; }
         }
 
         [DefaultValue(true)]
@@ -1062,8 +1062,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.DontIndentSwitchCases")]
         public bool Pref_AS_DontIndentSwitchCases
         {
-            get { return this.pref_AS_DontIndentSwitchCases; }
-            set { this.pref_AS_DontIndentSwitchCases = value; }
+            get { return pref_AS_DontIndentSwitchCases; }
+            set { pref_AS_DontIndentSwitchCases = value; }
         }
 
         [DefaultValue(true)]
@@ -1072,8 +1072,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AlignDeclEquals")]
         public bool Pref_AS_AlignDeclEquals
         {
-            get { return this.pref_AS_AlignDeclEquals; }
-            set { this.pref_AS_AlignDeclEquals = value; }
+            get { return pref_AS_AlignDeclEquals; }
+            set { pref_AS_AlignDeclEquals = value; }
         }
 
         [DefaultValue(DeclAlignMode.Consecutive)]
@@ -1082,8 +1082,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AlignDeclMode")]
         public DeclAlignMode Pref_AS_AlignDeclMode
         {
-            get { return this.pref_AS_AlignDeclMode; }
-            set { this.pref_AS_AlignDeclMode = value; }
+            get { return pref_AS_AlignDeclMode; }
+            set { pref_AS_AlignDeclMode = value; }
         }
 
         [DefaultValue(true)]
@@ -1092,8 +1092,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.KeepSpacesBeforeLineComments")]
         public bool Pref_AS_KeepSpacesBeforeLineComments
         {
-            get { return this.pref_AS_KeepSpacesBeforeLineComments; }
-            set { this.pref_AS_KeepSpacesBeforeLineComments = value; }
+            get { return pref_AS_KeepSpacesBeforeLineComments; }
+            set { pref_AS_KeepSpacesBeforeLineComments = value; }
         }
 
         [DefaultValue(0)]
@@ -1102,8 +1102,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AlignLineCommentsAtColumn")]
         public int Pref_AS_AlignLineCommentsAtColumn
         {
-            get { return this.pref_AS_AlignLineCommentsAtColumn; }
-            set { this.pref_AS_AlignLineCommentsAtColumn = value; }
+            get { return pref_AS_AlignLineCommentsAtColumn; }
+            set { pref_AS_AlignLineCommentsAtColumn = value; }
         }
 
         [DefaultValue(false)]
@@ -1112,8 +1112,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseGlobalCRBeforeBrace")]
         public bool Pref_AS_UseGlobalCRBeforeBrace
         {
-            get { return this.pref_AS_UseGlobalCRBeforeBrace; }
-            set { this.pref_AS_UseGlobalCRBeforeBrace = value; }
+            get { return pref_AS_UseGlobalCRBeforeBrace; }
+            set { pref_AS_UseGlobalCRBeforeBrace = value; }
         }
 
         [DefaultValue(0)]
@@ -1122,8 +1122,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.CRBeforeBraceSettings")]
         public int Pref_AS_AdvancedCRBeforeBraceSettings
         {
-            get { return this.pref_AS_AdvancedCRBeforeBraceSettings; }
-            set { this.pref_AS_AdvancedCRBeforeBraceSettings = value; }
+            get { return pref_AS_AdvancedCRBeforeBraceSettings; }
+            set { pref_AS_AdvancedCRBeforeBraceSettings = value; }
         }
 
         [DefaultValue(false)]
@@ -1132,8 +1132,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NewlineBeforeBindableFunction")]
         public bool Pref_AS_NewlineBeforeBindableFunction
         {
-            get { return this.pref_AS_NewlineBeforeBindableFunction; }
-            set { this.pref_AS_NewlineBeforeBindableFunction = value; }
+            get { return pref_AS_NewlineBeforeBindableFunction; }
+            set { pref_AS_NewlineBeforeBindableFunction = value; }
         }
 
         [DefaultValue(false)]
@@ -1142,8 +1142,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.NewlineBeforeBindableProperty")]
         public bool Pref_AS_NewlineBeforeBindableProperty
         {
-            get { return this.pref_AS_NewlineBeforeBindableProperty; }
-            set { this.pref_AS_NewlineBeforeBindableProperty = value; }
+            get { return pref_AS_NewlineBeforeBindableProperty; }
+            set { pref_AS_NewlineBeforeBindableProperty = value; }
         }
 
         [DefaultValue(false)]
@@ -1152,8 +1152,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BreakLinesBeforeArithmetic")]
         public bool Pref_AS_BreakLinesBeforeArithmetic
         {
-            get { return this.pref_AS_BreakLinesBeforeArithmetic; }
-            set { this.pref_AS_BreakLinesBeforeArithmetic = value; }
+            get { return pref_AS_BreakLinesBeforeArithmetic; }
+            set { pref_AS_BreakLinesBeforeArithmetic = value; }
         }
 
         [DefaultValue(false)]
@@ -1162,8 +1162,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BreakLinesBeforeLogical")]
         public bool Pref_AS_BreakLinesBeforeLogical
         {
-            get { return this.pref_AS_BreakLinesBeforeLogical; }
-            set { this.pref_AS_BreakLinesBeforeLogical = value; }
+            get { return pref_AS_BreakLinesBeforeLogical; }
+            set { pref_AS_BreakLinesBeforeLogical = value; }
         }
 
         [DefaultValue(false)]
@@ -1172,8 +1172,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.BreakLinesBeforeAssignment")]
         public bool Pref_AS_BreakLinesBeforeAssignment
         {
-            get { return this.pref_AS_BreakLinesBeforeAssignment; }
-            set { this.pref_AS_BreakLinesBeforeAssignment = value; }
+            get { return pref_AS_BreakLinesBeforeAssignment; }
+            set { pref_AS_BreakLinesBeforeAssignment = value; }
         }
 
         [DefaultValue(false)]
@@ -1182,8 +1182,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseAdvancedWrapping")]
         public bool Pref_AS_UseAdvancedWrapping
         {
-            get { return this.pref_AS_UseAdvancedWrapping; }
-            set { this.pref_AS_UseAdvancedWrapping = value; }
+            get { return pref_AS_UseAdvancedWrapping; }
+            set { pref_AS_UseAdvancedWrapping = value; }
         }
 
         [DefaultValue(0)]
@@ -1192,8 +1192,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.UseAdvancedWrapping")]
         public int Pref_AS_AdvancedWrappingElements
         {
-            get { return this.pref_AS_AdvancedWrappingElements; }
-            set { this.pref_AS_AdvancedWrappingElements = value; }
+            get { return pref_AS_AdvancedWrappingElements; }
+            set { pref_AS_AdvancedWrappingElements = value; }
         }
 
         [DefaultValue(false)]
@@ -1202,8 +1202,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingEnforceMax")]
         public bool Pref_AS_AdvancedWrappingEnforceMax
         {
-            get { return this.pref_AS_AdvancedWrappingEnforceMax; }
-            set { this.pref_AS_AdvancedWrappingEnforceMax = value; }
+            get { return pref_AS_AdvancedWrappingEnforceMax; }
+            set { pref_AS_AdvancedWrappingEnforceMax = value; }
         }
 
         [DefaultValue(false)]
@@ -1212,8 +1212,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAllArgs")]
         public bool Pref_AS_AdvancedWrappingAllArgs
         {
-            get { return this.pref_AS_AdvancedWrappingAllArgs; }
-            set { this.pref_AS_AdvancedWrappingAllArgs = value; }
+            get { return pref_AS_AdvancedWrappingAllArgs; }
+            set { pref_AS_AdvancedWrappingAllArgs = value; }
         }
 
         [DefaultValue(false)]
@@ -1222,8 +1222,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAllParms")]
         public bool Pref_AS_AdvancedWrappingAllParms
         {
-            get { return this.pref_AS_AdvancedWrappingAllParms; }
-            set { this.pref_AS_AdvancedWrappingAllParms = value; }
+            get { return pref_AS_AdvancedWrappingAllParms; }
+            set { pref_AS_AdvancedWrappingAllParms = value; }
         }
 
         [DefaultValue(false)]
@@ -1232,8 +1232,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingFirstArg")]
         public bool Pref_AS_AdvancedWrappingFirstArg
         {
-            get { return this.pref_AS_AdvancedWrappingFirstArg; }
-            set { this.pref_AS_AdvancedWrappingFirstArg = value; }
+            get { return pref_AS_AdvancedWrappingFirstArg; }
+            set { pref_AS_AdvancedWrappingFirstArg = value; }
         }
 
         [DefaultValue(false)]
@@ -1242,8 +1242,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingFirstParm")]
         public bool Pref_AS_AdvancedWrappingFirstParm
         {
-            get { return this.pref_AS_AdvancedWrappingFirstParm; }
-            set { this.pref_AS_AdvancedWrappingFirstParm = value; }
+            get { return pref_AS_AdvancedWrappingFirstParm; }
+            set { pref_AS_AdvancedWrappingFirstParm = value; }
         }
 
         [DefaultValue(false)]
@@ -1252,8 +1252,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingFirstArrayItem")]
         public bool Pref_AS_AdvancedWrappingFirstArrayItem
         {
-            get { return this.pref_AS_AdvancedWrappingFirstArrayItem; }
-            set { this.pref_AS_AdvancedWrappingFirstArrayItem = value; }
+            get { return pref_AS_AdvancedWrappingFirstArrayItem; }
+            set { pref_AS_AdvancedWrappingFirstArrayItem = value; }
         }
 
         [DefaultValue(false)]
@@ -1262,8 +1262,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingFirstObjectItem")]
         public bool Pref_AS_AdvancedWrappingFirstObjectItem
         {
-            get { return this.pref_AS_AdvancedWrappingFirstObjectItem; }
-            set { this.pref_AS_AdvancedWrappingFirstObjectItem = value; }
+            get { return pref_AS_AdvancedWrappingFirstObjectItem; }
+            set { pref_AS_AdvancedWrappingFirstObjectItem = value; }
         }
 
         [DefaultValue(false)]
@@ -1272,8 +1272,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAllArrayItems")]
         public bool Pref_AS_AdvancedWrappingAllArrayItems
         {
-            get { return this.pref_AS_AdvancedWrappingAllArrayItems; }
-            set { this.pref_AS_AdvancedWrappingAllArrayItems = value; }
+            get { return pref_AS_AdvancedWrappingAllArrayItems; }
+            set { pref_AS_AdvancedWrappingAllArrayItems = value; }
         }
 
         [DefaultValue(false)]
@@ -1282,8 +1282,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAllObjectItems")]
         public bool Pref_AS_AdvancedWrappingAllObjectItems
         {
-            get { return this.pref_AS_AdvancedWrappingAllObjectItems; }
-            set { this.pref_AS_AdvancedWrappingAllObjectItems = value; }
+            get { return pref_AS_AdvancedWrappingAllObjectItems; }
+            set { pref_AS_AdvancedWrappingAllObjectItems = value; }
         }
 
         [DefaultValue(false)]
@@ -1292,8 +1292,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAlignArrayItems")]
         public bool Pref_AS_AdvancedWrappingAlignArrayItems
         {
-            get { return this.pref_AS_AdvancedWrappingAlignArrayItems; }
-            set { this.pref_AS_AdvancedWrappingAlignArrayItems = value; }
+            get { return pref_AS_AdvancedWrappingAlignArrayItems; }
+            set { pref_AS_AdvancedWrappingAlignArrayItems = value; }
         }
 
         [DefaultValue(false)]
@@ -1302,8 +1302,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingAlignObjectItems")]
         public bool Pref_AS_AdvancedWrappingAlignObjectItems
         {
-            get { return this.pref_AS_AdvancedWrappingAlignObjectItems; }
-            set { this.pref_AS_AdvancedWrappingAlignObjectItems = value; }
+            get { return pref_AS_AdvancedWrappingAlignObjectItems; }
+            set { pref_AS_AdvancedWrappingAlignObjectItems = value; }
         }
 
         [DefaultValue(1)]
@@ -1312,8 +1312,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingGraceColumns")]
         public int Pref_AS_AdvancedWrappingGraceColumns
         {
-            get { return this.pref_AS_AdvancedWrappingGraceColumns; }
-            set { this.pref_AS_AdvancedWrappingGraceColumns = value; }
+            get { return pref_AS_AdvancedWrappingGraceColumns; }
+            set { pref_AS_AdvancedWrappingGraceColumns = value; }
         }
 
         [DefaultValue(false)]
@@ -1322,8 +1322,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.AdvancedWrappingPreservePhrases")]
         public bool Pref_AS_AdvancedWrappingPreservePhrases
         {
-            get { return this.pref_AS_AdvancedWrappingPreservePhrases; }
-            set { this.pref_AS_AdvancedWrappingPreservePhrases = value; }
+            get { return pref_AS_AdvancedWrappingPreservePhrases; }
+            set { pref_AS_AdvancedWrappingPreservePhrases = value; }
         }
 
         [DefaultValue("")]
@@ -1332,8 +1332,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetFunction")]
         public string Pref_AS_MetaTagsOnSameLineAsTargetFunction
         {
-            get { return this.pref_AS_MetaTagsOnSameLineAsTargetFunction; }
-            set { this.pref_AS_MetaTagsOnSameLineAsTargetFunction = value; }
+            get { return pref_AS_MetaTagsOnSameLineAsTargetFunction; }
+            set { pref_AS_MetaTagsOnSameLineAsTargetFunction = value; }
         }
 
         [DefaultValue("")]
@@ -1342,29 +1342,29 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.AS.MetaTagsOnSameLineAsTargetProperty")]
         public string Pref_AS_MetaTagsOnSameLineAsTargetProperty
         {
-            get { return this.pref_AS_MetaTagsOnSameLineAsTargetProperty; }
-            set { this.pref_AS_MetaTagsOnSameLineAsTargetProperty = value; }
+            get { return pref_AS_MetaTagsOnSameLineAsTargetProperty; }
+            set { pref_AS_MetaTagsOnSameLineAsTargetProperty = value; }
         }
 
         [Browsable(false)]
         public bool Pref_AS_NewlineAfterBindable
         {
-            get { return this.pref_AS_NewlineAfterBindable; }
-            set { this.pref_AS_NewlineAfterBindable = value; }
+            get { return pref_AS_NewlineAfterBindable; }
+            set { pref_AS_NewlineAfterBindable = value; }
         }
 
         [Browsable(false)]
         public bool Pref_AS_DoAutoFormat
         {
-            get { return this.pref_AS_DoAutoFormat; }
-            set { this.pref_AS_DoAutoFormat = value; }
+            get { return pref_AS_DoAutoFormat; }
+            set { pref_AS_DoAutoFormat = value; }
         }
 
         [Browsable(false)]
         public bool Pref_AS_AutoFormatStyle
         {
-            get { return this.pref_AS_AutoFormatStyle; }
-            set { this.pref_AS_AutoFormatStyle = value; }
+            get { return pref_AS_AutoFormatStyle; }
+            set { pref_AS_AutoFormatStyle = value; }
         }
         
         ////////////////// MXML ///////////////////////////////////////
@@ -1375,8 +1375,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.SpacesAroundEquals")]
         public int Pref_MXML_SpacesAroundEquals
         {
-            get { return this.pref_MXML_SpacesAroundEquals; }
-            set { this.pref_MXML_SpacesAroundEquals = value; }
+            get { return pref_MXML_SpacesAroundEquals; }
+            set { pref_MXML_SpacesAroundEquals = value; }
         }
 
         [DefaultValue(false)]
@@ -1385,8 +1385,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.SortExtraAttributes")]
         public bool Pref_MXML_SortExtraAttrs
         {
-            get { return this.pref_MXML_SortExtraAttrs; }
-            set { this.pref_MXML_SortExtraAttrs = value; }
+            get { return pref_MXML_SortExtraAttrs; }
+            set { pref_MXML_SortExtraAttrs = value; }
         }
 
         [DefaultValue(false)]
@@ -1395,8 +1395,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.AddNewLineAfterLastAttribute")]
         public bool Pref_MXML_AddNewlineAfterLastAttr
         {
-            get { return this.pref_MXML_AddNewlineAfterLastAttr; }
-            set { this.pref_MXML_AddNewlineAfterLastAttr = value; }
+            get { return pref_MXML_AddNewlineAfterLastAttr; }
+            set { pref_MXML_AddNewlineAfterLastAttr = value; }
         }
 
         [DefaultValue(SortMode.UseData)]
@@ -1405,8 +1405,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.SortAttributeMode")]
         public SortMode Pref_MXML_SortAttrMode
         {
-            get { return this.pref_MXML_SortAttrMode; }
-            set { this.pref_MXML_SortAttrMode = value; }
+            get { return pref_MXML_SortAttrMode; }
+            set { pref_MXML_SortAttrMode = value; }
         }
 
         [DefaultValue(200)]
@@ -1415,8 +1415,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.MaxLineLength")]
         public int Pref_MXML_MaxLineLength
         {
-            get { return this.pref_MXML_MaxLineLength; }
-            set { this.pref_MXML_MaxLineLength = value; }
+            get { return pref_MXML_MaxLineLength; }
+            set { pref_MXML_MaxLineLength = value; }
         }
 
         [DefaultValue(WrapMode.CountPerLine)]
@@ -1425,8 +1425,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.AttributeWrapMode")]
         public WrapMode Pref_MXML_AttrWrapMode
         {
-            get { return this.pref_MXML_AttrWrapMode; }
-            set { this.pref_MXML_AttrWrapMode = value; }
+            get { return pref_MXML_AttrWrapMode; }
+            set { pref_MXML_AttrWrapMode = value; }
         }
 
         [DefaultValue(1)]
@@ -1435,8 +1435,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.AttributesPerLine")]
         public int Pref_MXML_AttrsPerLine
         {
-            get { return this.pref_MXML_AttrsPerLine; }
-            set { this.pref_MXML_AttrsPerLine = value; }
+            get { return pref_MXML_AttrsPerLine; }
+            set { pref_MXML_AttrsPerLine = value; }
         }
 
         [DefaultValue(true)]
@@ -1445,8 +1445,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.KeepBlankLines")]
         public bool Pref_MXML_KeepBlankLines
         {
-            get { return this.pref_MXML_KeepBlankLines; }
-            set { this.pref_MXML_KeepBlankLines = value; }
+            get { return pref_MXML_KeepBlankLines; }
+            set { pref_MXML_KeepBlankLines = value; }
         }
 
         [DefaultValue(WrapIndent.WrapElement)]
@@ -1455,8 +1455,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.WrapIndentStyle")]
         public WrapIndent Pref_MXML_WrapIndentStyle
         {
-            get { return this.pref_MXML_WrapIndentStyle; }
-            set { this.pref_MXML_WrapIndentStyle = value; }
+            get { return pref_MXML_WrapIndentStyle; }
+            set { pref_MXML_WrapIndentStyle = value; }
         }
 
         [DefaultValue(1)]
@@ -1465,8 +1465,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesBeforeTags")]
         public int Pref_MXML_BlankLinesBeforeTags
         {
-            get { return this.pref_MXML_BlankLinesBeforeTags; }
-            set { this.pref_MXML_BlankLinesBeforeTags = value; }
+            get { return pref_MXML_BlankLinesBeforeTags; }
+            set { pref_MXML_BlankLinesBeforeTags = value; }
         }
 
         [DefaultValue(true)]
@@ -1475,8 +1475,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.UseAttributesToKeepOnSameLine")]
         public bool Pref_MXML_UseAttrsToKeepOnSameLine
         {
-            get { return this.pref_MXML_UseAttrsToKeepOnSameLine; }
-            set { this.pref_MXML_UseAttrsToKeepOnSameLine = value; }
+            get { return pref_MXML_UseAttrsToKeepOnSameLine; }
+            set { pref_MXML_UseAttrsToKeepOnSameLine = value; }
         }
 
         [DefaultValue(10)]
@@ -1485,8 +1485,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.AttributesToKeepOnSameLine")]
         public int Pref_MXML_AttrsToKeepOnSameLine
         {
-            get { return this.pref_MXML_AttrsToKeepOnSameLine; }
-            set { this.pref_MXML_AttrsToKeepOnSameLine = value; }
+            get { return pref_MXML_AttrsToKeepOnSameLine; }
+            set { pref_MXML_AttrsToKeepOnSameLine = value; }
         }
 
         [DefaultValue(1)]
@@ -1495,8 +1495,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.SpacesBeforeEmptyTagEnd")]
         public int Pref_MXML_SpacesBeforeEmptyTagEnd
         {
-            get { return this.pref_MXML_SpacesBeforeEmptyTagEnd; }
-            set { this.pref_MXML_SpacesBeforeEmptyTagEnd = value; }
+            get { return pref_MXML_SpacesBeforeEmptyTagEnd; }
+            set { pref_MXML_SpacesBeforeEmptyTagEnd = value; }
         }
 
         [DefaultValue(true)]
@@ -1505,8 +1505,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.RequireCDATAForAS3Formatting")]
         public bool Pref_MXML_RequireCDATAForASFormatting
         {
-            get { return this.pref_MXML_RequireCDATAForASFormatting; }
-            set { this.pref_MXML_RequireCDATAForASFormatting = value; }
+            get { return pref_MXML_RequireCDATAForASFormatting; }
+            set { pref_MXML_RequireCDATAForASFormatting = value; }
         }
 
         [Category("MXML")]
@@ -1514,8 +1514,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.TagsThatCanFormat")]
         public string Pref_MXML_TagsCanFormat
         {
-            get { return this.pref_MXML_TagsCanFormat; }
-            set { this.pref_MXML_TagsCanFormat = value; }
+            get { return pref_MXML_TagsCanFormat; }
+            set { pref_MXML_TagsCanFormat = value; }
         }
 
         [Category("MXML")]
@@ -1523,8 +1523,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.TagsThatCannotFormat")]
         public string Pref_MXML_TagsCannotFormat
         {
-            get { return this.pref_MXML_TagsCannotFormat; }
-            set { this.pref_MXML_TagsCannotFormat = value; }
+            get { return pref_MXML_TagsCannotFormat; }
+            set { pref_MXML_TagsCannotFormat = value; }
         }
 
         [Category("MXML")]
@@ -1532,8 +1532,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.TagsWithBlankLinesBefore")]
         public string Pref_MXML_TagsWithBlankLinesBefore
         {
-            get { return this.pref_MXML_TagsWithBlankLinesBefore; }
-            set { this.pref_MXML_TagsWithBlankLinesBefore = value; }
+            get { return pref_MXML_TagsWithBlankLinesBefore; }
+            set { pref_MXML_TagsWithBlankLinesBefore = value; }
         }
 
         [DefaultValue(false)]
@@ -1542,8 +1542,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.KeepRelativeIndentInMultilineComments")]
         public bool Pref_MXML_KeepRelativeIndentInMultilineComments
         {
-            get { return this.pref_MXML_KeepRelativeIndentInMultilineComments; }
-            set { this.pref_MXML_KeepRelativeIndentInMultilineComments = value; }
+            get { return pref_MXML_KeepRelativeIndentInMultilineComments; }
+            set { pref_MXML_KeepRelativeIndentInMultilineComments = value; }
         }
 
         [DefaultValue(0)]
@@ -1552,8 +1552,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesBeforeComments")]
         public int Pref_MXML_BlankLinesBeforeComments
         {
-            get { return this.pref_MXML_BlankLinesBeforeComments; }
-            set { this.pref_MXML_BlankLinesBeforeComments = value; }
+            get { return pref_MXML_BlankLinesBeforeComments; }
+            set { pref_MXML_BlankLinesBeforeComments = value; }
         }
 
         [DefaultValue(0)]
@@ -1562,8 +1562,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesAfterSpecificParentTags")]
         public int Pref_MXML_BlankLinesAfterSpecificParentTags
         {
-            get { return this.pref_MXML_BlankLinesAfterSpecificParentTags; }
-            set { this.pref_MXML_BlankLinesAfterSpecificParentTags = value; }
+            get { return pref_MXML_BlankLinesAfterSpecificParentTags; }
+            set { pref_MXML_BlankLinesAfterSpecificParentTags = value; }
         }
 
         [DefaultValue(0)]
@@ -1572,8 +1572,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesBetweenSiblingTags")]
         public int Pref_MXML_BlankLinesBetweenSiblingTags
         {
-            get { return this.pref_MXML_BlankLinesBetweenSiblingTags; }
-            set { this.pref_MXML_BlankLinesBetweenSiblingTags = value; }
+            get { return pref_MXML_BlankLinesBetweenSiblingTags; }
+            set { pref_MXML_BlankLinesBetweenSiblingTags = value; }
         }
 
         [DefaultValue(0)]
@@ -1582,8 +1582,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesAfterParentTags")]
         public int Pref_MXML_BlankLinesAfterParentTags
         {
-            get { return this.pref_MXML_BlankLinesAfterParentTags; }
-            set { this.pref_MXML_BlankLinesAfterParentTags = value; }
+            get { return pref_MXML_BlankLinesAfterParentTags; }
+            set { pref_MXML_BlankLinesAfterParentTags = value; }
         }
 
         [DefaultValue(0)]
@@ -1592,8 +1592,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesBeforeClosingTags")]
         public int Pref_MXML_BlankLinesBeforeClosingTags
         {
-            get { return this.pref_MXML_BlankLinesBeforeClosingTags; }
-            set { this.pref_MXML_BlankLinesBeforeClosingTags = value; }
+            get { return pref_MXML_BlankLinesBeforeClosingTags; }
+            set { pref_MXML_BlankLinesBeforeClosingTags = value; }
         }
 
         [DefaultValue(1)]
@@ -1602,8 +1602,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.TabsInHangingIndent")]
         public int Pref_MXML_TabsInHangingIndent
         {
-            get { return this.pref_MXML_TabsInHangingIndent; }
-            set { this.pref_MXML_TabsInHangingIndent = value; }
+            get { return pref_MXML_TabsInHangingIndent; }
+            set { pref_MXML_TabsInHangingIndent = value; }
         }
 
         [DefaultValue(true)]
@@ -1612,8 +1612,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.UseSpacesInsideAttributeBraces")]
         public bool Pref_MXML_UseSpacesInsideAttributeBraces
         {
-            get { return this.pref_MXML_UseSpacesInsideAttributeBraces; }
-            set { this.pref_MXML_UseSpacesInsideAttributeBraces = value; }
+            get { return pref_MXML_UseSpacesInsideAttributeBraces; }
+            set { pref_MXML_UseSpacesInsideAttributeBraces = value; }
         }
 
         [DefaultValue(true)]
@@ -1622,8 +1622,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.UseFormattingOfBoundAttributes")]
         public bool Pref_MXML_UseFormattingOfBoundAttributes
         {
-            get { return this.pref_MXML_UseFormattingOfBoundAttributes; }
-            set { this.pref_MXML_UseFormattingOfBoundAttributes = value; }
+            get { return pref_MXML_UseFormattingOfBoundAttributes; }
+            set { pref_MXML_UseFormattingOfBoundAttributes = value; }
         }
 
         [DefaultValue(4)]
@@ -1632,8 +1632,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.SpacesInsideAttributeBraces")]
         public int Pref_MXML_SpacesInsideAttributeBraces
         {
-            get { return this.pref_MXML_SpacesInsideAttributeBraces; }
-            set { this.pref_MXML_SpacesInsideAttributeBraces = value; }
+            get { return pref_MXML_SpacesInsideAttributeBraces; }
+            set { pref_MXML_SpacesInsideAttributeBraces = value; }
         }
 
         [DefaultValue(4)]
@@ -1642,8 +1642,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.ScriptCDataIndentTabs")]
         public int Pref_MXML_ScriptCDataIndentTabs
         {
-            get { return this.pref_MXML_ScriptCDataIndentTabs; }
-            set { this.pref_MXML_ScriptCDataIndentTabs = value; }
+            get { return pref_MXML_ScriptCDataIndentTabs; }
+            set { pref_MXML_ScriptCDataIndentTabs = value; }
         }
 
         [DefaultValue(4)]
@@ -1652,8 +1652,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.ScriptIndentTabs")]
         public int Pref_MXML_ScriptIndentTabs
         {
-            get { return this.pref_MXML_ScriptIndentTabs; }
-            set { this.pref_MXML_ScriptIndentTabs = value; }
+            get { return pref_MXML_ScriptIndentTabs; }
+            set { pref_MXML_ScriptIndentTabs = value; }
         }
 
         [DefaultValue(1)]
@@ -1662,8 +1662,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.BlankLinesAtCDataStart")]
         public int Pref_MXML_BlankLinesAtCDataStart
         {
-            get { return this.pref_MXML_BlankLinesAtCDataStart; }
-            set { this.pref_MXML_BlankLinesAtCDataStart = value; }
+            get { return pref_MXML_BlankLinesAtCDataStart; }
+            set { pref_MXML_BlankLinesAtCDataStart = value; }
         }
 
         [DefaultValue(true)]
@@ -1672,8 +1672,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.KeepScriptCDataOnSameLine")]
         public bool Pref_MXML_KeepScriptCDataOnSameLine
         {
-            get { return this.pref_MXML_KeepScriptCDataOnSameLine; }
-            set { this.pref_MXML_KeepScriptCDataOnSameLine = value; }
+            get { return pref_MXML_KeepScriptCDataOnSameLine; }
+            set { pref_MXML_KeepScriptCDataOnSameLine = value; }
         }
 
         [DefaultValue(true)]
@@ -1682,8 +1682,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.IndentTagClose")]
         public bool Pref_MXML_IndentTagClose
         {
-            get { return this.pref_MXML_IndentTagClose; }
-            set { this.pref_MXML_IndentTagClose = value; }
+            get { return pref_MXML_IndentTagClose; }
+            set { pref_MXML_IndentTagClose = value; }
         }
 
         [DefaultValue(false)]
@@ -1692,8 +1692,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.AlwaysUseMaxLineLength")]
         public bool Pref_MXML_AlwaysUseMaxLineLength
         {
-            get { return this.pref_MXML_AlwaysUseMaxLineLength; }
-            set { this.pref_MXML_AlwaysUseMaxLineLength = value; }
+            get { return pref_MXML_AlwaysUseMaxLineLength; }
+            set { pref_MXML_AlwaysUseMaxLineLength = value; }
         }
 
         [DefaultValue(true)]
@@ -1702,8 +1702,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.UseTagsDoNotFormatInside")]
         public bool Pref_MXML_UseTagsDoNotFormatInside
         {
-            get { return this.pref_MXML_UseTagsDoNotFormatInside; }
-            set { this.pref_MXML_UseTagsDoNotFormatInside = value; }
+            get { return pref_MXML_UseTagsDoNotFormatInside; }
+            set { pref_MXML_UseTagsDoNotFormatInside = value; }
         }
 
         [DefaultValue("")]
@@ -1712,8 +1712,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.ParentTagsWithBlankLinesAfter")]
         public string Pref_MXML_ParentTagsWithBlankLinesAfter
         {
-            get { return this.pref_MXML_ParentTagsWithBlankLinesAfter; }
-            set { this.pref_MXML_ParentTagsWithBlankLinesAfter = value; }
+            get { return pref_MXML_ParentTagsWithBlankLinesAfter; }
+            set { pref_MXML_ParentTagsWithBlankLinesAfter = value; }
         }
 
         [DefaultValue("")]
@@ -1722,8 +1722,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.TagsDoNotFormatInside")]
         public string Pref_MXML_TagsDoNotFormatInside
         {
-            get { return this.pref_MXML_TagsDoNotFormatInside; }
-            set { this.pref_MXML_TagsDoNotFormatInside = value; }
+            get { return pref_MXML_TagsDoNotFormatInside; }
+            set { pref_MXML_TagsDoNotFormatInside = value; }
         }
 
         [DefaultValue("")]
@@ -1732,8 +1732,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.TagsWithASContent")]
         public string Pref_MXML_TagsWithASContent
         {
-            get { return this.pref_MXML_TagsWithASContent; }
-            set { this.pref_MXML_TagsWithASContent = value; }
+            get { return pref_MXML_TagsWithASContent; }
+            set { pref_MXML_TagsWithASContent = value; }
         }
 
         [DefaultValue("")]
@@ -1742,8 +1742,8 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.SortAttrData")]
         public string Pref_MXML_SortAttrData
         {
-            get { return this.pref_MXML_SortAttrData; }
-            set { this.pref_MXML_SortAttrData = value; }
+            get { return pref_MXML_SortAttrData; }
+            set { pref_MXML_SortAttrData = value; }
         }
 
         [DefaultValue("")]
@@ -1752,22 +1752,22 @@ namespace CodeFormatter
         [LocalizedDescription("CodeFormatter.Description.MXML.AttrGroups")]
         public string Pref_MXML_AttrGroups
         {
-            get { return this.pref_MXML_AttrGroups; }
-            set { this.pref_MXML_AttrGroups = value; }
+            get { return pref_MXML_AttrGroups; }
+            set { pref_MXML_AttrGroups = value; }
         }
 
         [Browsable(false)]
         public bool Pref_MXML_AutoFormatStyle
         {
-            get { return this.pref_MXML_AutoFormatStyle; }
-            set { this.pref_MXML_AutoFormatStyle = value; }
+            get { return pref_MXML_AutoFormatStyle; }
+            set { pref_MXML_AutoFormatStyle = value; }
         }
 
         [Browsable(false)]
         public bool Pref_MXML_DoAutoFormat
         {
-            get { return this.pref_MXML_DoAutoFormat; }
-            set { this.pref_MXML_DoAutoFormat = value; }
+            get { return pref_MXML_DoAutoFormat; }
+            set { pref_MXML_DoAutoFormat = value; }
         }
         
         public void InitializeDefaultPreferences()

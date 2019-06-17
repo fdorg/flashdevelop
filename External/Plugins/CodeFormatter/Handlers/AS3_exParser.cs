@@ -339,14 +339,14 @@ public class AS3_exParser : Parser
 
     public ITreeAdaptor TreeAdaptor
     {
-        get { return this.adaptor; }
+        get { return adaptor; }
         set {
-        this.adaptor = value;
+        adaptor = value;
         }
     }
 
     override public string[] TokenNames {
-        get { return AS3_exParser.tokenNames; }
+        get { return tokenNames; }
     }
 
     override public string GrammarFileName {
@@ -1057,9 +1057,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "booleanLiteral"
     // AS3_ex.g3:1538:1: booleanLiteral : (T= TRUE | F= FALSE );
-    public AS3_exParser.booleanLiteral_return booleanLiteral() // throws RecognitionException [1]
+    public booleanLiteral_return booleanLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.booleanLiteral_return retval = new AS3_exParser.booleanLiteral_return();
+        booleanLiteral_return retval = new booleanLiteral_return();
         retval.Start = input.LT(1);
         int booleanLiteral_StartIndex = input.Index();
         object root_0 = null;
@@ -1171,9 +1171,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "numericLiteral"
     // AS3_ex.g3:1540:1: numericLiteral : (D= DEC_NUMBER_LITERAL | H= HEX_NUMBER_LITERAL );
-    public AS3_exParser.numericLiteral_return numericLiteral() // throws RecognitionException [1]
+    public numericLiteral_return numericLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.numericLiteral_return retval = new AS3_exParser.numericLiteral_return();
+        numericLiteral_return retval = new numericLiteral_return();
         retval.Start = input.LT(1);
         int numericLiteral_StartIndex = input.Index();
         object root_0 = null;
@@ -1285,9 +1285,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "stringLiteral"
     // AS3_ex.g3:1542:1: stringLiteral : (S= SINGLE_QUOTE_LITERAL | D= DOUBLE_QUOTE_LITERAL );
-    public AS3_exParser.stringLiteral_return stringLiteral() // throws RecognitionException [1]
+    public stringLiteral_return stringLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.stringLiteral_return retval = new AS3_exParser.stringLiteral_return();
+        stringLiteral_return retval = new stringLiteral_return();
         retval.Start = input.LT(1);
         int stringLiteral_StartIndex = input.Index();
         object root_0 = null;
@@ -1399,9 +1399,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "regularExpresionLiteral"
     // AS3_ex.g3:1544:1: regularExpresionLiteral : R= REGULAR_EXPR_LITERAL ;
-    public AS3_exParser.regularExpresionLiteral_return regularExpresionLiteral() // throws RecognitionException [1]
+    public regularExpresionLiteral_return regularExpresionLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.regularExpresionLiteral_return retval = new AS3_exParser.regularExpresionLiteral_return();
+        regularExpresionLiteral_return retval = new regularExpresionLiteral_return();
         retval.Start = input.LT(1);
         int regularExpresionLiteral_StartIndex = input.Index();
         object root_0 = null;
@@ -1470,15 +1470,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "identifierLiteral"
     // AS3_ex.g3:1546:1: identifierLiteral : (I= IDENTIFIER | notQuiteReservedWord );
-    public AS3_exParser.identifierLiteral_return identifierLiteral() // throws RecognitionException [1]
+    public identifierLiteral_return identifierLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.identifierLiteral_return retval = new AS3_exParser.identifierLiteral_return();
+        identifierLiteral_return retval = new identifierLiteral_return();
         retval.Start = input.LT(1);
         int identifierLiteral_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
-        AS3_exParser.notQuiteReservedWord_return notQuiteReservedWord1 = null;
+        notQuiteReservedWord_return notQuiteReservedWord1 = null;
 
 
         object I_tree=null;
@@ -1580,9 +1580,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlNameLiteral"
     // AS3_ex.g3:1548:1: xmlNameLiteral : (I= IDENTIFIER | allKeywords ) ({...}? => (s= SUB | d= DOT | c= COLON ) {...}? => (I2= IDENTIFIER | allKeywords ) )* ;
-    public AS3_exParser.xmlNameLiteral_return xmlNameLiteral() // throws RecognitionException [1]
+    public xmlNameLiteral_return xmlNameLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlNameLiteral_return retval = new AS3_exParser.xmlNameLiteral_return();
+        xmlNameLiteral_return retval = new xmlNameLiteral_return();
         retval.Start = input.LT(1);
         int xmlNameLiteral_StartIndex = input.Index();
         object root_0 = null;
@@ -1592,9 +1592,9 @@ public class AS3_exParser : Parser
         IToken d = null;
         IToken c = null;
         IToken I2 = null;
-        AS3_exParser.allKeywords_return allKeywords2 = null;
+        allKeywords_return allKeywords2 = null;
 
-        AS3_exParser.allKeywords_return allKeywords3 = null;
+        allKeywords_return allKeywords3 = null;
 
 
         object I_tree=null;
@@ -1865,21 +1865,21 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "literal"
     // AS3_ex.g3:1551:1: literal : (N= NULL | booleanLiteral | numericLiteral | stringLiteral | regularExpresionLiteral );
-    public AS3_exParser.literal_return literal() // throws RecognitionException [1]
+    public literal_return literal() // throws RecognitionException [1]
     {   
-        AS3_exParser.literal_return retval = new AS3_exParser.literal_return();
+        literal_return retval = new literal_return();
         retval.Start = input.LT(1);
         int literal_StartIndex = input.Index();
         object root_0 = null;
 
         IToken N = null;
-        AS3_exParser.booleanLiteral_return booleanLiteral4 = null;
+        booleanLiteral_return booleanLiteral4 = null;
 
-        AS3_exParser.numericLiteral_return numericLiteral5 = null;
+        numericLiteral_return numericLiteral5 = null;
 
-        AS3_exParser.stringLiteral_return stringLiteral6 = null;
+        stringLiteral_return stringLiteral6 = null;
 
-        AS3_exParser.regularExpresionLiteral_return regularExpresionLiteral7 = null;
+        regularExpresionLiteral_return regularExpresionLiteral7 = null;
 
 
         object N_tree=null;
@@ -2040,18 +2040,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlMarkup"
     // AS3_ex.g3:1554:1: xmlMarkup : ( xmlComment | xmlCDATA | xmlPI );
-    public AS3_exParser.xmlMarkup_return xmlMarkup() // throws RecognitionException [1]
+    public xmlMarkup_return xmlMarkup() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlMarkup_return retval = new AS3_exParser.xmlMarkup_return();
+        xmlMarkup_return retval = new xmlMarkup_return();
         retval.Start = input.LT(1);
         int xmlMarkup_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlComment_return xmlComment8 = null;
+        xmlComment_return xmlComment8 = null;
 
-        AS3_exParser.xmlCDATA_return xmlCDATA9 = null;
+        xmlCDATA_return xmlCDATA9 = null;
 
-        AS3_exParser.xmlPI_return xmlPI10 = null;
+        xmlPI_return xmlPI10 = null;
 
 
 
@@ -2168,9 +2168,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlComment"
     // AS3_ex.g3:1555:1: xmlComment : x= XML_COMMENT ;
-    public AS3_exParser.xmlComment_return xmlComment() // throws RecognitionException [1]
+    public xmlComment_return xmlComment() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlComment_return retval = new AS3_exParser.xmlComment_return();
+        xmlComment_return retval = new xmlComment_return();
         retval.Start = input.LT(1);
         int xmlComment_StartIndex = input.Index();
         object root_0 = null;
@@ -2239,9 +2239,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlCDATA"
     // AS3_ex.g3:1556:1: xmlCDATA : x= XML_CDATA ;
-    public AS3_exParser.xmlCDATA_return xmlCDATA() // throws RecognitionException [1]
+    public xmlCDATA_return xmlCDATA() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlCDATA_return retval = new AS3_exParser.xmlCDATA_return();
+        xmlCDATA_return retval = new xmlCDATA_return();
         retval.Start = input.LT(1);
         int xmlCDATA_StartIndex = input.Index();
         object root_0 = null;
@@ -2310,9 +2310,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlPI"
     // AS3_ex.g3:1557:1: xmlPI : x= XML_PI ;
-    public AS3_exParser.xmlPI_return xmlPI() // throws RecognitionException [1]
+    public xmlPI_return xmlPI() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlPI_return retval = new AS3_exParser.xmlPI_return();
+        xmlPI_return retval = new xmlPI_return();
         retval.Start = input.LT(1);
         int xmlPI_StartIndex = input.Index();
         object root_0 = null;
@@ -2381,16 +2381,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlExprEval"
     // AS3_ex.g3:1558:1: xmlExprEval : L= LCURLY expression R= RCURLY ;
-    public AS3_exParser.xmlExprEval_return xmlExprEval() // throws RecognitionException [1]
+    public xmlExprEval_return xmlExprEval() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlExprEval_return retval = new AS3_exParser.xmlExprEval_return();
+        xmlExprEval_return retval = new xmlExprEval_return();
         retval.Start = input.LT(1);
         int xmlExprEval_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.expression_return expression11 = null;
+        expression_return expression11 = null;
 
 
         object L_tree=null;
@@ -2470,15 +2470,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlTextElement"
     // AS3_ex.g3:1561:1: xmlTextElement : ( allKeywords | lexToken= ( DEC_NUMBER_LITERAL | HEX_NUMBER_LITERAL | SINGLE_QUOTE_LITERAL | DOUBLE_QUOTE_LITERAL | IDENTIFIER | XML_TEXT | DIV | SEMI | RCURLY | LPAREN | RPAREN | LBRACK | RBRACK | DOT | COMMA | GT | LTE | EQ | NEQ | SAME | NSAME | PLUS | SUB | STAR | MOD | INC | DEC | SHL | AND | OR | XOR | NOT | INV | LAND | LOR | QUE | COLON | ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | LOR_ASSIGN | LAND_ASSIGN | ELLIPSIS | XML_ELLIPSIS | XML_NS_OP | XML_AT ) );
-    public AS3_exParser.xmlTextElement_return xmlTextElement() // throws RecognitionException [1]
+    public xmlTextElement_return xmlTextElement() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlTextElement_return retval = new AS3_exParser.xmlTextElement_return();
+        xmlTextElement_return retval = new xmlTextElement_return();
         retval.Start = input.LT(1);
         int xmlTextElement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken lexToken = null;
-        AS3_exParser.allKeywords_return allKeywords12 = null;
+        allKeywords_return allKeywords12 = null;
 
 
         object lexToken_tree=null;
@@ -2596,14 +2596,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlText"
     // AS3_ex.g3:1635:1: xmlText : ( xmlTextElement )+ ;
-    public AS3_exParser.xmlText_return xmlText() // throws RecognitionException [1]
+    public xmlText_return xmlText() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlText_return retval = new AS3_exParser.xmlText_return();
+        xmlText_return retval = new xmlText_return();
         retval.Start = input.LT(1);
         int xmlText_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlTextElement_return xmlTextElement13 = null;
+        xmlTextElement_return xmlTextElement13 = null;
 
 
 
@@ -2834,18 +2834,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlPrimaryExpression"
     // AS3_ex.g3:1641:1: xmlPrimaryExpression : ( xmlPropertyIdentifier | xmlInitialiser | xmlListInitialiser );
-    public AS3_exParser.xmlPrimaryExpression_return xmlPrimaryExpression() // throws RecognitionException [1]
+    public xmlPrimaryExpression_return xmlPrimaryExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlPrimaryExpression_return retval = new AS3_exParser.xmlPrimaryExpression_return();
+        xmlPrimaryExpression_return retval = new xmlPrimaryExpression_return();
         retval.Start = input.LT(1);
         int xmlPrimaryExpression_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlPropertyIdentifier_return xmlPropertyIdentifier14 = null;
+        xmlPropertyIdentifier_return xmlPropertyIdentifier14 = null;
 
-        AS3_exParser.xmlInitialiser_return xmlInitialiser15 = null;
+        xmlInitialiser_return xmlInitialiser15 = null;
 
-        AS3_exParser.xmlListInitialiser_return xmlListInitialiser16 = null;
+        xmlListInitialiser_return xmlListInitialiser16 = null;
 
 
 
@@ -3021,17 +3021,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlPropertyIdentifier"
     // AS3_ex.g3:1657:1: xmlPropertyIdentifier : ( xmlAttributeIdentifier | xmlQualifiedIdentifier | s= STAR );
-    public AS3_exParser.xmlPropertyIdentifier_return xmlPropertyIdentifier() // throws RecognitionException [1]
+    public xmlPropertyIdentifier_return xmlPropertyIdentifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlPropertyIdentifier_return retval = new AS3_exParser.xmlPropertyIdentifier_return();
+        xmlPropertyIdentifier_return retval = new xmlPropertyIdentifier_return();
         retval.Start = input.LT(1);
         int xmlPropertyIdentifier_StartIndex = input.Index();
         object root_0 = null;
 
         IToken s = null;
-        AS3_exParser.xmlAttributeIdentifier_return xmlAttributeIdentifier17 = null;
+        xmlAttributeIdentifier_return xmlAttributeIdentifier17 = null;
 
-        AS3_exParser.xmlQualifiedIdentifier_return xmlQualifiedIdentifier18 = null;
+        xmlQualifiedIdentifier_return xmlQualifiedIdentifier18 = null;
 
 
         object s_tree=null;
@@ -3224,19 +3224,19 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlAttributeIdentifier"
     // AS3_ex.g3:1663:1: xmlAttributeIdentifier : at= XML_AT ( xmlQualifiedIdentifier | xmlPropertySelector | indexSuffix ) ;
-    public AS3_exParser.xmlAttributeIdentifier_return xmlAttributeIdentifier() // throws RecognitionException [1]
+    public xmlAttributeIdentifier_return xmlAttributeIdentifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlAttributeIdentifier_return retval = new AS3_exParser.xmlAttributeIdentifier_return();
+        xmlAttributeIdentifier_return retval = new xmlAttributeIdentifier_return();
         retval.Start = input.LT(1);
         int xmlAttributeIdentifier_StartIndex = input.Index();
         object root_0 = null;
 
         IToken at = null;
-        AS3_exParser.xmlQualifiedIdentifier_return xmlQualifiedIdentifier19 = null;
+        xmlQualifiedIdentifier_return xmlQualifiedIdentifier19 = null;
 
-        AS3_exParser.xmlPropertySelector_return xmlPropertySelector20 = null;
+        xmlPropertySelector_return xmlPropertySelector20 = null;
 
-        AS3_exParser.indexSuffix_return indexSuffix21 = null;
+        indexSuffix_return indexSuffix21 = null;
 
 
         object at_tree=null;
@@ -3496,15 +3496,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlPropertySelector"
     // AS3_ex.g3:1672:1: xmlPropertySelector : ( xmlNameLiteral | s= STAR );
-    public AS3_exParser.xmlPropertySelector_return xmlPropertySelector() // throws RecognitionException [1]
+    public xmlPropertySelector_return xmlPropertySelector() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlPropertySelector_return retval = new AS3_exParser.xmlPropertySelector_return();
+        xmlPropertySelector_return retval = new xmlPropertySelector_return();
         retval.Start = input.LT(1);
         int xmlPropertySelector_StartIndex = input.Index();
         object root_0 = null;
 
         IToken s = null;
-        AS3_exParser.xmlNameLiteral_return xmlNameLiteral22 = null;
+        xmlNameLiteral_return xmlNameLiteral22 = null;
 
 
         object s_tree=null;
@@ -3606,19 +3606,19 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlQualifiedIdentifier"
     // AS3_ex.g3:1677:1: xmlQualifiedIdentifier : xmlPropertySelector x= XML_NS_OP ( xmlPropertySelector | indexSuffix ) ;
-    public AS3_exParser.xmlQualifiedIdentifier_return xmlQualifiedIdentifier() // throws RecognitionException [1]
+    public xmlQualifiedIdentifier_return xmlQualifiedIdentifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlQualifiedIdentifier_return retval = new AS3_exParser.xmlQualifiedIdentifier_return();
+        xmlQualifiedIdentifier_return retval = new xmlQualifiedIdentifier_return();
         retval.Start = input.LT(1);
         int xmlQualifiedIdentifier_StartIndex = input.Index();
         object root_0 = null;
 
         IToken x = null;
-        AS3_exParser.xmlPropertySelector_return xmlPropertySelector23 = null;
+        xmlPropertySelector_return xmlPropertySelector23 = null;
 
-        AS3_exParser.xmlPropertySelector_return xmlPropertySelector24 = null;
+        xmlPropertySelector_return xmlPropertySelector24 = null;
 
-        AS3_exParser.indexSuffix_return indexSuffix25 = null;
+        indexSuffix_return indexSuffix25 = null;
 
 
         object x_tree=null;
@@ -3739,16 +3739,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlInitialiser"
     // AS3_ex.g3:1686:1: xmlInitialiser : ( xmlMarkup | xmlElement );
-    public AS3_exParser.xmlInitialiser_return xmlInitialiser() // throws RecognitionException [1]
+    public xmlInitialiser_return xmlInitialiser() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlInitialiser_return retval = new AS3_exParser.xmlInitialiser_return();
+        xmlInitialiser_return retval = new xmlInitialiser_return();
         retval.Start = input.LT(1);
         int xmlInitialiser_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlMarkup_return xmlMarkup26 = null;
+        xmlMarkup_return xmlMarkup26 = null;
 
-        AS3_exParser.xmlElement_return xmlElement27 = null;
+        xmlElement_return xmlElement27 = null;
 
 
 
@@ -3845,9 +3845,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlElement"
     // AS3_ex.g3:1699:1: xmlElement : L= LT xmlTagName ( xmlAttributes )? (x= XML_TEND | G= GT ( xmlElementContent[false] )? x= XML_E_TEND xmlTagName G= GT ) ;
-    public AS3_exParser.xmlElement_return xmlElement() // throws RecognitionException [1]
+    public xmlElement_return xmlElement() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlElement_return retval = new AS3_exParser.xmlElement_return();
+        xmlElement_return retval = new xmlElement_return();
         retval.Start = input.LT(1);
         int xmlElement_StartIndex = input.Index();
         object root_0 = null;
@@ -3855,13 +3855,13 @@ public class AS3_exParser : Parser
         IToken L = null;
         IToken x = null;
         IToken G = null;
-        AS3_exParser.xmlTagName_return xmlTagName28 = null;
+        xmlTagName_return xmlTagName28 = null;
 
-        AS3_exParser.xmlAttributes_return xmlAttributes29 = null;
+        xmlAttributes_return xmlAttributes29 = null;
 
-        AS3_exParser.xmlElementContent_return xmlElementContent30 = null;
+        xmlElementContent_return xmlElementContent30 = null;
 
-        AS3_exParser.xmlTagName_return xmlTagName31 = null;
+        xmlTagName_return xmlTagName31 = null;
 
 
         object L_tree=null;
@@ -4112,14 +4112,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlAttributes"
     // AS3_ex.g3:1729:1: xmlAttributes : ( xmlAttribute )+ ;
-    public AS3_exParser.xmlAttributes_return xmlAttributes() // throws RecognitionException [1]
+    public xmlAttributes_return xmlAttributes() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlAttributes_return retval = new AS3_exParser.xmlAttributes_return();
+        xmlAttributes_return retval = new xmlAttributes_return();
         retval.Start = input.LT(1);
         int xmlAttributes_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlAttribute_return xmlAttribute32 = null;
+        xmlAttribute_return xmlAttribute32 = null;
 
 
 
@@ -4214,16 +4214,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlTagName"
     // AS3_ex.g3:1733:1: xmlTagName : ( xmlExprEval | xmlNameLiteral );
-    public AS3_exParser.xmlTagName_return xmlTagName() // throws RecognitionException [1]
+    public xmlTagName_return xmlTagName() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlTagName_return retval = new AS3_exParser.xmlTagName_return();
+        xmlTagName_return retval = new xmlTagName_return();
         retval.Start = input.LT(1);
         int xmlTagName_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlExprEval_return xmlExprEval33 = null;
+        xmlExprEval_return xmlExprEval33 = null;
 
-        AS3_exParser.xmlNameLiteral_return xmlNameLiteral34 = null;
+        xmlNameLiteral_return xmlNameLiteral34 = null;
 
 
 
@@ -4320,19 +4320,19 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlAttribute"
     // AS3_ex.g3:1738:1: xmlAttribute : {...}? xmlTagName A= ASSIGN ( xmlExprEval | stringLiteral ) ;
-    public AS3_exParser.xmlAttribute_return xmlAttribute() // throws RecognitionException [1]
+    public xmlAttribute_return xmlAttribute() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlAttribute_return retval = new AS3_exParser.xmlAttribute_return();
+        xmlAttribute_return retval = new xmlAttribute_return();
         retval.Start = input.LT(1);
         int xmlAttribute_StartIndex = input.Index();
         object root_0 = null;
 
         IToken A = null;
-        AS3_exParser.xmlTagName_return xmlTagName35 = null;
+        xmlTagName_return xmlTagName35 = null;
 
-        AS3_exParser.xmlExprEval_return xmlExprEval36 = null;
+        xmlExprEval_return xmlExprEval36 = null;
 
-        AS3_exParser.stringLiteral_return stringLiteral37 = null;
+        stringLiteral_return stringLiteral37 = null;
 
 
         object A_tree=null;
@@ -4458,14 +4458,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlElementContent"
     // AS3_ex.g3:1746:1: xmlElementContent[bool crAfterTags] : ( xmlElementContentHelper[crAfterTags] )+ ;
-    public AS3_exParser.xmlElementContent_return xmlElementContent(bool crAfterTags) // throws RecognitionException [1]
+    public xmlElementContent_return xmlElementContent(bool crAfterTags) // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlElementContent_return retval = new AS3_exParser.xmlElementContent_return();
+        xmlElementContent_return retval = new xmlElementContent_return();
         retval.Start = input.LT(1);
         int xmlElementContent_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlElementContentHelper_return xmlElementContentHelper38 = null;
+        xmlElementContentHelper_return xmlElementContentHelper38 = null;
 
 
 
@@ -4560,20 +4560,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlElementContentHelper"
     // AS3_ex.g3:1750:1: xmlElementContentHelper[bool crAfterTags] : ( xmlExprEval | xmlMarkup | xmlElement | xmlText );
-    public AS3_exParser.xmlElementContentHelper_return xmlElementContentHelper(bool crAfterTags) // throws RecognitionException [1]
+    public xmlElementContentHelper_return xmlElementContentHelper(bool crAfterTags) // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlElementContentHelper_return retval = new AS3_exParser.xmlElementContentHelper_return();
+        xmlElementContentHelper_return retval = new xmlElementContentHelper_return();
         retval.Start = input.LT(1);
         int xmlElementContentHelper_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.xmlExprEval_return xmlExprEval39 = null;
+        xmlExprEval_return xmlExprEval39 = null;
 
-        AS3_exParser.xmlMarkup_return xmlMarkup40 = null;
+        xmlMarkup_return xmlMarkup40 = null;
 
-        AS3_exParser.xmlElement_return xmlElement41 = null;
+        xmlElement_return xmlElement41 = null;
 
-        AS3_exParser.xmlText_return xmlText42 = null;
+        xmlText_return xmlText42 = null;
 
 
 
@@ -4839,15 +4839,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlListInitialiser"
     // AS3_ex.g3:1757:1: xmlListInitialiser : x= XML_LS_STD ( xmlElementContent[true] )? x= XML_LS_END ;
-    public AS3_exParser.xmlListInitialiser_return xmlListInitialiser() // throws RecognitionException [1]
+    public xmlListInitialiser_return xmlListInitialiser() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlListInitialiser_return retval = new AS3_exParser.xmlListInitialiser_return();
+        xmlListInitialiser_return retval = new xmlListInitialiser_return();
         retval.Start = input.LT(1);
         int xmlListInitialiser_StartIndex = input.Index();
         object root_0 = null;
 
         IToken x = null;
-        AS3_exParser.xmlElementContent_return xmlElementContent43 = null;
+        xmlElementContent_return xmlElementContent43 = null;
 
 
         object x_tree=null;
@@ -4984,9 +4984,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "semic"
     // AS3_ex.g3:1776:1: semic : (S= SEMI | E= EOF | R= RCURLY );
-    public AS3_exParser.semic_return semic() // throws RecognitionException [1]
+    public semic_return semic() // throws RecognitionException [1]
     {   
-        AS3_exParser.semic_return retval = new AS3_exParser.semic_return();
+        semic_return retval = new semic_return();
         retval.Start = input.LT(1);
         int semic_StartIndex = input.Index();
         object root_0 = null;
@@ -5155,17 +5155,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "fileContents"
     // AS3_ex.g3:1817:1: fileContents : ( ( ( packageDeclaration )? ( packageElement )* ) | EOF );
-    public AS3_exParser.fileContents_return fileContents() // throws RecognitionException [1]
+    public fileContents_return fileContents() // throws RecognitionException [1]
     {   
-        AS3_exParser.fileContents_return retval = new AS3_exParser.fileContents_return();
+        fileContents_return retval = new fileContents_return();
         retval.Start = input.LT(1);
         int fileContents_StartIndex = input.Index();
         object root_0 = null;
 
         IToken EOF46 = null;
-        AS3_exParser.packageDeclaration_return packageDeclaration44 = null;
+        packageDeclaration_return packageDeclaration44 = null;
 
-        AS3_exParser.packageElement_return packageElement45 = null;
+        packageElement_return packageElement45 = null;
 
 
         object EOF46_tree=null;
@@ -5340,9 +5340,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "packageDeclaration"
     // AS3_ex.g3:1823:1: packageDeclaration : p= PACKAGE ( type )? l= LCURLY ( packageElement )* r= RCURLY ;
-    public AS3_exParser.packageDeclaration_return packageDeclaration() // throws RecognitionException [1]
+    public packageDeclaration_return packageDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.packageDeclaration_return retval = new AS3_exParser.packageDeclaration_return();
+        packageDeclaration_return retval = new packageDeclaration_return();
         retval.Start = input.LT(1);
         int packageDeclaration_StartIndex = input.Index();
         object root_0 = null;
@@ -5350,9 +5350,9 @@ public class AS3_exParser : Parser
         IToken p = null;
         IToken l = null;
         IToken r = null;
-        AS3_exParser.type_return type47 = null;
+        type_return type47 = null;
 
-        AS3_exParser.packageElement_return packageElement48 = null;
+        packageElement_return packageElement48 = null;
 
 
         object p_tree=null;
@@ -5522,9 +5522,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "mxmlEmbedded"
     // AS3_ex.g3:1847:1: mxmlEmbedded : ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )* ( EOF )? ;
-    public AS3_exParser.mxmlEmbedded_return mxmlEmbedded() // throws RecognitionException [1]
+    public mxmlEmbedded_return mxmlEmbedded() // throws RecognitionException [1]
     {   
-        AS3_exParser.mxmlEmbedded_return retval = new AS3_exParser.mxmlEmbedded_return();
+        mxmlEmbedded_return retval = new mxmlEmbedded_return();
         retval.Start = input.LT(1);
         int mxmlEmbedded_StartIndex = input.Index();
         object root_0 = null;
@@ -5532,19 +5532,19 @@ public class AS3_exParser : Parser
         IToken l = null;
         IToken r = null;
         IToken EOF56 = null;
-        AS3_exParser.conditionalCompilerOption_return conditionalCompilerOption49 = null;
+        conditionalCompilerOption_return conditionalCompilerOption49 = null;
 
-        AS3_exParser.mxmlEmbedded_return mxmlEmbedded50 = null;
+        mxmlEmbedded_return mxmlEmbedded50 = null;
 
-        AS3_exParser.propertyDeclaration_return propertyDeclaration51 = null;
+        propertyDeclaration_return propertyDeclaration51 = null;
 
-        AS3_exParser.functionDeclaration_return functionDeclaration52 = null;
+        functionDeclaration_return functionDeclaration52 = null;
 
-        AS3_exParser.statement_return statement53 = null;
+        statement_return statement53 = null;
 
-        AS3_exParser.directive_return directive54 = null;
+        directive_return directive54 = null;
 
-        AS3_exParser.interfaceFunctionDeclaration_return interfaceFunctionDeclaration55 = null;
+        interfaceFunctionDeclaration_return interfaceFunctionDeclaration55 = null;
 
 
         object l_tree=null;
@@ -5744,30 +5744,30 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "packageElement"
     // AS3_ex.g3:1864:1: packageElement : ( conditionalCompilerOption l= LCURLY ( packageElement )* r= RCURLY | classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive );
-    public AS3_exParser.packageElement_return packageElement() // throws RecognitionException [1]
+    public packageElement_return packageElement() // throws RecognitionException [1]
     {   
-        AS3_exParser.packageElement_return retval = new AS3_exParser.packageElement_return();
+        packageElement_return retval = new packageElement_return();
         retval.Start = input.LT(1);
         int packageElement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken l = null;
         IToken r = null;
-        AS3_exParser.conditionalCompilerOption_return conditionalCompilerOption57 = null;
+        conditionalCompilerOption_return conditionalCompilerOption57 = null;
 
-        AS3_exParser.packageElement_return packageElement58 = null;
+        packageElement_return packageElement58 = null;
 
-        AS3_exParser.classOrInterfaceDecl_return classOrInterfaceDecl59 = null;
+        classOrInterfaceDecl_return classOrInterfaceDecl59 = null;
 
-        AS3_exParser.propertyDeclaration_return propertyDeclaration60 = null;
+        propertyDeclaration_return propertyDeclaration60 = null;
 
-        AS3_exParser.functionDeclaration_return functionDeclaration61 = null;
+        functionDeclaration_return functionDeclaration61 = null;
 
-        AS3_exParser.interfaceFunctionDeclaration_return interfaceFunctionDeclaration62 = null;
+        interfaceFunctionDeclaration_return interfaceFunctionDeclaration62 = null;
 
-        AS3_exParser.statement_return statement63 = null;
+        statement_return statement63 = null;
 
-        AS3_exParser.directive_return directive64 = null;
+        directive_return directive64 = null;
 
 
         object l_tree=null;
@@ -5984,9 +5984,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "importDeclaration"
     // AS3_ex.g3:1881:1: importDeclaration : i= IMPORT type (D= DOT S= STAR )? semic ;
-    public AS3_exParser.importDeclaration_return importDeclaration() // throws RecognitionException [1]
+    public importDeclaration_return importDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.importDeclaration_return retval = new AS3_exParser.importDeclaration_return();
+        importDeclaration_return retval = new importDeclaration_return();
         retval.Start = input.LT(1);
         int importDeclaration_StartIndex = input.Index();
         object root_0 = null;
@@ -5994,9 +5994,9 @@ public class AS3_exParser : Parser
         IToken i = null;
         IToken D = null;
         IToken S = null;
-        AS3_exParser.type_return type65 = null;
+        type_return type65 = null;
 
-        AS3_exParser.semic_return semic66 = null;
+        semic_return semic66 = null;
 
 
         object i_tree=null;
@@ -6118,20 +6118,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "classOrInterfaceDecl"
     // AS3_ex.g3:1887:1: classOrInterfaceDecl : ( conditionalDirAndBindingDecls )? ( memberModifiers )? ( interfaceDeclaration | classDeclaration ) ;
-    public AS3_exParser.classOrInterfaceDecl_return classOrInterfaceDecl() // throws RecognitionException [1]
+    public classOrInterfaceDecl_return classOrInterfaceDecl() // throws RecognitionException [1]
     {   
-        AS3_exParser.classOrInterfaceDecl_return retval = new AS3_exParser.classOrInterfaceDecl_return();
+        classOrInterfaceDecl_return retval = new classOrInterfaceDecl_return();
         retval.Start = input.LT(1);
         int classOrInterfaceDecl_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls67 = null;
+        conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls67 = null;
 
-        AS3_exParser.memberModifiers_return memberModifiers68 = null;
+        memberModifiers_return memberModifiers68 = null;
 
-        AS3_exParser.interfaceDeclaration_return interfaceDeclaration69 = null;
+        interfaceDeclaration_return interfaceDeclaration69 = null;
 
-        AS3_exParser.classDeclaration_return classDeclaration70 = null;
+        classDeclaration_return classDeclaration70 = null;
 
 
 
@@ -6328,22 +6328,22 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "directive"
     // AS3_ex.g3:1891:1: directive : ( bindingDecl | includeDirective | useNamespaceDirective | importDeclaration | defaultXMLNamespaceDirective ) ;
-    public AS3_exParser.directive_return directive() // throws RecognitionException [1]
+    public directive_return directive() // throws RecognitionException [1]
     {   
-        AS3_exParser.directive_return retval = new AS3_exParser.directive_return();
+        directive_return retval = new directive_return();
         retval.Start = input.LT(1);
         int directive_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.bindingDecl_return bindingDecl71 = null;
+        bindingDecl_return bindingDecl71 = null;
 
-        AS3_exParser.includeDirective_return includeDirective72 = null;
+        includeDirective_return includeDirective72 = null;
 
-        AS3_exParser.useNamespaceDirective_return useNamespaceDirective73 = null;
+        useNamespaceDirective_return useNamespaceDirective73 = null;
 
-        AS3_exParser.importDeclaration_return importDeclaration74 = null;
+        importDeclaration_return importDeclaration74 = null;
 
-        AS3_exParser.defaultXMLNamespaceDirective_return defaultXMLNamespaceDirective75 = null;
+        defaultXMLNamespaceDirective_return defaultXMLNamespaceDirective75 = null;
 
 
 
@@ -6507,16 +6507,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "conditionalDirAndBindingDecls"
     // AS3_ex.g3:1896:1: conditionalDirAndBindingDecls : conditionalCompilerOption ( bindingDecl )* ;
-    public AS3_exParser.conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls() // throws RecognitionException [1]
+    public conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls() // throws RecognitionException [1]
     {   
-        AS3_exParser.conditionalDirAndBindingDecls_return retval = new AS3_exParser.conditionalDirAndBindingDecls_return();
+        conditionalDirAndBindingDecls_return retval = new conditionalDirAndBindingDecls_return();
         retval.Start = input.LT(1);
         int conditionalDirAndBindingDecls_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.conditionalCompilerOption_return conditionalCompilerOption76 = null;
+        conditionalCompilerOption_return conditionalCompilerOption76 = null;
 
-        AS3_exParser.bindingDecl_return bindingDecl77 = null;
+        bindingDecl_return bindingDecl77 = null;
 
 
 
@@ -6626,9 +6626,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "xmlKeyword"
     // AS3_ex.g3:1904:1: xmlKeyword : {...}?I= IDENTIFIER ;
-    public AS3_exParser.xmlKeyword_return xmlKeyword() // throws RecognitionException [1]
+    public xmlKeyword_return xmlKeyword() // throws RecognitionException [1]
     {   
-        AS3_exParser.xmlKeyword_return retval = new AS3_exParser.xmlKeyword_return();
+        xmlKeyword_return retval = new xmlKeyword_return();
         retval.Start = input.LT(1);
         int xmlKeyword_StartIndex = input.Index();
         object root_0 = null;
@@ -6702,17 +6702,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "conditionalCompilerOption"
     // AS3_ex.g3:1908:1: conditionalCompilerOption : identifierLiteral x= XML_NS_OP identifierLiteral ;
-    public AS3_exParser.conditionalCompilerOption_return conditionalCompilerOption() // throws RecognitionException [1]
+    public conditionalCompilerOption_return conditionalCompilerOption() // throws RecognitionException [1]
     {   
-        AS3_exParser.conditionalCompilerOption_return retval = new AS3_exParser.conditionalCompilerOption_return();
+        conditionalCompilerOption_return retval = new conditionalCompilerOption_return();
         retval.Start = input.LT(1);
         int conditionalCompilerOption_StartIndex = input.Index();
         object root_0 = null;
 
         IToken x = null;
-        AS3_exParser.identifierLiteral_return identifierLiteral78 = null;
+        identifierLiteral_return identifierLiteral78 = null;
 
-        AS3_exParser.identifierLiteral_return identifierLiteral79 = null;
+        identifierLiteral_return identifierLiteral79 = null;
 
 
         object x_tree=null;
@@ -6787,9 +6787,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "defaultXMLNamespaceDirective"
     // AS3_ex.g3:1913:1: defaultXMLNamespaceDirective : D= DEFAULT xmlKeyword N= NAMESPACE A= ASSIGN assignmentExpression semic ;
-    public AS3_exParser.defaultXMLNamespaceDirective_return defaultXMLNamespaceDirective() // throws RecognitionException [1]
+    public defaultXMLNamespaceDirective_return defaultXMLNamespaceDirective() // throws RecognitionException [1]
     {   
-        AS3_exParser.defaultXMLNamespaceDirective_return retval = new AS3_exParser.defaultXMLNamespaceDirective_return();
+        defaultXMLNamespaceDirective_return retval = new defaultXMLNamespaceDirective_return();
         retval.Start = input.LT(1);
         int defaultXMLNamespaceDirective_StartIndex = input.Index();
         object root_0 = null;
@@ -6797,11 +6797,11 @@ public class AS3_exParser : Parser
         IToken D = null;
         IToken N = null;
         IToken A = null;
-        AS3_exParser.xmlKeyword_return xmlKeyword80 = null;
+        xmlKeyword_return xmlKeyword80 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression81 = null;
+        assignmentExpression_return assignmentExpression81 = null;
 
-        AS3_exParser.semic_return semic82 = null;
+        semic_return semic82 = null;
 
 
         object D_tree=null;
@@ -6922,9 +6922,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bindingDecl"
     // AS3_ex.g3:1934:1: bindingDecl : L= LBRACK (XA= XML_AT )? I= IDENTIFIER (L= LPAREN ( bindingDeclArg (C= COMMA bindingDeclArg )* )? R= RPAREN )? R= RBRACK (s= SEMI )? ;
-    public AS3_exParser.bindingDecl_return bindingDecl() // throws RecognitionException [1]
+    public bindingDecl_return bindingDecl() // throws RecognitionException [1]
     {   
-        AS3_exParser.bindingDecl_return retval = new AS3_exParser.bindingDecl_return();
+        bindingDecl_return retval = new bindingDecl_return();
         retval.Start = input.LT(1);
         int bindingDecl_StartIndex = input.Index();
         object root_0 = null;
@@ -6935,9 +6935,9 @@ public class AS3_exParser : Parser
         IToken C = null;
         IToken R = null;
         IToken s = null;
-        AS3_exParser.bindingDeclArg_return bindingDeclArg83 = null;
+        bindingDeclArg_return bindingDeclArg83 = null;
 
-        AS3_exParser.bindingDeclArg_return bindingDeclArg84 = null;
+        bindingDeclArg_return bindingDeclArg84 = null;
 
 
         object L_tree=null;
@@ -7223,17 +7223,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "includeDirective"
     // AS3_ex.g3:1979:1: includeDirective : I= INCLUDE stringLiteral semic ;
-    public AS3_exParser.includeDirective_return includeDirective() // throws RecognitionException [1]
+    public includeDirective_return includeDirective() // throws RecognitionException [1]
     {   
-        AS3_exParser.includeDirective_return retval = new AS3_exParser.includeDirective_return();
+        includeDirective_return retval = new includeDirective_return();
         retval.Start = input.LT(1);
         int includeDirective_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
-        AS3_exParser.stringLiteral_return stringLiteral85 = null;
+        stringLiteral_return stringLiteral85 = null;
 
-        AS3_exParser.semic_return semic86 = null;
+        semic_return semic86 = null;
 
 
         object I_tree=null;
@@ -7312,9 +7312,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bindingDeclArg"
     // AS3_ex.g3:1985:1: bindingDeclArg : ( eitherIdentifier E= ASSIGN )? ( stringLiteral | (P= PLUS | S= SUB )? numericLiteral | ( eitherIdentifier (D= DOT eitherIdentifier )* ) ) ;
-    public AS3_exParser.bindingDeclArg_return bindingDeclArg() // throws RecognitionException [1]
+    public bindingDeclArg_return bindingDeclArg() // throws RecognitionException [1]
     {   
-        AS3_exParser.bindingDeclArg_return retval = new AS3_exParser.bindingDeclArg_return();
+        bindingDeclArg_return retval = new bindingDeclArg_return();
         retval.Start = input.LT(1);
         int bindingDeclArg_StartIndex = input.Index();
         object root_0 = null;
@@ -7323,15 +7323,15 @@ public class AS3_exParser : Parser
         IToken P = null;
         IToken S = null;
         IToken D = null;
-        AS3_exParser.eitherIdentifier_return eitherIdentifier87 = null;
+        eitherIdentifier_return eitherIdentifier87 = null;
 
-        AS3_exParser.stringLiteral_return stringLiteral88 = null;
+        stringLiteral_return stringLiteral88 = null;
 
-        AS3_exParser.numericLiteral_return numericLiteral89 = null;
+        numericLiteral_return numericLiteral89 = null;
 
-        AS3_exParser.eitherIdentifier_return eitherIdentifier90 = null;
+        eitherIdentifier_return eitherIdentifier90 = null;
 
-        AS3_exParser.eitherIdentifier_return eitherIdentifier91 = null;
+        eitherIdentifier_return eitherIdentifier91 = null;
 
 
         object E_tree=null;
@@ -7639,20 +7639,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "interfaceDeclaration"
     // AS3_ex.g3:2002:1: interfaceDeclaration : i= INTERFACE type (e= EXTENDS typeList )? interfaceBody ;
-    public AS3_exParser.interfaceDeclaration_return interfaceDeclaration() // throws RecognitionException [1]
+    public interfaceDeclaration_return interfaceDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.interfaceDeclaration_return retval = new AS3_exParser.interfaceDeclaration_return();
+        interfaceDeclaration_return retval = new interfaceDeclaration_return();
         retval.Start = input.LT(1);
         int interfaceDeclaration_StartIndex = input.Index();
         object root_0 = null;
 
         IToken i = null;
         IToken e = null;
-        AS3_exParser.type_return type92 = null;
+        type_return type92 = null;
 
-        AS3_exParser.typeList_return typeList93 = null;
+        typeList_return typeList93 = null;
 
-        AS3_exParser.interfaceBody_return interfaceBody94 = null;
+        interfaceBody_return interfaceBody94 = null;
 
 
         object i_tree=null;
@@ -7781,16 +7781,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "interfaceBody"
     // AS3_ex.g3:2018:1: interfaceBody : l= LCURLY ( interfaceElement )* r= RCURLY ;
-    public AS3_exParser.interfaceBody_return interfaceBody() // throws RecognitionException [1]
+    public interfaceBody_return interfaceBody() // throws RecognitionException [1]
     {   
-        AS3_exParser.interfaceBody_return retval = new AS3_exParser.interfaceBody_return();
+        interfaceBody_return retval = new interfaceBody_return();
         retval.Start = input.LT(1);
         int interfaceBody_StartIndex = input.Index();
         object root_0 = null;
 
         IToken l = null;
         IToken r = null;
-        AS3_exParser.interfaceElement_return interfaceElement95 = null;
+        interfaceElement_return interfaceElement95 = null;
 
 
         object l_tree=null;
@@ -7913,9 +7913,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "classDeclaration"
     // AS3_ex.g3:2033:1: classDeclaration : c= CLASS type (E= EXTENDS type )? (I= IMPLEMENTS typeList )? classBody ;
-    public AS3_exParser.classDeclaration_return classDeclaration() // throws RecognitionException [1]
+    public classDeclaration_return classDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.classDeclaration_return retval = new AS3_exParser.classDeclaration_return();
+        classDeclaration_return retval = new classDeclaration_return();
         retval.Start = input.LT(1);
         int classDeclaration_StartIndex = input.Index();
         object root_0 = null;
@@ -7923,13 +7923,13 @@ public class AS3_exParser : Parser
         IToken c = null;
         IToken E = null;
         IToken I = null;
-        AS3_exParser.type_return type96 = null;
+        type_return type96 = null;
 
-        AS3_exParser.type_return type97 = null;
+        type_return type97 = null;
 
-        AS3_exParser.typeList_return typeList98 = null;
+        typeList_return typeList98 = null;
 
-        AS3_exParser.classBody_return classBody99 = null;
+        classBody_return classBody99 = null;
 
 
         object c_tree=null;
@@ -8104,16 +8104,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "classBody"
     // AS3_ex.g3:2056:1: classBody : L= LCURLY ( classBodyElement )* R= RCURLY ;
-    public AS3_exParser.classBody_return classBody() // throws RecognitionException [1]
+    public classBody_return classBody() // throws RecognitionException [1]
     {   
-        AS3_exParser.classBody_return retval = new AS3_exParser.classBody_return();
+        classBody_return retval = new classBody_return();
         retval.Start = input.LT(1);
         int classBody_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.classBodyElement_return classBodyElement100 = null;
+        classBodyElement_return classBodyElement100 = null;
 
 
         object L_tree=null;
@@ -8236,26 +8236,26 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "classBodyElement"
     // AS3_ex.g3:2075:1: classBodyElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( classBodyElement )* r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive );
-    public AS3_exParser.classBodyElement_return classBodyElement() // throws RecognitionException [1]
+    public classBodyElement_return classBodyElement() // throws RecognitionException [1]
     {   
-        AS3_exParser.classBodyElement_return retval = new AS3_exParser.classBodyElement_return();
+        classBodyElement_return retval = new classBodyElement_return();
         retval.Start = input.LT(1);
         int classBodyElement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken l = null;
         IToken r = null;
-        AS3_exParser.conditionalCompilerOption_return conditionalCompilerOption101 = null;
+        conditionalCompilerOption_return conditionalCompilerOption101 = null;
 
-        AS3_exParser.classBodyElement_return classBodyElement102 = null;
+        classBodyElement_return classBodyElement102 = null;
 
-        AS3_exParser.propertyDeclaration_return propertyDeclaration103 = null;
+        propertyDeclaration_return propertyDeclaration103 = null;
 
-        AS3_exParser.functionDeclaration_return functionDeclaration104 = null;
+        functionDeclaration_return functionDeclaration104 = null;
 
-        AS3_exParser.statement_return statement105 = null;
+        statement_return statement105 = null;
 
-        AS3_exParser.directive_return directive106 = null;
+        directive_return directive106 = null;
 
 
         object l_tree=null;
@@ -8446,26 +8446,26 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "interfaceElement"
     // AS3_ex.g3:2093:1: interfaceElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( interfaceElement )* r= RCURLY | propertyDeclaration | interfaceFunctionDeclaration | statement | directive );
-    public AS3_exParser.interfaceElement_return interfaceElement() // throws RecognitionException [1]
+    public interfaceElement_return interfaceElement() // throws RecognitionException [1]
     {   
-        AS3_exParser.interfaceElement_return retval = new AS3_exParser.interfaceElement_return();
+        interfaceElement_return retval = new interfaceElement_return();
         retval.Start = input.LT(1);
         int interfaceElement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken l = null;
         IToken r = null;
-        AS3_exParser.conditionalCompilerOption_return conditionalCompilerOption107 = null;
+        conditionalCompilerOption_return conditionalCompilerOption107 = null;
 
-        AS3_exParser.interfaceElement_return interfaceElement108 = null;
+        interfaceElement_return interfaceElement108 = null;
 
-        AS3_exParser.propertyDeclaration_return propertyDeclaration109 = null;
+        propertyDeclaration_return propertyDeclaration109 = null;
 
-        AS3_exParser.interfaceFunctionDeclaration_return interfaceFunctionDeclaration110 = null;
+        interfaceFunctionDeclaration_return interfaceFunctionDeclaration110 = null;
 
-        AS3_exParser.statement_return statement111 = null;
+        statement_return statement111 = null;
 
-        AS3_exParser.directive_return directive112 = null;
+        directive_return directive112 = null;
 
 
         object l_tree=null;
@@ -8656,9 +8656,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "interfaceFunctionDeclaration"
     // AS3_ex.g3:2117:1: interfaceFunctionDeclaration : ( conditionalDirAndBindingDecls )? ( memberModifiers )? F= FUNCTION (S= SET | G= GET )? (I= IDENTIFIER | notQuiteReservedWord ) formalParameterList (C= COLON type )? semic ;
-    public AS3_exParser.interfaceFunctionDeclaration_return interfaceFunctionDeclaration() // throws RecognitionException [1]
+    public interfaceFunctionDeclaration_return interfaceFunctionDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.interfaceFunctionDeclaration_return retval = new AS3_exParser.interfaceFunctionDeclaration_return();
+        interfaceFunctionDeclaration_return retval = new interfaceFunctionDeclaration_return();
         retval.Start = input.LT(1);
         int interfaceFunctionDeclaration_StartIndex = input.Index();
         object root_0 = null;
@@ -8668,17 +8668,17 @@ public class AS3_exParser : Parser
         IToken G = null;
         IToken I = null;
         IToken C = null;
-        AS3_exParser.conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls113 = null;
+        conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls113 = null;
 
-        AS3_exParser.memberModifiers_return memberModifiers114 = null;
+        memberModifiers_return memberModifiers114 = null;
 
-        AS3_exParser.notQuiteReservedWord_return notQuiteReservedWord115 = null;
+        notQuiteReservedWord_return notQuiteReservedWord115 = null;
 
-        AS3_exParser.formalParameterList_return formalParameterList116 = null;
+        formalParameterList_return formalParameterList116 = null;
 
-        AS3_exParser.type_return type117 = null;
+        type_return type117 = null;
 
-        AS3_exParser.semic_return semic118 = null;
+        semic_return semic118 = null;
 
 
         object F_tree=null;
@@ -8997,22 +8997,22 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "propertyDeclaration"
     // AS3_ex.g3:2134:1: propertyDeclaration : ( conditionalDirAndBindingDecls )? ( memberModifiers )? ( variableStatement | constantVarStatement | namespaceDirective ) ;
-    public AS3_exParser.propertyDeclaration_return propertyDeclaration() // throws RecognitionException [1]
+    public propertyDeclaration_return propertyDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.propertyDeclaration_return retval = new AS3_exParser.propertyDeclaration_return();
+        propertyDeclaration_return retval = new propertyDeclaration_return();
         retval.Start = input.LT(1);
         int propertyDeclaration_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls119 = null;
+        conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls119 = null;
 
-        AS3_exParser.memberModifiers_return memberModifiers120 = null;
+        memberModifiers_return memberModifiers120 = null;
 
-        AS3_exParser.variableStatement_return variableStatement121 = null;
+        variableStatement_return variableStatement121 = null;
 
-        AS3_exParser.constantVarStatement_return constantVarStatement122 = null;
+        constantVarStatement_return constantVarStatement122 = null;
 
-        AS3_exParser.namespaceDirective_return namespaceDirective123 = null;
+        namespaceDirective_return namespaceDirective123 = null;
 
 
 
@@ -9250,9 +9250,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "functionDeclaration"
     // AS3_ex.g3:2142:1: functionDeclaration : ( conditionalDirAndBindingDecls )? ( memberModifiers )? F= FUNCTION (funcType= ( SET | GET ) )? (I= IDENTIFIER | notQuiteReservedWord ) formalParameterList (C= COLON type )? functionBody ;
-    public AS3_exParser.functionDeclaration_return functionDeclaration() // throws RecognitionException [1]
+    public functionDeclaration_return functionDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.functionDeclaration_return retval = new AS3_exParser.functionDeclaration_return();
+        functionDeclaration_return retval = new functionDeclaration_return();
         retval.Start = input.LT(1);
         int functionDeclaration_StartIndex = input.Index();
         object root_0 = null;
@@ -9261,17 +9261,17 @@ public class AS3_exParser : Parser
         IToken funcType = null;
         IToken I = null;
         IToken C = null;
-        AS3_exParser.conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls124 = null;
+        conditionalDirAndBindingDecls_return conditionalDirAndBindingDecls124 = null;
 
-        AS3_exParser.memberModifiers_return memberModifiers125 = null;
+        memberModifiers_return memberModifiers125 = null;
 
-        AS3_exParser.notQuiteReservedWord_return notQuiteReservedWord126 = null;
+        notQuiteReservedWord_return notQuiteReservedWord126 = null;
 
-        AS3_exParser.formalParameterList_return formalParameterList127 = null;
+        formalParameterList_return formalParameterList127 = null;
 
-        AS3_exParser.type_return type128 = null;
+        type_return type128 = null;
 
-        AS3_exParser.functionBody_return functionBody129 = null;
+        functionBody_return functionBody129 = null;
 
 
         object F_tree=null;
@@ -9590,9 +9590,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "functionExpression"
     // AS3_ex.g3:2158:1: functionExpression : F= FUNCTION (I= IDENTIFIER )? formalParameterList (C= COLON type )? functionBody ;
-    public AS3_exParser.functionExpression_return functionExpression() // throws RecognitionException [1]
+    public functionExpression_return functionExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.functionExpression_return retval = new AS3_exParser.functionExpression_return();
+        functionExpression_return retval = new functionExpression_return();
         retval.Start = input.LT(1);
         int functionExpression_StartIndex = input.Index();
         object root_0 = null;
@@ -9600,11 +9600,11 @@ public class AS3_exParser : Parser
         IToken F = null;
         IToken I = null;
         IToken C = null;
-        AS3_exParser.formalParameterList_return formalParameterList130 = null;
+        formalParameterList_return formalParameterList130 = null;
 
-        AS3_exParser.type_return type131 = null;
+        type_return type131 = null;
 
-        AS3_exParser.functionBody_return functionBody132 = null;
+        functionBody_return functionBody132 = null;
 
 
         object F_tree=null;
@@ -9758,9 +9758,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "formalParameterList"
     // AS3_ex.g3:2165:1: formalParameterList : L= LPAREN ( ( variableDeclaration (C= COMMA variableDeclaration )* (C= COMMA formalEllipsisParameter )? ) | formalEllipsisParameter )? R= RPAREN ;
-    public AS3_exParser.formalParameterList_return formalParameterList() // throws RecognitionException [1]
+    public formalParameterList_return formalParameterList() // throws RecognitionException [1]
     {   
-        AS3_exParser.formalParameterList_return retval = new AS3_exParser.formalParameterList_return();
+        formalParameterList_return retval = new formalParameterList_return();
         retval.Start = input.LT(1);
         int formalParameterList_StartIndex = input.Index();
         object root_0 = null;
@@ -9768,13 +9768,13 @@ public class AS3_exParser : Parser
         IToken L = null;
         IToken C = null;
         IToken R = null;
-        AS3_exParser.variableDeclaration_return variableDeclaration133 = null;
+        variableDeclaration_return variableDeclaration133 = null;
 
-        AS3_exParser.variableDeclaration_return variableDeclaration134 = null;
+        variableDeclaration_return variableDeclaration134 = null;
 
-        AS3_exParser.formalEllipsisParameter_return formalEllipsisParameter135 = null;
+        formalEllipsisParameter_return formalEllipsisParameter135 = null;
 
-        AS3_exParser.formalEllipsisParameter_return formalEllipsisParameter136 = null;
+        formalEllipsisParameter_return formalEllipsisParameter136 = null;
 
 
         object L_tree=null;
@@ -10029,15 +10029,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "formalEllipsisParameter"
     // AS3_ex.g3:2208:1: formalEllipsisParameter : E= ELLIPSIS variableIdentifierDecl ;
-    public AS3_exParser.formalEllipsisParameter_return formalEllipsisParameter() // throws RecognitionException [1]
+    public formalEllipsisParameter_return formalEllipsisParameter() // throws RecognitionException [1]
     {   
-        AS3_exParser.formalEllipsisParameter_return retval = new AS3_exParser.formalEllipsisParameter_return();
+        formalEllipsisParameter_return retval = new formalEllipsisParameter_return();
         retval.Start = input.LT(1);
         int formalEllipsisParameter_StartIndex = input.Index();
         object root_0 = null;
 
         IToken E = null;
-        AS3_exParser.variableIdentifierDecl_return variableIdentifierDecl137 = null;
+        variableIdentifierDecl_return variableIdentifierDecl137 = null;
 
 
         object E_tree=null;
@@ -10107,18 +10107,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "functionBody"
     // AS3_ex.g3:2212:1: functionBody : L= LCURLY ( ( statement | functionDeclaration ) )* R= RCURLY ;
-    public AS3_exParser.functionBody_return functionBody() // throws RecognitionException [1]
+    public functionBody_return functionBody() // throws RecognitionException [1]
     {   
-        AS3_exParser.functionBody_return retval = new AS3_exParser.functionBody_return();
+        functionBody_return retval = new functionBody_return();
         retval.Start = input.LT(1);
         int functionBody_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.statement_return statement138 = null;
+        statement_return statement138 = null;
 
-        AS3_exParser.functionDeclaration_return functionDeclaration139 = null;
+        functionDeclaration_return functionDeclaration139 = null;
 
 
         object L_tree=null;
@@ -10282,14 +10282,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "memberModifiers"
     // AS3_ex.g3:2240:1: memberModifiers : ( memberModifier )+ ;
-    public AS3_exParser.memberModifiers_return memberModifiers() // throws RecognitionException [1]
+    public memberModifiers_return memberModifiers() // throws RecognitionException [1]
     {   
-        AS3_exParser.memberModifiers_return retval = new AS3_exParser.memberModifiers_return();
+        memberModifiers_return retval = new memberModifiers_return();
         retval.Start = input.LT(1);
         int memberModifiers_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.memberModifier_return memberModifier140 = null;
+        memberModifier_return memberModifier140 = null;
 
 
 
@@ -10395,9 +10395,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "memberModifier"
     // AS3_ex.g3:2248:1: memberModifier : x= ( DYNAMIC | FINAL | INTERNAL | NATIVE | OVERRIDE | PRIVATE | PROTECTED | PUBLIC | STATIC | IDENTIFIER ) ;
-    public AS3_exParser.memberModifier_return memberModifier() // throws RecognitionException [1]
+    public memberModifier_return memberModifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.memberModifier_return retval = new AS3_exParser.memberModifier_return();
+        memberModifier_return retval = new memberModifier_return();
         retval.Start = input.LT(1);
         int memberModifier_StartIndex = input.Index();
         object root_0 = null;
@@ -10475,56 +10475,56 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "statement"
     // AS3_ex.g3:2270:1: statement : ( blockStatement | directive | namespaceDirective | constantVarStatement | tryStatement | switchStatement | withStatement | returnStatement | breakStatement | continueStatement | forStatement | forInStatement | forEachInStatement | doWhileStatement | whileStatement | ifStatement | variableStatement | throwStatement | labelledStatement | expression semic | emptyStatement ) ;
-    public AS3_exParser.statement_return statement() // throws RecognitionException [1]
+    public statement_return statement() // throws RecognitionException [1]
     {   
-        AS3_exParser.statement_return retval = new AS3_exParser.statement_return();
+        statement_return retval = new statement_return();
         retval.Start = input.LT(1);
         int statement_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.blockStatement_return blockStatement141 = null;
+        blockStatement_return blockStatement141 = null;
 
-        AS3_exParser.directive_return directive142 = null;
+        directive_return directive142 = null;
 
-        AS3_exParser.namespaceDirective_return namespaceDirective143 = null;
+        namespaceDirective_return namespaceDirective143 = null;
 
-        AS3_exParser.constantVarStatement_return constantVarStatement144 = null;
+        constantVarStatement_return constantVarStatement144 = null;
 
-        AS3_exParser.tryStatement_return tryStatement145 = null;
+        tryStatement_return tryStatement145 = null;
 
-        AS3_exParser.switchStatement_return switchStatement146 = null;
+        switchStatement_return switchStatement146 = null;
 
-        AS3_exParser.withStatement_return withStatement147 = null;
+        withStatement_return withStatement147 = null;
 
-        AS3_exParser.returnStatement_return returnStatement148 = null;
+        returnStatement_return returnStatement148 = null;
 
-        AS3_exParser.breakStatement_return breakStatement149 = null;
+        breakStatement_return breakStatement149 = null;
 
-        AS3_exParser.continueStatement_return continueStatement150 = null;
+        continueStatement_return continueStatement150 = null;
 
-        AS3_exParser.forStatement_return forStatement151 = null;
+        forStatement_return forStatement151 = null;
 
-        AS3_exParser.forInStatement_return forInStatement152 = null;
+        forInStatement_return forInStatement152 = null;
 
-        AS3_exParser.forEachInStatement_return forEachInStatement153 = null;
+        forEachInStatement_return forEachInStatement153 = null;
 
-        AS3_exParser.doWhileStatement_return doWhileStatement154 = null;
+        doWhileStatement_return doWhileStatement154 = null;
 
-        AS3_exParser.whileStatement_return whileStatement155 = null;
+        whileStatement_return whileStatement155 = null;
 
-        AS3_exParser.ifStatement_return ifStatement156 = null;
+        ifStatement_return ifStatement156 = null;
 
-        AS3_exParser.variableStatement_return variableStatement157 = null;
+        variableStatement_return variableStatement157 = null;
 
-        AS3_exParser.throwStatement_return throwStatement158 = null;
+        throwStatement_return throwStatement158 = null;
 
-        AS3_exParser.labelledStatement_return labelledStatement159 = null;
+        labelledStatement_return labelledStatement159 = null;
 
-        AS3_exParser.expression_return expression160 = null;
+        expression_return expression160 = null;
 
-        AS3_exParser.semic_return semic161 = null;
+        semic_return semic161 = null;
 
-        AS3_exParser.emptyStatement_return emptyStatement162 = null;
+        emptyStatement_return emptyStatement162 = null;
 
 
 
@@ -11084,18 +11084,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "blockStatement"
     // AS3_ex.g3:2310:1: blockStatement : (conditionalToken= conditionalCompilerOption )? L= LCURLY ( statement )* R= RCURLY ;
-    public AS3_exParser.blockStatement_return blockStatement() // throws RecognitionException [1]
+    public blockStatement_return blockStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.blockStatement_return retval = new AS3_exParser.blockStatement_return();
+        blockStatement_return retval = new blockStatement_return();
         retval.Start = input.LT(1);
         int blockStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.conditionalCompilerOption_return conditionalToken = null;
+        conditionalCompilerOption_return conditionalToken = null;
 
-        AS3_exParser.statement_return statement163 = null;
+        statement_return statement163 = null;
 
 
         object L_tree=null;
@@ -11251,17 +11251,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "throwStatement"
     // AS3_ex.g3:2327:1: throwStatement : T= THROW expression semic ;
-    public AS3_exParser.throwStatement_return throwStatement() // throws RecognitionException [1]
+    public throwStatement_return throwStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.throwStatement_return retval = new AS3_exParser.throwStatement_return();
+        throwStatement_return retval = new throwStatement_return();
         retval.Start = input.LT(1);
         int throwStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken T = null;
-        AS3_exParser.expression_return expression164 = null;
+        expression_return expression164 = null;
 
-        AS3_exParser.semic_return semic165 = null;
+        semic_return semic165 = null;
 
 
         object T_tree=null;
@@ -11349,16 +11349,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "constantVarStatement"
     // AS3_ex.g3:2341:1: constantVarStatement : C= CONST variableDeclarationList (S= SEMI )? ;
-    public AS3_exParser.constantVarStatement_return constantVarStatement() // throws RecognitionException [1]
+    public constantVarStatement_return constantVarStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.constantVarStatement_return retval = new AS3_exParser.constantVarStatement_return();
+        constantVarStatement_return retval = new constantVarStatement_return();
         retval.Start = input.LT(1);
         int constantVarStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
         IToken S = null;
-        AS3_exParser.variableDeclarationList_return variableDeclarationList166 = null;
+        variableDeclarationList_return variableDeclarationList166 = null;
 
 
         object C_tree=null;
@@ -11470,9 +11470,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "useNamespaceDirective"
     // AS3_ex.g3:2350:1: useNamespaceDirective : U= USE N= NAMESPACE qualifiedIdentifier (C= COMMA qualifiedIdentifier )* semic ;
-    public AS3_exParser.useNamespaceDirective_return useNamespaceDirective() // throws RecognitionException [1]
+    public useNamespaceDirective_return useNamespaceDirective() // throws RecognitionException [1]
     {   
-        AS3_exParser.useNamespaceDirective_return retval = new AS3_exParser.useNamespaceDirective_return();
+        useNamespaceDirective_return retval = new useNamespaceDirective_return();
         retval.Start = input.LT(1);
         int useNamespaceDirective_StartIndex = input.Index();
         object root_0 = null;
@@ -11480,11 +11480,11 @@ public class AS3_exParser : Parser
         IToken U = null;
         IToken N = null;
         IToken C = null;
-        AS3_exParser.qualifiedIdentifier_return qualifiedIdentifier167 = null;
+        qualifiedIdentifier_return qualifiedIdentifier167 = null;
 
-        AS3_exParser.qualifiedIdentifier_return qualifiedIdentifier168 = null;
+        qualifiedIdentifier_return qualifiedIdentifier168 = null;
 
-        AS3_exParser.semic_return semic169 = null;
+        semic_return semic169 = null;
 
 
         object U_tree=null;
@@ -11642,20 +11642,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "namespaceDirective"
     // AS3_ex.g3:2380:1: namespaceDirective : N= NAMESPACE qualifiedIdentifier (A= ASSIGN stringLiteral )? semic ;
-    public AS3_exParser.namespaceDirective_return namespaceDirective() // throws RecognitionException [1]
+    public namespaceDirective_return namespaceDirective() // throws RecognitionException [1]
     {   
-        AS3_exParser.namespaceDirective_return retval = new AS3_exParser.namespaceDirective_return();
+        namespaceDirective_return retval = new namespaceDirective_return();
         retval.Start = input.LT(1);
         int namespaceDirective_StartIndex = input.Index();
         object root_0 = null;
 
         IToken N = null;
         IToken A = null;
-        AS3_exParser.qualifiedIdentifier_return qualifiedIdentifier170 = null;
+        qualifiedIdentifier_return qualifiedIdentifier170 = null;
 
-        AS3_exParser.stringLiteral_return stringLiteral171 = null;
+        stringLiteral_return stringLiteral171 = null;
 
-        AS3_exParser.semic_return semic172 = null;
+        semic_return semic172 = null;
 
 
         object N_tree=null;
@@ -11776,23 +11776,23 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "tryStatement"
     // AS3_ex.g3:2392:1: tryStatement : T= TRY blockStatement ( ( catchClause )+ finallyClause | ( catchClause )+ | finallyClause ) ;
-    public AS3_exParser.tryStatement_return tryStatement() // throws RecognitionException [1]
+    public tryStatement_return tryStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.tryStatement_return retval = new AS3_exParser.tryStatement_return();
+        tryStatement_return retval = new tryStatement_return();
         retval.Start = input.LT(1);
         int tryStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken T = null;
-        AS3_exParser.blockStatement_return blockStatement173 = null;
+        blockStatement_return blockStatement173 = null;
 
-        AS3_exParser.catchClause_return catchClause174 = null;
+        catchClause_return catchClause174 = null;
 
-        AS3_exParser.finallyClause_return finallyClause175 = null;
+        finallyClause_return finallyClause175 = null;
 
-        AS3_exParser.catchClause_return catchClause176 = null;
+        catchClause_return catchClause176 = null;
 
-        AS3_exParser.finallyClause_return finallyClause177 = null;
+        finallyClause_return finallyClause177 = null;
 
 
         object T_tree=null;
@@ -12035,9 +12035,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "catchClause"
     // AS3_ex.g3:2402:1: catchClause : C= CATCH L= LPAREN variableIdentifierDecl R= RPAREN blockStatement ;
-    public AS3_exParser.catchClause_return catchClause() // throws RecognitionException [1]
+    public catchClause_return catchClause() // throws RecognitionException [1]
     {   
-        AS3_exParser.catchClause_return retval = new AS3_exParser.catchClause_return();
+        catchClause_return retval = new catchClause_return();
         retval.Start = input.LT(1);
         int catchClause_StartIndex = input.Index();
         object root_0 = null;
@@ -12045,9 +12045,9 @@ public class AS3_exParser : Parser
         IToken C = null;
         IToken L = null;
         IToken R = null;
-        AS3_exParser.variableIdentifierDecl_return variableIdentifierDecl178 = null;
+        variableIdentifierDecl_return variableIdentifierDecl178 = null;
 
-        AS3_exParser.blockStatement_return blockStatement179 = null;
+        blockStatement_return blockStatement179 = null;
 
 
         object C_tree=null;
@@ -12158,15 +12158,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "finallyClause"
     // AS3_ex.g3:2406:1: finallyClause : F= FINALLY blockStatement ;
-    public AS3_exParser.finallyClause_return finallyClause() // throws RecognitionException [1]
+    public finallyClause_return finallyClause() // throws RecognitionException [1]
     {   
-        AS3_exParser.finallyClause_return retval = new AS3_exParser.finallyClause_return();
+        finallyClause_return retval = new finallyClause_return();
         retval.Start = input.LT(1);
         int finallyClause_StartIndex = input.Index();
         object root_0 = null;
 
         IToken F = null;
-        AS3_exParser.blockStatement_return blockStatement180 = null;
+        blockStatement_return blockStatement180 = null;
 
 
         object F_tree=null;
@@ -12252,16 +12252,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "labelledStatement"
     // AS3_ex.g3:2414:1: labelledStatement : I= IDENTIFIER C= COLON statement ;
-    public AS3_exParser.labelledStatement_return labelledStatement() // throws RecognitionException [1]
+    public labelledStatement_return labelledStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.labelledStatement_return retval = new AS3_exParser.labelledStatement_return();
+        labelledStatement_return retval = new labelledStatement_return();
         retval.Start = input.LT(1);
         int labelledStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
         IToken C = null;
-        AS3_exParser.statement_return statement181 = null;
+        statement_return statement181 = null;
 
 
         object I_tree=null;
@@ -12352,9 +12352,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "switchStatement"
     // AS3_ex.g3:2429:1: switchStatement : S= SWITCH parExpression L= LCURLY ( switchBlockStatementGroup )* R= RCURLY ;
-    public AS3_exParser.switchStatement_return switchStatement() // throws RecognitionException [1]
+    public switchStatement_return switchStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.switchStatement_return retval = new AS3_exParser.switchStatement_return();
+        switchStatement_return retval = new switchStatement_return();
         retval.Start = input.LT(1);
         int switchStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -12362,9 +12362,9 @@ public class AS3_exParser : Parser
         IToken S = null;
         IToken L = null;
         IToken R = null;
-        AS3_exParser.parExpression_return parExpression182 = null;
+        parExpression_return parExpression182 = null;
 
-        AS3_exParser.switchBlockStatementGroup_return switchBlockStatementGroup183 = null;
+        switchBlockStatementGroup_return switchBlockStatementGroup183 = null;
 
 
         object S_tree=null;
@@ -12528,18 +12528,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "switchBlockStatementGroup"
     // AS3_ex.g3:2458:1: switchBlockStatementGroup : switchLabel ( statement )* ( breakStatement )? ;
-    public AS3_exParser.switchBlockStatementGroup_return switchBlockStatementGroup() // throws RecognitionException [1]
+    public switchBlockStatementGroup_return switchBlockStatementGroup() // throws RecognitionException [1]
     {   
-        AS3_exParser.switchBlockStatementGroup_return retval = new AS3_exParser.switchBlockStatementGroup_return();
+        switchBlockStatementGroup_return retval = new switchBlockStatementGroup_return();
         retval.Start = input.LT(1);
         int switchBlockStatementGroup_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.switchLabel_return switchLabel184 = null;
+        switchLabel_return switchLabel184 = null;
 
-        AS3_exParser.statement_return statement185 = null;
+        statement_return statement185 = null;
 
-        AS3_exParser.breakStatement_return breakStatement186 = null;
+        breakStatement_return breakStatement186 = null;
 
 
 
@@ -12677,9 +12677,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "switchLabel"
     // AS3_ex.g3:2470:1: switchLabel : (C= CASE expression O= COLON | D= DEFAULT C= COLON );
-    public AS3_exParser.switchLabel_return switchLabel() // throws RecognitionException [1]
+    public switchLabel_return switchLabel() // throws RecognitionException [1]
     {   
-        AS3_exParser.switchLabel_return retval = new AS3_exParser.switchLabel_return();
+        switchLabel_return retval = new switchLabel_return();
         retval.Start = input.LT(1);
         int switchLabel_StartIndex = input.Index();
         object root_0 = null;
@@ -12687,7 +12687,7 @@ public class AS3_exParser : Parser
         IToken C = null;
         IToken O = null;
         IToken D = null;
-        AS3_exParser.expression_return expression187 = null;
+        expression_return expression187 = null;
 
 
         object C_tree=null;
@@ -12828,9 +12828,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "withStatement"
     // AS3_ex.g3:2487:1: withStatement : W= WITH L= LPAREN expression R= RPAREN statement ;
-    public AS3_exParser.withStatement_return withStatement() // throws RecognitionException [1]
+    public withStatement_return withStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.withStatement_return retval = new AS3_exParser.withStatement_return();
+        withStatement_return retval = new withStatement_return();
         retval.Start = input.LT(1);
         int withStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -12838,9 +12838,9 @@ public class AS3_exParser : Parser
         IToken W = null;
         IToken L = null;
         IToken R = null;
-        AS3_exParser.expression_return expression188 = null;
+        expression_return expression188 = null;
 
-        AS3_exParser.statement_return statement189 = null;
+        statement_return statement189 = null;
 
 
         object W_tree=null;
@@ -12972,17 +12972,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "returnStatement"
     // AS3_ex.g3:2511:1: returnStatement : R= RETURN ( expression )? semic ;
-    public AS3_exParser.returnStatement_return returnStatement() // throws RecognitionException [1]
+    public returnStatement_return returnStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.returnStatement_return retval = new AS3_exParser.returnStatement_return();
+        returnStatement_return retval = new returnStatement_return();
         retval.Start = input.LT(1);
         int returnStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken R = null;
-        AS3_exParser.expression_return expression190 = null;
+        expression_return expression190 = null;
 
-        AS3_exParser.semic_return semic191 = null;
+        semic_return semic191 = null;
 
 
         object R_tree=null;
@@ -13089,16 +13089,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "breakStatement"
     // AS3_ex.g3:2527:1: breakStatement : B= BREAK (I= IDENTIFIER )? semic ;
-    public AS3_exParser.breakStatement_return breakStatement() // throws RecognitionException [1]
+    public breakStatement_return breakStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.breakStatement_return retval = new AS3_exParser.breakStatement_return();
+        breakStatement_return retval = new breakStatement_return();
         retval.Start = input.LT(1);
         int breakStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken B = null;
         IToken I = null;
-        AS3_exParser.semic_return semic192 = null;
+        semic_return semic192 = null;
 
 
         object B_tree=null;
@@ -13206,16 +13206,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "continueStatement"
     // AS3_ex.g3:2543:1: continueStatement : C= CONTINUE (I= IDENTIFIER )? semic ;
-    public AS3_exParser.continueStatement_return continueStatement() // throws RecognitionException [1]
+    public continueStatement_return continueStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.continueStatement_return retval = new AS3_exParser.continueStatement_return();
+        continueStatement_return retval = new continueStatement_return();
         retval.Start = input.LT(1);
         int continueStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
         IToken I = null;
-        AS3_exParser.semic_return semic193 = null;
+        semic_return semic193 = null;
 
 
         object C_tree=null;
@@ -13323,9 +13323,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forStatement"
     // AS3_ex.g3:2559:1: forStatement : F= FOR L= LPAREN forControl R= RPAREN statement ;
-    public AS3_exParser.forStatement_return forStatement() // throws RecognitionException [1]
+    public forStatement_return forStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.forStatement_return retval = new AS3_exParser.forStatement_return();
+        forStatement_return retval = new forStatement_return();
         retval.Start = input.LT(1);
         int forStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -13333,9 +13333,9 @@ public class AS3_exParser : Parser
         IToken F = null;
         IToken L = null;
         IToken R = null;
-        AS3_exParser.forControl_return forControl194 = null;
+        forControl_return forControl194 = null;
 
-        AS3_exParser.statement_return statement195 = null;
+        statement_return statement195 = null;
 
 
         object F_tree=null;
@@ -13467,9 +13467,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forInStatement"
     // AS3_ex.g3:2579:1: forInStatement : F= FOR L= LPAREN forInControl R= RPAREN statement ;
-    public AS3_exParser.forInStatement_return forInStatement() // throws RecognitionException [1]
+    public forInStatement_return forInStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.forInStatement_return retval = new AS3_exParser.forInStatement_return();
+        forInStatement_return retval = new forInStatement_return();
         retval.Start = input.LT(1);
         int forInStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -13477,9 +13477,9 @@ public class AS3_exParser : Parser
         IToken F = null;
         IToken L = null;
         IToken R = null;
-        AS3_exParser.forInControl_return forInControl196 = null;
+        forInControl_return forInControl196 = null;
 
-        AS3_exParser.statement_return statement197 = null;
+        statement_return statement197 = null;
 
 
         object F_tree=null;
@@ -13611,9 +13611,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forEachInStatement"
     // AS3_ex.g3:2599:1: forEachInStatement : F= FOR E= EACH L= LPAREN forInControl R= RPAREN statement ;
-    public AS3_exParser.forEachInStatement_return forEachInStatement() // throws RecognitionException [1]
+    public forEachInStatement_return forEachInStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.forEachInStatement_return retval = new AS3_exParser.forEachInStatement_return();
+        forEachInStatement_return retval = new forEachInStatement_return();
         retval.Start = input.LT(1);
         int forEachInStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -13622,9 +13622,9 @@ public class AS3_exParser : Parser
         IToken E = null;
         IToken L = null;
         IToken R = null;
-        AS3_exParser.forInControl_return forInControl198 = null;
+        forInControl_return forInControl198 = null;
 
-        AS3_exParser.statement_return statement199 = null;
+        statement_return statement199 = null;
 
 
         object F_tree=null;
@@ -13766,22 +13766,22 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forControl"
     // AS3_ex.g3:2621:1: forControl options {k=3; } : ( forInit )? semic ( expression )? semic ( forUpdate )? ;
-    public AS3_exParser.forControl_return forControl() // throws RecognitionException [1]
+    public forControl_return forControl() // throws RecognitionException [1]
     {   
-        AS3_exParser.forControl_return retval = new AS3_exParser.forControl_return();
+        forControl_return retval = new forControl_return();
         retval.Start = input.LT(1);
         int forControl_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.forInit_return forInit200 = null;
+        forInit_return forInit200 = null;
 
-        AS3_exParser.semic_return semic201 = null;
+        semic_return semic201 = null;
 
-        AS3_exParser.expression_return expression202 = null;
+        expression_return expression202 = null;
 
-        AS3_exParser.semic_return semic203 = null;
+        semic_return semic203 = null;
 
-        AS3_exParser.forUpdate_return forUpdate204 = null;
+        forUpdate_return forUpdate204 = null;
 
 
 
@@ -13934,17 +13934,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forInControl"
     // AS3_ex.g3:2626:1: forInControl options {k=3; } : forInDecl I= IN expression ;
-    public AS3_exParser.forInControl_return forInControl() // throws RecognitionException [1]
+    public forInControl_return forInControl() // throws RecognitionException [1]
     {   
-        AS3_exParser.forInControl_return retval = new AS3_exParser.forInControl_return();
+        forInControl_return retval = new forInControl_return();
         retval.Start = input.LT(1);
         int forInControl_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
-        AS3_exParser.forInDecl_return forInDecl205 = null;
+        forInDecl_return forInDecl205 = null;
 
-        AS3_exParser.expression_return expression206 = null;
+        expression_return expression206 = null;
 
 
         object I_tree=null;
@@ -14019,17 +14019,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forInDecl"
     // AS3_ex.g3:2631:1: forInDecl : ( leftHandSideExpression | V= VAR variableDeclarationNoIn );
-    public AS3_exParser.forInDecl_return forInDecl() // throws RecognitionException [1]
+    public forInDecl_return forInDecl() // throws RecognitionException [1]
     {   
-        AS3_exParser.forInDecl_return retval = new AS3_exParser.forInDecl_return();
+        forInDecl_return retval = new forInDecl_return();
         retval.Start = input.LT(1);
         int forInDecl_StartIndex = input.Index();
         object root_0 = null;
 
         IToken V = null;
-        AS3_exParser.leftHandSideExpression_return leftHandSideExpression207 = null;
+        leftHandSideExpression_return leftHandSideExpression207 = null;
 
-        AS3_exParser.variableDeclarationNoIn_return variableDeclarationNoIn208 = null;
+        variableDeclarationNoIn_return variableDeclarationNoIn208 = null;
 
 
         object V_tree=null;
@@ -14153,17 +14153,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forInit"
     // AS3_ex.g3:2636:1: forInit : (V= VAR variableDeclarationNoInList | expressionNoIn );
-    public AS3_exParser.forInit_return forInit() // throws RecognitionException [1]
+    public forInit_return forInit() // throws RecognitionException [1]
     {   
-        AS3_exParser.forInit_return retval = new AS3_exParser.forInit_return();
+        forInit_return retval = new forInit_return();
         retval.Start = input.LT(1);
         int forInit_StartIndex = input.Index();
         object root_0 = null;
 
         IToken V = null;
-        AS3_exParser.variableDeclarationNoInList_return variableDeclarationNoInList209 = null;
+        variableDeclarationNoInList_return variableDeclarationNoInList209 = null;
 
-        AS3_exParser.expressionNoIn_return expressionNoIn210 = null;
+        expressionNoIn_return expressionNoIn210 = null;
 
 
         object V_tree=null;
@@ -14287,14 +14287,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "forUpdate"
     // AS3_ex.g3:2641:1: forUpdate : expression ;
-    public AS3_exParser.forUpdate_return forUpdate() // throws RecognitionException [1]
+    public forUpdate_return forUpdate() // throws RecognitionException [1]
     {   
-        AS3_exParser.forUpdate_return retval = new AS3_exParser.forUpdate_return();
+        forUpdate_return retval = new forUpdate_return();
         retval.Start = input.LT(1);
         int forUpdate_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.expression_return expression211 = null;
+        expression_return expression211 = null;
 
 
 
@@ -14354,9 +14354,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "doWhileStatement"
     // AS3_ex.g3:2650:1: doWhileStatement : D= DO statement W= WHILE parExpression semic (S= SEMI )? ;
-    public AS3_exParser.doWhileStatement_return doWhileStatement() // throws RecognitionException [1]
+    public doWhileStatement_return doWhileStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.doWhileStatement_return retval = new AS3_exParser.doWhileStatement_return();
+        doWhileStatement_return retval = new doWhileStatement_return();
         retval.Start = input.LT(1);
         int doWhileStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -14364,11 +14364,11 @@ public class AS3_exParser : Parser
         IToken D = null;
         IToken W = null;
         IToken S = null;
-        AS3_exParser.statement_return statement212 = null;
+        statement_return statement212 = null;
 
-        AS3_exParser.parExpression_return parExpression213 = null;
+        parExpression_return parExpression213 = null;
 
-        AS3_exParser.semic_return semic214 = null;
+        semic_return semic214 = null;
 
 
         object D_tree=null;
@@ -14530,17 +14530,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "whileStatement"
     // AS3_ex.g3:2673:1: whileStatement : W= WHILE parExpression statement ;
-    public AS3_exParser.whileStatement_return whileStatement() // throws RecognitionException [1]
+    public whileStatement_return whileStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.whileStatement_return retval = new AS3_exParser.whileStatement_return();
+        whileStatement_return retval = new whileStatement_return();
         retval.Start = input.LT(1);
         int whileStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken W = null;
-        AS3_exParser.parExpression_return parExpression215 = null;
+        parExpression_return parExpression215 = null;
 
-        AS3_exParser.statement_return statement216 = null;
+        statement_return statement216 = null;
 
 
         object W_tree=null;
@@ -14653,20 +14653,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "ifStatement"
     // AS3_ex.g3:2700:1: ifStatement : I= IF parExpression statement ( options {k=1; } : E= ELSE statement )? ;
-    public AS3_exParser.ifStatement_return ifStatement() // throws RecognitionException [1]
+    public ifStatement_return ifStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.ifStatement_return retval = new AS3_exParser.ifStatement_return();
+        ifStatement_return retval = new ifStatement_return();
         retval.Start = input.LT(1);
         int ifStatement_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
         IToken E = null;
-        AS3_exParser.parExpression_return parExpression217 = null;
+        parExpression_return parExpression217 = null;
 
-        AS3_exParser.statement_return statement218 = null;
+        statement_return statement218 = null;
 
-        AS3_exParser.statement_return statement219 = null;
+        statement_return statement219 = null;
 
 
         object I_tree=null;
@@ -14911,9 +14911,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "emptyStatement"
     // AS3_ex.g3:2779:1: emptyStatement : S= SEMI ;
-    public AS3_exParser.emptyStatement_return emptyStatement() // throws RecognitionException [1]
+    public emptyStatement_return emptyStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.emptyStatement_return retval = new AS3_exParser.emptyStatement_return();
+        emptyStatement_return retval = new emptyStatement_return();
         retval.Start = input.LT(1);
         int emptyStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -14982,9 +14982,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "variableStatement"
     // AS3_ex.g3:2788:1: variableStatement : (I= IDENTIFIER )? V= VAR variableDeclaration (C= COMMA variableDeclaration )* semic ;
-    public AS3_exParser.variableStatement_return variableStatement() // throws RecognitionException [1]
+    public variableStatement_return variableStatement() // throws RecognitionException [1]
     {   
-        AS3_exParser.variableStatement_return retval = new AS3_exParser.variableStatement_return();
+        variableStatement_return retval = new variableStatement_return();
         retval.Start = input.LT(1);
         int variableStatement_StartIndex = input.Index();
         object root_0 = null;
@@ -14992,11 +14992,11 @@ public class AS3_exParser : Parser
         IToken I = null;
         IToken V = null;
         IToken C = null;
-        AS3_exParser.variableDeclaration_return variableDeclaration220 = null;
+        variableDeclaration_return variableDeclaration220 = null;
 
-        AS3_exParser.variableDeclaration_return variableDeclaration221 = null;
+        variableDeclaration_return variableDeclaration221 = null;
 
-        AS3_exParser.semic_return semic222 = null;
+        semic_return semic222 = null;
 
 
         object I_tree=null;
@@ -15173,17 +15173,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "variableDeclarationList"
     // AS3_ex.g3:2812:1: variableDeclarationList : variableDeclaration (C= COMMA variableDeclaration )* ;
-    public AS3_exParser.variableDeclarationList_return variableDeclarationList() // throws RecognitionException [1]
+    public variableDeclarationList_return variableDeclarationList() // throws RecognitionException [1]
     {   
-        AS3_exParser.variableDeclarationList_return retval = new AS3_exParser.variableDeclarationList_return();
+        variableDeclarationList_return retval = new variableDeclarationList_return();
         retval.Start = input.LT(1);
         int variableDeclarationList_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.variableDeclaration_return variableDeclaration223 = null;
+        variableDeclaration_return variableDeclaration223 = null;
 
-        AS3_exParser.variableDeclaration_return variableDeclaration224 = null;
+        variableDeclaration_return variableDeclaration224 = null;
 
 
         object C_tree=null;
@@ -15312,17 +15312,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "variableDeclarationNoInList"
     // AS3_ex.g3:2836:1: variableDeclarationNoInList : variableDeclarationNoIn (C= COMMA variableDeclarationNoIn )* ;
-    public AS3_exParser.variableDeclarationNoInList_return variableDeclarationNoInList() // throws RecognitionException [1]
+    public variableDeclarationNoInList_return variableDeclarationNoInList() // throws RecognitionException [1]
     {   
-        AS3_exParser.variableDeclarationNoInList_return retval = new AS3_exParser.variableDeclarationNoInList_return();
+        variableDeclarationNoInList_return retval = new variableDeclarationNoInList_return();
         retval.Start = input.LT(1);
         int variableDeclarationNoInList_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.variableDeclarationNoIn_return variableDeclarationNoIn225 = null;
+        variableDeclarationNoIn_return variableDeclarationNoIn225 = null;
 
-        AS3_exParser.variableDeclarationNoIn_return variableDeclarationNoIn226 = null;
+        variableDeclarationNoIn_return variableDeclarationNoIn226 = null;
 
 
         object C_tree=null;
@@ -15451,17 +15451,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "variableDeclaration"
     // AS3_ex.g3:2860:1: variableDeclaration : variableIdentifierDecl (A= ASSIGN assignmentExpression )? ;
-    public AS3_exParser.variableDeclaration_return variableDeclaration() // throws RecognitionException [1]
+    public variableDeclaration_return variableDeclaration() // throws RecognitionException [1]
     {   
-        AS3_exParser.variableDeclaration_return retval = new AS3_exParser.variableDeclaration_return();
+        variableDeclaration_return retval = new variableDeclaration_return();
         retval.Start = input.LT(1);
         int variableDeclaration_StartIndex = input.Index();
         object root_0 = null;
 
         IToken A = null;
-        AS3_exParser.variableIdentifierDecl_return variableIdentifierDecl227 = null;
+        variableIdentifierDecl_return variableIdentifierDecl227 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression228 = null;
+        assignmentExpression_return assignmentExpression228 = null;
 
 
         object A_tree=null;
@@ -15568,17 +15568,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "variableDeclarationNoIn"
     // AS3_ex.g3:2875:1: variableDeclarationNoIn : variableIdentifierDecl (A= ASSIGN assignmentExpressionNoIn )? ;
-    public AS3_exParser.variableDeclarationNoIn_return variableDeclarationNoIn() // throws RecognitionException [1]
+    public variableDeclarationNoIn_return variableDeclarationNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.variableDeclarationNoIn_return retval = new AS3_exParser.variableDeclarationNoIn_return();
+        variableDeclarationNoIn_return retval = new variableDeclarationNoIn_return();
         retval.Start = input.LT(1);
         int variableDeclarationNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken A = null;
-        AS3_exParser.variableIdentifierDecl_return variableIdentifierDecl229 = null;
+        variableIdentifierDecl_return variableIdentifierDecl229 = null;
 
-        AS3_exParser.assignmentExpressionNoIn_return assignmentExpressionNoIn230 = null;
+        assignmentExpressionNoIn_return assignmentExpressionNoIn230 = null;
 
 
         object A_tree=null;
@@ -15683,17 +15683,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "variableIdentifierDecl"
     // AS3_ex.g3:2888:1: variableIdentifierDecl : identifierLiteral (C= COLON type )? ;
-    public AS3_exParser.variableIdentifierDecl_return variableIdentifierDecl() // throws RecognitionException [1]
+    public variableIdentifierDecl_return variableIdentifierDecl() // throws RecognitionException [1]
     {   
-        AS3_exParser.variableIdentifierDecl_return retval = new AS3_exParser.variableIdentifierDecl_return();
+        variableIdentifierDecl_return retval = new variableIdentifierDecl_return();
         retval.Start = input.LT(1);
         int variableIdentifierDecl_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.identifierLiteral_return identifierLiteral231 = null;
+        identifierLiteral_return identifierLiteral231 = null;
 
-        AS3_exParser.type_return type232 = null;
+        type_return type232 = null;
 
 
         object C_tree=null;
@@ -15787,16 +15787,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "type"
     // AS3_ex.g3:2895:1: type : ( qualifiedName | S= STAR | V= VOID );
-    public AS3_exParser.type_return type() // throws RecognitionException [1]
+    public type_return type() // throws RecognitionException [1]
     {   
-        AS3_exParser.type_return retval = new AS3_exParser.type_return();
+        type_return retval = new type_return();
         retval.Start = input.LT(1);
         int type_StartIndex = input.Index();
         object root_0 = null;
 
         IToken S = null;
         IToken V = null;
-        AS3_exParser.qualifiedName_return qualifiedName233 = null;
+        qualifiedName_return qualifiedName233 = null;
 
 
         object S_tree=null;
@@ -15935,17 +15935,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "typeList"
     // AS3_ex.g3:2897:1: typeList : type (C= COMMA type )* ;
-    public AS3_exParser.typeList_return typeList() // throws RecognitionException [1]
+    public typeList_return typeList() // throws RecognitionException [1]
     {   
-        AS3_exParser.typeList_return retval = new AS3_exParser.typeList_return();
+        typeList_return retval = new typeList_return();
         retval.Start = input.LT(1);
         int typeList_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.type_return type234 = null;
+        type_return type234 = null;
 
-        AS3_exParser.type_return type235 = null;
+        type_return type235 = null;
 
 
         object C_tree=null;
@@ -16074,17 +16074,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "standardQualifiedName"
     // AS3_ex.g3:2922:1: standardQualifiedName : typeSpecifier (D= DOT typeSpecifier )* ;
-    public AS3_exParser.standardQualifiedName_return standardQualifiedName() // throws RecognitionException [1]
+    public standardQualifiedName_return standardQualifiedName() // throws RecognitionException [1]
     {   
-        AS3_exParser.standardQualifiedName_return retval = new AS3_exParser.standardQualifiedName_return();
+        standardQualifiedName_return retval = new standardQualifiedName_return();
         retval.Start = input.LT(1);
         int standardQualifiedName_StartIndex = input.Index();
         object root_0 = null;
 
         IToken D = null;
-        AS3_exParser.typeSpecifier_return typeSpecifier236 = null;
+        typeSpecifier_return typeSpecifier236 = null;
 
-        AS3_exParser.typeSpecifier_return typeSpecifier237 = null;
+        typeSpecifier_return typeSpecifier237 = null;
 
 
         object D_tree=null;
@@ -16199,16 +16199,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "qualifiedName"
     // AS3_ex.g3:2928:1: qualifiedName : standardQualifiedName ( typePostfixSyntax )? ;
-    public AS3_exParser.qualifiedName_return qualifiedName() // throws RecognitionException [1]
+    public qualifiedName_return qualifiedName() // throws RecognitionException [1]
     {   
-        AS3_exParser.qualifiedName_return retval = new AS3_exParser.qualifiedName_return();
+        qualifiedName_return retval = new qualifiedName_return();
         retval.Start = input.LT(1);
         int qualifiedName_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.standardQualifiedName_return standardQualifiedName238 = null;
+        standardQualifiedName_return standardQualifiedName238 = null;
 
-        AS3_exParser.typePostfixSyntax_return typePostfixSyntax239 = null;
+        typePostfixSyntax_return typePostfixSyntax239 = null;
 
 
 
@@ -16297,9 +16297,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "typePostfixSyntax"
     // AS3_ex.g3:2933:1: typePostfixSyntax : D= DOT L= LT ( standardQualifiedName | st= STAR ) ( typePostfixSyntax )? G= GT ;
-    public AS3_exParser.typePostfixSyntax_return typePostfixSyntax() // throws RecognitionException [1]
+    public typePostfixSyntax_return typePostfixSyntax() // throws RecognitionException [1]
     {   
-        AS3_exParser.typePostfixSyntax_return retval = new AS3_exParser.typePostfixSyntax_return();
+        typePostfixSyntax_return retval = new typePostfixSyntax_return();
         retval.Start = input.LT(1);
         int typePostfixSyntax_StartIndex = input.Index();
         object root_0 = null;
@@ -16308,9 +16308,9 @@ public class AS3_exParser : Parser
         IToken L = null;
         IToken st = null;
         IToken G = null;
-        AS3_exParser.standardQualifiedName_return standardQualifiedName240 = null;
+        standardQualifiedName_return standardQualifiedName240 = null;
 
-        AS3_exParser.typePostfixSyntax_return typePostfixSyntax241 = null;
+        typePostfixSyntax_return typePostfixSyntax241 = null;
 
 
         object D_tree=null;
@@ -16471,9 +16471,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "qualifiedIdentifier"
     // AS3_ex.g3:2941:1: qualifiedIdentifier : I= IDENTIFIER ;
-    public AS3_exParser.qualifiedIdentifier_return qualifiedIdentifier() // throws RecognitionException [1]
+    public qualifiedIdentifier_return qualifiedIdentifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.qualifiedIdentifier_return retval = new AS3_exParser.qualifiedIdentifier_return();
+        qualifiedIdentifier_return retval = new qualifiedIdentifier_return();
         retval.Start = input.LT(1);
         int qualifiedIdentifier_StartIndex = input.Index();
         object root_0 = null;
@@ -16542,16 +16542,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "parExpression"
     // AS3_ex.g3:2949:1: parExpression : L= LPAREN expression R= RPAREN ;
-    public AS3_exParser.parExpression_return parExpression() // throws RecognitionException [1]
+    public parExpression_return parExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.parExpression_return retval = new AS3_exParser.parExpression_return();
+        parExpression_return retval = new parExpression_return();
         retval.Start = input.LT(1);
         int parExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.expression_return expression242 = null;
+        expression_return expression242 = null;
 
 
         object L_tree=null;
@@ -16651,17 +16651,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "expression"
     // AS3_ex.g3:2961:1: expression : assignmentExpression (C= COMMA assignmentExpression )* ;
-    public AS3_exParser.expression_return expression() // throws RecognitionException [1]
+    public expression_return expression() // throws RecognitionException [1]
     {   
-        AS3_exParser.expression_return retval = new AS3_exParser.expression_return();
+        expression_return retval = new expression_return();
         retval.Start = input.LT(1);
         int expression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.assignmentExpression_return assignmentExpression243 = null;
+        assignmentExpression_return assignmentExpression243 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression244 = null;
+        assignmentExpression_return assignmentExpression244 = null;
 
 
         object C_tree=null;
@@ -16797,17 +16797,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "expressionNoIn"
     // AS3_ex.g3:2985:1: expressionNoIn : assignmentExpressionNoIn (C= COMMA assignmentExpressionNoIn )* ;
-    public AS3_exParser.expressionNoIn_return expressionNoIn() // throws RecognitionException [1]
+    public expressionNoIn_return expressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.expressionNoIn_return retval = new AS3_exParser.expressionNoIn_return();
+        expressionNoIn_return retval = new expressionNoIn_return();
         retval.Start = input.LT(1);
         int expressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.assignmentExpressionNoIn_return assignmentExpressionNoIn245 = null;
+        assignmentExpressionNoIn_return assignmentExpressionNoIn245 = null;
 
-        AS3_exParser.assignmentExpressionNoIn_return assignmentExpressionNoIn246 = null;
+        assignmentExpressionNoIn_return assignmentExpressionNoIn246 = null;
 
 
         object C_tree=null;
@@ -16936,20 +16936,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "assignmentExpression"
     // AS3_ex.g3:3010:1: assignmentExpression : ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpression | conditionalExpression ) ;
-    public AS3_exParser.assignmentExpression_return assignmentExpression() // throws RecognitionException [1]
+    public assignmentExpression_return assignmentExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.assignmentExpression_return retval = new AS3_exParser.assignmentExpression_return();
+        assignmentExpression_return retval = new assignmentExpression_return();
         retval.Start = input.LT(1);
         int assignmentExpression_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.leftHandSideExpression_return leftHandSideExpression247 = null;
+        leftHandSideExpression_return leftHandSideExpression247 = null;
 
-        AS3_exParser.assignmentOperator_return assignmentOperator248 = null;
+        assignmentOperator_return assignmentOperator248 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression249 = null;
+        assignmentExpression_return assignmentExpression249 = null;
 
-        AS3_exParser.conditionalExpression_return conditionalExpression250 = null;
+        conditionalExpression_return conditionalExpression250 = null;
 
 
 
@@ -17057,20 +17057,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "assignmentExpressionNoIn"
     // AS3_ex.g3:3026:1: assignmentExpressionNoIn : ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpressionNoIn | conditionalExpressionNoIn ) ;
-    public AS3_exParser.assignmentExpressionNoIn_return assignmentExpressionNoIn() // throws RecognitionException [1]
+    public assignmentExpressionNoIn_return assignmentExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.assignmentExpressionNoIn_return retval = new AS3_exParser.assignmentExpressionNoIn_return();
+        assignmentExpressionNoIn_return retval = new assignmentExpressionNoIn_return();
         retval.Start = input.LT(1);
         int assignmentExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.leftHandSideExpression_return leftHandSideExpression251 = null;
+        leftHandSideExpression_return leftHandSideExpression251 = null;
 
-        AS3_exParser.assignmentOperator_return assignmentOperator252 = null;
+        assignmentOperator_return assignmentOperator252 = null;
 
-        AS3_exParser.assignmentExpressionNoIn_return assignmentExpressionNoIn253 = null;
+        assignmentExpressionNoIn_return assignmentExpressionNoIn253 = null;
 
-        AS3_exParser.conditionalExpressionNoIn_return conditionalExpressionNoIn254 = null;
+        conditionalExpressionNoIn_return conditionalExpressionNoIn254 = null;
 
 
 
@@ -17178,14 +17178,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "assignmentOperator"
     // AS3_ex.g3:3040:1: assignmentOperator : op= assignmentOperator_int ;
-    public AS3_exParser.assignmentOperator_return assignmentOperator() // throws RecognitionException [1]
+    public assignmentOperator_return assignmentOperator() // throws RecognitionException [1]
     {   
-        AS3_exParser.assignmentOperator_return retval = new AS3_exParser.assignmentOperator_return();
+        assignmentOperator_return retval = new assignmentOperator_return();
         retval.Start = input.LT(1);
         int assignmentOperator_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.assignmentOperator_int_return op = null;
+        assignmentOperator_int_return op = null;
 
 
 
@@ -17256,9 +17256,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "assignmentOperator_int"
     // AS3_ex.g3:3052:1: assignmentOperator_int : ( ASSIGN | s= STAR a= ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | ( ( '>' '>' '=' )=>t1= '>' t2= '>' t3= '=' {...}? -> SHR_ASSIGN ) | ( ( '>' '>' '>' '=' )=>t1= '>' t2= '>' t3= '>' t4= '=' {...}? -> SHU_ASSIGN ) | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | LOR_ASSIGN | LAND_ASSIGN );
-    public AS3_exParser.assignmentOperator_int_return assignmentOperator_int() // throws RecognitionException [1]
+    public assignmentOperator_int_return assignmentOperator_int() // throws RecognitionException [1]
     {   
-        AS3_exParser.assignmentOperator_int_return retval = new AS3_exParser.assignmentOperator_int_return();
+        assignmentOperator_int_return retval = new assignmentOperator_int_return();
         retval.Start = input.LT(1);
         int assignmentOperator_int_StartIndex = input.Index();
         object root_0 = null;
@@ -17621,20 +17621,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "conditionalExpression"
     // AS3_ex.g3:3092:1: conditionalExpression : logicalORExpression (Q= QUE assignmentExpression C= COLON assignmentExpression )? ;
-    public AS3_exParser.conditionalExpression_return conditionalExpression() // throws RecognitionException [1]
+    public conditionalExpression_return conditionalExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.conditionalExpression_return retval = new AS3_exParser.conditionalExpression_return();
+        conditionalExpression_return retval = new conditionalExpression_return();
         retval.Start = input.LT(1);
         int conditionalExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken Q = null;
         IToken C = null;
-        AS3_exParser.logicalORExpression_return logicalORExpression266 = null;
+        logicalORExpression_return logicalORExpression266 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression267 = null;
+        assignmentExpression_return assignmentExpression267 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression268 = null;
+        assignmentExpression_return assignmentExpression268 = null;
 
 
         object Q_tree=null;
@@ -17768,20 +17768,20 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "conditionalExpressionNoIn"
     // AS3_ex.g3:3102:1: conditionalExpressionNoIn : logicalORExpressionNoIn (Q= QUE assignmentExpression C= COLON assignmentExpression )? ;
-    public AS3_exParser.conditionalExpressionNoIn_return conditionalExpressionNoIn() // throws RecognitionException [1]
+    public conditionalExpressionNoIn_return conditionalExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.conditionalExpressionNoIn_return retval = new AS3_exParser.conditionalExpressionNoIn_return();
+        conditionalExpressionNoIn_return retval = new conditionalExpressionNoIn_return();
         retval.Start = input.LT(1);
         int conditionalExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken Q = null;
         IToken C = null;
-        AS3_exParser.logicalORExpressionNoIn_return logicalORExpressionNoIn269 = null;
+        logicalORExpressionNoIn_return logicalORExpressionNoIn269 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression270 = null;
+        assignmentExpression_return assignmentExpression270 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression271 = null;
+        assignmentExpression_return assignmentExpression271 = null;
 
 
         object Q_tree=null;
@@ -17910,17 +17910,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "logicalORExpression"
     // AS3_ex.g3:3113:1: logicalORExpression : logicalANDExpression (L= LOR logicalANDExpression )* ;
-    public AS3_exParser.logicalORExpression_return logicalORExpression() // throws RecognitionException [1]
+    public logicalORExpression_return logicalORExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.logicalORExpression_return retval = new AS3_exParser.logicalORExpression_return();
+        logicalORExpression_return retval = new logicalORExpression_return();
         retval.Start = input.LT(1);
         int logicalORExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
-        AS3_exParser.logicalANDExpression_return logicalANDExpression272 = null;
+        logicalANDExpression_return logicalANDExpression272 = null;
 
-        AS3_exParser.logicalANDExpression_return logicalANDExpression273 = null;
+        logicalANDExpression_return logicalANDExpression273 = null;
 
 
         object L_tree=null;
@@ -18047,17 +18047,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "logicalORExpressionNoIn"
     // AS3_ex.g3:3123:1: logicalORExpressionNoIn : logicalANDExpressionNoIn (L= LOR logicalANDExpressionNoIn )* ;
-    public AS3_exParser.logicalORExpressionNoIn_return logicalORExpressionNoIn() // throws RecognitionException [1]
+    public logicalORExpressionNoIn_return logicalORExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.logicalORExpressionNoIn_return retval = new AS3_exParser.logicalORExpressionNoIn_return();
+        logicalORExpressionNoIn_return retval = new logicalORExpressionNoIn_return();
         retval.Start = input.LT(1);
         int logicalORExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
-        AS3_exParser.logicalANDExpressionNoIn_return logicalANDExpressionNoIn274 = null;
+        logicalANDExpressionNoIn_return logicalANDExpressionNoIn274 = null;
 
-        AS3_exParser.logicalANDExpressionNoIn_return logicalANDExpressionNoIn275 = null;
+        logicalANDExpressionNoIn_return logicalANDExpressionNoIn275 = null;
 
 
         object L_tree=null;
@@ -18177,17 +18177,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "logicalANDExpression"
     // AS3_ex.g3:3133:1: logicalANDExpression : bitwiseORExpression (L= LAND bitwiseORExpression )* ;
-    public AS3_exParser.logicalANDExpression_return logicalANDExpression() // throws RecognitionException [1]
+    public logicalANDExpression_return logicalANDExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.logicalANDExpression_return retval = new AS3_exParser.logicalANDExpression_return();
+        logicalANDExpression_return retval = new logicalANDExpression_return();
         retval.Start = input.LT(1);
         int logicalANDExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
-        AS3_exParser.bitwiseORExpression_return bitwiseORExpression276 = null;
+        bitwiseORExpression_return bitwiseORExpression276 = null;
 
-        AS3_exParser.bitwiseORExpression_return bitwiseORExpression277 = null;
+        bitwiseORExpression_return bitwiseORExpression277 = null;
 
 
         object L_tree=null;
@@ -18314,17 +18314,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "logicalANDExpressionNoIn"
     // AS3_ex.g3:3143:1: logicalANDExpressionNoIn : bitwiseORExpressionNoIn (L= LAND bitwiseORExpressionNoIn )* ;
-    public AS3_exParser.logicalANDExpressionNoIn_return logicalANDExpressionNoIn() // throws RecognitionException [1]
+    public logicalANDExpressionNoIn_return logicalANDExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.logicalANDExpressionNoIn_return retval = new AS3_exParser.logicalANDExpressionNoIn_return();
+        logicalANDExpressionNoIn_return retval = new logicalANDExpressionNoIn_return();
         retval.Start = input.LT(1);
         int logicalANDExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
-        AS3_exParser.bitwiseORExpressionNoIn_return bitwiseORExpressionNoIn278 = null;
+        bitwiseORExpressionNoIn_return bitwiseORExpressionNoIn278 = null;
 
-        AS3_exParser.bitwiseORExpressionNoIn_return bitwiseORExpressionNoIn279 = null;
+        bitwiseORExpressionNoIn_return bitwiseORExpressionNoIn279 = null;
 
 
         object L_tree=null;
@@ -18444,17 +18444,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bitwiseORExpression"
     // AS3_ex.g3:3154:1: bitwiseORExpression : bitwiseXORExpression (O= OR bitwiseXORExpression )* ;
-    public AS3_exParser.bitwiseORExpression_return bitwiseORExpression() // throws RecognitionException [1]
+    public bitwiseORExpression_return bitwiseORExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.bitwiseORExpression_return retval = new AS3_exParser.bitwiseORExpression_return();
+        bitwiseORExpression_return retval = new bitwiseORExpression_return();
         retval.Start = input.LT(1);
         int bitwiseORExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken O = null;
-        AS3_exParser.bitwiseXORExpression_return bitwiseXORExpression280 = null;
+        bitwiseXORExpression_return bitwiseXORExpression280 = null;
 
-        AS3_exParser.bitwiseXORExpression_return bitwiseXORExpression281 = null;
+        bitwiseXORExpression_return bitwiseXORExpression281 = null;
 
 
         object O_tree=null;
@@ -18581,17 +18581,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bitwiseORExpressionNoIn"
     // AS3_ex.g3:3164:1: bitwiseORExpressionNoIn : bitwiseXORExpressionNoIn (O= OR bitwiseXORExpressionNoIn )* ;
-    public AS3_exParser.bitwiseORExpressionNoIn_return bitwiseORExpressionNoIn() // throws RecognitionException [1]
+    public bitwiseORExpressionNoIn_return bitwiseORExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.bitwiseORExpressionNoIn_return retval = new AS3_exParser.bitwiseORExpressionNoIn_return();
+        bitwiseORExpressionNoIn_return retval = new bitwiseORExpressionNoIn_return();
         retval.Start = input.LT(1);
         int bitwiseORExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken O = null;
-        AS3_exParser.bitwiseXORExpressionNoIn_return bitwiseXORExpressionNoIn282 = null;
+        bitwiseXORExpressionNoIn_return bitwiseXORExpressionNoIn282 = null;
 
-        AS3_exParser.bitwiseXORExpressionNoIn_return bitwiseXORExpressionNoIn283 = null;
+        bitwiseXORExpressionNoIn_return bitwiseXORExpressionNoIn283 = null;
 
 
         object O_tree=null;
@@ -18711,17 +18711,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bitwiseXORExpression"
     // AS3_ex.g3:3174:1: bitwiseXORExpression : bitwiseANDExpression (x= XOR bitwiseANDExpression )* ;
-    public AS3_exParser.bitwiseXORExpression_return bitwiseXORExpression() // throws RecognitionException [1]
+    public bitwiseXORExpression_return bitwiseXORExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.bitwiseXORExpression_return retval = new AS3_exParser.bitwiseXORExpression_return();
+        bitwiseXORExpression_return retval = new bitwiseXORExpression_return();
         retval.Start = input.LT(1);
         int bitwiseXORExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken x = null;
-        AS3_exParser.bitwiseANDExpression_return bitwiseANDExpression284 = null;
+        bitwiseANDExpression_return bitwiseANDExpression284 = null;
 
-        AS3_exParser.bitwiseANDExpression_return bitwiseANDExpression285 = null;
+        bitwiseANDExpression_return bitwiseANDExpression285 = null;
 
 
         object x_tree=null;
@@ -18848,17 +18848,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bitwiseXORExpressionNoIn"
     // AS3_ex.g3:3184:1: bitwiseXORExpressionNoIn : bitwiseANDExpressionNoIn (x= XOR bitwiseANDExpressionNoIn )* ;
-    public AS3_exParser.bitwiseXORExpressionNoIn_return bitwiseXORExpressionNoIn() // throws RecognitionException [1]
+    public bitwiseXORExpressionNoIn_return bitwiseXORExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.bitwiseXORExpressionNoIn_return retval = new AS3_exParser.bitwiseXORExpressionNoIn_return();
+        bitwiseXORExpressionNoIn_return retval = new bitwiseXORExpressionNoIn_return();
         retval.Start = input.LT(1);
         int bitwiseXORExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken x = null;
-        AS3_exParser.bitwiseANDExpressionNoIn_return bitwiseANDExpressionNoIn286 = null;
+        bitwiseANDExpressionNoIn_return bitwiseANDExpressionNoIn286 = null;
 
-        AS3_exParser.bitwiseANDExpressionNoIn_return bitwiseANDExpressionNoIn287 = null;
+        bitwiseANDExpressionNoIn_return bitwiseANDExpressionNoIn287 = null;
 
 
         object x_tree=null;
@@ -18978,17 +18978,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bitwiseANDExpression"
     // AS3_ex.g3:3194:1: bitwiseANDExpression : equalityExpression (A= AND equalityExpression )* ;
-    public AS3_exParser.bitwiseANDExpression_return bitwiseANDExpression() // throws RecognitionException [1]
+    public bitwiseANDExpression_return bitwiseANDExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.bitwiseANDExpression_return retval = new AS3_exParser.bitwiseANDExpression_return();
+        bitwiseANDExpression_return retval = new bitwiseANDExpression_return();
         retval.Start = input.LT(1);
         int bitwiseANDExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken A = null;
-        AS3_exParser.equalityExpression_return equalityExpression288 = null;
+        equalityExpression_return equalityExpression288 = null;
 
-        AS3_exParser.equalityExpression_return equalityExpression289 = null;
+        equalityExpression_return equalityExpression289 = null;
 
 
         object A_tree=null;
@@ -19115,17 +19115,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "bitwiseANDExpressionNoIn"
     // AS3_ex.g3:3204:1: bitwiseANDExpressionNoIn : equalityExpressionNoIn (A= AND equalityExpressionNoIn )* ;
-    public AS3_exParser.bitwiseANDExpressionNoIn_return bitwiseANDExpressionNoIn() // throws RecognitionException [1]
+    public bitwiseANDExpressionNoIn_return bitwiseANDExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.bitwiseANDExpressionNoIn_return retval = new AS3_exParser.bitwiseANDExpressionNoIn_return();
+        bitwiseANDExpressionNoIn_return retval = new bitwiseANDExpressionNoIn_return();
         retval.Start = input.LT(1);
         int bitwiseANDExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken A = null;
-        AS3_exParser.equalityExpressionNoIn_return equalityExpressionNoIn290 = null;
+        equalityExpressionNoIn_return equalityExpressionNoIn290 = null;
 
-        AS3_exParser.equalityExpressionNoIn_return equalityExpressionNoIn291 = null;
+        equalityExpressionNoIn_return equalityExpressionNoIn291 = null;
 
 
         object A_tree=null;
@@ -19245,17 +19245,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "equalityExpression"
     // AS3_ex.g3:3215:1: equalityExpression : relationalExpression (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpression )* ;
-    public AS3_exParser.equalityExpression_return equalityExpression() // throws RecognitionException [1]
+    public equalityExpression_return equalityExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.equalityExpression_return retval = new AS3_exParser.equalityExpression_return();
+        equalityExpression_return retval = new equalityExpression_return();
         retval.Start = input.LT(1);
         int equalityExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken eq = null;
-        AS3_exParser.relationalExpression_return relationalExpression292 = null;
+        relationalExpression_return relationalExpression292 = null;
 
-        AS3_exParser.relationalExpression_return relationalExpression293 = null;
+        relationalExpression_return relationalExpression293 = null;
 
 
         object eq_tree=null;
@@ -19391,17 +19391,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "equalityExpressionNoIn"
     // AS3_ex.g3:3225:1: equalityExpressionNoIn : relationalExpressionNoIn (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpressionNoIn )* ;
-    public AS3_exParser.equalityExpressionNoIn_return equalityExpressionNoIn() // throws RecognitionException [1]
+    public equalityExpressionNoIn_return equalityExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.equalityExpressionNoIn_return retval = new AS3_exParser.equalityExpressionNoIn_return();
+        equalityExpressionNoIn_return retval = new equalityExpressionNoIn_return();
         retval.Start = input.LT(1);
         int equalityExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
 
         IToken eq = null;
-        AS3_exParser.relationalExpressionNoIn_return relationalExpressionNoIn294 = null;
+        relationalExpressionNoIn_return relationalExpressionNoIn294 = null;
 
-        AS3_exParser.relationalExpressionNoIn_return relationalExpressionNoIn295 = null;
+        relationalExpressionNoIn_return relationalExpressionNoIn295 = null;
 
 
         object eq_tree=null;
@@ -19530,9 +19530,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "relationalExpression"
     // AS3_ex.g3:3236:1: relationalExpression : shiftExpression ( (g= GT (assign= ASSIGN )? | eq= ( IN | LT | LTE | INSTANCEOF | IS | AS ) ) shiftExpression )* ;
-    public AS3_exParser.relationalExpression_return relationalExpression() // throws RecognitionException [1]
+    public relationalExpression_return relationalExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.relationalExpression_return retval = new AS3_exParser.relationalExpression_return();
+        relationalExpression_return retval = new relationalExpression_return();
         retval.Start = input.LT(1);
         int relationalExpression_StartIndex = input.Index();
         object root_0 = null;
@@ -19540,9 +19540,9 @@ public class AS3_exParser : Parser
         IToken g = null;
         IToken assign = null;
         IToken eq = null;
-        AS3_exParser.shiftExpression_return shiftExpression296 = null;
+        shiftExpression_return shiftExpression296 = null;
 
-        AS3_exParser.shiftExpression_return shiftExpression297 = null;
+        shiftExpression_return shiftExpression297 = null;
 
 
         object g_tree=null;
@@ -19808,9 +19808,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "relationalExpressionNoIn"
     // AS3_ex.g3:3259:1: relationalExpressionNoIn : shiftExpression ( (g= GT (assign= ASSIGN )? | eq= ( LT | LTE | INSTANCEOF | IS | AS ) ) shiftExpression )* ;
-    public AS3_exParser.relationalExpressionNoIn_return relationalExpressionNoIn() // throws RecognitionException [1]
+    public relationalExpressionNoIn_return relationalExpressionNoIn() // throws RecognitionException [1]
     {   
-        AS3_exParser.relationalExpressionNoIn_return retval = new AS3_exParser.relationalExpressionNoIn_return();
+        relationalExpressionNoIn_return retval = new relationalExpressionNoIn_return();
         retval.Start = input.LT(1);
         int relationalExpressionNoIn_StartIndex = input.Index();
         object root_0 = null;
@@ -19818,9 +19818,9 @@ public class AS3_exParser : Parser
         IToken g = null;
         IToken assign = null;
         IToken eq = null;
-        AS3_exParser.shiftExpression_return shiftExpression298 = null;
+        shiftExpression_return shiftExpression298 = null;
 
-        AS3_exParser.shiftExpression_return shiftExpression299 = null;
+        shiftExpression_return shiftExpression299 = null;
 
 
         object g_tree=null;
@@ -20027,9 +20027,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "shiftExpression"
     // AS3_ex.g3:3283:1: shiftExpression : additiveExpression ( (t1= SHL | ( ( '>' '>' )=>t1= '>' t2= '>' {...}? -> SHR ) | ( ( '>' '>' '>' )=>t1= '>' t2= '>' t3= '>' {...}? -> SHU ) ) additiveExpression )* ;
-    public AS3_exParser.shiftExpression_return shiftExpression() // throws RecognitionException [1]
+    public shiftExpression_return shiftExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.shiftExpression_return retval = new AS3_exParser.shiftExpression_return();
+        shiftExpression_return retval = new shiftExpression_return();
         retval.Start = input.LT(1);
         int shiftExpression_StartIndex = input.Index();
         object root_0 = null;
@@ -20037,9 +20037,9 @@ public class AS3_exParser : Parser
         IToken t1 = null;
         IToken t2 = null;
         IToken t3 = null;
-        AS3_exParser.additiveExpression_return additiveExpression300 = null;
+        additiveExpression_return additiveExpression300 = null;
 
-        AS3_exParser.additiveExpression_return additiveExpression301 = null;
+        additiveExpression_return additiveExpression301 = null;
 
 
         object t1_tree=null;
@@ -20337,17 +20337,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "additiveExpression"
     // AS3_ex.g3:3313:1: additiveExpression : multiplicativeExpression (op= ( PLUS | SUB ) multiplicativeExpression )* ;
-    public AS3_exParser.additiveExpression_return additiveExpression() // throws RecognitionException [1]
+    public additiveExpression_return additiveExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.additiveExpression_return retval = new AS3_exParser.additiveExpression_return();
+        additiveExpression_return retval = new additiveExpression_return();
         retval.Start = input.LT(1);
         int additiveExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken op = null;
-        AS3_exParser.multiplicativeExpression_return multiplicativeExpression302 = null;
+        multiplicativeExpression_return multiplicativeExpression302 = null;
 
-        AS3_exParser.multiplicativeExpression_return multiplicativeExpression303 = null;
+        multiplicativeExpression_return multiplicativeExpression303 = null;
 
 
         object op_tree=null;
@@ -20483,17 +20483,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "multiplicativeExpression"
     // AS3_ex.g3:3324:1: multiplicativeExpression : unaryExpression (op= ( STAR | DIV | MOD ) unaryExpression )* ;
-    public AS3_exParser.multiplicativeExpression_return multiplicativeExpression() // throws RecognitionException [1]
+    public multiplicativeExpression_return multiplicativeExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.multiplicativeExpression_return retval = new AS3_exParser.multiplicativeExpression_return();
+        multiplicativeExpression_return retval = new multiplicativeExpression_return();
         retval.Start = input.LT(1);
         int multiplicativeExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken op = null;
-        AS3_exParser.unaryExpression_return unaryExpression304 = null;
+        unaryExpression_return unaryExpression304 = null;
 
-        AS3_exParser.unaryExpression_return unaryExpression305 = null;
+        unaryExpression_return unaryExpression305 = null;
 
 
         object op_tree=null;
@@ -20640,21 +20640,21 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "unaryExpression"
     // AS3_ex.g3:3335:1: unaryExpression : ( postfixExpression | op= ( NOT | INV ) unaryExpression | unaryOp postfixExpression );
-    public AS3_exParser.unaryExpression_return unaryExpression() // throws RecognitionException [1]
+    public unaryExpression_return unaryExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.unaryExpression_return retval = new AS3_exParser.unaryExpression_return();
+        unaryExpression_return retval = new unaryExpression_return();
         retval.Start = input.LT(1);
         int unaryExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken op = null;
-        AS3_exParser.postfixExpression_return postfixExpression306 = null;
+        postfixExpression_return postfixExpression306 = null;
 
-        AS3_exParser.unaryExpression_return unaryExpression307 = null;
+        unaryExpression_return unaryExpression307 = null;
 
-        AS3_exParser.unaryOp_return unaryOp308 = null;
+        unaryOp_return unaryOp308 = null;
 
-        AS3_exParser.postfixExpression_return postfixExpression309 = null;
+        postfixExpression_return postfixExpression309 = null;
 
 
         object op_tree=null;
@@ -20771,9 +20771,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "unaryOp"
     // AS3_ex.g3:3343:1: unaryOp : op= ( DELETE | VOID | TYPEOF | INC | DEC | PLUS | SUB | INV | NOT ) ;
-    public AS3_exParser.unaryOp_return unaryOp() // throws RecognitionException [1]
+    public unaryOp_return unaryOp() // throws RecognitionException [1]
     {   
-        AS3_exParser.unaryOp_return retval = new AS3_exParser.unaryOp_return();
+        unaryOp_return retval = new unaryOp_return();
         retval.Start = input.LT(1);
         int unaryOp_StartIndex = input.Index();
         object root_0 = null;
@@ -20851,16 +20851,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "postfixExpression"
     // AS3_ex.g3:3349:1: postfixExpression : leftHandSideExpression ( postfixOp )? ;
-    public AS3_exParser.postfixExpression_return postfixExpression() // throws RecognitionException [1]
+    public postfixExpression_return postfixExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.postfixExpression_return retval = new AS3_exParser.postfixExpression_return();
+        postfixExpression_return retval = new postfixExpression_return();
         retval.Start = input.LT(1);
         int postfixExpression_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.leftHandSideExpression_return leftHandSideExpression310 = null;
+        leftHandSideExpression_return leftHandSideExpression310 = null;
 
-        AS3_exParser.postfixOp_return postfixOp311 = null;
+        postfixOp_return postfixOp311 = null;
 
 
 
@@ -20949,9 +20949,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "postfixOp"
     // AS3_ex.g3:3353:1: postfixOp : op= ( INC | DEC ) ;
-    public AS3_exParser.postfixOp_return postfixOp() // throws RecognitionException [1]
+    public postfixOp_return postfixOp() // throws RecognitionException [1]
     {   
-        AS3_exParser.postfixOp_return retval = new AS3_exParser.postfixOp_return();
+        postfixOp_return retval = new postfixOp_return();
         retval.Start = input.LT(1);
         int postfixOp_StartIndex = input.Index();
         object root_0 = null;
@@ -21029,18 +21029,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "memberExpression"
     // AS3_ex.g3:3358:1: memberExpression : ( primaryExpression | functionExpression | newExpression );
-    public AS3_exParser.memberExpression_return memberExpression() // throws RecognitionException [1]
+    public memberExpression_return memberExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.memberExpression_return retval = new AS3_exParser.memberExpression_return();
+        memberExpression_return retval = new memberExpression_return();
         retval.Start = input.LT(1);
         int memberExpression_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.primaryExpression_return primaryExpression312 = null;
+        primaryExpression_return primaryExpression312 = null;
 
-        AS3_exParser.functionExpression_return functionExpression313 = null;
+        functionExpression_return functionExpression313 = null;
 
-        AS3_exParser.newExpression_return newExpression314 = null;
+        newExpression_return newExpression314 = null;
 
 
 
@@ -21258,15 +21258,15 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "newExpression"
     // AS3_ex.g3:3364:1: newExpression : N= NEW primaryExpression ;
-    public AS3_exParser.newExpression_return newExpression() // throws RecognitionException [1]
+    public newExpression_return newExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.newExpression_return retval = new AS3_exParser.newExpression_return();
+        newExpression_return retval = new newExpression_return();
         retval.Start = input.LT(1);
         int newExpression_StartIndex = input.Index();
         object root_0 = null;
 
         IToken N = null;
-        AS3_exParser.primaryExpression_return primaryExpression315 = null;
+        primaryExpression_return primaryExpression315 = null;
 
 
         object N_tree=null;
@@ -21336,9 +21336,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "leftHandSideExpression"
     // AS3_ex.g3:3369:1: leftHandSideExpression : memberExpression ( arguments | L= LBRACK expression R= RBRACK | E= XML_ELLIPSIS eitherIdentifier | D= DOT ( eitherIdentifier | parExpression ) | typePostfixSyntax | op= XML_NS_OP expression )* ;
-    public AS3_exParser.leftHandSideExpression_return leftHandSideExpression() // throws RecognitionException [1]
+    public leftHandSideExpression_return leftHandSideExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.leftHandSideExpression_return retval = new AS3_exParser.leftHandSideExpression_return();
+        leftHandSideExpression_return retval = new leftHandSideExpression_return();
         retval.Start = input.LT(1);
         int leftHandSideExpression_StartIndex = input.Index();
         object root_0 = null;
@@ -21348,21 +21348,21 @@ public class AS3_exParser : Parser
         IToken E = null;
         IToken D = null;
         IToken op = null;
-        AS3_exParser.memberExpression_return memberExpression316 = null;
+        memberExpression_return memberExpression316 = null;
 
-        AS3_exParser.arguments_return arguments317 = null;
+        arguments_return arguments317 = null;
 
-        AS3_exParser.expression_return expression318 = null;
+        expression_return expression318 = null;
 
-        AS3_exParser.eitherIdentifier_return eitherIdentifier319 = null;
+        eitherIdentifier_return eitherIdentifier319 = null;
 
-        AS3_exParser.eitherIdentifier_return eitherIdentifier320 = null;
+        eitherIdentifier_return eitherIdentifier320 = null;
 
-        AS3_exParser.parExpression_return parExpression321 = null;
+        parExpression_return parExpression321 = null;
 
-        AS3_exParser.typePostfixSyntax_return typePostfixSyntax322 = null;
+        typePostfixSyntax_return typePostfixSyntax322 = null;
 
-        AS3_exParser.expression_return expression323 = null;
+        expression_return expression323 = null;
 
 
         object L_tree=null;
@@ -21624,17 +21624,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "eitherIdentifier"
     // AS3_ex.g3:3389:1: eitherIdentifier : (I= IDENTIFIER | xmlPropertyIdentifier | allKeywords );
-    public AS3_exParser.eitherIdentifier_return eitherIdentifier() // throws RecognitionException [1]
+    public eitherIdentifier_return eitherIdentifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.eitherIdentifier_return retval = new AS3_exParser.eitherIdentifier_return();
+        eitherIdentifier_return retval = new eitherIdentifier_return();
         retval.Start = input.LT(1);
         int eitherIdentifier_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
-        AS3_exParser.xmlPropertyIdentifier_return xmlPropertyIdentifier324 = null;
+        xmlPropertyIdentifier_return xmlPropertyIdentifier324 = null;
 
-        AS3_exParser.allKeywords_return allKeywords325 = null;
+        allKeywords_return allKeywords325 = null;
 
 
         object I_tree=null;
@@ -21865,16 +21865,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "typeSpecifier"
     // AS3_ex.g3:3395:1: typeSpecifier : (I= IDENTIFIER | notQuiteReservedWord | I= INTERNAL | D= DEFAULT );
-    public AS3_exParser.typeSpecifier_return typeSpecifier() // throws RecognitionException [1]
+    public typeSpecifier_return typeSpecifier() // throws RecognitionException [1]
     {   
-        AS3_exParser.typeSpecifier_return retval = new AS3_exParser.typeSpecifier_return();
+        typeSpecifier_return retval = new typeSpecifier_return();
         retval.Start = input.LT(1);
         int typeSpecifier_StartIndex = input.Index();
         object root_0 = null;
 
         IToken I = null;
         IToken D = null;
-        AS3_exParser.notQuiteReservedWord_return notQuiteReservedWord326 = null;
+        notQuiteReservedWord_return notQuiteReservedWord326 = null;
 
 
         object I_tree=null;
@@ -22032,9 +22032,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "notQuiteReservedWord"
     // AS3_ex.g3:3399:1: notQuiteReservedWord : word= ( TO | NATIVE | EACH | GET | SET | NAMESPACE | DYNAMIC | FINAL | OVERRIDE | STATIC ) ;
-    public AS3_exParser.notQuiteReservedWord_return notQuiteReservedWord() // throws RecognitionException [1]
+    public notQuiteReservedWord_return notQuiteReservedWord() // throws RecognitionException [1]
     {   
-        AS3_exParser.notQuiteReservedWord_return retval = new AS3_exParser.notQuiteReservedWord_return();
+        notQuiteReservedWord_return retval = new notQuiteReservedWord_return();
         retval.Start = input.LT(1);
         int notQuiteReservedWord_StartIndex = input.Index();
         object root_0 = null;
@@ -22112,16 +22112,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "allKeywords"
     // AS3_ex.g3:3404:1: allKeywords : ( reservedWord | notQuiteReservedWord ) ;
-    public AS3_exParser.allKeywords_return allKeywords() // throws RecognitionException [1]
+    public allKeywords_return allKeywords() // throws RecognitionException [1]
     {   
-        AS3_exParser.allKeywords_return retval = new AS3_exParser.allKeywords_return();
+        allKeywords_return retval = new allKeywords_return();
         retval.Start = input.LT(1);
         int allKeywords_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.reservedWord_return reservedWord327 = null;
+        reservedWord_return reservedWord327 = null;
 
-        AS3_exParser.notQuiteReservedWord_return notQuiteReservedWord328 = null;
+        notQuiteReservedWord_return notQuiteReservedWord328 = null;
 
 
 
@@ -22223,9 +22223,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "reservedWord"
     // AS3_ex.g3:3407:1: reservedWord : word= ( AS | BREAK | CASE | CATCH | CLASS | CONST | CONTINUE | DEFAULT | DELETE | DO | ELSE | EXTENDS | FALSE | FINALLY | FOR | FUNCTION | IF | IMPLEMENTS | IMPORT | IN | INSTANCEOF | INTERFACE | INTERNAL | IS | NEW | NULL | PACKAGE | PRIVATE | PROTECTED | PUBLIC | RETURN | SUPER | SWITCH | THIS | THROW | TRUE | TRY | TYPEOF | USE | VAR | VOID | WHILE | WITH | INCLUDE ) ;
-    public AS3_exParser.reservedWord_return reservedWord() // throws RecognitionException [1]
+    public reservedWord_return reservedWord() // throws RecognitionException [1]
     {   
-        AS3_exParser.reservedWord_return retval = new AS3_exParser.reservedWord_return();
+        reservedWord_return retval = new reservedWord_return();
         retval.Start = input.LT(1);
         int reservedWord_StartIndex = input.Index();
         object root_0 = null;
@@ -22303,9 +22303,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "arguments"
     // AS3_ex.g3:3466:1: arguments : L= LPAREN ( assignmentExpression (C= COMMA assignmentExpression )* )? R= RPAREN ;
-    public AS3_exParser.arguments_return arguments() // throws RecognitionException [1]
+    public arguments_return arguments() // throws RecognitionException [1]
     {   
-        AS3_exParser.arguments_return retval = new AS3_exParser.arguments_return();
+        arguments_return retval = new arguments_return();
         retval.Start = input.LT(1);
         int arguments_StartIndex = input.Index();
         object root_0 = null;
@@ -22313,9 +22313,9 @@ public class AS3_exParser : Parser
         IToken L = null;
         IToken C = null;
         IToken R = null;
-        AS3_exParser.assignmentExpression_return assignmentExpression329 = null;
+        assignmentExpression_return assignmentExpression329 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression330 = null;
+        assignmentExpression_return assignmentExpression330 = null;
 
 
         object L_tree=null;
@@ -22496,16 +22496,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "suffix"
     // AS3_ex.g3:3501:1: suffix : ( indexSuffix | propertyReferenceSuffix );
-    public AS3_exParser.suffix_return suffix() // throws RecognitionException [1]
+    public suffix_return suffix() // throws RecognitionException [1]
     {   
-        AS3_exParser.suffix_return retval = new AS3_exParser.suffix_return();
+        suffix_return retval = new suffix_return();
         retval.Start = input.LT(1);
         int suffix_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.indexSuffix_return indexSuffix331 = null;
+        indexSuffix_return indexSuffix331 = null;
 
-        AS3_exParser.propertyReferenceSuffix_return propertyReferenceSuffix332 = null;
+        propertyReferenceSuffix_return propertyReferenceSuffix332 = null;
 
 
 
@@ -22602,16 +22602,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "indexSuffix"
     // AS3_ex.g3:3505:1: indexSuffix : L= LBRACK expression R= RBRACK ;
-    public AS3_exParser.indexSuffix_return indexSuffix() // throws RecognitionException [1]
+    public indexSuffix_return indexSuffix() // throws RecognitionException [1]
     {   
-        AS3_exParser.indexSuffix_return retval = new AS3_exParser.indexSuffix_return();
+        indexSuffix_return retval = new indexSuffix_return();
         retval.Start = input.LT(1);
         int indexSuffix_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.expression_return expression333 = null;
+        expression_return expression333 = null;
 
 
         object L_tree=null;
@@ -22691,16 +22691,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "propertyReferenceSuffix"
     // AS3_ex.g3:3509:1: propertyReferenceSuffix : (D= DOT I= IDENTIFIER | D= DOT xmlPropertyIdentifier | D= DOT );
-    public AS3_exParser.propertyReferenceSuffix_return propertyReferenceSuffix() // throws RecognitionException [1]
+    public propertyReferenceSuffix_return propertyReferenceSuffix() // throws RecognitionException [1]
     {   
-        AS3_exParser.propertyReferenceSuffix_return retval = new AS3_exParser.propertyReferenceSuffix_return();
+        propertyReferenceSuffix_return retval = new propertyReferenceSuffix_return();
         retval.Start = input.LT(1);
         int propertyReferenceSuffix_StartIndex = input.Index();
         object root_0 = null;
 
         IToken D = null;
         IToken I = null;
-        AS3_exParser.xmlPropertyIdentifier_return xmlPropertyIdentifier334 = null;
+        xmlPropertyIdentifier_return xmlPropertyIdentifier334 = null;
 
 
         object D_tree=null;
@@ -22942,14 +22942,14 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "primaryExpression"
     // AS3_ex.g3:3516:1: primaryExpression : primaryExpressionHelper ;
-    public AS3_exParser.primaryExpression_return primaryExpression() // throws RecognitionException [1]
+    public primaryExpression_return primaryExpression() // throws RecognitionException [1]
     {   
-        AS3_exParser.primaryExpression_return retval = new AS3_exParser.primaryExpression_return();
+        primaryExpression_return retval = new primaryExpression_return();
         retval.Start = input.LT(1);
         int primaryExpression_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.primaryExpressionHelper_return primaryExpressionHelper335 = null;
+        primaryExpressionHelper_return primaryExpressionHelper335 = null;
 
 
 
@@ -23009,9 +23009,9 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "primaryExpressionHelper"
     // AS3_ex.g3:3521:1: primaryExpressionHelper : (T= THIS | S= SUPER | literal | arrayLiteral | objectLiteral | ( identifierLiteral x= XML_NS_OP )? identifierLiteral | xmlPrimaryExpression | parExpression | l= LT type g= GT ( arrayLiteral )? );
-    public AS3_exParser.primaryExpressionHelper_return primaryExpressionHelper() // throws RecognitionException [1]
+    public primaryExpressionHelper_return primaryExpressionHelper() // throws RecognitionException [1]
     {   
-        AS3_exParser.primaryExpressionHelper_return retval = new AS3_exParser.primaryExpressionHelper_return();
+        primaryExpressionHelper_return retval = new primaryExpressionHelper_return();
         retval.Start = input.LT(1);
         int primaryExpressionHelper_StartIndex = input.Index();
         object root_0 = null;
@@ -23021,23 +23021,23 @@ public class AS3_exParser : Parser
         IToken x = null;
         IToken l = null;
         IToken g = null;
-        AS3_exParser.literal_return literal336 = null;
+        literal_return literal336 = null;
 
-        AS3_exParser.arrayLiteral_return arrayLiteral337 = null;
+        arrayLiteral_return arrayLiteral337 = null;
 
-        AS3_exParser.objectLiteral_return objectLiteral338 = null;
+        objectLiteral_return objectLiteral338 = null;
 
-        AS3_exParser.identifierLiteral_return identifierLiteral339 = null;
+        identifierLiteral_return identifierLiteral339 = null;
 
-        AS3_exParser.identifierLiteral_return identifierLiteral340 = null;
+        identifierLiteral_return identifierLiteral340 = null;
 
-        AS3_exParser.xmlPrimaryExpression_return xmlPrimaryExpression341 = null;
+        xmlPrimaryExpression_return xmlPrimaryExpression341 = null;
 
-        AS3_exParser.parExpression_return parExpression342 = null;
+        parExpression_return parExpression342 = null;
 
-        AS3_exParser.type_return type343 = null;
+        type_return type343 = null;
 
-        AS3_exParser.arrayLiteral_return arrayLiteral344 = null;
+        arrayLiteral_return arrayLiteral344 = null;
 
 
         object T_tree=null;
@@ -23315,16 +23315,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "objectLiteral"
     // AS3_ex.g3:3534:1: objectLiteral : L= LCURLY ( propertyNameAndValueList )? R= RCURLY ;
-    public AS3_exParser.objectLiteral_return objectLiteral() // throws RecognitionException [1]
+    public objectLiteral_return objectLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.objectLiteral_return retval = new AS3_exParser.objectLiteral_return();
+        objectLiteral_return retval = new objectLiteral_return();
         retval.Start = input.LT(1);
         int objectLiteral_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.propertyNameAndValueList_return propertyNameAndValueList345 = null;
+        propertyNameAndValueList_return propertyNameAndValueList345 = null;
 
 
         object L_tree=null;
@@ -23427,17 +23427,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "propertyNameAndValueList"
     // AS3_ex.g3:3542:1: propertyNameAndValueList : propertyNameAndValue (C= COMMA propertyNameAndValue )* ;
-    public AS3_exParser.propertyNameAndValueList_return propertyNameAndValueList() // throws RecognitionException [1]
+    public propertyNameAndValueList_return propertyNameAndValueList() // throws RecognitionException [1]
     {   
-        AS3_exParser.propertyNameAndValueList_return retval = new AS3_exParser.propertyNameAndValueList_return();
+        propertyNameAndValueList_return retval = new propertyNameAndValueList_return();
         retval.Start = input.LT(1);
         int propertyNameAndValueList_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.propertyNameAndValue_return propertyNameAndValue346 = null;
+        propertyNameAndValue_return propertyNameAndValue346 = null;
 
-        AS3_exParser.propertyNameAndValue_return propertyNameAndValue347 = null;
+        propertyNameAndValue_return propertyNameAndValue347 = null;
 
 
         object C_tree=null;
@@ -23575,17 +23575,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "propertyNameAndValue"
     // AS3_ex.g3:3571:1: propertyNameAndValue : propertyName C= COLON assignmentExpression ;
-    public AS3_exParser.propertyNameAndValue_return propertyNameAndValue() // throws RecognitionException [1]
+    public propertyNameAndValue_return propertyNameAndValue() // throws RecognitionException [1]
     {   
-        AS3_exParser.propertyNameAndValue_return retval = new AS3_exParser.propertyNameAndValue_return();
+        propertyNameAndValue_return retval = new propertyNameAndValue_return();
         retval.Start = input.LT(1);
         int propertyNameAndValue_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.propertyName_return propertyName348 = null;
+        propertyName_return propertyName348 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression349 = null;
+        assignmentExpression_return assignmentExpression349 = null;
 
 
         object C_tree=null;
@@ -23663,18 +23663,18 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "propertyName"
     // AS3_ex.g3:3580:1: propertyName : ( identifierLiteral | stringLiteral | numericLiteral );
-    public AS3_exParser.propertyName_return propertyName() // throws RecognitionException [1]
+    public propertyName_return propertyName() // throws RecognitionException [1]
     {   
-        AS3_exParser.propertyName_return retval = new AS3_exParser.propertyName_return();
+        propertyName_return retval = new propertyName_return();
         retval.Start = input.LT(1);
         int propertyName_StartIndex = input.Index();
         object root_0 = null;
 
-        AS3_exParser.identifierLiteral_return identifierLiteral350 = null;
+        identifierLiteral_return identifierLiteral350 = null;
 
-        AS3_exParser.stringLiteral_return stringLiteral351 = null;
+        stringLiteral_return stringLiteral351 = null;
 
-        AS3_exParser.numericLiteral_return numericLiteral352 = null;
+        numericLiteral_return numericLiteral352 = null;
 
 
 
@@ -23803,16 +23803,16 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "arrayLiteral"
     // AS3_ex.g3:3587:1: arrayLiteral : L= LBRACK ( elementList )? R= RBRACK ;
-    public AS3_exParser.arrayLiteral_return arrayLiteral() // throws RecognitionException [1]
+    public arrayLiteral_return arrayLiteral() // throws RecognitionException [1]
     {   
-        AS3_exParser.arrayLiteral_return retval = new AS3_exParser.arrayLiteral_return();
+        arrayLiteral_return retval = new arrayLiteral_return();
         retval.Start = input.LT(1);
         int arrayLiteral_StartIndex = input.Index();
         object root_0 = null;
 
         IToken L = null;
         IToken R = null;
-        AS3_exParser.elementList_return elementList353 = null;
+        elementList_return elementList353 = null;
 
 
         object L_tree=null;
@@ -23911,17 +23911,17 @@ public class AS3_exParser : Parser
 
     // $ANTLR start "elementList"
     // AS3_ex.g3:3591:1: elementList : assignmentExpression (C= COMMA assignmentExpression )* (C= COMMA )? ;
-    public AS3_exParser.elementList_return elementList() // throws RecognitionException [1]
+    public elementList_return elementList() // throws RecognitionException [1]
     {   
-        AS3_exParser.elementList_return retval = new AS3_exParser.elementList_return();
+        elementList_return retval = new elementList_return();
         retval.Start = input.LT(1);
         int elementList_StartIndex = input.Index();
         object root_0 = null;
 
         IToken C = null;
-        AS3_exParser.assignmentExpression_return assignmentExpression354 = null;
+        assignmentExpression_return assignmentExpression354 = null;
 
-        AS3_exParser.assignmentExpression_return assignmentExpression355 = null;
+        assignmentExpression_return assignmentExpression355 = null;
 
 
         object C_tree=null;
@@ -27657,38 +27657,38 @@ public class AS3_exParser : Parser
     protected DFA161 dfa161;
     private void InitializeCyclicDFAs()
     {
-        this.dfa8 = new DFA8(this);
-        this.dfa34 = new DFA34(this);
-        this.dfa37 = new DFA37(this);
-        this.dfa49 = new DFA49(this);
-        this.dfa59 = new DFA59(this);
-        this.dfa61 = new DFA61(this);
-        this.dfa80 = new DFA80(this);
-        this.dfa83 = new DFA83(this);
-        this.dfa93 = new DFA93(this);
-        this.dfa121 = new DFA121(this);
-        this.dfa122 = new DFA122(this);
-        this.dfa123 = new DFA123(this);
-        this.dfa148 = new DFA148(this);
-        this.dfa152 = new DFA152(this);
-        this.dfa162 = new DFA162(this);
-        this.dfa161 = new DFA161(this);
-        this.dfa8.specialStateTransitionHandler = DFA8_SpecialStateTransition;
-        this.dfa34.specialStateTransitionHandler = DFA34_SpecialStateTransition;
-        this.dfa37.specialStateTransitionHandler = DFA37_SpecialStateTransition;
-        this.dfa49.specialStateTransitionHandler = DFA49_SpecialStateTransition;
-        this.dfa59.specialStateTransitionHandler = DFA59_SpecialStateTransition;
-        this.dfa61.specialStateTransitionHandler = DFA61_SpecialStateTransition;
-        this.dfa80.specialStateTransitionHandler = DFA80_SpecialStateTransition;
-        this.dfa83.specialStateTransitionHandler = DFA83_SpecialStateTransition;
-        this.dfa93.specialStateTransitionHandler = DFA93_SpecialStateTransition;
-        this.dfa121.specialStateTransitionHandler = DFA121_SpecialStateTransition;
-        this.dfa122.specialStateTransitionHandler = DFA122_SpecialStateTransition;
+        dfa8 = new DFA8(this);
+        dfa34 = new DFA34(this);
+        dfa37 = new DFA37(this);
+        dfa49 = new DFA49(this);
+        dfa59 = new DFA59(this);
+        dfa61 = new DFA61(this);
+        dfa80 = new DFA80(this);
+        dfa83 = new DFA83(this);
+        dfa93 = new DFA93(this);
+        dfa121 = new DFA121(this);
+        dfa122 = new DFA122(this);
+        dfa123 = new DFA123(this);
+        dfa148 = new DFA148(this);
+        dfa152 = new DFA152(this);
+        dfa162 = new DFA162(this);
+        dfa161 = new DFA161(this);
+        dfa8.specialStateTransitionHandler = DFA8_SpecialStateTransition;
+        dfa34.specialStateTransitionHandler = DFA34_SpecialStateTransition;
+        dfa37.specialStateTransitionHandler = DFA37_SpecialStateTransition;
+        dfa49.specialStateTransitionHandler = DFA49_SpecialStateTransition;
+        dfa59.specialStateTransitionHandler = DFA59_SpecialStateTransition;
+        dfa61.specialStateTransitionHandler = DFA61_SpecialStateTransition;
+        dfa80.specialStateTransitionHandler = DFA80_SpecialStateTransition;
+        dfa83.specialStateTransitionHandler = DFA83_SpecialStateTransition;
+        dfa93.specialStateTransitionHandler = DFA93_SpecialStateTransition;
+        dfa121.specialStateTransitionHandler = DFA121_SpecialStateTransition;
+        dfa122.specialStateTransitionHandler = DFA122_SpecialStateTransition;
 
-        this.dfa148.specialStateTransitionHandler = DFA148_SpecialStateTransition;
-        this.dfa152.specialStateTransitionHandler = DFA152_SpecialStateTransition;
-        this.dfa162.specialStateTransitionHandler = DFA162_SpecialStateTransition;
-        this.dfa161.specialStateTransitionHandler = DFA161_SpecialStateTransition;
+        dfa148.specialStateTransitionHandler = DFA148_SpecialStateTransition;
+        dfa152.specialStateTransitionHandler = DFA152_SpecialStateTransition;
+        dfa162.specialStateTransitionHandler = DFA162_SpecialStateTransition;
+        dfa161.specialStateTransitionHandler = DFA161_SpecialStateTransition;
     }
 
     const string DFA8_eotS =
@@ -27795,14 +27795,14 @@ public class AS3_exParser : Parser
         public DFA8(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 8;
-            this.eot = DFA8_eot;
-            this.eof = DFA8_eof;
-            this.min = DFA8_min;
-            this.max = DFA8_max;
-            this.accept = DFA8_accept;
-            this.special = DFA8_special;
-            this.transition = DFA8_transition;
+            decisionNumber = 8;
+            eot = DFA8_eot;
+            eof = DFA8_eof;
+            min = DFA8_min;
+            max = DFA8_max;
+            accept = DFA8_accept;
+            special = DFA8_special;
+            transition = DFA8_transition;
 
         }
 
@@ -28581,14 +28581,14 @@ public class AS3_exParser : Parser
         public DFA34(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 34;
-            this.eot = DFA34_eot;
-            this.eof = DFA34_eof;
-            this.min = DFA34_min;
-            this.max = DFA34_max;
-            this.accept = DFA34_accept;
-            this.special = DFA34_special;
-            this.transition = DFA34_transition;
+            decisionNumber = 34;
+            eot = DFA34_eot;
+            eof = DFA34_eof;
+            min = DFA34_min;
+            max = DFA34_max;
+            accept = DFA34_accept;
+            special = DFA34_special;
+            transition = DFA34_transition;
 
         }
 
@@ -28934,14 +28934,14 @@ public class AS3_exParser : Parser
         public DFA37(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 37;
-            this.eot = DFA37_eot;
-            this.eof = DFA37_eof;
-            this.min = DFA37_min;
-            this.max = DFA37_max;
-            this.accept = DFA37_accept;
-            this.special = DFA37_special;
-            this.transition = DFA37_transition;
+            decisionNumber = 37;
+            eot = DFA37_eot;
+            eof = DFA37_eof;
+            min = DFA37_min;
+            max = DFA37_max;
+            accept = DFA37_accept;
+            special = DFA37_special;
+            transition = DFA37_transition;
 
         }
 
@@ -29274,14 +29274,14 @@ public class AS3_exParser : Parser
         public DFA49(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 49;
-            this.eot = DFA49_eot;
-            this.eof = DFA49_eof;
-            this.min = DFA49_min;
-            this.max = DFA49_max;
-            this.accept = DFA49_accept;
-            this.special = DFA49_special;
-            this.transition = DFA49_transition;
+            decisionNumber = 49;
+            eot = DFA49_eot;
+            eof = DFA49_eof;
+            min = DFA49_min;
+            max = DFA49_max;
+            accept = DFA49_accept;
+            special = DFA49_special;
+            transition = DFA49_transition;
 
         }
 
@@ -29472,14 +29472,14 @@ public class AS3_exParser : Parser
         public DFA59(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 59;
-            this.eot = DFA59_eot;
-            this.eof = DFA59_eof;
-            this.min = DFA59_min;
-            this.max = DFA59_max;
-            this.accept = DFA59_accept;
-            this.special = DFA59_special;
-            this.transition = DFA59_transition;
+            decisionNumber = 59;
+            eot = DFA59_eot;
+            eof = DFA59_eof;
+            min = DFA59_min;
+            max = DFA59_max;
+            accept = DFA59_accept;
+            special = DFA59_special;
+            transition = DFA59_transition;
 
         }
 
@@ -29808,14 +29808,14 @@ public class AS3_exParser : Parser
         public DFA61(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 61;
-            this.eot = DFA61_eot;
-            this.eof = DFA61_eof;
-            this.min = DFA61_min;
-            this.max = DFA61_max;
-            this.accept = DFA61_accept;
-            this.special = DFA61_special;
-            this.transition = DFA61_transition;
+            decisionNumber = 61;
+            eot = DFA61_eot;
+            eof = DFA61_eof;
+            min = DFA61_min;
+            max = DFA61_max;
+            accept = DFA61_accept;
+            special = DFA61_special;
+            transition = DFA61_transition;
 
         }
 
@@ -30140,14 +30140,14 @@ public class AS3_exParser : Parser
         public DFA80(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 80;
-            this.eot = DFA80_eot;
-            this.eof = DFA80_eof;
-            this.min = DFA80_min;
-            this.max = DFA80_max;
-            this.accept = DFA80_accept;
-            this.special = DFA80_special;
-            this.transition = DFA80_transition;
+            decisionNumber = 80;
+            eot = DFA80_eot;
+            eof = DFA80_eof;
+            min = DFA80_min;
+            max = DFA80_max;
+            accept = DFA80_accept;
+            special = DFA80_special;
+            transition = DFA80_transition;
 
         }
 
@@ -30370,14 +30370,14 @@ public class AS3_exParser : Parser
         public DFA83(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 83;
-            this.eot = DFA83_eot;
-            this.eof = DFA83_eof;
-            this.min = DFA83_min;
-            this.max = DFA83_max;
-            this.accept = DFA83_accept;
-            this.special = DFA83_special;
-            this.transition = DFA83_transition;
+            decisionNumber = 83;
+            eot = DFA83_eot;
+            eof = DFA83_eof;
+            min = DFA83_min;
+            max = DFA83_max;
+            accept = DFA83_accept;
+            special = DFA83_special;
+            transition = DFA83_transition;
 
         }
 
@@ -30825,14 +30825,14 @@ public class AS3_exParser : Parser
         public DFA93(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 93;
-            this.eot = DFA93_eot;
-            this.eof = DFA93_eof;
-            this.min = DFA93_min;
-            this.max = DFA93_max;
-            this.accept = DFA93_accept;
-            this.special = DFA93_special;
-            this.transition = DFA93_transition;
+            decisionNumber = 93;
+            eot = DFA93_eot;
+            eof = DFA93_eof;
+            min = DFA93_min;
+            max = DFA93_max;
+            accept = DFA93_accept;
+            special = DFA93_special;
+            transition = DFA93_transition;
 
         }
 
@@ -30971,14 +30971,14 @@ public class AS3_exParser : Parser
         public DFA121(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 121;
-            this.eot = DFA121_eot;
-            this.eof = DFA121_eof;
-            this.min = DFA121_min;
-            this.max = DFA121_max;
-            this.accept = DFA121_accept;
-            this.special = DFA121_special;
-            this.transition = DFA121_transition;
+            decisionNumber = 121;
+            eot = DFA121_eot;
+            eof = DFA121_eof;
+            min = DFA121_min;
+            max = DFA121_max;
+            accept = DFA121_accept;
+            special = DFA121_special;
+            transition = DFA121_transition;
 
         }
 
@@ -31462,14 +31462,14 @@ public class AS3_exParser : Parser
         public DFA122(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 122;
-            this.eot = DFA122_eot;
-            this.eof = DFA122_eof;
-            this.min = DFA122_min;
-            this.max = DFA122_max;
-            this.accept = DFA122_accept;
-            this.special = DFA122_special;
-            this.transition = DFA122_transition;
+            decisionNumber = 122;
+            eot = DFA122_eot;
+            eof = DFA122_eof;
+            min = DFA122_min;
+            max = DFA122_max;
+            accept = DFA122_accept;
+            special = DFA122_special;
+            transition = DFA122_transition;
 
         }
 
@@ -31933,14 +31933,14 @@ public class AS3_exParser : Parser
         public DFA123(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 123;
-            this.eot = DFA123_eot;
-            this.eof = DFA123_eof;
-            this.min = DFA123_min;
-            this.max = DFA123_max;
-            this.accept = DFA123_accept;
-            this.special = DFA123_special;
-            this.transition = DFA123_transition;
+            decisionNumber = 123;
+            eot = DFA123_eot;
+            eof = DFA123_eof;
+            min = DFA123_min;
+            max = DFA123_max;
+            accept = DFA123_accept;
+            special = DFA123_special;
+            transition = DFA123_transition;
 
         }
 
@@ -32014,14 +32014,14 @@ public class AS3_exParser : Parser
         public DFA148(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 148;
-            this.eot = DFA148_eot;
-            this.eof = DFA148_eof;
-            this.min = DFA148_min;
-            this.max = DFA148_max;
-            this.accept = DFA148_accept;
-            this.special = DFA148_special;
-            this.transition = DFA148_transition;
+            decisionNumber = 148;
+            eot = DFA148_eot;
+            eof = DFA148_eof;
+            min = DFA148_min;
+            max = DFA148_max;
+            accept = DFA148_accept;
+            special = DFA148_special;
+            transition = DFA148_transition;
 
         }
 
@@ -32122,14 +32122,14 @@ public class AS3_exParser : Parser
         public DFA152(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 152;
-            this.eot = DFA152_eot;
-            this.eof = DFA152_eof;
-            this.min = DFA152_min;
-            this.max = DFA152_max;
-            this.accept = DFA152_accept;
-            this.special = DFA152_special;
-            this.transition = DFA152_transition;
+            decisionNumber = 152;
+            eot = DFA152_eot;
+            eof = DFA152_eof;
+            min = DFA152_min;
+            max = DFA152_max;
+            accept = DFA152_accept;
+            special = DFA152_special;
+            transition = DFA152_transition;
 
         }
 
@@ -32294,14 +32294,14 @@ public class AS3_exParser : Parser
         public DFA162(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 162;
-            this.eot = DFA162_eot;
-            this.eof = DFA162_eof;
-            this.min = DFA162_min;
-            this.max = DFA162_max;
-            this.accept = DFA162_accept;
-            this.special = DFA162_special;
-            this.transition = DFA162_transition;
+            decisionNumber = 162;
+            eot = DFA162_eot;
+            eof = DFA162_eof;
+            min = DFA162_min;
+            max = DFA162_max;
+            accept = DFA162_accept;
+            special = DFA162_special;
+            transition = DFA162_transition;
 
         }
 
@@ -32566,14 +32566,14 @@ public class AS3_exParser : Parser
         public DFA161(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 161;
-            this.eot = DFA161_eot;
-            this.eof = DFA161_eof;
-            this.min = DFA161_min;
-            this.max = DFA161_max;
-            this.accept = DFA161_accept;
-            this.special = DFA161_special;
-            this.transition = DFA161_transition;
+            decisionNumber = 161;
+            eot = DFA161_eot;
+            eof = DFA161_eof;
+            min = DFA161_min;
+            max = DFA161_max;
+            accept = DFA161_accept;
+            special = DFA161_special;
+            transition = DFA161_transition;
 
         }
 

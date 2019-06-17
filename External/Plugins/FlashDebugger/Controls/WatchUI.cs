@@ -16,15 +16,15 @@ namespace FlashDebugger.Controls
 
         public WatchUI(WatchManager watchManager)
         {
-            this.AutoKeyHandling = true;
-            this.treeControl = new DataTreeControl(true);
-            this.treeControl.Tree.BorderStyle = BorderStyle.None;
-            this.treeControl.Resize += this.TreeControlResize;
-            this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
-            this.treeControl.Dock = DockStyle.Fill;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.treeControl);
+            AutoKeyHandling = true;
+            treeControl = new DataTreeControl(true);
+            treeControl.Tree.BorderStyle = BorderStyle.None;
+            treeControl.Resize += TreeControlResize;
+            treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
+            treeControl.Dock = DockStyle.Fill;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(treeControl);
 
             this.watchManager = watchManager;
             this.watchManager.ExpressionAdded += WatchManager_ExpressionAdded;
@@ -36,9 +36,9 @@ namespace FlashDebugger.Controls
 
         private void TreeControlResize(object sender, EventArgs e)
         {
-            int w = this.treeControl.Width / 2;
-            this.treeControl.Tree.Columns[0].Width = w;
-            this.treeControl.Tree.Columns[1].Width = w - 8;
+            int w = treeControl.Width / 2;
+            treeControl.Tree.Columns[0].Width = w;
+            treeControl.Tree.Columns[1].Width = w - 8;
         }
 
         private void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)

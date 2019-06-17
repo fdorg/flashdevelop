@@ -26,25 +26,25 @@ namespace FlashDebugger.Controls
 
         private void InitializeLocalization()
         {
-            this.label1.Text = TextHelper.GetString("Label.Exp");
-            this.label2.Text = TextHelper.GetString("Label.Value");
-            this.Closebutton.Text = TextHelper.GetString("Label.Close");
-            this.CopyAllbutton.Text = TextHelper.GetString("Label.CopyAll");
-            this.WordWrapcheckBox.Text = TextHelper.GetString("Label.WordWrap");
-            this.CopyValuebutton.Text = TextHelper.GetString("Label.CopyValue");
-            this.CopyExpbutton.Text = TextHelper.GetString("Label.CopyExp");
-            this.Text = " " + TextHelper.GetStringWithoutMnemonics("Label.Viewer");
+            label1.Text = TextHelper.GetString("Label.Exp");
+            label2.Text = TextHelper.GetString("Label.Value");
+            Closebutton.Text = TextHelper.GetString("Label.Close");
+            CopyAllbutton.Text = TextHelper.GetString("Label.CopyAll");
+            WordWrapcheckBox.Text = TextHelper.GetString("Label.WordWrap");
+            CopyValuebutton.Text = TextHelper.GetString("Label.CopyValue");
+            CopyExpbutton.Text = TextHelper.GetString("Label.CopyExp");
+            Text = " " + TextHelper.GetStringWithoutMnemonics("Label.Viewer");
         }
 
         private void ViewerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
-            this.Visible = false;
+            Visible = false;
         }
 
         private void Closebutton_Click(object sender, EventArgs e)
         {
-            this.Visible = false;
+            Visible = false;
         }
 
         private void WordWrapcheckBox_CheckedChanged(object sender, EventArgs e)

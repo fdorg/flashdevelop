@@ -10,7 +10,7 @@ namespace ProjectManager.Projects.AS2
         public AS2ProjectReader(string filename)
             : base(filename, new AS2Project(filename))
         {
-            this.project = base.Project as AS2Project;
+            project = Project as AS2Project;
         }
 
         public new AS2Project ReadProject()

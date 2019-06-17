@@ -13,8 +13,8 @@ namespace ProjectManager.Projects
 
         public BuildEventInfo(string name, string value)
         {
-            this.Name = name;
-            this.Value = value;
+            Name = name;
+            Value = value;
         }
 
         // SendKeys requires brackets around certain characters which have meaning

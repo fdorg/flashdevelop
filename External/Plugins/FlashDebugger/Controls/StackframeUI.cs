@@ -41,7 +41,7 @@ namespace FlashDebugger
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
         {
-            this.AutoKeyHandling = true;
+            AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             wholeFrameStack = new List<ListViewItem>();
             InitializeComponents(imageList);
@@ -52,148 +52,148 @@ namespace FlashDebugger
 
         private void InitializeComponents(ImageList imageList)
         {
-            this.toolStripLabelFilter = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripTextBoxFilter = new System.Windows.Forms.ToolStripSpringTextBox();
-            this.clearFilterButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripDropDownOptions = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripItemMatchCase = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripItemRegEx = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripItemNegate = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripFilters = new PluginCore.Controls.ToolStripEx();
-            this.toolStripFilters.SuspendLayout();
+            toolStripLabelFilter = new ToolStripLabel();
+            toolStripTextBoxFilter = new ToolStripSpringTextBox();
+            clearFilterButton = new ToolStripButton();
+            toolStripDropDownOptions = new ToolStripDropDownButton();
+            toolStripItemMatchCase = new ToolStripMenuItem();
+            toolStripItemRegEx = new ToolStripMenuItem();
+            toolStripItemNegate = new ToolStripMenuItem();
+            toolStripFilters = new ToolStripEx();
+            toolStripFilters.SuspendLayout();
             // 
             // toolStripTextBoxFilter
             //
-            this.toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
-            this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
-            this.toolStripTextBoxFilter.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.toolStripTextBoxFilter.Enabled = false;
-            this.toolStripTextBoxFilter.TextChanged += this.ToolStripTextFieldFilter_Changed;
+            toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
+            toolStripTextBoxFilter.Size = new Size(100, 25);
+            toolStripTextBoxFilter.Padding = new Padding(0, 0, 1, 0);
+            toolStripTextBoxFilter.Enabled = false;
+            toolStripTextBoxFilter.TextChanged += ToolStripTextFieldFilter_Changed;
             // 
             // toolStripLabelFilter
             //
-            this.toolStripLabelFilter.Margin = new System.Windows.Forms.Padding(2, 1, 0, 1);
-            this.toolStripLabelFilter.Name = "toolStripLabelFilter";
-            this.toolStripLabelFilter.Size = new System.Drawing.Size(36, 22);
-            this.toolStripLabelFilter.Text = "Filter:";
+            toolStripLabelFilter.Margin = new Padding(2, 1, 0, 1);
+            toolStripLabelFilter.Name = "toolStripLabelFilter";
+            toolStripLabelFilter.Size = new Size(36, 22);
+            toolStripLabelFilter.Text = "Filter:";
             // 
             // clearFilterButton
             //
-            this.clearFilterButton.Enabled = false;
-            this.clearFilterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearFilterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.clearFilterButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.clearFilterButton.Name = "clearFilterButton";
-            this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
-            this.clearFilterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
-            this.clearFilterButton.Click += this.ClearFilterButton_Click;
+            clearFilterButton.Enabled = false;
+            clearFilterButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            clearFilterButton.ImageTransparentColor = Color.Magenta;
+            clearFilterButton.Margin = new Padding(0, 1, 0, 1);
+            clearFilterButton.Name = "clearFilterButton";
+            clearFilterButton.Size = new Size(23, 26);
+            clearFilterButton.Alignment = ToolStripItemAlignment.Right;
+            clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
+            clearFilterButton.Click += ClearFilterButton_Click;
             // 
             // toolStripItemMatchCase
             // 
-            this.toolStripItemMatchCase.Name = "toolStripItemMatchCase";
-            this.toolStripItemMatchCase.CheckOnClick = true;
-            this.toolStripItemMatchCase.Text = "Match Case";
-            this.toolStripItemNegate.Click += FilterOption_Click;
+            toolStripItemMatchCase.Name = "toolStripItemMatchCase";
+            toolStripItemMatchCase.CheckOnClick = true;
+            toolStripItemMatchCase.Text = "Match Case";
+            toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripItemRegEx
             // 
-            this.toolStripItemRegEx.Name = "toolStripItemRegEx";
-            this.toolStripItemRegEx.CheckOnClick = true;
-            this.toolStripItemRegEx.Text = "Regular Expression";
-            this.toolStripItemNegate.Click += FilterOption_Click;
+            toolStripItemRegEx.Name = "toolStripItemRegEx";
+            toolStripItemRegEx.CheckOnClick = true;
+            toolStripItemRegEx.Text = "Regular Expression";
+            toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripItemNegate
             // 
-            this.toolStripItemNegate.Name = "toolStripItemNegate";
-            this.toolStripItemNegate.CheckOnClick = true;
-            this.toolStripItemNegate.Text = "Match Opposite";
-            this.toolStripItemNegate.Click += FilterOption_Click;
+            toolStripItemNegate.Name = "toolStripItemNegate";
+            toolStripItemNegate.CheckOnClick = true;
+            toolStripItemNegate.Text = "Match Opposite";
+            toolStripItemNegate.Click += FilterOption_Click;
             // 
             // toolStripDropDownOptions
             // 
-            this.toolStripDropDownOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripItemMatchCase,
-            this.toolStripItemRegEx,
-            this.toolStripItemNegate});
-            this.toolStripDropDownOptions.Name = "toolStripDropDownOptions";
-            this.toolStripDropDownOptions.Text = "Options";
+            toolStripDropDownOptions.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownOptions.DropDownItems.AddRange(new ToolStripItem[] {
+            toolStripItemMatchCase,
+            toolStripItemRegEx,
+            toolStripItemNegate});
+            toolStripDropDownOptions.Name = "toolStripDropDownOptions";
+            toolStripDropDownOptions.Text = "Options";
             // 
             // toolStripFilters
             // 
-            this.toolStripFilters.ImageScalingSize = ScaleHelper.Scale(new System.Drawing.Size(16, 16));
-            this.toolStripFilters.CanOverflow = false;
-            this.toolStripFilters.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStripFilters.Padding = new System.Windows.Forms.Padding(1, 1, 2, 2);
-            this.toolStripFilters.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStripFilters.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabelFilter,
-            this.toolStripTextBoxFilter, 
-            this.clearFilterButton,
-            this.toolStripDropDownOptions});
-            this.toolStripFilters.Name = "toolStripFilters";
-            this.toolStripFilters.Location = new System.Drawing.Point(1, 0);
-            this.toolStripFilters.Size = new System.Drawing.Size(710, 25);
-            this.toolStripFilters.TabIndex = 0;
-            this.toolStripFilters.Text = "toolStripFilters";
+            toolStripFilters.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            toolStripFilters.CanOverflow = false;
+            toolStripFilters.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            toolStripFilters.Padding = new Padding(1, 1, 2, 2);
+            toolStripFilters.GripStyle = ToolStripGripStyle.Hidden;
+            toolStripFilters.Items.AddRange(new ToolStripItem[] {
+            toolStripLabelFilter,
+            toolStripTextBoxFilter, 
+            clearFilterButton,
+            toolStripDropDownOptions});
+            toolStripFilters.Name = "toolStripFilters";
+            toolStripFilters.Location = new Point(1, 0);
+            toolStripFilters.Size = new Size(710, 25);
+            toolStripFilters.TabIndex = 0;
+            toolStripFilters.Text = "toolStripFilters";
             // lv
-            this.lv = new ListViewEx();
-            this.lv.ShowItemToolTips = true;
-            this.imageColumnHeader = new ColumnHeader();
-            this.imageColumnHeader.Text = string.Empty;
-            this.imageColumnHeader.Width = 20;
-            this.frameColumnHeader = new ColumnHeader();
-            this.frameColumnHeader.Text = string.Empty;
-            this.lv.Columns.AddRange(new ColumnHeader[] {
-            this.imageColumnHeader,
-            this.frameColumnHeader});
-            this.lv.FullRowSelect = true;
-            this.lv.BorderStyle = BorderStyle.None;
-            this.lv.Dock = System.Windows.Forms.DockStyle.Fill;
+            lv = new ListViewEx();
+            lv.ShowItemToolTips = true;
+            imageColumnHeader = new ColumnHeader();
+            imageColumnHeader.Text = string.Empty;
+            imageColumnHeader.Width = 20;
+            frameColumnHeader = new ColumnHeader();
+            frameColumnHeader.Text = string.Empty;
+            lv.Columns.AddRange(new ColumnHeader[] {
+            imageColumnHeader,
+            frameColumnHeader});
+            lv.FullRowSelect = true;
+            lv.BorderStyle = BorderStyle.None;
+            lv.Dock = DockStyle.Fill;
             foreach (ColumnHeader column in lv.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
             }
             lv.SmallImageList = imageList;
             currentImageIndex = imageList.Images.IndexOfKey("StartContinue");
-            lv.View = System.Windows.Forms.View.Details;
+            lv.View = View.Details;
             lv.MouseDoubleClick += Lv_MouseDoubleClick;
             lv.KeyDown += Lv_KeyDown;
             lv.SizeChanged += Lv_SizeChanged;
-            this.Controls.Add(lv);
-            this.Controls.Add(toolStripFilters);
-            this.toolStripFilters.ResumeLayout(false);
-            this.toolStripFilters.PerformLayout();
+            Controls.Add(lv);
+            Controls.Add(toolStripFilters);
+            toolStripFilters.ResumeLayout(false);
+            toolStripFilters.PerformLayout();
         }
 
         public void InitializeContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            this.copyContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, this.CopyTextClick);
-            this.copyContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
-            this.copyAllContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyAll"), null, this.CopyAllTextClick);
-            this.setFrameContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.SetCurrentFrame"), null, this.SetCurrentFrameClick);
-            this.setFrameContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
-            this.gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, this.GotoSourceClick);
-            this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Shift | Keys.Enter);
-            this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, this.JustMyCodeClick);
-            this.justMyCodeContextMenuItem.CheckOnClick = true;
-            menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
-            this.lv.ContextMenuStrip = menu;
+            copyContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, CopyTextClick);
+            copyContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
+            copyAllContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyAll"), null, CopyAllTextClick);
+            setFrameContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.SetCurrentFrame"), null, SetCurrentFrameClick);
+            setFrameContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
+            gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, GotoSourceClick);
+            gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Shift | Keys.Enter);
+            justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, JustMyCodeClick);
+            justMyCodeContextMenuItem.CheckOnClick = true;
+            menu.Items.AddRange(new ToolStripItem[] {copyContextMenuItem, copyAllContextMenuItem, new ToolStripSeparator(), setFrameContextMenuItem, gotoSourceContextMenuItem, justMyCodeContextMenuItem});
+            lv.ContextMenuStrip = menu;
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
-            this.toolStripFilters.Renderer = new DockPanelStripRenderer();
+            toolStripFilters.Renderer = new DockPanelStripRenderer();
             menu.Opening += ContextMenuOpening;
         }
 
         private void InitializeLocalization()
         {
-            this.toolStripLabelFilter.Text = TextHelper.GetString("Label.Filter");
-            this.toolStripItemMatchCase.Text = TextHelper.GetString("Label.MatchCase");
-            this.toolStripItemRegEx.Text = TextHelper.GetString("Label.RegularExpression");
-            this.toolStripItemNegate.Text = TextHelper.GetString("Label.MatchOpposite");
-            this.toolStripDropDownOptions.Text = TextHelper.GetString("Label.Options");
+            toolStripLabelFilter.Text = TextHelper.GetString("Label.Filter");
+            toolStripItemMatchCase.Text = TextHelper.GetString("Label.MatchCase");
+            toolStripItemRegEx.Text = TextHelper.GetString("Label.RegularExpression");
+            toolStripItemNegate.Text = TextHelper.GetString("Label.MatchOpposite");
+            toolStripDropDownOptions.Text = TextHelper.GetString("Label.Options");
         }
 
         public void ClearItem()
@@ -280,7 +280,7 @@ namespace FlashDebugger
                     if (!ownFile)
                     {
                         Color color = PluginBase.MainForm.GetThemeColor("ListView.ForeColor");
-                        if (color == Color.Empty) color = System.Drawing.SystemColors.GrayText;
+                        if (color == Color.Empty) color = SystemColors.GrayText;
                         listItem.SubItems[1].ForeColor = color;
                     }
                     wholeFrameStack.Add(listItem);
@@ -316,16 +316,16 @@ namespace FlashDebugger
 
         private void Lv_SizeChanged(object sender, EventArgs e)
         {
-            this.frameColumnHeader.Width = lv.Width - this.imageColumnHeader.Width;
+            frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
         }
 
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButton_Click(object sender, System.EventArgs e)
+        private void ClearFilterButton_Click(object sender, EventArgs e)
         {
-            this.clearFilterButton.Enabled = false;
-            this.toolStripTextBoxFilter.Clear();
+            clearFilterButton.Enabled = false;
+            toolStripTextBoxFilter.Clear();
         }
 
         /// <summary>
@@ -333,8 +333,8 @@ namespace FlashDebugger
         /// </summary>
         private void ToolStripTextFieldFilter_Changed(object sender, EventArgs e)
         {
-            this.clearFilterButton.Enabled = this.toolStripTextBoxFilter.Text.Trim() != string.Empty;
-            this.FilterResults();
+            clearFilterButton.Enabled = toolStripTextBoxFilter.Text.Trim() != string.Empty;
+            FilterResults();
         }
 
         private void FilterOption_Click(object sender, EventArgs e)

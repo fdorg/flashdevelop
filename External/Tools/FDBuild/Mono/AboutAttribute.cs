@@ -8,12 +8,12 @@ namespace Mono
         // Methods
         public AboutAttribute(string details)
         {
-            this.Details = details;
+            Details = details;
         }
 
         public override string ToString()
         {
-            return this.Details;
+            return Details;
         }
 
 

@@ -2574,7 +2574,7 @@ namespace CodeFormatter.Handlers
 
         public void setUsePrivateTags(bool usePrivateTags)
         {
-            this.mUsePrivateTags = usePrivateTags;
+            mUsePrivateTags = usePrivateTags;
         }
 
         public List<string> getPrivateTags()
@@ -2584,7 +2584,7 @@ namespace CodeFormatter.Handlers
 
         public void setPrivateTags(List<string> privateTags)
         {
-            this.mPrivateTags = privateTags;
+            mPrivateTags = privateTags;
         }
 
         public bool isUseSpacesInsideAttrBraces()

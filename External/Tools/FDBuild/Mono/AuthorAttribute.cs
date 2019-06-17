@@ -8,23 +8,23 @@ namespace Mono
         // Methods
         public AuthorAttribute(string name)
         {
-            this.Name = name;
-            this.SubProject = null;
+            Name = name;
+            SubProject = null;
         }
 
         public AuthorAttribute(string name, string subProject)
         {
-            this.Name = name;
-            this.SubProject = subProject;
+            Name = name;
+            SubProject = subProject;
         }
 
         public override string ToString()
         {
-            if (this.SubProject == null)
+            if (SubProject == null)
             {
-                return this.Name;
+                return Name;
             }
-            return (this.Name + " (" + this.SubProject + ")");
+            return (Name + " (" + SubProject + ")");
         }
 
 

@@ -20,9 +20,9 @@ namespace AirProperties.Forms
         {
             InitializeComponent();
 
-            this.OKButton.Text = TextHelper.GetString("Label.Ok");
-            this.CancelButton1.Text = TextHelper.GetString("Label.Cancel");
-            this.Text = TextHelper.GetString("Title.SelectIOSDevices");
+            OKButton.Text = TextHelper.GetString("Label.Ok");
+            CancelButton1.Text = TextHelper.GetString("Label.Cancel");
+            Text = TextHelper.GetString("Title.SelectIOSDevices");
 
             var iPadDevices = new DeviceClassification("iPad", "iPad", new[]
                 {

@@ -14,16 +14,16 @@ namespace LintingHelper
         [LocalizedDescription("LintingHelper.Description.LintOnSave"), DefaultValue(true)]
         public bool LintOnSave
         {
-            get { return this.lintOnSave; }
-            set { this.lintOnSave = value; }
+            get { return lintOnSave; }
+            set { lintOnSave = value; }
         }
 
         [DisplayName("Lint after opening a file")]
         [LocalizedDescription("LintingHelper.Description.LintOnOpen"), DefaultValue(true)]
         public bool LintOnOpen
         {
-            get { return this.lintOnOpen; }
-            set { this.lintOnOpen = value; }
+            get { return lintOnOpen; }
+            set { lintOnOpen = value; }
         }
     }
 }

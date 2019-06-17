@@ -2306,10 +2306,10 @@ public class MXMLLexer : Lexer {
     protected DFA13 dfa13;
     private void InitializeCyclicDFAs()
     {
-        this.dfa14 = new DFA14(this);
-        this.dfa13 = new DFA13(this);
-        this.dfa14.specialStateTransitionHandler = DFA14_SpecialStateTransition;
-        this.dfa13.specialStateTransitionHandler = DFA13_SpecialStateTransition;
+        dfa14 = new DFA14(this);
+        dfa13 = new DFA13(this);
+        dfa14.specialStateTransitionHandler = DFA14_SpecialStateTransition;
+        dfa13.specialStateTransitionHandler = DFA13_SpecialStateTransition;
     }
 
     const string DFA14_eotS =
@@ -2481,14 +2481,14 @@ public class MXMLLexer : Lexer {
         public DFA14(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 14;
-            this.eot = DFA14_eot;
-            this.eof = DFA14_eof;
-            this.min = DFA14_min;
-            this.max = DFA14_max;
-            this.accept = DFA14_accept;
-            this.special = DFA14_special;
-            this.transition = DFA14_transition;
+            decisionNumber = 14;
+            eot = DFA14_eot;
+            eof = DFA14_eof;
+            min = DFA14_min;
+            max = DFA14_max;
+            accept = DFA14_accept;
+            special = DFA14_special;
+            transition = DFA14_transition;
 
         }
 
@@ -2593,14 +2593,14 @@ public class MXMLLexer : Lexer {
         public DFA13(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 13;
-            this.eot = DFA13_eot;
-            this.eof = DFA13_eof;
-            this.min = DFA13_min;
-            this.max = DFA13_max;
-            this.accept = DFA13_accept;
-            this.special = DFA13_special;
-            this.transition = DFA13_transition;
+            decisionNumber = 13;
+            eot = DFA13_eot;
+            eof = DFA13_eof;
+            min = DFA13_min;
+            max = DFA13_max;
+            accept = DFA13_accept;
+            special = DFA13_special;
+            transition = DFA13_transition;
 
         }
 

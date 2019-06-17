@@ -12,7 +12,7 @@ namespace ProjectManager.Projects.AS3
         public AS3ProjectReader(string filename)
             : base(filename, new AS3Project(filename))
         {
-            this.project = base.Project as AS3Project;
+            project = Project as AS3Project;
         }
 
         public new AS3Project ReadProject()

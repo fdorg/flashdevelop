@@ -45,12 +45,12 @@ namespace CodeAnalyzer
         {
             string args = "-Xmx256m -jar \"" + pmdPath + "\" -s \"" + sourcePath + "\" -o \"" + projectPath + "\"";
             if (!string.IsNullOrEmpty(pmdRuleset) && File.Exists(pmdRuleset)) args += " -r \"" + pmdRuleset + "\"";
-            this.SetStatusText(TextHelper.GetString("Info.RunningFlexPMD"));
-            this.pmdRunner = new ProcessRunner();
-            this.pmdRunner.ProcessEnded += this.PmdRunnerProcessEnded;
-            this.pmdRunner.Error += this.PmdRunnerError;
-            this.pmdRunner.Run("java", args, true);
-            this.errorLog = string.Empty;
+            SetStatusText(TextHelper.GetString("Info.RunningFlexPMD"));
+            pmdRunner = new ProcessRunner();
+            pmdRunner.ProcessEnded += PmdRunnerProcessEnded;
+            pmdRunner.Error += PmdRunnerError;
+            pmdRunner.Run("java", args, true);
+            errorLog = string.Empty;
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace CodeAnalyzer
         {
             if (exitCode != 0)
             {
-                this.pmdWatcher.EnableRaisingEvents = false;
+                pmdWatcher.EnableRaisingEvents = false;
                 PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
-                TraceManager.Add(this.errorLog);
+                TraceManager.Add(errorLog);
             }
         }
 
@@ -71,7 +71,7 @@ namespace CodeAnalyzer
         /// </summary>
         private void PmdRunnerError(object sender, string line)
         {
-            this.errorLog += line + "\n";
+            errorLog += line + "\n";
         }
 
         /// <summary>
@@ -79,24 +79,24 @@ namespace CodeAnalyzer
         /// </summary>
         private void WatchFile(string projectPath)
         {
-            this.pmdWatcher = new FileSystemWatcher();
-            this.pmdWatcher.EnableRaisingEvents = false;
-            this.pmdWatcher.Filter = "pmd.xml";
-            this.pmdWatcher.Created += this.onCreateFile;
-            this.deleteTimer = new Timer();
-            this.deleteTimer.Enabled = false;
-            this.deleteTimer.AutoReset = false;
-            this.deleteTimer.Interval = 500;
-            this.deleteTimer.Elapsed += this.onTimedDelete;
-            this.watchedFile = Path.Combine(projectPath, "pmd.xml");
-            string oldFile = Path.ChangeExtension(this.watchedFile, "old");
-            if (File.Exists(this.watchedFile))
+            pmdWatcher = new FileSystemWatcher();
+            pmdWatcher.EnableRaisingEvents = false;
+            pmdWatcher.Filter = "pmd.xml";
+            pmdWatcher.Created += onCreateFile;
+            deleteTimer = new Timer();
+            deleteTimer.Enabled = false;
+            deleteTimer.AutoReset = false;
+            deleteTimer.Interval = 500;
+            deleteTimer.Elapsed += onTimedDelete;
+            watchedFile = Path.Combine(projectPath, "pmd.xml");
+            string oldFile = Path.ChangeExtension(watchedFile, "old");
+            if (File.Exists(watchedFile))
             {
                 if (File.Exists(oldFile)) File.Delete(oldFile);
-                File.Move(this.watchedFile, oldFile);
+                File.Move(watchedFile, oldFile);
             }
-            this.pmdWatcher.Path = projectPath;
-            this.pmdWatcher.EnableRaisingEvents = true;
+            pmdWatcher.Path = projectPath;
+            pmdWatcher.EnableRaisingEvents = true;
         }
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace CodeAnalyzer
         {
             if (e.Name.ToLower() == "pmd.xml")
             {
-                this.pmdWatcher.EnableRaisingEvents = false;
-                this.deleteTimer.Enabled = true;
+                pmdWatcher.EnableRaisingEvents = false;
+                deleteTimer.Enabled = true;
             }
         }
 
@@ -119,16 +119,16 @@ namespace CodeAnalyzer
             Form mainForm = PluginBase.MainForm as Form;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { this.onTimedDelete(sender, e); });
+                mainForm.BeginInvoke((MethodInvoker)delegate { onTimedDelete(sender, e); });
                 return;
             }
             try
             {
-                if (File.Exists(this.watchedFile))
+                if (File.Exists(watchedFile))
                 {
                     string currFile = string.Empty;
                     PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
-                    XmlTextReader reader = new XmlTextReader(this.watchedFile);
+                    XmlTextReader reader = new XmlTextReader(watchedFile);
                     while (reader.Read())
                     {
                         if (reader.NodeType == XmlNodeType.Element && reader.Name == "file")
@@ -152,14 +152,14 @@ namespace CodeAnalyzer
                         }
                     }
                     reader.Close();
-                    string oldFile = Path.ChangeExtension(this.watchedFile, "old");
-                    if (File.Exists(this.watchedFile))
+                    string oldFile = Path.ChangeExtension(watchedFile, "old");
+                    if (File.Exists(watchedFile))
                     {
                         if (File.Exists(oldFile)) File.Delete(oldFile);
-                        File.Move(this.watchedFile, oldFile);
+                        File.Move(watchedFile, oldFile);
                     }
                     PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
-                    this.SetStatusText(TextHelper.GetString("Info.FlexPMDFinished"));
+                    SetStatusText(TextHelper.GetString("Info.FlexPMDFinished"));
                 }
             }
             catch (Exception ex)

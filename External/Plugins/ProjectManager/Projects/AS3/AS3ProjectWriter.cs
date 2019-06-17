@@ -9,7 +9,7 @@ namespace ProjectManager.Projects.AS3
         public AS3ProjectWriter(AS3Project project, string filename)
             : base(project, filename)
         {
-            this.project = base.Project as AS3Project;
+            this.project = Project as AS3Project;
         }
 
         protected override void OnAfterWriteClasspaths()

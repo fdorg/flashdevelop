@@ -13,7 +13,7 @@ namespace ProjectManager.Projects
             : base(new FileStream(filename, File.Exists(filename) ? FileMode.Truncate : FileMode.CreateNew), Encoding.UTF8)
         {
             this.project = project;
-            this.Formatting = Formatting.Indented;
+            Formatting = Formatting.Indented;
         }
 
         protected Project Project { get { return project; } }

@@ -24,8 +24,8 @@ namespace BasicCompletion
         [LocalizedDescription("BasicCompletion.Description.AutoInsertType")]
         public AutoInsert AutoInsertType
         {
-            get { return this.autoInsertType; }
-            set { this.autoInsertType = value; }
+            get { return autoInsertType; }
+            set { autoInsertType = value; }
         }
 
         /// <summary> 
@@ -35,8 +35,8 @@ namespace BasicCompletion
         [LocalizedDescription("BasicCompletion.Description.DisableAutoCompletion")]
         public bool DisableAutoCompletion
         {
-            get { return this.disableAutoCompletion; }
-            set { this.disableAutoCompletion = value; }
+            get { return disableAutoCompletion; }
+            set { disableAutoCompletion = value; }
         }
 
     }

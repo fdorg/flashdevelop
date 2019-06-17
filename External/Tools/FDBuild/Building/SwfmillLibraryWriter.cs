@@ -13,7 +13,7 @@ namespace ProjectManager.Building
 
         public SwfmillLibraryWriter(string libraryPath) : base(libraryPath, Encoding.UTF8)
         {
-            base.Formatting = Formatting.Indented;
+            Formatting = Formatting.Indented;
         }
 
         public void WriteProject(Project project)

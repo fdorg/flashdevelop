@@ -15,7 +15,7 @@ namespace ProjectManager.Building
         {
             this.project = project;
             project.CurrentSDK = compilerPath;
-            this.vars = new BuildEventVars(project);
+            vars = new BuildEventVars(project);
         }
 
         //parse line into command/argument pair

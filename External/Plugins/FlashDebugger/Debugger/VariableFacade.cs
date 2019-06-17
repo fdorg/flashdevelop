@@ -140,7 +140,7 @@ namespace FlashDebugger
 
         public int getIsolateId()
         {
-            return this.getIsolateId();
+            return getIsolateId();
         }
     }
 

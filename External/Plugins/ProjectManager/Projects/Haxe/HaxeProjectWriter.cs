@@ -7,7 +7,7 @@ namespace ProjectManager.Projects.Haxe
         public HaxeProjectWriter(HaxeProject project, string filename)
             : base(project, filename)
         {
-            this.project = base.Project as HaxeProject;
+            this.project = Project as HaxeProject;
         }
 
         protected override void OnAfterWriteClasspaths()

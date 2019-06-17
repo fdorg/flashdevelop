@@ -131,10 +131,10 @@ namespace FDBuild
         public static void BuildProject(string projectFile)
         {
             Project project = ProjectLoader.Load(projectFile);
-            Program.BuildOptions.Language = project.Language.ToUpper();
+            BuildOptions.Language = project.Language.ToUpper();
 
-            ProjectBuilder builder = ProjectBuilder.Create(project, Program.BuildOptions.IpcName, Program.BuildOptions.CompilerPath);
-            builder.BuildCommand(Program.BuildOptions.ExtraClasspaths, Program.BuildOptions.NoTrace);
+            ProjectBuilder builder = ProjectBuilder.Create(project, BuildOptions.IpcName, BuildOptions.CompilerPath);
+            builder.BuildCommand(BuildOptions.ExtraClasspaths, BuildOptions.NoTrace);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace FDBuild
             //Project project = ProjectLoader.Load(projectFile);
             //Program.BuildOptions.Language = project.Language.ToUpper();
 
-            AS3ProjectBuilder builder = new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
+            AS3ProjectBuilder builder = new AS3ProjectBuilder(null, BuildOptions.CompilerPath, BuildOptions.IpcName);
             builder.CompileWithMxmlc(workingdir, arguments, true);
             
         }
@@ -159,7 +159,7 @@ namespace FDBuild
         /// <param name="arguments">the compc arguments</param>
         public static void BuildCOMPC( string workingdir, string arguments )
         {
-            new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
+            new AS3ProjectBuilder(null, BuildOptions.CompilerPath, BuildOptions.IpcName);
         }
     }
 }

@@ -69,8 +69,8 @@ namespace AirProperties
             InitializeControls();
             InitializeGraphics();
             InitializeLocalization();
-            this.Font = PluginCore.PluginBase.MainForm.Settings.DefaultFont;
-            this.TitleHeading.Font = new System.Drawing.Font(this.Font, System.Drawing.FontStyle.Bold);
+            Font = PluginBase.MainForm.Settings.DefaultFont;
+            TitleHeading.Font = new Font(Font, FontStyle.Bold);
             _iconFields = new List<PropertyManager.AirApplicationIconField> 
             { 
                 new PropertyManager.AirApplicationIconField("16", PropertyManager.AirVersion.V10),
@@ -101,123 +101,123 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("1024", PropertyManager.AirVersion.V34)
             };
 
-            if (this._pluginMain.Settings.SelectPropertiesFileOnOpen) SelectAndLoadPropertiesFile();
+            if (_pluginMain.Settings.SelectPropertiesFileOnOpen) SelectAndLoadPropertiesFile();
             else
             {
-                _propertiesFilePath = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
+                _propertiesFilePath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
                 LoadProperties(true);
             }
             string airVersion = PropertyManager.Version;
             if (PropertyManager.IsUnsupportedVersion) airVersion += "*";
-            SetTitle(PluginCore.PluginBase.CurrentProject.Name, airVersion);
+            SetTitle(PluginBase.CurrentProject.Name, airVersion);
         }
 
         private void InitializeLocalization()
         {
             // Common
-            this.OKButton.Text = TextHelper.GetString("Label.Ok");
-            this.HelpButton1.Text = TextHelper.GetString("Label.Help");
-            this.CancelButton1.Text = TextHelper.GetString("Label.Cancel");
-            this.TitleHeading.Text = TextHelper.GetString("Title.AirWizard");
-            this.TitleDescription.Text = TextHelper.GetString("Label.TitleDesc").Replace("{0}", "\r\n");
+            OKButton.Text = TextHelper.GetString("Label.Ok");
+            HelpButton1.Text = TextHelper.GetString("Label.Help");
+            CancelButton1.Text = TextHelper.GetString("Label.Cancel");
+            TitleHeading.Text = TextHelper.GetString("Title.AirWizard");
+            TitleDescription.Text = TextHelper.GetString("Label.TitleDesc").Replace("{0}", "\r\n");
             // Details
-            this.DetailsTabPage.Text = TextHelper.GetString("Label.Details");
-            this.DescriptionLabel.Text = TextHelper.GetString("Label.Description");
-            this.VersionNoLabel.Text = TextHelper.GetString("Label.VersionNo");
-            this.CopyrightLabel.Text = TextHelper.GetString("Label.Copyright");
-            this.VersionLabel.Text = TextHelper.GetString("Label.Version");
-            this.LocaleLabel.Text = TextHelper.GetString("Label.Locale");
-            this.NameLabel.Text = TextHelper.GetString("Label.Name");
-            this.IDLabel.Text = TextHelper.GetString("Label.Id");
+            DetailsTabPage.Text = TextHelper.GetString("Label.Details");
+            DescriptionLabel.Text = TextHelper.GetString("Label.Description");
+            VersionNoLabel.Text = TextHelper.GetString("Label.VersionNo");
+            CopyrightLabel.Text = TextHelper.GetString("Label.Copyright");
+            VersionLabel.Text = TextHelper.GetString("Label.Version");
+            LocaleLabel.Text = TextHelper.GetString("Label.Locale");
+            NameLabel.Text = TextHelper.GetString("Label.Name");
+            IDLabel.Text = TextHelper.GetString("Label.Id");
             // Installation
-            this.FileNameLabel.Text = TextHelper.GetString("Label.FileName");
-            this.PublisherIdLabel.Text = TextHelper.GetString("Label.PublisherId");
-            this.InstallationTabPage.Text = TextHelper.GetString("Label.Installation");
-            this.MinPatchLevelLabel.Text = TextHelper.GetString("Label.MinPatchLevel");
-            this.InstallFolderLabel.Text = TextHelper.GetString("Label.InstallFolder");
-            this.ProgramMenuFolderLabel.Text = TextHelper.GetString("Label.ProgramMenuFolder");
-            this.SupportedProfilesGroupBox.Text = TextHelper.GetString("Label.SupportedProfiles");
-            this.ExtendedDesktopLabel.Text = TextHelper.GetString("Label.ExtendedDesktop");
-            this.MobileDeviceLabel.Text = TextHelper.GetString("Label.MobileDevice");
-            this.ExtendedTvLabel.Text = TextHelper.GetString("Label.ExtendedTv");
-            this.DesktopLabel.Text = TextHelper.GetString("Label.Desktop");
-            this.TvLabel.Text = TextHelper.GetString("Label.Tv");
+            FileNameLabel.Text = TextHelper.GetString("Label.FileName");
+            PublisherIdLabel.Text = TextHelper.GetString("Label.PublisherId");
+            InstallationTabPage.Text = TextHelper.GetString("Label.Installation");
+            MinPatchLevelLabel.Text = TextHelper.GetString("Label.MinPatchLevel");
+            InstallFolderLabel.Text = TextHelper.GetString("Label.InstallFolder");
+            ProgramMenuFolderLabel.Text = TextHelper.GetString("Label.ProgramMenuFolder");
+            SupportedProfilesGroupBox.Text = TextHelper.GetString("Label.SupportedProfiles");
+            ExtendedDesktopLabel.Text = TextHelper.GetString("Label.ExtendedDesktop");
+            MobileDeviceLabel.Text = TextHelper.GetString("Label.MobileDevice");
+            ExtendedTvLabel.Text = TextHelper.GetString("Label.ExtendedTv");
+            DesktopLabel.Text = TextHelper.GetString("Label.Desktop");
+            TvLabel.Text = TextHelper.GetString("Label.Tv");
             // Application
-            this.ApplicationTabPage.Text = TextHelper.GetString("Label.Application");
-            this.CustomUpdateUILabel.Text = TextHelper.GetString("Label.CustomUpdateUI");
-            this.BrowersInvocationLabel.Text = TextHelper.GetString("Label.BrowserInvocation");
-            this.AppIconsGroupBox.Text = TextHelper.GetString("Label.Icons");
+            ApplicationTabPage.Text = TextHelper.GetString("Label.Application");
+            CustomUpdateUILabel.Text = TextHelper.GetString("Label.CustomUpdateUI");
+            BrowersInvocationLabel.Text = TextHelper.GetString("Label.BrowserInvocation");
+            AppIconsGroupBox.Text = TextHelper.GetString("Label.Icons");
             // Initial Window
-            this.TitleLabel.Text = TextHelper.GetString("Label.Title");
-            this.ContentLabel.Text = TextHelper.GetString("Label.Content");
-            this.VisibleLabel.Text = TextHelper.GetString("Label.Visible");
-            this.ResizableLabel.Text = TextHelper.GetString("Label.Resizable");
-            this.TransparentLabel.Text = TextHelper.GetString("Label.Transparent");
-            this.MinimizableLabel.Text = TextHelper.GetString("Label.Minimizable");
-            this.MaximizableLabel.Text = TextHelper.GetString("Label.Maximizable");
-            this.WindowBoundsGroupBox.Text = TextHelper.GetString("Label.WindowBounds");
-            this.InitialLocationLabel.Text = TextHelper.GetString("Label.InitialLocation");
-            this.WindowedPlatformsTabPage.Text = TextHelper.GetString("Label.WindowedPlatforms");
-            this.NonWindowedPlatformsTabPage.Text = TextHelper.GetString("Label.NonWindowedPlatforms");
-            this.SystemChromeLabel.Text = TextHelper.GetString("Label.SystemChrome");
-            this.InitialSizeLabel.Text = TextHelper.GetString("Label.InitialSize");
-            this.MinimumSizeLabel.Text = TextHelper.GetString("Label.MinimumSize");
-            this.MaximumSizeLabel.Text = TextHelper.GetString("Label.MaximumSize");
-            this.ApectRatioLabel.Text = TextHelper.GetString("Label.AspectRatio");
-            this.RenderModeLabel.Text = TextHelper.GetString("Label.RenderMode");
-            this.AutoOrientsLabel.Text = TextHelper.GetString("Label.AutoOrients");
-            this.FullscreenLabel.Text = TextHelper.GetString("Label.Fullscreen");
+            TitleLabel.Text = TextHelper.GetString("Label.Title");
+            ContentLabel.Text = TextHelper.GetString("Label.Content");
+            VisibleLabel.Text = TextHelper.GetString("Label.Visible");
+            ResizableLabel.Text = TextHelper.GetString("Label.Resizable");
+            TransparentLabel.Text = TextHelper.GetString("Label.Transparent");
+            MinimizableLabel.Text = TextHelper.GetString("Label.Minimizable");
+            MaximizableLabel.Text = TextHelper.GetString("Label.Maximizable");
+            WindowBoundsGroupBox.Text = TextHelper.GetString("Label.WindowBounds");
+            InitialLocationLabel.Text = TextHelper.GetString("Label.InitialLocation");
+            WindowedPlatformsTabPage.Text = TextHelper.GetString("Label.WindowedPlatforms");
+            NonWindowedPlatformsTabPage.Text = TextHelper.GetString("Label.NonWindowedPlatforms");
+            SystemChromeLabel.Text = TextHelper.GetString("Label.SystemChrome");
+            InitialSizeLabel.Text = TextHelper.GetString("Label.InitialSize");
+            MinimumSizeLabel.Text = TextHelper.GetString("Label.MinimumSize");
+            MaximumSizeLabel.Text = TextHelper.GetString("Label.MaximumSize");
+            ApectRatioLabel.Text = TextHelper.GetString("Label.AspectRatio");
+            RenderModeLabel.Text = TextHelper.GetString("Label.RenderMode");
+            AutoOrientsLabel.Text = TextHelper.GetString("Label.AutoOrients");
+            FullscreenLabel.Text = TextHelper.GetString("Label.Fullscreen");
             // Filetypes
-            this.FileTypesTabPage.Text = TextHelper.GetString("Label.FileTypes");
-            this.FileTypeNameColumnHeader.Text = TextHelper.GetString("Label.Name");
-            this.FileTypeExtensionColumnHeader.Text = TextHelper.GetString("Label.Extension");
-            this.FileTypeDetailsTabPage.Text = TextHelper.GetString("Label.Details");
-            this.FTExtensionLabel.Text = TextHelper.GetString("Label.Extension");
-            this.FTDescriptionLabel.Text = TextHelper.GetString("Label.Description");
-            this.FTContentTypeLabel.Text = TextHelper.GetString("Label.ContentType");
-            this.RemoveFileTypeButton.Text = TextHelper.GetString("Label.Remove");
-            this.NewFileTypeButton.Text = TextHelper.GetString("Label.New");
-            this.FTNameLabel.Text = TextHelper.GetString("Label.Name");
+            FileTypesTabPage.Text = TextHelper.GetString("Label.FileTypes");
+            FileTypeNameColumnHeader.Text = TextHelper.GetString("Label.Name");
+            FileTypeExtensionColumnHeader.Text = TextHelper.GetString("Label.Extension");
+            FileTypeDetailsTabPage.Text = TextHelper.GetString("Label.Details");
+            FTExtensionLabel.Text = TextHelper.GetString("Label.Extension");
+            FTDescriptionLabel.Text = TextHelper.GetString("Label.Description");
+            FTContentTypeLabel.Text = TextHelper.GetString("Label.ContentType");
+            RemoveFileTypeButton.Text = TextHelper.GetString("Label.Remove");
+            NewFileTypeButton.Text = TextHelper.GetString("Label.New");
+            FTNameLabel.Text = TextHelper.GetString("Label.Name");
             // Extensions
-            this.ExtensionsTabPage.Text = TextHelper.GetString("Label.Extensions");
-            this.ExtensionIdLabel.Text = TextHelper.GetString("Label.ExtensionId");
-            this.ExtensionsColumnHeader.Text = TextHelper.GetString("Label.Extensions");
-            this.ExtensionRemoveButton.Text = TextHelper.GetString("Label.Remove");
-            this.ExtensionAddButton.Text = TextHelper.GetString("Label.Add");
+            ExtensionsTabPage.Text = TextHelper.GetString("Label.Extensions");
+            ExtensionIdLabel.Text = TextHelper.GetString("Label.ExtensionId");
+            ExtensionsColumnHeader.Text = TextHelper.GetString("Label.Extensions");
+            ExtensionRemoveButton.Text = TextHelper.GetString("Label.Remove");
+            ExtensionAddButton.Text = TextHelper.GetString("Label.Add");
             // Mobile additions
-            this.AndroidManifestAdditionsTabPage.Text = TextHelper.GetString("Label.AndroidAdditions");
-            this.IPhoneInfoAdditionsTabPage.Text = TextHelper.GetString("Label.IPhoneAdditions");
+            AndroidManifestAdditionsTabPage.Text = TextHelper.GetString("Label.AndroidAdditions");
+            IPhoneInfoAdditionsTabPage.Text = TextHelper.GetString("Label.IPhoneAdditions");
             // New
-            this.DesktopResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
-            this.AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
-            this.AndroidColorDepthLabel.Text = TextHelper.GetString("Label.ColorDepth");
-            this.AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
-            this.AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
-            this.IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
-            this.IPhoneOtherBehaviorGroup.Text = TextHelper.GetString("Label.OtherBehavior");
-            this.label8.Text = TextHelper.GetString("Label.PushNotifications");
-            this.IPhoneExternalSWFsLabel.Text = TextHelper.GetString("Label.ExternalSWFs");
-            this.IPhoneLookGroup.Text = TextHelper.GetString("Label.LookAndFeel");
-            this.IPhonePrerrenderedIconLabel.Text = TextHelper.GetString("Label.PrerenderedIcon");
-            this.IPhoneStatusBarStyleLabel.Text = TextHelper.GetString("Label.StatusBarStyle");
-            this.IPhoneBackgroundBehaviorGroup.Text = TextHelper.GetString("Label.BackgroundBehavior");
-            this.IPhoneExitsOnSuspendLabel.Text = TextHelper.GetString("Label.ExitOnSuspend");
-            this.IPhoneDeviceBehaviorGroup.Text = TextHelper.GetString("Label.Display");
-            this.IPhoneResolutionExcludeButton.Text = TextHelper.GetString("Label.Exclude");
-            this.IPhoneResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
-            this.IPhoneForceCPULabel.Text = TextHelper.GetString("Label.CPURendering");
-            this.IPhoneDeviceLabel.Text = TextHelper.GetString("Label.SupportedDevices");
-            this.IPhoneInfoAdditionsLabel.Text = TextHelper.GetString("Label.InfoAdditions");
-            this.IPhoneEntitlementsLabel.Text = TextHelper.GetString("Label.Entitlements");
-            this.ExtensionBrowseButton.Text = TextHelper.GetString("Label.Browse");
+            DesktopResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
+            AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            AndroidColorDepthLabel.Text = TextHelper.GetString("Label.ColorDepth");
+            AndroidPermissionsLabel.Text = TextHelper.GetString("Label.SelectPermForInfo");
+            AndroidManifestAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            IPhoneInfoAdditionsButton.Text = TextHelper.GetString("Label.Advanced");
+            IPhoneOtherBehaviorGroup.Text = TextHelper.GetString("Label.OtherBehavior");
+            label8.Text = TextHelper.GetString("Label.PushNotifications");
+            IPhoneExternalSWFsLabel.Text = TextHelper.GetString("Label.ExternalSWFs");
+            IPhoneLookGroup.Text = TextHelper.GetString("Label.LookAndFeel");
+            IPhonePrerrenderedIconLabel.Text = TextHelper.GetString("Label.PrerenderedIcon");
+            IPhoneStatusBarStyleLabel.Text = TextHelper.GetString("Label.StatusBarStyle");
+            IPhoneBackgroundBehaviorGroup.Text = TextHelper.GetString("Label.BackgroundBehavior");
+            IPhoneExitsOnSuspendLabel.Text = TextHelper.GetString("Label.ExitOnSuspend");
+            IPhoneDeviceBehaviorGroup.Text = TextHelper.GetString("Label.Display");
+            IPhoneResolutionExcludeButton.Text = TextHelper.GetString("Label.Exclude");
+            IPhoneResolutionLabel.Text = TextHelper.GetString("Label.Resolution");
+            IPhoneForceCPULabel.Text = TextHelper.GetString("Label.CPURendering");
+            IPhoneDeviceLabel.Text = TextHelper.GetString("Label.SupportedDevices");
+            IPhoneInfoAdditionsLabel.Text = TextHelper.GetString("Label.InfoAdditions");
+            IPhoneEntitlementsLabel.Text = TextHelper.GetString("Label.Entitlements");
+            ExtensionBrowseButton.Text = TextHelper.GetString("Label.Browse");
         }
 
         private void InitializeGraphics()
         {
-            this.TitlePictureBox.Image = PluginMain.GetImage("blockdevice.png");
-            this.NamePictureBox.Image = PluginMain.GetImage("irc_protocol.png");
-            this.DescriptionPictureBox.Image = PluginMain.GetImage("irc_protocol.png");
-            this.LocalePictureBox.Image = PluginMain.GetImage("irc_protocol.png");
+            TitlePictureBox.Image = PluginMain.GetImage("blockdevice.png");
+            NamePictureBox.Image = PluginMain.GetImage("irc_protocol.png");
+            DescriptionPictureBox.Image = PluginMain.GetImage("irc_protocol.png");
+            LocalePictureBox.Image = PluginMain.GetImage("irc_protocol.png");
         }
 
         private void InitializeControls()
@@ -235,8 +235,8 @@ namespace AirProperties
             SoftKeyboardField.Items.Add(new ListItem(string.Empty, string.Empty));
             SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.None"), "none"));
             SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.Pan"), "pan"));
-            OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
-            OpenPropertiesFileDialog.InitialDirectory = Path.GetDirectoryName(PluginCore.PluginBase.CurrentProject.ProjectPath);
+            OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            OpenPropertiesFileDialog.InitialDirectory = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             AndroidManifestAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };
             IPhoneInfoAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };     
         }
@@ -436,7 +436,7 @@ namespace AirProperties
 
         public void SetTitle(string projectName, string airVersion)
         {
-            this.Text = " " + projectName + " - " + TextHelper.GetString("Title.AirWizard") + " (" + airVersion + ")";
+            Text = " " + projectName + " - " + TextHelper.GetString("Title.AirWizard") + " (" + airVersion + ")";
         }
 
         private void SetupUI()
@@ -648,7 +648,7 @@ namespace AirProperties
                         if (MessageBox.Show(string.Format(TextHelper.GetString("Alert.Message.UnsupportedAirDescriptorFile"),
                             _propertiesFile, PropertyManager.Version, PropertyManager.MaxSupportedVersion),
                             TextHelper.GetString("Alert.Title.UnsupportedAirDescriptorFile"),
-                            MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != System.Windows.Forms.DialogResult.OK)
+                            MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
                             return;
                     }
                     SetupUI();
@@ -699,7 +699,7 @@ namespace AirProperties
                     // Application tab
                     PropertyManager.GetProperty("allowBrowserInvocation", BrowserInvocationField);
                     PropertyManager.GetProperty("customUpdateUI", CustomUpdateUIField);
-                    foreach (PropertyManager.AirApplicationIconField icon in this._iconFields)
+                    foreach (PropertyManager.AirApplicationIconField icon in _iconFields)
                     {
                         if (icon.MinVersion <= PropertyManager.MajorVersion)
                         {
@@ -809,7 +809,7 @@ namespace AirProperties
             string[] files = Directory.GetFiles(_propertiesFilePath, "*-app.xml");
             foreach (string file in files)
                 if (LooksLikeAIRProperties(file)) return file;
-            foreach (string srcPath in PluginCore.PluginBase.CurrentProject.SourcePaths)
+            foreach (string srcPath in PluginBase.CurrentProject.SourcePaths)
             {
                 files = Directory.GetFiles(ProjectPaths.GetAbsolutePath(_propertiesFilePath, srcPath), "*-app.xml");
                 foreach (string file in files)
@@ -820,7 +820,7 @@ namespace AirProperties
                 if (LooksLikeAIRProperties(file)) return file;
 
             // look if we stored a custom path in the project's lcoal storage
-            ProjectManager.Projects.Project project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+            Project project = PluginBase.CurrentProject as Project;
             if (project.Storage.ContainsKey("air-descriptor"))
                 path = project.GetAbsolutePath(project.Storage["air-descriptor"]);
 
@@ -896,7 +896,7 @@ namespace AirProperties
                 // Application tab
                 PropertyManager.SetProperty("allowBrowserInvocation", BrowserInvocationField);
                 PropertyManager.SetProperty("customUpdateUI", CustomUpdateUIField);
-                foreach (PropertyManager.AirApplicationIconField icon in this._iconFields)
+                foreach (PropertyManager.AirApplicationIconField icon in _iconFields)
                 {
                     if (icon.MinVersion <= PropertyManager.MajorVersion)
                     {
@@ -933,7 +933,7 @@ namespace AirProperties
                     PropertyManager.SetExtensions(_extensions);
 
                     bool refreshProject = false;
-                    var project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+                    var project = PluginBase.CurrentProject as Project;
                     foreach (var extension in _extensions)
                     {
                         if (!string.IsNullOrEmpty(extension.Path))
@@ -1010,7 +1010,7 @@ namespace AirProperties
                 if (_isPropertiesLoaded)
                 {
                     // store custom property file location in project's local storage
-                    ProjectManager.Projects.Project project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+                    Project project = PluginBase.CurrentProject as Project;
                     project.Storage.Add("air-descriptor", project.GetRelativePath(_propertiesFile));
                     project.Save();
                 }
@@ -1047,9 +1047,9 @@ namespace AirProperties
         {
 
             string projectPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-            string iconFolder = this._pluginMain.Settings.ProjectIconsFolder;
+            string iconFolder = _pluginMain.Settings.ProjectIconsFolder;
             string destinationPath = projectPath + @"\" + iconFolder;
-            string packagedFileName = this._pluginMain.Settings.PackageIconsFolder;
+            string packagedFileName = _pluginMain.Settings.PackageIconsFolder;
             string filePrefix;
             if (isApplicationIcon) filePrefix = FileNameField.Text;
             else filePrefix = FileTypeExtensionField.Text;
@@ -1361,7 +1361,7 @@ namespace AirProperties
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void OKButton_Click(object sender, EventArgs e)
@@ -1784,7 +1784,7 @@ namespace AirProperties
                 {
                     if (extension.IsValid && string.IsNullOrEmpty(extension.Path))
                     {
-                        var project = PluginCore.PluginBase.CurrentProject as ProjectManager.Projects.Project;
+                        var project = PluginBase.CurrentProject as Project;
                         foreach (var externalPath in (project.CompilerOptions as MxmlcOptions).ExternalLibraryPaths)
                         {
                             if (Path.GetExtension(externalPath).ToUpperInvariant() == ".ANE")
@@ -1917,10 +1917,10 @@ namespace AirProperties
             field.Text = field.Text.Trim();
             if (field.Visible && field.Text.Length > 0 && (!Regex.IsMatch(field.Text, _AnyUriRegexPattern) || !ValidateImageExtension(field.Text)))
             {
-                this.ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
+                ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(field, string.Empty);
+            else ValidationErrorProvider.SetError(field, string.Empty);
         }
 
         private void ValidateFileTypeIconField(object sender, CancelEventArgs e)
@@ -1935,13 +1935,13 @@ namespace AirProperties
                 if (field.Text.Length > 0 && (!Regex.IsMatch(field.Text, _AnyUriRegexPattern) || !ValidateImageExtension(field.Text)))
                 {
                     selectedFileType.SetIconIsValid(Convert.ToInt16(size), false);
-                    this.ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
+                    ValidationErrorProvider.SetError(field, string.Format(TextHelper.GetString("Validation.InvalidProperty"), TextHelper.GetString("Label.Icon") + " " + size + " x " + size));
                     e.Cancel = true;
                 }
                 else
                 {
                     selectedFileType.SetIconIsValid(Convert.ToInt16(size), true);
-                    this.ValidationErrorProvider.SetError(field, string.Empty);
+                    ValidationErrorProvider.SetError(field, string.Empty);
                 }
                 RefreshSelectedFileType();
             }
@@ -1951,20 +1951,20 @@ namespace AirProperties
         {
             if (!Regex.IsMatch(IDField.Text, _IdRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(IDField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), IDLabel.Text));
+                ValidationErrorProvider.SetError(IDField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), IDLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(IDField, "");
+            else ValidationErrorProvider.SetError(IDField, "");
         }
 
         private void VersionField_Validating(object sender, CancelEventArgs e)
         {
             if (VersionField.Text.Length == 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
-                this.ValidationErrorProvider.SetError(VersionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
+                ValidationErrorProvider.SetError(VersionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(VersionField, "");
+            else ValidationErrorProvider.SetError(VersionField, "");
         }
 
         private void FileNameField_Validating(object sender, CancelEventArgs e)
@@ -1972,10 +1972,10 @@ namespace AirProperties
             FileNameField.Text = FileNameField.Text.Trim();
             if (!Regex.IsMatch(FileNameField.Text, _FileNameRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(FileNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FileNameLabel.Text));
+                ValidationErrorProvider.SetError(FileNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FileNameLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(FileNameField, "");
+            else ValidationErrorProvider.SetError(FileNameField, "");
         }
 
         private void InstallFolderField_Validating(object sender, CancelEventArgs e)
@@ -1983,10 +1983,10 @@ namespace AirProperties
             InstallFolderField.Text = InstallFolderField.Text.Trim();
             if (InstallFolderField.Text.Length > 0 && !Regex.IsMatch(InstallFolderField.Text, _FilePathRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(InstallFolderField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InstallFolderLabel.Text));
+                ValidationErrorProvider.SetError(InstallFolderField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InstallFolderLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(InstallFolderField, "");
+            else ValidationErrorProvider.SetError(InstallFolderField, "");
         }
 
         private void ProgramMenuFolderField_Validating(object sender, CancelEventArgs e)
@@ -1994,10 +1994,10 @@ namespace AirProperties
             ProgramMenuFolderField.Text = ProgramMenuFolderField.Text.Trim();
             if (ProgramMenuFolderField.Text.Length > 0 && !Regex.IsMatch(ProgramMenuFolderField.Text, _FilePathRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(ProgramMenuFolderField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ProgramMenuFolderLabel.Text));
+                ValidationErrorProvider.SetError(ProgramMenuFolderField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ProgramMenuFolderLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(ProgramMenuFolderField, "");
+            else ValidationErrorProvider.SetError(ProgramMenuFolderField, "");
         }
 
 
@@ -2006,10 +2006,10 @@ namespace AirProperties
             ContentField.Text = ContentField.Text.Trim();
             if (!Regex.IsMatch(ContentField.Text, _AnyUriRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(ContentField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ContentLabel.Text));
+                ValidationErrorProvider.SetError(ContentField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ContentLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(ContentField, "");
+            else ValidationErrorProvider.SetError(ContentField, "");
         }
 
         private void XField_Validating(object sender, CancelEventArgs e)
@@ -2017,10 +2017,10 @@ namespace AirProperties
             XField.Text = XField.Text.Trim();
             if (XField.Text.Length > 0 && !Regex.IsMatch(XField.Text, _CoordinateRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(XField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (X)"));
+                ValidationErrorProvider.SetError(XField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (X)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(XField, "");
+            else ValidationErrorProvider.SetError(XField, "");
         }
 
         private void YField_Validating(object sender, CancelEventArgs e)
@@ -2028,10 +2028,10 @@ namespace AirProperties
             YField.Text = YField.Text.Trim();
             if (YField.Text.Length > 0 && !Regex.IsMatch(YField.Text, _CoordinateRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(YField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (Y)"));
+                ValidationErrorProvider.SetError(YField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialLocationLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(YField, "");
+            else ValidationErrorProvider.SetError(YField, "");
         }
 
         private void WidthField_Validating(object sender, CancelEventArgs e)
@@ -2039,10 +2039,10 @@ namespace AirProperties
             WidthField.Text = WidthField.Text.Trim();
             if (WidthField.Text.Length > 0 && !Regex.IsMatch(WidthField.Text, _NumberRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(WidthField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (X)"));
+                ValidationErrorProvider.SetError(WidthField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (X)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(WidthField, "");
+            else ValidationErrorProvider.SetError(WidthField, "");
         }
 
         private void HeightField_Validating(object sender, CancelEventArgs e)
@@ -2050,10 +2050,10 @@ namespace AirProperties
             HeightField.Text = HeightField.Text.Trim();
             if (HeightField.Text.Length > 0 && !Regex.IsMatch(HeightField.Text, _NumberRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(HeightField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (Y)"));
+                ValidationErrorProvider.SetError(HeightField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), InitialSizeLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(HeightField, "");
+            else ValidationErrorProvider.SetError(HeightField, "");
         }
 
         private void MinSizeXField_Validating(object sender, CancelEventArgs e)
@@ -2074,10 +2074,10 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MinSizeXField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (X)"));
+                ValidationErrorProvider.SetError(MinSizeXField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (X)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(MinSizeXField, "");
+            else ValidationErrorProvider.SetError(MinSizeXField, "");
         }
 
         private void MinSizeYField_Validating(object sender, CancelEventArgs e)
@@ -2098,10 +2098,10 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MinSizeYField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (Y)"));
+                ValidationErrorProvider.SetError(MinSizeYField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MinimumSizeLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(MinSizeYField, "");
+            else ValidationErrorProvider.SetError(MinSizeYField, "");
         }
 
         private void MaxSizeXField_Validating(object sender, CancelEventArgs e)
@@ -2122,10 +2122,10 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MaxSizeXField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (X)"));
+                ValidationErrorProvider.SetError(MaxSizeXField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (X)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(MaxSizeXField, "");
+            else ValidationErrorProvider.SetError(MaxSizeXField, "");
         }
 
         private void MaxSizeYField_Validating(object sender, CancelEventArgs e)
@@ -2146,10 +2146,10 @@ namespace AirProperties
             }
             if (!isValid)
             {
-                this.ValidationErrorProvider.SetError(MaxSizeYField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (Y)"));
+                ValidationErrorProvider.SetError(MaxSizeYField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), MaximumSizeLabel.Text + " (Y)"));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(MaxSizeYField, "");
+            else ValidationErrorProvider.SetError(MaxSizeYField, "");
         }
 
         private void FileTypeNameField_Validating(object sender, CancelEventArgs e)
@@ -2162,13 +2162,13 @@ namespace AirProperties
                 if (FileTypeNameField.Text.Length == 0)
                 {
                     selectedFileType.NameIsValid = false;
-                    this.ValidationErrorProvider.SetError(FileTypeNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
+                    ValidationErrorProvider.SetError(FileTypeNameField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
                     e.Cancel = true;
                 }
                 else
                 {
                     selectedFileType.NameIsValid = true;
-                    this.ValidationErrorProvider.SetError(FileTypeNameField, "");
+                    ValidationErrorProvider.SetError(FileTypeNameField, "");
                 }
                 RefreshSelectedFileType();
             }
@@ -2185,13 +2185,13 @@ namespace AirProperties
                 if (!Regex.IsMatch(FileTypeExtensionField.Text, _FileNameRegexPattern))
                 {
                     selectedFileType.ExtensionIsValid = false;
-                    this.ValidationErrorProvider.SetError(FileTypeExtensionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTExtensionLabel.Text));
+                    ValidationErrorProvider.SetError(FileTypeExtensionField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTExtensionLabel.Text));
                     e.Cancel = true;
                 }
                 else
                 {
                     selectedFileType.ExtensionIsValid = true;
-                    this.ValidationErrorProvider.SetError(FileTypeExtensionField, "");
+                    ValidationErrorProvider.SetError(FileTypeExtensionField, "");
                 }
                 RefreshSelectedFileType();
             }
@@ -2218,13 +2218,13 @@ namespace AirProperties
                 if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
                 {
                     selectedFileType.ContentTypeIsValid = false;
-                    this.ValidationErrorProvider.SetError(FileTypeContentTypeField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
+                    ValidationErrorProvider.SetError(FileTypeContentTypeField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
                     e.Cancel = true;
                 }
                 else
                 {
                     selectedFileType.ContentTypeIsValid = true;
-                    this.ValidationErrorProvider.SetError(FileTypeContentTypeField, "");
+                    ValidationErrorProvider.SetError(FileTypeContentTypeField, "");
                 }
                 RefreshSelectedFileType();
             }
@@ -2247,10 +2247,10 @@ namespace AirProperties
             PublisherIdField.Text = PublisherIdField.Text.Trim();
             if (PublisherIdField.Text.Length > 0 && !Regex.IsMatch(PublisherIdField.Text, _PublisherRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(PublisherIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), PublisherIdLabel.Text));
+                ValidationErrorProvider.SetError(PublisherIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), PublisherIdLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(PublisherIdField, "");
+            else ValidationErrorProvider.SetError(PublisherIdField, "");
         }
 
         private void VersionNoField_Validating(object sender, CancelEventArgs e)
@@ -2258,10 +2258,10 @@ namespace AirProperties
             VersionNoField.Text = VersionNoField.Text.Trim();
             if (VersionNoField.Text.Length > 0 && !Regex.IsMatch(VersionNoField.Text, _VersionRegexPattern))
             {
-                this.ValidationErrorProvider.SetError(VersionNoField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionNoLabel.Text));
+                ValidationErrorProvider.SetError(VersionNoField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionNoLabel.Text));
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(VersionNoField, "");
+            else ValidationErrorProvider.SetError(VersionNoField, "");
         }
 
         private void ExtensionIdField_Validating(object sender, CancelEventArgs e)
@@ -2274,13 +2274,13 @@ namespace AirProperties
                 if (ExtensionIdField.Text.Length > 0 && !Regex.IsMatch(ExtensionIdField.Text, _ExtensionRegexPattern))
                 {
                     selectedExtension.IsValid = false;
-                    this.ValidationErrorProvider.SetError(ExtensionIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ExtensionIdLabel.Text));
+                    ValidationErrorProvider.SetError(ExtensionIdField, string.Format(TextHelper.GetString("Validation.InvalidProperty"), ExtensionIdLabel.Text));
                     e.Cancel = true;
                 }
                 else
                 {
                     selectedExtension.IsValid = true;
-                    this.ValidationErrorProvider.SetError(ExtensionIdField, "");
+                    ValidationErrorProvider.SetError(ExtensionIdField, "");
                 }
 
                 RefreshSelectedExtension();
@@ -2302,20 +2302,20 @@ namespace AirProperties
         private void IPhoneExternalSWFsField_Validating(object sender, CancelEventArgs e)
         {
             var externalsFile = IPhoneExternalSWFsField.Text;
-            if (externalsFile == string.Empty) this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
+            if (externalsFile == string.Empty) ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
             else if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
             {
-                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
+                ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
 
                 e.Cancel = true;
             }
             else if (!File.Exists(ProjectPaths.GetAbsolutePath(Path.GetDirectoryName(_propertiesFile), externalsFile)))
             {
-                this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Validation.MissingSWFContainer"));
+                ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Validation.MissingSWFContainer"));
 
                 e.Cancel = true;
             }
-            else this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
+            else ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
 
         }
 
@@ -2448,24 +2448,24 @@ namespace AirProperties
                 {
                     var version = new Version(MinimumiOsVersionField.Text);
                     if (version.Major > 4 || version.Minor > 2)
-                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
+                        ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
                     else
                     {
                         e.Cancel = true;
                         // I think it's actually 4.2, but people should nowadays target 4.3 as a minimum
-                        this.ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidMinAIRVersion"));
+                        ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidMinAIRVersion"));
                     }
                 }
                 catch
                 {
                     e.Cancel = true;
-                    this.ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidVersionValue"));
+                    ValidationErrorProvider.SetError(MinimumiOsVersionField, TextHelper.GetString("Validation.InvalidVersionValue"));
                 }
 
             }
             else
             {
-                this.ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
+                ValidationErrorProvider.SetError(MinimumiOsVersionField, string.Empty);
             }
         }
 
@@ -2474,23 +2474,23 @@ namespace AirProperties
             int osVersion;
             if (MinimumAndroidOsField.Text == string.Empty)
             {
-                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
+                ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
 
                 return;
             }
             if (!int.TryParse(MinimumAndroidOsField.Text, out osVersion))
             {
                 e.Cancel = true;
-                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidVersionValue"));
+                ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidVersionValue"));
             }
             else if (osVersion < 8) // IMHO, it should be 9, as 8 nowadays may give some problems
             {
                 e.Cancel = true;
-                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidAndroidMinVersion"));
+                ValidationErrorProvider.SetError(MinimumAndroidOsField, TextHelper.GetString("Validation.InvalidAndroidMinVersion"));
             }
             else
             {
-                this.ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
+                ValidationErrorProvider.SetError(MinimumAndroidOsField, string.Empty);
             }
         }
 
