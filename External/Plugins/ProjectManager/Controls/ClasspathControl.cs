@@ -13,7 +13,7 @@ namespace ProjectManager.Controls
 {
     public class ClasspathControl : UserControl
     {
-        String language;
+        string language;
         Project project; // if not null, use relative paths
 
         public event EventHandler Changed;
@@ -71,9 +71,9 @@ namespace ProjectManager.Controls
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(271, 133);
             this.listBox.TabIndex = 0;
-            this.listBox.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
-            this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
-            this.listBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseMove);
+            this.listBox.DoubleClick += this.listBox_DoubleClick;
+            this.listBox.SelectedIndexChanged += this.listBox_SelectedIndexChanged;
+            this.listBox.MouseMove += this.listBox_MouseMove;
             this.listBox.IntegralHeight = false;
             // 
             // btnNewClasspath
@@ -85,7 +85,7 @@ namespace ProjectManager.Controls
             this.btnNewClasspath.Size = new System.Drawing.Size(107, 21);
             this.btnNewClasspath.TabIndex = 1;
             this.btnNewClasspath.Text = "&Add Classpath...";
-            this.btnNewClasspath.Click += new System.EventHandler(this.btnNewClasspath_Click);
+            this.btnNewClasspath.Click += this.btnNewClasspath_Click;
             // 
             // btnRemove
             // 
@@ -96,7 +96,7 @@ namespace ProjectManager.Controls
             this.btnRemove.Size = new System.Drawing.Size(69, 21);
             this.btnRemove.TabIndex = 2;
             this.btnRemove.Text = "&Remove";
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            this.btnRemove.Click += this.btnRemove_Click;
             // 
             // btnUp
             // 
@@ -105,7 +105,7 @@ namespace ProjectManager.Controls
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(24, 24);
             this.btnUp.TabIndex = 3;
-            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            this.btnUp.Click += this.btnUp_Click;
             // 
             // btnDown
             // 
@@ -114,7 +114,7 @@ namespace ProjectManager.Controls
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(24, 24);
             this.btnDown.TabIndex = 4;
-            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+            this.btnDown.Click += this.btnDown_Click;
             // 
             // langComboBox
             // 
@@ -401,7 +401,7 @@ namespace ProjectManager.Controls
 
             public override string ToString()
             {
-                String projPath = TextHelper.GetString("Info.ProjectDirectory");
+                string projPath = TextHelper.GetString("Info.ProjectDirectory");
                 return (Classpath == ".") ? projPath : Classpath;
             }
 

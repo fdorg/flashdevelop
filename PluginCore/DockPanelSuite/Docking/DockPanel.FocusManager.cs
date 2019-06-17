@@ -59,7 +59,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 public LocalWindowsHook(Win32.HookType hook)
                 {
                     m_hookType = hook;
-                    m_filterFunc = new NativeMethods.HookProc(this.CoreHookProc);
+                    m_filterFunc = this.CoreHookProc;
                 }
 
                 // Default filter function
@@ -124,7 +124,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_dockPanel = dockPanel;
                 if (!NativeMethods.ShouldUseWin32()) return;
                 m_localWindowsHook = new LocalWindowsHook(Win32.HookType.WH_CALLWNDPROCRET);
-                m_hookEventHandler = new LocalWindowsHook.HookEventHandler(HookEventHandler);
+                m_hookEventHandler = HookEventHandler;
                 m_localWindowsHook.HookInvoked += m_hookEventHandler;
                 m_localWindowsHook.Install();
             }

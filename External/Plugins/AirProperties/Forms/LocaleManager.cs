@@ -39,20 +39,20 @@ namespace AirProperties
         {
             InitializeComponent();
             InitializeLocalization();
-            this._applicationLocales = applicationLocales;
+            _applicationLocales = applicationLocales;
             LoadDefaultLocales();
         }
 
         private void InitializeLocalization()
         {
-            this.OKButton.Text = TextHelper.GetString("Label.Ok");
-            this.AddNewButton.Text = TextHelper.GetString("Label.Add");
-            this.CancelButton1.Text = TextHelper.GetString("Label.Cancel");
-            this.DefaultLocalesLabel.Text = TextHelper.GetString("Label.DefaultLocales");
-            this.SelectedLocalesLabel.Text = TextHelper.GetString("Label.SelectedLocales");
-            this.CustomLocaleField.Text = TextHelper.GetString("Label.AddCustomLocale");
-            this.LocalesGroupBox.Text = TextHelper.GetString("Label.Locales");
-            this.Text = " " + TextHelper.GetString("Title.LocaleManager");
+            OKButton.Text = TextHelper.GetString("Label.Ok");
+            AddNewButton.Text = TextHelper.GetString("Label.Add");
+            CancelButton1.Text = TextHelper.GetString("Label.Cancel");
+            DefaultLocalesLabel.Text = TextHelper.GetString("Label.DefaultLocales");
+            SelectedLocalesLabel.Text = TextHelper.GetString("Label.SelectedLocales");
+            CustomLocaleField.Text = TextHelper.GetString("Label.AddCustomLocale");
+            LocalesGroupBox.Text = TextHelper.GetString("Label.Locales");
+            Text = " " + TextHelper.GetString("Title.LocaleManager");
         }
 
         /// <summary>
@@ -60,11 +60,11 @@ namespace AirProperties
         /// </summary>
         private void LoadDefaultLocales()
         {
-            Boolean isDefaultLocale;
+            bool isDefaultLocale;
             // Add defaults to available list
             AvailableListBox.Items.AddRange(_defaultLocales);
             // Check each selected against defaults
-            foreach (String locale in _applicationLocales)
+            foreach (string locale in _applicationLocales)
             {
                 isDefaultLocale = false;
                 foreach (ListItem defaultLocale in _defaultLocales)
@@ -117,22 +117,22 @@ namespace AirProperties
 
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (this.ValidateChildren())
+            if (ValidateChildren())
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void AddNewButton_Click(object sender, EventArgs e)
         {
-            String newLocale = CustomLocaleField.Text.Trim();
+            string newLocale = CustomLocaleField.Text.Trim();
             if (newLocale.Length > 0)
             {
                 if (!_applicationLocales.Contains(newLocale) && _customLocaleIsValid)
@@ -167,9 +167,9 @@ namespace AirProperties
         // Simple validation to check if new locale is an extension of a default locale
         private void CustomLocaleField_Validating(object sender, CancelEventArgs e)
         {
-            String newLocale = CustomLocaleField.Text.Trim();
-            String baseLocale;
-            Boolean isValid = false;
+            string newLocale = CustomLocaleField.Text.Trim();
+            string baseLocale;
+            bool isValid = false;
             if (newLocale.Length > 0 && newLocale != TextHelper.GetString("Label.AddCustomLocale"))
             {
                 foreach (ListItem locale in _defaultLocales)

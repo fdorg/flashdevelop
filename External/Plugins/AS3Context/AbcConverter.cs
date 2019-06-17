@@ -19,7 +19,7 @@ namespace AS3Context
     {
         static public List<string> ExcludedASDocs = getDefaultExcludedASDocs();
 
-        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new String(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
         static private Regex reDocFile = new Regex("[/\\\\]([-_.$a-z0-9]+)\\.xml", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         static public Dictionary<string, Dictionary<string, ASDocItem>> Docs = new Dictionary<string, Dictionary<string, ASDocItem>>();
@@ -296,7 +296,7 @@ namespace AS3Context
                         {
                             docPath = "globalOperation:" + (model.Package.Length > 0 ? model.Package + ":" : "")
                                 + member.Name;
-                            if (member.Access == Visibility.Public && !String.IsNullOrEmpty(member.Namespace)
+                            if (member.Access == Visibility.Public && !string.IsNullOrEmpty(member.Namespace)
                                 && member.Namespace != "public")
                                 docPath += member.Namespace + ":";
                             if ((member.Flags & FlagType.Setter) > 0) docPath += ":set";
@@ -578,7 +578,7 @@ namespace AS3Context
         private static void GetMemberDoc(MemberModel member)
         {
             string dPath = docPath + ":";
-            if (member.Access == Visibility.Public && !String.IsNullOrEmpty(member.Namespace)
+            if (member.Access == Visibility.Public && !string.IsNullOrEmpty(member.Namespace)
                 && member.Namespace != "public")
                 dPath += member.Namespace + ":";
             dPath += member.Name;
@@ -1249,7 +1249,7 @@ namespace AS3Context
             meta.Params = new Dictionary<string, string>();
             meta.Params["kind"] = sKind;
             meta.Params["name"] = sName;
-            meta.RawParams = String.Format("kind=\"{0}\", name=\"{1}\"", sKind, sName);
+            meta.RawParams = string.Format("kind=\"{0}\", name=\"{1}\"", sKind, sName);
             doc.Meta.Add(meta);
         }
 
@@ -1286,7 +1286,7 @@ namespace AS3Context
             meta.Params = new Dictionary<string, string>();
             meta.Params["name"] = sName;
             meta.Params["type"] = sType;
-            meta.RawParams = String.Format("name=\"{0}\", type=\"{1}\"", sName, sType);
+            meta.RawParams = string.Format("name=\"{0}\", type=\"{1}\"", sName, sType);
             if (sInherit != null)
             {
                 meta.Params["inherit"] = sInherit;
@@ -1333,7 +1333,7 @@ namespace AS3Context
             meta.Params["type"] = eType;
             if (eFullType != null)
                 meta.Comments = meta.Comments.Trim() + "\n@eventType\t" + eFullType.Replace(':', '.');
-            meta.RawParams = String.Format("name=\"{0}\", type=\"{1}\"", eName, eType);
+            meta.RawParams = string.Format("name=\"{0}\", type=\"{1}\"", eName, eType);
             doc.Meta.Add(meta);
         }
     }

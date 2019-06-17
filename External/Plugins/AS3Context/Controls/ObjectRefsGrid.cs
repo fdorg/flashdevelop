@@ -75,19 +75,19 @@ namespace AS3Context.Controls
             this.line = line;
         }
 
-        public String Method
+        public string Method
         {
             get { return method; }
         }
-        public String Path
+        public string Path
         {
             get { return path; }
         }
-        public String File
+        public string File
         {
             get { return file; }
         }
-        public String Line
+        public string Line
         {
             get { return line; }
         }

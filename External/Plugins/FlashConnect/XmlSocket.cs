@@ -15,10 +15,10 @@ namespace FlashConnect
         private StringBuilder packets;
         public event XmlReceivedEventHandler XmlReceived;
         public event DataReceivedEventHandler DataReceived;
-        private readonly String INCORRECT_PKT = TextHelper.GetString("Info.IncorrectPacket");
-        private readonly String CONNECTION_FAILED = TextHelper.GetString("Info.ConnectionFailed");
+        private readonly string INCORRECT_PKT = TextHelper.GetString("Info.IncorrectPacket");
+        private readonly string CONNECTION_FAILED = TextHelper.GetString("Info.ConnectionFailed");
 
-        public XmlSocket(String address, Int32 port)
+        public XmlSocket(string address, int port)
         {
             try
             {
@@ -26,11 +26,11 @@ namespace FlashConnect
                 this.server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 this.server.Bind(new IPEndPoint(ipAddress, port));
                 this.server.Listen(10);
-                this.server.BeginAccept(new AsyncCallback(this.OnConnectRequest), this.server);
+                this.server.BeginAccept(this.OnConnectRequest, this.server);
             }
             catch (SocketException ex)
             {
-                if (ex.ErrorCode == 10048) TraceManager.Add("FlashConnect: " + String.Format(CONNECTION_FAILED, port));
+                if (ex.ErrorCode == 10048) TraceManager.Add("FlashConnect: " + string.Format(CONNECTION_FAILED, port));
                 else ErrorManager.ShowError(ex);
             }
             catch (Exception ex)
@@ -49,7 +49,7 @@ namespace FlashConnect
                 Socket server = (Socket)result.AsyncState;
                 this.client = server.EndAccept(result);
                 this.SetupReceiveCallback(client);
-                server.BeginAccept(new AsyncCallback(this.OnConnectRequest), server);
+                server.BeginAccept(this.OnConnectRequest, server);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace FlashConnect
             StateObject so = new StateObject(client);
             try
             {
-                AsyncCallback receiveData = new AsyncCallback(this.OnReceivedData);
+                AsyncCallback receiveData = this.OnReceivedData;
                 client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, receiveData, so);
             }
             catch (SocketException)
@@ -87,14 +87,14 @@ namespace FlashConnect
             StateObject so = (StateObject)result.AsyncState;
             try
             {
-                Int32 bytesReceived = so.Client.EndReceive(result);
+                int bytesReceived = so.Client.EndReceive(result);
                 if (bytesReceived > 0)
                 {
                     /**
                     * Recieve data 
                     */
                     so.Data.Append(Encoding.ASCII.GetString(so.Buffer, 0, bytesReceived));
-                    String contents = so.Data.ToString();
+                    string contents = so.Data.ToString();
                     DataReceived?.Invoke(this, new DataReceivedEventArgs(contents, so.Client));
                     /**
                     * Check packet
@@ -107,10 +107,10 @@ namespace FlashConnect
                     */
                     if (packets != null && contents.EndsWith('\0'))
                     {
-                        String msg = packets.ToString(); packets = null; 
+                        string msg = packets.ToString(); packets = null; 
                         if (msg == "<policy-file-request/>\0") 
                         {
-                            String policy = "<cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>\0";
+                            string policy = "<cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>\0";
                             so.Client.Send(Encoding.ASCII.GetBytes(policy));
                         }
                         else if (msg.EndsWithOrdinal("</flashconnect>\0")) XmlReceived?.Invoke(this, new XmlReceivedEventArgs(msg, so.Client));

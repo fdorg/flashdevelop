@@ -208,7 +208,7 @@ namespace System.Windows.Forms
             if (!PluginCore.Win32.ShouldUseWin32()) return;
 
             // Set a constant to define the autoscroll region
-            const Single scrollRegion = 20;
+            const float scrollRegion = 20;
 
             // See where the cursor is
             Point pt = PointToClient(Cursor.Position);

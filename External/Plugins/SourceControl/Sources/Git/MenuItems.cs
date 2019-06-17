@@ -66,7 +66,7 @@ namespace SourceControl.Sources.Git
 
         private string GetPaths()
         {
-            return String.Join("*", GetPathsArray());
+            return string.Join("*", GetPathsArray());
         }
 
         private string[] GetPathsArray()
@@ -138,8 +138,8 @@ namespace SourceControl.Sources.Git
 
         void Commit_Click(object sender, EventArgs e)
         {
-            String title = TextHelper.GetString("Label.Commit");
-            String msg = TextHelper.GetString("Info.EnterMessage");
+            string title = TextHelper.GetString("Label.Commit");
+            string msg = TextHelper.GetString("Info.EnterMessage");
             using (LineEntryDialog led = new LineEntryDialog(title, msg, ""))
             {
                 if (led.ShowDialog() != DialogResult.OK || led.Line == "")

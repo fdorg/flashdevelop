@@ -27,7 +27,7 @@ namespace ProjectManager.Projects.Generic
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
-            String inPath = Path.GetDirectoryName(inFile);
+            string inPath = Path.GetDirectoryName(inFile);
             return ProjectPaths.GetRelativePath(inPath, path);
         }
 

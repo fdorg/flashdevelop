@@ -245,7 +245,7 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
-        public void SetUseTheme(Object parent, Boolean use)
+        public void SetUseTheme(object parent, bool use)
         {
             throw new NotImplementedException();
         }

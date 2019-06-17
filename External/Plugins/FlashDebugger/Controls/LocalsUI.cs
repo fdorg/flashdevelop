@@ -11,32 +11,32 @@ namespace FlashDebugger
     {
         private PluginMain pluginMain;
         private DataTreeControl treeControl;
-        private static Char[] chTrims = { '.' };
+        private static char[] chTrims = { '.' };
 
         public LocalsUI(PluginMain pluginMain)
         {
-            this.AutoKeyHandling = true;
+            AutoKeyHandling = true;
             this.pluginMain = pluginMain;
-            this.treeControl = new DataTreeControl();
-            this.treeControl.Tree.BorderStyle = BorderStyle.None;
-            this.treeControl.Resize += new EventHandler(this.TreeControlResize);
-            this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
-            this.treeControl.Dock = DockStyle.Fill;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.treeControl);
+            treeControl = new DataTreeControl();
+            treeControl.Tree.BorderStyle = BorderStyle.None;
+            treeControl.Resize += TreeControlResize;
+            treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
+            treeControl.Dock = DockStyle.Fill;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(treeControl);
         }
 
-        private void TreeControlResize(Object sender, EventArgs e)
+        private void TreeControlResize(object sender, EventArgs e)
         {
-            Int32 w = this.treeControl.Width / 2;
-            this.treeControl.Tree.Columns[0].Width = w;
-            this.treeControl.Tree.Columns[1].Width = w - 8;
+            int w = treeControl.Width / 2;
+            treeControl.Tree.Columns[0].Width = w;
+            treeControl.Tree.Columns[1].Width = w - 8;
         }
 
         public DataTreeControl TreeControl 
         {
-            get { return this.treeControl; }
+            get { return treeControl; }
         }
 
         public void Clear()

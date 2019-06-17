@@ -189,11 +189,11 @@ namespace ASCompletion.Model
 
             // replace strings by temp replacements
             MatchCollection qStrMatches = ASFileParserRegexes.QuotedString.Matches(comment);
-            Dictionary<String, String> qStrRepls = new Dictionary<string, string>();
+            Dictionary<string, string> qStrRepls = new Dictionary<string, string>();
             int i = qStrMatches.Count;
             while (i-- > 0)
             {
-                String strRepl = getRandomStringRepl();
+                string strRepl = getRandomStringRepl();
                 qStrRepls.Add(strRepl, qStrMatches[i].Value);
                 comment = comment.Substring(0, qStrMatches[i].Index) + strRepl + comment.Substring(qStrMatches[i].Index + qStrMatches[i].Length);
             }
@@ -215,7 +215,7 @@ namespace ASCompletion.Model
                 fm.Type = m.Groups["fType"].Value;
 
             // parameters
-            String pBody = comment.Substring(idxBraceOp, 1 + idxBraceCl - idxBraceOp);
+            string pBody = comment.Substring(idxBraceOp, 1 + idxBraceCl - idxBraceOp);
             MatchCollection pMatches = ASFileParserRegexes.Parameter.Matches(pBody);
             int l = pMatches.Count;
             for (i = 0; i < l; i++)
@@ -223,7 +223,7 @@ namespace ASCompletion.Model
                 string pName = pMatches[i].Groups["pName"].Value;
                 if (!string.IsNullOrEmpty(pName))
                 {
-                    foreach (KeyValuePair<String,String> replEntry in qStrRepls)
+                    foreach (KeyValuePair<string,string> replEntry in qStrRepls)
                     {
                         if (pName.Contains(replEntry.Key))
                         {
@@ -236,7 +236,7 @@ namespace ASCompletion.Model
                 string pType = pMatches[i].Groups["pType"].Value;
                 if (!string.IsNullOrEmpty(pType))
                 {
-                    foreach (KeyValuePair<String,String> replEntry in qStrRepls)
+                    foreach (KeyValuePair<string,string> replEntry in qStrRepls)
                     {
                         if (pType.Contains(replEntry.Key))
                         {
@@ -255,7 +255,7 @@ namespace ASCompletion.Model
                     }
                     else
                     {
-                        foreach (KeyValuePair<String,String> replEntry in qStrRepls)
+                        foreach (KeyValuePair<string,string> replEntry in qStrRepls)
                         {
                             if (pVal.Contains(replEntry.Key))
                             {
@@ -335,7 +335,7 @@ namespace ASCompletion.Model
             typeClassifier = null;
             typeComment = null;
 
-            if (String.IsNullOrEmpty(typeDefinition))
+            if (string.IsNullOrEmpty(typeDefinition))
                 return false;
 
             Match m = ASFileParserRegexes.TypeDefinition.Match(typeDefinition);
@@ -356,7 +356,7 @@ namespace ASCompletion.Model
         }
         public static TypeDefinitionKind ParseTypeDefinitionInto(string typeDefinition, MemberModel model, bool parseCommon, bool parseGeneric)
         {
-            if (String.IsNullOrEmpty(typeDefinition))
+            if (string.IsNullOrEmpty(typeDefinition))
                 return TypeDefinitionKind.Null;
 
             if (!typeDefinition.Contains("/*") || !typeDefinition.Contains("*/"))
@@ -857,7 +857,7 @@ namespace ASCompletion.Model
                             i++;
                         }
 
-                        string comment = new String(commentBuffer, 0, commentLength);
+                        string comment = new string(commentBuffer, 0, commentLength);
                         
                         // region start
                         Match matchStart = ASFileParserRegexes.RegionStart.Match(comment);
@@ -2166,7 +2166,7 @@ namespace ASCompletion.Model
             return qt;
         }
 
-        private String LastStringToken(string token, string separator)
+        private string LastStringToken(string token, string separator)
         {
             int p = token.LastIndexOfOrdinal(separator);
             return (p >= 0) ? token.Substring(p + 1) : token;

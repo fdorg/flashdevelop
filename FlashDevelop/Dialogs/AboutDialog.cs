@@ -48,7 +48,7 @@ namespace FlashDevelop.Dialogs
             this.imageBox.Size = new System.Drawing.Size(450, 244);
             this.imageBox.TabIndex = 0;
             this.imageBox.TabStop = false;
-            this.imageBox.Click += new System.EventHandler(this.DialogCloseClick);
+            this.imageBox.Click += this.DialogCloseClick;
             // 
             // copyLabel
             //
@@ -61,7 +61,7 @@ namespace FlashDevelop.Dialogs
             this.copyLabel.Size = new System.Drawing.Size(383, 30);
             this.copyLabel.TabIndex = 0;
             this.copyLabel.Text = PluginCore.DistroConfig.DISTRIBUTION_ABOUT;
-            this.copyLabel.Click += new System.EventHandler(this.DialogCloseClick);
+            this.copyLabel.Click += this.DialogCloseClick;
             // 
             // versionLabel
             //
@@ -74,7 +74,7 @@ namespace FlashDevelop.Dialogs
             this.versionLabel.Size = new System.Drawing.Size(289, 15);
             this.versionLabel.TabIndex = 0;
             this.versionLabel.Text = "FlashDevelop 5.0.0.99 for .NET 3.5 (master#1234567890)";
-            this.versionLabel.Click += new System.EventHandler(this.DialogCloseClick);
+            this.versionLabel.Click += this.DialogCloseClick;
             this.versionLabel.LinkClicked += VersionLabelLinkClicked;
             // 
             // AboutDialog
@@ -90,7 +90,7 @@ namespace FlashDevelop.Dialogs
             this.MinimizeBox = false;
             this.Name = "AboutDialog";
             this.ShowInTaskbar = false;
-            this.KeyDown += new KeyEventHandler(this.DialogKeyDown);
+            this.KeyDown += this.DialogKeyDown;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " About FlashDevelop";
             ((System.ComponentModel.ISupportInitialize)(this.imageBox)).EndInit();
@@ -117,16 +117,16 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ApplyLocalizedTexts()
         {
-            String name = Application.ProductName;
-            String bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
+            string name = Application.ProductName;
+            string bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
             this.Text = " " + TextHelper.GetString("Title.AboutDialog") + " " + bit;
             this.versionLabel.Font = new Font(this.Font, FontStyle.Bold);
             this.versionLabel.Text = name;
             Regex shaRegex = new Regex("#([a-f0-9]*)");
-            String sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
-            String link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
-            Int32 lastChar = this.versionLabel.Text.Length;
-            Int32 firstChar = this.versionLabel.Text.IndexOf('(');
+            string sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
+            string link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
+            int lastChar = this.versionLabel.Text.Length;
+            int firstChar = this.versionLabel.Text.IndexOf('(');
             this.versionLabel.Links.Add(new LinkLabel.Link(firstChar, lastChar, link));
             ToolTip tooltip = new ToolTip();
             tooltip.SetToolTip(versionLabel, link);
@@ -135,16 +135,16 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When user clicks the link, open the Github commit in the browser.
         /// </summary>
-        private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        private void VersionLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string target = e.Link.LinkData as String;
+            string target = e.Link.LinkData as string;
             if (target != null) Process.Start(target);
         }
 
         /// <summary>
         /// Closes the about dialog
         /// </summary>
-        private void DialogKeyDown(Object sender, KeyEventArgs e)
+        private void DialogKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter || e.KeyData == Keys.Escape)
             {
@@ -155,7 +155,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the about dialog
         /// </summary>
-        private void DialogCloseClick(Object sender, EventArgs e)
+        private void DialogCloseClick(object sender, EventArgs e)
         {
             this.Close();
         }

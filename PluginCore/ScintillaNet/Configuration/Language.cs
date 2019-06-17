@@ -91,7 +91,7 @@ namespace ScintillaNet.Configuration
         {
             if (!HasExtension(extension))
             {
-                if (String.IsNullOrEmpty(fileextensions))
+                if (string.IsNullOrEmpty(fileextensions))
                     fileextensions = extension;
                 else
                     fileextensions += "," + extension;
@@ -102,7 +102,7 @@ namespace ScintillaNet.Configuration
         {
             var extensions = new List<string>(fileextensions.Split(','));
             bool anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
-            fileextensions = String.Join(",", extensions.ToArray());
+            fileextensions = string.Join(",", extensions.ToArray());
             return anyRemoved;
         }
 

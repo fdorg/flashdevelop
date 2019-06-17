@@ -178,7 +178,7 @@ namespace ASCompletion.Model
             if (FileName.Length == 0) return null;
             
             string path = Path.GetDirectoryName(FileName);
-            if (String.IsNullOrEmpty(Package)) return path;
+            if (string.IsNullOrEmpty(Package)) return path;
 
             // get up the packages path
             string packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);

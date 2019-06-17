@@ -13,15 +13,15 @@ using StringReader = java.io.StringReader;
 
 namespace FlashDebugger
 {
-    public delegate void ConditionErrorEventHandler(Object sender, BreakPointArgs e);
-    public delegate void ChangeBreakPointEventHandler(Object sender, BreakPointArgs e);
-    public delegate void UpdateBreakPointEventHandler(Object sender, UpdateBreakPointArgs e);
+    public delegate void ConditionErrorEventHandler(object sender, BreakPointArgs e);
+    public delegate void ChangeBreakPointEventHandler(object sender, BreakPointArgs e);
+    public delegate void UpdateBreakPointEventHandler(object sender, UpdateBreakPointArgs e);
 
     public class BreakPointManager
     {
         private IProject m_Project;
         private string m_SaveFileFullPath;
-        private Boolean m_bAccessable = true;
+        private bool m_bAccessable = true;
         private BreakPointInfo m_TemporaryBreakPointInfo = null;
         private List<BreakPointInfo> m_BreakPointList = new List<BreakPointInfo>();
    
@@ -49,9 +49,9 @@ namespace FlashDebugger
 
         private string GetBreakpointsFile(string path)
         {
-            String cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Breakpoints");
+            string cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Breakpoints");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-            String hashFileName = HashCalculator.CalculateSHA1(path);
+            string hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");
         }
 
@@ -93,10 +93,10 @@ namespace FlashDebugger
             }
         }
 
-        public List<Int32> GetMarkers(ScintillaControl sci, int markerNum)
+        public List<int> GetMarkers(ScintillaControl sci, int markerNum)
         {
-            Int32 line = 0;
-            List<Int32> markerLines = new List<Int32>();
+            int line = 0;
+            List<int> markerLines = new List<int>();
             while (true)
             {
                 if ((sci.MarkerNext(line, GetMarkerMask(markerNum)) == -1) || (line > sci.LineCount)) break;
@@ -107,12 +107,12 @@ namespace FlashDebugger
             return markerLines;
         }
 
-        private static Int32 GetMarkerMask(Int32 marker)
+        private static int GetMarkerMask(int marker)
         {
             return 1 << marker;
         }
 
-        public int GetBreakPointIndex(String fileName, int line)
+        public int GetBreakPointIndex(string fileName, int line)
         {
             int index = m_BreakPointList.FindIndex(delegate(BreakPointInfo info)
             {
@@ -121,14 +121,14 @@ namespace FlashDebugger
             return index;
         }
 
-        public Boolean ShouldBreak(SourceFile file, int line)
+        public bool ShouldBreak(SourceFile file, int line)
         {
             return ShouldBreak(file, line, null);
         }
 
-        public Boolean ShouldBreak(SourceFile file, int line, Frame frame)
+        public bool ShouldBreak(SourceFile file, int line, Frame frame)
         {
-            String localPath = PluginMain.debugManager.GetLocalPath(file);
+            string localPath = PluginMain.debugManager.GetLocalPath(file);
             if (localPath == null)
             {
                 return false;
@@ -176,7 +176,7 @@ namespace FlashDebugger
                     }
                     catch (/*Expression*/Exception e)
                     {
-                        TraceManager.AddAsync("[Problem in breakpoint: "+e.ToString()+"]", 4);
+                        TraceManager.AddAsync("[Problem in breakpoint: "+e+"]", 4);
                         ErrorManager.ShowError(e);
                         return true;
                     }
@@ -251,7 +251,7 @@ namespace FlashDebugger
             PluginMain.debugManager.FlashInterface.UpdateBreakpoints(bpList);
         }
 
-        internal void SetBreakPointInfo(string filefullpath, int line, Boolean bDeleted, Boolean bEnabled)
+        internal void SetBreakPointInfo(string filefullpath, int line, bool bDeleted, bool bEnabled)
         {
             if (!m_bAccessable) return;
             BreakPointInfo cbinfo = m_BreakPointList.Find(delegate(BreakPointInfo info)
@@ -388,10 +388,10 @@ namespace FlashDebugger
         public int Line;
         public string Exp;
         public string FileFullPath;
-        public Boolean IsDelete;
-        public Boolean Enable;
+        public bool IsDelete;
+        public bool Enable;
 
-        public BreakPointArgs(string filefullpath, int line, string exp, Boolean isdelete, Boolean enable)
+        public BreakPointArgs(string filefullpath, int line, string exp, bool isdelete, bool enable)
         {
             FileFullPath = filefullpath;
             Line = line;
@@ -418,8 +418,8 @@ namespace FlashDebugger
     public class BreakPointInfo
     {
         private int m_Line;
-        private Boolean m_bDeleted;
-        private Boolean m_bEnabled;
+        private bool m_bDeleted;
+        private bool m_bEnabled;
         private string m_FileFullPath;
         private string m_ConditionalExpression;
         private ValueExp m_ParsedExpression;
@@ -436,13 +436,13 @@ namespace FlashDebugger
             set { m_Line = value; }
         }
 
-        public Boolean IsDeleted
+        public bool IsDeleted
         {
             get { return m_bDeleted; }
             set { m_bDeleted = value; }
         }
 
-        public Boolean IsEnabled
+        public bool IsEnabled
         {
             get { return m_bEnabled; }
             set { m_bEnabled = value; }
@@ -491,7 +491,7 @@ namespace FlashDebugger
             m_ParsedExpression = null;
         }
 
-        public BreakPointInfo(string fileFullPath, int line, string exp, Boolean bDeleted, Boolean bEnabled)
+        public BreakPointInfo(string fileFullPath, int line, string exp, bool bDeleted, bool bEnabled)
         {
             m_FileFullPath = fileFullPath;
             m_Line = line;

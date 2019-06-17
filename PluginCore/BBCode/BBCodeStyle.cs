@@ -111,7 +111,7 @@ namespace PluginCore.BBCode
         public StateMode isStriked = StateMode.DEFAULT;
         public StateMode isUnderlined = StateMode.DEFAULT;
 
-        public String fontName = null;
+        public string fontName = null;
         public float fontSize = 0;
         public bool isAbsFontSize = true;
 
@@ -136,7 +136,7 @@ namespace PluginCore.BBCode
             return c;
         }
 
-        override public String ToString()
+        override public string ToString()
         {
             return "[bbCodeStyle"
                    + " isBold=" + isBold
@@ -209,7 +209,7 @@ namespace PluginCore.BBCode
                 return _colorChannelMixers[mode](back, fore);
             }
 
-            public static Mode ResolveColorMode(String modeStr)
+            public static Mode ResolveColorMode(string modeStr)
             {
                 if (string.IsNullOrEmpty(modeStr))
                     return Mode.NORMAL;
@@ -230,7 +230,7 @@ namespace PluginCore.BBCode
 
             private static bool _isInitedStatics = false;
             private static Dictionary<Mode, DColorChannelMixer> _colorChannelMixers;
-            private static Dictionary<String, Mode> _colorChannelMixersHash;
+            private static Dictionary<string, Mode> _colorChannelMixersHash;
 
             private static void _InitStatics()
             {
@@ -238,15 +238,15 @@ namespace PluginCore.BBCode
                     return;
 
                 _colorChannelMixers = new Dictionary<Mode, DColorChannelMixer>();
-                _colorChannelMixers[Mode.NORMAL] = new DColorChannelMixer(_channelMixer_NORMAL);
-                _colorChannelMixers[Mode.ADD] = new DColorChannelMixer(_channelMixer_ADD);
-                _colorChannelMixers[Mode.SUBTRACT] = new DColorChannelMixer(_channelMixer_SUBTRACT);
-                _colorChannelMixers[Mode.MULTIPLY] = new DColorChannelMixer(_channelMixer_MULTIPLY);
-                _colorChannelMixers[Mode.DIVIDE] = new DColorChannelMixer(_channelMixer_DIVIDE);
-                _colorChannelMixers[Mode.DIFFERENCE] = new DColorChannelMixer(_channelMixer_DIFFERENCE);
-                _colorChannelMixers[Mode.EXCLUSION] = new DColorChannelMixer(_channelMixer_EXCLUSION);
-                _colorChannelMixers[Mode.OVERLAY] = new DColorChannelMixer(_channelMixer_OVERLAY);
-                _colorChannelMixers[Mode.HARDLIGHT] = new DColorChannelMixer(_channelMixer_HARDLIGHT);
+                _colorChannelMixers[Mode.NORMAL] = _channelMixer_NORMAL;
+                _colorChannelMixers[Mode.ADD] = _channelMixer_ADD;
+                _colorChannelMixers[Mode.SUBTRACT] = _channelMixer_SUBTRACT;
+                _colorChannelMixers[Mode.MULTIPLY] = _channelMixer_MULTIPLY;
+                _colorChannelMixers[Mode.DIVIDE] = _channelMixer_DIVIDE;
+                _colorChannelMixers[Mode.DIFFERENCE] = _channelMixer_DIFFERENCE;
+                _colorChannelMixers[Mode.EXCLUSION] = _channelMixer_EXCLUSION;
+                _colorChannelMixers[Mode.OVERLAY] = _channelMixer_OVERLAY;
+                _colorChannelMixers[Mode.HARDLIGHT] = _channelMixer_HARDLIGHT;
 
                 _colorChannelMixersHash = new Dictionary<string, Mode>();
                 _colorChannelMixersHash["NORMAL"] = Mode.NORMAL;

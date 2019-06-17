@@ -1,6 +1,5 @@
 ﻿using PluginCore;
 using PluginCore.Managers;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -52,12 +51,12 @@ namespace CodeRefactor.Managers
             if (project == null)
                 return null;
             
-            List<String> files = new List<String>();
-            String[] filters = project.DefaultSearchFilter.Split(';');
+            List<string> files = new List<string>();
+            string[] filters = project.DefaultSearchFilter.Split(';');
 
-            foreach (String path in project.SourcePaths)
+            foreach (string path in project.SourcePaths)
             {
-                foreach (String filter in filters)
+                foreach (string filter in filters)
                 {
                     files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter,
                         SearchOption.AllDirectories));

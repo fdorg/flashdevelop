@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 namespace PluginCore.Utilities
 {
@@ -46,8 +45,8 @@ namespace PluginCore.Utilities
             else if (s1.Length == 0) return -1;
             else if (s2.Length == 0) return 1;
             //special case
-            bool sp1 = Char.IsLetterOrDigit(s1[0]);
-            bool sp2 = Char.IsLetterOrDigit(s2[0]);
+            bool sp1 = char.IsLetterOrDigit(s1[0]);
+            bool sp2 = char.IsLetterOrDigit(s2[0]);
             if (sp1 && !sp2) return 1;
             if (!sp1 && sp2) return -1;
             int i1 = 0, i2 = 0; //current index
@@ -58,16 +57,16 @@ namespace PluginCore.Utilities
             {
                 c1 = s1[i1];
                 c2 = s2[i2];
-                sp1 = Char.IsDigit(c1);
-                sp2 = Char.IsDigit(c2);
+                sp1 = char.IsDigit(c1);
+                sp2 = char.IsDigit(c2);
                 if (!sp1 && !sp2)
                 {
-                    letter1 = Char.IsLetter(c1);
-                    letter2 = Char.IsLetter(c2);
+                    letter1 = char.IsLetter(c1);
+                    letter2 = char.IsLetter(c2);
 
                     if (letter1 && letter2)
                     {
-                        r = Char.ToUpper(c1).ToString().CompareTo(Char.ToUpper(c2).ToString());
+                        r = char.ToUpper(c1).ToString().CompareTo(char.ToUpper(c2).ToString());
                         if (r != 0) return r;
                     }
                     else if (!letter1 && !letter2)
@@ -157,7 +156,7 @@ namespace PluginCore.Utilities
             nzStart = start;
             end = start;
             bool countZeros = true;
-            while (Char.IsDigit(s, end))
+            while (char.IsDigit(s, end))
             {
                 if (countZeros && s[end].Equals('0'))
                 {

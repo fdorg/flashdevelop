@@ -12,7 +12,7 @@ namespace ProjectManager.Building
         public static bool Run(string fileName, string arguments, bool ignoreExitCode, bool mergeErrors)
         {
             // CrossOver native call
-            Boolean isNative = fileName == "FDEXE.sh" || Path.GetExtension(fileName) == ".command";
+            bool isNative = fileName == "FDEXE.sh" || Path.GetExtension(fileName) == ".command";
 
             Process process = new Process();
             process.StartInfo.UseShellExecute = false;
@@ -30,8 +30,8 @@ namespace ProjectManager.Building
             LineFilter stdoutFilter = new LineFilter(process.StandardOutput, Console.Out, false);
             LineFilter stderrFilter = new LineFilter(process.StandardError, Console.Error, mergeErrors);
 
-            Thread outThread = new Thread(new ThreadStart(stdoutFilter.Filter));
-            Thread errThread = new Thread(new ThreadStart(stderrFilter.Filter));
+            Thread outThread = new Thread(stdoutFilter.Filter);
+            Thread errThread = new Thread(stderrFilter.Filter);
 
             outThread.Start();
             errThread.Start();

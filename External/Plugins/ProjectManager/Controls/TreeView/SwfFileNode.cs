@@ -38,7 +38,7 @@ namespace ProjectManager.Controls.TreeView
 
     public class ExportNode : FakeNode
     {
-        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new String(Path.GetInvalidPathChars())) + "]");
+        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]");
 
         public string Export;
         public string ContainingSwfPath;
@@ -218,8 +218,8 @@ namespace ProjectManager.Controls.TreeView
             parser = new ContentParser(BackingPath);
 
             runner = new BackgroundWorker();
-            runner.RunWorkerCompleted += new RunWorkerCompletedEventHandler(runner_ProcessEnded);
-            runner.DoWork += new DoWorkEventHandler(runner_DoWork);
+            runner.RunWorkerCompleted += runner_ProcessEnded;
+            runner.DoWork += runner_DoWork;
             runner.RunWorkerAsync(parser);
         }
 
@@ -298,7 +298,7 @@ namespace ProjectManager.Controls.TreeView
                         frame.Text = groupName + " (" + FormatBytes(group.AbcSize) + ")";
                         if (parser.Frames.Count > 1) node.Nodes.Add(frame);
 
-                        List<String> names = classesComp.groups[index];
+                        List<string> names = classesComp.groups[index];
                         names.Sort(); // TODO Add setting?
                         foreach (string cls in names)
                         {
@@ -332,7 +332,7 @@ namespace ProjectManager.Controls.TreeView
                         frame.Text = groupName + " (" + FormatBytes(group.DataSize) + ")";
                         if (parser.Frames.Count > 1) node2.Nodes.Add(frame);
 
-                        List<String> names = symbolsComp.groups[index];
+                        List<string> names = symbolsComp.groups[index];
                         names.Sort(); // TODO Add setting?
                         foreach (string symbol in names)
                             node2.Nodes.Add(new ExportNode(BackingPath, symbol));
@@ -355,7 +355,7 @@ namespace ProjectManager.Controls.TreeView
                         frame.Text = groupName + " (" + FormatBytes(group.FontSize) + ")";
                         if (parser.Frames.Count > 1) node2.Nodes.Add(frame);
 
-                        List<String> names = fontsComp.groups[index];
+                        List<string> names = fontsComp.groups[index];
                         names.Sort(); // TODO Add setting?
                         foreach (string font in names)
                             node2.Nodes.Add(new FontExportNode(BackingPath, font));

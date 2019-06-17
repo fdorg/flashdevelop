@@ -10,7 +10,7 @@ namespace ProjectManager.Projects.AS2
         public AS2ProjectWriter(AS2Project project, string filename)
             : base(project, filename)
         {
-            this.project = base.Project as AS2Project;
+            this.project = Project as AS2Project;
             this.filename = filename;
         }
 

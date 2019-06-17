@@ -45,7 +45,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_dockPanel = dockPanel;
 
                 m_timerMouseTrack = new Timer();
-                m_timerMouseTrack.Tick += new EventHandler(TimerMouseTrack_Tick);
+                m_timerMouseTrack.Tick += TimerMouseTrack_Tick;
 
                 Visible = false;
                 m_splitter = new SplitterControl(this);
@@ -305,7 +305,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 get
                 {
                     Rectangle rect = ClientRectangle;
-                    Boolean flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
+                    bool flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
 
                     // exclude the border and the splitter
                     if (DockState == DockState.DockBottomAutoHide)
@@ -333,7 +333,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected override void OnLayout(LayoutEventArgs levent)
             {
                 DockPadding.All = 0;
-                Boolean flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
+                bool flat = PluginCore.PluginBase.MainForm.GetThemeColor("AutoHideWindowControl.BackColor") != Color.Empty;
                 if (DockState == DockState.DockLeftAutoHide)
                 {
                     DockPadding.Right = flat ? 1 : 2;

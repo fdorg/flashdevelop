@@ -439,9 +439,9 @@ namespace AS3Context
     #endregion
 
     #region Catalogs
-    class MxmlCatalogs : Dictionary<String, MxmlCatalog>
+    class MxmlCatalogs : Dictionary<string, MxmlCatalog>
     {
-        public String FileName;
+        public string FileName;
         public DateTime TimeStamp;
 
         public void Read(string fileName, byte[] rawData)

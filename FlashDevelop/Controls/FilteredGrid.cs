@@ -319,12 +319,12 @@ namespace FlashDevelop.Controls
             return TypeDescriptor.GetAttributes(m_SelectedObject, true);
         }
 
-        public String GetClassName()
+        public string GetClassName()
         {
             return TypeDescriptor.GetClassName(m_SelectedObject, true);
         }
 
-        public String GetComponentName()
+        public string GetComponentName()
         {
             return TypeDescriptor.GetComponentName(m_SelectedObject, true);
         }

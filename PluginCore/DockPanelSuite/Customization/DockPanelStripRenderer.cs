@@ -44,15 +44,15 @@ namespace System.Windows.Forms
 
     public class DockPanelStripRenderer : ToolStripRenderer
     {
-        private Boolean useTheme;
+        private bool useTheme;
         private ToolStrip toolStrip;
-        private Boolean drawBottomBorder;
+        private bool drawBottomBorder;
         private ProfessionalColorTable colorTable;
         private static ToolStripRenderer renderer;
 
         public DockPanelStripRenderer() : this(true) {}
-        public DockPanelStripRenderer(Boolean drawBottomBorder) : this(drawBottomBorder, true) {}
-        public DockPanelStripRenderer(Boolean drawBottomBorder, Boolean useTheme)
+        public DockPanelStripRenderer(bool drawBottomBorder) : this(drawBottomBorder, true) {}
+        public DockPanelStripRenderer(bool drawBottomBorder, bool useTheme)
         {
             this.useTheme = useTheme;
             this.drawBottomBorder = drawBottomBorder;
@@ -62,7 +62,7 @@ namespace System.Windows.Forms
             else renderer = new ToolStripProfessionalRenderer(this.colorTable);
         }
 
-        private Color GetThemeColor(String id)
+        private Color GetThemeColor(string id)
         {
             if (!useTheme) return Color.Empty;
             return PluginBase.MainForm.GetThemeColor(id);
@@ -86,7 +86,7 @@ namespace System.Windows.Forms
             }
             if (item is ToolStripButton)
             {
-                Double scale = ScaleHelper.GetScale();
+                double scale = ScaleHelper.GetScale();
                 if (scale >= 1.5)
                 {
                     item.Padding = new Padding(4, 2, 4, 2);
@@ -108,7 +108,7 @@ namespace System.Windows.Forms
             }
         }
 
-        private void OnToolStripPaint(Object sender, PaintEventArgs e)
+        private void OnToolStripPaint(object sender, PaintEventArgs e)
         {
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
@@ -191,7 +191,7 @@ namespace System.Windows.Forms
                 if (e.ToolStrip is ToolStripDropDownMenu) renderer.DrawSeparator(e);
                 else
                 {
-                    Int32 middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
+                    int middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
                     e.Graphics.DrawLine(SystemPens.ControlDark, middle - 1, e.Item.ContentRectangle.Top + 1, middle - 1, e.Item.ContentRectangle.Bottom - 2);
                     e.Graphics.DrawLine(SystemPens.ControlLightLight, middle, e.Item.ContentRectangle.Top + 1, middle, e.Item.ContentRectangle.Bottom - 2);
                 }
@@ -203,7 +203,7 @@ namespace System.Windows.Forms
                 if (dark != Color.Empty && light != Color.Empty)
                 {
                     Pen pen = new Pen(dark);
-                    Int32 middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
+                    int middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
                     e.Graphics.DrawLine(pen, middle - 1, e.Item.ContentRectangle.Top + 2, middle - 1, e.Item.ContentRectangle.Bottom - 4);
                     pen.Dispose();
                     Pen pen2 = new Pen(light);
@@ -218,7 +218,7 @@ namespace System.Windows.Forms
                 if (sepFore != Color.Empty)
                 {
                     Pen pen2 = new Pen(sepFore);
-                    Int32 middle = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
+                    int middle = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
                     e.Graphics.DrawLine(pen2, ScaleHelper.Scale(16) + 16, middle, e.Item.ContentRectangle.Right - 6, middle);
                     pen2.Dispose();
                 }
@@ -235,7 +235,7 @@ namespace System.Windows.Forms
                 using (Brush lightBrush = new SolidBrush(fore == Color.Empty ? this.colorTable.GripLight : fore))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 6, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(lightBrush, r);
                         r.Offset(0, 4);
@@ -245,7 +245,7 @@ namespace System.Windows.Forms
                 using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark : back))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 5, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(darkBrush, r);
                         r.Offset(0, 4);
@@ -258,7 +258,7 @@ namespace System.Windows.Forms
                 using (Brush lightBrush = new SolidBrush(this.colorTable.GripLight))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 8, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(lightBrush, r);
                         r.Offset(0, 4);
@@ -267,7 +267,7 @@ namespace System.Windows.Forms
                 using (Brush darkBrush = new SolidBrush(this.colorTable.GripDark))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 7, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(darkBrush, r);
                         r.Offset(0, 4);
@@ -327,7 +327,7 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                Boolean isOver = false;
+                bool isOver = false;
                 Color back = GetThemeColor("ToolStripItem.BackColor");
                 Color border = GetThemeColor("ToolStripItem.BorderColor");
                 Color active = GetThemeColor("ToolStripMenu.DropDownBorderColor");
@@ -432,16 +432,16 @@ namespace System.Windows.Forms
                 using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
                 {
                     // Do we need to invert the drawing edge?
-                    Boolean rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
+                    bool rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
                     // Find vertical position of the lowest grip line
-                    Int32 y = e.AffectedBounds.Bottom - 3 * 2 + 1;
+                    int y = e.AffectedBounds.Bottom - 3 * 2 + 1;
                     // Draw three lines of grips
-                    for (Int32 i = 3; i >= 1; i--)
+                    for (int i = 3; i >= 1; i--)
                     {
                         // Find the rightmost grip position on the line
-                        Int32 x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
+                        int x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
                         // Draw grips from right to left on line
-                        for (Int32 j = 0; j < i; j++)
+                        for (int j = 0; j < i; j++)
                         {
                             // Just the single grip glyph
                             DrawGripGlyph(e.Graphics, x, y, darkBrush, lightBrush);
@@ -455,7 +455,7 @@ namespace System.Windows.Forms
             }
             else renderer.DrawStatusStripSizingGrip(e);
         }
-        private void DrawGripGlyph(Graphics g, Int32 x, Int32 y, Brush darkBrush, Brush lightBrush)
+        private void DrawGripGlyph(Graphics g, int x, int y, Brush darkBrush, Brush lightBrush)
         {
             g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
             g.FillRectangle(darkBrush, x, y, 2, 2);
@@ -472,8 +472,8 @@ namespace System.Windows.Forms
             using (Brush brush = new SolidBrush(e.ArrowColor))
             {
                 Point[] arrow;
-                Int32 hor = ScaleHelper.Scale(2);
-                Int32 ver = ScaleHelper.Scale(2);
+                int hor = ScaleHelper.Scale(2);
+                int ver = ScaleHelper.Scale(2);
                 Point middle = new Point(dropDownRect.Left + dropDownRect.Width / 2, dropDownRect.Top + dropDownRect.Height / 2);
                 switch (e.Direction)
                 {

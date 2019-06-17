@@ -14,7 +14,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.TextBox infoTextBox;
-        private static Int32 errorCount = 1;
+        private static int errorCount = 1;
 
         public ErrorDialog()
         {
@@ -53,7 +53,7 @@ namespace FlashDevelop.Dialogs
             this.exitButton.TabIndex = 2;
             this.exitButton.Text = "&Exit";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
+            this.exitButton.Click += this.ExitButtonClick;
             // 
             // headerLabel
             // 
@@ -75,7 +75,7 @@ namespace FlashDevelop.Dialogs
             this.continueButton.TabIndex = 1;
             this.continueButton.Text = "&Continue";
             this.continueButton.UseVisualStyleBackColor = true;
-            this.continueButton.Click += new System.EventHandler(this.ContinueButtonClick);
+            this.continueButton.Click += this.ContinueButtonClick;
             // 
             // infoTextBox
             // Font needs to be set here so that controls resize correctly in high-dpi
@@ -164,7 +164,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the form error dialog
         /// </summary>
-        private void ContinueButtonClick(Object sender, EventArgs e)
+        private void ContinueButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -172,7 +172,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Exits the application entirely
         /// </summary>
-        private void ExitButtonClick(Object sender, EventArgs e)
+        private void ExitButtonClick(object sender, EventArgs e)
         {
             Environment.Exit(1);
         }

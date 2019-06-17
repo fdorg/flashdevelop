@@ -1,5 +1,3 @@
-using System;
-
 namespace SevenZip.Compression.RangeCoder
 {
     struct BitEncoder
@@ -45,17 +43,17 @@ namespace SevenZip.Compression.RangeCoder
             }
         }
 
-        private static UInt32[] ProbPrices = new UInt32[kBitModelTotal >> kNumMoveReducingBits];
+        private static uint[] ProbPrices = new uint[kBitModelTotal >> kNumMoveReducingBits];
 
         static BitEncoder()
         {
             const int kNumBits = (kNumBitModelTotalBits - kNumMoveReducingBits);
             for (int i = kNumBits - 1; i >= 0; i--)
             {
-                UInt32 start = (UInt32)1 << (kNumBits - i - 1);
-                UInt32 end = (UInt32)1 << (kNumBits - i);
-                for (UInt32 j = start; j < end; j++)
-                    ProbPrices[j] = ((UInt32)i << kNumBitPriceShiftBits) +
+                uint start = (uint)1 << (kNumBits - i - 1);
+                uint end = (uint)1 << (kNumBits - i);
+                for (uint j = start; j < end; j++)
+                    ProbPrices[j] = ((uint)i << kNumBitPriceShiftBits) +
                         (((end - j) << kNumBitPriceShiftBits) >> (kNumBits - i - 1));
             }
         }

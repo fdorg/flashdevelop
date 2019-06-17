@@ -6228,10 +6228,10 @@ public class AS3_exLexer : Lexer {
     protected DFA30 dfa30;
     private void InitializeCyclicDFAs()
     {
-        this.dfa18 = new DFA18(this);
-        this.dfa30 = new DFA30(this);
+        dfa18 = new DFA18(this);
+        dfa30 = new DFA30(this);
 
-        this.dfa30.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA30_SpecialStateTransition);
+        dfa30.specialStateTransitionHandler = DFA30_SpecialStateTransition;
     }
 
     const string DFA18_eotS =
@@ -6267,14 +6267,14 @@ public class AS3_exLexer : Lexer {
         public DFA18(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 18;
-            this.eot = DFA18_eot;
-            this.eof = DFA18_eof;
-            this.min = DFA18_min;
-            this.max = DFA18_max;
-            this.accept = DFA18_accept;
-            this.special = DFA18_special;
-            this.transition = DFA18_transition;
+            decisionNumber = 18;
+            eot = DFA18_eot;
+            eof = DFA18_eof;
+            min = DFA18_min;
+            max = DFA18_max;
+            accept = DFA18_accept;
+            special = DFA18_special;
+            transition = DFA18_transition;
 
         }
 
@@ -6895,14 +6895,14 @@ public class AS3_exLexer : Lexer {
         public DFA30(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 30;
-            this.eot = DFA30_eot;
-            this.eof = DFA30_eof;
-            this.min = DFA30_min;
-            this.max = DFA30_max;
-            this.accept = DFA30_accept;
-            this.special = DFA30_special;
-            this.transition = DFA30_transition;
+            decisionNumber = 30;
+            eot = DFA30_eot;
+            eof = DFA30_eof;
+            min = DFA30_min;
+            max = DFA30_max;
+            accept = DFA30_accept;
+            special = DFA30_special;
+            transition = DFA30_transition;
 
         }
 

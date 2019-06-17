@@ -65,17 +65,17 @@ namespace FlashDebugger.Controls.DataTree
                 else if (type == VariableType_.NUMBER)
                 {
                     double number = ((Double)m_Value.getValueAsObject()).doubleValue();
-                    if (!System.Double.IsNaN(number) && (double)(long)number == number)
+                    if (!double.IsNaN(number) && (double)(long)number == number)
                     {
                         if (!m_bEditing)
                         {
-                            if (number < 0 && number >= Int32.MinValue)
+                            if (number < 0 && number >= int.MinValue)
                             {
-                                return number + " [0x" + ((Int32)number).ToString("x") + "]";
+                                return number + " [0x" + ((int)number).ToString("x") + "]";
                             }
                             else if (number < 0 || number > 9)
                             {
-                                return number + " [0x" + ((Int64)number).ToString("x") + "]";
+                                return number + " [0x" + ((long)number).ToString("x") + "]";
                             }
                         }
                         else return number.ToString();
@@ -98,7 +98,7 @@ namespace FlashDebugger.Controls.DataTree
                 }
                 else if (type == VariableType_.FUNCTION)
                 {
-                    return "Function @" + m_Value.ToString();
+                    return "Function @" + m_Value;
                 }
                 temp = m_Value.ToString();
                 if (!m_bEditing)
@@ -177,7 +177,7 @@ namespace FlashDebugger.Controls.DataTree
                     }
                     else if (type == VariableType_.FUNCTION)
                     {
-                        return "Function - " + m_Value.ToString();
+                        return "Function - " + m_Value;
                     }
                 }
                 return "";

@@ -17,19 +17,19 @@ namespace PluginCore.Utilities
         static ObjectSerializer()
         {
             formatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomainAssemblyResolve);
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainAssemblyResolve;
         }
 
         /// <summary>
         /// The BinaryFormatter may need some help finding Assemblies from various directories
         /// </summary>
-        static Assembly CurrentDomainAssemblyResolve(Object sender, ResolveEventArgs args)
+        static Assembly CurrentDomainAssemblyResolve(object sender, ResolveEventArgs args)
         {
             AssemblyName assemblyName = new AssemblyName(args.Name);
-            String ffile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".exe");
-            String afile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".dll");
-            String dfile = Path.Combine(PathHelper.PluginDir, assemblyName.Name + ".dll");
-            String ufile = Path.Combine(PathHelper.UserPluginDir, assemblyName.Name + ".dll");
+            string ffile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".exe");
+            string afile = Path.Combine(PathHelper.AppDir, assemblyName.Name + ".dll");
+            string dfile = Path.Combine(PathHelper.PluginDir, assemblyName.Name + ".dll");
+            string ufile = Path.Combine(PathHelper.UserPluginDir, assemblyName.Name + ".dll");
             if (File.Exists(ffile)) return Assembly.LoadFrom(ffile);
             if (File.Exists(afile)) return Assembly.LoadFrom(afile);
             if (File.Exists(dfile)) return Assembly.LoadFrom(dfile);
@@ -40,9 +40,9 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Serializes the specified object to a binary file
         /// </summary>
-        public static void Serialize(String file, Object obj)
+        public static void Serialize(string file, object obj)
         {
-            Int32 count = 0;
+            int count = 0;
             while (true)
             {
                 try
@@ -69,22 +69,22 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Deserializes the specified object from a binary file
         /// </summary>
-        public static Object Deserialize(String file, Object obj, Boolean checkValidity)
+        public static object Deserialize(string file, object obj, bool checkValidity)
         {
             try
             {
                 FileHelper.EnsureUpdatedFile(file);
-                Object settings = InternalDeserialize(file, obj.GetType());
+                object settings = InternalDeserialize(file, obj.GetType());
                 if (checkValidity)
                 {
-                    Object defaults = Activator.CreateInstance(obj.GetType());
+                    object defaults = Activator.CreateInstance(obj.GetType());
                     PropertyInfo[] properties = settings.GetType().GetProperties();
                     foreach (PropertyInfo property in properties)
                     {
-                        Object current = GetValue(settings, property.Name);
+                        object current = GetValue(settings, property.Name);
                         if (current == null || (current is Color && (Color)current == Color.Empty))
                         {
-                            Object value = GetValue(defaults, property.Name);
+                            object value = GetValue(defaults, property.Name);
                             SetValue(settings, property.Name, value);
                         }
                     }
@@ -97,7 +97,7 @@ namespace PluginCore.Utilities
                 return obj;
             }
         }
-        public static Object Deserialize(String file, Object obj)
+        public static object Deserialize(string file, object obj)
         {
             return Deserialize(file, obj, true);
         }
@@ -105,7 +105,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Fixes some common issues when serializing
         /// </summary>
-        private static Object InternalDeserialize(String file, Type type)
+        private static object InternalDeserialize(string file, Type type)
         {
             FileInfo info = new FileInfo(file);
             if (!info.Exists)
@@ -129,7 +129,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Sets a value of a setting
         /// </summary>
-        public static void SetValue(Object obj, String name, Object value)
+        public static void SetValue(object obj, string name, object value)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Gets a value of a setting as an object
         /// </summary>
-        public static Object GetValue(Object obj, String name)
+        public static object GetValue(object obj, string name)
         {
             try
             {

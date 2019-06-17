@@ -59,7 +59,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Handles the internal events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.FileSwitch)
             {
@@ -119,27 +119,27 @@ namespace FlashDevelop.Controls
             this.highlightHost.Margin = new Padding(0, 2, 6, 1);
             this.highlightCheckBox.Text = TextHelper.GetString("Label.HighlightAll");
             this.highlightCheckBox.BackColor = Color.Transparent;
-            this.highlightCheckBox.Click += new EventHandler(this.HighlightAllCheckBoxClick);
+            this.highlightCheckBox.Click += this.HighlightAllCheckBoxClick;
             //
             // matchCaseCheckBox
             //
             this.matchCaseHost.Margin = new Padding(0, 2, 6, 1);
             this.matchCaseCheckBox.Text = TextHelper.GetString("Label.MatchCase");
             this.matchCaseCheckBox.BackColor = Color.Transparent;
-            this.matchCaseCheckBox.CheckedChanged += new EventHandler(this.MatchCaseCheckBoxCheckedChanged);
+            this.matchCaseCheckBox.CheckedChanged += this.MatchCaseCheckBoxCheckedChanged;
             //
             // wholeWordCheckBox
             //
             this.wholeWordHost.Margin = new Padding(0, 2, 6, 1);
             this.wholeWordCheckBox.Text = TextHelper.GetString("Label.WholeWord");
             this.wholeWordCheckBox.BackColor = Color.Transparent;
-            this.wholeWordCheckBox.CheckedChanged += new EventHandler(this.WholeWordCheckBoxCheckedChanged);
+            this.wholeWordCheckBox.CheckedChanged += this.WholeWordCheckBoxCheckedChanged;
             //
             // nextButton
             //
             this.nextButton.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
             this.nextButton.Image = Image.FromStream(ResourceHelper.GetStream("QuickFindNext.png"));
-            this.nextButton.Click += new EventHandler(this.FindNextButtonClick);
+            this.nextButton.Click += this.FindNextButtonClick;
             this.nextButton.Text = TextHelper.GetString("Label.Next");
             this.nextButton.Margin = new Padding(0, 1, 2, 2);
             //
@@ -147,7 +147,7 @@ namespace FlashDevelop.Controls
             //
             this.previousButton.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
             this.previousButton.Image = Image.FromStream(ResourceHelper.GetStream("QuickFindPrev.png"));
-            this.previousButton.Click += new EventHandler(this.FindPrevButtonClick);
+            this.previousButton.Click += this.FindPrevButtonClick;
             this.previousButton.Text = TextHelper.GetString("Label.Previous");
             this.previousButton.Margin = new Padding(0, 1, 7, 2);
             //
@@ -155,20 +155,20 @@ namespace FlashDevelop.Controls
             //
             this.closeButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.closeButton.Image = Image.FromStream(ResourceHelper.GetStream("QuickFindClose.png"));
-            this.closeButton.Click += new EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             this.closeButton.Margin = new Padding(0, 1, 5, 2);
             //
             // findTextBox
             //
             this.findTextBox.Size = new Size(150, 21);
-            this.findTextBox.KeyPress += new KeyPressEventHandler(this.FindTextBoxKeyPress);
-            this.findTextBox.TextChanged += new EventHandler(this.FindTextBoxTextChanged);
-            this.findTextBox.OnKeyEscape += new KeyEscapeEvent(this.FindTextBoxOnKeyEscape);
+            this.findTextBox.KeyPress += this.FindTextBoxKeyPress;
+            this.findTextBox.TextChanged += this.FindTextBoxTextChanged;
+            this.findTextBox.OnKeyEscape += this.FindTextBoxOnKeyEscape;
             this.findTextBox.Margin = new Padding(0, 1, 7, 2);
             //
             // moreButton
             //
-            this.moreButton.Click += new EventHandler(this.MoreButtonClick);
+            this.moreButton.Click += this.MoreButtonClick;
             this.moreButton.Text = TextHelper.GetString("Label.More");
             this.moreButton.Alignment = ToolStripItemAlignment.Right;
             this.moreButton.Margin = new Padding(0, 1, 5, 2);
@@ -209,7 +209,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Enables or disables controls
         /// </summary>
-        public Boolean CanSearch
+        public bool CanSearch
         {
             get { return this.findTextBox.Enabled; }
             set
@@ -231,7 +231,7 @@ namespace FlashDevelop.Controls
             Color text = Globals.MainForm.GetThemeColor("QuickFind.ForeColor");
             Color fore = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor");
             Color back = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BackColor");
-            Boolean useTheme = Globals.MainForm.GetThemeColor("QuickFind.BackColor") != Color.Empty;
+            bool useTheme = Globals.MainForm.GetThemeColor("QuickFind.BackColor") != Color.Empty;
             if (back != Color.Empty) this.backColor = this.findTextBox.BackColor = back;
             if (text != Color.Empty) this.infoLabel.ForeColor = text;
             if (fore != Color.Empty) this.findTextBox.ForeColor = fore;
@@ -257,38 +257,38 @@ namespace FlashDevelop.Controls
         private void InitializeTimers()
         {
             this.typingTimer = new Timer();
-            this.typingTimer.Tick += new EventHandler(this.TypingTimerTick);
+            this.typingTimer.Tick += this.TypingTimerTick;
             this.typingTimer.Interval = 250;
         }
 
         /// <summary>
         /// Set the case of the text to search
         /// </summary>
-        public void SetMatchCase(Boolean matchCase)
+        public void SetMatchCase(bool matchCase)
         {
-            this.matchCaseCheckBox.CheckedChanged -= new EventHandler(this.MatchCaseCheckBoxCheckedChanged);
+            this.matchCaseCheckBox.CheckedChanged -= this.MatchCaseCheckBoxCheckedChanged;
             this.matchCaseCheckBox.Checked = matchCase; // Change the value...
-            this.matchCaseCheckBox.CheckedChanged += new EventHandler(this.MatchCaseCheckBoxCheckedChanged);
+            this.matchCaseCheckBox.CheckedChanged += this.MatchCaseCheckBoxCheckedChanged;
         }
 
         /// <summary>
         /// Set the whole word prop of the text to search
         /// </summary>
-        public void SetWholeWord(Boolean wholeWord)
+        public void SetWholeWord(bool wholeWord)
         {
-            this.wholeWordCheckBox.CheckedChanged -= new EventHandler(this.WholeWordCheckBoxCheckedChanged);
+            this.wholeWordCheckBox.CheckedChanged -= this.WholeWordCheckBoxCheckedChanged;
             this.wholeWordCheckBox.Checked = wholeWord; // Change the value...
-            this.wholeWordCheckBox.CheckedChanged += new EventHandler(this.WholeWordCheckBoxCheckedChanged);
+            this.wholeWordCheckBox.CheckedChanged += this.WholeWordCheckBoxCheckedChanged;
         }
 
         /// <summary>
         /// Set the text to search
         /// </summary>
-        public void SetFindText(String text)
+        public void SetFindText(string text)
         {
-            this.findTextBox.TextChanged -= new EventHandler(this.FindTextBoxTextChanged);
+            this.findTextBox.TextChanged -= this.FindTextBoxTextChanged;
             this.findTextBox.Text = text; // Change the value...
-            this.findTextBox.TextChanged += new EventHandler(this.FindTextBoxTextChanged);
+            this.findTextBox.TextChanged += this.FindTextBoxTextChanged;
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Executes the search for next match
         /// </summary>
-        public void FindNextButtonClick(Object sender, EventArgs e)
+        public void FindNextButtonClick(object sender, EventArgs e)
         {
             if (this.findTextBox.Text.Length > 0)
             {
@@ -317,7 +317,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Executes the search for previous match
         /// </summary>
-        public void FindPrevButtonClick(Object sender, EventArgs e)
+        public void FindPrevButtonClick(object sender, EventArgs e)
         {
             if (this.findTextBox.Text.Length > 0)
             {
@@ -340,7 +340,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Update the match case globally if it's changed
         /// </summary>
-        private void MatchCaseCheckBoxCheckedChanged(Object sender, EventArgs e)
+        private void MatchCaseCheckBoxCheckedChanged(object sender, EventArgs e)
         {
             if (!Globals.Settings.DisableFindOptionSync)
             {
@@ -351,7 +351,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Update the whole word globally if it's changed
         /// </summary>
-        private void WholeWordCheckBoxCheckedChanged(Object sender, EventArgs e)
+        private void WholeWordCheckBoxCheckedChanged(object sender, EventArgs e)
         {
             if (!Globals.Settings.DisableFindOptionSync)
             {
@@ -363,7 +363,7 @@ namespace FlashDevelop.Controls
         /// Text into the main search textbox has changed, then 
         /// process with find next occurrence of the word
         /// </summary>
-        private void FindTextBoxTextChanged(Object sender, EventArgs e)
+        private void FindTextBoxTextChanged(object sender, EventArgs e)
         {
             if (Globals.SciControl.TextLength > 30000)
             {
@@ -376,7 +376,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// When the typing timer ticks update the search
         /// </summary>
-        private void TypingTimerTick(Object sender, EventArgs e)
+        private void TypingTimerTick(object sender, EventArgs e)
         {
             this.typingTimer.Stop();
             if (this.findTextBox.Text.Length > 0)
@@ -407,9 +407,9 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Pressed key on the main textbox
         /// </summary>
-        private void FindTextBoxKeyPress(Object sender, KeyPressEventArgs e)
+        private void FindTextBoxKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (Char)Keys.Return && this.findTextBox.Text.Length > 0)
+            if (e.KeyChar == (char)Keys.Return && this.findTextBox.Text.Length > 0)
             {
                 e.Handled = true;
                 if ((ModifierKeys & Keys.Shift) == Keys.Shift) FindPrev(findTextBox.Text, false);
@@ -441,7 +441,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Highlights or removes highlights for all results
         /// </summary>
-        private void HighlightAllCheckBoxClick(Object sender, EventArgs e)
+        private void HighlightAllCheckBoxClick(object sender, EventArgs e)
         {
             var sci = Globals.SciControl;
             if (this.highlightCheckBox.Checked)
@@ -461,7 +461,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Finds the correct match based on the current position
         /// </summary>
-        private void FindCorrect(String text, Boolean refreshHighlights)
+        private void FindCorrect(string text, bool refreshHighlights)
         {
             if (string.IsNullOrEmpty(text)) return;
             this.findTextBox.BackColor = this.backColor;
@@ -472,16 +472,16 @@ namespace FlashDevelop.Controls
                 SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, true);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
                 if (refreshHighlights) this.RefreshHighlights(sci, matches);
-                String message = TextHelper.GetString("Info.ShowingResult");
-                Int32 index = FRDialogGenerics.GetMatchIndex(match, matches);
-                String formatted = String.Format(message, index, matches.Count);
+                string message = TextHelper.GetString("Info.ShowingResult");
+                int index = FRDialogGenerics.GetMatchIndex(match, matches);
+                string formatted = string.Format(message, index, matches.Count);
                 this.infoLabel.Text = formatted;
             }
             else
             {
                 this.findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
         }
@@ -489,7 +489,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Finds the next match based on the current position
         /// </summary>
-        private void FindNext(String text, Boolean refreshHighlights)
+        private void FindNext(string text, bool refreshHighlights)
         {
             if (text == "") return;
             this.findTextBox.BackColor = this.backColor;
@@ -500,16 +500,16 @@ namespace FlashDevelop.Controls
                 SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, true, false);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
                 if (refreshHighlights) this.RefreshHighlights(sci, matches);
-                String message = TextHelper.GetString("Info.ShowingResult");
-                Int32 index = FRDialogGenerics.GetMatchIndex(match, matches);
-                String formatted = String.Format(message, index, matches.Count);
+                string message = TextHelper.GetString("Info.ShowingResult");
+                int index = FRDialogGenerics.GetMatchIndex(match, matches);
+                string formatted = string.Format(message, index, matches.Count);
                 this.infoLabel.Text = formatted;
             }
             else
             {
                 this.findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
         }
@@ -517,7 +517,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Finds the previous match based on the current position
         /// </summary>
-        private void FindPrev(String text, Boolean refreshHighlights)
+        private void FindPrev(string text, bool refreshHighlights)
         {
             if (text == "") return;
             this.findTextBox.BackColor = this.backColor;
@@ -528,16 +528,16 @@ namespace FlashDevelop.Controls
                 SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, false, false);
                 if (match != null) FRDialogGenerics.SelectMatch(sci, match);
                 if (refreshHighlights) this.RefreshHighlights(sci, matches);
-                String message = TextHelper.GetString("Info.ShowingResult");
-                Int32 index = FRDialogGenerics.GetMatchIndex(match, matches);
-                String formatted = String.Format(message, index, matches.Count);
+                string message = TextHelper.GetString("Info.ShowingResult");
+                int index = FRDialogGenerics.GetMatchIndex(match, matches);
+                string formatted = string.Format(message, index, matches.Count);
                 this.infoLabel.Text = formatted;
             }
             else
             {
                 this.findTextBox.BackColor = Globals.MainForm.GetThemeColor("QuickFind.ErrorBack", Color.Salmon);
                 sci.SetSel(sci.SelectionStart, sci.SelectionStart);
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
         }
@@ -563,7 +563,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Remove the status strip elements
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
+        private void CloseButtonClick(object sender, EventArgs e)
         {
             this.Hide();
             this.ApplyFixedDocumentPadding();
@@ -572,7 +572,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Open the Find And Replace dialog
         /// </summary>
-        private void MoreButtonClick(Object sender, EventArgs e)
+        private void MoreButtonClick(object sender, EventArgs e)
         {
             this.CloseButtonClick(null, null);
             PluginBase.MainForm.CallCommand("FindAndReplace", null);
@@ -603,9 +603,9 @@ namespace FlashDevelop.Controls
 
         /// Gets search results for a sci control
         /// </summary>
-        private List<SearchMatch> GetResults(ScintillaControl sci, String text)
+        private List<SearchMatch> GetResults(ScintillaControl sci, string text)
         {
-            String pattern = text;
+            string pattern = text;
             FRSearch search = new FRSearch(pattern);
             search.Filter = SearchFilter.None;
             search.NoCase = !this.matchCaseCheckBox.Checked;
@@ -643,7 +643,7 @@ namespace FlashDevelop.Controls
                 base.InitializeItem(item);
                 if (item is ToolStripButton)
                 {
-                    Double scale = ScaleHelper.GetScale();
+                    double scale = ScaleHelper.GetScale();
                     if (scale >= 1.5)
                     {
                         item.Padding = new Padding(4, 2, 4, 2);
@@ -669,7 +669,7 @@ namespace FlashDevelop.Controls
                 }
             }
 
-            private void OnToolStripPaint(Object sender, PaintEventArgs e)
+            private void OnToolStripPaint(object sender, PaintEventArgs e)
             {
                 Color tborder = Globals.MainForm.GetThemeColor("ToolStripTextBoxControl.BorderColor");
                 foreach (ToolStripItem item in this.toolStrip.Items)
@@ -701,7 +701,7 @@ namespace FlashDevelop.Controls
             {
                 if (renderer is ToolStripProfessionalRenderer)
                 {
-                    Boolean isOver = false;
+                    bool isOver = false;
                     Color back = Globals.MainForm.GetThemeColor("ToolStripItem.BackColor");
                     Color border = Globals.MainForm.GetThemeColor("ToolStripItem.BorderColor");
                     Color active = Globals.MainForm.GetThemeColor("ToolStripMenu.DropDownBorderColor");
@@ -842,16 +842,16 @@ namespace FlashDevelop.Controls
 
             public EscapeTextBox() : base() 
             {
-                this.Control.PreviewKeyDown += new PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+                this.Control.PreviewKeyDown += this.OnPreviewKeyDown;
             }
 
-            protected override Boolean ProcessCmdKey(ref Message m, Keys keyData)
+            protected override bool ProcessCmdKey(ref Message m, Keys keyData)
             {
                 if (keyData == Keys.Escape) OnPressEscapeKey();
                 return false;
             }
 
-            private void OnPreviewKeyDown(Object sender, PreviewKeyDownEventArgs e)
+            private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
             {
                 Keys ctrlAlt = Keys.Control | Keys.Alt;
                 if ((e.KeyData & ctrlAlt) == ctrlAlt) e.IsInputKey = true;

@@ -162,9 +162,9 @@ namespace ASCompletion.Model
                     basePath = System.IO.Path.GetDirectoryName(Path);
                     masks = new string[] { System.IO.Path.GetFileName(Path) };
                     watcher = new WatcherEx(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileName(Path));
-                    watcher.Deleted += new FileSystemEventHandler(watcher_Deleted);
-                    watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-                    watcher.Renamed += new RenamedEventHandler(watcher_Renamed);
+                    watcher.Deleted += watcher_Deleted;
+                    watcher.Changed += watcher_Changed;
+                    watcher.Renamed += watcher_Renamed;
                     watcher.EnableRaisingEvents = true;
                 }
                 catch
@@ -185,9 +185,9 @@ namespace ASCompletion.Model
                         watcher = new WatcherEx(Path); //System.IO.Path.GetDirectoryName(Path));
                         if (!IsTemporaryPath || !watcher.IsRemote)
                         {
-                            watcher.Deleted += new FileSystemEventHandler(watcher_Deleted);
-                            watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-                            watcher.Renamed += new RenamedEventHandler(watcher_Renamed);
+                            watcher.Deleted += watcher_Deleted;
+                            watcher.Changed += watcher_Changed;
+                            watcher.Renamed += watcher_Renamed;
                             watcher.EnableRaisingEvents = true;
                         }
                         

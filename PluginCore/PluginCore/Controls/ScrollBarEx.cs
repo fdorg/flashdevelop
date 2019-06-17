@@ -23,11 +23,11 @@ namespace PluginCore.Controls
         /// <summary>
         /// Attaches the custom scrollbars to the specified controls, requires restart.
         /// </summary>
-        public static IDisposable Attach(Object obj)
+        public static IDisposable Attach(object obj)
         {
             return ScrollBarEx.Attach(obj, false);
         }
-        public static IDisposable Attach(Object obj, Boolean childrenToo)
+        public static IDisposable Attach(object obj, bool childrenToo)
         {
             if (!Win32.ShouldUseWin32() && !PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false)) return null;
             else if (obj is Control && childrenToo)
@@ -2001,11 +2001,11 @@ namespace PluginCore.Controls
         /// <summary>
         /// Handle the incoming theme events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
+                bool enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
                 if (control.Parent == null) return;
                 else if (enabled)
                 {
@@ -2154,7 +2154,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary>
-        protected virtual void OnResize(Object sender, EventArgs e)
+        protected virtual void OnResize(object sender, EventArgs e)
         {
             int borderWidth = 0;
             if (control is PropertyGrid && borderWidth == 0) borderWidth = 1;
@@ -2190,12 +2190,12 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the scroll state on control paint
         /// </summary>
-        protected virtual void OnPaint(Object sender, PaintEventArgs e) => UpdateScrollState();
+        protected virtual void OnPaint(object sender, PaintEventArgs e) => UpdateScrollState();
 
         /// <summary>
         /// Updates the control on scrollbar scroll
         /// </summary>
-        protected virtual void OnScroll(Object sender, ScrollEventArgs e) {}
+        protected virtual void OnScroll(object sender, ScrollEventArgs e) {}
     }
 
     public class TextBoxScroller : ScrollerBase
@@ -2229,7 +2229,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the current line index
         /// </summary>
-        public Int32 GetLineIndex(int index)
+        public int GetLineIndex(int index)
         {
             return Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
         }
@@ -2237,7 +2237,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the amount of lines, also with wrapping
         /// </summary>
-        public Int32 GetLineCount()
+        public int GetLineCount()
         {
             return Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
         }
@@ -2245,15 +2245,15 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the first visible line on screen
         /// </summary>
-        public Int32 GetFirstVisibleLine()
+        public int GetFirstVisibleLine()
         {
-            return (Int32)Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
+            return (int)Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
         }
 
         /// <summary>
         /// Gets the amount of visible lines
         /// </summary>
-        public Int32 GetVisibleLines()
+        public int GetVisibleLines()
         {
             var rect = new Win32.RECT();
             Win32.SendMessage(textBox.Handle, Win32.EM_GETRECT, IntPtr.Zero, ref rect);
@@ -2266,9 +2266,9 @@ namespace PluginCore.Controls
         /// </summary>
         protected override void UpdateScrollState()
         {
-            Int32 vScrollMax = GetLineCount();
-            Int32 vScrollPos = GetFirstVisibleLine();
-            Int32 vScrollPage = GetVisibleLines();
+            int vScrollMax = GetLineCount();
+            int vScrollPos = GetFirstVisibleLine();
+            int vScrollPage = GetVisibleLines();
             if (this.textBox.ScrollBars != ScrollBars.Vertical)
             {
                 // Force scrollbar so that content is displayed correctly...
@@ -2287,7 +2287,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the textBox on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2329,7 +2329,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the textBox on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2376,7 +2376,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the amount of visible rows
         /// </summary>
-        private Int32 GetVisibleRows()
+        private int GetVisibleRows()
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2384,7 +2384,7 @@ namespace PluginCore.Controls
                 {
                     Type type = ctrl.GetType();
                     FieldInfo field = type.GetField("visibleRows", BindingFlags.Instance | BindingFlags.NonPublic);
-                    return (Int32)field.GetValue(ctrl) - 1;
+                    return (int)field.GetValue(ctrl) - 1;
                 }
             }
             return 0;
@@ -2393,7 +2393,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the scroll position of the scrollbar
         /// </summary>
-        private void SetScrollOffset(Int32 value)
+        private void SetScrollOffset(int value)
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2449,7 +2449,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the propertyGrid on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || propertyGrid.SelectedObjects.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2490,7 +2490,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the treeView on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || treeView.Nodes.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2556,25 +2556,25 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the listView on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || listView.Items.Count == 0) return;
-            Int32 height = listView.GetItemRect(0).Height; // Item height in pixels
+            int height = listView.GetItemRect(0).Height; // Item height in pixels
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Int32 vScroll;
+                int vScroll;
                 if (listView.ShowGroups && !PlatformHelper.isRunningOnWine())
                 {
-                    Int32 prevPos = Win32.GetScrollPos(listView.Handle, Win32.SB_VERT);
+                    int prevPos = Win32.GetScrollPos(listView.Handle, Win32.SB_VERT);
                     vScroll = -(prevPos - e.NewValue);
                 }
                 else vScroll = -(e.OldValue - e.NewValue) * height;
-                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
+                Win32.SendMessage(listView.Handle, (int)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
             }
             else
             {
-                Int32 hScroll = -(e.OldValue - e.NewValue);
-                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
+                int hScroll = -(e.OldValue - e.NewValue);
+                Win32.SendMessage(listView.Handle, (int)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
             }
         }
     }
@@ -2610,7 +2610,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the listBox on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || listBox.Items.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2657,12 +2657,12 @@ namespace PluginCore.Controls
         /// </summary>
         protected override void UpdateScrollState()
         {
-            Int32 vScrollMax = dataGridView.RowCount;
-            Int32 vScrollPos = dataGridView.FirstDisplayedScrollingRowIndex;
-            Int32 vScrollPage = dataGridView.DisplayedRowCount(false);
-            Int32 hScrollMax = dataGridView.ColumnCount;
-            Int32 hScrollPos = dataGridView.FirstDisplayedScrollingColumnIndex;
-            Int32 hScrollPage = dataGridView.DisplayedColumnCount(false);
+            int vScrollMax = dataGridView.RowCount;
+            int vScrollPos = dataGridView.FirstDisplayedScrollingRowIndex;
+            int vScrollPage = dataGridView.DisplayedRowCount(false);
+            int hScrollMax = dataGridView.ColumnCount;
+            int hScrollPos = dataGridView.FirstDisplayedScrollingColumnIndex;
+            int hScrollPage = dataGridView.DisplayedColumnCount(false);
             vScrollBar.Visible = vScrollMax > (vScrollPage - 1) && vScrollMax != vScrollPage;
             hScrollBar.Visible = hScrollMax > (hScrollPage - 1) && hScrollMax != hScrollPage;
             vScrollBar.Scroll -= OnScroll;
@@ -2682,7 +2682,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the dataGridView on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || dataGridView.RowCount == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll) dataGridView.FirstDisplayedScrollingRowIndex = e.NewValue;

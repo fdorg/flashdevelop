@@ -492,7 +492,7 @@ namespace AS3Context.Compiler
                         }
                     }
                     catch {}
-                    errorDesc = String.Format("{0}:{1}: col: {2}: {3}", filename, mErr.Groups["line"].Value, mErr.Groups["col"].Value, errorDesc);
+                    errorDesc = string.Format("{0}:{1}: col: {2}: {3}", filename, mErr.Groups["line"].Value, mErr.Groups["col"].Value, errorDesc);
                     ascRunner_OutputError(sender, errorDesc);
                 }
                 errorState++;

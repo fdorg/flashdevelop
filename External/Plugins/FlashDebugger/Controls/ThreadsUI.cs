@@ -16,35 +16,35 @@ namespace FlashDebugger
 
         public ThreadsUI(PluginMain pluginMain, ImageList imageList)
         {
-            this.AutoKeyHandling = true;
+            AutoKeyHandling = true;
             this.pluginMain = pluginMain;
             lv = new ListViewEx();
             lv.ShowItemToolTips = true;
-            this.imageColumnHeader = new ColumnHeader();
-            this.imageColumnHeader.Text = string.Empty;
-            this.imageColumnHeader.Width = 20;
-            this.frameColumnHeader = new ColumnHeader();
-            this.frameColumnHeader.Text = string.Empty;
+            imageColumnHeader = new ColumnHeader();
+            imageColumnHeader.Text = string.Empty;
+            imageColumnHeader.Width = 20;
+            frameColumnHeader = new ColumnHeader();
+            frameColumnHeader.Text = string.Empty;
             lv.Columns.AddRange(new ColumnHeader[] {
-            this.imageColumnHeader,
-            this.frameColumnHeader});
+            imageColumnHeader,
+            frameColumnHeader});
             lv.FullRowSelect = true;
             lv.BorderStyle = BorderStyle.None;
-            lv.Dock = System.Windows.Forms.DockStyle.Fill;
+            lv.Dock = DockStyle.Fill;
             lv.SmallImageList = imageList;
             runningImageIndex = imageList.Images.IndexOfKey("StartContinue");
             suspendedImageIndex = imageList.Images.IndexOfKey("Pause");
-            lv.View = System.Windows.Forms.View.Details;
-            lv.MouseDoubleClick += new MouseEventHandler(lv_MouseDoubleClick);
-            lv.KeyDown += new KeyEventHandler(lv_KeyDown);
-            lv.SizeChanged += new EventHandler(lv_SizeChanged);
-            this.Controls.Add(lv);
+            lv.View = View.Details;
+            lv.MouseDoubleClick += lv_MouseDoubleClick;
+            lv.KeyDown += lv_KeyDown;
+            lv.SizeChanged += lv_SizeChanged;
+            Controls.Add(lv);
             ScrollBarEx.Attach(lv);
         }
 
         void lv_SizeChanged(object sender, EventArgs e)
         {
-            this.frameColumnHeader.Width = lv.Width - this.imageColumnHeader.Width;
+            frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
         }
 
         public void ClearItem()
@@ -67,7 +67,7 @@ namespace FlashDebugger
             }
         }
 
-        public void SetThreads(Dictionary<int, FlashDebugger.FlashInterface.IsolateInfo> isolates)
+        public void SetThreads(Dictionary<int, FlashInterface.IsolateInfo> isolates)
         {
             lv.Items.Clear();
             if (PluginMain.debugManager.FlashInterface.Session == null)
@@ -75,14 +75,14 @@ namespace FlashDebugger
                 return;
             }
             // add primary -- flash specific
-            String title = "Main thread";
+            string title = "Main thread";
             int image = PluginMain.debugManager.FlashInterface.Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
             lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
             lv.Items[lv.Items.Count - 1].Tag = 1;
-            foreach (KeyValuePair<int, FlashDebugger.FlashInterface.IsolateInfo> ii_pair in isolates)
+            foreach (KeyValuePair<int, FlashInterface.IsolateInfo> ii_pair in isolates)
             {
                 int i_id = ii_pair.Key;
-                FlashDebugger.FlashInterface.IsolateInfo ii = ii_pair.Value;
+                FlashInterface.IsolateInfo ii = ii_pair.Value;
                 title = "Worker " + i_id;
                 image = ii.i_Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
                 lv.Items.Add(new ListViewItem(new string[] { "", title }, image));

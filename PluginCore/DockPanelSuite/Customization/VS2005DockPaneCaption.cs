@@ -114,7 +114,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonClose = new InertButton(this, ImageButtonClose, ImageButtonClose);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
-                    m_buttonClose.Click += new EventHandler(Close_Click);
+                    m_buttonClose.Click += Close_Click;
                     Controls.Add(m_buttonClose);
                 }
 
@@ -155,7 +155,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonAutoHide = new InertButton(this, ImageButtonDock, ImageButtonAutoHide);
                     m_toolTip.SetToolTip(m_buttonAutoHide, ToolTipAutoHide);
-                    m_buttonAutoHide.Click += new EventHandler(AutoHide_Click);
+                    m_buttonAutoHide.Click += AutoHide_Click;
                     Controls.Add(m_buttonAutoHide);
                 }
 
@@ -184,7 +184,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonOptions = new InertButton(this, ImageButtonOptions, ImageButtonOptions);
                     m_toolTip.SetToolTip(m_buttonOptions, ToolTipOptions);
-                    m_buttonOptions.Click += new EventHandler(Options_Click);
+                    m_buttonOptions.Click += Options_Click;
                     Controls.Add(m_buttonOptions);
                 }
                 return m_buttonOptions;

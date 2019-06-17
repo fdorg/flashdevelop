@@ -36,17 +36,17 @@ namespace FlashDevelop
         /// <summary>
         /// Run FlashDevelop and catch any unhandled exceptions.
         /// </summary>
-        static void RunFlashDevelopWithErrorHandling(String[] arguments, Boolean isFirst)
+        static void RunFlashDevelopWithErrorHandling(string[] arguments, bool isFirst)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             MainForm.IsFirst = isFirst;
             MainForm.Arguments = arguments;
             MainForm mainForm = new MainForm();
-            SingleInstanceApp.NewInstanceMessage += delegate(Object sender, Object message)
+            SingleInstanceApp.NewInstanceMessage += delegate(object sender, object message)
             {
-                MainForm.Arguments = message as String[];
-                mainForm.ProcessParameters(message as String[]);
+                MainForm.Arguments = message as string[];
+                mainForm.ProcessParameters(message as string[]);
             };
             try
             {
@@ -66,11 +66,11 @@ namespace FlashDevelop
         /// <summary>
         /// Checks if we should run in multi instance mode.
         /// </summary>
-        public static Boolean MultiInstanceMode
+        public static bool MultiInstanceMode
         {
             get 
             {
-                String file = Path.Combine(PathHelper.AppDir, ".multi");
+                string file = Path.Combine(PathHelper.AppDir, ".multi");
                 return File.Exists(file);
             }
         }

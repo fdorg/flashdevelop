@@ -94,7 +94,7 @@ namespace ProjectManager.Controls.TreeView
             set { projectTree = value; }
         }
 
-        public Boolean Contains(ToolStripMenuItem item)
+        public bool Contains(ToolStripMenuItem item)
         {
             return item != null && item.Enabled && findItem(item, Items);
         }
@@ -188,8 +188,8 @@ namespace ProjectManager.Controls.TreeView
             else ext = "." + actual;
             Image image = Icons.GetImageForFile(ext).Img;
             image = Icons.Overlay(image, Icons.BulletAdd.Img, 5, 4);
-            String nlabel = TextHelper.GetString("Label.New");
-            String flabel = TextHelper.GetString("Label.File");
+            string nlabel = TextHelper.GetString("Label.New");
+            string flabel = TextHelper.GetString("Label.File");
             ToolStripMenuItem item = new ToolStripMenuItem(nlabel + " " + actual + " " + flabel + "...", image);
             item.Click += delegate
             {
@@ -516,9 +516,9 @@ namespace ProjectManager.Controls.TreeView
             AddFileItems(menu, path);
         }
 
-        private bool IsBuildable(String path)
+        private bool IsBuildable(string path)
         {
-            String ext = Path.GetExtension(path).ToLower();
+            string ext = Path.GetExtension(path).ToLower();
             if (FileInspector.IsAS2Project(path, ext)) return true;
             else if (FileInspector.IsAS3Project(path, ext)) return true;
             else if (FileInspector.IsHaxeProject(path, ext)) return true;

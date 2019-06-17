@@ -32,7 +32,7 @@ namespace FlashDebugger.Debugger
                 if (value != null)
                 {
                     m_Project = value;
-                    this.ClearAll();
+                    ClearAll();
                     m_SaveFileFullPath = GetWatchFile(m_Project.ProjectPath);
                 }
             }
@@ -40,9 +40,9 @@ namespace FlashDebugger.Debugger
 
         private string GetWatchFile(string path)
         {
-            String cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Watch");
+            string cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Watch");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-            String hashFileName = HashCalculator.CalculateSHA1(path);
+            string hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");
         }
 
@@ -167,8 +167,8 @@ namespace FlashDebugger.Debugger
 
         public WatchExpressionArgs(string expression, int position)
         {
-            this.Expression = expression;
-            this.Position = position;
+            Expression = expression;
+            Position = position;
         }
     }
 
@@ -182,9 +182,9 @@ namespace FlashDebugger.Debugger
 
         public WatchExpressionReplaceArgs(string oldExpression, string newExpression, int position)
         {
-            this.OldExpression = oldExpression;
-            this.NewExpression = newExpression;
-            this.Position = position;
+            OldExpression = oldExpression;
+            NewExpression = newExpression;
+            Position = position;
         }
     }
 }

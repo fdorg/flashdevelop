@@ -34,7 +34,7 @@ namespace ProjectManager.Helpers
         Argument[] arguments;
 
         private static Hashtable projectTypes = new Hashtable();
-        private static List<String> projectExt = new List<string>();
+        private static List<string> projectExt = new List<string>();
         private static bool projectTypesSet = false;
 
         private static bool isRunning;
@@ -138,8 +138,8 @@ namespace ProjectManager.Helpers
             {
                 if (FileInspector.IsTemplate(source, ext)) dest = dest.Substring(0, dest.LastIndexOf('.'));
 
-                Boolean saveBOM = PluginBase.MainForm.Settings.SaveUnicodeWithBOM;
-                Encoding encoding = Encoding.GetEncoding((Int32)PluginBase.MainForm.Settings.DefaultCodePage);
+                bool saveBOM = PluginBase.MainForm.Settings.SaveUnicodeWithBOM;
+                Encoding encoding = Encoding.GetEncoding((int)PluginBase.MainForm.Settings.DefaultCodePage);
                 // batch files must be encoded in ASCII
                 ext = Path.GetExtension(dest).ToLower();
                 if (ext == ".bat" || ext == ".cmd" || ext.StartsWithOrdinal(".php")) encoding = Encoding.ASCII;
@@ -212,14 +212,14 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the clipboard text
         /// </summary>
-        public static String GetClipboard()
+        public static string GetClipboard()
         {
             IDataObject cbdata = Clipboard.GetDataObject();
             if (cbdata.GetDataPresent("System.String", true))
             {
                 return cbdata.GetData("System.String", true).ToString();
             }
-            else return String.Empty;
+            else return string.Empty;
         }
 
         private bool ShouldSkip(string path, bool isProjectRoot)
@@ -279,7 +279,7 @@ namespace ProjectManager.Helpers
         public static string GetProjectFilters()
         {
             string[] exts = projectExt.ToArray();
-            string filters = "FlashDevelop Projects|" + String.Join(";", exts)
+            string filters = "FlashDevelop Projects|" + string.Join(";", exts)
                 + "|Adobe Flex Builder Project|.actionScriptProperties";
             return filters;
         }
@@ -288,16 +288,16 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the correct coding style line break chars
         /// </summary>
-        public static String ProcessCodeStyleLineBreaks(String text)
+        public static string ProcessCodeStyleLineBreaks(string text)
         {
-            String CSLB = "$(CSLB)";
-            Int32 nextIndex = text.IndexOfOrdinal(CSLB);
+            string CSLB = "$(CSLB)";
+            int nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
             CodingStyle cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
-            Int32 eolMode = (Int32)PluginBase.Settings.EOLMode;
-            String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            String result = ""; Int32 currentIndex = 0;
+            int eolMode = (int)PluginBase.Settings.EOLMode;
+            string lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
+            string result = ""; int currentIndex = 0;
             while (nextIndex >= 0)
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
@@ -310,17 +310,17 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the line intendation from the text
         /// </summary>
-        private static String GetLineIndentation(String text, Int32 position)
+        private static string GetLineIndentation(string text, int position)
         {
-            Char c;
-            Int32 startPos = position;
+            char c;
+            int startPos = position;
             while (startPos > 0)
             {
                 c = text[startPos];
                 if (c == 10 || c == 13) break;
                 startPos--;
             }
-            Int32 endPos = ++startPos;
+            int endPos = ++startPos;
             while (endPos < position)
             {
                 c = text[endPos];

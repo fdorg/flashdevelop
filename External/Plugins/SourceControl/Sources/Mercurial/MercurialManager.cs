@@ -89,7 +89,7 @@ namespace SourceControl.Sources.Mercurial
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(Status_OnResult);
+                status.OnResult += Status_OnResult;
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];

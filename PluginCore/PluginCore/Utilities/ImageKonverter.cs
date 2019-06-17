@@ -29,7 +29,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Adjusts the saturation and brightness of the image.
         /// </summary>
-        public static Image ImageAdjust(Image image, Int32 saturation, Int32 brightness)
+        public static Image ImageAdjust(Image image, int saturation, int brightness)
         {
             Image dest = new Bitmap(image.Width, image.Height);
             ImageAdjust(image, dest, saturation, brightness);
@@ -39,7 +39,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Adjusts the saturation and brightness of the image.
         /// </summary>
-        public static void ImageAdjust(Image source, Image dest, Int32 saturation, Int32 brightness)
+        public static void ImageAdjust(Image source, Image dest, int saturation, int brightness)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Resize image with GDI+ so that image is nice and clear with required size.
         /// </summary>
-        public static Image ImageResize(Bitmap source, Int32 width, Int32 height)
+        public static Image ImageResize(Bitmap source, int width, int height)
         {
             Bitmap bitmap = new Bitmap(width, height, source.PixelFormat);
             Graphics graphicsImage = Graphics.FromImage(bitmap);

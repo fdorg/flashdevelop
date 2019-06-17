@@ -10,9 +10,9 @@ namespace FlashDevelop.Docking
     public class DockablePanel : DockContent
     {
         private Image image;
-        private String pluginGuid;
+        private string pluginGuid;
 
-        public DockablePanel(Control ctrl, String pluginGuid)
+        public DockablePanel(Control ctrl, string pluginGuid)
         {
             this.Text = ctrl.Text;
             ctrl.Dock = DockStyle.Fill;
@@ -53,7 +53,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Retrieves the guid of the document
         /// </summary>
-        public override String GetPersistString()
+        public override string GetPersistString()
         {
             return this.pluginGuid;
         }

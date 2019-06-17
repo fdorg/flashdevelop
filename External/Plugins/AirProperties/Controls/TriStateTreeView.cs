@@ -88,7 +88,7 @@ namespace AirProperties.Controls
 
             // Give every node an initial 'unchecked' image
             IgnoreClickAction++;    // we're making changes to the tree, ignore any other change requests
-            UpdateChildState(this.Nodes, (int)CheckedState.UnChecked, false, true);
+            UpdateChildState(Nodes, (int)CheckedState.UnChecked, false, true);
             IgnoreClickAction--;
         }
         

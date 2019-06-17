@@ -13,7 +13,7 @@ namespace StartPage.ProjectInfo
         {
             this.xmlSerializer = XmlSerializer.FromTypes(new[]{this.GetType()})[0];
         }
-        public RecentProjectList(List<String> recentProjects)
+        public RecentProjectList(List<string> recentProjects)
         {
             this.Update(recentProjects);
         }
@@ -21,10 +21,10 @@ namespace StartPage.ProjectInfo
         /// <summary>
         /// Updates the recent project list from list of paths
         /// </summary>
-        public void Update(List<String> recentProjects)
+        public void Update(List<string> recentProjects)
         {
             this.Clear();
-            foreach (String recentProject in recentProjects)
+            foreach (string recentProject in recentProjects)
             {
                 this.Add(new RecentProject(recentProject));
             }
@@ -44,14 +44,14 @@ namespace StartPage.ProjectInfo
 
     public class RecentProject
     {
-        public String Path = "";
-        public String Name = "";
-        public String Type = "";
-        public String Created = "Error getting file information.";
-        public String Modified = "Error getting file information.";
+        public string Path = "";
+        public string Name = "";
+        public string Type = "";
+        public string Created = "Error getting file information.";
+        public string Modified = "Error getting file information.";
 
         public RecentProject() {}
-        public RecentProject(String path)
+        public RecentProject(string path)
         {
             FileInfo fileInfo = new FileInfo(path);
             this.Path = path; // Store the path...

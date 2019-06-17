@@ -17,16 +17,16 @@ namespace CodeRefactor
         [LocalizedDescription("CodeRefactor.Description.SeparatePackages"), DefaultValue(false)]
         public bool SeparatePackages
         {
-            get { return this.separatePackages; }
-            set { this.separatePackages = value; }
+            get { return separatePackages; }
+            set { separatePackages = value; }
         }
 
         [DisplayName("Disable Move Refactoring")]
         [LocalizedDescription("CodeRefactor.Description.DisableMoveRefactoring"), DefaultValue(false)]
         public bool DisableMoveRefactoring
         {
-            get { return this.disableMoveRefactoring; }
-            set { this.disableMoveRefactoring = value; }
+            get { return disableMoveRefactoring; }
+            set { disableMoveRefactoring = value; }
         }
 
         [DisplayName("Use Inline Renaming")]

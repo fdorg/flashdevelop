@@ -99,7 +99,7 @@ namespace ProjectManager.Actions
                 // validate commands not empty
                 if (project.PreBuildEvent.Trim().Length == 0 && project.PostBuildEvent.Trim().Length == 0)
                 {
-                    String info = TextHelper.GetString("Info.NoOutputAndNoBuild");
+                    string info = TextHelper.GetString("Info.NoOutputAndNoBuild");
                     TraceManager.Add(info);
                 }
             }
@@ -117,7 +117,7 @@ namespace ProjectManager.Actions
 
                 if (project.OutputPath.Length == 0)
                 {
-                    String info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
+                    string info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
                     ErrorManager.ShowInfo(info);
                     return false;
                 }
@@ -284,7 +284,7 @@ namespace ProjectManager.Actions
             if (sdks == null) sdks = new InstalledSDK[] { };
 
             // default sdk
-            if (String.IsNullOrEmpty(preferredSDK))
+            if (string.IsNullOrEmpty(preferredSDK))
             {
                 LatestSDKMatchQuality = -1;
                 foreach (InstalledSDK sdk in sdks)

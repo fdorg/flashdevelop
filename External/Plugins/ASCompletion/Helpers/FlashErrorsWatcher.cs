@@ -55,7 +55,7 @@ namespace ASCompletion.Helpers
 
                 fsWatcher = new WatcherEx(logLocation);
                 fsWatcher.EnableRaisingEvents = true;
-                fsWatcher.Changed += new FileSystemEventHandler(fsWatcher_Changed);
+                fsWatcher.Changed += fsWatcher_Changed;
 
                 updater = new Timer();
                 updater.SynchronizingObject = PluginBase.MainForm as Form;
@@ -94,7 +94,7 @@ namespace ASCompletion.Helpers
                     line += "," + mCol.Groups[1].Value;
                     desc = desc.Substring(mCol.Length);
                 }
-                TraceManager.Add(String.Format("{0}({1}): {2}", file, line, desc), -3);
+                TraceManager.Add(string.Format("{0}({1}): {2}", file, line, desc), -3);
             }
             foreach (Match m in warningMatches)
             {
@@ -107,7 +107,7 @@ namespace ASCompletion.Helpers
                     line += "," + mCol.Groups[1].Value;
                     desc = desc.Substring(mCol.Length);
                 }
-                TraceManager.Add(String.Format("{0}({1}): {2}", file, line, desc), -3);
+                TraceManager.Add(string.Format("{0}({1}): {2}", file, line, desc), -3);
             }
             te = new TextEvent(EventType.ProcessEnd, "Done(" + errorMatches.Count + ")");
             EventManager.DispatchEvent(this, te);

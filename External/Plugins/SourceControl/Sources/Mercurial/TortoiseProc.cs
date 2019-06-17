@@ -12,7 +12,7 @@ namespace SourceControl.Sources.Mercurial
 
         static public void Execute(string command, string path)
         {
-            string args = String.Format("{0} \"{1}\"", command, path);
+            string args = string.Format("{0} \"{1}\"", command, path);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
@@ -28,7 +28,7 @@ namespace SourceControl.Sources.Mercurial
 
         static public void Execute(string command, string path1, string path2)
         {
-            string args = String.Format("{0} \"{1}\" \"{2}\"", command, path1, path2);
+            string args = string.Format("{0} \"{1}\" \"{2}\"", command, path1, path2);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
@@ -46,7 +46,7 @@ namespace SourceControl.Sources.Mercurial
         {
             string cmd = PluginMain.SCSettings.TortoiseHGProcPath;
             if (cmd != null && File.Exists(cmd)) return cmd;
-            if (String.IsNullOrEmpty(cmd)) cmd = "thgw.exe";
+            if (string.IsNullOrEmpty(cmd)) cmd = "thgw.exe";
             return ResolveTortoiseProcPath(cmd);
         }
 

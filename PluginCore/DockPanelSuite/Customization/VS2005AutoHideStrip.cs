@@ -286,7 +286,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             else x = TabGapLeft + rectTabStrip.X;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005AutoHideStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005AutoHideStrip.TabStyle");
 
             foreach (Pane pane in GetPanes(dockState))
             {
@@ -341,12 +341,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             GraphicsPath path = GetTabOutline(tab, false, true);
             g.FillPath(BrushTabBackground, path);
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005AutoHideStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005AutoHideStrip.TabStyle");
             Color tabUlColor = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005AutoHideStrip.TabUnderlineColor");
 
             if (tabStyle == "Underlined")
             {
-                Int32 spacing = ScaleHelper.Scale(4);
+                int spacing = ScaleHelper.Scale(4);
                 Brush brush = tabUlColor != Color.Empty ? new SolidBrush(tabUlColor) : SystemBrushes.Highlight;
                 if (dockState == DockState.DockRightAutoHide)
                 {

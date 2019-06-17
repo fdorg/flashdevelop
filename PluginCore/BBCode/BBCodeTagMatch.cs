@@ -6,30 +6,30 @@ namespace PluginCore.BBCode
     public class BBCodeTagMatch : BBCodeTagInfo, IPairTagMatch
     {
 
-        public BBCodeTagMatch(Boolean isTagOpener)
+        public BBCodeTagMatch(bool isTagOpener)
         {
             _init(isTagOpener, -1, null, null, null, 0, 0, true);
         }
-        public BBCodeTagMatch(Boolean isTagOpener,
+        public BBCodeTagMatch(bool isTagOpener,
                                int tagIndex,
-                               String tagValue,
-                               String tagName,
-                               String tagParam,
+                               string tagValue,
+                               string tagName,
+                               string tagParam,
                                uint numOpenBraceSlashes,
                                uint numCloseBraceSlashes,
-                               Boolean autoGenerateCloserInfo)
+                               bool autoGenerateCloserInfo)
         {
             _init(isTagOpener, tagIndex, tagValue, tagName, tagParam, numOpenBraceSlashes, numCloseBraceSlashes, autoGenerateCloserInfo);
         }
 
-        private void _init(Boolean isTagOpener,
+        private void _init(bool isTagOpener,
                             int tagIndex,
-                            String tagValue,
-                            String tagName,
-                            String tagParam,
+                            string tagValue,
+                            string tagName,
+                            string tagParam,
                             uint numOpenBraceSlashes,
                             uint numCloseBraceSlashes,
-                            Boolean autoGenerateCloserInfo)
+                            bool autoGenerateCloserInfo)
         {
             _init_BBCodeTagInfo(isTagOpener, tagName, tagParam);
 
@@ -49,7 +49,7 @@ namespace PluginCore.BBCode
 
         private int _tagIndex;
         private uint _tagLength;
-        private String _tagValue;
+        private string _tagValue;
 
         private uint _numOpenBraceSlashes;
         private uint _numCloseBraceSlashes;
@@ -66,7 +66,7 @@ namespace PluginCore.BBCode
         {
             get { return _tagLength; }
         }
-        public String tagValue
+        public string tagValue
         {
             get { return _tagValue; }
         }
@@ -104,7 +104,7 @@ namespace PluginCore.BBCode
             }
         }
 
-        override public String ToString()
+        override public string ToString()
         {
             return "[bbCodeTagMatch"
                    + " isTagOpener=" + this.isTagOpener

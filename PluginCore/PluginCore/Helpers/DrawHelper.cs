@@ -9,9 +9,9 @@ namespace PluginCore.Helpers
         /// Measures the actual width of the text
         /// http://www.codeproject.com/KB/GDI-plus/measurestring.aspx
         /// </summary>
-        public static Int32 MeasureDisplayStringWidth(Graphics graphics, String text, Font font)
+        public static int MeasureDisplayStringWidth(Graphics graphics, string text, Font font)
         {
-            if (String.IsNullOrEmpty(text)) return 0;
+            if (string.IsNullOrEmpty(text)) return 0;
 
             try
             {
@@ -22,7 +22,7 @@ namespace PluginCore.Helpers
                 format.SetMeasurableCharacterRanges(ranges);
                 regions = graphics.MeasureCharacterRanges(text, font, rect, format);
                 rect = regions[0].GetBounds(graphics);
-                return (Int32)rect.Right;
+                return (int)rect.Right;
             }
             catch (IndexOutOfRangeException)
             {

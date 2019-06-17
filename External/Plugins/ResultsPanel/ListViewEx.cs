@@ -189,7 +189,7 @@ namespace ResultsPanel
             arrowRenderer.DrawBackground(device, new Rectangle(bounds.Location, bounds.Size));
         }
 
-        private void DrawColumnText(IDeviceContext device, Rectangle bounds, String text, Font font, Color foreColor)
+        private void DrawColumnText(IDeviceContext device, Rectangle bounds, string text, Font font, Color foreColor)
         {
             int textHeight = TextRenderer.MeasureText("HeightTest", font).Height + 1;
             Rectangle textRect = new Rectangle(bounds.X + 3, bounds.Y + (bounds.Height / 2) - (textHeight / 2), bounds.Width, bounds.Height);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Subversion
 {
@@ -7,7 +6,7 @@ namespace SourceControl.Sources.Subversion
     {
         public AddCommand(string path)
         {
-            string args = String.Format("add \"{0}\"", Path.GetFileName(path));
+            string args = string.Format("add \"{0}\"", Path.GetFileName(path));
             Run(args, Path.GetDirectoryName(path));
         }
     }

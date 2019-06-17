@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using PluginCore.Helpers;
@@ -22,9 +21,9 @@ namespace ProjectManager.Projects
         /// <summary>
         /// 
         /// </summary>
-        public static List<String> GetAllProjectDirs()
+        public static List<string> GetAllProjectDirs()
         {
-            List<String> allDirs = new List<String>();
+            List<string> allDirs = new List<string>();
             if (Directory.Exists(ProjectTemplatesDirectory))
             {
                 allDirs.AddRange(Directory.GetDirectories(ProjectTemplatesDirectory));

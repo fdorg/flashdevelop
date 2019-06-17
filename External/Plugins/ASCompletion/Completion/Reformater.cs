@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using PluginCore;
 
@@ -127,7 +126,7 @@ namespace ASCompletion.Completion
                 }
 
                 // generic type
-                if (c == '<' && (c2 == '.' || (options.IsHaXe && (Char.IsLetterOrDigit(c2) || c2 == '{'))))
+                if (c == '<' && (c2 == '.' || (options.IsHaXe && (char.IsLetterOrDigit(c2) || c2 == '{'))))
                 {
                     int i2 = i;
                     if (lookupGeneric(options,txt, ref i))
@@ -186,7 +185,7 @@ namespace ASCompletion.Completion
                 {
                     if (c2 == '}' && (c == ';' || c == ','))
                         needSpace = false;
-                    else if (options.SpaceBeforeFunctionCall && Char.IsLetterOrDigit(c2) && c == '(')
+                    else if (options.SpaceBeforeFunctionCall && char.IsLetterOrDigit(c2) && c == '(')
                         needSpace = true;
                     else
                     {
@@ -268,7 +267,7 @@ namespace ASCompletion.Completion
                         string end = txt.Substring(i).Trim();
                         if (end.Length == 0)
                         {
-                            if (Char.IsLetterOrDigit(prevC) || prevC == ')')
+                            if (char.IsLetterOrDigit(prevC) || prevC == ')')
                             {
                                 sb.Append(options.Newline).Append(indentation).Append('{');
                                 needSpace = false;
@@ -291,7 +290,7 @@ namespace ASCompletion.Completion
                     {
                         if ((c == '-' || c == '+') && (i >= n || !options.Operators.Contains(txt[i]))) // unary sign
                         {
-                            needSpace = (c2 == ')' || c2 == ']' || c2 == '\'' || c2 == '"' || Char.IsLetterOrDigit(c2));
+                            needSpace = (c2 == ')' || c2 == ']' || c2 == '\'' || c2 == '"' || char.IsLetterOrDigit(c2));
                         }
                         else if (c != '!' || (i < n && options.Operators.Contains(txt[i]))) // operator
                         {
@@ -303,7 +302,7 @@ namespace ASCompletion.Completion
                             needSpace = true;
                         }
                     }
-                    if (c == ')' && i < n && Char.IsLetter(txt[i]))
+                    if (c == ')' && i < n && char.IsLetter(txt[i]))
                         sb.Append(' ');
                     c2 = c;
                 }
@@ -332,7 +331,7 @@ namespace ASCompletion.Completion
             {
                 if (c != ' ') prev = c;
                 c = txt[i++];
-                if (Char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
+                if (char.IsLetterOrDigit(c) || c == '.' || c == ' ' || c == ',' || c == ':') continue;
                 if (c == '<') sub++;
                 else if (c == '>')
                 {
@@ -538,7 +537,7 @@ namespace ASCompletion.Completion
                 c = txt[i--];
                 if (c == ' ' || c == '\t') continue;
                 if (c == '\r' || c == '\n') break;
-                if (Char.IsLetterOrDigit(c) || "_$])".Contains(c)) return false;
+                if (char.IsLetterOrDigit(c) || "_$])".Contains(c)) return false;
                 break;
             }
             i = index;

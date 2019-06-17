@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -14,7 +13,7 @@ namespace ProjectManager.Projects
             : base(new FileStream(filename, File.Exists(filename) ? FileMode.Truncate : FileMode.CreateNew), Encoding.UTF8)
         {
             this.project = project;
-            this.Formatting = Formatting.Indented;
+            Formatting = Formatting.Indented;
         }
 
         protected Project Project { get { return project; } }
@@ -118,7 +117,7 @@ namespace ProjectManager.Projects
             WriteOption("testMovieCommand", project.TestMovieCommand ?? "");
             if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
             {
-                WriteOption("defaultBuildTargets", String.Join(",", project.MovieOptions.DefaultBuildTargets));
+                WriteOption("defaultBuildTargets", string.Join(",", project.MovieOptions.DefaultBuildTargets));
             }
             WriteEndElement();
         }

@@ -10,7 +10,7 @@ using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
-    using GeneratorJobType = HaXeContext.Generators.GeneratorJob;
+    using GeneratorJobType = GeneratorJob;
 
     [TestFixture]
     public class CodeGeneratorTests2 : ASCompletionTests

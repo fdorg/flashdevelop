@@ -15,10 +15,10 @@ namespace OutputPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private Int32 logCount;
+        private int logCount;
         private RichTextBoxEx textLog;
         private PluginMain pluginMain;
-        private String searchInvitation;
+        private string searchInvitation;
         private System.Timers.Timer scrollTimer;
         private ToolStripMenuItem wrapTextItem;
         private ToolStripSpringTextBox findTextBox;
@@ -27,9 +27,9 @@ namespace OutputPanel
         private ToolStripButton clearButton;
         private ToolStrip toolStrip;
         private Timer typingTimer;
-        private Boolean scrolling;
+        private bool scrolling;
         private Timer autoShow;
-        private Boolean muted;
+        private bool muted;
         private Image toggleButtonImagePause, toggleButtonImagePlay, toggleButtonImagePlayNew;
 
         public PluginUI(PluginMain pluginMain)
@@ -72,7 +72,7 @@ namespace OutputPanel
             // 
             this.scrollTimer.Interval = 50;
             this.scrollTimer.SynchronizingObject = this;
-            this.scrollTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.ScrollTimerElapsed);
+            this.scrollTimer.Elapsed += this.ScrollTimerElapsed;
             // 
             // textLog
             // 
@@ -85,10 +85,10 @@ namespace OutputPanel
             this.textLog.TabIndex = 1;
             this.textLog.Text = "";
             this.textLog.WordWrap = false;
-            this.textLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
-            this.textLog.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TextLogMouseUp);
-            this.textLog.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.LinkClicked);
-            this.textLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TextLogMouseDown);
+            this.textLog.KeyDown += this.PluginUIKeyDown;
+            this.textLog.MouseUp += this.TextLogMouseUp;
+            this.textLog.LinkClicked += this.LinkClicked;
+            this.textLog.MouseDown += this.TextLogMouseDown;
             // 
             // toolStrip
             // 
@@ -114,7 +114,7 @@ namespace OutputPanel
             this.toggleButton.Name = "toggleButton";
             this.toggleButton.Size = new System.Drawing.Size(23, 20);
             this.toggleButton.Text = "toolStripButton1";
-            this.toggleButton.Click += new System.EventHandler(this.ToggleButtonClick);
+            this.toggleButton.Click += this.ToggleButtonClick;
             // 
             // toolStripSeparator1
             // 
@@ -127,10 +127,10 @@ namespace OutputPanel
             this.findTextBox.Size = new System.Drawing.Size(190, 23);
             this.findTextBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.findTextBox.TextChanged += new System.EventHandler(this.FindTextBoxTextChanged);
-            this.findTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
-            this.findTextBox.Leave += new System.EventHandler(this.FindTextBoxLeave);
-            this.findTextBox.Enter += new System.EventHandler(this.FindTextBoxEnter);
+            this.findTextBox.TextChanged += this.FindTextBoxTextChanged;
+            this.findTextBox.KeyDown += this.PluginUIKeyDown;
+            this.findTextBox.Leave += this.FindTextBoxLeave;
+            this.findTextBox.Enter += this.FindTextBoxEnter;
             // 
             // clearButton
             //
@@ -139,7 +139,7 @@ namespace OutputPanel
             this.clearButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearButton.Click += new System.EventHandler(this.ClearButtonClick);
+            this.clearButton.Click += this.ClearButtonClick;
             // 
             // PluginUI
             // 
@@ -174,9 +174,9 @@ namespace OutputPanel
         {
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;
-            this.autoShow.Tick += new EventHandler(this.AutoShowPanel);
+            this.autoShow.Tick += this.AutoShowPanel;
             this.typingTimer = new Timer();
-            this.typingTimer.Tick += new EventHandler(this.TypingTimerTick);
+            this.typingTimer.Tick += this.TypingTimerTick;
             this.typingTimer.Interval = 250;
         }
 
@@ -188,10 +188,10 @@ namespace OutputPanel
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer();
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearOutput"), null, new EventHandler(this.ClearOutput)));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyOutput"), null, new EventHandler(this.CopyOutput)));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearOutput"), null, this.ClearOutput));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyOutput"), null, this.CopyOutput));
             menu.Items.Add(new ToolStripSeparator());
-            wrapTextItem = new ToolStripMenuItem(TextHelper.GetString("Label.WrapText"), null, new EventHandler(this.WrapText));
+            wrapTextItem = new ToolStripMenuItem(TextHelper.GetString("Label.WrapText"), null, this.WrapText);
             menu.Items.Add(wrapTextItem);
             this.searchInvitation = TextHelper.GetString("Label.SearchInvitation");
             this.clearButton.ToolTipText = TextHelper.GetString("Label.ClearSearchText");
@@ -205,7 +205,7 @@ namespace OutputPanel
         /// <summary>
         /// Opens the clicked link
         /// </summary>
-        private void LinkClicked(Object sender, LinkClickedEventArgs e)
+        private void LinkClicked(object sender, LinkClickedEventArgs e)
         {
             PluginBase.MainForm.CallCommand("Browse", e.LinkText);
         }
@@ -213,7 +213,7 @@ namespace OutputPanel
         /// <summary>
         /// Handle the internal key down event
         /// </summary>
-        private void PluginUIKeyDown(Object sender, KeyEventArgs e)
+        private void PluginUIKeyDown(object sender, KeyEventArgs e)
         {
             this.OnShortcut(e.KeyData);
         }
@@ -221,7 +221,7 @@ namespace OutputPanel
         /// <summary>
         /// Changes the wrapping in the control
         /// </summary>
-        private void WrapText(Object sender, EventArgs e)
+        private void WrapText(object sender, EventArgs e)
         {
             this.pluginMain.PluginSettings.WrapOutput = !this.pluginMain.PluginSettings.WrapOutput;
             this.pluginMain.SaveSettings();
@@ -246,10 +246,10 @@ namespace OutputPanel
         /// <summary>
         /// Copies the text to clipboard
         /// </summary>
-        private void CopyOutput(Object sender, EventArgs e)
+        private void CopyOutput(object sender, EventArgs e)
         {
             if (this.textLog.SelectedText.Length > 0) this.textLog.Copy();
-            else if (!String.IsNullOrEmpty(this.textLog.Text))
+            else if (!string.IsNullOrEmpty(this.textLog.Text))
             {
                 Clipboard.SetText(this.textLog.Text);
                 PluginBase.MainForm.RefreshUI();
@@ -267,7 +267,7 @@ namespace OutputPanel
         /// <summary>
         /// Clears the output
         /// </summary>
-        public void ClearOutput(Object sender, EventArgs e)
+        public void ClearOutput(object sender, EventArgs e)
         {
             this.textLog.Clear();
         }
@@ -284,7 +284,7 @@ namespace OutputPanel
         /// <summary>
         /// Shows the panel
         /// </summary>
-        private void AutoShowPanel(Object sender, EventArgs e)
+        private void AutoShowPanel(object sender, EventArgs e)
         {
             this.autoShow.Stop();
             if (this.textLog.TextLength > 0)
@@ -326,7 +326,7 @@ namespace OutputPanel
         /// <summary>
         /// Handles the shortcut
         /// </summary>
-        public Boolean OnShortcut(Keys keys)
+        public bool OnShortcut(Keys keys)
         {
             if (ContainsFocus)
             {
@@ -366,23 +366,23 @@ namespace OutputPanel
                 return;
             }
             IList<TraceItem> log = TraceManager.TraceLog;
-            Int32 newCount = log.Count;
+            int newCount = log.Count;
             if (newCount <= this.logCount)
             {
                 this.logCount = newCount;
                 return;
             }
-            Int32 state;
-            String message;
+            int state;
+            string message;
             TraceItem entry;
             Color newColor = Color.Red;
             Color currentColor = Color.Red;
             int oldSelectionStart = this.textLog.SelectionStart;
             int oldSelectionLength = this.textLog.SelectionLength;
             List<HighlightMarker> markers = this.pluginMain.PluginSettings.HighlightMarkers;
-            Boolean fastMode = (newCount - this.logCount) > 1000;
+            bool fastMode = (newCount - this.logCount) > 1000;
             StringBuilder newText = new StringBuilder();
-            for (Int32 i = this.logCount; i < newCount; i++)
+            for (int i = this.logCount; i < newCount; i++)
             {
                 entry = log[i];
                 state = entry.State;
@@ -391,7 +391,7 @@ namespace OutputPanel
                 if (!fastMode)
                 {
                     // Automatic state from message, legacy format, ie. "2:message" -> state = 2
-                    if (this.pluginMain.PluginSettings.UseLegacyColoring && state == 1 && message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                    if (this.pluginMain.PluginSettings.UseLegacyColoring && state == 1 && message.Length > 2 && message[1] == ':' && char.IsDigit(message[0]))
                     {
                         if (int.TryParse(message[0].ToString(), out state))
                         {
@@ -469,7 +469,7 @@ namespace OutputPanel
         /// <summary>
         /// Scrolling fix on RichTextBox
         /// </summary> 
-        private void ScrollTimerElapsed(Object sender, System.Timers.ElapsedEventArgs e)
+        private void ScrollTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             this.scrollTimer.Enabled = false;
             if (this.pluginMain.PluginSettings.ShowOnProcessEnd)
@@ -488,7 +488,7 @@ namespace OutputPanel
         /// <summary>
         /// Filters the output by search text
         /// </summary>
-        private void FilterOutput(String findText)
+        private void FilterOutput(string findText)
         {
             this.textLog.Select(0, this.textLog.TextLength);
             this.textLog.SelectionBackColor = this.textLog.BackColor;
@@ -496,7 +496,7 @@ namespace OutputPanel
             {
                 findText = Regex.Escape(findText);
                 MatchCollection results = Regex.Matches(this.textLog.Text, findText, RegexOptions.IgnoreCase);
-                for (Int32 i = 0; i < results.Count; i++)
+                for (int i = 0; i < results.Count; i++)
                 {
                     Match match = results[i];
                     this.textLog.SelectionStart = match.Index;
@@ -509,7 +509,7 @@ namespace OutputPanel
         /// <summary>
         /// Handles the text change event
         /// </summary>
-        private void FindTextBoxTextChanged(Object sender, EventArgs e)
+        private void FindTextBoxTextChanged(object sender, EventArgs e)
         {
             if (this.textLog.TextLength > 10000)
             {
@@ -522,10 +522,10 @@ namespace OutputPanel
         /// <summary>
         /// When the typing timer ticks update the search
         /// </summary>
-        private void TypingTimerTick(Object sender, EventArgs e)
+        private void TypingTimerTick(object sender, EventArgs e)
         {
             this.typingTimer.Stop();
-            String searchText = this.findTextBox.Text;
+            string searchText = this.findTextBox.Text;
             if (searchText == searchInvitation) searchText = "";
             if (searchText.Trim() != "") this.FilterOutput(searchText);
             else this.ClearCurrentSelection();
@@ -535,7 +535,7 @@ namespace OutputPanel
         /// <summary>
         /// When user enters control, handle it
         /// </summary>
-        private void FindTextBoxEnter(Object sender, EventArgs e)
+        private void FindTextBoxEnter(object sender, EventArgs e)
         {
             if (this.findTextBox.Text == searchInvitation)
             {
@@ -547,7 +547,7 @@ namespace OutputPanel
         /// <summary>
         /// When user leaves control, handle it
         /// </summary>
-        private void FindTextBoxLeave(Object sender, EventArgs e)
+        private void FindTextBoxLeave(object sender, EventArgs e)
         {
             if (this.findTextBox.Text == "")
             {
@@ -560,7 +560,7 @@ namespace OutputPanel
         /// <summary>
         /// Clears the search text from the control
         /// </summary>
-        private void ClearButtonClick(Object sender, EventArgs e)
+        private void ClearButtonClick(object sender, EventArgs e)
         {
             this.findTextBox.Text = "";
             this.ClearCurrentSelection();
@@ -570,18 +570,18 @@ namespace OutputPanel
         /// <summary>
         /// Finds the next match and selects it
         /// </summary>
-        private void FindNextMatch(Boolean forward)
+        private void FindNextMatch(bool forward)
         {
             try
             {
-                String searchText = this.findTextBox.Text;
+                string searchText = this.findTextBox.Text;
                 if (searchText == searchInvitation) searchText = "";
                 if (searchText.Trim() != "")
                 {
-                    Int32 curPos = this.textLog.SelectionStart + this.textLog.SelectionLength;
+                    int curPos = this.textLog.SelectionStart + this.textLog.SelectionLength;
                     MatchCollection results = Regex.Matches(this.textLog.Text, searchText, RegexOptions.IgnoreCase);
                     Match nearestMatch = results[0];
-                    for (Int32 i = 0; i < results.Count; i++)
+                    for (int i = 0; i < results.Count; i++)
                     {
                         if (forward)
                         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore;
@@ -23,8 +22,8 @@ namespace SourceControl.Managers
         {
             this.fsWatchers = fsWatchers;
 
-            FileNode.OnFileNodeRefresh += new FileNodeRefresh(FileNode_OnFileNodeRefresh);
-            DirectoryNode.OnDirectoryNodeRefresh += new DirectoryNodeRefresh(DirectoryNode_OnDirectoryNodeRefresh);
+            FileNode.OnFileNodeRefresh += FileNode_OnFileNodeRefresh;
+            DirectoryNode.OnDirectoryNodeRefresh += DirectoryNode_OnDirectoryNodeRefresh;
 
             OverlayMap.Init();
         }
@@ -204,7 +203,7 @@ namespace SourceControl.Managers
 
             Image original = tree.ImageList.Images[node.ImageIndex];
             Bitmap composed = original.Clone() as Bitmap;
-            Int32 curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
+            int curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
             using (Graphics destination = Graphics.FromImage(composed))
             {
                 destination.DrawImage(iconSkin, 

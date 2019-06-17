@@ -10,7 +10,7 @@ namespace FlashDevelop.Dialogs
 {
     public class ControlDialog : Form
     {
-        private Boolean showGroups = true;
+        private bool showGroups = true;
 
         public ControlDialog()
         {
@@ -18,11 +18,11 @@ namespace FlashDevelop.Dialogs
             this.propertyGridEx.SelectedObject = this;
             this.customTabControl.DisplayStyle = TabStyle.Flat;
             this.pictureBoxEx.Image = Image.FromStream(ResourceHelper.GetStream("AboutDialog.jpg"));
-            this.Load += new EventHandler(this.OnFormLoad);
+            this.Load += this.OnFormLoad;
             ScaleHelper.AdjustForHighDPI(this);
         }
 
-        private void OnFormLoad(Object sender, EventArgs e)
+        private void OnFormLoad(object sender, EventArgs e)
         {
             ScrollBarEx.Attach(this, true);
             ScrollBarEx.Attach(this.dataGridViewEx);
@@ -37,7 +37,7 @@ namespace FlashDevelop.Dialogs
             this.treeViewEx.ExpandAll();
         }
 
-        public Boolean ShowGroups
+        public bool ShowGroups
         {
             get { return showGroups; }
             set

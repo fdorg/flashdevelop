@@ -92,7 +92,7 @@ namespace Ookii.Dialogs
                 if( _downlevelDialog != null )
                     _downlevelDialog.Description = value;
                 else
-                    _description = value ?? String.Empty;
+                    _description = value ?? string.Empty;
             }
         }
 

@@ -8,13 +8,13 @@ namespace PluginCore.FRService
     /// <summary>
     /// Event delegates of the service
     /// </summary> 
-    public delegate void FRProgressReportHandler(Int32 percentDone);
+    public delegate void FRProgressReportHandler(int percentDone);
     public delegate void FRFinishedHandler(FRResults results);
 
     /// <summary>
     /// "Alias" for: Dictionary<String, List<SearchMatch>>
     /// </summary>
-    public class FRResults : Dictionary<String, List<SearchMatch>>
+    public class FRResults : Dictionary<string, List<SearchMatch>>
     {
     }
 
@@ -199,7 +199,7 @@ namespace PluginCore.FRService
                     return;
                 }
                 // get files
-                Int32 count = 0;
+                int count = 0;
                 List<string> files = configuration.GetFiles();
                 if (files == null || files.Count == 0)
                 {
@@ -215,9 +215,9 @@ namespace PluginCore.FRService
                 else
                 {
                     // do search
-                    Int32 total = files.Count;
-                    Int32 lastPercent = 0;
-                    foreach (String file in files)
+                    int total = files.Count;
+                    int lastPercent = 0;
+                    foreach (string file in files)
                     {
                         if (this.backgroundWorker.CancellationPending) e.Cancel = true;
                         else
@@ -241,7 +241,7 @@ namespace PluginCore.FRService
 
                             // progress
                             count++;
-                            Int32 percent = (100 * count) / total;
+                            int percent = (100 * count) / total;
                             if (lastPercent != percent)
                             {
                                 this.backgroundWorker.ReportProgress(percent);

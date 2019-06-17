@@ -147,7 +147,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonClose = new InertButton(ImageButtonClose, ImageButtonClose);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
-                    m_buttonClose.Click += new EventHandler(Close_Click);
+                    m_buttonClose.Click += Close_Click;
                     Controls.Add(m_buttonClose);
                 }
 
@@ -188,7 +188,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonWindowList = new InertButton(ImageButtonWindowList, ImageButtonWindowListOverflow);
                     m_toolTip.SetToolTip(m_buttonWindowList, ToolTipSelect);
-                    m_buttonWindowList.Click += new EventHandler(WindowList_Click);
+                    m_buttonWindowList.Click += WindowList_Click;
                     Controls.Add(m_buttonWindowList);
                 }
 
@@ -368,7 +368,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get 
             {
-                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
+                string tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
                 if (tabSize == "Large") return ScaleHelper.Scale(_DocumentTabGapTop - 2);
                 else return ScaleHelper.Scale(_DocumentTabGapTop);
             }
@@ -394,7 +394,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get 
             {
-                String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+                string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
                 if (tabStyle == "Rect") return ScaleHelper.Scale(_DocumentIconGapLeft - 4);
                 else return ScaleHelper.Scale(_DocumentIconGapLeft); 
             }
@@ -873,7 +873,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int x = 0;
             Rectangle rectTabStrip = TabsRectangle;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
 
             // HACK
             if (tabStyle == "Rect") x = rectTabStrip.X;
@@ -1105,7 +1105,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             int curveSize = 6;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
             if (tabStyle == "Block")
             {
                 curveSize = 1;
@@ -1245,13 +1245,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DocumentIconWidth, DocumentIconHeight);
             Rectangle rectText = rectIcon;
 
-            String tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
+            string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
 
             // Adjust text
             double scale = ScaleHelper.GetScale();
             if (scale >= 1.5)
             {
-                String tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
+                string tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
                 if (tabSize == "Default") rectText.Y += ScaleHelper.Scale(1);
             }
             else rectText.Y += ScaleHelper.Scale(2);
@@ -1438,7 +1438,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 IDockContent content = tab.Content;
                 ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
                 item.Tag = tab.Content;
-                item.MouseUp += new MouseEventHandler(ContextMenuItem_Up);
+                item.MouseUp += ContextMenuItem_Up;
             }
             SelectMenu.Show(ButtonWindowList, x, y);
         }
@@ -1584,7 +1584,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (index != -1)
             {
                 TabVS2005 tab = Tabs[index] as TabVS2005;
-                if (!String.IsNullOrEmpty(tab.Content.DockHandler.ToolTipText))
+                if (!string.IsNullOrEmpty(tab.Content.DockHandler.ToolTipText))
                     toolTip = tab.Content.DockHandler.ToolTipText;
                 else if (tab.MaxWidth > tab.TabWidth)
                     toolTip = tab.Content.DockHandler.TabText;

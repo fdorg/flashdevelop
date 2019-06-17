@@ -11,7 +11,7 @@ namespace FlashDevelop.Dialogs
 {
     public class HashDialog : SmartForm
     {
-        private System.String resultHashText;
+        private string resultHashText;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.ComboBox hashComboBox;
@@ -28,7 +28,7 @@ namespace FlashDevelop.Dialogs
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "f521ee73-e082-4218-a41f-bd1a501ebe27";
-            this.resultHashText = String.Empty;
+            this.resultHashText = string.Empty;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
         }
@@ -60,7 +60,7 @@ namespace FlashDevelop.Dialogs
             this.inputTextBox.Name = "inputTextBox";
             this.inputTextBox.Size = new System.Drawing.Size(386, 75);
             this.inputTextBox.TabIndex = 7;
-            this.inputTextBox.TextChanged += new System.EventHandler(this.InputTextBoxChanged);
+            this.inputTextBox.TextChanged += this.InputTextBoxChanged;
             this.inputTextBox.Font = Globals.Settings.DefaultFont; // Do not remove!
             // 
             // okButton
@@ -94,7 +94,7 @@ namespace FlashDevelop.Dialogs
             this.hashComboBox.Size = new System.Drawing.Size(120, 21);
             this.hashComboBox.TabIndex = 3;
             this.hashComboBox.SelectedIndex = 1;
-            this.hashComboBox.SelectedIndexChanged += new System.EventHandler(this.CheckBoxSelectedIndexChanged);
+            this.hashComboBox.SelectedIndexChanged += this.CheckBoxSelectedIndexChanged;
             // 
             // inputTextLabel
             // 
@@ -148,7 +148,7 @@ namespace FlashDevelop.Dialogs
             this.encodingComboBox.Size = new System.Drawing.Size(120, 21);
             this.encodingComboBox.TabIndex = 5;
             this.encodingComboBox.SelectedIndex = 0;
-            this.encodingComboBox.SelectedIndexChanged += new System.EventHandler(this.CheckBoxSelectedIndexChanged);
+            this.encodingComboBox.SelectedIndexChanged += this.CheckBoxSelectedIndexChanged;
             // 
             // cancelButton
             // 
@@ -199,7 +199,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Result hash text of the dialog
         /// </summary>
-        public String HashResultText
+        public string HashResultText
         {
             get { return this.resultHashText; }
         }
@@ -221,7 +221,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the output when the index is changed
         /// </summary>
-        private void CheckBoxSelectedIndexChanged(Object sender, EventArgs e)
+        private void CheckBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             this.InputTextBoxChanged(null, null);
         }
@@ -229,9 +229,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When text changes, update the hash to the output box
         /// </summary>
-        private void InputTextBoxChanged(Object sender, EventArgs e)
+        private void InputTextBoxChanged(object sender, EventArgs e)
         {
-            Byte[] plainBytes = Encoding.UTF8.GetBytes(this.inputTextBox.Text);
+            byte[] plainBytes = Encoding.UTF8.GetBytes(this.inputTextBox.Text);
             try
             {
                 if (this.hashComboBox.SelectedIndex == 1)
@@ -261,23 +261,23 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Outputs the hash to the output box in specified encoding
         /// </summary>
-        private void OutputHash(Byte[] hashBytes)
+        private void OutputHash(byte[] hashBytes)
         {
             if (this.encodingComboBox.SelectedIndex == 0)
             {
-                String b16Hash = Base16.Encode(hashBytes);
+                string b16Hash = Base16.Encode(hashBytes);
                 this.outputTextBox.Text = this.resultHashText = b16Hash;
             } 
             else if (this.encodingComboBox.SelectedIndex == 1)
             {
-                String b64Hash = Base64.Encode(hashBytes);
+                string b64Hash = Base64.Encode(hashBytes);
                 this.outputTextBox.Text = this.resultHashText = b64Hash;
             }
             else if (this.encodingComboBox.SelectedIndex == 2)
             {
-                List<String> array = new List<String>();
-                foreach (Byte entry in hashBytes) array.Add(entry.ToString());
-                String output = String.Join(", ", array.ToArray());
+                List<string> array = new List<string>();
+                foreach (byte entry in hashBytes) array.Add(entry.ToString());
+                string output = string.Join(", ", array.ToArray());
                 this.outputTextBox.Text = output;
                 this.resultHashText = output;
             }

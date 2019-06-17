@@ -13,7 +13,7 @@ namespace PluginCore.BBCode
         public IPairTagMatcher pairTagMatcher;
         public IPairTagMatchHandler pairTagHandler;
 
-        public String input;
+        public string input;
         public IndexTree lastTree;
 
 
@@ -67,7 +67,7 @@ namespace PluginCore.BBCode
         private IndexTree _buildTree(List<IPairTagMatch> openers)
         {
             uint inputL = (uint)input.Length;
-            Boolean closerOutOfBounds;
+            bool closerOutOfBounds;
             int closerStartAt;
             Dictionary<int, IPairTagMatch> closerIndices = new Dictionary<int, IPairTagMatch>();
             IPairTagMatch mOp;

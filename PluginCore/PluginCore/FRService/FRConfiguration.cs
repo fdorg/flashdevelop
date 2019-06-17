@@ -12,22 +12,22 @@ namespace PluginCore.FRService
         /// <summary>
         /// Properties of the class 
         /// </summary> 
-        protected String path;
-        protected String mask;
-        protected String source;
-        protected Boolean recursive;
-        protected List<String> files;
+        protected string path;
+        protected string mask;
+        protected string source;
+        protected bool recursive;
+        protected List<string> files;
         protected OperationType type;
         protected FRSearch search;
         protected string replacement;
-        protected Boolean cacheDocuments = false;
-        protected Boolean updateSourceFile = true;
-        protected IDictionary<String, ITabbedDocument> openDocuments = null;
+        protected bool cacheDocuments = false;
+        protected bool updateSourceFile = true;
+        protected IDictionary<string, ITabbedDocument> openDocuments = null;
 
         /// <summary>
         /// Enables the caching
         /// </summary>
-        public Boolean CacheDocuments
+        public bool CacheDocuments
         {
             get { return cacheDocuments; }
             set { cacheDocuments = value; }
@@ -36,7 +36,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Updates the source file only
         /// </summary>
-        public Boolean UpdateSourceFileOnly
+        public bool UpdateSourceFileOnly
         {
             get { return updateSourceFile; }
             set { updateSourceFile = value; }
@@ -65,26 +65,26 @@ namespace PluginCore.FRService
         /// <summary>
         /// Constructor of the class 
         /// </summary> 
-        public FRConfiguration(List<String> files, FRSearch search)
+        public FRConfiguration(List<string> files, FRSearch search)
         {
             this.type = OperationType.FindInRange;
             this.search = search;
             this.files = files;
         }
-        public FRConfiguration(String fileName, String source, FRSearch search)
+        public FRConfiguration(string fileName, string source, FRSearch search)
         {
             this.type = OperationType.FindInSource;
             this.path = fileName;
             this.search = search;
             this.source = source;
         }
-        public FRConfiguration(String fileName, FRSearch search)
+        public FRConfiguration(string fileName, FRSearch search)
         {
             this.type = OperationType.FindInFile;
             this.path = fileName;
             this.search = search;
         }
-        public FRConfiguration(String path, String fileMask, Boolean recursive, FRSearch search)
+        public FRConfiguration(string path, string fileMask, bool recursive, FRSearch search)
         {
             this.path = path;
             this.type = OperationType.FindInPath;
@@ -104,7 +104,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Gets the source
         /// </summary>
-        public string GetSource(String file)
+        public string GetSource(string file)
         {
             switch (type)
             {
@@ -119,7 +119,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Reads the source
         /// </summary>
-        protected string ReadCurrentFileSource(String file)
+        protected string ReadCurrentFileSource(string file)
         {
             if (cacheDocuments)
             {
@@ -132,7 +132,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Checks if the document is cached
         /// </summary>
-        protected bool IsDocumentCached(String file)
+        protected bool IsDocumentCached(string file)
         {
             return openDocuments.ContainsKey(file);
         }
@@ -142,7 +142,7 @@ namespace PluginCore.FRService
         /// </summary>
         protected void CacheOpenDocuments()
         {
-            this.openDocuments = new Dictionary<String, ITabbedDocument>();
+            this.openDocuments = new Dictionary<string, ITabbedDocument>();
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
                 if (document.IsEditable)
@@ -187,7 +187,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Gets the files
         /// </summary>
-        public List<String> GetFiles()
+        public List<string> GetFiles()
         {
             switch (type)
             {
@@ -197,7 +197,7 @@ namespace PluginCore.FRService
                 case OperationType.FindInSource:
                     if (this.files == null)
                     {
-                        this.files = new List<String>();
+                        this.files = new List<string>();
                         this.files.Add(path);
                     }
                     return files;
@@ -205,7 +205,7 @@ namespace PluginCore.FRService
                 case OperationType.FindInFile:
                     if (this.files == null)
                     {
-                        this.files = new List<String>();
+                        this.files = new List<string>();
                         this.files.Add(path);
                     }
                     return this.files;

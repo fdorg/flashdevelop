@@ -18,7 +18,7 @@ namespace PluginCore.Bridge
         
         public event DataReceivedEventHandler DataReceived;
         
-        public ServerSocket(String address, Int32 port)
+        public ServerSocket(string address, int port)
         {
             if (address == null || address == "invalid")
             {
@@ -54,7 +54,7 @@ namespace PluginCore.Bridge
                 conn = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conn.Bind(new IPEndPoint(ipAddress, portNum));
                 conn.Listen(10);
-                conn.BeginAccept(new AsyncCallback(this.OnConnectRequest), conn);
+                conn.BeginAccept(this.OnConnectRequest, conn);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ namespace PluginCore.Bridge
                 Socket server = (Socket)result.AsyncState;
                 Socket client = server.EndAccept(result);
                 this.SetupReceiveCallback(client);
-                server.BeginAccept(new AsyncCallback(this.OnConnectRequest), server);
+                server.BeginAccept(this.OnConnectRequest, server);
             }
             catch (Exception ex)
             {
@@ -139,7 +139,7 @@ namespace PluginCore.Bridge
             StateObject so = new StateObject(client);
             try
             {
-                AsyncCallback receiveData = new AsyncCallback(this.OnReceivedData);
+                AsyncCallback receiveData = this.OnReceivedData;
                 so.Client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, receiveData, so);
             }
             catch (SocketException)
@@ -161,10 +161,10 @@ namespace PluginCore.Bridge
             StateObject so = (StateObject)result.AsyncState;
             try
             {
-                Int32 bytesReceived = so.Client.EndReceive(result);
+                int bytesReceived = so.Client.EndReceive(result);
                 if (bytesReceived > 0)
                 {
-                    String chunk = Encoding.UTF8.GetString(so.Buffer, 0, bytesReceived);
+                    string chunk = Encoding.UTF8.GetString(so.Buffer, 0, bytesReceived);
                     if (chunk.Contains('*'))
                     {
                         so.Data.Append(chunk);
@@ -204,20 +204,20 @@ namespace PluginCore.Bridge
     
     #region STRUCTS
     
-    public delegate void DataReceivedEventHandler(Object sender, DataReceivedEventArgs e);
+    public delegate void DataReceivedEventHandler(object sender, DataReceivedEventArgs e);
     
     public class DataReceivedEventArgs : EventArgs
     {
-        private String text;
+        private string text;
         private Socket socket;
 
-        public DataReceivedEventArgs(String text, Socket socket) 
+        public DataReceivedEventArgs(string text, Socket socket) 
         {
             this.text = text;
             this.socket = socket;
         }
 
-        public String Text 
+        public string Text 
         {
             get { return this.text; }
         }
@@ -232,16 +232,16 @@ namespace PluginCore.Bridge
     
     public class StateObject
     {
-        public Int32 Size; 
+        public int Size; 
         public Socket Client;
         public StringBuilder Data;
-        public Byte[] Buffer;
+        public byte[] Buffer;
         
         public StateObject(Socket client)
         {
             this.Size = 1024;
             this.Data = new StringBuilder();
-            this.Buffer = new Byte[this.Size];
+            this.Buffer = new byte[this.Size];
             this.Client = client;
         }
         

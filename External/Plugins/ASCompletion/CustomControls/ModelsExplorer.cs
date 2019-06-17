@@ -341,7 +341,7 @@ namespace ASCompletion
                 if (model != null)
                 {
                     ClassModel theClass = model.GetClassByName(tnode.Text);
-                    string memberName = (node.Tag as String).Split('@')[0];
+                    string memberName = (node.Tag as string).Split('@')[0];
                     MemberModel member = theClass.Members.Search(memberName, 0, 0);
                     if (member == null) return;
                     int line = member.LineFrom;
@@ -561,7 +561,7 @@ namespace ASCompletion
 
             string path = GetPathFromNode(node);
             if (path != null)
-                PluginBase.MainForm.CallCommand("RunProcess", String.Format("explorer.exe;/e,\"{0}\"", path));
+                PluginBase.MainForm.CallCommand("RunProcess", string.Format("explorer.exe;/e,\"{0}\"", path));
         }
 
         private void EditToolStripMenuItem_Click(object sender, EventArgs e)

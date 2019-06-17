@@ -49,12 +49,12 @@ namespace ASClassWizard.Wizards
             this.cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
         }
 
-        public String StartupPackage
+        public string StartupPackage
         {
             set { packageBox.Text = value; }
         }
 
-        public String StartupClassName
+        public string StartupClassName
         {
             set { classBox.Text = value; }
         }

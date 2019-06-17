@@ -28,7 +28,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             ShowAutoHideContentOnHover = true;
 
-            String value = PluginCore.PluginBase.MainForm.GetThemeValue("DockPanel.ShowAutoHideContentOn");
+            string value = PluginCore.PluginBase.MainForm.GetThemeValue("DockPanel.ShowAutoHideContentOn");
             if (value == "Click") ShowAutoHideContentOnHover = false;
 
             m_focusManager = new FocusManagerImpl(this);
@@ -112,9 +112,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                     m_focusManager.Dispose();
                     if (m_mdiClientController != null)
                     {
-                        m_mdiClientController.HandleAssigned -= new EventHandler(MdiClientHandleAssigned);
-                        m_mdiClientController.MdiChildActivate -= new EventHandler(ParentFormMdiChildActivate);
-                        m_mdiClientController.Layout -= new LayoutEventHandler(MdiClient_Layout);
+                        m_mdiClientController.HandleAssigned -= MdiClientHandleAssigned;
+                        m_mdiClientController.MdiChildActivate -= ParentFormMdiChildActivate;
+                        m_mdiClientController.Layout -= MdiClient_Layout;
                         m_mdiClientController.Dispose();
                     }
                     FloatWindows.Dispose();
@@ -876,7 +876,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return;
 
             if (m_dummyControlPaintEventHandler == null)
-                m_dummyControlPaintEventHandler = new PaintEventHandler(DummyControl_Paint);
+                m_dummyControlPaintEventHandler = DummyControl_Paint;
 
             DummyControl.Paint += m_dummyControlPaintEventHandler;
             DummyControl.Invalidate();

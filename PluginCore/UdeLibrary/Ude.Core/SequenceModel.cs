@@ -36,8 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {   
     public abstract class SequenceModel
@@ -63,7 +61,7 @@ namespace Ude.Core
             get { return keepEnglishLetter; }
         }
         
-        protected String charsetName;
+        protected string charsetName;
 
         public string CharsetName {
             get { return charsetName; }
@@ -74,7 +72,7 @@ namespace Ude.Core
                 byte[] precedenceMatrix,
                 float typicalPositiveRatio,
                 bool keepEnglishLetter,
-                String charsetName)
+                string charsetName)
         {
             this.charToOrderMap = charToOrderMap;
             this.precedenceMatrix = precedenceMatrix;

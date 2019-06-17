@@ -417,7 +417,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 name = name.Substring(1);
             }
 
-            header.LinkName = String.Empty;
+            header.LinkName = string.Empty;
             header.Name     = name;
             
             if (Directory.Exists(file)) {
@@ -519,9 +519,9 @@ namespace ICSharpCode.SharpZipLib.Tar
             
             header.TypeFlag = isDir ? TarHeader.LF_DIR : TarHeader.LF_NORMAL;
             
-            header.LinkName  = String.Empty;
-            header.UserName  = String.Empty;
-            header.GroupName = String.Empty;
+            header.LinkName  = string.Empty;
+            header.UserName  = string.Empty;
+            header.GroupName = string.Empty;
             
             header.DevMajor = 0;
             header.DevMinor = 0;

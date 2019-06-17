@@ -79,7 +79,7 @@ namespace ProjectManager.Controls
             this.insertButton.Size = new System.Drawing.Size(75, 23);
             this.insertButton.TabIndex = 4;
             this.insertButton.Text = "&Insert";
-            this.insertButton.Click += new System.EventHandler(this.insertButton_Click);
+            this.insertButton.Click += this.insertButton_Click;
             // 
             // textBox
             // 
@@ -91,7 +91,7 @@ namespace ProjectManager.Controls
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(368, 116);
             this.textBox.TabIndex = 0;
-            this.textBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            this.textBox.TextChanged += this.textBox_TextChanged;
             // 
             // splitter1
             // 
@@ -131,9 +131,9 @@ namespace ProjectManager.Controls
             this.listView.TabIndex = 1;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += new System.EventHandler(this.listView_DoubleClick);
-            this.listView.SelectedIndexChanged += new System.EventHandler(this.listView_SelectedIndexChanged);
-            this.listView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView_MouseMove);
+            this.listView.DoubleClick += this.listView_DoubleClick;
+            this.listView.SelectedIndexChanged += this.listView_SelectedIndexChanged;
+            this.listView.MouseMove += this.listView_MouseMove;
             // 
             // nameColumn
             // 

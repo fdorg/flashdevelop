@@ -19,7 +19,7 @@ namespace ProjectManager.Projects.AS3
 
         public override string ToString()
         {
-            return String.IsNullOrEmpty(Uri) ? "New Namespace" : Uri;
+            return string.IsNullOrEmpty(Uri) ? "New Namespace" : Uri;
         }
     }
 }

@@ -10,9 +10,9 @@ namespace WeifenLuo.WinFormsUI.Docking
     {
         public DockContent()
         {
-            m_dockHandler = new DockContentHandler(this, new GetPersistStringCallback(GetPersistString));
-            m_dockHandler.DockStateChanged += new EventHandler(DockHandler_DockStateChanged);
-            m_dockHandler.IsActivatedChanged += new EventHandler(DockHandler_IsActivatedChanged);
+            m_dockHandler = new DockContentHandler(this, GetPersistString);
+            m_dockHandler.DockStateChanged += DockHandler_DockStateChanged;
+            m_dockHandler.IsActivatedChanged += DockHandler_IsActivatedChanged;
         }
 
         private DockContentHandler m_dockHandler = null;

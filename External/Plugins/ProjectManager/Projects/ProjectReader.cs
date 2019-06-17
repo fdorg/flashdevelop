@@ -41,7 +41,7 @@ namespace ProjectManager.Projects
                 project.OutputType = project.MovieOptions.DefaultOutput(project.MovieOptions.Platform);
 
             else if (project.OutputType == OutputType.OtherIDE
-                && (!String.IsNullOrEmpty(project.PreBuildEvent) || !String.IsNullOrEmpty(project.PostBuildEvent)))
+                && (!string.IsNullOrEmpty(project.PreBuildEvent) || !string.IsNullOrEmpty(project.PostBuildEvent)))
                 project.OutputType = OutputType.CustomBuild;
         }
 
@@ -185,9 +185,9 @@ namespace ProjectManager.Projects
                         break;
 
                     case "defaultBuildTargets":
-                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.Contains(","))
+                        if (!string.IsNullOrEmpty(Value.Trim()) && Value.Contains(","))
                         {
-                            String[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<String>();
+                            string[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<string>();
                             project.MovieOptions.DefaultBuildTargets = cleaned;
                         }
                         break;

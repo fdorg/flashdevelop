@@ -39,9 +39,9 @@ namespace ProjectManager.Controls
             }
             else if (!PluginBase.MainForm.ClosingEntirely)
             {
-                List<String> paths = new List<String>();
+                List<string> paths = new List<string>();
                 paths.Add(Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath));
-                foreach (String path in PluginBase.CurrentProject.SourcePaths)
+                foreach (string path in PluginBase.CurrentProject.SourcePaths)
                 {
                     paths.Add(PluginBase.CurrentProject.GetAbsolutePath(path));
                 }
@@ -55,10 +55,10 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Updates color of a document tab
         /// </summary>
-        private static void UpdateTabColor(ITabbedDocument doc, List<String> paths, ProjectManagerSettings settings)
+        private static void UpdateTabColor(ITabbedDocument doc, List<string> paths, ProjectManagerSettings settings)
         {
-            Boolean isMatch = false;
-            foreach (String path in paths)
+            bool isMatch = false;
+            foreach (string path in paths)
             {
                 if (doc.FileName.StartsWith(path, StringComparison.OrdinalIgnoreCase))
                 {

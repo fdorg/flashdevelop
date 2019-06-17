@@ -24,7 +24,7 @@ namespace SourceControl.Managers
 
             refreshTimer = new Timer();
             refreshTimer.Interval = 100;
-            refreshTimer.Tick += new EventHandler(RefreshTimer_Tick);
+            refreshTimer.Tick += RefreshTimer_Tick;
             refreshTimer.Stop();
         }
 

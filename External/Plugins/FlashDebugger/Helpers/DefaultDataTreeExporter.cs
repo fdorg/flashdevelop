@@ -89,7 +89,7 @@ namespace FlashDebugger.Helpers
                         {
                             // error
                             AppendTimes(sb, levelSep, level + 1);
-                            sb.AppendLine(String.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
+                            sb.AppendLine(string.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
                         }
                         else if (level > CopyTreeMaxRecursion)
                         {

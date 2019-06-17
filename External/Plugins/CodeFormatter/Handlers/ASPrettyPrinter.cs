@@ -4151,7 +4151,7 @@ namespace CodeFormatter.Handlers
                     if (braceCode==BraceAdd_Switch && braceInfo.isBracesCurrentlyExist())
                     {
                         IToken prevToken=mRawTokens.Get(nextToken.TokenIndex-1);
-                        while (prevToken.Channel!=AS3_exParser.DEFAULT_TOKEN_CHANNEL)
+                        while (prevToken.Channel!=BaseRecognizer.DEFAULT_TOKEN_CHANNEL)
                         {
                             if (prevToken.TokenIndex==0)
                                 break;
@@ -4226,7 +4226,7 @@ namespace CodeFormatter.Handlers
         }
 
         public void setKeepSpacesBeforeLineComments(bool keepSpaces) {
-            this.mKeepSpacesBeforeLineComments = keepSpaces;
+            mKeepSpacesBeforeLineComments = keepSpaces;
         }
 
         public int getAlignDeclMode() {

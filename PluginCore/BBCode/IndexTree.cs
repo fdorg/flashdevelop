@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -22,7 +21,7 @@ namespace PluginCore.BBCode
             return r;
         }
         
-        public static Boolean insertLeaf( IndexTree tree, IndexTree leaf )
+        public static bool insertLeaf( IndexTree tree, IndexTree leaf )
         {
             if( tree == null || leaf == null )
                 return false;
@@ -251,16 +250,16 @@ namespace PluginCore.BBCode
             return clone;
         }
         
-        public static String treeToString( IndexTree tree )
+        public static string treeToString( IndexTree tree )
         {
             return treeToString( tree, "", false );
         }
-        public static String treeToString( IndexTree tree, String space, Boolean noEolAndEnd )
+        public static string treeToString( IndexTree tree, string space, bool noEolAndEnd )
         {
             if( tree == null )
                 return null;
             
-            String s = "";
+            string s = "";
             
             if( !noEolAndEnd )
                 s += "\n";

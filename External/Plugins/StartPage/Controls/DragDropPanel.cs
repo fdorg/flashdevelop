@@ -11,8 +11,8 @@ namespace StartPage.Controls
         {
             this.AutoSize = false;
             this.AllowDrop = true;
-            this.DragOver += new DragEventHandler(this.PanelDragOver);
-            this.DragDrop += new DragEventHandler(this.PanelDragDrop);
+            this.DragOver += this.PanelDragOver;
+            this.DragDrop += this.PanelDragDrop;
             this.Width = 300;
             this.Height = 90;
         }
@@ -38,7 +38,7 @@ namespace StartPage.Controls
         /// <summary>
         /// Handles the drag over event and enables correct dn'd effects.
         /// </summary>
-        private void PanelDragOver(Object sender, DragEventArgs e)
+        private void PanelDragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -50,12 +50,12 @@ namespace StartPage.Controls
         /// <summary>
         /// Handles the actual file drop and opens them as editable documents.
         /// </summary>
-        private void PanelDragDrop(Object sender, DragEventArgs e)
+        private void PanelDragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                String[] files = (String[])e.Data.GetData(DataFormats.FileDrop);
-                foreach (String file in files)
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (string file in files)
                 {
                     if (File.Exists(file))
                     {

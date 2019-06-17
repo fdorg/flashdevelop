@@ -14,10 +14,10 @@ namespace ProjectManager.Controls
     public class OpenResourceForm : SmartForm
     {
         private PluginMain plugin;
-        private Int32 MAX_ITEMS = 100;
-        private List<String> openedFiles;
-        private List<String> projectFiles;
-        private const String ITEM_SPACER = "-----------------";
+        private int MAX_ITEMS = 100;
+        private List<string> openedFiles;
+        private List<string> projectFiles;
+        private const string ITEM_SPACER = "-----------------";
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.CheckBox cbInClasspathsOnly;
@@ -58,8 +58,8 @@ namespace ProjectManager.Controls
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(466, 22);
             this.textBox.TabIndex = 1;
-            this.textBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.textBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxKeyDown);
+            this.textBox.TextChanged += this.TextBoxTextChanged;
+            this.textBox.KeyDown += this.TextBoxKeyDown;
             // 
             // refreshButton
             //
@@ -68,7 +68,7 @@ namespace ProjectManager.Controls
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 23);
             this.refreshButton.TabIndex = 4;
-            this.refreshButton.Click += new EventHandler(RefreshButtonClick);
+            this.refreshButton.Click += RefreshButtonClick;
             // 
             // cbInClasspathsOnly
             // 
@@ -80,7 +80,7 @@ namespace ProjectManager.Controls
             this.cbInClasspathsOnly.AutoSize = true;
             this.cbInClasspathsOnly.TabIndex = 2;
             this.cbInClasspathsOnly.Checked = false;
-            this.cbInClasspathsOnly.CheckedChanged += new System.EventHandler(this.CbInClasspathsOnlyCheckedChanged);
+            this.cbInClasspathsOnly.CheckedChanged += this.CbInClasspathsOnlyCheckedChanged;
             // 
             // checkBox
             //
@@ -92,7 +92,7 @@ namespace ProjectManager.Controls
             this.checkBox.AutoSize = true;
             this.checkBox.TabIndex = 3;
             this.checkBox.Checked = false;
-            this.checkBox.CheckedChanged += new EventHandler(this.CheckBoxCheckedChanged);
+            this.checkBox.CheckedChanged += this.CheckBoxCheckedChanged;
             // 
             // listBox
             // 
@@ -104,9 +104,9 @@ namespace ProjectManager.Controls
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(498, 264);
             this.listBox.TabIndex = 5;
-            this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
-            this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
-            this.listBox.DoubleClick += new System.EventHandler(this.ListBoxDoubleClick);
+            this.listBox.DrawItem += this.ListBoxDrawItem;
+            this.listBox.Resize += this.ListBoxResize;
+            this.listBox.DoubleClick += this.ListBoxDoubleClick;
             // 
             // OpenResourceForm
             // 
@@ -127,9 +127,9 @@ namespace ProjectManager.Controls
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Open Resource";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OpenResourceKeyDown);
-            this.Load += new EventHandler(OpenResourceFormLoad);
-            this.Activated += new EventHandler(OpenResourceFormActivated);
+            this.KeyDown += this.OpenResourceKeyDown;
+            this.Load += OpenResourceFormLoad;
+            this.Activated += OpenResourceFormActivated;
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -155,31 +155,31 @@ namespace ProjectManager.Controls
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
         }
 
-        private void RefreshButtonClick(Object sender, EventArgs e)
+        private void RefreshButtonClick(object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        private void CbInClasspathsOnlyCheckedChanged(Object sender, EventArgs e)
+        private void CbInClasspathsOnlyCheckedChanged(object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        private void CheckBoxCheckedChanged(Object sender, EventArgs e)
+        private void CheckBoxCheckedChanged(object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        private void OpenResourceFormLoad(Object sender, EventArgs e)
+        private void OpenResourceFormLoad(object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        private void OpenResourceFormActivated(Object sender, EventArgs e)
+        private void OpenResourceFormActivated(object sender, EventArgs e)
         {
             this.textBox.Focus();
             this.textBox.SelectAll();
@@ -191,12 +191,12 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void ListBoxDrawItem(Object sender, DrawItemEventArgs e)
+        private void ListBoxDrawItem(object sender, DrawItemEventArgs e)
         {
-            Boolean selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            bool selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
             if (e.Index >= 0)
             {
-                var fullName = (String)this.listBox.Items[e.Index];
+                var fullName = (string)this.listBox.Items[e.Index];
                 if (fullName == ITEM_SPACER)
                 {
                     e.Graphics.FillRectangle(new SolidBrush(this.listBox.BackColor), e.Bounds);
@@ -206,10 +206,10 @@ namespace ProjectManager.Controls
                 else if (!selected)
                 {
                     e.Graphics.FillRectangle(new SolidBrush(this.listBox.BackColor), e.Bounds);
-                    Int32 slashIndex = fullName.LastIndexOf(Path.DirectorySeparatorChar);
-                    String path = fullName.Substring(0, slashIndex + 1);
-                    String name = fullName.Substring(slashIndex + 1);
-                    Int32 pathSize = DrawHelper.MeasureDisplayStringWidth(e.Graphics, path, e.Font) - 2;
+                    int slashIndex = fullName.LastIndexOf(Path.DirectorySeparatorChar);
+                    string path = fullName.Substring(0, slashIndex + 1);
+                    string name = fullName.Substring(slashIndex + 1);
+                    int pathSize = DrawHelper.MeasureDisplayStringWidth(e.Graphics, path, e.Font) - 2;
                     if (pathSize < 0) pathSize = 0; // No negative padding...
                     e.Graphics.DrawString(path, e.Font, Brushes.Gray, e.Bounds.Left, e.Bounds.Top, StringFormat.GenericDefault);
                     e.Graphics.DrawString(name, e.Font, Brushes.Black, e.Bounds.Left + pathSize, e.Bounds.Top, StringFormat.GenericDefault);
@@ -237,16 +237,16 @@ namespace ProjectManager.Controls
 
         private void FillListBox()
         {
-            List<String> matchedFiles;
+            List<string> matchedFiles;
             if (this.textBox.Text.Length > 0)
             {
-                String searchText = this.textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                string searchText = this.textBox.Text.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                 matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, searchText, Path.DirectorySeparatorChar, 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
                 matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, searchText, Path.DirectorySeparatorChar, this.MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
-            foreach (String file in matchedFiles)
+            foreach (string file in matchedFiles)
             {
                this.listBox.Items.Add(file);
             }
@@ -257,10 +257,10 @@ namespace ProjectManager.Controls
         /// </summary>
         private void UpdateOpenFiles()
         {
-            List<String> open = this.GetOpenFiles();
-            List<String> folders = this.GetProjectFolders();
-            List<String> prevOpen = openedFiles;
-            openedFiles = new List<String>();
+            List<string> open = this.GetOpenFiles();
+            List<string> folders = this.GetProjectFolders();
+            List<string> prevOpen = openedFiles;
+            openedFiles = new List<string>();
             foreach (string file in open)
             {
                 foreach (string folder in folders)
@@ -284,11 +284,11 @@ namespace ProjectManager.Controls
 
         private void CreateFileList()
         {
-            List<String> open = this.GetOpenFiles();
-            openedFiles = new List<String>();
-            projectFiles = new List<String>();
-            List<String> allFiles = this.GetProjectFiles();
-            foreach (String file in allFiles)
+            List<string> open = this.GetOpenFiles();
+            openedFiles = new List<string>();
+            projectFiles = new List<string>();
+            List<string> allFiles = this.GetProjectFiles();
+            foreach (string file in allFiles)
             {
                 if (open.Contains(file)) openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
                 else projectFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
@@ -301,12 +301,12 @@ namespace ProjectManager.Controls
         /// <returns></returns>
         private List<string> GetOpenFiles()
         {
-            List<String> open = new List<String>();
+            List<string> open = new List<string>();
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
                 if (doc.IsEditable && !doc.IsUntitled) 
                 {
-                    String ext = Path.GetExtension(doc.FileName);
+                    string ext = Path.GetExtension(doc.FileName);
                     if (!PluginMain.Settings.ExcludedFileTypes.Contains(ext))
                     {
                         open.Add(doc.FileName);
@@ -319,11 +319,11 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Gets a list of project related files
         /// </summary>
-        public List<String> GetProjectFiles()
+        public List<string> GetProjectFiles()
         {
-            List<String> files = new List<String>();
-            List<String> folders = this.GetProjectFolders();
-            foreach (String folder in folders)
+            List<string> files = new List<string>();
+            List<string> folders = this.GetProjectFolders();
+            foreach (string folder in folders)
             {
                 AddFilesInFolder(files, folder);
             }
@@ -333,7 +333,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Gather files in depth avoiding hidden directories
         /// </summary>
-        private void AddFilesInFolder(List<String> files, String folder)
+        private void AddFilesInFolder(List<string> files, string folder)
         {
             if (Directory.Exists(folder) && !isFolderHidden(folder))
             {
@@ -367,18 +367,18 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Gets a list of project related folders
         /// </summary>
-        public List<String> GetProjectFolders()
+        public List<string> GetProjectFolders()
         {
-            String projectFolder = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-            List<String> folders = new List<String>();
+            string projectFolder = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            List<string> folders = new List<string>();
             if (!cbInClasspathsOnly.Checked) folders.Add(projectFolder);
             if (!PluginMain.Settings.SearchExternalClassPath) return folders;
-            foreach (String path in PluginBase.CurrentProject.SourcePaths)
+            foreach (string path in PluginBase.CurrentProject.SourcePaths)
             {
                 if (Path.IsPathRooted(path)) folders.Add(path);
                 else
                 {
-                    String folder = Path.GetFullPath(Path.Combine(projectFolder, path));
+                    string folder = Path.GetFullPath(Path.Combine(projectFolder, path));
                     if (cbInClasspathsOnly.Checked || !folder.StartsWithOrdinal(projectFolder)) folders.Add(folder);
                 }
             }
@@ -390,8 +390,8 @@ namespace ProjectManager.Controls
         /// </summary>
         private bool isFolderHidden(string folder)
         {
-            String name = Path.GetFileName(folder);
-            if (name.Length == 0 || !Char.IsLetterOrDigit(name[0])) return true;
+            string name = Path.GetFileName(folder);
+            if (name.Length == 0 || !char.IsLetterOrDigit(name[0])) return true;
             foreach (string dir in PluginMain.Settings.ExcludedDirectories)
                 if (dir == name) return true;
             FileInfo info = new FileInfo(folder);
@@ -402,7 +402,7 @@ namespace ProjectManager.Controls
         {
             if (this.listBox.SelectedItem != null)
             {
-                String file = PluginBase.CurrentProject.GetAbsolutePath((string)this.listBox.SelectedItem);
+                string file = PluginBase.CurrentProject.GetAbsolutePath((string)this.listBox.SelectedItem);
                 ((Form)PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate
                 {
                     plugin.OpenFile(file);
@@ -411,7 +411,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void OpenResourceKeyDown(Object sender, KeyEventArgs e)
+        private void OpenResourceKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape) this.Close();
             else if (e.KeyCode == Keys.Enter)
@@ -427,7 +427,7 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void TextBoxKeyDown(Object sender, KeyEventArgs e)
+        private void TextBoxKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Down && this.listBox.SelectedIndex < this.listBox.Items.Count - 1)
             {
@@ -451,17 +451,17 @@ namespace ProjectManager.Controls
             }
         }
 
-        private void TextBoxTextChanged(Object sender, EventArgs e)
+        private void TextBoxTextChanged(object sender, EventArgs e)
         {
             this.RefreshListBox();
         }
 
-        private void ListBoxDoubleClick(Object sender, EventArgs e)
+        private void ListBoxDoubleClick(object sender, EventArgs e)
         {
             this.Navigate();
         }
 
-        private void ListBoxResize(Object sender, EventArgs e)
+        private void ListBoxResize(object sender, EventArgs e)
         {
             this.listBox.Refresh();
         }

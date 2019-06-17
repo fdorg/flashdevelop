@@ -6,12 +6,12 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class LocalizedCategoryAttribute : CategoryAttribute
     {
-        public LocalizedCategoryAttribute(String key) : base(key) { }
+        public LocalizedCategoryAttribute(string key) : base(key) { }
 
         /// <summary>
         /// Gets the localized string
         /// </summary>
-        protected override String GetLocalizedString(String key)
+        protected override string GetLocalizedString(string key)
         {
             return TextHelper.GetString(key);
         }
@@ -21,9 +21,9 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {
-        private Boolean initialized = false;
+        private bool initialized = false;
 
-        public LocalizedDescriptionAttribute(String key) : base(key) { }
+        public LocalizedDescriptionAttribute(string key) : base(key) { }
 
         /// <summary>
         /// Gets the description of the string
@@ -34,7 +34,7 @@ namespace PluginCore.Localization
             {
                 if (!initialized)
                 {
-                    DescriptionValue = TextHelper.GetString(base.Description) ?? String.Empty;
+                    DescriptionValue = TextHelper.GetString(base.Description) ?? string.Empty;
                     initialized = true;
                 }
                 return DescriptionValue;
@@ -46,9 +46,9 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class StringValueAttribute : Attribute
     {
-        private String value;
+        private string value;
 
-        public StringValueAttribute(String value)
+        public StringValueAttribute(string value)
         {
             this.value = value;
         }
@@ -56,7 +56,7 @@ namespace PluginCore.Localization
         /// <summary>
         /// Gets the string value of the class
         /// </summary>
-        public String Value
+        public string Value
         {
             get { return this.value; }
         }

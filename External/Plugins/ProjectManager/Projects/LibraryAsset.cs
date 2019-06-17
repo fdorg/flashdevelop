@@ -18,7 +18,7 @@ namespace ProjectManager.Projects
         public string FontGlyphs;
         public string Sharepoint;
         public SwfAssetMode SwfMode;
-        public Boolean BitmapLinkage;
+        public bool BitmapLinkage;
 
         public LibraryAsset(Project project, string path)
         {

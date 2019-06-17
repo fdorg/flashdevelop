@@ -198,13 +198,13 @@ namespace XMLCompletion
                 {
                     delayOpenConfig = new Timer();
                     delayOpenConfig.Interval = 100;
-                    delayOpenConfig.Tick += new EventHandler(delayOpenConfig_Tick);
+                    delayOpenConfig.Tick += delayOpenConfig_Tick;
                 }
                 if (watcherConfig == null) // watching config files changes
                 {
                     watcherConfig = new FileSystemWatcher(Path.Combine(PathHelper.DataDir, "XMLCompletion"), "zen*");
-                    watcherConfig.Changed += new FileSystemEventHandler(watcherConfig_Changed);
-                    watcherConfig.Created += new FileSystemEventHandler(watcherConfig_Changed);
+                    watcherConfig.Changed += watcherConfig_Changed;
+                    watcherConfig.Created += watcherConfig_Changed;
                     watcherConfig.EnableRaisingEvents = true;
                 }
             }
@@ -254,7 +254,7 @@ namespace XMLCompletion
                 if (src == null)
                     return false;
 
-                String content;
+                string content;
                 using (StreamReader sr = new StreamReader(src))
                 {
                     content = sr.ReadToEnd();
@@ -299,7 +299,7 @@ namespace XMLCompletion
                         if (lastValid - 1 <= pos) break;
                         lastValid = pos + 1;
                     }
-                    else if (!Char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
+                    else if (!char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
                     pos--;
                     if (pos < 0) lastValid = 0;
                 }

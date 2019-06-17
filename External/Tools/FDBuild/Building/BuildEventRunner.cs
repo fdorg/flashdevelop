@@ -15,13 +15,13 @@ namespace ProjectManager.Building
         {
             this.project = project;
             project.CurrentSDK = compilerPath;
-            this.vars = new BuildEventVars(project);
+            vars = new BuildEventVars(project);
         }
 
         //parse line into command/argument pair
         private string[] tokenize(string line)
         {
-            string[] result = new String[2];
+            string[] result = new string[2];
 
             if (line.StartsWith("\"", StringComparison.Ordinal))
             {

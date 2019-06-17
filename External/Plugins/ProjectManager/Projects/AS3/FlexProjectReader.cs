@@ -298,12 +298,12 @@ namespace ProjectManager.Projects.AS3
             }
         }
 
-        public static String ResolvePath(String path, String relativeTo)
+        public static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Boolean isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
+            bool isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
-            String resolvedPath = Path.Combine(relativeTo, path);
+            string resolvedPath = Path.Combine(relativeTo, path);
             if (Directory.Exists(resolvedPath) || File.Exists(resolvedPath)) return resolvedPath;
             return null;
         }

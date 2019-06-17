@@ -72,7 +72,7 @@ namespace SourceControl.Sources.Subversion
                     if (node is GenericNode)
                         paths.Add((node as GenericNode).BackingPath);
                 }
-            return String.Join("*", paths.ToArray());
+            return string.Join("*", paths.ToArray());
         }
 
         void EditConflict_Click(object sender, EventArgs e)

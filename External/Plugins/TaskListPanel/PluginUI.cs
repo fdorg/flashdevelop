@@ -19,19 +19,19 @@ namespace TaskListPanel
 {
     public class PluginUI : DockPanelControl, IEventHandler
     {  
-        private Int32 totalFiles;
-        private Int32 currentPos;
-        private List<String> groups;
-        private Int32 processedFiles;
+        private int totalFiles;
+        private int currentPos;
+        private List<string> groups;
+        private int processedFiles;
         private PluginMain pluginMain;
-        private String currentFileName;
-        private List<String> extensions;
+        private string currentFileName;
+        private List<string> extensions;
         private Regex todoParser = null;
-        private Boolean isEnabled = false;
-        private Boolean refreshEnabled = false;
+        private bool isEnabled = false;
+        private bool refreshEnabled = false;
         private System.Windows.Forms.Timer parseTimer;
-        private Boolean firstExecutionCompleted = false;
-        private Dictionary<String, DateTime> filesCache;
+        private bool firstExecutionCompleted = false;
+        private Dictionary<string, DateTime> filesCache;
         private ContextMenuStrip contextMenu;
         private ToolStripMenuItem refreshButton;
         private ToolStripLabel toolStripLabel;
@@ -57,18 +57,18 @@ namespace TaskListPanel
             this.InitializeLocalization();
             this.InitializeLayout();
             this.pluginMain = pluginMain;
-            this.groups = new List<String>();
+            this.groups = new List<string>();
             this.columnSorter = new ListViewSorter();
             this.listView.ListViewItemSorter = this.columnSorter;
             Settings settings = (Settings)pluginMain.Settings;
-            this.filesCache = new Dictionary<String, DateTime>();
+            this.filesCache = new Dictionary<string, DateTime>();
             EventManager.AddEventHandler(this, EventType.Keys); // Listen Esc
             try
             {
                 if (settings.GroupValues.Length > 0)
                 {
                     this.groups.AddRange(settings.GroupValues);
-                    this.todoParser = BuildRegex(String.Join("|", settings.GroupValues));
+                    this.todoParser = BuildRegex(string.Join("|", settings.GroupValues));
                     this.isEnabled = true;
                     this.InitGraphics();
                 }
@@ -130,9 +130,9 @@ namespace TaskListPanel
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += new System.EventHandler(this.ListViewDoubleClick);
-            this.listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.ListViewColumnClick);
-            this.listView.KeyPress += new KeyPressEventHandler(this.ListViewKeyPress);
+            this.listView.DoubleClick += this.ListViewDoubleClick;
+            this.listView.ColumnClick += this.ListViewColumnClick;
+            this.listView.KeyPress += this.ListViewKeyPress;
             // 
             // columnIcon
             // 
@@ -208,7 +208,7 @@ namespace TaskListPanel
         /// <summary>
         /// 
         /// </summary>
-        private Regex BuildRegex(String pattern)
+        private Regex BuildRegex(string pattern)
         {
             return new Regex(@"(//|\*)[\t ]*(" + pattern + @")[:\t ]+(.*)", RegexOptions.Multiline);
         }
@@ -223,8 +223,8 @@ namespace TaskListPanel
             this.contextMenu.Font = PluginBase.Settings.DefaultFont;
             this.statusStrip.Font = PluginBase.Settings.DefaultFont;
             Image image = PluginBase.MainForm.FindImage("66");
-            String label = TextHelper.GetString("FlashDevelop.Label.Refresh");
-            this.refreshButton = new ToolStripMenuItem(label, image, new EventHandler(this.RefreshButtonClick));
+            string label = TextHelper.GetString("FlashDevelop.Label.Refresh");
+            this.refreshButton = new ToolStripMenuItem(label, image, this.RefreshButtonClick);
             this.contextMenu.Items.Add(this.refreshButton);
             this.listView.ContextMenuStrip = this.contextMenu;
         }
@@ -254,7 +254,7 @@ namespace TaskListPanel
                 if (settings.GroupValues.Length > 0)
                 {
                     this.groups.AddRange(settings.GroupValues);
-                    this.todoParser = BuildRegex(String.Join("|", settings.GroupValues));
+                    this.todoParser = BuildRegex(string.Join("|", settings.GroupValues));
                     this.isEnabled = true;
                     this.InitGraphics();
                 }
@@ -272,7 +272,7 @@ namespace TaskListPanel
         /// <summary>
         /// While parsing project files we need to disable the refresh button
         /// </summary>
-        public Boolean RefreshEnabled
+        public bool RefreshEnabled
         {
             get { return this.refreshEnabled; }
             set
@@ -293,16 +293,16 @@ namespace TaskListPanel
         /// <summary>
         /// Get all available files with extension matches, filters out hidden paths.
         /// </summary>
-        private List<String> GetFiles(String path, ExplorationContext context)
+        private List<string> GetFiles(string path, ExplorationContext context)
         {
-            List<String> files = new List<String>();
-            foreach (String extension in this.extensions)
+            List<string> files = new List<string>();
+            foreach (string extension in this.extensions)
             {
-                String[] allFiles = Directory.GetFiles(path, "*" + extension);
+                string[] allFiles = Directory.GetFiles(path, "*" + extension);
                 files.AddRange(allFiles);
-                foreach (String file in allFiles)
+                foreach (string file in allFiles)
                 {
-                    foreach (String hidden in context.HiddenPaths)
+                    foreach (string hidden in context.HiddenPaths)
                     {
                         if (file.StartsWith(hidden, StringComparison.OrdinalIgnoreCase))
                         {
@@ -311,9 +311,9 @@ namespace TaskListPanel
                     }
                 }
             }
-            foreach (String dir in Directory.GetDirectories(path))
+            foreach (string dir in Directory.GetDirectories(path))
             {
-                if (context.Worker.CancellationPending) return new List<String>();
+                if (context.Worker.CancellationPending) return new List<string>();
                 Thread.Sleep(5);
                 if (this.ShouldBeScanned(dir, context.ExcludedPaths))
                 {
@@ -326,12 +326,12 @@ namespace TaskListPanel
         /// <summary>
         /// Get all available files with extension match
         /// </summary>
-        private List<String> GetFiles(ExplorationContext context)
+        private List<string> GetFiles(ExplorationContext context)
         {
-            List<String> files = new List<String>();
-            foreach (String path in context.Directories)
+            List<string> files = new List<string>();
+            foreach (string path in context.Directories)
             {
-                if (context.Worker.CancellationPending) return new List<String>();
+                if (context.Worker.CancellationPending) return new List<string>();
                 Thread.Sleep(5);
                 try
                 {
@@ -348,11 +348,11 @@ namespace TaskListPanel
         /// <summary>
         /// Checks if the path should be scanned for tasks
         /// </summary>
-        private Boolean ShouldBeScanned(String path, string[] excludedPaths)
+        private bool ShouldBeScanned(string path, string[] excludedPaths)
         {
-            String name = Path.GetFileName(path);
+            string name = Path.GetFileName(path);
             if ("._- ".Contains(name[0])) return false;
-            foreach (String exclude in excludedPaths)
+            foreach (string exclude in excludedPaths)
             {
                 if (!Directory.Exists(path) || path.StartsWith(exclude, StringComparison.OrdinalIgnoreCase)) return false;
             }
@@ -399,14 +399,14 @@ namespace TaskListPanel
                 IProject project = PluginBase.CurrentProject;
                 ExplorationContext context = new ExplorationContext();
                 Settings settings = (Settings)this.pluginMain.Settings;
-                context.ExcludedPaths = (String[])settings.ExcludedPaths.Clone();
-                context.Directories = (String[])project.SourcePaths.Clone();
-                for (Int32 i = 0; i < context.Directories.Length; i++)
+                context.ExcludedPaths = (string[])settings.ExcludedPaths.Clone();
+                context.Directories = (string[])project.SourcePaths.Clone();
+                for (int i = 0; i < context.Directories.Length; i++)
                 {
                     context.Directories[i] = project.GetAbsolutePath(context.Directories[i]);
                 }
                 context.HiddenPaths = project.GetHiddenPaths();
-                for (Int32 i = 0; i < context.HiddenPaths.Length; i++)
+                for (int i = 0; i < context.HiddenPaths.Length; i++)
                 {
                     context.HiddenPaths[i] = project.GetAbsolutePath(context.HiddenPaths[i]);
                 }
@@ -414,10 +414,10 @@ namespace TaskListPanel
                 bgWork = new BackgroundWorker();
                 context.Worker = bgWork;
                 bgWork.WorkerSupportsCancellation = true;
-                bgWork.DoWork += new DoWorkEventHandler(bgWork_DoWork);
-                bgWork.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWork_RunWorkerCompleted);
+                bgWork.DoWork += bgWork_DoWork;
+                bgWork.RunWorkerCompleted += bgWork_RunWorkerCompleted;
                 bgWork.RunWorkerAsync(context);
-                String message = TextHelper.GetString("Info.Refreshing");
+                string message = TextHelper.GetString("Info.Refreshing");
                 this.toolStripLabel.Text = message;
             }
         }
@@ -425,16 +425,16 @@ namespace TaskListPanel
         private void GetExtensions()
         {
             Settings settings = (Settings)pluginMain.Settings;
-            this.extensions = new List<String>();
-            foreach (String ext in settings.FileExtensions)
+            this.extensions = new List<string>();
+            foreach (string ext in settings.FileExtensions)
             {
-                if (!String.IsNullOrEmpty(ext))
+                if (!string.IsNullOrEmpty(ext))
                 {
                     if (!ext.StartsWith('*')) this.extensions.Add("*" + ext);
                     else this.extensions.Add(ext);
                 }
             }
-            String[] addExt = ASContext.Context.GetExplorerMask();
+            string[] addExt = ASContext.Context.GetExplorerMask();
             if (addExt != null && addExt.Length > 0) extensions.AddRange(addExt);
         }
 
@@ -469,8 +469,8 @@ namespace TaskListPanel
         /// </summary>
         private void ParseNextFile()
         {
-            String path;
-            Int32 status;
+            string path;
+            int status;
             ExplorationContext context;
             if (this.parseTimer.Tag is ExplorationContext)
             {
@@ -486,7 +486,7 @@ namespace TaskListPanel
                     List<string> files = context.Files;
                     if (files != null && files.Count > 0)
                     {
-                        Boolean parseFile = false;
+                        bool parseFile = false;
                         path = files[0];
                         DateTime lastWriteTime = new FileInfo(path).LastWriteTime;
                         if (!this.filesCache.ContainsKey(path))
@@ -501,8 +501,8 @@ namespace TaskListPanel
                         files.RemoveAt(0);
                         if (parseFile) this.ParseFile(path);
                         this.processedFiles++;
-                        String message = TextHelper.GetString("Info.Processing");
-                        this.toolStripLabel.Text = String.Format(message, processedFiles, totalFiles);
+                        string message = TextHelper.GetString("Info.Processing");
+                        this.toolStripLabel.Text = string.Format(message, processedFiles, totalFiles);
                         this.refreshButton.Enabled = false;
                     }
                     else context.Status = 2;
@@ -531,7 +531,7 @@ namespace TaskListPanel
         /// <summary>
         /// Parse a file adding all the found Matches into the listView
         /// </summary>
-        private void ParseFile(String path)
+        private void ParseFile(string path)
         {
             if (!File.Exists(path)) return;
             Hashtable itemTag; 
@@ -548,7 +548,7 @@ namespace TaskListPanel
                     itemTag["FullPath"] = path;
                     itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
                     itemTag["Position"] = match.Groups[2].Index;
-                    item = new ListViewItem(new String[] {
+                    item = new ListViewItem(new string[] {
                         "",
                         match.Groups[2].Index.ToString(),
                         match.Groups[2].Value,
@@ -576,7 +576,7 @@ namespace TaskListPanel
         /// <summary>
         /// Parse a string
         /// </summary>
-        private void ParseFile(String text, String path)
+        private void ParseFile(string text, string path)
         {
             ListViewItem item;
             Hashtable itemTag;
@@ -590,7 +590,7 @@ namespace TaskListPanel
                     itemTag["FullPath"] = path;
                     itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
                     itemTag["Position"] = match.Groups[2].Index;
-                    item = new ListViewItem(new String[] {
+                    item = new ListViewItem(new string[] {
                         "",
                         match.Groups[2].Index.ToString(),
                         match.Groups[2].Value,
@@ -609,10 +609,10 @@ namespace TaskListPanel
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, String path)
+        private void AddToGroup(ListViewItem item, string path)
         {
-            String gpname;
-            Boolean found = false;
+            string gpname;
+            bool found = false;
             ListViewGroup gp = null;
             if (File.Exists(path)) gpname = Path.GetFileName(path);
             else gpname = TextHelper.GetString("FlashDevelop.Group.Other");
@@ -639,7 +639,7 @@ namespace TaskListPanel
         /// <summary>
         /// Find the corresponding image index
         /// </summary>
-        private Int32 FindImageIndex(String p)
+        private int FindImageIndex(string p)
         {
             if (this.groups.Contains(p)) return this.groups.IndexOf(p);
             else return -1;
@@ -661,7 +661,7 @@ namespace TaskListPanel
             Settings settings = (Settings) this.pluginMain.Settings;
             if (settings != null && settings.ImageIndexes != null)
             {
-                foreach (Int32 index in settings.ImageIndexes)
+                foreach (int index in settings.ImageIndexes)
                 {
                     imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust(index.ToString()));
                 }
@@ -671,7 +671,7 @@ namespace TaskListPanel
         /// <summary>
         /// Remove all items by filename
         /// </summary>
-        private void RemoveItemsByPath(String path)
+        private void RemoveItemsByPath(string path)
         {
             ListViewItem[] items = this.listView.Items.Find(path, false);
             foreach (ListViewItem item in items) item.Remove();
@@ -693,12 +693,12 @@ namespace TaskListPanel
         /// <summary>
         /// Move the document position
         /// </summary>
-        private void MoveToPosition(ScintillaControl sci, Int32 position)
+        private void MoveToPosition(ScintillaControl sci, int position)
         {
             try
             {
                 position = sci.MBSafePosition(position); // scintilla indexes are in 8bits
-                Int32 line = sci.LineFromPosition(position);
+                int line = sci.LineFromPosition(position);
                 sci.EnsureVisibleEnforcePolicy(line);
                 sci.GotoPos(position);
                 sci.SetSel(position, sci.LineEndPosition(line));
@@ -706,7 +706,7 @@ namespace TaskListPanel
             }
             catch 
             {
-                String message = TextHelper.GetString("Info.InvalidItem");
+                string message = TextHelper.GetString("Info.InvalidItem");
                 ErrorManager.ShowInfo(message);
                 this.RemoveInvalidItems();
                 this.RefreshProject();
@@ -716,11 +716,11 @@ namespace TaskListPanel
         /// <summary>
         /// Clicked on "Refresh" project button. This will refresh all the project files
         /// </summary>
-        private void RefreshButtonClick(Object sender, EventArgs e)
+        private void RefreshButtonClick(object sender, EventArgs e)
         {
             if (!this.isEnabled)
             {
-                String message = TextHelper.GetString("Info.SettingError");
+                string message = TextHelper.GetString("Info.SettingError");
                 this.toolStripLabel.Text = message;
             }
             else
@@ -753,7 +753,7 @@ namespace TaskListPanel
         /// <summary>
         /// Double click on an element, open the file and move to the correct position
         /// </summary>
-        private void ListViewDoubleClick(Object sender, EventArgs e)
+        private void ListViewDoubleClick(object sender, EventArgs e)
         {
             if (!this.isEnabled) return;
             ListView.SelectedListViewItemCollection selected = this.listView.SelectedItems;
@@ -761,9 +761,9 @@ namespace TaskListPanel
             if (selected.Count > 0)
             {
                 ListViewItem firstSelected = selected[0];
-                String path = firstSelected.Name;
+                string path = firstSelected.Name;
                 this.currentFileName = path;
-                this.currentPos = (Int32)((Hashtable)firstSelected.Tag)["Position"];
+                this.currentPos = (int)((Hashtable)firstSelected.Tag)["Position"];
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
                 if (document.IsEditable)
                 {
@@ -777,7 +777,7 @@ namespace TaskListPanel
                 }
                 if (!File.Exists(path))
                 {
-                    String message = TextHelper.GetString("Info.InvalidFile");
+                    string message = TextHelper.GetString("Info.InvalidFile");
                     ErrorManager.ShowInfo(message);
                     this.RemoveInvalidItems();
                     this.RefreshProject();
@@ -789,7 +789,7 @@ namespace TaskListPanel
         /// <summary>
         /// Handles the internal events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (!this.isEnabled) return;
             ITabbedDocument document;
@@ -834,7 +834,7 @@ namespace TaskListPanel
         /// <summary>
         /// Click on a listview header column, then sort the view
         /// </summary>
-        private void ListViewColumnClick(Object sender, ColumnClickEventArgs e)
+        private void ListViewColumnClick(object sender, ColumnClickEventArgs e)
         {
             if (!this.isEnabled) return;
             if (e.Column == this.columnSorter.SortColumn)
@@ -856,9 +856,9 @@ namespace TaskListPanel
         /// <summary>
         /// On enter, go to the selected item
         /// </summary>
-        private void ListViewKeyPress(Object sender, KeyPressEventArgs e)
+        private void ListViewKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (Char)Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
                 this.ListViewDoubleClick(null, null);
             }
@@ -874,7 +874,7 @@ namespace TaskListPanel
     class ExplorationContext
     {
         public int Status = 0;
-        public List<String> Files;
+        public List<string> Files;
         public BackgroundWorker Worker;
         public string[] Directories;
         public string[] ExcludedPaths;

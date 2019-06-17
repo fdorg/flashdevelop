@@ -19,7 +19,7 @@ namespace FlashDevelop.Managers
         static LayoutManager()
         {
             PluginPanels = new List<DockContent>();
-            contentDeserializer = new DeserializeDockContent(GetContentFromPersistString);
+            contentDeserializer = GetContentFromPersistString;
             savedPersistStrings = new HashSet<string>();
             dynamicContentTemplates = new List<DockContent>();
         }
@@ -55,7 +55,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Retrieves the content by persist string
         /// </summary>
-        private static DockContent GetContentFromPersistString(String persistString)
+        private static DockContent GetContentFromPersistString(string persistString)
         {
             for (int i = 0; i < PluginPanels.Count; i++)
             {
@@ -214,7 +214,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Restores the specified panel layout
         /// </summary>
-        public static void RestoreLayout(String file)
+        public static void RestoreLayout(string file)
         {
             try
             {

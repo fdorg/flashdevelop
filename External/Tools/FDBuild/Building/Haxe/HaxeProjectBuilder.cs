@@ -50,7 +50,7 @@ namespace ProjectManager.Building.Haxe
                 libraryBuilder.BuildLibrarySwf(project, false);
             }
             output = output.TrimEnd('\\', '/');
-            string haxeArgs = connect + " " + String.Join(" ", project.BuildHXML(extraClasspaths, output, noTrace));
+            string haxeArgs = connect + " " + string.Join(" ", project.BuildHXML(extraClasspaths, output, noTrace));
             
             Console.WriteLine("haxe " + haxeArgs);
 

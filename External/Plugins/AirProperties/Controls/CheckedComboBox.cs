@@ -57,8 +57,8 @@ namespace AirProperties.Controls
                 public CustomCheckedListBox()
                     : base()
                 {
-                    this.SelectionMode = SelectionMode.One;
-                    this.HorizontalScrollbar = true;
+                    SelectionMode = SelectionMode.One;
+                    HorizontalScrollbar = true;
                 }
                 /// <summary>
                 /// Intercepts the keyboard input, [Enter] confirms a selection and [Esc] cancels it.
@@ -69,14 +69,14 @@ namespace AirProperties.Controls
                     if (e.KeyCode == Keys.Enter)
                     {
                         // Enact selection.
-                        ((CheckedComboBox.Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, true));
+                        ((Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, true));
                         e.Handled = true;
 
                     }
                     else if (e.KeyCode == Keys.Escape)
                     {
                         // Cancel selection.
-                        ((CheckedComboBox.Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, false));
+                        ((Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, false));
                         e.Handled = true;
 
                     }
@@ -162,9 +162,9 @@ namespace AirProperties.Controls
             {
                 this.ccbParent = ccbParent;
                 InitializeComponent();
-                this.ShowInTaskbar = false;
+                ShowInTaskbar = false;
                 // Add a handler to notify our parent of ItemCheck events.
-                this.cclb.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.cclb_ItemCheck);
+                cclb.ItemCheck += cclb_ItemCheck;
             }
 
             // ********************************************* Methods *********************************************
@@ -172,33 +172,33 @@ namespace AirProperties.Controls
             // Create a CustomCheckedListBox which fills up the entire form area.
             private void InitializeComponent()
             {
-                this.cclb = new CustomCheckedListBox();
-                this.SuspendLayout();
+                cclb = new CustomCheckedListBox();
+                SuspendLayout();
                 // 
                 // cclb
                 // 
-                this.cclb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-                this.cclb.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.cclb.FormattingEnabled = true;
-                this.cclb.Location = new System.Drawing.Point(0, 0);
-                this.cclb.Name = "cclb";
-                this.cclb.Size = new System.Drawing.Size(47, 15);
-                this.cclb.TabIndex = 0;
+                cclb.BorderStyle = BorderStyle.FixedSingle;
+                cclb.Dock = DockStyle.Fill;
+                cclb.FormattingEnabled = true;
+                cclb.Location = new Point(0, 0);
+                cclb.Name = "cclb";
+                cclb.Size = new Size(47, 15);
+                cclb.TabIndex = 0;
                 // 
                 // Dropdown
                 // 
-                this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.BackColor = System.Drawing.SystemColors.Menu;
-                this.ClientSize = new System.Drawing.Size(47, 16);
-                this.ControlBox = false;
-                this.Controls.Add(this.cclb);
-                this.ForeColor = System.Drawing.SystemColors.ControlText;
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                this.MinimizeBox = false;
-                this.Name = "ccbParent";
-                this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-                this.ResumeLayout(false);
+                AutoScaleDimensions = new SizeF(6F, 13F);
+                AutoScaleMode = AutoScaleMode.Font;
+                BackColor = SystemColors.Menu;
+                ClientSize = new Size(47, 16);
+                ControlBox = false;
+                Controls.Add(cclb);
+                ForeColor = SystemColors.ControlText;
+                FormBorderStyle = FormBorderStyle.None;
+                MinimizeBox = false;
+                Name = "ccbParent";
+                StartPosition = FormStartPosition.Manual;
+                ResumeLayout(false);
             }
 
             public string GetCheckedItemsStringValue()
@@ -249,7 +249,7 @@ namespace AirProperties.Controls
                 dropdownClosed = true;
                 // Set the focus to our parent CheckedComboBox and hide the dropdown check list.
                 ccbParent.Focus();
-                this.Hide();
+                Hide();
                 // Notify CheckedComboBox that its dropdown is closed. (NOTE: it does not matter which parameters we pass to
                 // OnDropDownClosed() as long as the argument is CCBoxEventArgs so that the method knows the notification has
                 // come from our code and not from the framework).
@@ -359,16 +359,16 @@ namespace AirProperties.Controls
             : base()
         {
             // We want to do the drawing of the dropdown.
-            this.DrawMode = DrawMode.Normal;
+            DrawMode = DrawMode.Normal;
             // Default value separator.
-            this.ValueSeparator = ", ";
+            ValueSeparator = ", ";
             // This prevents the actual ComboBox dropdown to show, although it's not strickly-speaking necessary.
             // But including this remove a slight flickering just before our dropdown appears (which is caused by
             // the empty-dropdown list of the ComboBox which is displayed for fractions of a second).
-            this.DropDownHeight = 1;
-            this.dropdown = new Dropdown(this);
+            DropDownHeight = 1;
+            dropdown = new Dropdown(this);
             // CheckOnClick style for the dropdown (NOTE: must be set after dropdown is created).
-            this.CheckOnClick = true;
+            CheckOnClick = true;
         }
 
         // ******************************** Operations ********************************
@@ -390,18 +390,18 @@ namespace AirProperties.Controls
         {
             if (!dropdown.Visible)
             {
-                Rectangle rect = RectangleToScreen(this.ClientRectangle);
-                dropdown.Location = new Point(rect.X, rect.Y + this.Size.Height);
+                Rectangle rect = RectangleToScreen(ClientRectangle);
+                dropdown.Location = new Point(rect.X, rect.Y + Size.Height);
                 int count = dropdown.List.Items.Count;
-                if (count > this.MaxDropDownItems)
+                if (count > MaxDropDownItems)
                 {
-                    count = this.MaxDropDownItems;
+                    count = MaxDropDownItems;
                 }
                 else if (count == 0)
                 {
                     count = 1;
                 }
-                dropdown.Size = new Size(this.Size.Width, (dropdown.List.ItemHeight) * count + 2);
+                dropdown.Size = new Size(Size.Width, (dropdown.List.ItemHeight) * count + 2);
                 dropdown.List.Focus();
                 dropdown.Show(this);
             }

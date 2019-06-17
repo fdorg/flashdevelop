@@ -29,14 +29,14 @@ namespace SourceControl.Sources.Git
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
-                runner.Output += new LineOutputHandler(Runner_Output);
-                runner.Error += new LineOutputHandler(Runner_Error);
-                runner.ProcessEnded += new ProcessEndedHandler(Runner_ProcessEnded);
+                runner.Output += Runner_Output;
+                runner.Error += Runner_Error;
+                runner.ProcessEnded += Runner_ProcessEnded;
             }
             catch (Exception ex)
             {
                 runner = null;
-                String label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
@@ -84,7 +84,7 @@ namespace SourceControl.Sources.Git
             {
                 (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
                 {
-                    ErrorManager.ShowInfo(String.Join("\n", errors.ToArray()));
+                    ErrorManager.ShowInfo(string.Join("\n", errors.ToArray()));
                 });
             }
         }

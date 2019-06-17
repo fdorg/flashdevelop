@@ -271,7 +271,7 @@ namespace PluginCore.Controls
                 {
                     if (Win32.ShouldUseWin32())
                     {
-                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int)m.WParam, (int)m.LParam);
                         return true;
                     }
                     else return false;

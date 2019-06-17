@@ -134,8 +134,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     // unwire events connected to the old parent.
                     if (m_parentForm != null)
                     {
-                        m_parentForm.HandleCreated -= new EventHandler(ParentFormHandleCreated);
-                        m_parentForm.MdiChildActivate -= new EventHandler(ParentFormMdiChildActivate);
+                        m_parentForm.HandleCreated -= ParentFormHandleCreated;
+                        m_parentForm.MdiChildActivate -= ParentFormMdiChildActivate;
                     }
 
                     m_parentForm = value;
@@ -151,9 +151,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                         RefreshProperties();
                     }
                     else
-                        m_parentForm.HandleCreated += new EventHandler(ParentFormHandleCreated);
+                        m_parentForm.HandleCreated += ParentFormHandleCreated;
 
-                    m_parentForm.MdiChildActivate += new EventHandler(ParentFormMdiChildActivate);
+                    m_parentForm.MdiChildActivate += ParentFormMdiChildActivate;
                 }
             }
 
@@ -237,7 +237,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             private void ParentFormHandleCreated(object sender, EventArgs e)
             {
                 // The form has been created, unwire the event, and initialize the MdiClient.
-                this.m_parentForm.HandleCreated -= new EventHandler(ParentFormHandleCreated);
+                this.m_parentForm.HandleCreated -= ParentFormHandleCreated;
                 InitializeMdiClient();
                 RefreshProperties();
             }
@@ -258,7 +258,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 // release the handle.
                 if (m_mdiClient != null)
                 {
-                    m_mdiClient.HandleDestroyed -= new EventHandler(MdiClientHandleDestroyed);
+                    m_mdiClient.HandleDestroyed -= MdiClientHandleDestroyed;
                     m_mdiClient = null;
                 }
 
@@ -271,8 +271,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 // to the old MDI.
                 if (MdiClient != null)
                 {
-                    MdiClient.HandleDestroyed -= new EventHandler(MdiClientHandleDestroyed);
-                    MdiClient.Layout -= new LayoutEventHandler(MdiClientLayout);
+                    MdiClient.HandleDestroyed -= MdiClientHandleDestroyed;
+                    MdiClient.Layout -= MdiClientLayout;
                 }
 
                 if (ParentForm == null)
@@ -296,8 +296,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     OnHandleAssigned(EventArgs.Empty);
 
                     // Monitor the MdiClient for when its handle is destroyed.
-                    MdiClient.HandleDestroyed += new EventHandler(MdiClientHandleDestroyed);
-                    MdiClient.Layout += new LayoutEventHandler(MdiClientLayout);
+                    MdiClient.HandleDestroyed += MdiClientHandleDestroyed;
+                    MdiClient.Layout += MdiClientLayout;
 
                     break;
                 }
@@ -333,9 +333,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (m_mdiClientController == null)
             {
                 m_mdiClientController = new MdiClientController();
-                m_mdiClientController.HandleAssigned += new EventHandler(MdiClientHandleAssigned);
-                m_mdiClientController.MdiChildActivate += new EventHandler(ParentFormMdiChildActivate);
-                m_mdiClientController.Layout += new LayoutEventHandler(MdiClient_Layout);
+                m_mdiClientController.HandleAssigned += MdiClientHandleAssigned;
+                m_mdiClientController.MdiChildActivate += ParentFormMdiChildActivate;
+                m_mdiClientController.Layout += MdiClient_Layout;
             }
 
             return m_mdiClientController;

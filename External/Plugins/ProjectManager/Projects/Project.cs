@@ -128,7 +128,7 @@ namespace ProjectManager.Projects
         public PathCollection CompileTargets { get { return compileTargets; } }
         public HiddenPathCollection HiddenPaths { get { return hiddenPaths; } }
         public AssetCollection LibraryAssets { get { return libraryAssets; } }
-        public virtual String LibrarySWFPath { get { return OutputPath; } }
+        public virtual string LibrarySWFPath { get { return OutputPath; } }
         public Dictionary<string, string> Storage { get { return storage; } }
         public List<string> ExternalLibraries { get; } = new List<string>();
 
@@ -268,7 +268,7 @@ namespace ProjectManager.Projects
         /// </summary>
         public string GetObjDirectory()
         {
-            string objPath = Path.Combine(this.Directory, "obj");
+            string objPath = Path.Combine(Directory, "obj");
             if (!System.IO.Directory.Exists(objPath))
                 System.IO.Directory.CreateDirectory(objPath);
             return objPath;
@@ -316,14 +316,14 @@ namespace ProjectManager.Projects
 
         #region Path Helpers
 
-        public String[] GetHiddenPaths()
+        public string[] GetHiddenPaths()
         {
-            return this.hiddenPaths.ToArray();
+            return hiddenPaths.ToArray();
         }
 
         public string GetRelativePath(string path)
         {
-            return ProjectPaths.GetRelativePath(this.Directory, path);
+            return ProjectPaths.GetRelativePath(Directory, path);
         }
 
         public void UpdateVars(bool silent)
@@ -338,7 +338,7 @@ namespace ProjectManager.Projects
             if (vars != null && path.IndexOf('$') >= 0)
                 foreach (BuildEventInfo arg in vars) 
                     path = path.Replace(arg.FormattedName, arg.Value);
-            return ProjectPaths.GetAbsolutePath(this.Directory, path);
+            return ProjectPaths.GetAbsolutePath(Directory, path);
         }
 
         /// <summary>
@@ -356,14 +356,14 @@ namespace ProjectManager.Projects
         /// <summary>
         /// Replace accented characters and remove whitespace
         /// </summary>
-        public static String RemoveDiacritics(String s)
+        public static string RemoveDiacritics(string s)
         {
-            String normalizedString = s.Normalize(NormalizationForm.FormD);
+            string normalizedString = s.Normalize(NormalizationForm.FormD);
             StringBuilder stringBuilder = new StringBuilder();
 
             for (int i = 0; i < normalizedString.Length; i++)
             {
-                Char c = normalizedString[i];
+                char c = normalizedString[i];
                 if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                     stringBuilder.Append(c);
             }

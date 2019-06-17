@@ -114,7 +114,7 @@ namespace ASCompletion.Model
             explored = new List<string>();
         }
 
-        public void HideDirectories(IEnumerable<String> dirs)
+        public void HideDirectories(IEnumerable<string> dirs)
         {
             foreach (string dir in dirs)
             {
@@ -218,7 +218,7 @@ namespace ASCompletion.Model
                     else if (pathModel.Owner != null)
                         try
                         {
-                            NotifyProgress(String.Format(TextHelper.GetString("Info.Parsing"), 1), 0, 1);
+                            NotifyProgress(string.Format(TextHelper.GetString("Info.Parsing"), 1), 0, 1);
                             pathModel.Owner.ExploreVirtualPath(pathModel);
                         }
                         catch (Exception ex)
@@ -315,7 +315,7 @@ namespace ASCompletion.Model
 
             // parse files
             int n = foundFiles.Count;
-            NotifyProgress(String.Format(TextHelper.GetString("Info.Parsing"), n), 0, n);
+            NotifyProgress(string.Format(TextHelper.GetString("Info.Parsing"), n), 0, n);
             FileModel aFile = null;
             int cpt = 0;
             string filename;
@@ -347,7 +347,7 @@ namespace ASCompletion.Model
                 cpt++;
                 // update status
                 if (stopExploration) return writeCache;
-                if (i % 10 == 0) NotifyProgress(String.Format(TextHelper.GetString("Info.Parsing"), n), i, n);
+                if (i % 10 == 0) NotifyProgress(string.Format(TextHelper.GetString("Info.Parsing"), n), i, n);
                 Thread.Sleep(1);
             }
             return writeCache;

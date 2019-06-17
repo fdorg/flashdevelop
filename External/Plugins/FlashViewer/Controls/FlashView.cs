@@ -9,10 +9,10 @@ namespace FlashViewer.Controls
 {
     public class FlashView : UserControl
     {
-        private String moviePath;
+        private string moviePath;
         private AxShockwaveFlash flashMovie;
 
-        public FlashView(String file)
+        public FlashView(string file)
         {
             this.moviePath = file;
             this.InitializeComponent();
@@ -47,7 +47,7 @@ namespace FlashViewer.Controls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flashMovie);
             this.Name = "FlashView";
-            this.Load += new EventHandler(this.FlashViewLoad);
+            this.Load += this.FlashViewLoad;
             this.Size = new System.Drawing.Size(571, 367);
             ((System.ComponentModel.ISupportInitialize)(this.flashMovie)).EndInit();
             this.ResumeLayout(false);
@@ -61,7 +61,7 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Accessor for the movie file path
         /// </summary>
-        public String MoviePath
+        public string MoviePath
         {
             get { return this.moviePath; }
             set 
@@ -95,15 +95,15 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Handles the FSCommand event
         /// </summary>
-        private void FlashMovieFSCommand(Object sender, _IShockwaveFlashEvents_FSCommandEvent e)
+        private void FlashMovieFSCommand(object sender, _IShockwaveFlashEvents_FSCommandEvent e)
         {
             try
             {
                 if (e.command == "trace")
                 {
-                    Int32 state = 1;
-                    String message = e.args;
-                    if (message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                    int state = 1;
+                    string message = e.args;
+                    if (message.Length > 2 && message[1] == ':' && char.IsDigit(message[0]))
                     {
                         if (int.TryParse(message[0].ToString(), out state))
                         {
@@ -138,9 +138,9 @@ namespace FlashViewer.Controls
                         if (reader.Name == "string")
                         {
                             reader.Read();
-                            Int32 state = 1;
-                            String message = reader.Value;
-                            if (message.Length > 2 && message[1] == ':' && Char.IsDigit(message[0]))
+                            int state = 1;
+                            string message = reader.Value;
+                            if (message.Length > 2 && message[1] == ':' && char.IsDigit(message[0]))
                             {
                                 if (int.TryParse(message[0].ToString(), out state))
                                 {

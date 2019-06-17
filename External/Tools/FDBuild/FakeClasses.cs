@@ -29,11 +29,11 @@ namespace ProjectManager.Controls
 }
 namespace ProjectManager.Controls.AS2
 {
-    public class AS2PropertiesDialog : ProjectManager.Controls.PropertiesDialog { }
+    public class AS2PropertiesDialog : PropertiesDialog { }
 }
 namespace ProjectManager.Controls.AS3
 {
-    public class AS3PropertiesDialog : ProjectManager.Controls.PropertiesDialog { }
+    public class AS3PropertiesDialog : PropertiesDialog { }
 }
 
 namespace ProjectManager.Helpers
@@ -48,11 +48,11 @@ namespace ProjectManager.Helpers
 
         private static void SetInitialProjectHash()
         {
-            projectTypes["project.fdp"] = typeof(ProjectManager.Projects.AS2.AS2Project);
-            projectTypes["project.as2proj"] = typeof(ProjectManager.Projects.AS2.AS2Project);
-            projectTypes["project.as3proj"] = typeof(ProjectManager.Projects.AS3.AS3Project);
-            projectTypes["project.hxproj"] = typeof(ProjectManager.Projects.Haxe.HaxeProject);
-            projectTypes["project.fdproj"] = typeof(ProjectManager.Projects.Generic.GenericProject);
+            projectTypes["project.fdp"] = typeof(Projects.AS2.AS2Project);
+            projectTypes["project.as2proj"] = typeof(Projects.AS2.AS2Project);
+            projectTypes["project.as3proj"] = typeof(Projects.AS3.AS3Project);
+            projectTypes["project.hxproj"] = typeof(Projects.Haxe.HaxeProject);
+            projectTypes["project.fdproj"] = typeof(Projects.Generic.GenericProject);
             projectTypesSet = true;
         }
 

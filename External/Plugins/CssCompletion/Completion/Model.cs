@@ -181,13 +181,13 @@ namespace CssCompletion
         {
             get { return label; }
         }
-        Int32 IComparable.CompareTo(Object obj)
+        int IComparable.CompareTo(object obj)
         {
-            return String.Compare(Label, (obj as ICompletionListItem).Label, true);
+            return string.Compare(Label, (obj as ICompletionListItem).Label, true);
         }
-        Int32 IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
+        int IComparable<ICompletionListItem>.CompareTo(ICompletionListItem other)
         {
-            return String.Compare(Label, other.Label, true);
+            return string.Compare(Label, other.Label, true);
         }
     }
 }

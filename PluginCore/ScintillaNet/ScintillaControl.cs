@@ -256,12 +256,12 @@ namespace ScintillaNet
                 _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
                 directPointer = DirectPointer;
             }
-            UpdateUI += new UpdateUIHandler(OnUpdateUI);
-            UpdateUI += new UpdateUIHandler(OnBraceMatch);
-            UpdateUI += new UpdateUIHandler(OnCancelHighlight);
-            DoubleClick += new DoubleClickHandler(OnBlockSelect);
-            CharAdded += new CharAddedHandler(OnSmartIndent);
-            Resize += new EventHandler(OnResize);
+            UpdateUI += OnUpdateUI;
+            UpdateUI += OnBraceMatch;
+            UpdateUI += OnCancelHighlight;
+            DoubleClick += OnBlockSelect;
+            CharAdded += OnSmartIndent;
+            Resize += OnResize;
             this.InitScrollBars(this);
         }
 

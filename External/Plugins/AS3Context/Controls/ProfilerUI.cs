@@ -16,9 +16,9 @@ namespace AS3Context.Controls
 {
     public partial class ProfilerUI : DockPanelControl, IThemeHandler
     {
-        static private readonly Byte[] RESULT_OK = Encoding.Default.GetBytes("<flashconnect status=\"0\"/>\0");
-        static private readonly Byte[] RESULT_IGNORED = Encoding.Default.GetBytes("<flashconnect status=\"3\"/>\0");
-        static private readonly Byte[] RESULT_GC = Encoding.Default.GetBytes("<flashconnect status=\"4\"/>\0");
+        static private readonly byte[] RESULT_OK = Encoding.Default.GetBytes("<flashconnect status=\"0\"/>\0");
+        static private readonly byte[] RESULT_IGNORED = Encoding.Default.GetBytes("<flashconnect status=\"3\"/>\0");
+        static private readonly byte[] RESULT_GC = Encoding.Default.GetBytes("<flashconnect status=\"4\"/>\0");
 
         static private ProfilerUI instance;
         static private bool gcWanted;
@@ -27,7 +27,7 @@ namespace AS3Context.Controls
         private bool autoStart;
         private bool running;
         private string current;
-        private List<String> previous = new List<string>();
+        private List<string> previous = new List<string>();
         private ObjectRefsGrid objectRefsGrid;
         private ProfilerLiveObjectsView liveObjectsView;
         private ProfilerMemView memView;
@@ -91,7 +91,7 @@ namespace AS3Context.Controls
             if (PluginMain.Settings.ProfilerTimeout == 0) PluginMain.Settings.ProfilerTimeout = 30;
             detectDisconnect = new Timer();
             detectDisconnect.Interval = Math.Max(5, PluginMain.Settings.ProfilerTimeout) * 1000;
-            detectDisconnect.Tick += new EventHandler(detectDisconnect_Tick);
+            detectDisconnect.Tick += detectDisconnect_Tick;
 
             memView = new ProfilerMemView(memLabel, memStatsLabel, memScaleCombo, memoryPage);
 
@@ -99,7 +99,7 @@ namespace AS3Context.Controls
                 column.Width = ScaleHelper.Scale(column.Width);
 
             liveObjectsView = new ProfilerLiveObjectsView(listView);
-            liveObjectsView.OnViewObject += new ViewObjectEvent(liveObjectsView_OnViewObject);
+            liveObjectsView.OnViewObject += liveObjectsView_OnViewObject;
             objectRefsView = new ProfilerObjectsView(objectRefsGrid);
 
             configureProfilerChooser();
@@ -213,11 +213,11 @@ namespace AS3Context.Controls
         private void configureProfilerChooser()
         {
             profilerChooser.Image = PluginBase.MainForm.FindImage("274");
-            profilerChooser.DropDownOpening += new EventHandler(profilerChooser_DropDownOpening);
+            profilerChooser.DropDownOpening += profilerChooser_DropDownOpening;
 
             profilerItems = new List<ToolStripMenuItem>();
             defaultToolStripMenuItem.Checked = true;
-            defaultToolStripMenuItem.Click += new EventHandler(changeProfiler_Click);
+            defaultToolStripMenuItem.Click += changeProfiler_Click;
 
             profilerSWF = null; // default
             string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
@@ -248,7 +248,7 @@ namespace AS3Context.Controls
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(Path.GetFileNameWithoutExtension(swf));
                     item.Tag = swf;
-                    item.Click += new EventHandler(changeProfiler_Click);
+                    item.Click += changeProfiler_Click;
                     profilerItems.Add(item);
                 }
             }
@@ -256,7 +256,7 @@ namespace AS3Context.Controls
             profilerChooser.DropDownItems.AddRange(profilerItems.ToArray());
             defaultToolStripMenuItem.Checked = false;
             foreach (ToolStripMenuItem item in profilerItems)
-                if (item.Tag as String == profilerSWF)
+                if (item.Tag as string == profilerSWF)
                 {
                     item.Checked = true;
                     break;
@@ -271,7 +271,7 @@ namespace AS3Context.Controls
             foreach (ToolStripMenuItem it in profilerItems)
                 it.Checked = false;
             item.Checked = true;
-            profilerSWF = item.Tag as String;
+            profilerSWF = item.Tag as string;
 
             string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
             File.WriteAllText(active, profilerSWF ?? "");
@@ -331,7 +331,7 @@ namespace AS3Context.Controls
         {
             try
             {
-                String mmCfg = PathHelper.ResolveMMConfig();
+                string mmCfg = PathHelper.ResolveMMConfig();
                 if (!File.Exists(mmCfg)) CreateDefaultCfg(mmCfg);
 
                 string src = File.ReadAllText(mmCfg).Trim();
@@ -408,7 +408,7 @@ namespace AS3Context.Controls
         {
             try
             {
-                String contents = "PolicyFileLog=1\r\nPolicyFileLogAppend=0\r\nErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n";
+                string contents = "PolicyFileLog=1\r\nPolicyFileLogAppend=0\r\nErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n";
                 FileHelper.WriteFile(mmCfg, contents, Encoding.UTF8);
             }
             catch (Exception ex)

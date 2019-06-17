@@ -57,10 +57,10 @@ namespace ProjectManager.Projects
             return false;
         }
 
-        public String[] ToArray()
+        public string[] ToArray()
         {
-            String[] hiddenPaths = new String[List.Count];
-            for (Int32 i = 0; i < List.Count; i++)
+            string[] hiddenPaths = new string[List.Count];
+            for (int i = 0; i < List.Count; i++)
             {
                 hiddenPaths.SetValue(List[i], i);
             }
