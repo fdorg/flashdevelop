@@ -36,9 +36,9 @@ namespace FlashDevelop.Docking
             this.focusTimer = new Timer();
             this.focusTimer.Interval = 100;
             this.bookmarks = new List<int>();
-            this.focusTimer.Tick += new EventHandler(this.OnFocusTimer);
-            this.ControlAdded += new ControlEventHandler(this.DocumentControlAdded);
-            UITools.Manager.OnMarkerChanged += new UITools.LineEventHandler(this.OnMarkerChanged);
+            this.focusTimer.Tick += this.OnFocusTimer;
+            this.ControlAdded += this.DocumentControlAdded;
+            UITools.Manager.OnMarkerChanged += this.OnMarkerChanged;
             this.DockPanel = Globals.MainForm.DockPanel;
             this.Font = Globals.Settings.DefaultFont;
             this.DockAreas = DockAreas.Document;
@@ -278,10 +278,10 @@ namespace FlashDevelop.Docking
                 this.editor.MarkerDeleteAll(2);
                 this.IsModified = false;
             };
-            this.editor.FocusChanged += new FocusHandler(this.EditorFocusChanged);
-            this.editor2.FocusChanged += new FocusHandler(this.EditorFocusChanged);
-            this.editor.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
-            this.editor2.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
+            this.editor.FocusChanged += this.EditorFocusChanged;
+            this.editor2.FocusChanged += this.EditorFocusChanged;
+            this.editor.UpdateSync += this.EditorUpdateSync;
+            this.editor2.UpdateSync += this.EditorUpdateSync;
             this.Controls.Add(this.splitContainer);
         }
 
@@ -298,10 +298,10 @@ namespace FlashDevelop.Docking
                  e1 = editor2;
                  e2 = editor;
             }
-            e2.UpdateSync -= new UpdateSyncHandler(this.EditorUpdateSync);
+            e2.UpdateSync -= this.EditorUpdateSync;
             ScintillaManager.UpdateSyncProps(e1, e2);
             ScintillaManager.ApplySciSettings(e2);
-            e2.UpdateSync += new UpdateSyncHandler(this.EditorUpdateSync);
+            e2.UpdateSync += this.EditorUpdateSync;
             Globals.MainForm.RefreshUI();
         }
 
@@ -492,7 +492,7 @@ namespace FlashDevelop.Docking
         private void StartBackupTiming()
         {
             this.backupTimer = new Timer();
-            this.backupTimer.Tick += new EventHandler(this.BackupTimerTick);
+            this.backupTimer.Tick += this.BackupTimerTick;
             this.backupTimer.Interval = Globals.Settings.BackupInterval;
             this.backupTimer.Start();
         }

@@ -82,7 +82,7 @@ namespace FlashDevelop.Dialogs
             this.keyTextBox.Name = "keyTextBox";
             this.keyTextBox.Size = new System.Drawing.Size(308, 21);
             this.keyTextBox.TabIndex = 2;
-            this.keyTextBox.TextChanged += new System.EventHandler(this.TextBoxTextChange);
+            this.keyTextBox.TextChanged += this.TextBoxTextChange;
             // 
             // argsListView
             // 
@@ -97,7 +97,7 @@ namespace FlashDevelop.Dialogs
             this.argsListView.View = System.Windows.Forms.View.Details;
             this.argsListView.Alignment = ListViewAlignment.Left;
             this.argsListView.Columns.Add(this.columnHeader);
-            this.argsListView.SelectedIndexChanged += new System.EventHandler(this.ArgsListViewSelectedIndexChanged);
+            this.argsListView.SelectedIndexChanged += this.ArgsListViewSelectedIndexChanged;
             // 
             // valueLabel
             // 
@@ -144,7 +144,7 @@ namespace FlashDevelop.Dialogs
             this.valueTextBox.Name = "valueTextBox";
             this.valueTextBox.Size = new System.Drawing.Size(308, 223);
             this.valueTextBox.TabIndex = 4;
-            this.valueTextBox.TextChanged += new System.EventHandler(this.TextBoxTextChange);
+            this.valueTextBox.TextChanged += this.TextBoxTextChange;
             // 
             // infoLabel
             //
@@ -165,7 +165,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 7;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // infoPictureBox
             //
@@ -185,7 +185,7 @@ namespace FlashDevelop.Dialogs
             this.addButton.TabIndex = 2;
             this.addButton.Text = "&Add";
             this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new System.EventHandler(this.AddButtonClick);
+            this.addButton.Click += this.AddButtonClick;
             // 
             // deleteButton
             //
@@ -196,7 +196,7 @@ namespace FlashDevelop.Dialogs
             this.deleteButton.TabIndex = 3;
             this.deleteButton.Text = "&Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteButton.Click += this.DeleteButtonClick;
             // 
             // ArgumentDialog
             //
@@ -219,7 +219,7 @@ namespace FlashDevelop.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Custom Arguments";
-            this.Load += new System.EventHandler(this.DialogLoad);
+            this.Load += this.DialogLoad;
             this.detailsGroupBox.ResumeLayout(false);
             this.detailsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).EndInit();
@@ -262,7 +262,7 @@ namespace FlashDevelop.Dialogs
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             contextMenu.Font = PluginBase.Settings.DefaultFont;
             contextMenu.Renderer = new DockPanelStripRenderer(false, false);
-            contextMenu.Opening += new CancelEventHandler(this.ContextMenuOpening);
+            contextMenu.Opening += this.ContextMenuOpening;
             contextMenu.Items.Add(TextHelper.GetString("Label.ImportArguments"), null, this.ImportArguments);
             this.exportItem = new ToolStripMenuItem(TextHelper.GetString("Label.ExportArguments"), null, this.ExportArguments);
             contextMenu.Items.Add(this.exportItem); // Add export item

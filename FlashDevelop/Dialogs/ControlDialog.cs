@@ -18,7 +18,7 @@ namespace FlashDevelop.Dialogs
             this.propertyGridEx.SelectedObject = this;
             this.customTabControl.DisplayStyle = TabStyle.Flat;
             this.pictureBoxEx.Image = Image.FromStream(ResourceHelper.GetStream("AboutDialog.jpg"));
-            this.Load += new EventHandler(this.OnFormLoad);
+            this.Load += this.OnFormLoad;
             ScaleHelper.AdjustForHighDPI(this);
         }
 

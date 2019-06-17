@@ -93,7 +93,7 @@ namespace FlashLogViewer
             this.toggleButton.Margin = new System.Windows.Forms.Padding(1);
             this.toggleButton.Name = "toggleButton";
             this.toggleButton.Size = new System.Drawing.Size(23, 26);
-            this.toggleButton.Click += new System.EventHandler(this.ToggleButtonClick);
+            this.toggleButton.Click += this.ToggleButtonClick;
             // 
             // clearFilterButton
             //
@@ -104,7 +104,7 @@ namespace FlashLogViewer
             this.clearFilterButton.Name = "clearFilterButton";
             this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
             this.clearFilterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButtonClick);
+            this.clearFilterButton.Click += this.ClearFilterButtonClick;
             // 
             // topMostButton
             // 
@@ -113,7 +113,7 @@ namespace FlashLogViewer
             this.topMostButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.topMostButton.Name = "topMostButton";
             this.topMostButton.Size = new System.Drawing.Size(23, 26);
-            this.topMostButton.Click += new System.EventHandler(this.TopMostButtonClick);
+            this.topMostButton.Click += this.TopMostButtonClick;
             // 
             // toolStripSeparator
             // 
@@ -135,7 +135,7 @@ namespace FlashLogViewer
             this.logComboBox.Size = new System.Drawing.Size(120, 28);
             this.logComboBox.SelectedIndex = 0;
             this.logComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.logComboBox.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.LogComboBoxIndexChanged);
+            this.logComboBox.FlatCombo.SelectedIndexChanged += this.LogComboBoxIndexChanged;
             // 
             // filterLabel
             // 
@@ -150,7 +150,7 @@ namespace FlashLogViewer
             this.filterComboBox.Name = "filterComboBox";
             this.filterComboBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.filterComboBox.Size = new System.Drawing.Size(50, 28);
-            this.filterComboBox.TextChanged += new System.EventHandler(this.FilterTextBoxTextChanged);
+            this.filterComboBox.TextChanged += this.FilterTextBoxTextChanged;
             // 
             // logTextBox
             // 
@@ -269,10 +269,10 @@ namespace FlashLogViewer
             menu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer(false);
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearLog"), null, new EventHandler(this.ClearOutput)));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyOutput"), null, new EventHandler(this.CopyOutput)));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearLog"), null, this.ClearOutput));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyOutput"), null, this.CopyOutput));
             menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.WrapText"), null, new EventHandler(this.WrapText)));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.WrapText"), null, this.WrapText));
             this.clearFilterButton.ToolTipText = TextHelper.GetString("ToolTip.ClearFilterText");
             this.topMostButton.ToolTipText = TextHelper.GetString("ToolTip.PopupToTopMost");
             this.toggleButton.ToolTipText = TextHelper.GetString("ToolTip.StartTracking");
@@ -298,7 +298,7 @@ namespace FlashLogViewer
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.refreshTimer = new Timer();
             this.refreshTimer.Interval = this.GetUpdateInterval();
-            this.refreshTimer.Tick += new EventHandler(this.RefreshTimerTick);
+            this.refreshTimer.Tick += this.RefreshTimerTick;
             this.refreshTimer.Start();
             this.refreshTimer.Enabled = false;
         }
@@ -433,7 +433,7 @@ namespace FlashLogViewer
                 this.popupForm.Controls.Add(this);
                 this.popupForm.MinimumSize = new Size(350, 120);
                 this.popupForm.Text = TextHelper.GetString("Title.PluginPanel");
-                this.popupForm.FormClosed += new FormClosedEventHandler(this.PopupFormClosed);
+                this.popupForm.FormClosed += this.PopupFormClosed;
                 this.popupForm.Icon = ImageKonverter.ImageToIcon(PluginBase.MainForm.FindImage("412", false));
                 if (this.Settings.KeepPopupTopMost) this.popupForm.TopMost = true;
                 this.popupForm.Show();
@@ -447,7 +447,7 @@ namespace FlashLogViewer
         private void ClosePluginPanel()
         {
             this.pluginMain.PluginPanel.Hide();
-            this.pluginMain.PluginPanel.VisibleChanged += new EventHandler(this.PluginPanelVisibleChanged);
+            this.pluginMain.PluginPanel.VisibleChanged += this.PluginPanelVisibleChanged;
         }
 
         /// <summary>
@@ -455,7 +455,7 @@ namespace FlashLogViewer
         /// </summary>
         private void PluginPanelVisibleChanged(object sender, EventArgs e)
         {
-            this.pluginMain.PluginPanel.VisibleChanged -= new EventHandler(this.PluginPanelVisibleChanged);
+            this.pluginMain.PluginPanel.VisibleChanged -= this.PluginPanelVisibleChanged;
             this.popupForm.Close();
         }
 

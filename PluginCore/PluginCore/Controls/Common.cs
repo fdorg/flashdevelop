@@ -954,7 +954,7 @@ namespace System.Windows.Forms
     {
         public ToolStripSpringComboBox()
         {
-            this.Control.PreviewKeyDown += new PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+            this.Control.PreviewKeyDown += this.OnPreviewKeyDown;
         }
 
         /// <summary>
@@ -1026,7 +1026,7 @@ namespace System.Windows.Forms
     {
         public ToolStripSpringTextBox()
         {
-            this.Control.PreviewKeyDown += new PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+            this.Control.PreviewKeyDown += this.OnPreviewKeyDown;
         }
 
         /// <summary>

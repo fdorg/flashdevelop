@@ -30,7 +30,7 @@ namespace StartPage.Controls
             this.startPageActions = new StartPageActions();
             this.recentProjectList = new RecentProjectList();
             this.webBrowser.ObjectForScripting = this.startPageActions;
-            this.startPageActions.DocumentCompleted += new EventHandler(WebBrowserDocumentCompleted);
+            this.startPageActions.DocumentCompleted += WebBrowserDocumentCompleted;
             this.ShowStartPage();
         }
         
@@ -56,8 +56,8 @@ namespace StartPage.Controls
             this.webBrowser.Size = new System.Drawing.Size(696, 602);
             this.webBrowser.TabIndex = 0;
             this.webBrowser.WebBrowserShortcutsEnabled = false;
-            this.webBrowser.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.WebBrowserNavigating);
-            this.webBrowser.NewWindow += new System.ComponentModel.CancelEventHandler(this.WebBrowserNewWindow);
+            this.webBrowser.Navigating += this.WebBrowserNavigating;
+            this.webBrowser.NewWindow += this.WebBrowserNewWindow;
             // 
             // StartPageWebBrowser
             //

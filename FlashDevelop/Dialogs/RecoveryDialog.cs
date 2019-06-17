@@ -48,7 +48,7 @@ namespace FlashDevelop.Dialogs
             this.deleteButton.TabIndex = 2;
             this.deleteButton.Text = "&Delete Files";
             this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteButton.Click += this.DeleteButtonClick;
             // 
             // openButton
             // 
@@ -59,7 +59,7 @@ namespace FlashDevelop.Dialogs
             this.openButton.TabIndex = 3;
             this.openButton.Text = "&Open Files";
             this.openButton.UseVisualStyleBackColor = true;
-            this.openButton.Click += new System.EventHandler(this.OpenButtonClick);
+            this.openButton.Click += this.OpenButtonClick;
             // 
             // notifyButton
             // 
@@ -70,7 +70,7 @@ namespace FlashDevelop.Dialogs
             this.notifyButton.TabIndex = 1;
             this.notifyButton.Text = "&Notify Later";
             this.notifyButton.UseVisualStyleBackColor = true;
-            this.notifyButton.Click += new System.EventHandler(this.NotifyButtonClick);
+            this.notifyButton.Click += this.NotifyButtonClick;
             // 
             // infoLabel
             //

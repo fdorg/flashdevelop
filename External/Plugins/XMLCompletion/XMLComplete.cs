@@ -110,7 +110,7 @@ namespace XMLCompletion
             HtmlAttributeIcon = new Bitmap(PluginBase.MainForm.FindImage("272"));
             HtmlTagIcon = new Bitmap(PluginBase.MainForm.FindImage("417"));
             NamespaceTagIcon = new Bitmap(PluginBase.MainForm.FindImage("98"));
-            UITools.Manager.OnCharAdded += new UITools.CharAddedHandler(OnChar);
+            UITools.Manager.OnCharAdded += OnChar;
         }
         
         /// <summary>

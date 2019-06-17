@@ -60,7 +60,7 @@ namespace FlashDevelop.Dialogs
             this.inputTextBox.Name = "inputTextBox";
             this.inputTextBox.Size = new System.Drawing.Size(386, 75);
             this.inputTextBox.TabIndex = 7;
-            this.inputTextBox.TextChanged += new System.EventHandler(this.InputTextBoxChanged);
+            this.inputTextBox.TextChanged += this.InputTextBoxChanged;
             this.inputTextBox.Font = Globals.Settings.DefaultFont; // Do not remove!
             // 
             // okButton
@@ -94,7 +94,7 @@ namespace FlashDevelop.Dialogs
             this.hashComboBox.Size = new System.Drawing.Size(120, 21);
             this.hashComboBox.TabIndex = 3;
             this.hashComboBox.SelectedIndex = 1;
-            this.hashComboBox.SelectedIndexChanged += new System.EventHandler(this.CheckBoxSelectedIndexChanged);
+            this.hashComboBox.SelectedIndexChanged += this.CheckBoxSelectedIndexChanged;
             // 
             // inputTextLabel
             // 
@@ -148,7 +148,7 @@ namespace FlashDevelop.Dialogs
             this.encodingComboBox.Size = new System.Drawing.Size(120, 21);
             this.encodingComboBox.TabIndex = 5;
             this.encodingComboBox.SelectedIndex = 0;
-            this.encodingComboBox.SelectedIndexChanged += new System.EventHandler(this.CheckBoxSelectedIndexChanged);
+            this.encodingComboBox.SelectedIndexChanged += this.CheckBoxSelectedIndexChanged;
             // 
             // cancelButton
             // 

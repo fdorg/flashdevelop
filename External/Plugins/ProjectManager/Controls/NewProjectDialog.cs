@@ -87,7 +87,7 @@ namespace ProjectManager.Controls
             this.okButton.Size = new System.Drawing.Size(90, 23);
             this.okButton.TabIndex = 10;
             this.okButton.Text = "&OK";
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += this.okButton_Click;
             // 
             // previewBox
             // 
@@ -118,7 +118,7 @@ namespace ProjectManager.Controls
             this.projectListView.TileSize = new System.Drawing.Size(170, 22);
             this.projectListView.UseCompatibleStateImageBehavior = false;
             this.projectListView.View = System.Windows.Forms.View.Tile;
-            this.projectListView.SelectedIndexChanged += new System.EventHandler(this.projectListView_SelectedIndexChanged);
+            this.projectListView.SelectedIndexChanged += this.projectListView_SelectedIndexChanged;
             // 
             // columnHeader1
             // 
@@ -137,7 +137,7 @@ namespace ProjectManager.Controls
             this.locationTextBox.Size = new System.Drawing.Size(485, 21);
             this.locationTextBox.TabIndex = 5;
             this.locationTextBox.Text = "C:\\Documents and Settings\\Nick\\My Documents";
-            this.locationTextBox.TextChanged += new System.EventHandler(this.locationTextBox_TextChanged);
+            this.locationTextBox.TextChanged += this.locationTextBox_TextChanged;
             // 
             // label1
             // 
@@ -170,7 +170,7 @@ namespace ProjectManager.Controls
             this.browseButton.Size = new System.Drawing.Size(90, 23);
             this.browseButton.TabIndex = 6;
             this.browseButton.Text = "&Browse...";
-            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
+            this.browseButton.Click += this.browseButton_Click;
             // 
             // label2
             // 
@@ -191,7 +191,7 @@ namespace ProjectManager.Controls
             this.nameTextBox.Size = new System.Drawing.Size(585, 21);
             this.nameTextBox.TabIndex = 3;
             this.nameTextBox.Text = "New Project";
-            this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
+            this.nameTextBox.TextChanged += this.nameTextBox_TextChanged;
             // 
             // createDirectoryBox
             // 
@@ -202,7 +202,7 @@ namespace ProjectManager.Controls
             this.createDirectoryBox.Size = new System.Drawing.Size(249, 16);
             this.createDirectoryBox.TabIndex = 9;
             this.createDirectoryBox.Text = " Create &directory for project";
-            this.createDirectoryBox.CheckedChanged += new System.EventHandler(this.createDirectoryBox_CheckedChanged);
+            this.createDirectoryBox.CheckedChanged += this.createDirectoryBox_CheckedChanged;
             // 
             // statusBar
             // 
@@ -229,7 +229,7 @@ namespace ProjectManager.Controls
             this.packageTextBox.Name = "packageTextBox";
             this.packageTextBox.Size = new System.Drawing.Size(585, 21);
             this.packageTextBox.TabIndex = 8;
-            this.packageTextBox.TextChanged += new System.EventHandler(this.textPackage_TextChanged);
+            this.packageTextBox.TextChanged += this.textPackage_TextChanged;
             // 
             // NewProjectDialog
             // 
@@ -330,7 +330,7 @@ namespace ProjectManager.Controls
                 lastTemplate = templateName;
                 projectListView.Items.Add(item);
             }
-            this.Load += new EventHandler(NewProjectDialog_Load);
+            this.Load += NewProjectDialog_Load;
         }
 
         int CompareFolderNames(string pathA, string pathB)

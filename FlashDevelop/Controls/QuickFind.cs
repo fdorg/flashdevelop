@@ -119,27 +119,27 @@ namespace FlashDevelop.Controls
             this.highlightHost.Margin = new Padding(0, 2, 6, 1);
             this.highlightCheckBox.Text = TextHelper.GetString("Label.HighlightAll");
             this.highlightCheckBox.BackColor = Color.Transparent;
-            this.highlightCheckBox.Click += new EventHandler(this.HighlightAllCheckBoxClick);
+            this.highlightCheckBox.Click += this.HighlightAllCheckBoxClick;
             //
             // matchCaseCheckBox
             //
             this.matchCaseHost.Margin = new Padding(0, 2, 6, 1);
             this.matchCaseCheckBox.Text = TextHelper.GetString("Label.MatchCase");
             this.matchCaseCheckBox.BackColor = Color.Transparent;
-            this.matchCaseCheckBox.CheckedChanged += new EventHandler(this.MatchCaseCheckBoxCheckedChanged);
+            this.matchCaseCheckBox.CheckedChanged += this.MatchCaseCheckBoxCheckedChanged;
             //
             // wholeWordCheckBox
             //
             this.wholeWordHost.Margin = new Padding(0, 2, 6, 1);
             this.wholeWordCheckBox.Text = TextHelper.GetString("Label.WholeWord");
             this.wholeWordCheckBox.BackColor = Color.Transparent;
-            this.wholeWordCheckBox.CheckedChanged += new EventHandler(this.WholeWordCheckBoxCheckedChanged);
+            this.wholeWordCheckBox.CheckedChanged += this.WholeWordCheckBoxCheckedChanged;
             //
             // nextButton
             //
             this.nextButton.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
             this.nextButton.Image = Image.FromStream(ResourceHelper.GetStream("QuickFindNext.png"));
-            this.nextButton.Click += new EventHandler(this.FindNextButtonClick);
+            this.nextButton.Click += this.FindNextButtonClick;
             this.nextButton.Text = TextHelper.GetString("Label.Next");
             this.nextButton.Margin = new Padding(0, 1, 2, 2);
             //
@@ -147,7 +147,7 @@ namespace FlashDevelop.Controls
             //
             this.previousButton.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
             this.previousButton.Image = Image.FromStream(ResourceHelper.GetStream("QuickFindPrev.png"));
-            this.previousButton.Click += new EventHandler(this.FindPrevButtonClick);
+            this.previousButton.Click += this.FindPrevButtonClick;
             this.previousButton.Text = TextHelper.GetString("Label.Previous");
             this.previousButton.Margin = new Padding(0, 1, 7, 2);
             //
@@ -155,20 +155,20 @@ namespace FlashDevelop.Controls
             //
             this.closeButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.closeButton.Image = Image.FromStream(ResourceHelper.GetStream("QuickFindClose.png"));
-            this.closeButton.Click += new EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             this.closeButton.Margin = new Padding(0, 1, 5, 2);
             //
             // findTextBox
             //
             this.findTextBox.Size = new Size(150, 21);
-            this.findTextBox.KeyPress += new KeyPressEventHandler(this.FindTextBoxKeyPress);
-            this.findTextBox.TextChanged += new EventHandler(this.FindTextBoxTextChanged);
-            this.findTextBox.OnKeyEscape += new KeyEscapeEvent(this.FindTextBoxOnKeyEscape);
+            this.findTextBox.KeyPress += this.FindTextBoxKeyPress;
+            this.findTextBox.TextChanged += this.FindTextBoxTextChanged;
+            this.findTextBox.OnKeyEscape += this.FindTextBoxOnKeyEscape;
             this.findTextBox.Margin = new Padding(0, 1, 7, 2);
             //
             // moreButton
             //
-            this.moreButton.Click += new EventHandler(this.MoreButtonClick);
+            this.moreButton.Click += this.MoreButtonClick;
             this.moreButton.Text = TextHelper.GetString("Label.More");
             this.moreButton.Alignment = ToolStripItemAlignment.Right;
             this.moreButton.Margin = new Padding(0, 1, 5, 2);
@@ -257,7 +257,7 @@ namespace FlashDevelop.Controls
         private void InitializeTimers()
         {
             this.typingTimer = new Timer();
-            this.typingTimer.Tick += new EventHandler(this.TypingTimerTick);
+            this.typingTimer.Tick += this.TypingTimerTick;
             this.typingTimer.Interval = 250;
         }
 
@@ -266,9 +266,9 @@ namespace FlashDevelop.Controls
         /// </summary>
         public void SetMatchCase(bool matchCase)
         {
-            this.matchCaseCheckBox.CheckedChanged -= new EventHandler(this.MatchCaseCheckBoxCheckedChanged);
+            this.matchCaseCheckBox.CheckedChanged -= this.MatchCaseCheckBoxCheckedChanged;
             this.matchCaseCheckBox.Checked = matchCase; // Change the value...
-            this.matchCaseCheckBox.CheckedChanged += new EventHandler(this.MatchCaseCheckBoxCheckedChanged);
+            this.matchCaseCheckBox.CheckedChanged += this.MatchCaseCheckBoxCheckedChanged;
         }
 
         /// <summary>
@@ -276,9 +276,9 @@ namespace FlashDevelop.Controls
         /// </summary>
         public void SetWholeWord(bool wholeWord)
         {
-            this.wholeWordCheckBox.CheckedChanged -= new EventHandler(this.WholeWordCheckBoxCheckedChanged);
+            this.wholeWordCheckBox.CheckedChanged -= this.WholeWordCheckBoxCheckedChanged;
             this.wholeWordCheckBox.Checked = wholeWord; // Change the value...
-            this.wholeWordCheckBox.CheckedChanged += new EventHandler(this.WholeWordCheckBoxCheckedChanged);
+            this.wholeWordCheckBox.CheckedChanged += this.WholeWordCheckBoxCheckedChanged;
         }
 
         /// <summary>
@@ -286,9 +286,9 @@ namespace FlashDevelop.Controls
         /// </summary>
         public void SetFindText(string text)
         {
-            this.findTextBox.TextChanged -= new EventHandler(this.FindTextBoxTextChanged);
+            this.findTextBox.TextChanged -= this.FindTextBoxTextChanged;
             this.findTextBox.Text = text; // Change the value...
-            this.findTextBox.TextChanged += new EventHandler(this.FindTextBoxTextChanged);
+            this.findTextBox.TextChanged += this.FindTextBoxTextChanged;
         }
 
         /// <summary>
@@ -842,7 +842,7 @@ namespace FlashDevelop.Controls
 
             public EscapeTextBox() : base() 
             {
-                this.Control.PreviewKeyDown += new PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
+                this.Control.PreviewKeyDown += this.OnPreviewKeyDown;
             }
 
             protected override bool ProcessCmdKey(ref Message m, Keys keyData)

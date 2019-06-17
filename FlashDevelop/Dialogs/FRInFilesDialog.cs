@@ -117,7 +117,7 @@ namespace FlashDevelop.Dialogs
             this.replaceButton.Size = new System.Drawing.Size(90, 23);
             this.replaceButton.TabIndex = 8;
             this.replaceButton.Text = "&Replace";
-            this.replaceButton.Click += new System.EventHandler(this.ReplaceButtonClick);
+            this.replaceButton.Click += this.ReplaceButtonClick;
             // 
             // regexCheckBox
             // 
@@ -259,7 +259,7 @@ namespace FlashDevelop.Dialogs
             this.findButton.Size = new System.Drawing.Size(90, 23);
             this.findButton.TabIndex = 7;
             this.findButton.Text = "&Find";
-            this.findButton.Click += new System.EventHandler(this.FindButtonClick);
+            this.findButton.Click += this.FindButtonClick;
             // 
             // folderComboBox
             // 
@@ -336,7 +336,7 @@ namespace FlashDevelop.Dialogs
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(26, 24);
             this.browseButton.TabIndex = 5;
-            this.browseButton.Click += new System.EventHandler(this.BrowseButtonClick);
+            this.browseButton.Click += this.BrowseButtonClick;
             // 
             // replacedHeader
             // 
@@ -351,7 +351,7 @@ namespace FlashDevelop.Dialogs
             this.cancelButton.Size = new System.Drawing.Size(90, 23);
             this.cancelButton.TabIndex = 9;
             this.cancelButton.Text = "Ca&ncel";
-            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
+            this.cancelButton.Click += this.CancelButtonClick;
             // 
             // infoLabel
             // 
@@ -405,7 +405,7 @@ namespace FlashDevelop.Dialogs
             this.resultsView.TabIndex = 11;
             this.resultsView.UseCompatibleStateImageBehavior = false;
             this.resultsView.View = System.Windows.Forms.View.Details;
-            this.resultsView.DoubleClick += new System.EventHandler(this.ResultsViewDoubleClick);
+            this.resultsView.DoubleClick += this.ResultsViewDoubleClick;
             // 
             // progressBar
             // 
@@ -423,7 +423,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(0, 0);
             this.closeButton.TabIndex = 29;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // sendCheckBox
             // 
@@ -438,7 +438,7 @@ namespace FlashDevelop.Dialogs
             this.redirectCheckBox.Size = new System.Drawing.Size(230, 25);
             this.redirectCheckBox.TabIndex = 8;
             this.redirectCheckBox.Text = " Send results to Results Panel";
-            this.redirectCheckBox.CheckedChanged += new EventHandler(this.RedirectCheckBoxCheckChanged);
+            this.redirectCheckBox.CheckedChanged += this.RedirectCheckBoxCheckChanged;
             // 
             // FRInFilesDialog
             // 
@@ -474,9 +474,9 @@ namespace FlashDevelop.Dialogs
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Find And Replace In Files";
-            this.Load += new System.EventHandler(this.DialogLoaded);
-            this.VisibleChanged += new System.EventHandler(this.VisibleChange);
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.DialogClosing);
+            this.Load += this.DialogLoaded;
+            this.VisibleChanged += this.VisibleChange;
+            this.Closing += this.DialogClosing;
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             this.ResumeLayout(false);

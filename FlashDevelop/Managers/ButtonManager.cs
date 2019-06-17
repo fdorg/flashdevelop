@@ -290,7 +290,7 @@ namespace FlashDevelop.Managers
                 {
                     string file = Globals.PreviousDocuments[i];
                     ToolStripMenuItem item = new ToolStripMenuItem();
-                    item.Click += new EventHandler(Globals.MainForm.Reopen);
+                    item.Click += Globals.MainForm.Reopen;
                     item.Tag = file; item.Text = PathHelper.GetCompactPath(file);
                     if (i < Globals.Settings.MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
                     else Globals.PreviousDocuments.Remove(file);
@@ -300,8 +300,8 @@ namespace FlashDevelop.Managers
                     string cleanLabel = TextHelper.GetString("Label.CleanReopenList");
                     string clearLabel = TextHelper.GetString("Label.ClearReopenList");
                     reopenMenu.DropDownItems.Add(new ToolStripSeparator());
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, new EventHandler(Globals.MainForm.CleanReopenList)));
-                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, new EventHandler(Globals.MainForm.ClearReopenList)));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(cleanLabel, null, Globals.MainForm.CleanReopenList));
+                    reopenMenu.DropDownItems.Add(new ToolStripMenuItem(clearLabel, null, Globals.MainForm.ClearReopenList));
                     reopenMenu.Enabled = true;
                 }
                 else reopenMenu.Enabled = false;

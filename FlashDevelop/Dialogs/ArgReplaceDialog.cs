@@ -71,7 +71,7 @@ namespace FlashDevelop.Dialogs
             this.cancelButton.TabIndex = 1;
             this.cancelButton.Text = "&Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
+            this.cancelButton.Click += this.CancelButtonClick;
             // 
             // okButton
             //
@@ -83,7 +83,7 @@ namespace FlashDevelop.Dialogs
             this.okButton.TabIndex = 0;
             this.okButton.Text = "&OK";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.OkButtonClick);
+            this.okButton.Click += this.OkButtonClick;
             // 
             // argsPanel
             // 
@@ -115,7 +115,7 @@ namespace FlashDevelop.Dialogs
             this.Text = " Replace Variables";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Activated += new System.EventHandler(this.OnDialogActivated);
+            this.Activated += this.OnDialogActivated;
             this.bottomPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

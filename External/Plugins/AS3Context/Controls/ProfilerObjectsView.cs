@@ -29,17 +29,17 @@ namespace AS3Context.Controls
 
             delayOpen = new Timer();
             delayOpen.Interval = 100;
-            delayOpen.Tick += new EventHandler(delayOpen_Tick);
+            delayOpen.Tick += delayOpen_Tick;
 
             // action
             openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
-            openItem.Click += new EventHandler(objectsGrid_Open);
+            openItem.Click += objectsGrid_Open;
 
             objectsGrid.ContextMenuStrip = new ContextMenuStrip();
             objectsGrid.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             objectsGrid.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             objectsGrid.ContextMenuStrip.Items.Add(openItem);
-            objectsGrid.DoubleClick += new EventHandler(objectsGrid_Open);
+            objectsGrid.DoubleClick += objectsGrid_Open;
         }
 
         void delayOpen_Tick(object sender, EventArgs e)

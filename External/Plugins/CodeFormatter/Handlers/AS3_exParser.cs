@@ -27673,22 +27673,22 @@ public class AS3_exParser : Parser
         this.dfa152 = new DFA152(this);
         this.dfa162 = new DFA162(this);
         this.dfa161 = new DFA161(this);
-        this.dfa8.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA8_SpecialStateTransition);
-        this.dfa34.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA34_SpecialStateTransition);
-        this.dfa37.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA37_SpecialStateTransition);
-        this.dfa49.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA49_SpecialStateTransition);
-        this.dfa59.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA59_SpecialStateTransition);
-        this.dfa61.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA61_SpecialStateTransition);
-        this.dfa80.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA80_SpecialStateTransition);
-        this.dfa83.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA83_SpecialStateTransition);
-        this.dfa93.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA93_SpecialStateTransition);
-        this.dfa121.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA121_SpecialStateTransition);
-        this.dfa122.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA122_SpecialStateTransition);
+        this.dfa8.specialStateTransitionHandler = DFA8_SpecialStateTransition;
+        this.dfa34.specialStateTransitionHandler = DFA34_SpecialStateTransition;
+        this.dfa37.specialStateTransitionHandler = DFA37_SpecialStateTransition;
+        this.dfa49.specialStateTransitionHandler = DFA49_SpecialStateTransition;
+        this.dfa59.specialStateTransitionHandler = DFA59_SpecialStateTransition;
+        this.dfa61.specialStateTransitionHandler = DFA61_SpecialStateTransition;
+        this.dfa80.specialStateTransitionHandler = DFA80_SpecialStateTransition;
+        this.dfa83.specialStateTransitionHandler = DFA83_SpecialStateTransition;
+        this.dfa93.specialStateTransitionHandler = DFA93_SpecialStateTransition;
+        this.dfa121.specialStateTransitionHandler = DFA121_SpecialStateTransition;
+        this.dfa122.specialStateTransitionHandler = DFA122_SpecialStateTransition;
 
-        this.dfa148.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA148_SpecialStateTransition);
-        this.dfa152.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA152_SpecialStateTransition);
-        this.dfa162.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA162_SpecialStateTransition);
-        this.dfa161.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA161_SpecialStateTransition);
+        this.dfa148.specialStateTransitionHandler = DFA148_SpecialStateTransition;
+        this.dfa152.specialStateTransitionHandler = DFA152_SpecialStateTransition;
+        this.dfa162.specialStateTransitionHandler = DFA162_SpecialStateTransition;
+        this.dfa161.specialStateTransitionHandler = DFA161_SpecialStateTransition;
     }
 
     const string DFA8_eotS =

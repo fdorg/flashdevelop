@@ -72,7 +72,7 @@ namespace OutputPanel
             // 
             this.scrollTimer.Interval = 50;
             this.scrollTimer.SynchronizingObject = this;
-            this.scrollTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.ScrollTimerElapsed);
+            this.scrollTimer.Elapsed += this.ScrollTimerElapsed;
             // 
             // textLog
             // 
@@ -85,10 +85,10 @@ namespace OutputPanel
             this.textLog.TabIndex = 1;
             this.textLog.Text = "";
             this.textLog.WordWrap = false;
-            this.textLog.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
-            this.textLog.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TextLogMouseUp);
-            this.textLog.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.LinkClicked);
-            this.textLog.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TextLogMouseDown);
+            this.textLog.KeyDown += this.PluginUIKeyDown;
+            this.textLog.MouseUp += this.TextLogMouseUp;
+            this.textLog.LinkClicked += this.LinkClicked;
+            this.textLog.MouseDown += this.TextLogMouseDown;
             // 
             // toolStrip
             // 
@@ -114,7 +114,7 @@ namespace OutputPanel
             this.toggleButton.Name = "toggleButton";
             this.toggleButton.Size = new System.Drawing.Size(23, 20);
             this.toggleButton.Text = "toolStripButton1";
-            this.toggleButton.Click += new System.EventHandler(this.ToggleButtonClick);
+            this.toggleButton.Click += this.ToggleButtonClick;
             // 
             // toolStripSeparator1
             // 
@@ -127,10 +127,10 @@ namespace OutputPanel
             this.findTextBox.Size = new System.Drawing.Size(190, 23);
             this.findTextBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.findTextBox.TextChanged += new System.EventHandler(this.FindTextBoxTextChanged);
-            this.findTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginUIKeyDown);
-            this.findTextBox.Leave += new System.EventHandler(this.FindTextBoxLeave);
-            this.findTextBox.Enter += new System.EventHandler(this.FindTextBoxEnter);
+            this.findTextBox.TextChanged += this.FindTextBoxTextChanged;
+            this.findTextBox.KeyDown += this.PluginUIKeyDown;
+            this.findTextBox.Leave += this.FindTextBoxLeave;
+            this.findTextBox.Enter += this.FindTextBoxEnter;
             // 
             // clearButton
             //
@@ -139,7 +139,7 @@ namespace OutputPanel
             this.clearButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.clearButton.Click += new System.EventHandler(this.ClearButtonClick);
+            this.clearButton.Click += this.ClearButtonClick;
             // 
             // PluginUI
             // 
@@ -174,9 +174,9 @@ namespace OutputPanel
         {
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;
-            this.autoShow.Tick += new EventHandler(this.AutoShowPanel);
+            this.autoShow.Tick += this.AutoShowPanel;
             this.typingTimer = new Timer();
-            this.typingTimer.Tick += new EventHandler(this.TypingTimerTick);
+            this.typingTimer.Tick += this.TypingTimerTick;
             this.typingTimer.Interval = 250;
         }
 
@@ -188,10 +188,10 @@ namespace OutputPanel
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.Font = PluginBase.Settings.DefaultFont;
             menu.Renderer = new DockPanelStripRenderer();
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearOutput"), null, new EventHandler(this.ClearOutput)));
-            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyOutput"), null, new EventHandler(this.CopyOutput)));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ClearOutput"), null, this.ClearOutput));
+            menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CopyOutput"), null, this.CopyOutput));
             menu.Items.Add(new ToolStripSeparator());
-            wrapTextItem = new ToolStripMenuItem(TextHelper.GetString("Label.WrapText"), null, new EventHandler(this.WrapText));
+            wrapTextItem = new ToolStripMenuItem(TextHelper.GetString("Label.WrapText"), null, this.WrapText);
             menu.Items.Add(wrapTextItem);
             this.searchInvitation = TextHelper.GetString("Label.SearchInvitation");
             this.clearButton.ToolTipText = TextHelper.GetString("Label.ClearSearchText");

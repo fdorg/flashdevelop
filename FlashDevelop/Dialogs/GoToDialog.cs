@@ -52,7 +52,7 @@ namespace FlashDevelop.Dialogs
             this.positionButton.Size = new System.Drawing.Size(59, 23);
             this.positionButton.TabIndex = 3;
             this.positionButton.Text = "&Position";
-            this.positionButton.Click += new System.EventHandler(this.PositionButtonClick);
+            this.positionButton.Click += this.PositionButtonClick;
             // 
             // valueLabel
             // 
@@ -71,7 +71,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Size = new System.Drawing.Size(53, 23);
             this.closeButton.TabIndex = 4;
             this.closeButton.Text = "&Close";
-            this.closeButton.Click += new System.EventHandler(this.CancelButtonClick);
+            this.closeButton.Click += this.CancelButtonClick;
             // 
             // lineButton
             // 
@@ -81,7 +81,7 @@ namespace FlashDevelop.Dialogs
             this.lineButton.Size = new System.Drawing.Size(55, 23);
             this.lineButton.TabIndex = 2;
             this.lineButton.Text = "&Line";
-            this.lineButton.Click += new System.EventHandler(this.LineButtonClick);
+            this.lineButton.Click += this.LineButtonClick;
             // 
             // GoToDialog
             // 
@@ -102,8 +102,8 @@ namespace FlashDevelop.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Goto";
-            this.VisibleChanged += new System.EventHandler(this.VisibleChange);
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.DialogClosing);
+            this.VisibleChanged += this.VisibleChange;
+            this.Closing += this.DialogClosing;
             this.ResumeLayout(false);
             this.PerformLayout();
 

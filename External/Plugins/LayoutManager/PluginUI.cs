@@ -70,9 +70,9 @@ namespace LayoutManager
             this.layoutsListView.TabIndex = 11;
             this.layoutsListView.UseCompatibleStateImageBehavior = false;
             this.layoutsListView.View = System.Windows.Forms.View.List;
-            this.layoutsListView.DoubleClick += new System.EventHandler(this.LayoutsListViewDoubleClick);
-            this.layoutsListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LayoutsListViewKeyDown);
-            this.layoutsListView.SelectedIndexChanged += new System.EventHandler(this.LayoutsListViewSelectedIndexChanged);
+            this.layoutsListView.DoubleClick += this.LayoutsListViewDoubleClick;
+            this.layoutsListView.KeyDown += this.LayoutsListViewKeyDown;
+            this.layoutsListView.SelectedIndexChanged += this.LayoutsListViewSelectedIndexChanged;
             // 
             // toolStrip
             //
@@ -98,7 +98,7 @@ namespace LayoutManager
             this.loadStripButton.Name = "loadStripButton";
             this.loadStripButton.Size = new System.Drawing.Size(23, 22);
             this.loadStripButton.ToolTipText = "Load Layout";
-            this.loadStripButton.Click += new System.EventHandler(this.LoadButtonClick);
+            this.loadStripButton.Click += this.LoadButtonClick;
             // 
             // deleteStripButton
             //
@@ -108,7 +108,7 @@ namespace LayoutManager
             this.deleteStripButton.Name = "deleteStripButton";
             this.deleteStripButton.Size = new System.Drawing.Size(23, 22);
             this.deleteStripButton.ToolTipText = "Delete Layout";
-            this.deleteStripButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteStripButton.Click += this.DeleteButtonClick;
             // 
             // saveStripButton
             //
@@ -118,7 +118,7 @@ namespace LayoutManager
             this.saveStripButton.Name = "saveStripButton";
             this.saveStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveStripButton.ToolTipText = "Save Current...";
-            this.saveStripButton.Click += new System.EventHandler(this.SaveButtonClick);
+            this.saveStripButton.Click += this.SaveButtonClick;
             // 
             // settingStripButton
             //
@@ -128,7 +128,7 @@ namespace LayoutManager
             this.settingStripButton.Name = "settingsStripButton";
             this.settingStripButton.Size = new System.Drawing.Size(23, 22);
             this.settingStripButton.ToolTipText = "Show Settings...";
-            this.settingStripButton.Click += new System.EventHandler(this.SettingsButtonClick);
+            this.settingStripButton.Click += this.SettingsButtonClick;
             // 
             // toolStripSeparator
             // 
@@ -142,7 +142,7 @@ namespace LayoutManager
             this.Controls.Add(this.layoutsListView);
             this.Controls.Add(this.toolStrip);
             this.Size = new System.Drawing.Size(299, 283);
-            this.Load += new System.EventHandler(this.FormLoaded);
+            this.Load += this.FormLoaded;
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -189,10 +189,10 @@ namespace LayoutManager
         {
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ImageScalingSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
-            this.menuLoadButton = new ToolStripMenuItem(TextHelper.GetString("Label.LoadLayout"), null, new EventHandler(this.LoadButtonClick));
-            this.menuDeleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.DeleteLayout"), null, new EventHandler(this.DeleteButtonClick));
-            this.menuSaveButton = new ToolStripMenuItem(TextHelper.GetString("Label.SaveCurrent"), null, new EventHandler(this.SaveButtonClick));
-            this.menuSettingButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShowSettings"), null, new EventHandler(this.SettingsButtonClick));
+            this.menuLoadButton = new ToolStripMenuItem(TextHelper.GetString("Label.LoadLayout"), null, this.LoadButtonClick);
+            this.menuDeleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.DeleteLayout"), null, this.DeleteButtonClick);
+            this.menuSaveButton = new ToolStripMenuItem(TextHelper.GetString("Label.SaveCurrent"), null, this.SaveButtonClick);
+            this.menuSettingButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShowSettings"), null, this.SettingsButtonClick);
             menu.Items.AddRange(new ToolStripMenuItem[4] { this.menuLoadButton, this.menuDeleteButton, this.menuSaveButton, this.menuSettingButton});
             menu.Items.Insert(3, new ToolStripSeparator());
             menu.Font = PluginBase.Settings.DefaultFont;

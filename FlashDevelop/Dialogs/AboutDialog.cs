@@ -48,7 +48,7 @@ namespace FlashDevelop.Dialogs
             this.imageBox.Size = new System.Drawing.Size(450, 244);
             this.imageBox.TabIndex = 0;
             this.imageBox.TabStop = false;
-            this.imageBox.Click += new System.EventHandler(this.DialogCloseClick);
+            this.imageBox.Click += this.DialogCloseClick;
             // 
             // copyLabel
             //
@@ -61,7 +61,7 @@ namespace FlashDevelop.Dialogs
             this.copyLabel.Size = new System.Drawing.Size(383, 30);
             this.copyLabel.TabIndex = 0;
             this.copyLabel.Text = PluginCore.DistroConfig.DISTRIBUTION_ABOUT;
-            this.copyLabel.Click += new System.EventHandler(this.DialogCloseClick);
+            this.copyLabel.Click += this.DialogCloseClick;
             // 
             // versionLabel
             //
@@ -74,7 +74,7 @@ namespace FlashDevelop.Dialogs
             this.versionLabel.Size = new System.Drawing.Size(289, 15);
             this.versionLabel.TabIndex = 0;
             this.versionLabel.Text = "FlashDevelop 5.0.0.99 for .NET 3.5 (master#1234567890)";
-            this.versionLabel.Click += new System.EventHandler(this.DialogCloseClick);
+            this.versionLabel.Click += this.DialogCloseClick;
             this.versionLabel.LinkClicked += VersionLabelLinkClicked;
             // 
             // AboutDialog
@@ -90,7 +90,7 @@ namespace FlashDevelop.Dialogs
             this.MinimizeBox = false;
             this.Name = "AboutDialog";
             this.ShowInTaskbar = false;
-            this.KeyDown += new KeyEventHandler(this.DialogKeyDown);
+            this.KeyDown += this.DialogKeyDown;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " About FlashDevelop";
             ((System.ComponentModel.ISupportInitialize)(this.imageBox)).EndInit();

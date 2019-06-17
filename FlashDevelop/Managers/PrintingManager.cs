@@ -33,7 +33,7 @@ namespace FlashDevelop.Managers
             PrintPageLastChar = 0;
             PrintDocument printDocument = new PrintDocument();
             printDocument.DocumentName = Globals.CurrentDocument.Text;
-            printDocument.PrintPage += new PrintPageEventHandler(OnPrintDocumentPrintPage);
+            printDocument.PrintPage += OnPrintDocumentPrintPage;
             return printDocument;
         }
 

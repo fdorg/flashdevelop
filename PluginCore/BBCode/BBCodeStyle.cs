@@ -238,15 +238,15 @@ namespace PluginCore.BBCode
                     return;
 
                 _colorChannelMixers = new Dictionary<Mode, DColorChannelMixer>();
-                _colorChannelMixers[Mode.NORMAL] = new DColorChannelMixer(_channelMixer_NORMAL);
-                _colorChannelMixers[Mode.ADD] = new DColorChannelMixer(_channelMixer_ADD);
-                _colorChannelMixers[Mode.SUBTRACT] = new DColorChannelMixer(_channelMixer_SUBTRACT);
-                _colorChannelMixers[Mode.MULTIPLY] = new DColorChannelMixer(_channelMixer_MULTIPLY);
-                _colorChannelMixers[Mode.DIVIDE] = new DColorChannelMixer(_channelMixer_DIVIDE);
-                _colorChannelMixers[Mode.DIFFERENCE] = new DColorChannelMixer(_channelMixer_DIFFERENCE);
-                _colorChannelMixers[Mode.EXCLUSION] = new DColorChannelMixer(_channelMixer_EXCLUSION);
-                _colorChannelMixers[Mode.OVERLAY] = new DColorChannelMixer(_channelMixer_OVERLAY);
-                _colorChannelMixers[Mode.HARDLIGHT] = new DColorChannelMixer(_channelMixer_HARDLIGHT);
+                _colorChannelMixers[Mode.NORMAL] = _channelMixer_NORMAL;
+                _colorChannelMixers[Mode.ADD] = _channelMixer_ADD;
+                _colorChannelMixers[Mode.SUBTRACT] = _channelMixer_SUBTRACT;
+                _colorChannelMixers[Mode.MULTIPLY] = _channelMixer_MULTIPLY;
+                _colorChannelMixers[Mode.DIVIDE] = _channelMixer_DIVIDE;
+                _colorChannelMixers[Mode.DIFFERENCE] = _channelMixer_DIFFERENCE;
+                _colorChannelMixers[Mode.EXCLUSION] = _channelMixer_EXCLUSION;
+                _colorChannelMixers[Mode.OVERLAY] = _channelMixer_OVERLAY;
+                _colorChannelMixers[Mode.HARDLIGHT] = _channelMixer_HARDLIGHT;
 
                 _colorChannelMixersHash = new Dictionary<string, Mode>();
                 _colorChannelMixersHash["NORMAL"] = Mode.NORMAL;

@@ -91,7 +91,7 @@ namespace AS3Context.Controls
             if (PluginMain.Settings.ProfilerTimeout == 0) PluginMain.Settings.ProfilerTimeout = 30;
             detectDisconnect = new Timer();
             detectDisconnect.Interval = Math.Max(5, PluginMain.Settings.ProfilerTimeout) * 1000;
-            detectDisconnect.Tick += new EventHandler(detectDisconnect_Tick);
+            detectDisconnect.Tick += detectDisconnect_Tick;
 
             memView = new ProfilerMemView(memLabel, memStatsLabel, memScaleCombo, memoryPage);
 
@@ -99,7 +99,7 @@ namespace AS3Context.Controls
                 column.Width = ScaleHelper.Scale(column.Width);
 
             liveObjectsView = new ProfilerLiveObjectsView(listView);
-            liveObjectsView.OnViewObject += new ViewObjectEvent(liveObjectsView_OnViewObject);
+            liveObjectsView.OnViewObject += liveObjectsView_OnViewObject;
             objectRefsView = new ProfilerObjectsView(objectRefsGrid);
 
             configureProfilerChooser();
@@ -213,11 +213,11 @@ namespace AS3Context.Controls
         private void configureProfilerChooser()
         {
             profilerChooser.Image = PluginBase.MainForm.FindImage("274");
-            profilerChooser.DropDownOpening += new EventHandler(profilerChooser_DropDownOpening);
+            profilerChooser.DropDownOpening += profilerChooser_DropDownOpening;
 
             profilerItems = new List<ToolStripMenuItem>();
             defaultToolStripMenuItem.Checked = true;
-            defaultToolStripMenuItem.Click += new EventHandler(changeProfiler_Click);
+            defaultToolStripMenuItem.Click += changeProfiler_Click;
 
             profilerSWF = null; // default
             string active = Path.Combine(PathHelper.DataDir, "AS3Context", "activeProfiler.txt");
@@ -248,7 +248,7 @@ namespace AS3Context.Controls
                 {
                     ToolStripMenuItem item = new ToolStripMenuItem(Path.GetFileNameWithoutExtension(swf));
                     item.Tag = swf;
-                    item.Click += new EventHandler(changeProfiler_Click);
+                    item.Click += changeProfiler_Click;
                     profilerItems.Add(item);
                 }
             }

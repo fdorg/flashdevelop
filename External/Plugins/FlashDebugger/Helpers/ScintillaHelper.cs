@@ -40,7 +40,7 @@ namespace FlashDebugger
         static public void InitMarkers(ScintillaControl sci)
         {
             sci.ModEventMask |= (int)ModificationFlags.ChangeMarker;
-            sci.MarkerChanged += new MarkerChangedHandler(SciControl_MarkerChanged);
+            sci.MarkerChanged += SciControl_MarkerChanged;
             sci.MarginSensitiveN(BreakpointMargin, true);
             int mask = sci.GetMarginMaskN(BreakpointMargin);
             mask |= GetMarkerMask(markerBPEnabled);
@@ -57,8 +57,8 @@ namespace FlashDebugger
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
             sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
-            sci.MarginClick += new MarginClickHandler(SciControl_MarginClick);
-            sci.Modified += new ModifiedHandler(sci_Modified);
+            sci.MarginClick += SciControl_MarginClick;
+            sci.Modified += sci_Modified;
         }
 
         static public void sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
@@ -154,9 +154,9 @@ namespace FlashDebugger
             if (document != null && document.IsEditable)
             {
                 document.SplitSci1.ModEventMask |= (int)ModificationFlags.ChangeMarker;
-                document.SplitSci1.MarkerChanged -= new MarkerChangedHandler(SciControl_MarkerChanged);
+                document.SplitSci1.MarkerChanged -= SciControl_MarkerChanged;
                 document.SplitSci2.ModEventMask |= (int)ModificationFlags.ChangeMarker;
-                document.SplitSci2.MarkerChanged -= new MarkerChangedHandler(SciControl_MarkerChanged);
+                document.SplitSci2.MarkerChanged -= SciControl_MarkerChanged;
             }
         }
 

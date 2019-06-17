@@ -16,11 +16,11 @@ namespace AS3Context.Compiler
                 debugger?.Cleanup();
                 startMessage = message;
                 debugger = new FdbWrapper();
-                debugger.OnStarted += new LineEvent(debugger_OnStarted);
-                debugger.OnTrace += new LineEvent(debugger_OnTrace);
-                debugger.OnError += new LineEvent(debugger_OnError);
+                debugger.OnStarted += debugger_OnStarted;
+                debugger.OnTrace += debugger_OnTrace;
+                debugger.OnError += debugger_OnError;
                 if (PluginMain.Settings.VerboseFDB)
-                    debugger.OnOutput += new LineEvent(debugger_OnOutput);
+                    debugger.OnOutput += debugger_OnOutput;
                 debugger.Run(projectPath, flex2Path);
                 TraceManager.AddAsync(TextHelper.GetString("Info.CapturingTracesWithFDB"));
                 return true;

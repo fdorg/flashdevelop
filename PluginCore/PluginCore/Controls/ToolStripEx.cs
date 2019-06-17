@@ -21,9 +21,9 @@ namespace PluginCore.Controls
         /// </summary>
         public ToolStripEx()
         {
-            this.ItemAdded += new ToolStripItemEventHandler(this.OnItemAdded);
-            ((Form)PluginBase.MainForm).Deactivate += new EventHandler(this.OnFormDeactivate);
-            ((Form)PluginBase.MainForm).Activated += new EventHandler(this.OnFormDeactivate);
+            this.ItemAdded += this.OnItemAdded;
+            ((Form)PluginBase.MainForm).Deactivate += this.OnFormDeactivate;
+            ((Form)PluginBase.MainForm).Activated += this.OnFormDeactivate;
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace PluginCore.Controls
         {
             if (e.Item is ToolStripButton)
             {
-                e.Item.MouseEnter += new EventHandler(this.OnOverChange);
-                e.Item.MouseLeave += new EventHandler(this.OnOverChange);
+                e.Item.MouseEnter += this.OnOverChange;
+                e.Item.MouseLeave += this.OnOverChange;
             }
         }
 

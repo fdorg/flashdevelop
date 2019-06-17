@@ -72,8 +72,8 @@ namespace CodeRefactor.Controls
             this.Text = "Finding References...";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.VisibleChanged += new System.EventHandler(this.VisibleChange);
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.DialogClosing);
+            this.VisibleChanged += this.VisibleChange;
+            this.Closing += this.DialogClosing;
             this.Name = "FindingReferencesDialog";
             this.UseWaitCursor = true;
             this.ResumeLayout(false);

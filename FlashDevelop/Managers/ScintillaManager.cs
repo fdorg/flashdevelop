@@ -445,11 +445,11 @@ namespace FlashDevelop.Managers
             sci.Encoding = Encoding.GetEncoding(codepage);
             sci.SaveBOM = IsUnicode(codepage) && PluginBase.Settings.SaveUnicodeWithBOM;
             sci.Text = text; sci.FileName = file; // Set text and save file name
-            sci.Modified += new ModifiedHandler(Globals.MainForm.OnScintillaControlModified);
-            sci.MarginClick += new MarginClickHandler(Globals.MainForm.OnScintillaControlMarginClick);
-            sci.UpdateUI += new UpdateUIHandler(Globals.MainForm.OnScintillaControlUpdateControl);
-            sci.URIDropped += new URIDroppedHandler(Globals.MainForm.OnScintillaControlDropFiles);
-            sci.ModifyAttemptRO += new ModifyAttemptROHandler(Globals.MainForm.OnScintillaControlModifyRO);
+            sci.Modified += Globals.MainForm.OnScintillaControlModified;
+            sci.MarginClick += Globals.MainForm.OnScintillaControlMarginClick;
+            sci.UpdateUI += Globals.MainForm.OnScintillaControlUpdateControl;
+            sci.URIDropped += Globals.MainForm.OnScintillaControlDropFiles;
+            sci.ModifyAttemptRO += Globals.MainForm.OnScintillaControlModifyRO;
             string untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
             if (!file.StartsWithOrdinal(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
             sci.SetFoldFlags((int)PluginBase.Settings.FoldFlags);

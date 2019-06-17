@@ -51,8 +51,8 @@ namespace CodeFormatter
         /// </summary>
         public AStyleInterface()
         {
-            AStyleMemAlloc = new AStyleMemAllocDelgate(OnAStyleMemAlloc);
-            AStyleError = new AStyleErrorDelgate(OnAStyleError);
+            AStyleMemAlloc = OnAStyleMemAlloc;
+            AStyleError = OnAStyleError;
         }
 
         /// <summary>

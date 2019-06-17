@@ -118,8 +118,8 @@ namespace FlashDevelop.Managers
                         word = sci.GetWordFromPosition(sci.CurrentPos);
                         if (word == null) word = string.Empty;
                     }
-                    CompletionList.OnInsert += new InsertedTextHandler(HandleListInsert);
-                    CompletionList.OnCancel += new InsertedTextHandler(HandleListInsert);
+                    CompletionList.OnInsert += HandleListInsert;
+                    CompletionList.OnCancel += HandleListInsert;
                     CompletionList.Show(items, false, word);
                     return true;
                 }
@@ -132,8 +132,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
-            CompletionList.OnInsert -= new InsertedTextHandler(HandleListInsert);
-            CompletionList.OnCancel -= new InsertedTextHandler(HandleListInsert);
+            CompletionList.OnInsert -= HandleListInsert;
+            CompletionList.OnCancel -= HandleListInsert;
             ArgsProcessor.PrevSelText = string.Empty;
         }
 

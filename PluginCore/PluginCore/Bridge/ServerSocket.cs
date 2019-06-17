@@ -54,7 +54,7 @@ namespace PluginCore.Bridge
                 conn = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conn.Bind(new IPEndPoint(ipAddress, portNum));
                 conn.Listen(10);
-                conn.BeginAccept(new AsyncCallback(this.OnConnectRequest), conn);
+                conn.BeginAccept(this.OnConnectRequest, conn);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ namespace PluginCore.Bridge
                 Socket server = (Socket)result.AsyncState;
                 Socket client = server.EndAccept(result);
                 this.SetupReceiveCallback(client);
-                server.BeginAccept(new AsyncCallback(this.OnConnectRequest), server);
+                server.BeginAccept(this.OnConnectRequest, server);
             }
             catch (Exception ex)
             {
@@ -139,7 +139,7 @@ namespace PluginCore.Bridge
             StateObject so = new StateObject(client);
             try
             {
-                AsyncCallback receiveData = new AsyncCallback(this.OnReceivedData);
+                AsyncCallback receiveData = this.OnReceivedData;
                 so.Client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, receiveData, so);
             }
             catch (SocketException)

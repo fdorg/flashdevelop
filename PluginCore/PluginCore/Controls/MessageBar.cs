@@ -156,7 +156,7 @@ namespace PluginCore.Controls
             this.buttonClose.Size = new System.Drawing.Size(16, 14);
             this.buttonClose.TabIndex = 2;
             this.buttonClose.ToolTipText = "";
-            this.buttonClose.Click += new System.EventHandler(this.MessageBarClick);
+            this.buttonClose.Click += this.MessageBarClick;
             // 
             // label
             // 
@@ -169,9 +169,9 @@ namespace PluginCore.Controls
             this.label.Size = new System.Drawing.Size(494, 22);
             this.label.TabIndex = 0;
             this.label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label.Click += new System.EventHandler(this.MessageBarClick);
-            this.label.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
-            this.label.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
+            this.label.Click += this.MessageBarClick;
+            this.label.MouseEnter += this.LabelMouseEnter;
+            this.label.MouseLeave += this.LabelMouseLeave;
             // 
             // MessageBar
             // 
@@ -183,7 +183,7 @@ namespace PluginCore.Controls
             this.ForeColor = System.Drawing.SystemColors.InfoText;
             this.Name = "MessageBar";
             this.Size = new System.Drawing.Size(496, 24);
-            this.Click += new System.EventHandler(this.MessageBarClick);
+            this.Click += this.MessageBarClick;
             this.ResumeLayout(false);
 
         }

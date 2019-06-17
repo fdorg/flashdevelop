@@ -84,7 +84,7 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.Size = new System.Drawing.Size(561, 20);
             this.filterTextBox.TabIndex = 0;
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
+            this.filterTextBox.TextChanged += this.FilterTextChanged;
             // 
             // clearButton
             // 
@@ -94,7 +94,7 @@ namespace FlashDevelop.Dialogs
             this.clearButton.Size = new System.Drawing.Size(26, 23);
             this.clearButton.TabIndex = 1;
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.ClearFilterClick);
+            this.clearButton.Click += this.ClearFilterClick;
             // 
             // idHeader
             // 
@@ -117,7 +117,7 @@ namespace FlashDevelop.Dialogs
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.KeyDown += new KeyEventHandler(this.ListViewKeyDown);
+            this.listView.KeyDown += this.ListViewKeyDown;
             // 
             // pictureBox
             // 
@@ -144,7 +144,7 @@ namespace FlashDevelop.Dialogs
             this.importButton.Size = new System.Drawing.Size(25, 23);
             this.importButton.TabIndex = 3;
             this.importButton.UseVisualStyleBackColor = true;
-            this.importButton.Click += new System.EventHandler(this.SelectCustomShortcut);
+            this.importButton.Click += this.SelectCustomShortcut;
             // 
             // exportButton
             // 
@@ -154,7 +154,7 @@ namespace FlashDevelop.Dialogs
             this.exportButton.Size = new System.Drawing.Size(25, 23);
             this.exportButton.TabIndex = 4;
             this.exportButton.UseVisualStyleBackColor = true;
-            this.exportButton.Click += new System.EventHandler(this.SaveCustomShortcut);
+            this.exportButton.Click += this.SaveCustomShortcut;
             // 
             // closeButton
             // 
@@ -165,7 +165,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Size = new System.Drawing.Size(90, 23);
             this.closeButton.TabIndex = 5;
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // ShortcutDialog
             // 
@@ -189,8 +189,8 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.closeButton);
-            this.FormClosing += new FormClosingEventHandler(this.DialogClosing);
-            this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
+            this.FormClosing += this.DialogClosing;
+            this.FormClosed += this.DialogClosed;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             ((System.ComponentModel.ISupportInitialize)this.pictureBox).EndInit();

@@ -47,7 +47,7 @@ namespace FlashViewer.Controls
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.flashMovie);
             this.Name = "FlashView";
-            this.Load += new EventHandler(this.FlashViewLoad);
+            this.Load += this.FlashViewLoad;
             this.Size = new System.Drawing.Size(571, 367);
             ((System.ComponentModel.ISupportInitialize)(this.flashMovie)).EndInit();
             this.ResumeLayout(false);

@@ -19,7 +19,7 @@ namespace FlashDevelop.Managers
         static LayoutManager()
         {
             PluginPanels = new List<DockContent>();
-            contentDeserializer = new DeserializeDockContent(GetContentFromPersistString);
+            contentDeserializer = GetContentFromPersistString;
             savedPersistStrings = new HashSet<string>();
             dynamicContentTemplates = new List<DockContent>();
         }

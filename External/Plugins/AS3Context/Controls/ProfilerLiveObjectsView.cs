@@ -34,18 +34,18 @@ namespace AS3Context.Controls
             comparer.Sorting = SortOrder.Descending;
 
             listView.ListViewItemSorter = comparer;
-            listView.ColumnClick += new ColumnClickEventHandler(listView_ColumnClick);
+            listView.ColumnClick += listView_ColumnClick;
 
             // action
             viewObjectsItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewObjectsItem"));
-            viewObjectsItem.Click += new EventHandler(onViewObjects);
+            viewObjectsItem.Click += onViewObjects;
 
             listView.ContextMenuStrip = new ContextMenuStrip();
             listView.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
             listView.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             listView.ContextMenuStrip.Items.Add(viewObjectsItem);
 
-            listView.DoubleClick += new EventHandler(onViewObjects);
+            listView.DoubleClick += onViewObjects;
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e)

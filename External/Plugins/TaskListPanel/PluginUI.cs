@@ -130,9 +130,9 @@ namespace TaskListPanel
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += new System.EventHandler(this.ListViewDoubleClick);
-            this.listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.ListViewColumnClick);
-            this.listView.KeyPress += new KeyPressEventHandler(this.ListViewKeyPress);
+            this.listView.DoubleClick += this.ListViewDoubleClick;
+            this.listView.ColumnClick += this.ListViewColumnClick;
+            this.listView.KeyPress += this.ListViewKeyPress;
             // 
             // columnIcon
             // 
@@ -224,7 +224,7 @@ namespace TaskListPanel
             this.statusStrip.Font = PluginBase.Settings.DefaultFont;
             Image image = PluginBase.MainForm.FindImage("66");
             string label = TextHelper.GetString("FlashDevelop.Label.Refresh");
-            this.refreshButton = new ToolStripMenuItem(label, image, new EventHandler(this.RefreshButtonClick));
+            this.refreshButton = new ToolStripMenuItem(label, image, this.RefreshButtonClick);
             this.contextMenu.Items.Add(this.refreshButton);
             this.listView.ContextMenuStrip = this.contextMenu;
         }
@@ -414,8 +414,8 @@ namespace TaskListPanel
                 bgWork = new BackgroundWorker();
                 context.Worker = bgWork;
                 bgWork.WorkerSupportsCancellation = true;
-                bgWork.DoWork += new DoWorkEventHandler(bgWork_DoWork);
-                bgWork.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWork_RunWorkerCompleted);
+                bgWork.DoWork += bgWork_DoWork;
+                bgWork.RunWorkerCompleted += bgWork_RunWorkerCompleted;
                 bgWork.RunWorkerAsync(context);
                 string message = TextHelper.GetString("Info.Refreshing");
                 this.toolStripLabel.Text = message;

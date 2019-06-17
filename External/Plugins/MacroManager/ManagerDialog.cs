@@ -65,7 +65,7 @@ namespace MacroManager
             this.propertyGrid.Size = new System.Drawing.Size(355, 299);
             this.propertyGrid.TabIndex = 2;
             this.propertyGrid.ToolbarVisible = false;
-            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyValueChanged);
+            this.propertyGrid.PropertyValueChanged += this.PropertyValueChanged;
             // 
             // listView
             // 
@@ -79,7 +79,7 @@ namespace MacroManager
             this.listView.Size = new System.Drawing.Size(160, 270);
             this.listView.TabIndex = 1;
             this.listView.UseCompatibleStateImageBehavior = false;
-            this.listView.SelectedIndexChanged += new System.EventHandler(this.ListViewIndexChanged);
+            this.listView.SelectedIndexChanged += this.ListViewIndexChanged;
             this.listView.Columns.Add(this.columnHeader);
             // 
             // addButton
@@ -92,7 +92,7 @@ namespace MacroManager
             this.addButton.TabIndex = 3;
             this.addButton.Text = "&Add";
             this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new System.EventHandler(this.AddButtonClick);
+            this.addButton.Click += this.AddButtonClick;
             // 
             // deleteButton
             // 
@@ -104,7 +104,7 @@ namespace MacroManager
             this.deleteButton.TabIndex = 4;
             this.deleteButton.Text = "&Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteButton.Click += this.DeleteButtonClick;
             // 
             // closeButton
             // 
@@ -116,7 +116,7 @@ namespace MacroManager
             this.closeButton.TabIndex = 0;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // pictureBox
             //
@@ -159,8 +159,8 @@ namespace MacroManager
             this.Name = "ManagerDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.Load += new System.EventHandler(this.DialogLoad);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DialogClosed);
+            this.Load += this.DialogLoad;
+            this.FormClosed += this.DialogClosed;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Text = "Macros";
@@ -206,7 +206,7 @@ namespace MacroManager
             ContextMenuStrip contextMenu = new ContextMenuStrip();
             contextMenu.Font = PluginBase.Settings.DefaultFont;
             contextMenu.Renderer = new DockPanelStripRenderer(false, false);
-            contextMenu.Opening += new CancelEventHandler(this.ContextMenuOpening);
+            contextMenu.Opening += this.ContextMenuOpening;
             contextMenu.Items.Add(TextHelper.GetString("Label.ImportMacros"), null, this.ImportMacros);
             this.exportItem = new ToolStripMenuItem(TextHelper.GetString("Label.ExportMacros"), null, this.ExportMacros);
             contextMenu.Items.Add(this.exportItem); // Add export item

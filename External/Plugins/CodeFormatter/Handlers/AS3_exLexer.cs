@@ -6231,7 +6231,7 @@ public class AS3_exLexer : Lexer {
         this.dfa18 = new DFA18(this);
         this.dfa30 = new DFA30(this);
 
-        this.dfa30.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA30_SpecialStateTransition);
+        this.dfa30.specialStateTransitionHandler = DFA30_SpecialStateTransition;
     }
 
     const string DFA18_eotS =

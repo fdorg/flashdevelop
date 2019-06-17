@@ -100,7 +100,7 @@ namespace ProjectManager.Helpers
             this.btnOK.Size = new System.Drawing.Size(72, 21);
             this.btnOK.TabIndex = 1;
             this.btnOK.Text = "OK";
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Click += this.btnOK_Click;
             // 
             // btnCancel
             // 
@@ -111,7 +111,7 @@ namespace ProjectManager.Helpers
             this.btnCancel.Size = new System.Drawing.Size(72, 21);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += this.btnCancel_Click;
             // 
             // LineEntryDialog
             // 

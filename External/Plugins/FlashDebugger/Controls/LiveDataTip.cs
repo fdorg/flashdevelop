@@ -19,7 +19,7 @@ namespace FlashDebugger
 
         public LiveDataTip()
         {
-            UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(Manager_OnMouseHover);
+            UITools.Manager.OnMouseHover += Manager_OnMouseHover;
         }
 
         private void Initialize()
@@ -29,8 +29,8 @@ namespace FlashDebugger
             m_ToolTip.Visible = false;
             m_MouseMessageFilter = new MouseMessageFilter();
             m_MouseMessageFilter.AddControls(new Control[] { m_ToolTip, m_ToolTip.DataTree });
-            m_MouseMessageFilter.MouseDownEvent += new MouseDownEventHandler(MouseMessageFilter_MouseDownEvent);
-            m_MouseMessageFilter.KeyDownEvent += new EventHandler(MouseMessageFilter_KeyDownEvent);
+            m_MouseMessageFilter.MouseDownEvent += MouseMessageFilter_MouseDownEvent;
+            m_MouseMessageFilter.KeyDownEvent += MouseMessageFilter_KeyDownEvent;
             Application.AddMessageFilter(m_MouseMessageFilter);
         }
 

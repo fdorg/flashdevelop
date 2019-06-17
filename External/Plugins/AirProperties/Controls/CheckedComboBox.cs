@@ -164,7 +164,7 @@ namespace AirProperties.Controls
                 InitializeComponent();
                 this.ShowInTaskbar = false;
                 // Add a handler to notify our parent of ItemCheck events.
-                this.cclb.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.cclb_ItemCheck);
+                this.cclb.ItemCheck += this.cclb_ItemCheck;
             }
 
             // ********************************************* Methods *********************************************

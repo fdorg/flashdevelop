@@ -102,7 +102,7 @@ namespace SourceControl.Dialogs
             this.btnYes.Size = new System.Drawing.Size(72, 21);
             this.btnYes.TabIndex = 1;
             this.btnYes.Text = "Yes";
-            this.btnYes.Click += new System.EventHandler(this.btnYes_Click);
+            this.btnYes.Click += this.btnYes_Click;
             // 
             // btnNo
             // 
@@ -113,7 +113,7 @@ namespace SourceControl.Dialogs
             this.btnNo.Size = new System.Drawing.Size(72, 21);
             this.btnNo.TabIndex = 2;
             this.btnNo.Text = "No";
-            this.btnNo.Click += new System.EventHandler(this.btnNo_Click);
+            this.btnNo.Click += this.btnNo_Click;
             // 
             // btnNever
             // 
@@ -124,7 +124,7 @@ namespace SourceControl.Dialogs
             this.btnNever.Size = new System.Drawing.Size(72, 21);
             this.btnNever.TabIndex = 4;
             this.btnNever.Text = "Never";
-            this.btnNever.Click += new System.EventHandler(this.btnNever_Click);
+            this.btnNever.Click += this.btnNever_Click;
             // 
             // LineEntryDialog
             // 

@@ -23,8 +23,8 @@ namespace PluginCore.Controls
         public SmartForm()
         {
             this.formProps = new FormProps();
-            this.Load += new EventHandler(this.SmartFormLoad);
-            this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
+            this.Load += this.SmartFormLoad;
+            this.FormClosed += this.SmartFormClosed;
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
             ScaleHelper.AdjustForHighDPI(this);
         }
@@ -119,7 +119,7 @@ namespace PluginCore.Controls
             if (!string.IsNullOrEmpty(this.helpLink))
             {
                 this.HelpButton = true;
-                this.HelpButtonClicked += new CancelEventHandler(this.SmartFormHelpButtonClick);
+                this.HelpButtonClicked += this.SmartFormHelpButtonClick;
             }
             ApplyProps?.Invoke(this);
         }

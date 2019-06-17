@@ -112,8 +112,8 @@ namespace System.Windows.Forms
 
         static MessageBoxManager()
         {
-            hookProc = new HookProc(MessageBoxHookProc);
-            enumProc = new EnumChildProc(MessageBoxEnumProc);
+            hookProc = MessageBoxHookProc;
+            enumProc = MessageBoxEnumProc;
             hHook = IntPtr.Zero;
         }
 

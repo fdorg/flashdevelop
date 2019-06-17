@@ -55,7 +55,7 @@ namespace ASCompletion.Helpers
 
                 fsWatcher = new WatcherEx(logLocation);
                 fsWatcher.EnableRaisingEvents = true;
-                fsWatcher.Changed += new FileSystemEventHandler(fsWatcher_Changed);
+                fsWatcher.Changed += fsWatcher_Changed;
 
                 updater = new Timer();
                 updater.SynchronizingObject = PluginBase.MainForm as Form;

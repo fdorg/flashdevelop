@@ -113,9 +113,9 @@ namespace FlashDebugger
             }
             defaultColor = dgv.Rows[dgv.Rows.Add()].DefaultCellStyle.BackColor;
             dgv.Rows.Clear();
-            this.dgv.CellEndEdit += new DataGridViewCellEventHandler(dgv_CellEndEdit);
-            this.dgv.CellMouseUp += new DataGridViewCellMouseEventHandler(dgv_CellMouseUp);
-            this.dgv.CellDoubleClick += new DataGridViewCellEventHandler(dgv_CellDoubleClick);
+            this.dgv.CellEndEdit += dgv_CellEndEdit;
+            this.dgv.CellMouseUp += dgv_CellMouseUp;
+            this.dgv.CellDoubleClick += dgv_CellDoubleClick;
             this.Controls.Add(this.dgv);
             InitializeComponent();
             tsbRemoveSelected.Image = PluginBase.MainForm.FindImage("548|27|5|5");
@@ -268,7 +268,7 @@ namespace FlashDebugger
             this.tsbRemoveSelected.Name = "tsbRemoveSelected";
             this.tsbRemoveSelected.Size = new System.Drawing.Size(23, 24);
             this.tsbRemoveSelected.Text = "toolStripButton1";
-            this.tsbRemoveSelected.Click += new System.EventHandler(this.TsbRemoveSelected_Click);
+            this.tsbRemoveSelected.Click += this.TsbRemoveSelected_Click;
             // 
             // tsbRemoveFiltered
             // 
@@ -277,7 +277,7 @@ namespace FlashDebugger
             this.tsbRemoveFiltered.Name = "tsbRemoveFiltered";
             this.tsbRemoveFiltered.Size = new System.Drawing.Size(23, 24);
             this.tsbRemoveFiltered.Text = "toolStripButton2";
-            this.tsbRemoveFiltered.Click += new System.EventHandler(this.TsbRemoveFiltered_Click);
+            this.tsbRemoveFiltered.Click += this.TsbRemoveFiltered_Click;
             // 
             // tsbAlternateFiltered
             // 
@@ -286,7 +286,7 @@ namespace FlashDebugger
             this.tsbAlternateFiltered.Name = "tsbAlternateFiltered";
             this.tsbAlternateFiltered.Size = new System.Drawing.Size(23, 24);
             this.tsbAlternateFiltered.Text = "toolStripButton3";
-            this.tsbAlternateFiltered.Click += new System.EventHandler(this.TsbAlternateFiltered_Click);
+            this.tsbAlternateFiltered.Click += this.TsbAlternateFiltered_Click;
             // 
             // tsSeparator
             // 
@@ -300,7 +300,7 @@ namespace FlashDebugger
             this.tsbExportFiltered.Name = "tsbExportFiltered";
             this.tsbExportFiltered.Size = new System.Drawing.Size(23, 24);
             this.tsbExportFiltered.Text = "toolStripButton4";
-            this.tsbExportFiltered.Click += new System.EventHandler(this.TsbExportFiltered_Click);
+            this.tsbExportFiltered.Click += this.TsbExportFiltered_Click;
             // 
             // tsbImport
             // 
@@ -309,13 +309,13 @@ namespace FlashDebugger
             this.tsbImport.Name = "tsbImport";
             this.tsbImport.Size = new System.Drawing.Size(23, 24);
             this.tsbImport.Text = "toolStripButton5";
-            this.tsbImport.Click += new System.EventHandler(this.TsbImport_Click);
+            this.tsbImport.Click += this.TsbImport_Click;
             // 
             // tstxtFilter
             // 
             this.tstxtFilter.Name = "tstxtFilter";
             this.tstxtFilter.Size = new System.Drawing.Size(ScaleHelper.Scale(90), 23);
-            this.tstxtFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TstxtFilter_KeyDown);
+            this.tstxtFilter.KeyDown += this.TstxtFilter_KeyDown;
             // 
             // tscbFilterColumns
             // 

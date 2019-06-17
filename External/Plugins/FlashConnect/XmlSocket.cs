@@ -26,7 +26,7 @@ namespace FlashConnect
                 this.server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 this.server.Bind(new IPEndPoint(ipAddress, port));
                 this.server.Listen(10);
-                this.server.BeginAccept(new AsyncCallback(this.OnConnectRequest), this.server);
+                this.server.BeginAccept(this.OnConnectRequest, this.server);
             }
             catch (SocketException ex)
             {
@@ -49,7 +49,7 @@ namespace FlashConnect
                 Socket server = (Socket)result.AsyncState;
                 this.client = server.EndAccept(result);
                 this.SetupReceiveCallback(client);
-                server.BeginAccept(new AsyncCallback(this.OnConnectRequest), server);
+                server.BeginAccept(this.OnConnectRequest, server);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace FlashConnect
             StateObject so = new StateObject(client);
             try
             {
-                AsyncCallback receiveData = new AsyncCallback(this.OnReceivedData);
+                AsyncCallback receiveData = this.OnReceivedData;
                 client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, receiveData, so);
             }
             catch (SocketException)

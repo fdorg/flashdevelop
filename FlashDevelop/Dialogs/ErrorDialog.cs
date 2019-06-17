@@ -53,7 +53,7 @@ namespace FlashDevelop.Dialogs
             this.exitButton.TabIndex = 2;
             this.exitButton.Text = "&Exit";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
+            this.exitButton.Click += this.ExitButtonClick;
             // 
             // headerLabel
             // 
@@ -75,7 +75,7 @@ namespace FlashDevelop.Dialogs
             this.continueButton.TabIndex = 1;
             this.continueButton.Text = "&Continue";
             this.continueButton.UseVisualStyleBackColor = true;
-            this.continueButton.Click += new System.EventHandler(this.ContinueButtonClick);
+            this.continueButton.Click += this.ContinueButtonClick;
             // 
             // infoTextBox
             // Font needs to be set here so that controls resize correctly in high-dpi

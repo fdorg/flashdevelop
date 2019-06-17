@@ -81,7 +81,7 @@ namespace WeifenLuo.WinFormsUI
 
             m_timer = new Timer();
             m_timer.Enabled = false;
-            m_timer.Tick += new EventHandler(Timer_Tick);
+            m_timer.Tick += Timer_Tick;
         }
 
         protected override void Dispose(bool disposing)

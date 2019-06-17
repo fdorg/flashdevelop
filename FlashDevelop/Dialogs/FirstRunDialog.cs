@@ -89,7 +89,7 @@ namespace FlashDevelop.Dialogs
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = " Initializing...";
-            this.Load += new System.EventHandler(this.FirstRunDialogLoad);
+            this.Load += this.FirstRunDialogLoad;
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
@@ -116,9 +116,9 @@ namespace FlashDevelop.Dialogs
             this.worker = new BackgroundWorker();
             this.worker.WorkerReportsProgress = true;
             this.worker.WorkerSupportsCancellation = true;
-            this.worker.DoWork += new DoWorkEventHandler(this.ProcessCommands);
-            this.worker.ProgressChanged += new ProgressChangedEventHandler(this.ProgressChanged);
-            this.worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerCompleted);
+            this.worker.DoWork += this.ProcessCommands;
+            this.worker.ProgressChanged += this.ProgressChanged;
+            this.worker.RunWorkerCompleted += this.WorkerCompleted;
             this.worker.RunWorkerAsync();
         }
 
@@ -157,9 +157,9 @@ namespace FlashDevelop.Dialogs
             else
             {
                 this.infoLabel.Text = TextHelper.GetString("Info.InitFailed");
-                this.pictureBox.Click += new EventHandler(this.FirstRunDialogClick);
-                this.progressBar.Click += new EventHandler(this.FirstRunDialogClick);
-                this.infoLabel.Click += new EventHandler(this.FirstRunDialogClick);
+                this.pictureBox.Click += this.FirstRunDialogClick;
+                this.progressBar.Click += this.FirstRunDialogClick;
+                this.infoLabel.Click += this.FirstRunDialogClick;
             }
         }
 

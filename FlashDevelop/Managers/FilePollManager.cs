@@ -19,7 +19,7 @@ namespace FlashDevelop.Managers
             CheckSettingValues();
             FilePollTimer = new Timer();
             FilePollTimer.Interval = Globals.Settings.FilePollInterval;
-            FilePollTimer.Tick += new EventHandler(FilePollTimerTick);
+            FilePollTimer.Tick += FilePollTimerTick;
             FilePollTimer.Start();
         }
 

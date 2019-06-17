@@ -14,19 +14,19 @@ namespace PluginCore.BBCode
         {
             _handlers = new Dictionary<string, DHandler>();
 
-            _handlers["B"] = new DHandler(_hadleTag_B);
-            _handlers["I"] = new DHandler(_hadleTag_I);
-            _handlers["S"] = new DHandler(_hadleTag_S);
-            _handlers["U"] = new DHandler(_hadleTag_U);
-            _handlers["~B"] = new DHandler(_hadleTag_NotB);
-            _handlers["~I"] = new DHandler(_hadleTag_NotI);
-            _handlers["~S"] = new DHandler(_hadleTag_NotS);
-            _handlers["~U"] = new DHandler(_hadleTag_NotU);
-            _handlers["FONT"] = new DHandler(_hadleTag_Font);
-            _handlers["SIZE"] = new DHandler(_hadleTag_Size);
-            _handlers["COLOR"] = new DHandler(_hadleTag_Color);
-            _handlers["BGCOLOR"] = new DHandler(_hadleTag_BgColor);
-            _handlers["BACKCOLOR"] = new DHandler(_hadleTag_BgColor);
+            _handlers["B"] = _hadleTag_B;
+            _handlers["I"] = _hadleTag_I;
+            _handlers["S"] = _hadleTag_S;
+            _handlers["U"] = _hadleTag_U;
+            _handlers["~B"] = _hadleTag_NotB;
+            _handlers["~I"] = _hadleTag_NotI;
+            _handlers["~S"] = _hadleTag_NotS;
+            _handlers["~U"] = _hadleTag_NotU;
+            _handlers["FONT"] = _hadleTag_Font;
+            _handlers["SIZE"] = _hadleTag_Size;
+            _handlers["COLOR"] = _hadleTag_Color;
+            _handlers["BGCOLOR"] = _hadleTag_BgColor;
+            _handlers["BACKCOLOR"] = _hadleTag_BgColor;
         }
 
 

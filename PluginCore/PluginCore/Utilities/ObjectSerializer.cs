@@ -17,7 +17,7 @@ namespace PluginCore.Utilities
         static ObjectSerializer()
         {
             formatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomainAssemblyResolve);
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainAssemblyResolve;
         }
 
         /// <summary>

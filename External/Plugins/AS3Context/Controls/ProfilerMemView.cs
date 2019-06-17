@@ -32,7 +32,7 @@ namespace AS3Context.Controls
 
             scaleCombo = scale;
             scaleCombo.SelectedIndex = scaleCombo.Items.Count - 1;
-            scaleCombo.SelectedIndexChanged += new EventHandler(scaleCombo_SelectedIndexChanged);
+            scaleCombo.SelectedIndexChanged += scaleCombo_SelectedIndexChanged;
             graph.TimeScale = scaleCombo.SelectedIndex + 1;
 
             Clear();

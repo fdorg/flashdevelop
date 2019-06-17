@@ -30,8 +30,8 @@ namespace ProjectManager.Building
             LineFilter stdoutFilter = new LineFilter(process.StandardOutput, Console.Out, false);
             LineFilter stderrFilter = new LineFilter(process.StandardError, Console.Error, mergeErrors);
 
-            Thread outThread = new Thread(new ThreadStart(stdoutFilter.Filter));
-            Thread errThread = new Thread(new ThreadStart(stderrFilter.Filter));
+            Thread outThread = new Thread(stdoutFilter.Filter);
+            Thread errThread = new Thread(stderrFilter.Filter);
 
             outThread.Start();
             errThread.Start();

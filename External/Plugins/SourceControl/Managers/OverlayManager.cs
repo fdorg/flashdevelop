@@ -23,8 +23,8 @@ namespace SourceControl.Managers
         {
             this.fsWatchers = fsWatchers;
 
-            FileNode.OnFileNodeRefresh += new FileNodeRefresh(FileNode_OnFileNodeRefresh);
-            DirectoryNode.OnDirectoryNodeRefresh += new DirectoryNodeRefresh(DirectoryNode_OnDirectoryNodeRefresh);
+            FileNode.OnFileNodeRefresh += FileNode_OnFileNodeRefresh;
+            DirectoryNode.OnDirectoryNodeRefresh += DirectoryNode_OnDirectoryNodeRefresh;
 
             OverlayMap.Init();
         }

@@ -19,7 +19,7 @@ namespace FlashDebugger.Controls
             this.AutoKeyHandling = true;
             this.treeControl = new DataTreeControl(true);
             this.treeControl.Tree.BorderStyle = BorderStyle.None;
-            this.treeControl.Resize += new EventHandler(this.TreeControlResize);
+            this.treeControl.Resize += this.TreeControlResize;
             this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
             this.treeControl.Dock = DockStyle.Fill;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

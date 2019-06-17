@@ -87,8 +87,8 @@ namespace BookmarkPanel
             this.listView.TabIndex = 0;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.DoubleClick += new System.EventHandler(this.ListViewDoubleClick);
-            this.listView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ListViewKeyUp);
+            this.listView.DoubleClick += this.ListViewDoubleClick;
+            this.listView.KeyUp += this.ListViewKeyUp;
             // 
             // columnLine
             // 
@@ -106,14 +106,14 @@ namespace BookmarkPanel
             this.removeBookmarksItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
             this.contextMenuStrip.Size = new System.Drawing.Size(176, 26);
-            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ContextMenuStripOpening);
+            this.contextMenuStrip.Opening += this.ContextMenuStripOpening;
             // 
             // removeBookmarksItem
             //
             this.removeBookmarksItem.Name = "removeBookmarksItem";
             this.removeBookmarksItem.Size = new System.Drawing.Size(175, 22);
             this.removeBookmarksItem.Text = "Remove Bookmarks";
-            this.removeBookmarksItem.Click += new System.EventHandler(this.RemoveBookmarksItemClick);
+            this.removeBookmarksItem.Click += this.RemoveBookmarksItemClick;
             // 
             // toolStrip
             // 
@@ -137,7 +137,7 @@ namespace BookmarkPanel
             this.searchButton.Name = "searchButton";
             this.searchButton.Size = new System.Drawing.Size(23, 22);
             this.searchButton.ToolTipText = "Search And Add Bookmarks";
-            this.searchButton.Click += new System.EventHandler(this.SearchButtonClick);
+            this.searchButton.Click += this.SearchButtonClick;
             // 
             // searchBox
             //
@@ -145,7 +145,7 @@ namespace BookmarkPanel
             this.searchBox.Name = "searchBox";
             this.searchBox.Size = new System.Drawing.Size(200, 22);
             this.searchBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.searchBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SearchBoxKeyUp);
+            this.searchBox.KeyUp += this.SearchBoxKeyUp;
             // 
             // statusStrip
             // 
@@ -203,9 +203,9 @@ namespace BookmarkPanel
             this.timeoutManager = new TimeoutManager();
             this.updateTimer = new System.Windows.Forms.Timer();
             this.updateTimer.Interval = 500;
-            this.updateTimer.Tick += new EventHandler(this.UpdateTimerTick);
-            UITools.Manager.OnTextChanged += new UITools.TextChangedHandler(this.ManagerOnTextChanged);
-            UITools.Manager.OnMarkerChanged += new UITools.LineEventHandler(this.ManagerOnMarkerChanged);
+            this.updateTimer.Tick += this.UpdateTimerTick;
+            UITools.Manager.OnTextChanged += this.ManagerOnTextChanged;
+            UITools.Manager.OnMarkerChanged += this.ManagerOnMarkerChanged;
         }
 
         /// <summary>

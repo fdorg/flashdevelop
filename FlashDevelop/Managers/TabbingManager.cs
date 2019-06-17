@@ -15,7 +15,7 @@ namespace FlashDevelop.Managers
         {
             TabTimer = new Timer();
             TabTimer.Interval = 100;
-            TabTimer.Tick += new EventHandler(OnTabTimer);
+            TabTimer.Tick += OnTabTimer;
             TabHistory = new List<ITabbedDocument>();
             SequentialIndex = 0;
         }

@@ -318,8 +318,8 @@ namespace ASCompletion
             this.sortDropDown.Name = "sortDropDown";
             this.sortDropDown.Size = new System.Drawing.Size(13, 22);
             this.sortDropDown.Text = "";
-            this.sortDropDown.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SortDropDown_DropDownItemClicked);
-            this.sortDropDown.DropDownOpening += new System.EventHandler(this.SortDropDown_DropDownOpening);
+            this.sortDropDown.DropDownItemClicked += this.SortDropDown_DropDownItemClicked;
+            this.sortDropDown.DropDownOpening += this.SortDropDown_DropDownOpening;
             this.sortDropDown.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             // 
             // noneItem
@@ -362,10 +362,10 @@ namespace ASCompletion
             this.findTextTxt.Name = "findTextTxt";
             this.findTextTxt.Size = new System.Drawing.Size(100, 25);
             this.findTextTxt.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.findTextTxt.Leave += new System.EventHandler(this.FindProcTxtLeave);
-            this.findTextTxt.Enter += new System.EventHandler(this.FindProcTxtEnter);
-            this.findTextTxt.Click += new System.EventHandler(this.FindProcTxtEnter);
-            this.findTextTxt.TextChanged += new System.EventHandler(this.FindProcTxtChanged);
+            this.findTextTxt.Leave += this.FindProcTxtLeave;
+            this.findTextTxt.Enter += this.FindProcTxtEnter;
+            this.findTextTxt.Click += this.FindProcTxtEnter;
+            this.findTextTxt.TextChanged += this.FindProcTxtChanged;
             // 
             // clearButton
             //
@@ -374,7 +374,7 @@ namespace ASCompletion
             this.clearButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(23, 22);
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            this.clearButton.Click += this.clearButton_Click;
             // 
             // PluginUI
             // 

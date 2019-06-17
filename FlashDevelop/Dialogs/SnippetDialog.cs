@@ -99,7 +99,7 @@ namespace FlashDevelop.Dialogs
             this.contentsTextBox.Size = new System.Drawing.Size(453, 299);
             this.contentsTextBox.TabIndex = 8;
             this.contentsTextBox.WordWrap = false;
-            this.contentsTextBox.TextChanged += new System.EventHandler(this.ToggleCreate);
+            this.contentsTextBox.TextChanged += this.ToggleCreate;
             // 
             // addButton
             //
@@ -111,7 +111,7 @@ namespace FlashDevelop.Dialogs
             this.addButton.TabIndex = 3;
             this.addButton.Text = "&Add";
             this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new System.EventHandler(this.AddButtonClick);
+            this.addButton.Click += this.AddButtonClick;
             // 
             // deleteButton
             //
@@ -123,7 +123,7 @@ namespace FlashDevelop.Dialogs
             this.deleteButton.TabIndex = 3;
             this.deleteButton.Text = "&Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteButton.Click += this.DeleteButtonClick;
             // 
             // snippetNameTextBox
             //
@@ -131,7 +131,7 @@ namespace FlashDevelop.Dialogs
             this.snippetNameTextBox.Name = "snippetNameTextBox";
             this.snippetNameTextBox.Size = new System.Drawing.Size(140, 19);
             this.snippetNameTextBox.TabIndex = 6;
-            this.snippetNameTextBox.TextChanged += new System.EventHandler(this.ToggleCreate);
+            this.snippetNameTextBox.TextChanged += this.ToggleCreate;
             // 
             // nameLabel
             // 
@@ -166,7 +166,7 @@ namespace FlashDevelop.Dialogs
             this.snippetListView.Name = "snippetListBox";
             this.snippetListView.Size = new System.Drawing.Size(130, 329);
             this.snippetListView.TabIndex = 5;
-            this.snippetListView.SelectedIndexChanged += new System.EventHandler(this.SnippetListViewSelectedIndexChanged);
+            this.snippetListView.SelectedIndexChanged += this.SnippetListViewSelectedIndexChanged;
             // 
             // saveButton
             //
@@ -178,7 +178,7 @@ namespace FlashDevelop.Dialogs
             this.saveButton.TabIndex = 2;
             this.saveButton.Text = "&Save";
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.SaveButtonClick);
+            this.saveButton.Click += this.SaveButtonClick;
             // 
             // exportButton
             //
@@ -187,7 +187,7 @@ namespace FlashDevelop.Dialogs
             this.exportButton.TabIndex = 9;
             this.exportButton.Size = new System.Drawing.Size(30, 23);
             this.exportButton.Location = new System.Drawing.Point(150, 358);
-            this.exportButton.Click += new System.EventHandler(this.ExportButtonClick);
+            this.exportButton.Click += this.ExportButtonClick;
             // 
             // insertLabel
             // 
@@ -207,7 +207,7 @@ namespace FlashDevelop.Dialogs
             this.languageDropDown.TabIndex = 4;
             this.languageDropDown.Location = new System.Drawing.Point(12, 25);
             this.languageDropDown.Size = new System.Drawing.Size(130, 23);
-            this.languageDropDown.SelectedIndexChanged += new System.EventHandler(this.LanguagesSelectedIndexChanged);
+            this.languageDropDown.SelectedIndexChanged += this.LanguagesSelectedIndexChanged;
             // 
             // closeButton
             //
@@ -219,7 +219,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // revertButton
             //
@@ -229,7 +229,7 @@ namespace FlashDevelop.Dialogs
             this.revertButton.Size = new System.Drawing.Size(30, 23);
             this.revertButton.TabIndex = 10;
             this.revertButton.UseVisualStyleBackColor = true;
-            this.revertButton.Click += new System.EventHandler(this.RevertButtonClick);
+            this.revertButton.Click += this.RevertButtonClick;
             // 
             // insertComboBox
             //
@@ -241,7 +241,7 @@ namespace FlashDevelop.Dialogs
             this.insertComboBox.Name = "insertComboBox";
             this.insertComboBox.Size = new System.Drawing.Size(305, 21);
             this.insertComboBox.TabIndex = 7;
-            this.insertComboBox.SelectedIndexChanged += new System.EventHandler(this.InsertComboBoxSelectedIndexChanged);
+            this.insertComboBox.SelectedIndexChanged += this.InsertComboBoxSelectedIndexChanged;
             // 
             // SnippetDialog
             //

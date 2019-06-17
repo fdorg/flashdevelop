@@ -68,7 +68,7 @@ namespace FlashDebugger
             this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
             this.toolStripTextBoxFilter.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.toolStripTextBoxFilter.Enabled = false;
-            this.toolStripTextBoxFilter.TextChanged += new System.EventHandler(this.ToolStripTextFieldFilter_Changed);
+            this.toolStripTextBoxFilter.TextChanged += this.ToolStripTextFieldFilter_Changed;
             // 
             // toolStripLabelFilter
             //
@@ -87,7 +87,7 @@ namespace FlashDebugger
             this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
             this.clearFilterButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
-            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButton_Click);
+            this.clearFilterButton.Click += this.ClearFilterButton_Click;
             // 
             // toolStripItemMatchCase
             // 
@@ -158,9 +158,9 @@ namespace FlashDebugger
             lv.SmallImageList = imageList;
             currentImageIndex = imageList.Images.IndexOfKey("StartContinue");
             lv.View = System.Windows.Forms.View.Details;
-            lv.MouseDoubleClick += new MouseEventHandler(Lv_MouseDoubleClick);
-            lv.KeyDown += new KeyEventHandler(Lv_KeyDown);
-            lv.SizeChanged += new EventHandler(Lv_SizeChanged);
+            lv.MouseDoubleClick += Lv_MouseDoubleClick;
+            lv.KeyDown += Lv_KeyDown;
+            lv.SizeChanged += Lv_SizeChanged;
             this.Controls.Add(lv);
             this.Controls.Add(toolStripFilters);
             this.toolStripFilters.ResumeLayout(false);
@@ -170,14 +170,14 @@ namespace FlashDebugger
         public void InitializeContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            this.copyContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyTextClick));
+            this.copyContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, this.CopyTextClick);
             this.copyContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Control | Keys.C);
-            this.copyAllContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyAll"), null, new EventHandler(this.CopyAllTextClick));
-            this.setFrameContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.SetCurrentFrame"), null, new EventHandler(this.SetCurrentFrameClick));
+            this.copyAllContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.CopyAll"), null, this.CopyAllTextClick);
+            this.setFrameContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.SetCurrentFrame"), null, this.SetCurrentFrameClick);
             this.setFrameContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Enter);
-            this.gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, new EventHandler(this.GotoSourceClick));
+            this.gotoSourceContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.GotoSource"), null, this.GotoSourceClick);
             this.gotoSourceContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Shift | Keys.Enter);
-            this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, new EventHandler(this.JustMyCodeClick));
+            this.justMyCodeContextMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.JustMyCode"), null, this.JustMyCodeClick);
             this.justMyCodeContextMenuItem.CheckOnClick = true;
             menu.Items.AddRange(new ToolStripItem[] {this.copyContextMenuItem, this.copyAllContextMenuItem, new ToolStripSeparator(), this.setFrameContextMenuItem, this.gotoSourceContextMenuItem, this.justMyCodeContextMenuItem});
             this.lv.ContextMenuStrip = menu;

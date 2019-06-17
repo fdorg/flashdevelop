@@ -35,9 +35,9 @@ namespace FlashDebugger
             runningImageIndex = imageList.Images.IndexOfKey("StartContinue");
             suspendedImageIndex = imageList.Images.IndexOfKey("Pause");
             lv.View = System.Windows.Forms.View.Details;
-            lv.MouseDoubleClick += new MouseEventHandler(lv_MouseDoubleClick);
-            lv.KeyDown += new KeyEventHandler(lv_KeyDown);
-            lv.SizeChanged += new EventHandler(lv_SizeChanged);
+            lv.MouseDoubleClick += lv_MouseDoubleClick;
+            lv.KeyDown += lv_KeyDown;
+            lv.SizeChanged += lv_SizeChanged;
             this.Controls.Add(lv);
             ScrollBarEx.Attach(lv);
         }

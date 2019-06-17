@@ -215,7 +215,7 @@ namespace FlashDevelop.Dialogs
             this.okButton.TabIndex = 1;
             this.okButton.Text = "&OK";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.OkButtonClick);
+            this.okButton.Click += this.OkButtonClick;
             // 
             // applyButton
             // 
@@ -227,7 +227,7 @@ namespace FlashDevelop.Dialogs
             this.applyButton.TabIndex = 3;
             this.applyButton.Text = "&Apply";
             this.applyButton.UseVisualStyleBackColor = true;
-            this.applyButton.Click += new System.EventHandler(this.SaveButtonClick);
+            this.applyButton.Click += this.SaveButtonClick;
             // 
             // exportButton
             // 
@@ -235,7 +235,7 @@ namespace FlashDevelop.Dialogs
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(35, 29);
             this.exportButton.TabIndex = 8;
-            this.exportButton.Click += new System.EventHandler(this.ExportLanguagesClick);
+            this.exportButton.Click += this.ExportLanguagesClick;
             // 
             // revertButton
             // 
@@ -243,7 +243,7 @@ namespace FlashDevelop.Dialogs
             this.revertButton.Name = "revertButton";
             this.revertButton.Size = new System.Drawing.Size(35, 29);
             this.revertButton.TabIndex = 9;
-            this.revertButton.Click += new System.EventHandler(this.RevertLanguagesClick);
+            this.revertButton.Click += this.RevertLanguagesClick;
             // 
             // defaultButton
             // 
@@ -251,7 +251,7 @@ namespace FlashDevelop.Dialogs
             this.defaultButton.Name = "defaultButton";
             this.defaultButton.Size = new System.Drawing.Size(35, 29);
             this.defaultButton.TabIndex = 10;
-            this.defaultButton.Click += new System.EventHandler(this.MakeAsDefaultStyleClick);
+            this.defaultButton.Click += this.MakeAsDefaultStyleClick;
             // 
             // cancelButton
             // 
@@ -263,7 +263,7 @@ namespace FlashDevelop.Dialogs
             this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "&Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
+            this.cancelButton.Click += this.CancelButtonClick;
             // 
             // itemListView
             // 
@@ -279,7 +279,7 @@ namespace FlashDevelop.Dialogs
             this.itemListView.TabIndex = 5;
             this.itemListView.UseCompatibleStateImageBehavior = false;
             this.itemListView.View = System.Windows.Forms.View.Details;
-            this.itemListView.SelectedIndexChanged += new System.EventHandler(this.ItemsSelectedIndexChanged);
+            this.itemListView.SelectedIndexChanged += this.ItemsSelectedIndexChanged;
             // 
             // itemGroupBox
             // 
@@ -327,7 +327,7 @@ namespace FlashDevelop.Dialogs
             this.italicsCheckBox.Text = "Italics";
             this.italicsCheckBox.ThreeState = true;
             this.italicsCheckBox.UseVisualStyleBackColor = true;
-            this.italicsCheckBox.CheckStateChanged += new System.EventHandler(this.LanguageItemChanged);
+            this.italicsCheckBox.CheckStateChanged += this.LanguageItemChanged;
             // 
             // backgroundButton
             // 
@@ -336,7 +336,7 @@ namespace FlashDevelop.Dialogs
             this.backgroundButton.Size = new System.Drawing.Size(33, 30);
             this.backgroundButton.TabIndex = 10;
             this.backgroundButton.UseVisualStyleBackColor = true;
-            this.backgroundButton.Click += new System.EventHandler(this.ItemBackgroundButtonClick);
+            this.backgroundButton.Click += this.ItemBackgroundButtonClick;
             // 
             // foregroundButton
             // 
@@ -345,7 +345,7 @@ namespace FlashDevelop.Dialogs
             this.foregroundButton.Size = new System.Drawing.Size(33, 30);
             this.foregroundButton.TabIndex = 7;
             this.foregroundButton.UseVisualStyleBackColor = true;
-            this.foregroundButton.Click += new System.EventHandler(this.ItemForegroundButtonClick);
+            this.foregroundButton.Click += this.ItemForegroundButtonClick;
             // 
             // boldCheckBox
             // 
@@ -359,7 +359,7 @@ namespace FlashDevelop.Dialogs
             this.boldCheckBox.Text = "Bold";
             this.boldCheckBox.ThreeState = true;
             this.boldCheckBox.UseVisualStyleBackColor = true;
-            this.boldCheckBox.CheckStateChanged += new System.EventHandler(this.LanguageItemChanged);
+            this.boldCheckBox.CheckStateChanged += this.LanguageItemChanged;
             // 
             // backgroundTextBox
             // 
@@ -367,7 +367,7 @@ namespace FlashDevelop.Dialogs
             this.backgroundTextBox.Name = "backgroundTextBox";
             this.backgroundTextBox.Size = new System.Drawing.Size(94, 23);
             this.backgroundTextBox.TabIndex = 9;
-            this.backgroundTextBox.TextChanged += new System.EventHandler(this.LanguageItemChanged);
+            this.backgroundTextBox.TextChanged += this.LanguageItemChanged;
             // 
             // foregroundTextBox
             // 
@@ -375,7 +375,7 @@ namespace FlashDevelop.Dialogs
             this.foregroundTextBox.Name = "foregroundTextBox";
             this.foregroundTextBox.Size = new System.Drawing.Size(94, 23);
             this.foregroundTextBox.TabIndex = 6;
-            this.foregroundTextBox.TextChanged += new System.EventHandler(this.LanguageItemChanged);
+            this.foregroundTextBox.TextChanged += this.LanguageItemChanged;
             // 
             // fontSizeComboBox
             // 
@@ -385,7 +385,7 @@ namespace FlashDevelop.Dialogs
             this.fontSizeComboBox.Name = "fontSizeComboBox";
             this.fontSizeComboBox.Size = new System.Drawing.Size(157, 24);
             this.fontSizeComboBox.TabIndex = 4;
-            this.fontSizeComboBox.TextChanged += new System.EventHandler(this.LanguageItemChanged);
+            this.fontSizeComboBox.TextChanged += this.LanguageItemChanged;
             // 
             // fontNameComboBox
             // 
@@ -395,7 +395,7 @@ namespace FlashDevelop.Dialogs
             this.fontNameComboBox.Name = "fontNameComboBox";
             this.fontNameComboBox.Size = new System.Drawing.Size(285, 24);
             this.fontNameComboBox.TabIndex = 2;
-            this.fontNameComboBox.SelectedIndexChanged += new System.EventHandler(this.LanguageItemChanged);
+            this.fontNameComboBox.SelectedIndexChanged += this.LanguageItemChanged;
             // 
             // sizeLabel
             // 
@@ -443,7 +443,7 @@ namespace FlashDevelop.Dialogs
             this.caretForeButton.Name = "caretForeButton";
             this.caretForeButton.Size = new System.Drawing.Size(33, 30);
             this.caretForeButton.TabIndex = 2;
-            this.caretForeButton.Click += new System.EventHandler(this.CaretForeButtonClick);
+            this.caretForeButton.Click += this.CaretForeButtonClick;
             // 
             // caretlineBackButton
             // 
@@ -451,7 +451,7 @@ namespace FlashDevelop.Dialogs
             this.caretlineBackButton.Name = "caretlineBackButton";
             this.caretlineBackButton.Size = new System.Drawing.Size(33, 30);
             this.caretlineBackButton.TabIndex = 4;
-            this.caretlineBackButton.Click += new System.EventHandler(this.CaretlineBackButtonClick);
+            this.caretlineBackButton.Click += this.CaretlineBackButtonClick;
             // 
             // selectionBackButton
             // 
@@ -459,7 +459,7 @@ namespace FlashDevelop.Dialogs
             this.selectionBackButton.Name = "selectionBackButton";
             this.selectionBackButton.Size = new System.Drawing.Size(33, 30);
             this.selectionBackButton.TabIndex = 14;
-            this.selectionBackButton.Click += new System.EventHandler(this.SelectionBackButtonClick);
+            this.selectionBackButton.Click += this.SelectionBackButtonClick;
             // 
             // selectionForeButton
             // 
@@ -467,7 +467,7 @@ namespace FlashDevelop.Dialogs
             this.selectionForeButton.Name = "selectionForeButton";
             this.selectionForeButton.Size = new System.Drawing.Size(33, 30);
             this.selectionForeButton.TabIndex = 12;
-            this.selectionForeButton.Click += new System.EventHandler(this.SelectionForeButtonClick);
+            this.selectionForeButton.Click += this.SelectionForeButtonClick;
             // 
             // caretForeTextBox
             // 
@@ -475,7 +475,7 @@ namespace FlashDevelop.Dialogs
             this.caretForeTextBox.Name = "caretForeTextBox";
             this.caretForeTextBox.Size = new System.Drawing.Size(103, 23);
             this.caretForeTextBox.TabIndex = 1;
-            this.caretForeTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.caretForeTextBox.TextChanged += this.EditorItemChanged;
             // 
             // caretlineBackTextBox
             // 
@@ -483,7 +483,7 @@ namespace FlashDevelop.Dialogs
             this.caretlineBackTextBox.Name = "caretlineBackTextBox";
             this.caretlineBackTextBox.Size = new System.Drawing.Size(103, 23);
             this.caretlineBackTextBox.TabIndex = 3;
-            this.caretlineBackTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.caretlineBackTextBox.TextChanged += this.EditorItemChanged;
             // 
             // selectionForeTextBox
             // 
@@ -491,7 +491,7 @@ namespace FlashDevelop.Dialogs
             this.selectionForeTextBox.Name = "selectionForeTextBox";
             this.selectionForeTextBox.Size = new System.Drawing.Size(103, 23);
             this.selectionForeTextBox.TabIndex = 11;
-            this.selectionForeTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.selectionForeTextBox.TextChanged += this.EditorItemChanged;
             // 
             // selectionBackTextBox
             // 
@@ -499,7 +499,7 @@ namespace FlashDevelop.Dialogs
             this.selectionBackTextBox.Name = "selectionBackTextBox";
             this.selectionBackTextBox.Size = new System.Drawing.Size(103, 23);
             this.selectionBackTextBox.TabIndex = 13;
-            this.selectionBackTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.selectionBackTextBox.TextChanged += this.EditorItemChanged;
             // 
             // marginForeButton
             // 
@@ -507,7 +507,7 @@ namespace FlashDevelop.Dialogs
             this.marginForeButton.Name = "marginForeButton";
             this.marginForeButton.Size = new System.Drawing.Size(33, 30);
             this.marginForeButton.TabIndex = 6;
-            this.marginForeButton.Click += new System.EventHandler(this.MarginForeButtonClick);
+            this.marginForeButton.Click += this.MarginForeButtonClick;
             // 
             // marginBackButton
             // 
@@ -515,7 +515,7 @@ namespace FlashDevelop.Dialogs
             this.marginBackButton.Name = "marginBackButton";
             this.marginBackButton.Size = new System.Drawing.Size(33, 30);
             this.marginBackButton.TabIndex = 8;
-            this.marginBackButton.Click += new System.EventHandler(this.MarginBackButtonClick);
+            this.marginBackButton.Click += this.MarginBackButtonClick;
             // 
             // markerBackButton
             // 
@@ -523,7 +523,7 @@ namespace FlashDevelop.Dialogs
             this.markerBackButton.Name = "markerBackButton";
             this.markerBackButton.Size = new System.Drawing.Size(33, 30);
             this.markerBackButton.TabIndex = 18;
-            this.markerBackButton.Click += new System.EventHandler(this.MarkerBackButtonClick);
+            this.markerBackButton.Click += this.MarkerBackButtonClick;
             // 
             // markerForeButton
             // 
@@ -531,7 +531,7 @@ namespace FlashDevelop.Dialogs
             this.markerForeButton.Name = "markerForeButton";
             this.markerForeButton.Size = new System.Drawing.Size(33, 30);
             this.markerForeButton.TabIndex = 16;
-            this.markerForeButton.Click += new System.EventHandler(this.MarkerForeButtonClick);
+            this.markerForeButton.Click += this.MarkerForeButtonClick;
             // 
             // marginForeTextBox
             // 
@@ -539,7 +539,7 @@ namespace FlashDevelop.Dialogs
             this.marginForeTextBox.Name = "marginForeTextBox";
             this.marginForeTextBox.Size = new System.Drawing.Size(103, 23);
             this.marginForeTextBox.TabIndex = 5;
-            this.marginForeTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.marginForeTextBox.TextChanged += this.EditorItemChanged;
             // 
             // marginBackTextBox
             // 
@@ -547,7 +547,7 @@ namespace FlashDevelop.Dialogs
             this.marginBackTextBox.Name = "marginBackTextBox";
             this.marginBackTextBox.Size = new System.Drawing.Size(103, 23);
             this.marginBackTextBox.TabIndex = 7;
-            this.marginBackTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.marginBackTextBox.TextChanged += this.EditorItemChanged;
             // 
             // markerForeTextBox
             // 
@@ -555,7 +555,7 @@ namespace FlashDevelop.Dialogs
             this.markerForeTextBox.Name = "markerForeTextBox";
             this.markerForeTextBox.Size = new System.Drawing.Size(103, 23);
             this.markerForeTextBox.TabIndex = 15;
-            this.markerForeTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.markerForeTextBox.TextChanged += this.EditorItemChanged;
             // 
             // markerBackTextBox
             // 
@@ -563,7 +563,7 @@ namespace FlashDevelop.Dialogs
             this.markerBackTextBox.Name = "markerBackTextBox";
             this.markerBackTextBox.Size = new System.Drawing.Size(103, 23);
             this.markerBackTextBox.TabIndex = 17;
-            this.markerBackTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.markerBackTextBox.TextChanged += this.EditorItemChanged;
             // 
             // saveFileDialog
             // 
@@ -715,7 +715,7 @@ namespace FlashDevelop.Dialogs
             this.printMarginButton.Name = "printMarginButton";
             this.printMarginButton.Size = new System.Drawing.Size(33, 30);
             this.printMarginButton.TabIndex = 22;
-            this.printMarginButton.Click += new System.EventHandler(this.PrintMarginButtonClick);
+            this.printMarginButton.Click += this.PrintMarginButtonClick;
             // 
             // printMarginLabel
             // 
@@ -733,7 +733,7 @@ namespace FlashDevelop.Dialogs
             this.printMarginTextBox.Name = "printMarginTextBox";
             this.printMarginTextBox.Size = new System.Drawing.Size(103, 23);
             this.printMarginTextBox.TabIndex = 21;
-            this.printMarginTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.printMarginTextBox.TextChanged += this.EditorItemChanged;
             // 
             // highlightBackButton
             // 
@@ -741,7 +741,7 @@ namespace FlashDevelop.Dialogs
             this.highlightBackButton.Name = "highlightBackButton";
             this.highlightBackButton.Size = new System.Drawing.Size(33, 30);
             this.highlightBackButton.TabIndex = 24;
-            this.highlightBackButton.Click += new System.EventHandler(this.HighlightBackButtonClick);
+            this.highlightBackButton.Click += this.HighlightBackButtonClick;
             // 
             // highlightBackLabel
             // 
@@ -759,7 +759,7 @@ namespace FlashDevelop.Dialogs
             this.highlightBackTextBox.Name = "highlightBackTextBox";
             this.highlightBackTextBox.Size = new System.Drawing.Size(103, 23);
             this.highlightBackTextBox.TabIndex = 23;
-            this.highlightBackTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.highlightBackTextBox.TextChanged += this.EditorItemChanged;
             // 
             // modifiedLineButton
             // 
@@ -767,7 +767,7 @@ namespace FlashDevelop.Dialogs
             this.modifiedLineButton.Name = "modifiedLineButton";
             this.modifiedLineButton.Size = new System.Drawing.Size(33, 30);
             this.modifiedLineButton.TabIndex = 28;
-            this.modifiedLineButton.Click += new System.EventHandler(this.ModifiedLineButtonClick);
+            this.modifiedLineButton.Click += this.ModifiedLineButtonClick;
             // 
             // modifiedLineLabel
             // 
@@ -785,7 +785,7 @@ namespace FlashDevelop.Dialogs
             this.modifiedLineTextBox.Name = "modifiedLineTextBox";
             this.modifiedLineTextBox.Size = new System.Drawing.Size(103, 23);
             this.modifiedLineTextBox.TabIndex = 27;
-            this.modifiedLineTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.modifiedLineTextBox.TextChanged += this.EditorItemChanged;
             // 
             // bookmarkLineButton
             // 
@@ -793,7 +793,7 @@ namespace FlashDevelop.Dialogs
             this.bookmarkLineButton.Name = "bookmarkLineButton";
             this.bookmarkLineButton.Size = new System.Drawing.Size(33, 30);
             this.bookmarkLineButton.TabIndex = 26;
-            this.bookmarkLineButton.Click += new System.EventHandler(this.BookmarkLineButtonClick);
+            this.bookmarkLineButton.Click += this.BookmarkLineButtonClick;
             // 
             // bookmarkLineLabel
             // 
@@ -811,7 +811,7 @@ namespace FlashDevelop.Dialogs
             this.bookmarkLineTextBox.Name = "bookmarkLineTextBox";
             this.bookmarkLineTextBox.Size = new System.Drawing.Size(103, 23);
             this.bookmarkLineTextBox.TabIndex = 25;
-            this.bookmarkLineTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.bookmarkLineTextBox.TextChanged += this.EditorItemChanged;
             // 
             // errorLineButton
             // 
@@ -819,7 +819,7 @@ namespace FlashDevelop.Dialogs
             this.errorLineButton.Name = "errorLineButton";
             this.errorLineButton.Size = new System.Drawing.Size(33, 30);
             this.errorLineButton.TabIndex = 10;
-            this.errorLineButton.Click += new System.EventHandler(this.ErrorLineButtonClick);
+            this.errorLineButton.Click += this.ErrorLineButtonClick;
             // 
             // errorLineLabel
             // 
@@ -837,7 +837,7 @@ namespace FlashDevelop.Dialogs
             this.errorLineTextBox.Name = "errorLineTextBox";
             this.errorLineTextBox.Size = new System.Drawing.Size(103, 23);
             this.errorLineTextBox.TabIndex = 9;
-            this.errorLineTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.errorLineTextBox.TextChanged += this.EditorItemChanged;
             // 
             // debugLineButton
             // 
@@ -845,7 +845,7 @@ namespace FlashDevelop.Dialogs
             this.debugLineButton.Name = "debugLineButton";
             this.debugLineButton.Size = new System.Drawing.Size(33, 30);
             this.debugLineButton.TabIndex = 20;
-            this.debugLineButton.Click += new System.EventHandler(this.DebugLineButtonClick);
+            this.debugLineButton.Click += this.DebugLineButtonClick;
             // 
             // debugLineLabel
             // 
@@ -863,7 +863,7 @@ namespace FlashDevelop.Dialogs
             this.debugLineTextBox.Name = "debugLineTextBox";
             this.debugLineTextBox.Size = new System.Drawing.Size(103, 23);
             this.debugLineTextBox.TabIndex = 19;
-            this.debugLineTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.debugLineTextBox.TextChanged += this.EditorItemChanged;
             // 
             // disabledLineButton
             // 
@@ -871,7 +871,7 @@ namespace FlashDevelop.Dialogs
             this.disabledLineButton.Name = "disabledLineButton";
             this.disabledLineButton.Size = new System.Drawing.Size(33, 30);
             this.disabledLineButton.TabIndex = 30;
-            this.disabledLineButton.Click += new System.EventHandler(this.DisabledLineButtonClick);
+            this.disabledLineButton.Click += this.DisabledLineButtonClick;
             // 
             // disabledLineLabel
             // 
@@ -889,7 +889,7 @@ namespace FlashDevelop.Dialogs
             this.disabledLineTextBox.Name = "disabledLineTextBox";
             this.disabledLineTextBox.Size = new System.Drawing.Size(103, 23);
             this.disabledLineTextBox.TabIndex = 29;
-            this.disabledLineTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.disabledLineTextBox.TextChanged += this.EditorItemChanged;
             // 
             // highlightWordBackButton
             // 
@@ -897,7 +897,7 @@ namespace FlashDevelop.Dialogs
             this.highlightWordBackButton.Name = "highlightWordBackButton";
             this.highlightWordBackButton.Size = new System.Drawing.Size(33, 30);
             this.highlightWordBackButton.TabIndex = 24;
-            this.highlightWordBackButton.Click += new System.EventHandler(this.HighlightWordBackButtonClick);
+            this.highlightWordBackButton.Click += this.HighlightWordBackButtonClick;
             // 
             // highlightWordBackLabel
             // 
@@ -915,7 +915,7 @@ namespace FlashDevelop.Dialogs
             this.highlightWordBackTextBox.Name = "highlightWordBackTextBox";
             this.highlightWordBackTextBox.Size = new System.Drawing.Size(103, 23);
             this.highlightWordBackTextBox.TabIndex = 23;
-            this.highlightWordBackTextBox.TextChanged += new System.EventHandler(this.EditorItemChanged);
+            this.highlightWordBackTextBox.TextChanged += this.EditorItemChanged;
             // 
             // colorizeCheckBox
             // 
@@ -929,7 +929,7 @@ namespace FlashDevelop.Dialogs
             this.colorizeCheckBox.Text = "Colorize first margin with 'gdefault' foreground color";
             this.colorizeCheckBox.ThreeState = true;
             this.colorizeCheckBox.UseVisualStyleBackColor = true;
-            this.colorizeCheckBox.CheckedChanged += new System.EventHandler(this.EditorItemChanged);
+            this.colorizeCheckBox.CheckedChanged += this.EditorItemChanged;
             // 
             // languageDropDown
             // 
@@ -939,7 +939,7 @@ namespace FlashDevelop.Dialogs
             this.languageDropDown.Name = "languageDropDown";
             this.languageDropDown.Size = new System.Drawing.Size(212, 24);
             this.languageDropDown.TabIndex = 4;
-            this.languageDropDown.SelectedIndexChanged += new System.EventHandler(this.LanguagesSelectedIndexChanged);
+            this.languageDropDown.SelectedIndexChanged += this.LanguagesSelectedIndexChanged;
             // 
             // EditorDialog
             // 

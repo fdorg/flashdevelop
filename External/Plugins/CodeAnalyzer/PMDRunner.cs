@@ -47,8 +47,8 @@ namespace CodeAnalyzer
             if (!string.IsNullOrEmpty(pmdRuleset) && File.Exists(pmdRuleset)) args += " -r \"" + pmdRuleset + "\"";
             this.SetStatusText(TextHelper.GetString("Info.RunningFlexPMD"));
             this.pmdRunner = new ProcessRunner();
-            this.pmdRunner.ProcessEnded += new ProcessEndedHandler(this.PmdRunnerProcessEnded);
-            this.pmdRunner.Error += new LineOutputHandler(this.PmdRunnerError);
+            this.pmdRunner.ProcessEnded += this.PmdRunnerProcessEnded;
+            this.pmdRunner.Error += this.PmdRunnerError;
             this.pmdRunner.Run("java", args, true);
             this.errorLog = string.Empty;
         }
@@ -82,12 +82,12 @@ namespace CodeAnalyzer
             this.pmdWatcher = new FileSystemWatcher();
             this.pmdWatcher.EnableRaisingEvents = false;
             this.pmdWatcher.Filter = "pmd.xml";
-            this.pmdWatcher.Created += new FileSystemEventHandler(this.onCreateFile);
+            this.pmdWatcher.Created += this.onCreateFile;
             this.deleteTimer = new Timer();
             this.deleteTimer.Enabled = false;
             this.deleteTimer.AutoReset = false;
             this.deleteTimer.Interval = 500;
-            this.deleteTimer.Elapsed += new ElapsedEventHandler(this.onTimedDelete);
+            this.deleteTimer.Elapsed += this.onTimedDelete;
             this.watchedFile = Path.Combine(projectPath, "pmd.xml");
             string oldFile = Path.ChangeExtension(this.watchedFile, "old");
             if (File.Exists(this.watchedFile))

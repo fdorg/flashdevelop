@@ -45,7 +45,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_dockPanel = dockPanel;
 
                 m_timerMouseTrack = new Timer();
-                m_timerMouseTrack.Tick += new EventHandler(TimerMouseTrack_Tick);
+                m_timerMouseTrack.Tick += TimerMouseTrack_Tick;
 
                 Visible = false;
                 m_splitter = new SplitterControl(this);

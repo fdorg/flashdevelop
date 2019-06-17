@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public ZipInputStream(Stream baseInputStream)
             : base(baseInputStream, new Inflater(true))
         {
-            internalReader = new ReadDataHandler(ReadingNotAvailable);
+            internalReader = ReadingNotAvailable;
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public ZipInputStream( Stream baseInputStream, int bufferSize )
             : base(baseInputStream, new Inflater(true), bufferSize)
         {
-            internalReader = new ReadDataHandler(ReadingNotAvailable);
+            internalReader = ReadingNotAvailable;
         }
         #endregion
         
@@ -297,9 +297,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 
             // Determine how to handle reading of data if this is attempted.
             if (entry.IsCompressionMethodSupported()) {
-                internalReader = new ReadDataHandler(InitialRead);
+                internalReader = InitialRead;
             } else {
-                internalReader = new ReadDataHandler(ReadingNotSupported);
+                internalReader = ReadingNotSupported;
             }
             
             return entry;
@@ -528,11 +528,11 @@ namespace ICSharpCode.SharpZipLib.Zip
                     inputBuffer.SetInflaterInput(inf);
                 }
 
-                internalReader = new ReadDataHandler(BodyRead);
+                internalReader = BodyRead;
                 return BodyRead(destination, offset, count);
             }
             else {
-                internalReader = new ReadDataHandler(ReadingNotAvailable);
+                internalReader = ReadingNotAvailable;
                 return 0;
             }
         }
@@ -663,7 +663,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public override void Close()
         {
-            internalReader = new ReadDataHandler(ReadingNotAvailable);
+            internalReader = ReadingNotAvailable;
             crc = null;
             entry = null;
 

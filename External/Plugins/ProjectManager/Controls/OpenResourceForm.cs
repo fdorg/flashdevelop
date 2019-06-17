@@ -58,8 +58,8 @@ namespace ProjectManager.Controls
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(466, 22);
             this.textBox.TabIndex = 1;
-            this.textBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.textBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxKeyDown);
+            this.textBox.TextChanged += this.TextBoxTextChanged;
+            this.textBox.KeyDown += this.TextBoxKeyDown;
             // 
             // refreshButton
             //
@@ -68,7 +68,7 @@ namespace ProjectManager.Controls
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 23);
             this.refreshButton.TabIndex = 4;
-            this.refreshButton.Click += new EventHandler(RefreshButtonClick);
+            this.refreshButton.Click += RefreshButtonClick;
             // 
             // cbInClasspathsOnly
             // 
@@ -80,7 +80,7 @@ namespace ProjectManager.Controls
             this.cbInClasspathsOnly.AutoSize = true;
             this.cbInClasspathsOnly.TabIndex = 2;
             this.cbInClasspathsOnly.Checked = false;
-            this.cbInClasspathsOnly.CheckedChanged += new System.EventHandler(this.CbInClasspathsOnlyCheckedChanged);
+            this.cbInClasspathsOnly.CheckedChanged += this.CbInClasspathsOnlyCheckedChanged;
             // 
             // checkBox
             //
@@ -92,7 +92,7 @@ namespace ProjectManager.Controls
             this.checkBox.AutoSize = true;
             this.checkBox.TabIndex = 3;
             this.checkBox.Checked = false;
-            this.checkBox.CheckedChanged += new EventHandler(this.CheckBoxCheckedChanged);
+            this.checkBox.CheckedChanged += this.CheckBoxCheckedChanged;
             // 
             // listBox
             // 
@@ -104,9 +104,9 @@ namespace ProjectManager.Controls
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(498, 264);
             this.listBox.TabIndex = 5;
-            this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
-            this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
-            this.listBox.DoubleClick += new System.EventHandler(this.ListBoxDoubleClick);
+            this.listBox.DrawItem += this.ListBoxDrawItem;
+            this.listBox.Resize += this.ListBoxResize;
+            this.listBox.DoubleClick += this.ListBoxDoubleClick;
             // 
             // OpenResourceForm
             // 
@@ -127,9 +127,9 @@ namespace ProjectManager.Controls
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Open Resource";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OpenResourceKeyDown);
-            this.Load += new EventHandler(OpenResourceFormLoad);
-            this.Activated += new EventHandler(OpenResourceFormActivated);
+            this.KeyDown += this.OpenResourceKeyDown;
+            this.Load += OpenResourceFormLoad;
+            this.Activated += OpenResourceFormActivated;
             this.ResumeLayout(false);
             this.PerformLayout();
         }

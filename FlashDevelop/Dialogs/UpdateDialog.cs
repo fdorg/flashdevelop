@@ -55,7 +55,7 @@ namespace FlashDevelop.Dialogs
             this.downloadButton.TabIndex = 2;
             this.downloadButton.Text = "&Download Update";
             this.downloadButton.UseVisualStyleBackColor = true;
-            this.downloadButton.Click += new System.EventHandler(this.DownloadButtonClick);
+            this.downloadButton.Click += this.DownloadButtonClick;
             // 
             // infoLabel
             //
@@ -78,7 +78,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // UpdateDialog
             //
@@ -96,7 +96,7 @@ namespace FlashDevelop.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Update Check";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DialogClosed);
+            this.FormClosed += this.DialogClosed;
             this.ResumeLayout(false);
 
         }
@@ -158,8 +158,8 @@ namespace FlashDevelop.Dialogs
         private void InitializeUpdating()
         {
             this.worker = new BackgroundWorker();
-            this.worker.DoWork += new DoWorkEventHandler(this.WorkerDoWork);
-            this.worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerCompleted);
+            this.worker.DoWork += this.WorkerDoWork;
+            this.worker.RunWorkerCompleted += this.WorkerCompleted;
             this.worker.WorkerSupportsCancellation = true;
             this.worker.RunWorkerAsync();
         }

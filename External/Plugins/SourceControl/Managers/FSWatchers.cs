@@ -131,8 +131,8 @@ namespace SourceControl.Managers
             var watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.Attributes;
-            watcher.Changed += new FileSystemEventHandler(Watcher_Changed);
-            watcher.Deleted += new FileSystemEventHandler(Watcher_Changed);
+            watcher.Changed += Watcher_Changed;
+            watcher.Deleted += Watcher_Changed;
             watcher.EnableRaisingEvents = true;
             watchers.Add(watcher, manager);
 

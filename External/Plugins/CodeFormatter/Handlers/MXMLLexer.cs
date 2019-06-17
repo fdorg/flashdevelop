@@ -2308,8 +2308,8 @@ public class MXMLLexer : Lexer {
     {
         this.dfa14 = new DFA14(this);
         this.dfa13 = new DFA13(this);
-        this.dfa14.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA14_SpecialStateTransition);
-        this.dfa13.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA13_SpecialStateTransition);
+        this.dfa14.specialStateTransitionHandler = DFA14_SpecialStateTransition;
+        this.dfa13.specialStateTransitionHandler = DFA13_SpecialStateTransition;
     }
 
     const string DFA14_eotS =

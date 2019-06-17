@@ -185,7 +185,7 @@ namespace ProjectManager.Controls
             this.btnOK.Size = new System.Drawing.Size(75, 21);
             this.btnOK.TabIndex = 1;
             this.btnOK.Text = "&OK";
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Click += this.btnOK_Click;
             // 
             // btnCancel
             // 
@@ -196,7 +196,7 @@ namespace ProjectManager.Controls
             this.btnCancel.Size = new System.Drawing.Size(75, 21);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "&Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += this.btnCancel_Click;
             // 
             // btnApply
             // 
@@ -207,7 +207,7 @@ namespace ProjectManager.Controls
             this.btnApply.Size = new System.Drawing.Size(75, 21);
             this.btnApply.TabIndex = 3;
             this.btnApply.Text = "&Apply";
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            this.btnApply.Click += this.btnApply_Click;
             // 
             // tabControl
             // 
@@ -314,7 +314,7 @@ namespace ProjectManager.Controls
             this.widthTextBox.Size = new System.Drawing.Size(32, 20);
             this.widthTextBox.TabIndex = 4;
             this.widthTextBox.Text = "500";
-            this.widthTextBox.TextChanged += new System.EventHandler(this.widthTextBox_TextChanged);
+            this.widthTextBox.TextChanged += this.widthTextBox_TextChanged;
             // 
             // outputBrowseButton
             // 
@@ -323,7 +323,7 @@ namespace ProjectManager.Controls
             this.outputBrowseButton.Size = new System.Drawing.Size(76, 21);
             this.outputBrowseButton.TabIndex = 2;
             this.outputBrowseButton.Text = "&Browse...";
-            this.outputBrowseButton.Click += new System.EventHandler(this.outputBrowseButton_Click);
+            this.outputBrowseButton.Click += this.outputBrowseButton_Click;
             // 
             // heightTextBox
             // 
@@ -333,7 +333,7 @@ namespace ProjectManager.Controls
             this.heightTextBox.Size = new System.Drawing.Size(32, 20);
             this.heightTextBox.TabIndex = 5;
             this.heightTextBox.Text = "300";
-            this.heightTextBox.TextChanged += new System.EventHandler(this.heightTextBox_TextChanged);
+            this.heightTextBox.TextChanged += this.heightTextBox_TextChanged;
             // 
             // xLabel
             // 
@@ -361,7 +361,7 @@ namespace ProjectManager.Controls
             this.colorTextBox.Size = new System.Drawing.Size(55, 20);
             this.colorTextBox.TabIndex = 9;
             this.colorTextBox.Text = "#FFFFFF";
-            this.colorTextBox.TextChanged += new System.EventHandler(this.colorTextBox_TextChanged);
+            this.colorTextBox.TextChanged += this.colorTextBox_TextChanged;
             // 
             // framerateLabel
             // 
@@ -378,7 +378,7 @@ namespace ProjectManager.Controls
             this.outputSwfBox.Name = "outputSwfBox";
             this.outputSwfBox.Size = new System.Drawing.Size(121, 20);
             this.outputSwfBox.TabIndex = 1;
-            this.outputSwfBox.TextChanged += new System.EventHandler(this.outputSwfBox_TextChanged);
+            this.outputSwfBox.TextChanged += this.outputSwfBox_TextChanged;
             // 
             // fpsTextBox
             // 
@@ -388,7 +388,7 @@ namespace ProjectManager.Controls
             this.fpsTextBox.Size = new System.Drawing.Size(27, 20);
             this.fpsTextBox.TabIndex = 37;
             this.fpsTextBox.Text = "30";
-            this.fpsTextBox.TextChanged += new System.EventHandler(this.fpsTextBox_TextChanged);
+            this.fpsTextBox.TextChanged += this.fpsTextBox_TextChanged;
             // 
             // exportinLabel
             // 
@@ -410,7 +410,7 @@ namespace ProjectManager.Controls
             this.colorLabel.Name = "colorLabel";
             this.colorLabel.Size = new System.Drawing.Size(17, 16);
             this.colorLabel.TabIndex = 7;
-            this.colorLabel.Click += new System.EventHandler(this.colorLabel_Click);
+            this.colorLabel.Click += this.colorLabel_Click;
             // 
             // pxLabel
             // 
@@ -456,7 +456,7 @@ namespace ProjectManager.Controls
             this.testMovieCombo.Name = "testMovieCombo";
             this.testMovieCombo.Size = new System.Drawing.Size(219, 21);
             this.testMovieCombo.TabIndex = 12;
-            this.testMovieCombo.SelectedIndexChanged += new System.EventHandler(this.testMovieCombo_SelectedIndexChanged);
+            this.testMovieCombo.SelectedIndexChanged += this.testMovieCombo_SelectedIndexChanged;
             // 
             // editCommandButton
             // 
@@ -466,7 +466,7 @@ namespace ProjectManager.Controls
             this.editCommandButton.TabIndex = 2;
             this.editCommandButton.Text = "&Edit...";
             this.editCommandButton.Visible = false;
-            this.editCommandButton.Click += new System.EventHandler(this.editCommandButton_Click);
+            this.editCommandButton.Click += this.editCommandButton_Click;
             // 
             // classpathsTab
             // 
@@ -519,7 +519,7 @@ namespace ProjectManager.Controls
             this.btnGlobalClasspaths.Size = new System.Drawing.Size(150, 21);
             this.btnGlobalClasspaths.TabIndex = 2;
             this.btnGlobalClasspaths.Text = "&Edit Global Classpaths...";
-            this.btnGlobalClasspaths.Click += new System.EventHandler(this.btnGlobalClasspaths_Click);
+            this.btnGlobalClasspaths.Click += this.btnGlobalClasspaths_Click;
             // 
             // buildTab
             // 
@@ -554,7 +554,7 @@ namespace ProjectManager.Controls
             this.alwaysExecuteCheckBox.TabIndex = 2;
             this.alwaysExecuteCheckBox.Text = "Always execute";
             this.agressiveTip.SetToolTip(this.alwaysExecuteCheckBox, "Execute the Post-Build Command Line even after a failed build");
-            this.alwaysExecuteCheckBox.CheckedChanged += new System.EventHandler(this.alwaysExecuteCheckBox_CheckedChanged);
+            this.alwaysExecuteCheckBox.CheckedChanged += this.alwaysExecuteCheckBox_CheckedChanged;
             // 
             // postBuilderButton
             // 
@@ -564,7 +564,7 @@ namespace ProjectManager.Controls
             this.postBuilderButton.Size = new System.Drawing.Size(75, 21);
             this.postBuilderButton.TabIndex = 1;
             this.postBuilderButton.Text = "Builder...";
-            this.postBuilderButton.Click += new System.EventHandler(this.postBuilderButton_Click);
+            this.postBuilderButton.Click += this.postBuilderButton_Click;
             // 
             // postBuildBox
             // 
@@ -574,7 +574,7 @@ namespace ProjectManager.Controls
             this.postBuildBox.Name = "postBuildBox";
             this.postBuildBox.Size = new System.Drawing.Size(293, 55);
             this.postBuildBox.TabIndex = 0;
-            this.postBuildBox.TextChanged += new System.EventHandler(this.postBuildBox_TextChanged);
+            this.postBuildBox.TextChanged += this.postBuildBox_TextChanged;
             // 
             // groupBox4
             // 
@@ -596,7 +596,7 @@ namespace ProjectManager.Controls
             this.preBuilderButton.Size = new System.Drawing.Size(75, 21);
             this.preBuilderButton.TabIndex = 1;
             this.preBuilderButton.Text = "Builder...";
-            this.preBuilderButton.Click += new System.EventHandler(this.preBuilderButton_Click);
+            this.preBuilderButton.Click += this.preBuilderButton_Click;
             // 
             // preBuildBox
             // 
@@ -606,7 +606,7 @@ namespace ProjectManager.Controls
             this.preBuildBox.Name = "preBuildBox";
             this.preBuildBox.Size = new System.Drawing.Size(293, 77);
             this.preBuildBox.TabIndex = 0;
-            this.preBuildBox.TextChanged += new System.EventHandler(this.preBuildBox_TextChanged);
+            this.preBuildBox.TextChanged += this.preBuildBox_TextChanged;
             // 
             // compilerTab
             // 
@@ -628,7 +628,7 @@ namespace ProjectManager.Controls
             this.propertyGrid.Size = new System.Drawing.Size(328, 266);
             this.propertyGrid.TabIndex = 0;
             this.propertyGrid.ToolbarVisible = false;
-            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.propertyGrid.PropertyValueChanged += this.propertyGrid_PropertyValueChanged;
             this.propertyGrid.Font = this.Font;
             // 
             // sdkTabPage
@@ -651,7 +651,7 @@ namespace ProjectManager.Controls
             this.manageButton.TabIndex = 2;
             this.manageButton.Text = "Manage...";
             this.manageButton.UseVisualStyleBackColor = true;
-            this.manageButton.Click += new EventHandler(this.manageButton_Click);
+            this.manageButton.Click += this.manageButton_Click;
             // 
             // sdkComboBox
             // 
@@ -661,7 +661,7 @@ namespace ProjectManager.Controls
             this.sdkComboBox.Name = "sdkComboBox";
             this.sdkComboBox.Size = new System.Drawing.Size(204, 21);
             this.sdkComboBox.TabIndex = 1;
-            this.sdkComboBox.SelectedIndexChanged += new EventHandler(this.sdkCombo_SelectedIndexChanged);
+            this.sdkComboBox.SelectedIndexChanged += this.sdkCombo_SelectedIndexChanged;
             // 
             // sdkGroupBox
             // 
@@ -725,7 +725,7 @@ namespace ProjectManager.Controls
             this.browseButton.TabIndex = 6;
             this.browseButton.Text = "Browse...";
             this.browseButton.UseVisualStyleBackColor = true;
-            this.browseButton.Click += new EventHandler(this.browseButton_Click);
+            this.browseButton.Click += this.browseButton_Click;
             // 
             // customTextBox
             // 
@@ -733,7 +733,7 @@ namespace ProjectManager.Controls
             this.customTextBox.Name = "customTextBox";
             this.customTextBox.Size = new System.Drawing.Size(204, 21);
             this.customTextBox.TabIndex = 5;
-            this.customTextBox.TextChanged += new EventHandler(this.customTextBox_TextChanged);
+            this.customTextBox.TextChanged += this.customTextBox_TextChanged;
             // 
             // labelUseCustom
             //
@@ -963,7 +963,7 @@ namespace ProjectManager.Controls
 
         private void InitClasspathTab()
         {
-            classpathControl.Changed += new EventHandler(classpathControl_Changed);
+            classpathControl.Changed += classpathControl_Changed;
             classpathControl.Project = project;
             classpathControl.Classpaths = project.Classpaths.ToArray();
             classpathControl.Language = project.Language;
@@ -1034,7 +1034,7 @@ namespace ProjectManager.Controls
                     (ot) => ot.ToString()
                 );
             InitCombo(outputCombo, types, project.OutputType, "Label.OutputType");
-            outputCombo.SelectedIndexChanged += new EventHandler(outputCombo_SelectedIndexChanged);
+            outputCombo.SelectedIndexChanged += outputCombo_SelectedIndexChanged;
 
             outputSwfBox.Text = project.OutputPath;
             widthTextBox.Text = options.Width.ToString();
@@ -1043,10 +1043,10 @@ namespace ProjectManager.Controls
             fpsTextBox.Text = options.Fps.ToString();
 
             InitCombo(platformCombo, project.MovieOptions.TargetPlatforms, project.MovieOptions.Platform);
-            platformCombo.SelectedIndexChanged += new EventHandler(platformCombo_SelectedIndexChanged);
+            platformCombo.SelectedIndexChanged += platformCombo_SelectedIndexChanged;
 
             InitCombo(versionCombo, project.MovieOptions.TargetVersions(this.platformCombo.Text), project.MovieOptions.Version);
-            versionCombo.SelectedIndexChanged += new EventHandler(versionCombo_SelectedIndexChanged);
+            versionCombo.SelectedIndexChanged += versionCombo_SelectedIndexChanged;
             UpdateVersionCombo();
 
             InitTestMovieOptions();

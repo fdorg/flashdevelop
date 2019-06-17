@@ -29,9 +29,9 @@ namespace SourceControl.Sources.Git
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
-                runner.Output += new LineOutputHandler(Runner_Output);
-                runner.Error += new LineOutputHandler(Runner_Error);
-                runner.ProcessEnded += new ProcessEndedHandler(Runner_ProcessEnded);
+                runner.Output += Runner_Output;
+                runner.Error += Runner_Error;
+                runner.ProcessEnded += Runner_ProcessEnded;
             }
             catch (Exception ex)
             {

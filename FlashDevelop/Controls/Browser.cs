@@ -83,7 +83,7 @@ namespace FlashDevelop.Controls
             this.backButton.Name = "backButton";
             this.backButton.Size = new System.Drawing.Size(23, 22);
             this.backButton.Text = "Back";
-            this.backButton.Click += new System.EventHandler(this.BackButtonClick);
+            this.backButton.Click += this.BackButtonClick;
             // 
             // forwardButton
             //
@@ -95,7 +95,7 @@ namespace FlashDevelop.Controls
             this.forwardButton.Name = "forwardButton";
             this.forwardButton.Size = new System.Drawing.Size(23, 22);
             this.forwardButton.Text = "Forward";
-            this.forwardButton.Click += new System.EventHandler(this.ForwardButtonClick);
+            this.forwardButton.Click += this.ForwardButtonClick;
             // 
             // refreshButton
             //
@@ -106,15 +106,15 @@ namespace FlashDevelop.Controls
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(23, 22);
             this.refreshButton.Text = "Refresh";
-            this.refreshButton.Click += new System.EventHandler(this.RefreshButtonClick);
+            this.refreshButton.Click += this.RefreshButtonClick;
             // 
             // addressComboBox
             //
             this.addressComboBox.Name = "addressComboBox";
             this.addressComboBox.Size = new System.Drawing.Size(450, 21);
             this.addressComboBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.addressComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddressComboBoxKeyPress);
-            this.addressComboBox.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.AddressComboBoxSelectedIndexChanged);
+            this.addressComboBox.KeyPress += this.AddressComboBoxKeyPress;
+            this.addressComboBox.FlatCombo.SelectedIndexChanged += this.AddressComboBoxSelectedIndexChanged;
             // 
             // goButton
             //
@@ -126,7 +126,7 @@ namespace FlashDevelop.Controls
             this.goButton.Name = "goButton";
             this.goButton.Size = new System.Drawing.Size(23, 22);
             this.goButton.Text = "Go";
-            this.goButton.Click += new System.EventHandler(this.BrowseButtonClick);
+            this.goButton.Click += this.BrowseButtonClick;
             // 
             // webBrowser
             //
@@ -138,11 +138,11 @@ namespace FlashDevelop.Controls
             this.webBrowser.Name = "webBrowser";
             this.webBrowser.Size = new System.Drawing.Size(620, 375);
             this.webBrowser.TabIndex = 2;
-            this.webBrowser.CanGoForwardChanged += new System.EventHandler(this.WebBrowserPropertyUpdated);
-            this.webBrowser.CanGoBackChanged += new System.EventHandler(this.WebBrowserPropertyUpdated);
-            this.webBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.WebBrowserNavigated);
-            this.webBrowser.DocumentTitleChanged += new System.EventHandler(this.WebBrowserDocumentTitleChanged);
-            this.webBrowser.NewWindow += new System.ComponentModel.CancelEventHandler(this.WebBrowserNewWindow);
+            this.webBrowser.CanGoForwardChanged += this.WebBrowserPropertyUpdated;
+            this.webBrowser.CanGoBackChanged += this.WebBrowserPropertyUpdated;
+            this.webBrowser.Navigated += this.WebBrowserNavigated;
+            this.webBrowser.DocumentTitleChanged += this.WebBrowserDocumentTitleChanged;
+            this.webBrowser.NewWindow += this.WebBrowserNewWindow;
             // 
             // Browser
             // 

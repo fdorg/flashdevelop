@@ -61,7 +61,7 @@ namespace FlashDevelop
                 this.InitializeGraphics();
                 Application.AddMessageFilter(this);
             }
-            else this.Load += new EventHandler(this.MainFormLoaded);
+            else this.Load += this.MainFormLoaded;
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace FlashDevelop
         /// </summary>
         private void InitializeErrorLog()
         {
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(this.OnUnhandledException);
+            AppDomain.CurrentDomain.UnhandledException += this.OnUnhandledException;
         }
 
         /// <summary>
@@ -529,8 +529,8 @@ namespace FlashDevelop
             try
             {
                 TabbedDocument tabbedDocument = new TabbedDocument();
-                tabbedDocument.Closing += new System.ComponentModel.CancelEventHandler(this.OnDocumentClosing);
-                tabbedDocument.Closed += new System.EventHandler(this.OnDocumentClosed);
+                tabbedDocument.Closing += this.OnDocumentClosing;
+                tabbedDocument.Closed += this.OnDocumentClosed;
                 tabbedDocument.Text = TextHelper.GetString("Title.CustomDocument");
                 tabbedDocument.TabPageContextMenuStrip = this.tabMenu;
                 tabbedDocument.Controls.Add(ctrl);
@@ -553,8 +553,8 @@ namespace FlashDevelop
             {
                 this.notifyOpenFile = true;
                 TabbedDocument tabbedDocument = new TabbedDocument();
-                tabbedDocument.Closing += new System.ComponentModel.CancelEventHandler(this.OnDocumentClosing);
-                tabbedDocument.Closed += new System.EventHandler(this.OnDocumentClosed);
+                tabbedDocument.Closing += this.OnDocumentClosing;
+                tabbedDocument.Closed += this.OnDocumentClosed;
                 tabbedDocument.TabPageContextMenuStrip = this.tabMenu;
                 tabbedDocument.ContextMenuStrip = this.editorMenu;
                 tabbedDocument.Text = Path.GetFileName(file);
@@ -765,8 +765,8 @@ namespace FlashDevelop
                 Environment.SetEnvironmentVariable("PATH", newPath, EnvironmentVariableTarget.Process);
                 // Watch for appman update notifications
                 this.amWatcher = new FileSystemWatcher(PathHelper.BaseDir, ".appman");
-                this.amWatcher.Changed += new FileSystemEventHandler(this.AppManUpdate);
-                this.amWatcher.Created += new FileSystemEventHandler(this.AppManUpdate);
+                this.amWatcher.Changed += this.AppManUpdate;
+                this.amWatcher.Created += this.AppManUpdate;
                 this.amWatcher.IncludeSubdirectories = false;
                 this.amWatcher.EnableRaisingEvents = true;
             }
@@ -1103,14 +1103,14 @@ namespace FlashDevelop
             this.Size = this.appSettings.WindowSize;
             this.Font = this.appSettings.DefaultFont;
             this.StartPosition = FormStartPosition.Manual;
-            this.Closing += new CancelEventHandler(this.OnMainFormClosing);
-            this.FormClosed += new FormClosedEventHandler(this.OnMainFormClosed);
-            this.Activated += new EventHandler(this.OnMainFormActivate);
-            this.Shown += new EventHandler(this.OnMainFormShow);
-            this.Load += new EventHandler(this.OnMainFormLoad);
-            this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
-            this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
-            this.Resize += new EventHandler(this.OnMainFormResize);
+            this.Closing += this.OnMainFormClosing;
+            this.FormClosed += this.OnMainFormClosed;
+            this.Activated += this.OnMainFormActivate;
+            this.Shown += this.OnMainFormShow;
+            this.Load += this.OnMainFormLoad;
+            this.LocationChanged += this.OnMainFormLocationChange;
+            this.GotFocus += this.OnMainFormGotFocus;
+            this.Resize += this.OnMainFormResize;
             ScintillaManager.ConfigurationLoaded += this.ApplyAllSettings;
         }
 
@@ -1177,10 +1177,10 @@ namespace FlashDevelop
             /**
             * DockPanel events
             */
-            this.dockPanel.ActivePaneChanged += new EventHandler(this.OnActivePaneChanged);
-            this.dockPanel.ActiveContentChanged += new EventHandler(this.OnActiveContentChanged);
-            this.dockPanel.ActiveDocumentChanged += new EventHandler(this.OnActiveDocumentChanged);
-            this.dockPanel.ContentRemoved += new EventHandler<DockContentEventArgs>(this.OnContentRemoved);
+            this.dockPanel.ActivePaneChanged += this.OnActivePaneChanged;
+            this.dockPanel.ActiveContentChanged += this.OnActiveContentChanged;
+            this.dockPanel.ActiveDocumentChanged += this.OnActiveDocumentChanged;
+            this.dockPanel.ContentRemoved += this.OnContentRemoved;
             /**
             * Populate menus and check buttons 
             */

@@ -224,9 +224,9 @@ namespace ResultsPanel
             this.entriesView.TabIndex = 1;
             this.entriesView.UseCompatibleStateImageBehavior = false;
             this.entriesView.View = System.Windows.Forms.View.Details;
-            this.entriesView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.EntriesView_ColumnClick);
-            this.entriesView.DoubleClick += new System.EventHandler(this.EntriesView_DoubleClick);
-            this.entriesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EntriesView_KeyDown);
+            this.entriesView.ColumnClick += this.EntriesView_ColumnClick;
+            this.entriesView.DoubleClick += this.EntriesView_DoubleClick;
+            this.entriesView.KeyDown += this.EntriesView_KeyDown;
             // 
             // entryType
             // 
@@ -279,7 +279,7 @@ namespace ResultsPanel
             this.toolStripButtonInfo.Name = "toolStripButtonInfo";
             this.toolStripButtonInfo.Size = new System.Drawing.Size(74, 22);
             this.toolStripButtonInfo.Text = "Information";
-            this.toolStripButtonInfo.CheckedChanged += new System.EventHandler(this.ToolStripButton_CheckedChanged);
+            this.toolStripButtonInfo.CheckedChanged += this.ToolStripButton_CheckedChanged;
             // 
             // toolStripButtonWarning
             // 
@@ -291,7 +291,7 @@ namespace ResultsPanel
             this.toolStripButtonWarning.Name = "toolStripButtonWarning";
             this.toolStripButtonWarning.Size = new System.Drawing.Size(56, 22);
             this.toolStripButtonWarning.Text = "Warning";
-            this.toolStripButtonWarning.CheckedChanged += new System.EventHandler(this.ToolStripButton_CheckedChanged);
+            this.toolStripButtonWarning.CheckedChanged += this.ToolStripButton_CheckedChanged;
             // 
             // toolStripButtonError
             // 
@@ -303,7 +303,7 @@ namespace ResultsPanel
             this.toolStripButtonError.Name = "toolStripButtonError";
             this.toolStripButtonError.Size = new System.Drawing.Size(36, 22);
             this.toolStripButtonError.Text = "Error";
-            this.toolStripButtonError.CheckedChanged += new System.EventHandler(this.ToolStripButton_CheckedChanged);
+            this.toolStripButtonError.CheckedChanged += this.ToolStripButton_CheckedChanged;
             // 
             // toolStripButtonLock
             // 
@@ -328,7 +328,7 @@ namespace ResultsPanel
             this.toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
             this.toolStripTextBoxFilter.Size = new System.Drawing.Size(100, 25);
             this.toolStripTextBoxFilter.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.toolStripTextBoxFilter.TextChanged += new System.EventHandler(this.ToolStripButton_CheckedChanged);
+            this.toolStripTextBoxFilter.TextChanged += this.ToolStripButton_CheckedChanged;
             // 
             // clearFilterButton
             //
@@ -339,12 +339,12 @@ namespace ResultsPanel
             this.clearFilterButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
             this.clearFilterButton.Name = "clearFilterButton";
             this.clearFilterButton.Size = new System.Drawing.Size(23, 26);
-            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButton_Click);
+            this.clearFilterButton.Click += this.ClearFilterButton_Click;
             // 
             // autoShow
             // 
             this.autoShow.Interval = 300;
-            this.autoShow.Tick += new System.EventHandler(this.AutoShow_Tick);
+            this.autoShow.Tick += this.AutoShow_Tick;
             // 
             // PluginUI
             //
@@ -352,7 +352,7 @@ namespace ResultsPanel
             this.Controls.Add(this.toolStripFilters);
             this.Name = "PluginUI";
             this.Size = new System.Drawing.Size(712, 246);
-            this.Resize += new System.EventHandler(this.PluginUI_Resize);
+            this.Resize += this.PluginUI_Resize;
             this.toolStripFilters.ResumeLayout(false);
             this.toolStripFilters.PerformLayout();
             this.ResumeLayout(false);

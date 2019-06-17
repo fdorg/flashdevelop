@@ -94,7 +94,7 @@ namespace FlashDevelop.Dialogs
             this.itemListView.View = System.Windows.Forms.View.Details;
             this.itemListView.Alignment = ListViewAlignment.Left;
             this.itemListView.Columns.Add(this.columnHeader);
-            this.itemListView.SelectedIndexChanged += new System.EventHandler(this.ItemListViewSelectedIndexChanged);
+            this.itemListView.SelectedIndexChanged += this.ItemListViewSelectedIndexChanged;
             // 
             // itemPropertyGrid
             // 
@@ -105,7 +105,7 @@ namespace FlashDevelop.Dialogs
             this.itemPropertyGrid.TabIndex = 3;
             this.itemPropertyGrid.ToolbarVisible = false;
             this.itemPropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.itemPropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(this.PropertyValueChanged);
+            this.itemPropertyGrid.PropertyValueChanged += this.PropertyValueChanged;
             // 
             // closeButton
             // 
@@ -117,7 +117,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 4;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // nameLabel
             // 
@@ -172,7 +172,7 @@ namespace FlashDevelop.Dialogs
             this.disableCheckBox.TabIndex = 7;
             this.disableCheckBox.Text = " Disable";
             this.disableCheckBox.UseVisualStyleBackColor = true;
-            this.disableCheckBox.Click += new System.EventHandler(this.DisableCheckBoxCheck);
+            this.disableCheckBox.Click += this.DisableCheckBoxCheck;
             // 
             // helpLabel
             //
@@ -183,7 +183,7 @@ namespace FlashDevelop.Dialogs
             this.helpLabel.TabIndex = 9;
             this.helpLabel.TabStop = true;
             this.helpLabel.Text = "Help";
-            this.helpLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HelpLabelClick);
+            this.helpLabel.LinkClicked += this.HelpLabelClick;
             // 
             // filterText
             //
@@ -192,7 +192,7 @@ namespace FlashDevelop.Dialogs
             this.filterText.Name = "FilterText";
             this.filterText.Size = new System.Drawing.Size(120, 20);
             this.filterText.TabIndex = 10;
-            this.filterText.TextChanged += new System.EventHandler(this.FilterTextTextChanged);
+            this.filterText.TextChanged += this.FilterTextTextChanged;
             // 
             // clearFilterButton
             //
@@ -202,7 +202,7 @@ namespace FlashDevelop.Dialogs
             this.clearFilterButton.Size = new System.Drawing.Size(26, 23);
             this.clearFilterButton.TabIndex = 11;
             this.clearFilterButton.UseVisualStyleBackColor = true;
-            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButtonClick);
+            this.clearFilterButton.Click += this.ClearFilterButtonClick;
             // 
             // filterLabel
             // 
@@ -241,10 +241,10 @@ namespace FlashDevelop.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Settings";
-            this.Load += new System.EventHandler(this.DialogLoad);
-            this.Shown += new System.EventHandler(this.DialogShown);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DialogClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DialogClosed);
+            this.Load += this.DialogLoad;
+            this.Shown += this.DialogShown;
+            this.FormClosing += this.DialogClosing;
+            this.FormClosed += this.DialogClosed;
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -339,9 +339,9 @@ namespace FlashDevelop.Dialogs
                 }
                 if (!string.IsNullOrEmpty(this.itemFilter)) // Set default filter...
                 {
-                    this.filterText.TextChanged -= new EventHandler(this.FilterTextTextChanged);
+                    this.filterText.TextChanged -= this.FilterTextTextChanged;
                     this.filterText.Text = this.itemFilter;
-                    this.filterText.TextChanged += new EventHandler(this.FilterTextTextChanged);
+                    this.filterText.TextChanged += this.FilterTextTextChanged;
                 }
                 if (this.filterText.Text.Length > 0)
                 {

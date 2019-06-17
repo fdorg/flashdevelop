@@ -218,8 +218,8 @@ namespace ProjectManager.Controls.TreeView
             parser = new ContentParser(BackingPath);
 
             runner = new BackgroundWorker();
-            runner.RunWorkerCompleted += new RunWorkerCompletedEventHandler(runner_ProcessEnded);
-            runner.DoWork += new DoWorkEventHandler(runner_DoWork);
+            runner.RunWorkerCompleted += runner_ProcessEnded;
+            runner.DoWork += runner_DoWork;
             runner.RunWorkerAsync(parser);
         }
 

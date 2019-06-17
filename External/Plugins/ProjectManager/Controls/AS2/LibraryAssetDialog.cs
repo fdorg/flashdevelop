@@ -88,7 +88,7 @@ namespace ProjectManager.Controls.AS2
             this.cancelButton.Size = new System.Drawing.Size(75, 21);
             this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "&Cancel";
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.cancelButton.Click += this.cancelButton_Click;
             // 
             // okButton
             // 
@@ -99,7 +99,7 @@ namespace ProjectManager.Controls.AS2
             this.okButton.Size = new System.Drawing.Size(75, 21);
             this.okButton.TabIndex = 1;
             this.okButton.Text = "&OK";
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += this.okButton_Click;
             // 
             // autoIDBox
             // 
@@ -111,7 +111,7 @@ namespace ProjectManager.Controls.AS2
             this.autoIDBox.Size = new System.Drawing.Size(266, 18);
             this.autoIDBox.TabIndex = 0;
             this.autoIDBox.Text = "Auto-generate &ID for attachMovie():";
-            this.autoIDBox.CheckedChanged += new System.EventHandler(this.autoIDBox_CheckedChanged);
+            this.autoIDBox.CheckedChanged += this.autoIDBox_CheckedChanged;
             // 
             // idTextBox
             // 
@@ -122,7 +122,7 @@ namespace ProjectManager.Controls.AS2
             this.idTextBox.Size = new System.Drawing.Size(248, 20);
             this.idTextBox.TabIndex = 1;
             this.idTextBox.Text = "Library.WorkerGuy.png";
-            this.idTextBox.TextChanged += new System.EventHandler(this.idTextBox_TextChanged);
+            this.idTextBox.TextChanged += this.idTextBox_TextChanged;
             // 
             // tabControl
             // 
@@ -162,7 +162,7 @@ namespace ProjectManager.Controls.AS2
             this.specifySharepointBox.TabIndex = 3;
             this.specifySharepointBox.Text = "&Specify sharepoint ID:";
             this.specifySharepointBox.UseVisualStyleBackColor = false;
-            this.specifySharepointBox.CheckedChanged += new System.EventHandler(this.specifySharepointBox_CheckedChanged);
+            this.specifySharepointBox.CheckedChanged += this.specifySharepointBox_CheckedChanged;
             // 
             // addPreloaderButton
             // 
@@ -172,7 +172,7 @@ namespace ProjectManager.Controls.AS2
             this.addPreloaderButton.Size = new System.Drawing.Size(184, 16);
             this.addPreloaderButton.TabIndex = 1;
             this.addPreloaderButton.Text = " Add as &preloader";
-            this.addPreloaderButton.CheckedChanged += new System.EventHandler(this.addPreloaderButton_CheckedChanged);
+            this.addPreloaderButton.CheckedChanged += this.addPreloaderButton_CheckedChanged;
             // 
             // explainLink
             // 
@@ -183,7 +183,7 @@ namespace ProjectManager.Controls.AS2
             this.explainLink.TabStop = true;
             this.explainLink.Text = "Explain these options";
             this.explainLink.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.explainLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.explainLink_LinkClicked);
+            this.explainLink.LinkClicked += this.explainLink_LinkClicked;
             // 
             // sharepointTextBox
             // 
@@ -192,7 +192,7 @@ namespace ProjectManager.Controls.AS2
             this.sharepointTextBox.Name = "sharepointTextBox";
             this.sharepointTextBox.Size = new System.Drawing.Size(197, 20);
             this.sharepointTextBox.TabIndex = 4;
-            this.sharepointTextBox.TextChanged += new System.EventHandler(this.sharepointTextBox_TextChanged);
+            this.sharepointTextBox.TextChanged += this.sharepointTextBox_TextChanged;
             // 
             // sharedLibraryButton
             // 
@@ -202,7 +202,7 @@ namespace ProjectManager.Controls.AS2
             this.sharedLibraryButton.Size = new System.Drawing.Size(224, 16);
             this.sharedLibraryButton.TabIndex = 2;
             this.sharedLibraryButton.Text = " Load at &runtime (shared library)";
-            this.sharedLibraryButton.CheckedChanged += new System.EventHandler(this.sharedLibraryButton_CheckedChanged);
+            this.sharedLibraryButton.CheckedChanged += this.sharedLibraryButton_CheckedChanged;
             // 
             // addLibraryButton
             // 
@@ -214,7 +214,7 @@ namespace ProjectManager.Controls.AS2
             this.addLibraryButton.TabIndex = 0;
             this.addLibraryButton.TabStop = true;
             this.addLibraryButton.Text = " Add to &library";
-            this.addLibraryButton.CheckedChanged += new System.EventHandler(this.addLibraryButton_CheckedChanged);
+            this.addLibraryButton.CheckedChanged += this.addLibraryButton_CheckedChanged;
             // 
             // swcTabPage
             // 
@@ -237,7 +237,7 @@ namespace ProjectManager.Controls.AS2
             this.swcIncOption.Size = new System.Drawing.Size(250, 16);
             this.swcIncOption.TabIndex = 4;
             this.swcIncOption.Text = "&Included library (include completely)";
-            this.swcIncOption.CheckedChanged += new System.EventHandler(this.swcLibOption_CheckedChanged);
+            this.swcIncOption.CheckedChanged += this.swcLibOption_CheckedChanged;
             // 
             // swcExtOption
             // 
@@ -247,7 +247,7 @@ namespace ProjectManager.Controls.AS2
             this.swcExtOption.Size = new System.Drawing.Size(250, 16);
             this.swcExtOption.TabIndex = 5;
             this.swcExtOption.Text = "&External library (not included)";
-            this.swcExtOption.CheckedChanged += new System.EventHandler(this.swcLibOption_CheckedChanged);
+            this.swcExtOption.CheckedChanged += this.swcLibOption_CheckedChanged;
             // 
             // swcLibOption
             // 
@@ -259,7 +259,7 @@ namespace ProjectManager.Controls.AS2
             this.swcLibOption.TabIndex = 3;
             this.swcLibOption.TabStop = true;
             this.swcLibOption.Text = "&Library (include referenced classes)";
-            this.swcLibOption.CheckedChanged += new System.EventHandler(this.swcLibOption_CheckedChanged);
+            this.swcLibOption.CheckedChanged += this.swcLibOption_CheckedChanged;
             // 
             // fontTabPage
             // 
@@ -281,7 +281,7 @@ namespace ProjectManager.Controls.AS2
             this.charactersTextBox.Name = "charactersTextBox";
             this.charactersTextBox.Size = new System.Drawing.Size(247, 79);
             this.charactersTextBox.TabIndex = 2;
-            this.charactersTextBox.TextChanged += new System.EventHandler(this.charactersTextBox_TextChanged);
+            this.charactersTextBox.TextChanged += this.charactersTextBox_TextChanged;
             // 
             // embedTheseButton
             // 
@@ -292,7 +292,7 @@ namespace ProjectManager.Controls.AS2
             this.embedTheseButton.Size = new System.Drawing.Size(266, 16);
             this.embedTheseButton.TabIndex = 1;
             this.embedTheseButton.Text = " Embed &these characters:";
-            this.embedTheseButton.CheckedChanged += new System.EventHandler(this.embedTheseButton_CheckedChanged);
+            this.embedTheseButton.CheckedChanged += this.embedTheseButton_CheckedChanged;
             // 
             // embedAllButton
             // 
@@ -305,7 +305,7 @@ namespace ProjectManager.Controls.AS2
             this.embedAllButton.TabIndex = 0;
             this.embedAllButton.TabStop = true;
             this.embedAllButton.Text = " Embed &all characters";
-            this.embedAllButton.CheckedChanged += new System.EventHandler(this.embedAllButton_CheckedChanged);
+            this.embedAllButton.CheckedChanged += this.embedAllButton_CheckedChanged;
             // 
             // advancedTabPage
             // 
@@ -330,7 +330,7 @@ namespace ProjectManager.Controls.AS2
             this.browseButton.Size = new System.Drawing.Size(72, 21);
             this.browseButton.TabIndex = 4;
             this.browseButton.Text = "&Browse...";
-            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
+            this.browseButton.Click += this.browseButton_Click;
             // 
             // updatedTextBox
             // 
@@ -340,7 +340,7 @@ namespace ProjectManager.Controls.AS2
             this.updatedTextBox.Name = "updatedTextBox";
             this.updatedTextBox.Size = new System.Drawing.Size(170, 20);
             this.updatedTextBox.TabIndex = 3;
-            this.updatedTextBox.TextChanged += new System.EventHandler(this.updatedTextBox_TextChanged);
+            this.updatedTextBox.TextChanged += this.updatedTextBox_TextChanged;
             // 
             // keepUpdatedBox
             // 
@@ -350,7 +350,7 @@ namespace ProjectManager.Controls.AS2
             this.keepUpdatedBox.Size = new System.Drawing.Size(266, 18);
             this.keepUpdatedBox.TabIndex = 2;
             this.keepUpdatedBox.Text = "&Keep updated by copying source file:";
-            this.keepUpdatedBox.CheckedChanged += new System.EventHandler(this.keepUpdatedBox_CheckedChanged);
+            this.keepUpdatedBox.CheckedChanged += this.keepUpdatedBox_CheckedChanged;
             // 
             // bitmapLinkageBox
             // 

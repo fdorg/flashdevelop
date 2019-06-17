@@ -147,7 +147,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonClose = new InertButton(ImageButtonClose, ImageButtonClose);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
-                    m_buttonClose.Click += new EventHandler(Close_Click);
+                    m_buttonClose.Click += Close_Click;
                     Controls.Add(m_buttonClose);
                 }
 
@@ -188,7 +188,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_buttonWindowList = new InertButton(ImageButtonWindowList, ImageButtonWindowListOverflow);
                     m_toolTip.SetToolTip(m_buttonWindowList, ToolTipSelect);
-                    m_buttonWindowList.Click += new EventHandler(WindowList_Click);
+                    m_buttonWindowList.Click += WindowList_Click;
                     Controls.Add(m_buttonWindowList);
                 }
 
@@ -1438,7 +1438,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 IDockContent content = tab.Content;
                 ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
                 item.Tag = tab.Content;
-                item.MouseUp += new MouseEventHandler(ContextMenuItem_Up);
+                item.MouseUp += ContextMenuItem_Up;
             }
             SelectMenu.Show(ButtonWindowList, x, y);
         }

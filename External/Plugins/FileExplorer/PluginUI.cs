@@ -88,10 +88,10 @@ namespace FileExplorer
             this.watcher.EnableRaisingEvents = true;
             this.watcher.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.DirectoryName)));
             this.watcher.SynchronizingObject = this;
-            this.watcher.Renamed += new System.IO.RenamedEventHandler(this.WatcherRenamed);
-            this.watcher.Deleted += new System.IO.FileSystemEventHandler(this.WatcherChanged);
-            this.watcher.Created += new System.IO.FileSystemEventHandler(this.WatcherChanged);
-            this.watcher.Changed += new System.IO.FileSystemEventHandler(this.WatcherChanged);
+            this.watcher.Renamed += this.WatcherRenamed;
+            this.watcher.Deleted += this.WatcherChanged;
+            this.watcher.Created += this.WatcherChanged;
+            this.watcher.Changed += this.WatcherChanged;
             // 
             // modifiedHeader
             // 
@@ -119,15 +119,15 @@ namespace FileExplorer
             this.fileView.FullRowSelect = true;
             this.fileView.UseCompatibleStateImageBehavior = false;
             this.fileView.View = System.Windows.Forms.View.Details;
-            this.fileView.ItemActivate += new System.EventHandler(this.FileViewItemActivate);
-            this.fileView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.FileViewAfterLabelEdit);
-            this.fileView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FileViewMouseUp);
-            this.fileView.DragDrop += new System.Windows.Forms.DragEventHandler(this.FileViewDragDrop);
-            this.fileView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.FileViewColumnClick);
-            this.fileView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FileViewKeyUp);
-            this.fileView.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.FileViewBeforeLabelEdit);
-            this.fileView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.FileViewDragItems);
-            this.fileView.DragOver += new System.Windows.Forms.DragEventHandler(this.FileViewDragOver);
+            this.fileView.ItemActivate += this.FileViewItemActivate;
+            this.fileView.AfterLabelEdit += this.FileViewAfterLabelEdit;
+            this.fileView.MouseUp += this.FileViewMouseUp;
+            this.fileView.DragDrop += this.FileViewDragDrop;
+            this.fileView.ColumnClick += this.FileViewColumnClick;
+            this.fileView.KeyUp += this.FileViewKeyUp;
+            this.fileView.BeforeLabelEdit += this.FileViewBeforeLabelEdit;
+            this.fileView.ItemDrag += this.FileViewDragItems;
+            this.fileView.DragOver += this.FileViewDragOver;
             // 
             // fileHeader
             // 
@@ -164,8 +164,8 @@ namespace FileExplorer
             this.selectedPath.Name = "selectedPath";
             this.selectedPath.Size = new System.Drawing.Size(200, 22);
             this.selectedPath.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.selectedPath.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.SelectedPathSelectedIndexChanged);
-            this.selectedPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SelectedPathKeyDown);
+            this.selectedPath.FlatCombo.SelectedIndexChanged += this.SelectedPathSelectedIndexChanged;
+            this.selectedPath.KeyDown += this.SelectedPathKeyDown;
             // 
             // syncronizeButton
             //
@@ -175,7 +175,7 @@ namespace FileExplorer
             this.syncronizeButton.Name = "syncronizeButton";
             this.syncronizeButton.Size = new System.Drawing.Size(23, 22);
             this.syncronizeButton.Text = "Synchronize";
-            this.syncronizeButton.Click += new System.EventHandler(this.SynchronizeView);
+            this.syncronizeButton.Click += this.SynchronizeView;
             // 
             // browseButton
             //
@@ -185,7 +185,7 @@ namespace FileExplorer
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(23, 22);
             this.browseButton.Text = "Browse";
-            this.browseButton.Click += new System.EventHandler(this.BrowseButtonClick);
+            this.browseButton.Click += this.BrowseButtonClick;
             // 
             // PluginUI
             //
@@ -237,29 +237,29 @@ namespace FileExplorer
         {
             this.menu = new ContextMenuStrip();
             this.menu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.RefreshView"), null, new EventHandler(this.RefreshFileView)));
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.SynchronizeView"), null, new EventHandler(this.SynchronizeView)));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.RefreshView"), null, this.RefreshFileView));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.SynchronizeView"), null, this.SynchronizeView));
             this.menu.Items.Add(new ToolStripSeparator());
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFileHere"), null, new EventHandler(this.CreateFileHere)));
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFolderHere"), null, new EventHandler(this.CreateFolderHere)));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFileHere"), null, this.CreateFileHere));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CreateFolderHere"), null, this.CreateFolderHere));
             this.menu.Items.Add(new ToolStripSeparator());
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, new EventHandler(this.ExploreHere)));
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), null, new EventHandler(this.FindHere)));
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CommandPromptHere"), null, new EventHandler(this.CommandPromptHere)));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.ExploreHere"), null, this.ExploreHere));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.FindHere"), null, this.FindHere));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.CommandPromptHere"), null, this.CommandPromptHere));
             if (Win32.ShouldUseWin32())
             {
-                this.shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, new EventHandler(this.ShowShellMenu));
+                this.shellButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"), null, this.ShowShellMenu);
                 this.menu.Items.Add(this.shellButton);
             }
             this.menu.Items.Add(new ToolStripSeparator());
-            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.TrustHere"), null, new EventHandler(this.TrustHere)));
+            this.menu.Items.Add(new ToolStripMenuItem(TextHelper.GetString("Label.TrustHere"), null, this.TrustHere));
             this.separator = new ToolStripSeparator();
-            this.runButton = new ToolStripMenuItem(TextHelper.GetString("Label.Run"), null, new EventHandler(this.OpenItem));
-            this.editButton = new ToolStripMenuItem(TextHelper.GetString("Label.Edit"), null, new EventHandler(this.EditItems));
-            this.copyButton = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, new EventHandler(this.CopyItems));
-            this.pasteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Paste"), null, new EventHandler(this.PasteItems));
-            this.renameButton = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"), null, new EventHandler(this.RenameItem));
-            this.deleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Delete"), null, new EventHandler(this.DeleteItems));
+            this.runButton = new ToolStripMenuItem(TextHelper.GetString("Label.Run"), null, this.OpenItem);
+            this.editButton = new ToolStripMenuItem(TextHelper.GetString("Label.Edit"), null, this.EditItems);
+            this.copyButton = new ToolStripMenuItem(TextHelper.GetString("Label.Copy"), null, this.CopyItems);
+            this.pasteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Paste"), null, this.PasteItems);
+            this.renameButton = new ToolStripMenuItem(TextHelper.GetString("Label.Rename"), null, this.RenameItem);
+            this.deleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.Delete"), null, this.DeleteItems);
             this.menu.Items.Add(this.separator);
             this.menu.Items.AddRange(new ToolStripMenuItem[6]{this.runButton, this.editButton, this.copyButton, this.pasteButton, this.renameButton, this.deleteButton});
             this.menu.Font = PluginBase.Settings.DefaultFont;
@@ -382,11 +382,11 @@ namespace FileExplorer
             // Check the specified path
             path = PathHelper.GetPhysicalPathName(path);
             // Do the actual filesystem querying in the background
-            MethodInvoker backgroundMethod = new MethodInvoker(delegate
+            MethodInvoker backgroundMethod = delegate
             {
                 dir = new DirectoryInfo(path);
                 infos = dir.GetFileSystemInfos();
-            });
+            };
             backgroundMethod.BeginInvoke(delegate(IAsyncResult result)
             {
                 backgroundMethod.EndInvoke(result);
