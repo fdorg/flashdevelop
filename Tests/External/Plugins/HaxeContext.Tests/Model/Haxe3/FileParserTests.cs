@@ -6,7 +6,7 @@ using ASCompletion.Model;
 using HaXeContext.TestUtils;
 using NUnit.Framework;
 
-namespace HaXeContext.Model
+namespace HaXeContext.Model.Haxe3
 {
     using MemberWithType = KeyValuePair<MemberModel, string>;
 
@@ -16,7 +16,7 @@ namespace HaXeContext.Model
         [TestFixtureSetUp]
         public void Setup() => SetHaxeFeatures(sci);
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
