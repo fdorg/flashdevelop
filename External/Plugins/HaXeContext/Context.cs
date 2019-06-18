@@ -761,21 +761,31 @@ namespace HaXeContext
                                 var extends = @class;
                                 while (!extends.IsVoid())
                                 {
-                                    if (extends.Name == "String")
+                                    switch (extends.Name)
                                     {
-                                        /**
-                                         * for example:
-                                         * transform
-                                         * enum abstract AString(String) {
-                                         *     var A;
-                                         * }
-                                         * to
-                                         * enum abstract AString(String) {
-                                         *     var A = "A";
-                                         * }
-                                         */
-                                        member.Value = $"\"{member.Name}\"";
-                                        break;
+                                        case "String":
+                                            /**
+                                             * for example:
+                                             * transform
+                                             * enum abstract AString(String) {
+                                             *     var A;
+                                             * }
+                                             * to
+                                             * enum abstract AString(String) {
+                                             *     var A = "A";
+                                             * }
+                                             */
+                                            member.Value = $"\"{member.Name}\"";
+                                            extends = ClassModel.VoidClass;
+                                            break;
+                                        case "Float":
+                                        case "UInt":
+                                        case "Int":
+                                            member.Value = index == 0
+                                                ? "0"
+                                                : (int.Parse(@class.Members[index - 1].Value) + 1).ToString();
+                                            extends = ClassModel.VoidClass;
+                                            break;
                                     }
                                     extends = extends.Extends;
                                 }

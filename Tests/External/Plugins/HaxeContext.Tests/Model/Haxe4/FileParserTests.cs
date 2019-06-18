@@ -29,6 +29,14 @@ namespace HaXeContext.Model.Haxe4
                     .Returns("\"A\"")
                     .SetName("Haxe4. Abstract default value. Issue 2801. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2801");
+                yield return new TestCaseData("Issue2801_3")
+                    .Returns("1")
+                    .SetName("Haxe4. Abstract default value. Issue 2801. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2801");
+                yield return new TestCaseData("Issue2801_4")
+                    .Returns("6")
+                    .SetName("Haxe4. Abstract default value. Issue 2801. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2801");
             }
         }
 

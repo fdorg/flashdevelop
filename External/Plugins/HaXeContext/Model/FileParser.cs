@@ -745,7 +745,7 @@ namespace HaXeContext.Model
                         hadValue = true;
                     }
                     // in params, store the default value
-                    else if ((inParams || (inType && c1 != '=')))
+                    else if (inParams || (inType && c1 != '='))
                     {
                         /**
                          * for example:
@@ -802,9 +802,25 @@ namespace HaXeContext.Model
                             valueBuffer[valueLength++] = c1;
                         }
                     }
-
+                    if (char.IsDigit(c1))
+                    {
+                        // store parameter default value
+                        var isDigit = true;
+                        for (var j = 0; j < valueLength; j++)
+                        {
+                            if (char.IsDigit(valueBuffer[j])) continue;
+                            isDigit = false;
+                            break;
+                        }
+                        if (isDigit)
+                        {
+                            if (valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
+                            valueBuffer[valueLength++] = c1;
+                            continue;
+                        }
+                    }
                     // detect keywords
-                    if (!char.IsLetterOrDigit(c1))
+                    if (!char.IsLetter(c1))
                     {
                         // escape next char
                         if (c1 == '\\' && i < len)
@@ -1380,7 +1396,7 @@ namespace HaXeContext.Model
                             var meta = LookupMeta(ref src, ref i);
                             if (meta != null)
                             {
-                                carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
+                                carriedMetaData ??= new List<ASMetaData>();
                                 carriedMetaData.Add(meta);
                             }
                         }
@@ -1610,7 +1626,7 @@ namespace HaXeContext.Model
                 for (var i = members.Count - 1; i >= 0; i--)
                 {
                     var member = members[i];
-                    if ((member.Flags & FlagType.Variable) != 0 && member.Type is string type && IsFunctionType(type))
+                    if ((member.Flags & FlagType.Variable) != 0 && member.Type is { } type && IsFunctionType(type))
                     {
                         member.Flags |= FlagType.Function;
                         FunctionTypeToMemberModel(type, features, member);

@@ -1742,6 +1742,8 @@
     <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue2796_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2801_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2801_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2801_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2801_4.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
