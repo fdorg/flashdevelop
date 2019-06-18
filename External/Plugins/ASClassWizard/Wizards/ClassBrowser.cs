@@ -10,44 +10,21 @@ namespace ASClassWizard.Wizards
 {
     public partial class ClassBrowser : SmartForm
     {
-        private MemberList all;
-        private List<ListBox.ListBoxItem> dataProvider;
-        private FlagType invalidFlag;
-        private FlagType validFlag;
         private int resultCount;
         private int topIndex;
         private int lastScore;
         private string matchToken;
         private int matchLen;
 
-        public MemberList ClassList
-        {
-            get { return this.all; }
-            set { this.all = value; }
-        }
+        public MemberList ClassList { get; set; }
 
-        public List<ListBox.ListBoxItem> DataProvider
-        {
-            get { return this.dataProvider; }
-            set { this.dataProvider = value; }
-        }
+        public List<ListBox.ListBoxItem> DataProvider { get; set; }
 
-        public FlagType ExcludeFlag
-        {
-            get { return this.invalidFlag; }
-            set { this.invalidFlag = value; }
-        }
+        public FlagType ExcludeFlag { get; set; }
 
-        public FlagType IncludeFlag
-        {
-            get { return this.validFlag; }
-            set { this.validFlag = value; }
-        }
+        public FlagType IncludeFlag { get; set; }
 
-        public string SelectedClass
-        {
-            get { return this.itemList.SelectedItem != null ? this.itemList.SelectedItem.ToString() : null; }
-        }
+        public string SelectedClass => itemList.SelectedItem?.ToString();
 
         public ClassBrowser()
         {
@@ -70,7 +47,6 @@ namespace ASClassWizard.Wizards
 
         private void ClassBrowser_Load(object sender, EventArgs e)
         {
-            ListBox.ListBoxItem node;
             this.itemList.BeginUpdate();
             this.itemList.Items.Clear();
             if (this.ClassList != null)
@@ -85,7 +61,7 @@ namespace ASClassWizard.Wizards
                         if (!((item.Flags & IncludeFlag) > 0)) continue;
                     }
                     if (this.itemList.Items.Count > 0 && item.Name == this.itemList.Items[this.itemList.Items.Count - 1].ToString()) continue;
-                    node = new ListBox.ListBoxItem(item.Name, (item.Flags & FlagType.Interface) > 0 ? 6 : 8);
+                    var node = new ListBox.ListBoxItem(item.Name, (item.Flags & FlagType.Interface) > 0 ? 6 : 8);
                     this.itemList.Items.Add(node);
                     this.DataProvider.Add(node);
                 }

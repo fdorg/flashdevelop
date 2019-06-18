@@ -280,7 +280,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 SuspendSetDockState();
                 FloatPane = (value == null ? null : (value.IsFloat ? value : FloatPane));
                 PanelPane = (value == null ? null : (value.IsFloat ? PanelPane : value));
-                ResumeSetDockState(IsHidden, value != null ? value.DockState : DockState.Unknown, oldPane);
+                ResumeSetDockState(IsHidden, value?.DockState ?? DockState.Unknown, oldPane);
 
                 DockPanel.ResumeLayout(true, true);
             }
@@ -302,7 +302,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private string m_tabText = null;
         public string TabText
         {
-            get {   return m_tabText==null ? Form.Text : m_tabText; }
+            get {   return m_tabText ?? Form.Text; }
             set
             {
                 if (m_tabText == value)
@@ -372,7 +372,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             else
             {
-                dockState = (PanelPane != null) ? PanelPane.DockState : DefaultDockState;
+                dockState = PanelPane?.DockState ?? DefaultDockState;
                 if (dockState != DockState.Unknown && !IsDockStateValid(dockState))
                 {
                     dockState = DockState.Unknown;

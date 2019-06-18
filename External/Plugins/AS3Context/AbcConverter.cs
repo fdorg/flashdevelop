@@ -17,12 +17,12 @@ namespace AS3Context
 
     public class AbcConverter
     {
-        static public List<string> ExcludedASDocs = getDefaultExcludedASDocs();
+        public static List<string> ExcludedASDocs = getDefaultExcludedASDocs();
 
-        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
-        static private Regex reDocFile = new Regex("[/\\\\]([-_.$a-z0-9]+)\\.xml", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        public static Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        private static Regex reDocFile = new Regex("[/\\\\]([-_.$a-z0-9]+)\\.xml", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        static public Dictionary<string, Dictionary<string, ASDocItem>> Docs = new Dictionary<string, Dictionary<string, ASDocItem>>();
+        public static Dictionary<string, Dictionary<string, ASDocItem>> Docs = new Dictionary<string, Dictionary<string, ASDocItem>>();
 
         private static Dictionary<string, FileModel> genericTypes;
         private static Dictionary<string, string> imports;
@@ -34,10 +34,7 @@ namespace AS3Context
         ///
         private static List<string> getDefaultExcludedASDocs()
         {
-            List<string> list = new List<string>();
-            list.Add("helpid");
-            list.Add("keyword");
-            return list;
+            return new List<string> {"helpid", "keyword"};
         }
 
         /// <summary>
@@ -61,7 +58,7 @@ namespace AS3Context
                         Match m = reDocFile.Match(docFile);
                         if (!m.Success) continue;
                         string package = m.Groups[1].Value;
-                        Dictionary<string, ASDocItem> packageDocs = Docs.ContainsKey(package)
+                        var packageDocs = Docs.ContainsKey(package)
                             ? Docs[package]
                             : new Dictionary<string, ASDocItem>();
 
@@ -239,8 +236,6 @@ namespace AS3Context
                             type.Members.Merge(result);
                             type.Constructor = ctor.Name;
                         }
-                        result = null;
-                        temp = null;
                     }
                     else type.Constructor = type.Name;
 
@@ -364,7 +359,7 @@ namespace AS3Context
 
         private static void applyTypeCommentToParams(ASDocItem doc, MemberModel model)
         {
-            if (doc == null || model == null || model.Parameters == null)
+            if (doc == null || model?.Parameters == null)
                 return;
 
             foreach (MemberModel param in model.Parameters)
@@ -521,27 +516,26 @@ namespace AS3Context
                 member.MetaDatas = metadatas;
             }
 
-            if (info is SlotInfo)
+            if (info is SlotInfo slot)
             {
-                SlotInfo slot = info as SlotInfo;
                 member.Flags |= FlagType.Variable;
                 if (slot.kind == TraitMember.Const) member.Flags |= FlagType.Constant;
-                if (slot.value is Namespace)
+                if (slot.value is Namespace ns)
                 {
                     member.Flags |= FlagType.Namespace;
-                    member.Value = '"' + (slot.value as Namespace).uri + '"';
+                    member.Value = '"' + ns.uri + '"';
                 }
                 member.Type = ImportType(slot.type);
             }
-            else if (info is MethodInfo)
+            else if (info is MethodInfo method)
             {
-                switch (info.kind)
+                switch (method.kind)
                 {
                     case TraitMember.Setter: member.Flags |= FlagType.Setter; break;
                     case TraitMember.Getter: member.Flags |= FlagType.Getter; break;
                     default: member.Flags |= FlagType.Function; break;
                 }
-                MethodInfo method = info as MethodInfo;
+
                 QName type = method.returnType;
                 member.Type = ImportType(type);
 
@@ -590,8 +584,7 @@ namespace AS3Context
 
         private static string ImportType(QName type)
         {
-            if (type == null) return "*";
-            else return ImportType(type.ToTypeString());
+            return type == null ? "*" : ImportType(type.ToTypeString());
         }
 
         private static string ImportType(string qname)
@@ -620,7 +613,7 @@ namespace AS3Context
             if (value == null) member.Value = "null";
             else if (value is string && value.ToString() != "undefined") member.Value = '"' + value.ToString() + '"';
             else if (value is bool) member.Value = value.ToString().ToLower();
-            else if (value is double) member.Value = ((double)value).ToString(CultureInfo.InvariantCulture.NumberFormat);
+            else if (value is double d) member.Value = d.ToString(CultureInfo.InvariantCulture.NumberFormat);
             else member.Value = value.ToString();
         }
     }

@@ -11,8 +11,6 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class LineEntryDialog : SmartForm
     {
-        string line;
-
         #region Form Designer Components
 
         private System.Windows.Forms.TextBox lineBox;
@@ -29,10 +27,7 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Gets the line entered by the user.
         /// </summary>
-        public string Line
-        {
-            get { return line; }
-        }
+        public string Line { get; private set; }
 
         public LineEntryDialog(string captionText, string labelText, string defaultLine)
         {
@@ -42,7 +37,7 @@ namespace ProjectManager.Helpers
             this.Text = " " + captionText;
             titleLabel.Text = labelText;
             lineBox.KeyDown += OnLineBoxOnKeyDown;
-            lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
+            lineBox.Text = defaultLine ?? string.Empty;
             lineBox.SelectAll();
             lineBox.Focus();
         }
@@ -147,7 +142,7 @@ namespace ProjectManager.Helpers
 
         private void btnOK_Click(object sender, System.EventArgs e)
         {
-            this.line = lineBox.Text;
+            this.Line = lineBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)

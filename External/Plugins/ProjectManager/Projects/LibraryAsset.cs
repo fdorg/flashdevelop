@@ -32,15 +32,15 @@ namespace ProjectManager.Projects
             SwfMode = SwfAssetMode.Library;
         }
 
-        public bool IsImage { get { return FileInspector.IsImage(Path, Extension); } }
-        public bool IsSound { get { return FileInspector.IsSound(Path, Extension); } }
-        public bool IsFont { get { return FileInspector.IsFont(Path, Extension); } }
-        public bool IsSwf { get { return FileInspector.IsSwf(Path, Extension); } }
-        public bool IsSwc { get { return FileInspector.IsSwc(Path, Extension); } }
+        public bool IsImage => FileInspector.IsImage(Path, Extension);
+        public bool IsSound => FileInspector.IsSound(Path, Extension);
+        public bool IsFont => FileInspector.IsFont(Path, Extension);
+        public bool IsSwf => FileInspector.IsSwf(Path, Extension);
+        public bool IsSwc => FileInspector.IsSwc(Path, Extension);
 
-        public string Extension { get { return System.IO.Path.GetExtension(Path).ToLower(); } }
-        
-        public string ID { get { return (ManualID != null) ? ManualID : GetAutoID(); } }
+        public string Extension => System.IO.Path.GetExtension(Path).ToLower();
+
+        public string ID => ManualID ?? GetAutoID();
 
         public string GetAutoID()
         {
@@ -48,14 +48,13 @@ namespace ProjectManager.Projects
             string autoID = Path.Replace(System.IO.Path.DirectorySeparatorChar,'.');
 
             // prefix with libraryprefix if this is an as2 project
-            AS2Project as2project = Project as AS2Project;
-            if (as2project != null && as2project.CompilerOptions.LibraryPrefix.Length > 0)
-                autoID = as2project.CompilerOptions.LibraryPrefix + "." + autoID;
+            if (Project is AS2Project project && project.CompilerOptions.LibraryPrefix.Length > 0)
+                autoID = project.CompilerOptions.LibraryPrefix + "." + autoID;
             
             return autoID;
         }
 
-        public bool HasManualID { get { return ManualID != null; } }
+        public bool HasManualID => ManualID != null;
     }
 
     public enum SwfAssetMode
@@ -72,7 +71,7 @@ namespace ProjectManager.Projects
 
     public class AssetCollection : CollectionBase
     {
-        Project project;
+        readonly Project project;
 
         public AssetCollection(Project project)
         {
@@ -86,7 +85,7 @@ namespace ProjectManager.Projects
 
         public void Add(string path)
         {
-            Add(new LibraryAsset(project,path));
+            Add(new LibraryAsset(project, path));
         }
 
         public bool Contains(string path)
@@ -123,7 +122,7 @@ namespace ProjectManager.Projects
             for (int i = 0; i < List.Count; i++)
             {
                 LibraryAsset asset = List[i] as LibraryAsset;
-
+                
                 if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
                     asset.Path == path)
                 {

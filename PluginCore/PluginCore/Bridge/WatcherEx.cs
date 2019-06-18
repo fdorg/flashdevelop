@@ -8,13 +8,12 @@ namespace PluginCore.Bridge
     public class WatcherEx
     {
         string path;
-        string filter;
-        bool isRemote;
+        readonly string filter;
         bool enabled;
         FileSystemWatcher watcher;
         BridgeClient bridge;
 
-        public bool IsRemote { get { return isRemote; } }
+        public bool IsRemote { get; }
 
         /// <summary>
         /// Either watch a single file (if specified) or an entire directory tree.
@@ -28,8 +27,8 @@ namespace PluginCore.Bridge
         {
             this.path = path;
             this.filter = file;
-            isRemote = BridgeManager.Active && path.ToUpper().StartsWithOrdinal(BridgeManager.Settings.SharedDrive);
-            if (!isRemote) SetupRegularWatcher();
+            IsRemote = BridgeManager.Active && path.ToUpper().StartsWithOrdinal(BridgeManager.Settings.SharedDrive);
+            if (!IsRemote) SetupRegularWatcher();
         }
 
         public void Dispose()
@@ -70,7 +69,7 @@ namespace PluginCore.Bridge
 
         public bool EnableRaisingEvents
         {
-            get { return enabled; }
+            get => enabled;
             set
             {
                 enabled = value;
@@ -129,7 +128,7 @@ namespace PluginCore.Bridge
 
         #region regular watcher implementation
 
-        static private Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
+        private static readonly Regex reIgnore = new Regex("[\\\\/][._]svn", RegexOptions.Compiled | RegexOptions.RightToLeft);
 
         private void SetupRegularWatcher()
         {

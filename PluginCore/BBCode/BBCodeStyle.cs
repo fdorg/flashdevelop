@@ -10,7 +10,7 @@ namespace PluginCore.BBCode
         public static BBCodeStyle fuseStyles(BBCodeStyle child, BBCodeStyle parent)
         {
             if (parent == null)
-                return child != null ? child.clone() : null;
+                return child?.clone();
 
             if (child == null)
                 return parent.clone();
@@ -114,36 +114,32 @@ namespace PluginCore.BBCode
         public string fontName = null;
         public float fontSize = 0;
         public bool isAbsFontSize = true;
-
         public Color foreColor = null;
         public Color backColor = null;
-
-
+        
         public BBCodeStyle clone()
         {
             BBCodeStyle c = new BBCodeStyle();
-
-            c.isBold = this.isBold;
-            c.isItalic = this.isItalic;
-            c.isStriked = this.isStriked;
-            c.isUnderlined = this.isUnderlined;
-            c.fontName = this.fontName;
-            c.fontSize = this.fontSize;
-            c.isAbsFontSize = this.isAbsFontSize;
-            c.foreColor = this.foreColor == null ? null : this.foreColor.clone();
-            c.backColor = this.backColor == null ? null : this.backColor.clone();
-
+            c.isBold = isBold;
+            c.isItalic = isItalic;
+            c.isStriked = isStriked;
+            c.isUnderlined = isUnderlined;
+            c.fontName = fontName;
+            c.fontSize = fontSize;
+            c.isAbsFontSize = isAbsFontSize;
+            c.foreColor = foreColor?.clone();
+            c.backColor = backColor?.clone();
             return c;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return "[bbCodeStyle"
                    + " isBold=" + isBold
                    + " isItalic='" + isItalic + "'"
                    + " isStriked='" + isStriked + "'"
                    + " isUnderlined='" + isUnderlined + "'"
-                   + " fontName='" + (fontName == null ? "null" : fontName) + "'"
+                   + " fontName='" + (fontName ?? "null") + "'"
                    + " fontSize='" + fontSize + "'"
                    + " isAbsFontSize='" + isAbsFontSize + "'"
                    + " foreColor='" + (foreColor == null ? "null" : foreColor.ToString()) + "'"
@@ -303,31 +299,30 @@ namespace PluginCore.BBCode
             }
             
             #endregion
-
-
-
+            
             public Color()
             {
             }
+
             public Color(uint color)
             {
                 this.color = color;
             }
+
             public Color(uint color, Mode mode)
             {
                 this.color = color;
                 this.mode = mode;
             }
-
-
+            
             public uint color = 0xFF000000;
             public Mode mode = Mode.NORMAL;
-
 
             public Color clone()
             {
                 return new Color(color, mode);
             }
+
             public override string ToString()
             {
                 return "[bbCodeStyle.Color"

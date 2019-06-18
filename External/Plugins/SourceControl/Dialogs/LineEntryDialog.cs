@@ -10,8 +10,6 @@ namespace SourceControl.Dialogs
     /// </summary>
     public class LineEntryDialog : Form
     {
-        string line;
-
         #region Form Designer Components
 
         private TextBox lineBox;
@@ -29,10 +27,7 @@ namespace SourceControl.Dialogs
         /// <summary>
         /// Gets the line entered by the user.
         /// </summary>
-        public string Line
-        {
-            get { return line; }
-        }
+        public string Line { get; private set; }
 
         public LineEntryDialog(string captionText, string labelText, string defaultLine)
         {
@@ -42,7 +37,7 @@ namespace SourceControl.Dialogs
             Text = " " + captionText;
             titleLabel.Text = labelText;
             lineBox.KeyDown += OnLineBoxOnKeyDown;
-            lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
+            lineBox.Text = defaultLine ?? string.Empty;
             lineBox.SelectAll();
             lineBox.Focus();
         }
@@ -52,9 +47,9 @@ namespace SourceControl.Dialogs
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
-        protected override void Dispose( bool disposing )
+        protected override void Dispose(bool disposing)
         {
-            if( disposing )
+            if (disposing)
             {
                 components?.Dispose();
             }
@@ -162,7 +157,7 @@ namespace SourceControl.Dialogs
 
         private void btnYes_Click(object sender, System.EventArgs e)
         {
-            line = lineBox.Text;
+            Line = lineBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)

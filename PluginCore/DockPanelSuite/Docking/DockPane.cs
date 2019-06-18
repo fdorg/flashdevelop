@@ -780,7 +780,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public DockWindow DockWindow
         {
-            get {   return (m_nestedDockingStatus.NestedPanes == null) ? null : m_nestedDockingStatus.NestedPanes.Container as DockWindow;  }
+            get {   return m_nestedDockingStatus.NestedPanes?.Container as DockWindow;  }
             set
             {
                 DockWindow oldValue = DockWindow;
@@ -793,7 +793,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public FloatWindow FloatWindow
         {
-            get {   return (m_nestedDockingStatus.NestedPanes == null) ? null : m_nestedDockingStatus.NestedPanes.Container as FloatWindow; }
+            get {   return m_nestedDockingStatus.NestedPanes?.Container as FloatWindow; }
             set
             {
                 FloatWindow oldValue = FloatWindow;

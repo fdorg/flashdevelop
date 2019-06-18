@@ -178,15 +178,15 @@ namespace XMLCompletion
 
     public class ZenCoding
     {
-        static private ZenLang lang;
-        static private bool inited;
-        static private ZenSettings settings;
-        static private Timer delayOpenConfig;
-        static private FileSystemWatcher watcherConfig;
-        static private Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
+        private static ZenLang lang;
+        private static bool inited;
+        private static ZenSettings settings;
+        private static Timer delayOpenConfig;
+        private static FileSystemWatcher watcherConfig;
+        private static readonly Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
 
         #region initialization
-        static private void init()
+        private static void init()
         {
             if (!inited)
             {
@@ -209,7 +209,7 @@ namespace XMLCompletion
                 }
             }
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            string docType = sci != null ? sci.ConfigurationLanguage.ToLower() : null;
+            string docType = sci?.ConfigurationLanguage.ToLower();
             lang = null;
             if (docType != null)
             {
@@ -276,7 +276,7 @@ namespace XMLCompletion
         #endregion
 
         #region expansion
-        static public bool expandSnippet(Hashtable data)
+        public static bool expandSnippet(Hashtable data)
         {
             if (data["snippet"] == null)
             {
@@ -285,10 +285,9 @@ namespace XMLCompletion
                 // extract zen expression
                 int pos = sci.CurrentPos - 1;
                 int lastValid = sci.CurrentPos;
-                char c = ' ';
                 while (pos >= 0)
                 {
-                    c = (char)sci.CharAt(pos);
+                    var c = (char)sci.CharAt(pos);
                     if (c <= 32)
                     {
                         lastValid = pos + 1;
@@ -327,7 +326,7 @@ namespace XMLCompletion
             return false;
         }
 
-        static public string expandExpression(string expr)
+        public static string expandExpression(string expr)
         {
             init(); // load config
             if (lang == null) return null;
@@ -362,7 +361,6 @@ namespace XMLCompletion
             string[] parts = expr.Split('>');
             Array.Reverse(parts);
             bool inline = true;
-            int index = 1;
             foreach (string part in parts)
             {
                 if (part.Length == 0)
@@ -515,7 +513,7 @@ namespace XMLCompletion
                     {
                         if (multiply > 1)
                         {
-                            index = i;
+                            var index = i;
                             src += master.Replace("$", index.ToString());
                         }
                         else src += master;

@@ -10,6 +10,7 @@ namespace PluginCore.BBCode
         {
             _init(isTagOpener, -1, null, null, null, 0, 0, true);
         }
+
         public BBCodeTagMatch(bool isTagOpener,
                                int tagIndex,
                                string tagValue,
@@ -33,12 +34,12 @@ namespace PluginCore.BBCode
         {
             _init_BBCodeTagInfo(isTagOpener, tagName, tagParam);
 
-            _tagIndex = tagIndex;
-            _tagValue = tagValue != null ? tagValue : "";
-            _tagLength = (uint)_tagValue.Length;
+            this.tagIndex = tagIndex;
+            this.tagValue = tagValue ?? "";
+            tagLength = (uint)this.tagValue.Length;
 
-            _numOpenBraceSlashes = numOpenBraceSlashes;
-            _numCloseBraceSlashes = numCloseBraceSlashes;
+            this.numOpenBraceSlashes = numOpenBraceSlashes;
+            this.numCloseBraceSlashes = numCloseBraceSlashes;
 
             _tagCloserInfos = new List<BBCodeTagInfo>();
 
@@ -46,75 +47,52 @@ namespace PluginCore.BBCode
                 _tagCloserInfos.Add(new BBCodeTagInfo(false, tagName, null));
         }
 
-
-        private int _tagIndex;
-        private uint _tagLength;
-        private string _tagValue;
-
-        private uint _numOpenBraceSlashes;
-        private uint _numCloseBraceSlashes;
-
         private List<BBCodeTagInfo> _tagCloserInfos;
         private BBCodeStyle _bbCodeStyle;
 
+        public int tagIndex { get; private set; }
 
-        public int tagIndex
-        {
-            get { return _tagIndex; }
-        }
-        public uint tagLength
-        {
-            get { return _tagLength; }
-        }
-        public string tagValue
-        {
-            get { return _tagValue; }
-        }
+        public uint tagLength { get; set; }
 
-        public uint numOpenBraceSlashes
-        {
-            get { return _numOpenBraceSlashes; }
-        }
-        public uint numCloseBraceSlashes
-        {
-            get { return _numCloseBraceSlashes; }
-        }
+        public string tagValue { get; set; }
+
+        public uint numOpenBraceSlashes { get; set; }
+
+        public uint numCloseBraceSlashes { get; private set; }
 
         public List<BBCodeTagInfo> tagCloserInfos
         {
-            get { return new List<BBCodeTagInfo>(_tagCloserInfos); }
+            get => new List<BBCodeTagInfo>(_tagCloserInfos);
             set
             {
-                if (!this.isTagOpener)
+                if (!isTagOpener)
                     throw new Exception("Closer tag infos can be assigned to this only if this is opener");
-                else
-                    _tagCloserInfos = value != null ? new List<BBCodeTagInfo>(value) : new List<BBCodeTagInfo>();
+                _tagCloserInfos = value != null ? new List<BBCodeTagInfo>(value) : new List<BBCodeTagInfo>();
             }
         }
 
         public BBCodeStyle bbCodeStyle
         {
-            get { return _bbCodeStyle; }
+            get => _bbCodeStyle;
             set
             {
-                if (!this.isTagOpener)
+                if (!isTagOpener)
                     throw new Exception("BBCode style can be assigned to this only if this is opener");
-                else
-                    _bbCodeStyle = value;
+                _bbCodeStyle = value;
             }
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return "[bbCodeTagMatch"
-                   + " isTagOpener=" + this.isTagOpener
-                   + " tagIndex=" + _tagIndex
-                   + " tagLength=" + _tagLength
-                   + " tagValue='" + _tagValue + "'"
-                   + " tagName='" + this.tagName + "'"
-                   + " tagParam='" + this.tagParam + "'"
-                   + " numOpenBraceSlashes='" + _numOpenBraceSlashes + "'"
-                   + " numCloseBraceSlashes='" + _numCloseBraceSlashes + "'"
+                   + " isTagOpener=" + isTagOpener
+                   + " tagIndex=" + tagIndex
+                   + " tagLength=" + tagLength
+                   + " tagValue='" + tagValue + "'"
+                   + " tagName='" + tagName + "'"
+                   + " tagParam='" + tagParam + "'"
+                   + " numOpenBraceSlashes='" + numOpenBraceSlashes + "'"
+                   + " numCloseBraceSlashes='" + numCloseBraceSlashes + "'"
                    + " bbCodeStyle='" + (_bbCodeStyle == null ? "null" : _bbCodeStyle.ToString()) + "'"
                    + "]";
         }
