@@ -7,10 +7,10 @@ namespace ProjectManager.Controls.AS2
 {
     public class LibraryAssetDialog : System.Windows.Forms.Form
     {
-        bool isAS3;
-        bool isSWC;
+        readonly bool isAS3;
+        readonly bool isSWC;
         bool modified;
-        LibraryAsset asset;
+        readonly LibraryAsset asset;
 
         #region Windows Form Designer
 
@@ -575,7 +575,7 @@ namespace ProjectManager.Controls.AS2
             if (autoIDBox.Checked)
                 idTextBox.Text = asset.GetAutoID();
             else
-                idTextBox.Text = (asset.ManualID == null) ? asset.GetAutoID() : asset.ManualID;
+                idTextBox.Text = asset.ManualID ?? asset.GetAutoID();
 
             Modified();
 
@@ -585,23 +585,21 @@ namespace ProjectManager.Controls.AS2
 
         private void browseButton_Click(object sender, System.EventArgs e)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+
+            // try pre-setting the current update path
+            try
             {
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-
-                // try pre-setting the current update path
-                try
-                {
-                    if (asset.UpdatePath.Length > 0)
-                        dialog.FileName = asset.Project.GetAbsolutePath(asset.UpdatePath);
-                    else
-                        dialog.FileName = asset.Project.GetAbsolutePath(asset.Path);
-                }
-                catch { }
-
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                    updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
+                if (asset.UpdatePath.Length > 0)
+                    dialog.FileName = asset.Project.GetAbsolutePath(asset.UpdatePath);
+                else
+                    dialog.FileName = asset.Project.GetAbsolutePath(asset.Path);
             }
+            catch { }
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+                updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
         }
 
         private void swcLibOption_CheckedChanged(object sender, EventArgs e)

@@ -12,31 +12,22 @@ namespace WeifenLuo.WinFormsUI.Docking
     {
         private sealed class InertButton : InertButtonBase
         {
-            private Bitmap m_image, m_imageAutoHide;
+            private readonly Bitmap m_image;
+            private readonly Bitmap m_imageAutoHide;
 
             public InertButton(VS2005DockPaneCaption dockPaneCaption, Bitmap image, Bitmap imageAutoHide) : base()
             {
-                m_dockPaneCaption = dockPaneCaption;
+                DockPaneCaption = dockPaneCaption;
                 m_image = image;
                 m_imageAutoHide = imageAutoHide;
                 RefreshChanges();
             }
 
-            private VS2005DockPaneCaption m_dockPaneCaption;
-            private VS2005DockPaneCaption DockPaneCaption
-            {
-                get { return m_dockPaneCaption; }
-            }
+            private VS2005DockPaneCaption DockPaneCaption { get; }
 
-            public bool IsAutoHide
-            {
-                get { return DockPaneCaption.DockPane.IsAutoHide; }
-            }
+            public bool IsAutoHide => DockPaneCaption.DockPane.IsAutoHide;
 
-            public override Bitmap Image
-            {
-                get { return IsAutoHide ? m_imageAutoHide : m_image; }
-            }
+            public override Bitmap Image => IsAutoHide ? m_imageAutoHide : m_image;
 
             protected override void OnRefreshChanges()
             {
@@ -47,46 +38,35 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
         }
-        
-        // 100%
-        private static int _TextGapTop = 1;
-        private static int _TextGapBottom = 1;
-        private static int _TextGapLeft = 3;
-        private static int _TextGapRight = 3;
-        private static int _ButtonGapTop = 3;
-        private static int _ButtonGapBottom = 3;
-        private static int _ButtonGapBetween = 1;
-        private static int _ButtonGapLeft = 3;
-        private static int _ButtonGapRight = 3;
 
-        private ToolTip m_toolTip;
+        private readonly ToolTip m_toolTip;
 
         public VS2005DockPaneCaption(DockPane pane) : base(pane)
         {
             SuspendLayout();
 
             Font = PluginCore.PluginBase.Settings.DefaultFont;
-            m_components = new Container();
+            Components = new Container();
             m_toolTip = new ToolTip(Components);
 
             // Adjust size based on scale
             double scale = ScaleHelper.GetScale();
             if (scale >= 2) // 200%
             {
-                _TextGapTop = 3;
-                _TextGapBottom = 6;
-                _ButtonGapBottom = 4;
+                TextGapTop = 3;
+                TextGapBottom = 6;
+                ButtonGapBottom = 4;
             }
             else if (scale >= 1.5) // 150%
             {
-                _TextGapTop = 2;
-                _TextGapBottom = 4;
-                _ButtonGapBottom = 4;
+                TextGapTop = 2;
+                TextGapBottom = 4;
+                ButtonGapBottom = 4;
             }
             else if (scale >= 1.2) // 120%
             {
-                _TextGapTop = 2;
-                _TextGapBottom = 2;
+                TextGapTop = 2;
+                TextGapBottom = 2;
             }
             // Else 100%
 
@@ -99,7 +79,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonClose == null)
-                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Close);
+                    _imageButtonClose = ScaleHelper.Scale(Resources.DockPane_Close);
 
                 return _imageButtonClose;
             }
@@ -128,7 +108,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonAutoHide == null)
-                    _imageButtonAutoHide = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_AutoHide);
+                    _imageButtonAutoHide = ScaleHelper.Scale(Resources.DockPane_AutoHide);
 
                 return _imageButtonAutoHide;
             }
@@ -140,7 +120,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonDock == null)
-                    _imageButtonDock = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Dock);
+                    _imageButtonDock = ScaleHelper.Scale(Resources.DockPane_Dock);
 
                 return _imageButtonDock;
             }
@@ -191,11 +171,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IContainer m_components;
-        private IContainer Components
-        {
-            get { return m_components; }
-        }
+        private IContainer Components { get; }
 
         protected override void Dispose(bool disposing)
         {
@@ -204,50 +180,23 @@ namespace WeifenLuo.WinFormsUI.Docking
             base.Dispose(disposing);
         }
 
-        private static int TextGapTop
-        {
-            get {   return _TextGapTop; }
-        }
+        static int TextGapTop { get; set; } = 1;
 
-        private static int TextGapBottom
-        {
-            get {   return _TextGapBottom;  }
-        }
+        static int TextGapBottom { get; set; } = 1;
 
-        private static int TextGapLeft
-        {
-            get {   return _TextGapLeft;    }
-        }
+        private static int TextGapLeft { get; } = 3;
 
-        private static int TextGapRight
-        {
-            get {   return _TextGapRight;   }
-        }
+        private static int TextGapRight { get; } = 3;
 
-        private static int ButtonGapTop
-        {
-            get {   return _ButtonGapTop;   }
-        }
+        private static int ButtonGapTop { get; } = 3;
 
-        private static int ButtonGapBottom
-        {
-            get {   return _ButtonGapBottom;    }
-        }
+        static int ButtonGapBottom { get; set; } = 3;
 
-        private static int ButtonGapLeft
-        {
-            get {   return _ButtonGapLeft;  }
-        }
+        private static int ButtonGapLeft { get; } = 3;
 
-        private static int ButtonGapRight
-        {
-            get {   return _ButtonGapRight; }
-        }
+        private static int ButtonGapRight { get; } = 3;
 
-        private static int ButtonGapBetween
-        {
-            get {   return _ButtonGapBetween;   }
-        }
+        private static int ButtonGapBetween { get; } = 1;
 
         private static string _toolTipClose;
         private static string ToolTipClose
@@ -331,15 +280,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Color ActiveTextColor
-        {
-            get {   return SystemColors.ActiveCaptionText;  }
-        }
+        private static Color ActiveTextColor => SystemColors.ActiveCaptionText;
 
-        private static Color InactiveTextColor
-        {
-            get {   return SystemColors.ControlText; }
-        }
+        private static Color InactiveTextColor => SystemColors.ControlText;
 
         private Color TextColor
         {
@@ -360,7 +303,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                Color color = Color.Empty;
+                Color color;
                 if (DockPane.IsActivated) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ActiveImageColor");
                 else color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ImageColor");
                 if (color != Color.Empty) return color;
@@ -458,15 +401,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             Invalidate();
         }
 
-        private bool CloseButtonEnabled
-        {
-            get {   return (DockPane.ActiveContent != null)? DockPane.ActiveContent.DockHandler.CloseButton : false;    }
-        }
+        private bool CloseButtonEnabled => DockPane.ActiveContent?.DockHandler.CloseButton ?? false;
 
-        private bool ShouldShowAutoHideButton
-        {
-            get {   return !DockPane.IsFloat;   }
-        }
+        private bool ShouldShowAutoHideButton => !DockPane.IsFloat;
 
         private void SetButtons()
         {
@@ -518,7 +455,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private void Options_Click(object sender, EventArgs e)
         {
-            ShowTabPageContextMenu(PointToClient(Control.MousePosition));
+            ShowTabPageContextMenu(PointToClient(MousePosition));
         }
 
         protected override void OnRightToLeftChanged(EventArgs e)

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.DockPanelSuite;
 using PluginCore.Helpers;
+using static WeifenLuo.WinFormsUI.Docking.VS2005DockPaneStrip;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -18,43 +19,21 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
             }
 
-            private int m_tabX;
-            public int TabX
-            {
-                get { return m_tabX; }
-                set { m_tabX = value; }
-            }
-
-            private int m_tabWidth;
-            public int TabWidth
-            {
-                get { return m_tabWidth; }
-                set { m_tabWidth = value; }
-            }
-
-            private int m_maxWidth;
-            public int MaxWidth
-            {
-                get { return m_maxWidth; }
-                set { m_maxWidth = value; }
-            }
-
-            private bool m_flag;
-            protected internal bool Flag
-            {
-                get { return m_flag; }
-                set { m_flag = value; }
-            }
+            public int TabX { get; set; }
+            public int TabWidth { get; set; }
+            public int MaxWidth { get; set; }
+            protected internal bool Flag { get; set; }
         }
 
-        protected internal override DockPaneStripBase.Tab CreateTab(IDockContent content)
+        protected internal override Tab CreateTab(IDockContent content)
         {
             return new TabVS2005(content);
         }
 
         private sealed class InertButton : InertButtonBase
         {
-            private Bitmap m_image0, m_image1;
+            private readonly Bitmap m_image0;
+            private readonly Bitmap m_image1;
 
             public InertButton(Bitmap image0, Bitmap image1)
                 : base()
@@ -66,7 +45,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             private int m_imageCategory = 0;
             public int ImageCategory
             {
-                get { return m_imageCategory; }
+                get => m_imageCategory;
                 set
                 {
                     if (m_imageCategory == value)
@@ -77,16 +56,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            public override Bitmap Image
-            {
-                get { return ImageCategory == 0 ? m_image0 : m_image1; }
-            }
+            public override Bitmap Image => ImageCategory == 0 ? m_image0 : m_image1;
 
             protected override void OnRefreshChanges()
             {
-                if (VS2005DockPaneStrip.ImageColor != ForeColor)
+                if (ImageColor != ForeColor)
                 {
-                    ForeColor = VS2005DockPaneStrip.ImageColor;
+                    ForeColor = ImageColor;
                     Invalidate();
                 }
             }
@@ -132,7 +108,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonClose == null)
-                    _imageButtonClose = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Close);
+                    _imageButtonClose = ScaleHelper.Scale(Resources.DockPane_Close);
 
                 return _imageButtonClose;
             }
@@ -161,7 +137,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowList == null)
-                    _imageButtonWindowList = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_Option);
+                    _imageButtonWindowList = ScaleHelper.Scale(Resources.DockPane_Option);
 
                 return _imageButtonWindowList;
             }
@@ -173,7 +149,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_imageButtonWindowListOverflow == null)
-                    _imageButtonWindowListOverflow = PluginCore.Helpers.ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
+                    _imageButtonWindowListOverflow = ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
 
                 return _imageButtonWindowListOverflow;
             }
@@ -196,17 +172,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static GraphicsPath GraphicsPath
-        {
-            get { return VS2005AutoHideStrip.GraphicsPath; }
-        }
+        private static GraphicsPath GraphicsPath => VS2005AutoHideStrip.GraphicsPath;
 
-        private IContainer m_components;
         private ToolTip m_toolTip;
-        private IContainer Components
-        {
-            get {   return m_components;    }
-        }
+        private IContainer Components { get; }
 
         #region Customizable Properties
         private static int ToolWindowStripGapTop
@@ -561,7 +530,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             Font = PluginCore.PluginBase.Settings.DefaultFont;
             
-            m_components = new Container();
+            Components = new Container();
             m_toolTip = new ToolTip(Components);
             m_selectMenu = new ContextMenuStrip(Components);
             m_selectMenu.Font = PluginCore.PluginBase.Settings.DefaultFont;
@@ -601,12 +570,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private int m_firstDisplayingTab = 0;
-        private int FirstDisplayingTab
-        {
-            get { return m_firstDisplayingTab; }
-            set { m_firstDisplayingTab = value; }
-        }
+        private int FirstDisplayingTab { get; set; } = 0;
 
         private int m_startDisplayingTab = 0;
         private int StartDisplayingTab
@@ -619,12 +583,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private int m_endDisplayingTab = 0;
-        private int EndDisplayingTab
-        {
-            get { return m_endDisplayingTab; }
-            set { m_endDisplayingTab = value; }
-        }
+        private int EndDisplayingTab { get; set; } = 0;
 
         private bool m_documentTabsOverflow = false;
         private bool DocumentTabsOverflow
@@ -1494,7 +1453,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (item != null)
             {
                 IDockContent content = (IDockContent)item.Tag;
-                if (e.Button == System.Windows.Forms.MouseButtons.Middle) content.DockHandler.Close();
+                if (e.Button == MouseButtons.Middle) content.DockHandler.Close();
                 else DockPane.ActiveContent = content;
                 SelectMenu.Hide();
             }
@@ -1512,7 +1471,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             else
             {
-                bool showCloseButton = DockPane.ActiveContent == null ? true : DockPane.ActiveContent.DockHandler.CloseButton;
+                bool showCloseButton = DockPane.ActiveContent?.DockHandler.CloseButton ?? true;
                 ButtonClose.Enabled = showCloseButton;
                 ButtonClose.RefreshChanges();
                 ButtonWindowList.RefreshChanges();
@@ -1576,7 +1535,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected override void OnMouseHover(EventArgs e)
         {
-            int index = HitTest(PointToClient(Control.MousePosition));
+            int index = HitTest(PointToClient(MousePosition));
             string toolTip = string.Empty;
 
             base.OnMouseHover(e);
@@ -1612,7 +1571,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (m.Msg == (int)Win32.Msgs.WM_MBUTTONDOWN)
             {
-                int index = this.HitTest();
+                int index = HitTest();
                 if (index != -1)
                 {
                     if (Tabs[index].Content.DockHandler.Content.GetType().ToString() == "FlashDevelop.Docking.TabbedDocument")

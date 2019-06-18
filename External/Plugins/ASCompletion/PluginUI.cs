@@ -73,7 +73,7 @@ namespace ASCompletion
         public ImageListManager treeIcons;
         private System.Timers.Timer tempoClick;
 
-        private GeneralSettings settings;
+        private readonly GeneralSettings settings;
         private string prevChecksum;
         private List<int> prevLines;
         private Stack<LookupLocation> lookupLocations;

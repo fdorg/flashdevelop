@@ -13,19 +13,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 public SplitterControl(AutoHideWindowControl autoHideWindow)
                 {
-                    m_autoHideWindow = autoHideWindow;
+                    AutoHideWindow = autoHideWindow;
                 }
 
-                private AutoHideWindowControl m_autoHideWindow;
-                private AutoHideWindowControl AutoHideWindow
-                {
-                    get { return m_autoHideWindow; }
-                }
+                private AutoHideWindowControl AutoHideWindow { get; }
 
-                protected override int SplitterSize
-                {
-                    get { return Measures.SplitterSize; }
-                }
+                protected override int SplitterSize => Measures.SplitterSize;
 
                 protected override void StartDrag()
                 {
@@ -37,12 +30,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             private const int ANIMATE_TIME = 100;   // in mini-seconds
             #endregion
 
-            private Timer m_timerMouseTrack;
-            private SplitterControl m_splitter;
+            private readonly Timer m_timerMouseTrack;
+            private readonly SplitterControl m_splitter;
 
             public AutoHideWindowControl(DockPanel dockPanel)
             {
-                m_dockPanel = dockPanel;
+                DockPanel = dockPanel;
 
                 m_timerMouseTrack = new Timer();
                 m_timerMouseTrack.Tick += TimerMouseTrack_Tick;
@@ -61,25 +54,18 @@ namespace WeifenLuo.WinFormsUI.Docking
                 base.Dispose(disposing);
             }
 
-            private DockPanel m_dockPanel = null;
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            public DockPanel DockPanel { get; }
 
-            private DockPane m_activePane = null;
-            public DockPane ActivePane
-            {
-                get { return m_activePane; }
-            }
+            public DockPane ActivePane { get; private set; }
+
             private void SetActivePane()
             {
-                DockPane value = (ActiveContent == null ? null : ActiveContent.DockHandler.Pane);
+                DockPane value = ActiveContent?.DockHandler.Pane;
 
-                if (value == m_activePane)
+                if (value == ActivePane)
                     return;
 
-                m_activePane = value;
+                ActivePane = value;
             }
 
             private IDockContent m_activeContent = null;
@@ -125,7 +111,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public DockState DockState
             {
-                get { return ActiveContent == null ? DockState.Unknown : ActiveContent.DockHandler.DockState; }
+                get { return ActiveContent?.DockHandler.DockState ?? DockState.Unknown; }
             }
 
             private bool m_flagAnimate = true;
@@ -608,7 +594,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (DocumentStyle == DocumentStyle.SystemMdi || DocumentStyle == DocumentStyle.DockingMdi)
             {
-                return (Parent == null) ? Rectangle.Empty : Parent.RectangleToClient(RectangleToScreen(rectAutoHideWindow));
+                return Parent?.RectangleToClient(RectangleToScreen(rectAutoHideWindow)) ?? Rectangle.Empty;
             }
             else return rectAutoHideWindow;
         }

@@ -406,7 +406,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             internal void SetActiveContent()
             {
-                IDockContent value = ActivePane == null ? null : ActivePane.ActiveContent;
+                IDockContent value = ActivePane?.ActiveContent;
 
                 if (m_activeContent == value)
                     return;
@@ -464,7 +464,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             private void SetActiveDocument()
             {
-                IDockContent value = ActiveDocumentPane == null ? null : ActiveDocumentPane.ActiveContent;
+                IDockContent value = ActiveDocumentPane?.ActiveContent;
 
                 if (m_activeDocument == value)
                     return;

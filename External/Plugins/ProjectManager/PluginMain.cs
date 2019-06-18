@@ -1367,7 +1367,7 @@ namespace ProjectManager
 
         private void TreeAddAsset()
         {
-            if (Tree.ProjectOf(Tree.SelectedPath) is Project project)
+            if (Tree.ProjectOf(Tree.SelectedPath) is { } project)
                 fileActions.AddLibraryAsset(project, Tree.SelectedPath);
         }
 
@@ -1375,7 +1375,7 @@ namespace ProjectManager
 
         private void TreeHideItems()
         {
-            if (Tree.ProjectOf(Tree.SelectedNode) is Project project)
+            if (Tree.ProjectOf(Tree.SelectedNode) is { } project)
                 projectActions.ToggleHidden(project, Tree.SelectedPaths);
         }
 

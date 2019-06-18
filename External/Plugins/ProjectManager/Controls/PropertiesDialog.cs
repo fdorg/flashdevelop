@@ -794,12 +794,7 @@ namespace ProjectManager.Controls
 
         #endregion
 
-        private Project project;
         private CompilerOptions optionsCopy;
-        private bool propertiesChanged;
-        private bool platformChanged;
-        private bool classpathsChanged;
-        private bool assetsChanged;
         private bool sdkChanged;
         private bool isPropertyGridReadOnly;
         private LanguagePlatform langPlatform;
@@ -829,39 +824,23 @@ namespace ProjectManager.Controls
             this.groupBox3.Controls.Add(this.classpathControl);
         }
 
-        protected Project BaseProject { get { return project; } }
+        protected Project BaseProject { get; private set; }
 
         public void SetProject(Project project)
         {
-            this.project = project;
+            this.BaseProject = project;
             BuildDisplay();
         }
 
         #region Change Tracking
 
-        public bool PropertiesChanged
-        {
-            get { return propertiesChanged; }
-            protected set { propertiesChanged = value; }
-        }
-        
-        public bool ClasspathsChanged
-        {
-            get { return classpathsChanged; }
-            protected set { classpathsChanged = value; }
-        }
+        public bool PropertiesChanged { get; protected set; }
 
-        public bool AssetsChanged
-        {
-            get { return assetsChanged; }
-            protected set { assetsChanged = value; }
-        }
+        public bool ClasspathsChanged { get; protected set; }
 
-        public bool PlatformChanged
-        {
-            get { return platformChanged; }
-            protected set { platformChanged = value; }
-        }
+        public bool AssetsChanged { get; protected set; }
+
+        public bool PlatformChanged { get; protected set; }
 
         #endregion
 
@@ -910,14 +889,14 @@ namespace ProjectManager.Controls
 
         protected virtual void BuildDisplay()
         {
-            this.Text = " " + project.Name + " (" + project.LanguageDisplayName + ") " + TextHelper.GetString("Info.Properties");
+            this.Text = " " + BaseProject.Name + " (" + BaseProject.LanguageDisplayName + ") " + TextHelper.GetString("Info.Properties");
 
-            langPlatform = GetLanguagePlatform(project.MovieOptions.Platform);
+            langPlatform = GetLanguagePlatform(BaseProject.MovieOptions.Platform);
 
             InitOutputTab();
             InitBuildTab();
             InitOptionsTab();
-            if (project.IsCompilable)
+            if (BaseProject.IsCompilable)
             {
                 InitSDKTab();
                 InitClasspathTab();
@@ -945,31 +924,31 @@ namespace ProjectManager.Controls
 
             // clone the compiler options object because the PropertyGrid modifies its
             // object directly
-            optionsCopy = project.CompilerOptions.Clone();
+            optionsCopy = BaseProject.CompilerOptions.Clone();
 
             if (isPropertyGridReadOnly)
                 TypeDescriptor.AddAttributes(optionsCopy, new Attribute[] { new ReadOnlyAttribute(true) });
 
             propertyGrid.SelectedObject = optionsCopy;
-            propertiesChanged = false;
+            PropertiesChanged = false;
         }
 
         private void InitBuildTab()
         {
-            preBuildBox.Text = project.PreBuildEvent;
-            postBuildBox.Text = project.PostBuildEvent;
-            alwaysExecuteCheckBox.Checked = project.AlwaysRunPostBuild;
+            preBuildBox.Text = BaseProject.PreBuildEvent;
+            postBuildBox.Text = BaseProject.PostBuildEvent;
+            alwaysExecuteCheckBox.Checked = BaseProject.AlwaysRunPostBuild;
         }
 
         private void InitClasspathTab()
         {
             classpathControl.Changed += classpathControl_Changed;
-            classpathControl.Project = project;
-            classpathControl.Classpaths = project.Classpaths.ToArray();
-            classpathControl.Language = project.Language;
+            classpathControl.Project = BaseProject;
+            classpathControl.Classpaths = BaseProject.Classpaths.ToArray();
+            classpathControl.Language = BaseProject.Language;
             classpathControl.LanguageBox.Visible = false;
             UpdateClasspaths();
-            classpathsChanged = false;
+            ClasspathsChanged = false;
         }
 
         private void UpdateClasspaths()
@@ -994,7 +973,7 @@ namespace ProjectManager.Controls
             labelWarning.Text = "";
 
             // retrieve SDK list
-            InstalledSDK[] sdks = BuildActions.GetInstalledSDKs(project);
+            InstalledSDK[] sdks = BuildActions.GetInstalledSDKs(BaseProject);
             if (sdks != null && sdks.Length > 0)
             {
                 sdkComboBox.Items.Add(TextHelper.GetString("Label.SDKComboDefault") + " (" + sdks[0].Name + ")");
@@ -1002,7 +981,7 @@ namespace ProjectManager.Controls
             }
             else sdkComboBox.Items.Add(TextHelper.GetString("Label.SDKComboNoSDK"));
 
-            InstalledSDK sdk = BuildActions.MatchSDK(sdks, project);
+            InstalledSDK sdk = BuildActions.MatchSDK(sdks, BaseProject);
             if (sdk != InstalledSDK.INVALID_SDK)
             {
                 if (BuildActions.LatestSDKMatchQuality >= 0)
@@ -1013,7 +992,7 @@ namespace ProjectManager.Controls
                     string icon = BuildActions.LatestSDKMatchQuality < 10 ? "196" : "197";
                     warningImage.Image = PluginBase.MainForm.FindImage(icon, false);
                     warningImage.Visible = true;
-                    string[] p = (project.PreferredSDK + ";;").Split(';');
+                    string[] p = (BaseProject.PreferredSDK + ";;").Split(';');
                     labelWarning.Text = TextHelper.GetString("Label.SDKExpected") 
                         + " " + p[0] + " (" + p[1] + ")";
                 }
@@ -1027,25 +1006,25 @@ namespace ProjectManager.Controls
 
         private void InitOutputTab()
         {
-            MovieOptions options = project.MovieOptions;
+            MovieOptions options = BaseProject.MovieOptions;
 
-            string[] types = Array.ConvertAll<OutputType, string>(
-                    project.MovieOptions.OutputTypes, 
+            string[] types = Array.ConvertAll(
+                    BaseProject.MovieOptions.OutputTypes, 
                     (ot) => ot.ToString()
                 );
-            InitCombo(outputCombo, types, project.OutputType, "Label.OutputType");
+            InitCombo(outputCombo, types, BaseProject.OutputType, "Label.OutputType");
             outputCombo.SelectedIndexChanged += outputCombo_SelectedIndexChanged;
 
-            outputSwfBox.Text = project.OutputPath;
+            outputSwfBox.Text = BaseProject.OutputPath;
             widthTextBox.Text = options.Width.ToString();
             heightTextBox.Text = options.Height.ToString();
             colorTextBox.Text = options.Background;
             fpsTextBox.Text = options.Fps.ToString();
 
-            InitCombo(platformCombo, project.MovieOptions.TargetPlatforms, project.MovieOptions.Platform);
+            InitCombo(platformCombo, BaseProject.MovieOptions.TargetPlatforms, BaseProject.MovieOptions.Platform);
             platformCombo.SelectedIndexChanged += platformCombo_SelectedIndexChanged;
 
-            InitCombo(versionCombo, project.MovieOptions.TargetVersions(this.platformCombo.Text), project.MovieOptions.Version);
+            InitCombo(versionCombo, BaseProject.MovieOptions.TargetVersions(this.platformCombo.Text), BaseProject.MovieOptions.Version);
             versionCombo.SelectedIndexChanged += versionCombo_SelectedIndexChanged;
             UpdateVersionCombo();
 
@@ -1091,9 +1070,8 @@ namespace ProjectManager.Controls
             options.Add(TestMovieBehavior.OpenDocument);
             options.Add(TestMovieBehavior.Webserver);
             options.Add(TestMovieBehavior.Custom);
-            List<string> items = options.ConvertAll<string>((item) => item.ToString());
-
-            InitCombo(testMovieCombo, items.ToArray(), project.TestMovieBehavior.ToString(), "Label.TestMovie");
+            List<string> items = options.ConvertAll((item) => item.ToString());
+            InitCombo(testMovieCombo, items.ToArray(), BaseProject.TestMovieBehavior.ToString(), "Label.TestMovie");
         }
 
         private void InitCombo(ComboBox combo, object[] items, object select)
@@ -1104,13 +1082,13 @@ namespace ProjectManager.Controls
         private void InitCombo(ComboBox combo, object[] values, object select, string localizePrefix)
         {
             combo.Items.Clear();
-            ComboItem[] items = Array.ConvertAll<object, ComboItem>(values, (value) => new ComboItem(value, localizePrefix));
+            ComboItem[] items = Array.ConvertAll(values, (value) => new ComboItem(value, localizePrefix));
             combo.Items.AddRange(items);
 
             if (select != null)
             {
                 string value = select.ToString();
-                int index = Array.FindIndex<ComboItem>(items, (item) => item.Value.ToString() == value);
+                int index = Array.FindIndex(items, (item) => item.Value.ToString() == value);
                 if (index >= 0) combo.SelectedIndex = index;
             }
         }
@@ -1118,19 +1096,19 @@ namespace ProjectManager.Controls
         private string GetPlatform()
         {
             if (platformCombo.SelectedIndex < 0) return null;
-            else return (platformCombo.SelectedItem as ComboItem).Value.ToString();
+            return ((ComboItem) platformCombo.SelectedItem).Value.ToString();
         }
 
         private OutputType GetOutput()
         {
             if (outputCombo.SelectedIndex < 0) return OutputType.Unknown;
-            else return (OutputType)Enum.Parse(typeof(OutputType), (outputCombo.SelectedItem as ComboItem).Value.ToString());
+            return (OutputType)Enum.Parse(typeof(OutputType), ((ComboItem) outputCombo.SelectedItem).Value.ToString());
         }
 
         private TestMovieBehavior GetTestMovie()
         {
             if (testMovieCombo.SelectedIndex < 0) return TestMovieBehavior.Unknown;
-            else return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), (testMovieCombo.SelectedItem as ComboItem).Value.ToString());
+            return (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), ((ComboItem) testMovieCombo.SelectedItem).Value.ToString());
         }
 
         protected void Modified()
@@ -1140,32 +1118,32 @@ namespace ProjectManager.Controls
 
         protected virtual bool Apply()
         {
-            MovieOptions options = project.MovieOptions;
+            MovieOptions options = BaseProject.MovieOptions;
 
             try
             {
-                project.OutputType = GetOutput();
-                if (OuputValid(outputSwfBox.Text)) project.OutputPath = outputSwfBox.Text;
-                project.Classpaths.Clear();
-                project.Classpaths.AddRange(classpathControl.Classpaths);
+                BaseProject.OutputType = GetOutput();
+                if (OuputValid(outputSwfBox.Text)) BaseProject.OutputPath = outputSwfBox.Text;
+                BaseProject.Classpaths.Clear();
+                BaseProject.Classpaths.AddRange(classpathControl.Classpaths);
                 options.Width = int.Parse(widthTextBox.Text);
                 options.Height = int.Parse(heightTextBox.Text);
                 options.BackgroundColor = Color.FromArgb(255, colorLabel.BackColor);
                 options.Fps = int.Parse(fpsTextBox.Text);
                 options.Platform = GetPlatform();
                 options.Version = versionCombo.Text;
-                project.PreBuildEvent = preBuildBox.Text;
-                project.PostBuildEvent = postBuildBox.Text;
-                project.AlwaysRunPostBuild = alwaysExecuteCheckBox.Checked;
-                project.TestMovieBehavior = GetTestMovie();
+                BaseProject.PreBuildEvent = preBuildBox.Text;
+                BaseProject.PostBuildEvent = postBuildBox.Text;
+                BaseProject.AlwaysRunPostBuild = alwaysExecuteCheckBox.Checked;
+                BaseProject.TestMovieBehavior = GetTestMovie();
 
                 if (sdkChanged)
                 {
-                    if (customTextBox.Text.Length > 0) project.PreferredSDK = customTextBox.Text;
+                    if (customTextBox.Text.Length > 0) BaseProject.PreferredSDK = customTextBox.Text;
                     else
                     {
                         InstalledSDK sdk = sdkComboBox.SelectedItem as InstalledSDK;
-                        project.PreferredSDK = sdk != null ? sdk.ToPreferredSDK() : null;
+                        BaseProject.PreferredSDK = sdk?.ToPreferredSDK();
                     }
                 }
             }
@@ -1175,9 +1153,9 @@ namespace ProjectManager.Controls
                 return false;
             }
             // copy compiler option values
-            project.CompilerOptions = optionsCopy;
+            BaseProject.CompilerOptions = optionsCopy;
             btnApply.Enabled = false;
-            propertiesChanged = true;
+            PropertiesChanged = true;
             return true;
         }
 
@@ -1212,7 +1190,7 @@ namespace ProjectManager.Controls
 
         private void outputSwfBox_TextChanged(object sender, EventArgs e)
         {
-            classpathsChanged = true;
+            ClasspathsChanged = true;
             Modified();
         }
 
@@ -1258,9 +1236,9 @@ namespace ProjectManager.Controls
             langPlatform = GetLanguagePlatform(platformCombo.Text);
 
             this.versionCombo.Items.Clear();
-            this.versionCombo.Items.AddRange(project.MovieOptions.TargetVersions(this.platformCombo.Text));
+            this.versionCombo.Items.AddRange(BaseProject.MovieOptions.TargetVersions(this.platformCombo.Text));
             this.versionCombo.SelectedIndex = Math.Max(0, this.versionCombo.Items.IndexOf(
-                        project.MovieOptions.DefaultVersion(this.platformCombo.Text)));
+                        BaseProject.MovieOptions.DefaultVersion(this.platformCombo.Text)));
 
             UpdateVersionCombo();
             InitTestMovieOptions();
@@ -1270,7 +1248,7 @@ namespace ProjectManager.Controls
             UpdateClasspaths();
             UpdateCompilerOptions();
 
-            platformChanged = true;
+            PlatformChanged = true;
             Modified();
         }
 
@@ -1286,13 +1264,13 @@ namespace ProjectManager.Controls
 
         private void versionCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            platformChanged = true;
+            PlatformChanged = true;
             Modified();
         }
 
         void classpathControl_Changed(object sender, EventArgs e)
         {
-            classpathsChanged = true; // keep special track of this, it's a big deal
+            ClasspathsChanged = true; // keep special track of this, it's a big deal
             Modified();
         }
 
@@ -1322,17 +1300,17 @@ namespace ProjectManager.Controls
             {
                 dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
                 dialog.OverwritePrompt = false;
-                dialog.InitialDirectory = project.Directory;
+                dialog.InitialDirectory = BaseProject.Directory;
                 // try pre-setting the current output path
                 try
                 {
-                    string path = project.GetAbsolutePath(outputSwfBox.Text);
+                    string path = BaseProject.GetAbsolutePath(outputSwfBox.Text);
                     if (File.Exists(path)) dialog.FileName = path;
                 }
                 catch { }
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    outputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+                    outputSwfBox.Text = BaseProject.GetRelativePath(dialog.FileName);
                 }
             }
         }
@@ -1351,11 +1329,11 @@ namespace ProjectManager.Controls
                 caption = TextHelper.GetString("Title.CustomTestMovieCommand");
                 label = TextHelper.GetString("Label.CustomTestMovieCommand");
             }
-            using (LineEntryDialog dialog = new LineEntryDialog(caption, label, project.TestMovieCommand ?? ""))
+            using (LineEntryDialog dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? ""))
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    project.TestMovieCommand = dialog.Line;
+                    BaseProject.TestMovieCommand = dialog.Line;
                     Modified();
                     btnOK.Focus();
                 }
@@ -1364,20 +1342,16 @@ namespace ProjectManager.Controls
 
         private void preBuilderButton_Click(object sender, System.EventArgs e)
         {
-            using (BuildEventDialog dialog = new BuildEventDialog(project))
-            {
-                dialog.CommandLine = preBuildBox.Text;
-                if (dialog.ShowDialog(this) == DialogResult.OK) preBuildBox.Text = dialog.CommandLine;
-            }
+            using BuildEventDialog dialog = new BuildEventDialog(BaseProject);
+            dialog.CommandLine = preBuildBox.Text;
+            if (dialog.ShowDialog(this) == DialogResult.OK) preBuildBox.Text = dialog.CommandLine;
         }
 
         private void postBuilderButton_Click(object sender, System.EventArgs e)
         {
-            using (BuildEventDialog dialog = new BuildEventDialog(project))
-            {
-                dialog.CommandLine = postBuildBox.Text;
-                if (dialog.ShowDialog(this) == DialogResult.OK) postBuildBox.Text = dialog.CommandLine;
-            }
+            using BuildEventDialog dialog = new BuildEventDialog(BaseProject);
+            dialog.CommandLine = postBuildBox.Text;
+            if (dialog.ShowDialog(this) == DialogResult.OK) postBuildBox.Text = dialog.CommandLine;
         }
 
         private void outputCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1390,10 +1364,10 @@ namespace ProjectManager.Controls
         private void UpdateGeneralPanel()
         {
             OutputType output = GetOutput();
-            generalGroupBox.Enabled = project.MovieOptions.HasOutput(output);
+            generalGroupBox.Enabled = BaseProject.MovieOptions.HasOutput(output);
             testMovieCombo.Enabled = (output != OutputType.Library);
             
-            bool isGraphical = project.MovieOptions.IsGraphical(GetPlatform());
+            bool isGraphical = BaseProject.MovieOptions.IsGraphical(GetPlatform());
             widthTextBox.Enabled = heightTextBox.Enabled = fpsTextBox.Enabled
                 = colorTextBox.Enabled = colorLabel.Enabled = isGraphical;
 
@@ -1405,7 +1379,7 @@ namespace ProjectManager.Controls
 
         private void manageButton_Click(object sender, EventArgs e)
         {
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ShowSettings", project.Language);
+            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.ShowSettings", BaseProject.Language);
             EventManager.DispatchEvent(this, de);
             if (de.Handled) InitSDKTab();
         }
@@ -1418,14 +1392,12 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, EventArgs e)
         {
-            using (VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog())
+            using VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
+            if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
+                folder.SelectedPath = customTextBox.Text;
+            if (folder.ShowDialog() == DialogResult.OK)
             {
-                if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
-                    folder.SelectedPath = customTextBox.Text;
-                if (folder.ShowDialog() == DialogResult.OK)
-                {
-                    customTextBox.Text = folder.SelectedPath;
-                }
+                customTextBox.Text = folder.SelectedPath;
             }
         }
 
@@ -1444,12 +1416,12 @@ namespace ProjectManager.Controls
 
             SelectItem(outputCombo, OutputType.Application);
             SelectItem(testMovieCombo, TestMovieBehavior.Custom);
-            project.TestMovieCommand = "";
+            BaseProject.TestMovieCommand = "";
 
             if (langPlatform.DefaultProjectFile == null) return;
 
             foreach (string fileName in langPlatform.DefaultProjectFile)
-                if (File.Exists(project.GetAbsolutePath(fileName)))
+                if (File.Exists(BaseProject.GetAbsolutePath(fileName)))
                 {
                     outputSwfBox.Text = fileName;
                     break;
@@ -1459,20 +1431,17 @@ namespace ProjectManager.Controls
         private bool IsExternalConfiguration()
         {
             string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
-            PlatformVersion version = langPlatform != null ? langPlatform.GetVersion(selectedVersion) : null;
-            return version != null && version.Commands != null && version.Commands.ContainsKey("display");
+            PlatformVersion version = langPlatform?.GetVersion(selectedVersion);
+            return version?.Commands != null && version.Commands.ContainsKey("display");
         }
 
-        private bool IsExternalToolchain()
-        {
-            return langPlatform != null && langPlatform.ExternalToolchain != null;
-        }
+        private bool IsExternalToolchain() => langPlatform?.ExternalToolchain != null;
 
         private LanguagePlatform GetLanguagePlatform(string platformName)
         {
-            if (PlatformData.SupportedLanguages.ContainsKey(project.Language))
+            if (PlatformData.SupportedLanguages.ContainsKey(BaseProject.Language))
             {
-                SupportedLanguage lang = PlatformData.SupportedLanguages[project.Language];
+                SupportedLanguage lang = PlatformData.SupportedLanguages[BaseProject.Language];
                 if (lang.Platforms.ContainsKey(platformName))
                     return lang.Platforms[platformName];
             }
@@ -1493,9 +1462,6 @@ namespace ProjectManager.Controls
             if (string.IsNullOrEmpty(Label)) Label = value.ToString();
         }
 
-        public override string ToString()
-        {
-             return Label;
-        }
+        public override string ToString() => Label;
     }
 }

@@ -196,11 +196,7 @@ namespace PluginCore
             return null;
         }
 
-        private static string ParseSwfVersion(XmlNode node)
-        {
-            var attr = node.Attributes["swf-version"];
-            return attr != null ? attr.Value : null;
-        }
+        private static string ParseSwfVersion(XmlNode node) => node.Attributes["swf-version"]?.Value;
 
         #endregion
     }

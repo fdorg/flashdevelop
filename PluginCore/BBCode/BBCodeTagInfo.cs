@@ -2,11 +2,11 @@ namespace PluginCore.BBCode
 {
     public class BBCodeTagInfo
     {
-
         public BBCodeTagInfo()
         {
             _init_BBCodeTagInfo(false, "", null);
         }
+
         public BBCodeTagInfo(bool isTagOpener, string tagName, string tagParam)
         {
             _init_BBCodeTagInfo(isTagOpener, tagName, tagParam);
@@ -14,39 +14,24 @@ namespace PluginCore.BBCode
 
         protected void _init_BBCodeTagInfo(bool isTagOpener, string tagName, string tagParam)
         {
-            _tagName = tagName != null ? tagName : "";
-            _tagParam = tagParam != null ? tagParam : "";
-            _isTagOpener = isTagOpener;
+            this.tagName = tagName ?? "";
+            this.tagParam = tagParam ?? "";
+            this.isTagOpener = isTagOpener;
         }
 
+        public bool isTagOpener { get; private set; }
 
-        private bool _isTagOpener;
-        private string _tagName;
-        private string _tagParam;
+        public string tagName { get; private set; }
 
+        public string tagParam { get; private set; }
 
-        public bool isTagOpener
-        {
-            get { return _isTagOpener; }
-        }
-        public string tagName
-        {
-            get { return _tagName; }
-        }
-        public string tagParam
-        {
-            get { return _tagParam; }
-        }
-
-
-        override public string ToString()
+        public override string ToString()
         {
             return "[bbCodeTagInfo"
-                   + " isTagOpener=" + _isTagOpener
-                   + " tagName='" + _tagName + "'"
-                   + " tagParam='" + _tagParam + "'"
+                   + " isTagOpener=" + isTagOpener
+                   + " tagName='" + tagName + "'"
+                   + " tagParam='" + tagParam + "'"
                    + "]";
         }
-
     }
 }
