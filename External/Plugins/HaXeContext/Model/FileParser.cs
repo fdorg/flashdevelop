@@ -873,7 +873,7 @@ namespace HaXeContext.Model
                     // method parameter's default value 
                     else if ((curMember.Flags & FlagType.Variable) > 0)
                     {
-                        if (inParams)
+                        if (!string.IsNullOrEmpty(param))
                         {
                             curMember.Value = param;
                             curMember.ValueEndPosition = i - 1;

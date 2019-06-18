@@ -728,6 +728,7 @@ namespace HaXeContext
             }
             // classes
             {
+                var isHaxe4 = GetCurrentSDKVersion() >= "4.0.0";
                 for (var i = 0; i < result.Classes.Count; i++)
                 {
                     var @class = result.Classes[i];
@@ -735,26 +736,49 @@ namespace HaXeContext
                     if ((flags & FlagType.Abstract) != 0)
                     {
                         var meta = @class.MetaDatas;
-                        if (meta != null && meta.Any(it => it.Name == ":enum"))
+                        if (meta is null || meta.All(it => it.Name != ":enum")) continue;
+                        /**
+                         * transform
+                         * @:enum abstract AType(T) {
+                         *     var Value;
+                         * }
+                         * to
+                         * @:enum abstract AType(T) {
+                         *     public static var Value;
+                         * }
+                         */
+                        for (int index = 0, count = @class.Members.Count; index < count; index++)
                         {
-                            /**
-                             * transform
-                             * @:enum abstract AType(T) {
-                             *     var Value;
-                             * }
-                             * to
-                             * @:enum abstract AType(T) {
-                             *     public static var Value;
-                             * }
-                             */
-                            for (int index = 0, count = @class.Members.Count; index < count; index++)
+                            var member = @class.Members[index];
+                            if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                            member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
+                            member.Access = Visibility.Public;
+                            if (string.IsNullOrEmpty(member.Type)) member.Type = @class.Type;
+                            member.InFile = @class.InFile;
+                            if (isHaxe4 && member.Value is null)
                             {
-                                var member = @class.Members[index];
-                                if (!member.Flags.HasFlag(FlagType.Variable)) continue;
-                                member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
-                                member.Access = Visibility.Public;
-                                if (string.IsNullOrEmpty(member.Type)) member.Type = @class.Type;
-                                member.InFile = @class.InFile;
+                                @class.ResolveExtends();
+                                var extends = @class;
+                                while (!extends.IsVoid())
+                                {
+                                    if (extends.Name == "String")
+                                    {
+                                        /**
+                                         * for example:
+                                         * transform
+                                         * enum abstract AString(String) {
+                                         *     var A;
+                                         * }
+                                         * to
+                                         * enum abstract AString(String) {
+                                         *     var A = "A";
+                                         * }
+                                         */
+                                        member.Value = $"\"{member.Name}\"";
+                                        break;
+                                    }
+                                    extends = extends.Extends;
+                                }
                             }
                         }
                     }
@@ -811,7 +835,7 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => haxeSettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
+        private InstalledSDK GetCurrentSDK() => context.Settings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
         public SemVer GetCurrentSDKVersion()
         {

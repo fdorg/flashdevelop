@@ -72,7 +72,8 @@
     <Compile Include="Generators\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
-    <Compile Include="Model\FileParserTests.cs" />
+    <Compile Include="Model\Haxe3\FileParserTests.cs" />
+    <Compile Include="Model\Haxe4\FileParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
@@ -1739,6 +1740,8 @@
     <EmbeddedResource Include="Test Files\generators\code\ImplementInterfaceNoPublicMember.hx" />
     <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue2788_1.hx" />
     <EmbeddedResource Include="Test Files\completion\GetExpressionType_Type_issue2796_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2801_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue2801_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
