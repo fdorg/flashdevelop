@@ -521,6 +521,13 @@ namespace HaXeContext.Generators
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
 
+        protected override MemberModel ToParameterVar(FunctionParameter member)
+        {
+            if (member.result?.Type is { } t && (t.Flags & FlagType.Struct) != 0)
+                return new MemberModel(AvoidKeyword(member.paramName), GetShortType(t.Type), FlagType.ParameterVar, 0);
+            return base.ToParameterVar(member);
+        }
+
         protected override string ToDeclarationWithModifiersString(MemberModel member, string template)
         {
             if (((HaXeSettings) ASContext.Context.Settings).DisableVoidTypeDeclaration && member.Type == ASContext.Context.Features.voidKey)

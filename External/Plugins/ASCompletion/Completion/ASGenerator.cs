@@ -1638,7 +1638,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        internal static string AvoidKeyword(string word)
+        protected internal static string AvoidKeyword(string word)
         {
             var features = ASContext.Context.Features;
             return features.accessKeywords.Contains(word)
@@ -2915,18 +2915,11 @@ namespace ASCompletion.Completion
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
+            var generator = ((ASGenerator) ASContext.Context.CodeGenerator);
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = new List<MemberModel>();
-            foreach (var it in parameters)
-            {
-                string type;
-                // TODO slavara: newMember.Parameters.Add(ToParameterVar(it));
-                if (it.result?.Type is {} t && (t.Flags & FlagType.Struct) != 0) type = t.Type;
-                else type = it.paramType.Length > it.paramQualType.Length ? it.paramType : it.paramQualType;
-                newMember.Parameters.Add(new MemberModel(AvoidKeyword(it.paramName), GetShortType(type), FlagType.ParameterVar, 0));
-            }
+            newMember.Parameters = parameters.Select(generator.ToParameterVar).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
-            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, newMember, position, inClass, detach);
+            generator.GenerateFunction(sci, newMember, position, inClass, detach);
         }
 
         protected virtual void GenerateFunction(ScintillaControl sci, MemberModel member, int position, ClassModel inClass, bool detach)
@@ -3932,6 +3925,12 @@ namespace ASCompletion.Completion
             UpdateLookupPosition(position, text.Length - length);
         }
 
+        protected virtual MemberModel ToParameterVar(FunctionParameter member)
+        {
+            var type = member.paramType.Length > member.paramQualType.Length ? member.paramType : member.paramQualType;
+            return new MemberModel(AvoidKeyword(member.paramName), GetShortType(type), FlagType.ParameterVar, 0);
+        }
+
         protected virtual string ToDeclarationWithModifiersString(MemberModel member, string template) => TemplateUtils.ToDeclarationWithModifiersString(member, template);
 
         #endregion
@@ -4281,7 +4280,7 @@ namespace ASCompletion.Completion
 
         static readonly Regex reShortType = new Regex(@"(?=\w+\.<)|(?:\w+\.)");
 
-        static string GetShortType(string type)
+        protected static string GetShortType(string type)
         {
             if (string.IsNullOrEmpty(type)) return type;
             if (!type.Contains('@') && type.LastIndexOf('.') is int startIndex && startIndex != -1)
