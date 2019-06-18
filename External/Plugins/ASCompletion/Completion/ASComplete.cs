@@ -47,7 +47,7 @@ namespace ASCompletion.Completion
         public static Keys HelpKeys = Keys.F1;
 
         //stores the currently used class namespace and name
-        private static string currentClassHash = null;
+        private static string currentClassHash;
         //stores the last completed member for each class
         protected static readonly IDictionary<string, string> completionHistory = new Dictionary<string, string>();
 
@@ -184,8 +184,7 @@ namespace ASCompletion.Completion
                 {
                     case '(':
                     case ',':
-                        if (!ASContext.CommonSettings.DisableCallTip) return HandleFunctionCompletion(sci, autoHide);
-                        return false;
+                        return !ASContext.CommonSettings.DisableCallTip && HandleFunctionCompletion(sci, autoHide);
 
                     case ')':
                         if (UITools.CallTip.CallTipActive) UITools.CallTip.Hide();
@@ -281,17 +280,16 @@ namespace ASCompletion.Completion
             // project types completion
             if (keys == (Keys.Control | Keys.Alt | Keys.Space))
             {
-                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
-                {
-                    int position = sci.CurrentPos - 1;
-                    string tail = GetWordLeft(sci, ref position);
-                    ContextFeatures features = ASContext.Context.Features;
-                    if (!tail.Contains(features.dot) && features.HasTypePreKey(tail)) tail = "";
-                    // display the full project classes list
-                    HandleAllClassesCompletion(sci, tail, false, true);
-                    return true;
-                }
-                return false;
+                if (!ASContext.HasContext
+                    || !ASContext.Context.IsFileValid
+                    || ASContext.Context.Settings.LazyClasspathExploration) return false;
+                var position = sci.CurrentPos - 1;
+                var tail = GetWordLeft(sci, ref position);
+                var features = ASContext.Context.Features;
+                if (!tail.Contains(features.dot) && features.HasTypePreKey(tail)) tail = "";
+                // display the full project classes list
+                HandleAllClassesCompletion(sci, tail, false, true);
+                return true;
             }
             // hot build
             if (keys == (Keys.Control | Keys.Enter))
@@ -530,11 +528,9 @@ namespace ASCompletion.Completion
                 var position = positions[i] + i * braceString.Length;
                 sci.InsertText(position, braceString);
                 positions[i] = position;
-                if (brace.AddSpace)
-                {
-                    sci.InsertText(position, " ");
-                    if (i + 1 < selections) positions[i + 1] += " ".Length * (i + 1);
-                }
+                if (!brace.AddSpace) continue;
+                sci.InsertText(position, " ");
+                if (i + 1 < selections) positions[i + 1] += " ".Length * (i + 1);
             }
             sci.SetSelection(positions[0], positions[0]);
             for (var i = 1; i < selections; i++)
@@ -547,14 +543,12 @@ namespace ASCompletion.Completion
 
         private static bool HandleBraceClose(ScintillaControl sci, Brace brace, char close, char next, int nextPosition)
         {
-            if (close == brace.Close && next == brace.Close && brace.ShouldClose(sci.CurrentPos, nextPosition))
-            {
-                sci.DeleteBack();
-                sci.AnchorPosition = nextPosition;
-                sci.CurrentPos = nextPosition;
-                return true;
-            }
-            return false;
+            if (close != brace.Close || next != brace.Close || !brace.ShouldClose(sci.CurrentPos, nextPosition))
+                return false;
+            sci.DeleteBack();
+            sci.AnchorPosition = nextPosition;
+            sci.CurrentPos = nextPosition;
+            return true;
         }
         
         private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open)
@@ -2949,7 +2943,7 @@ namespace ASCompletion.Completion
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
                 {
-                    if (features.hasInference && result.Member is MemberModel member && member.Type is null)
+                    if (features.hasInference && result.Member is { } member && member.Type is null)
                     {
                         ctx.CodeComplete.InferType(ASContext.CurSciControl, local, member);
                         if (member.Type != null) result.Type = ResolveType(member.Type, inFile);
@@ -3140,7 +3134,7 @@ namespace ASCompletion.Completion
             if (result.IsPackage)
             {
                 var ctx = ASContext.Context;
-                string fullName = (result.InFile.Package.Length > 0) ? result.InFile.Package + "." + token : token;
+                var fullName = (result.InFile.Package.Length > 0) ? result.InFile.Package + "." + token : token;
                 foreach (MemberModel mPack in result.InFile.Imports)
                 {
                     if (mPack.Name == token)
@@ -3148,7 +3142,7 @@ namespace ASCompletion.Completion
                         // sub-package
                         if (mPack.Flags == FlagType.Package)
                         {
-                            FileModel package = ctx.ResolvePackage(fullName, false);
+                            var package = ctx.ResolvePackage(fullName, false);
                             if (package != null) result.InFile = package;
                             else
                             {
@@ -3203,7 +3197,7 @@ namespace ASCompletion.Completion
             if (found != null && (found.Flags & FlagType.Setter) > 0)
             {
                 found = null;
-                MemberList matches = inFile.Members.MultipleSearch(token, mask, access);
+                var matches = inFile.Members.MultipleSearch(token, mask, access);
                 foreach (MemberModel member in matches)
                 {
                     found = member;
@@ -5028,7 +5022,7 @@ namespace ASCompletion.Completion
 
                 // resolve context & do smart insertion
                 expr.LocalVars = ParseLocalVars(expr);
-                ASResult context = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
+                var context = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
                 if (SmartInsertion(sci, position, expr, context))
                     DispatchInsertedElement(context, trigger);
             }
@@ -5039,16 +5033,12 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.Settings.GenerateImports) return;
             try
             {
-                ClassModel import = ((EventItem) item).EventType;
-                if (!ASContext.Context.IsImported(import, sci.LineFromPosition(position)))
-                {
-                    int offset = ASGenerator.InsertImport(import, true);
-                    if (offset > 0)
-                    {
-                        position += offset;
-                        sci.SetSel(position, position);
-                    }
-                }
+                var import = ((EventItem) item).EventType;
+                if (ASContext.Context.IsImported(import, sci.LineFromPosition(position))) return;
+                var offset = ASGenerator.InsertImport(import, true);
+                if (offset <= 0) return;
+                position += offset;
+                sci.SetSel(position, position);
             }
             catch (Exception) // event type name already present in imports
             {
@@ -5059,8 +5049,8 @@ namespace ASCompletion.Completion
         {
             ContextFeatures features = ASContext.Context.Features;
             FileModel cFile = ASContext.Context.CurrentModel;
-            FileModel inFile = null;
-            MemberModel import = null;
+            FileModel inFile;
+            MemberModel import;
 
             // if completed a package-level member
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package != "")
@@ -5166,10 +5156,8 @@ namespace ASCompletion.Completion
 
         private static void DispatchInsertedElement(ASResult context, char trigger)
         {
-            Hashtable info = new Hashtable();
-            info["context"] = context;
-            info["trigger"] = trigger;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.InsertedElement", info);
+            var info = new Hashtable {["context"] = context, ["trigger"] = trigger};
+            var de = new DataEvent(EventType.Command, "ASCompletion.InsertedElement", info);
             EventManager.DispatchEvent(ASContext.Context, de);
         }
 
@@ -5440,17 +5428,18 @@ namespace ASCompletion.Completion
         /// End position of expression
         /// </summary>
         public int Position;
+
+        /// <summary>
+        /// Start position of expression
+        /// </summary>
+        public int PositionExpression;
+
         public MemberModel ContextMember;
         public MemberList LocalVars;
         public MemberModel ContextFunction;
         public string FunctionBody;
         public int FunctionOffset;
         public bool BeforeBody;
-
-        /// <summary>
-        /// Start position of expression
-        /// </summary>
-        public int PositionExpression;
         public string Value;
         public List<string> SubExpressions;
         public List<int> SubExpressionPositions;

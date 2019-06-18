@@ -28,7 +28,7 @@ namespace HaXeContext.Completion
         protected override bool IsAvailableForToolTip(ScintillaControl sci, int position)
         {
             return base.IsAvailableForToolTip(sci, position)
-                   || (sci.GetWordFromPosition(position) is string word && (word == "cast" || word == "new"));
+                   || (sci.GetWordFromPosition(position) is { } word && (word == "cast" || word == "new"));
         }
 
         public override bool IsRegexStyle(ScintillaControl sci, int position)
@@ -94,7 +94,7 @@ namespace HaXeContext.Completion
                     return HandleMetadataForwardCompletion(sci, autoHide);
                 default:
                     // for example: https://haxe.org/manual/macro-reification-expression.html
-                    if (ASContext.Context.CurrentMember is MemberModel member
+                    if (ASContext.Context.CurrentMember is { } member
                         && member.Flags.HasFlag(FlagType.Function) && member.Flags.HasFlag((FlagType) HaxeFlagType.Macro))
                     {
                         // for example: $a<complete>
@@ -111,7 +111,7 @@ namespace HaXeContext.Completion
             }
             return false;
             // Utils
-            bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is ClassModel t && !t.IsVoid();
+            bool IsType(int position) => GetExpressionType(sci, position, false, true).Type is { } t && !t.IsVoid();
         }
 
         /// <inheritdoc />
@@ -128,10 +128,10 @@ namespace HaXeContext.Completion
                     // for example: case EnumValue | <complete> or case EnumValue, <complete>
                     if (c == '|' || c == ',')
                     {
-                        while (GetExpressionType(sci, pos + 1, false, true) is ASResult expr && expr.Type != null && !expr.Type.IsVoid())
+                        while (GetExpressionType(sci, pos + 1, false, true) is { } expr && expr.Type != null && !expr.Type.IsVoid())
                         {
                             if (expr.Context.WordBefore == "case") return HandleSwitchCaseCompletion(sci, pos, autoHide);
-                            if (expr.Context.Separator is string separator && (separator == "|" || separator == ","))
+                            if (expr.Context.Separator is { } separator && (separator == "|" || separator == ","))
                                 pos = expr.Context.SeparatorPosition - 1;
                             else break;
                         }
@@ -187,7 +187,7 @@ namespace HaXeContext.Completion
                 mask = FlagType.Static;
             }
             else return false;
-            if (ctx.CurrentModel.Classes.Find(it => it.LineFrom > currentLine) is ClassModel @class && @class.Flags.HasFlag(FlagType.Abstract))
+            if (ctx.CurrentModel.Classes.Find(it => it.LineFrom > currentLine) is { } @class && @class.Flags.HasFlag(FlagType.Abstract))
             {
                 var extends = @class.Extends;
                 if (!extends.IsVoid()) return false;
@@ -214,8 +214,8 @@ namespace HaXeContext.Completion
             var pos = position - 1;
             var paramIndex = FindParameterIndex(sci, ref pos);
             if (pos != -1 && ResolveFunction(sci, pos, autoHide)
-                && calltipMember?.Parameters is List<MemberModel> parameters && paramIndex < parameters.Count
-                && parameters[paramIndex] is MemberModel parameter && parameter.Type is string parameterType)
+                && calltipMember?.Parameters is { } parameters && paramIndex < parameters.Count
+                && parameters[paramIndex] is { } parameter && parameter.Type is { } parameterType)
             {
                 ClassModel type;
                 if (FileParser.IsFunctionType(parameterType))
@@ -240,7 +240,7 @@ namespace HaXeContext.Completion
         bool HandleAssignCompletion(ScintillaControl sci, int position, bool autoHide)
         {
             var expr = GetExpressionType(sci, position, false, true);
-            return expr.Type is ClassModel type && HandleAssignCompletion(sci, autoHide, (char) sci.CharAt(position), type, expr);
+            return expr.Type is { } type && HandleAssignCompletion(sci, autoHide, (char) sci.CharAt(position), type, expr);
         }
 
         bool HandleAssignCompletion(ScintillaControl sci, bool autoHide, char c, ClassModel type, ASResult expr)
@@ -271,7 +271,7 @@ namespace HaXeContext.Completion
             // for example: function(v:Type = <complete>
             if (expr.Context.ContextFunction != null && expr.Context.BeforeBody && !IsEnum(type))
             {
-                if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is string v && v != "null") return false;
+                if (expr.Context.Separator != "->" && ctx.GetDefaultValue(type.Name) is { } v && v != "null") return false;
                 CompletionList.Show(new List<ICompletionListItem> {new TemplateItem(new MemberModel("null", "null", FlagType.Template, 0))}, autoHide);
                 return true;
             }
@@ -288,12 +288,12 @@ namespace HaXeContext.Completion
                     while (expr.Context.Separator == "->")
                     {
                         expr = GetExpressionType(sci, expr.Context.SeparatorPosition, false, true);
-                        if (expr.Type == null) return false;
+                        if (expr.Type is null) return false;
                         functionType = expr.Type.Name + "->" + functionType;
                     }
                     member = FileParser.FunctionTypeToMemberModel<MemberModel>(functionType, ctx.Features);
                 }
-                if (member == null) return false;
+                if (member is null) return false;
                 var functionName = "function() {}";
                 var list = new List<ICompletionListItem> {new AnonymousFunctionGeneratorItem(functionName, () => CodeGenerator.GenerateAnonymousFunction(sci, member, TemplateUtils.GetTemplate("AnonymousFunction")))};
                 if (ctx is Context context && context.GetCurrentSDKVersion() >= "4.0.0")
@@ -530,7 +530,7 @@ namespace HaXeContext.Completion
                 return true;
             }
             var type = expr.Type;
-            if ((member != null && expr.Path != "super") || type == null)
+            if ((member != null && expr.Path != "super") || type is null)
             {
                 // for example: cast(<complete>
                 if (expr.Context.Value == "cast")
@@ -566,6 +566,14 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferType(ScintillaControl sci, ASExpr local, MemberModel member)
         {
+            /**
+             * for example:
+             * var v = it;
+             * for(it in v) {
+             *     it<complete>
+             * }
+             */
+            if (!string.IsNullOrEmpty(local.Value) && sci.PositionFromLine(member.LineFrom) > local.Position) return;
             if (!TryInferGenericType(member).IsVoid()) return;
             if (member.Flags.HasFlag(FlagType.ParameterVar))
             {
@@ -658,7 +666,7 @@ namespace HaXeContext.Completion
                     }
                     else expr = GetExpressionType(sci, i, false, true);
                     var exprType = expr.Type;
-                    if (exprType == null) return;
+                    if (exprType is null) return;
                     string iteratorIndexType = null;
                     exprType.ResolveExtends();
                     while (!exprType.IsVoid())
@@ -671,7 +679,7 @@ namespace HaXeContext.Completion
                         }
                         var members = exprType.Members;
                         var iterator = members.Search("iterator", 0, 0);
-                        if (iterator == null)
+                        if (iterator is null)
                         {
                             if (members.Contains("hasNext", 0, 0))
                             {
@@ -723,7 +731,7 @@ namespace HaXeContext.Completion
                             }
                         }
                     }
-                    if (member.Type == null)
+                    if (member.Type is null)
                     {
                         var type = ResolveType(ctx.Features.dynamicKey, null);
                         member.Type = type.QualifiedName;
@@ -1003,7 +1011,7 @@ namespace HaXeContext.Completion
             {
                 if (sci.PositionIsOnComment(i) || sci.CharAt(i) != ';') continue;
                 var expr = GetExpression(sci, i, true);
-                if (expr.Value is string name && !string.IsNullOrEmpty(name) && name != ASContext.Context.Features.voidKey)
+                if (expr.Value is { } name && !string.IsNullOrEmpty(name) && name != ASContext.Context.Features.voidKey)
                 {
                     var wordBefore = expr.WordBefore;
                     // for example: untyped "";<position>
@@ -1072,7 +1080,7 @@ namespace HaXeContext.Completion
         protected override ASExpr GetExpressionEx(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
             var result = base.GetExpressionEx(sci, position, ignoreWhiteSpace);
-            if (result.ContextFunction is MemberModel member
+            if (result.ContextFunction is { } member
                 && (member.Flags & (FlagType) HaxeFlagType.Macro) != 0
                 && sci.CharAt(result.PositionExpression - 1) == '$')
             {
@@ -1160,7 +1168,7 @@ namespace HaXeContext.Completion
                 {
                     var type = ResolveType(ctx.Features.stringKey, inFile);
                     // for example: ""|, ''|
-                    if (context.SubExpressions == null) expression = type.Name + ".#.";
+                    if (context.SubExpressions is null) expression = type.Name + ".#.";
                     // for example: "".<complete>, ''.<complete>
                     else
                     {
@@ -1196,7 +1204,7 @@ namespace HaXeContext.Completion
             }
             var result = base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
             // for example: trace<complete>, trace<cursor>()
-            if (result.Member == null && result.Type == null && (expression == "trace.#0~" || expression == "trace"))
+            if (result.Member is null && result.Type is null && (expression == "trace.#0~" || expression == "trace"))
             {
                 var type = ResolveType("haxe.Log", inFile);
                 if (!type.IsVoid())
@@ -1213,11 +1221,11 @@ namespace HaXeContext.Completion
 
         protected override string GetToolTipTextEx(ASResult expr)
         {
-            if (expr.Member == null && expr.Context is ASExpr context)
+            if (expr.Member is null && expr.Context is { } context)
             {
                 // for example: cast<cursor>(expr, Type);
                 if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
-                else if (context.Value is string s)
+                else if (context.Value is { } s)
                 {
                     // for example: cast<cursor> expr;
                     if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
@@ -1322,7 +1330,7 @@ namespace HaXeContext.Completion
             base.FindMemberEx(token, inFile, result, mask, access);
             if (result.Type != null && !result.Type.IsVoid()) return;
             var list = ASContext.Context.GetTopLevelElements();
-            if (list == null || list.Count == 0) return;
+            if (list is null || list.Count == 0) return;
             foreach (MemberModel it in list)
             {
                 if (it.Name != token || !it.Flags.HasFlag(FlagType.Enum)) continue;
@@ -1376,7 +1384,7 @@ namespace HaXeContext.Completion
                     }
                     result.Type = type;
                 }
-                else if (result.Type.IndexType is string indexType && FileParser.IsFunctionType(indexType))
+                else if (result.Type.IndexType is { } indexType && FileParser.IsFunctionType(indexType))
                 {
                     result.Member = (MemberModel) result.Member.Clone();
                     FileParser.FunctionTypeToMemberModel(indexType, ASContext.Context.Features, result.Member);
@@ -1395,7 +1403,7 @@ namespace HaXeContext.Completion
             {
                 var returnType = member.Type;
                 var subExpressions = context.SubExpressions;
-                if (!string.IsNullOrEmpty(member.Template) && subExpressions?.LastOrDefault() is string subExpression && subExpression.Length > 2)
+                if (!string.IsNullOrEmpty(member.Template) && subExpressions?.LastOrDefault() is { } subExpression && subExpression.Length > 2)
                 {
                     var subExpressionPosition = context.SubExpressionPositions.Last();
                     subExpression = subExpression.Substring(1, subExpression.Length - 2);
@@ -1425,7 +1433,7 @@ namespace HaXeContext.Completion
                         {
                             if (i == length) i++;
                             var expr = GetExpressionType(ASContext.CurSciControl, subExpressionPosition + i, false, true);
-                            if (expr.Type == null) expr.Type = ClassModel.VoidClass;
+                            if (expr.Type is null) expr.Type = ClassModel.VoidClass;
                             expressions.Add(expr);
                         }
                     }
@@ -1438,7 +1446,7 @@ namespace HaXeContext.Completion
                         // try transform T:{} to T
                         if (template.IndexOf(':') is int p && p != -1) template = template.Substring(0, p);
                         var reTemplateType = new Regex($"\\b{template}\\b");
-                        if (member.Parameters is List<MemberModel> parameters)
+                        if (member.Parameters is { } parameters)
                         {
                             for (var j = 0; j < parameters.Count && j < expressions.Count; j++)
                             {
@@ -1448,7 +1456,7 @@ namespace HaXeContext.Completion
                                 {
                                     // for example: typedef Null<T> = T, abstract Null<T> from T to T
                                     if (reTemplateType.IsMatch(parameterType)
-                                        && ResolveType(parameterType, result.InFile) is ClassModel expr && !expr.IsVoid()
+                                        && ResolveType(parameterType, result.InFile) is { } expr && !expr.IsVoid()
                                         && (expr.Flags & (FlagType.Abstract | FlagType.TypeDef)) != 0)
                                     {
                                     }
@@ -1497,7 +1505,7 @@ namespace HaXeContext.Completion
                 }
             }
             // for example: Null<SomeType>
-            if (inClass.ExtendsType is string extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != ASContext.Context.Features.objectKey
+            if (inClass.ExtendsType is { } extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != ASContext.Context.Features.objectKey
                 && inClass.Extends.IsVoid() && !string.IsNullOrEmpty(inClass.Template) && !string.IsNullOrEmpty(inClass.IndexType))
             {
                 var type = ResolveType(extendsType, ASContext.Context.CurrentModel);
@@ -1558,7 +1566,7 @@ namespace HaXeContext.Completion
         {
             var result = base.TypesAffinity(context, inClass, withClass);
             if (context != null
-                && ASContext.CurSciControl is ScintillaControl sci
+                && ASContext.CurSciControl is { } sci
                 && context.WordBefore == "privateAccess" && context.WordBeforePosition is int p
                 && sci.CharAt(p - 2) == '@' && sci.CharAt(p - 1) == ':') result |= Visibility.Private;
             return result;
@@ -1575,7 +1583,7 @@ namespace HaXeContext.Completion
             {
                 if (i > 0) sb.Append("->");
                 var t = parameters[i];
-                if (t == null) sb.Append(dynamicTypeName);
+                if (t is null) sb.Append(dynamicTypeName);
                 else if (FileParser.IsFunctionType(t))
                 {
                     sb.Append('(');
@@ -1635,7 +1643,7 @@ namespace HaXeContext.Completion
             // Utils
             List<ICompletionListItem> GetCompletionList(ASResult expr)
             {
-                if (expr.Member is MemberModel m && m.Type is string typeName)
+                if (expr.Member is { } m && m.Type is { } typeName)
                 {
                     typeName = CleanNullableType(typeName);
                     if (typeName == ctx.Features.booleanKey)
