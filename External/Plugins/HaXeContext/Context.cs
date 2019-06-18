@@ -778,9 +778,24 @@ namespace HaXeContext
                                             member.Value = $"\"{member.Name}\"";
                                             extends = ClassModel.VoidClass;
                                             break;
-                                        case "Float":
-                                        case "UInt":
                                         case "Int":
+                                            /**
+                                             * for example:
+                                             * transform
+                                             * enum abstract AString(Int) {
+                                             *     var A;
+                                             *     var B;
+                                             *     var C = 5;
+                                             *     var D;
+                                             * }
+                                             * to
+                                             * enum abstract AString(Int) {
+                                             *     var A = 0;
+                                             *     var B = 1;
+                                             *     var C = 5;
+                                             *     var D = 6;
+                                             * }
+                                             */
                                             member.Value = index == 0
                                                 ? "0"
                                                 : (int.Parse(@class.Members[index - 1].Value) + 1).ToString();
