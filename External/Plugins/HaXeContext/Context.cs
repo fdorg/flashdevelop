@@ -860,13 +860,10 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => context.Settings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
+        private InstalledSDK GetCurrentSDK() => (context.Settings ?? settings).InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
-        public SemVer GetCurrentSDKVersion()
-        {
-            var sdk = GetCurrentSDK();
-            return sdk != null ? new SemVer(sdk.Version) : SemVer.Zero;
-        }
+        public SemVer GetCurrentSDKVersion() => GetCurrentSDK() is { } sdk ? new SemVer(sdk.Version) : SemVer.Zero;
+
         #endregion
 
         #region class resolution
@@ -1188,7 +1185,8 @@ namespace HaXeContext
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath is null)
                 return ClassModel.VoidClass;
-            
+            // for example: {x:Int}
+            //if (cname.StartsWith('{')) return ResolveToken(cname, inFile);
             // handle generic types
             if (cname.Contains('<'))
             {
@@ -1283,8 +1281,19 @@ namespace HaXeContext
                 }
                 if (first == '{' && last == '}')
                 {
-                    //TODO: parse anonymous type
-                    return ResolveType(features.dynamicKey, inFile);
+                    // transform {x:Int} to class AnonymousType { public var x:Int; }
+                    var sb = new StringBuilder("class AnonymousType {public var ");
+                    for (var i = 1; i < token.Length - 1; i++)
+                    {
+                        var c = token[i];
+                        sb.Append(c);
+                        if (c == ',') sb.Append(" public var");
+                    }
+                    sb.Append('}');
+                    var model = GetCodeModel(sb.ToString());
+                    var result = model.Classes.First();
+                    result.Name = token;
+                    return result;
                 }
                 if (first == '(' && last == ')')
                 {

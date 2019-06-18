@@ -104,7 +104,7 @@ namespace ASCompletion.Completion
             ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
             //}
             ASComplete.OnChar(sci, addedChar, autoHide);
-            Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
+            Assert.That(CompletionList.SelectedLabel, Is.Null.Or.Empty);
             CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
             CompletionList.ReplaceText(sci, '\0');
             CompletionList.OnInsert -= ASComplete.HandleCompletionInsert;
