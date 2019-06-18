@@ -2919,7 +2919,10 @@ namespace ASCompletion.Completion
             newMember.Parameters = new List<MemberModel>();
             foreach (var it in parameters)
             {
-                var type = it.paramType.Length > it.paramQualType.Length ? it.paramType : it.paramQualType;
+                string type;
+                // TODO slavara: newMember.Parameters.Add(ToParameterVar(it));
+                if (it.result?.Type is {} t && (t.Flags & FlagType.Struct) != 0) type = t.Type;
+                else type = it.paramType.Length > it.paramQualType.Length ? it.paramType : it.paramQualType;
                 newMember.Parameters.Add(new MemberModel(AvoidKeyword(it.paramName), GetShortType(type), FlagType.ParameterVar, 0));
             }
             if (newMemberType != null) newMember.Type = newMemberType;

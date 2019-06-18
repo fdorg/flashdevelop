@@ -860,13 +860,10 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => context.Settings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
+        private InstalledSDK GetCurrentSDK() => (context.Settings ?? settings).InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
-        public SemVer GetCurrentSDKVersion()
-        {
-            var sdk = GetCurrentSDK();
-            return sdk != null ? new SemVer(sdk.Version) : SemVer.Zero;
-        }
+        public SemVer GetCurrentSDKVersion() => GetCurrentSDK() is { } sdk ? new SemVer(sdk.Version) : SemVer.Zero;
+
         #endregion
 
         #region class resolution
@@ -1188,7 +1185,38 @@ namespace HaXeContext
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath is null)
                 return ClassModel.VoidClass;
-            
+            // for example: {x:Int}
+            if (cname.StartsWith('{'))
+            {
+                var genCount = 0;
+                var isEmpty = true;
+                // transform {x:Int} to class AnonymousType { public var x:Int; }
+                var sb = new StringBuilder("class AnonymousStructure {public var ");
+                for (var i = 1; i < cname.Length - 1; i++)
+                {
+                    var c = cname[i];
+                    sb.Append(c);
+                    if (c == '<')
+                    {
+                        genCount++;
+                        isEmpty = false;
+                    }
+                    else if (c == '>') genCount--;
+                    else if (c == ',' && genCount == 0)
+                    {
+                        sb.Append(" public var");
+                        isEmpty = false;
+                    }
+                    else if (char.IsLetterOrDigit(c)) isEmpty = false;
+                }
+                if (isEmpty) return ResolveType(features.dynamicKey, null);
+                sb.Append('}');
+                var model = GetCodeModel(sb.ToString());
+                var result = model.Classes.First();
+                result.Type = cname;
+                result.Flags = FlagType.Struct;
+                return result;
+            }
             // handle generic types
             if (cname.Contains('<'))
             {
@@ -1282,10 +1310,7 @@ namespace HaXeContext
                     return ResolveType(features.arrayKey, inFile);
                 }
                 if (first == '{' && last == '}')
-                {
-                    //TODO: parse anonymous type
-                    return ResolveType(features.dynamicKey, inFile);
-                }
+                    return ResolveType(features.dynamicKey, null);
                 if (first == '(' && last == ')')
                 {
                     if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);

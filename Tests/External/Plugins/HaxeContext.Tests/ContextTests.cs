@@ -291,6 +291,50 @@ namespace HaXeContext
             return ASContext.Context.ResolveToken(token, null);
         }
 
+        static IEnumerable<TestCaseData> ResolveTypeIssue2779TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("{x:Int}", "4.0.0")
+                    .Returns(new MemberList
+                    {
+                        new MemberModel("x", "Int", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                    })
+                    .SetName("{x:Int}. Issue 2779. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2779");
+                yield return new TestCaseData("{x:Map<String, Int>}", "4.0.0")
+                    .Returns(new MemberList
+                    {
+                        new MemberModel("x", "Map<String, Int>", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                    })
+                    .SetName("{x:Map<String, Int>}. Issue 2779. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2779");
+                yield return new TestCaseData("{x:Map<String, Int>}", "4.0.0")
+                    .Returns(new MemberList
+                    {
+                        new MemberModel("x", "Map<String, Int>", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                    })
+                    .SetName("{x:Map<String, Int>}. Issue 2779. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2779");
+                yield return new TestCaseData("{x:Map<String, Int>, y:String}", "4.0.0")
+                    .Returns(new MemberList
+                    {
+                        new MemberModel("x", "Map<String, Int>", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                        new MemberModel("y", "String", FlagType.Access | FlagType.Dynamic | FlagType.Variable, Visibility.Public),
+                    })
+                    .SetName("{x:Map<String, Int>, y:String}. Issue 2779. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2779");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveTypeIssue2779TestCases))]
+        public List<MemberModel> ResolveAnonymousType(string sourceText, string sdkVersion)
+        {
+            ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
+            var result = ASContext.Context.ResolveType(sourceText, null);
+            return result.Members.Items;
+        }
+
         static IEnumerable<TestCaseData> GetTopLevelElementsTestCases
         {
             get
