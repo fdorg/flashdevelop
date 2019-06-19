@@ -1221,17 +1221,20 @@ namespace HaXeContext.Completion
 
         protected override string GetToolTipTextEx(ASResult expr)
         {
-            if (expr.Member is null && expr.Context is { } context)
+            if (expr.Member is null)
             {
-                // for example: cast<cursor>(expr, Type);
-                if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
-                else if (context.Value is { } s)
+                if (expr.Context is { } context)
                 {
-                    // for example: cast<cursor> expr;
-                    if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
-                    // for example: 'c'.code<complete> or "\n".code<complete>
-                    else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
-                        expr.Member = Context.StubStringCodeProperty;
+                    // for example: cast<cursor>(expr, Type);
+                    if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
+                    else if (context.Value is { } s)
+                    {
+                        // for example: cast<cursor> expr;
+                        if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
+                        // for example: 'c'.code<complete> or "\n".code<complete>
+                        else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
+                            expr.Member = Context.StubStringCodeProperty;
+                    }
                 }
             }
             return base.GetToolTipTextEx(expr);
@@ -1257,6 +1260,26 @@ namespace HaXeContext.Completion
                 type = type.Extends;
             }
             return null;
+        }
+
+        protected override string GetMemberModifiersTooltipText(MemberModel member)
+        {
+            var result = base.GetMemberModifiersTooltipText(member);
+            var flags = member.Flags;
+            if (!flags.HasFlag(FlagType.Class))
+            {
+                if (flags.HasFlag((FlagType) HaxeFlagType.Macro)) result = $"macro {result}";
+                if (flags.HasFlag((FlagType) HaxeFlagType.Inline)) result += "inline ";
+            }
+            return result;
+        }
+
+        protected override string GetMemberSignatureTooltipText(MemberModel member, string modifiers, string foundIn)
+        {
+            var flags = member.Flags;
+            if (flags.HasFlag((FlagType) HaxeFlagType.Inline) && flags.HasFlag(FlagType.Variable) && member.Value is { } value)
+                return $"{modifiers}var {member} = {value}{foundIn}";
+            return base.GetMemberSignatureTooltipText(member, modifiers, foundIn);
         }
 
         protected override string GetCalltipDef(MemberModel member)
