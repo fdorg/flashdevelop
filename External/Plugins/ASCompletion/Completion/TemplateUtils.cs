@@ -61,23 +61,23 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        public static string ToDeclarationString(MemberModel m, string template)
+        public static string ToDeclarationString(MemberModel member, string template)
         {
             // Insert Name
-            if (m.Name is null) template = ReplaceTemplateVariable(template, "Name", null);
-            else template = ReplaceTemplateVariable(template, "Name", m.FullName);
+            if (member.Name is null) template = ReplaceTemplateVariable(template, "Name", null);
+            else template = ReplaceTemplateVariable(template, "Name", member.FullName);
 
             // If method, insert arguments
-            template = ReplaceTemplateVariable(template, "Arguments", ParametersString(m, true));
+            template = ReplaceTemplateVariable(template, "Arguments", ParametersString(member, true));
 
-            if (!string.IsNullOrEmpty(m.Type))
+            if (!string.IsNullOrEmpty(member.Type))
             {
-                if ((m.Flags & FlagType.Setter) > 0 && m.Parameters != null && m.Parameters.Count == 1)
-                    template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(m.Parameters[0].Type));
-                else template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(m.Type));
+                if ((member.Flags & FlagType.Setter) > 0 && member.Parameters != null && member.Parameters.Count == 1)
+                    template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(member.Parameters[0].Type));
+                else template = ReplaceTemplateVariable(template, "Type", MemberModel.FormatType(member.Type));
             }
             else template = ReplaceTemplateVariable(template, "Type", null);
-            template = ReplaceTemplateVariable(template, "Value", m.Value);
+            template = ReplaceTemplateVariable(template, "Value", member.Value);
             return template;
         }
 

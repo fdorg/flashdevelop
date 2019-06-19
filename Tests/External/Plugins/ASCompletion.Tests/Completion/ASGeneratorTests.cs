@@ -1868,7 +1868,7 @@ namespace ASCompletion.Completion
                                 EventManager.RemoveEventHandler(handler);
                                 e.Handled = true;
                                 var info = (Hashtable) de.Data;
-                                Assert.IsNotNullOrEmpty((string) info["interfaceName"]);
+                                Assert.That((string)info["interfaceName"], Is.Not.Null.Or.Not.Empty);
                             }
 
                             break;
