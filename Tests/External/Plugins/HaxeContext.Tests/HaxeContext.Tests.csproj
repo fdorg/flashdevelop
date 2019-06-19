@@ -67,7 +67,8 @@
   <ItemGroup>
     <Compile Include="CodeRefactor\Commands\RefactorCommandTests.cs" />
     <Compile Include="CodeRefactor\Provider\HaxeCommandFactoryTests.cs" />
-    <Compile Include="Completion\CodeCompleteTests.cs" />
+    <Compile Include="Completion\Haxe3\CodeCompleteTests.cs" />
+    <Compile Include="Completion\Haxe4\CodeCompleteTests.cs" />
     <Compile Include="Generators\CodeGeneratorTests2.cs" />
     <Compile Include="Generators\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
@@ -1746,6 +1747,10 @@
     <EmbeddedResource Include="Test Files\parser\Issue2801_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2779_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2779_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2804_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2804_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2804_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2804_4.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

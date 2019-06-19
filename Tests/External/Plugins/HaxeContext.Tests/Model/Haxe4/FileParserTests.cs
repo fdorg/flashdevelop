@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ASCompletion;
 using ASCompletion.Context;
-using ASCompletion.Model;
 using NUnit.Framework;
 using PluginCore;
 

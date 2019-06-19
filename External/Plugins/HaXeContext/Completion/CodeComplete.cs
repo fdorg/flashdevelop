@@ -1259,6 +1259,26 @@ namespace HaXeContext.Completion
             return null;
         }
 
+        protected override string GetMemberModifiersTooltipText(MemberModel member)
+        {
+            var result = base.GetMemberModifiersTooltipText(member);
+            var flags = member.Flags;
+            if (!flags.HasFlag(FlagType.Class))
+            {
+                if (flags.HasFlag((FlagType) HaxeFlagType.Macro)) result = $"macro {result}";
+                if (flags.HasFlag((FlagType) HaxeFlagType.Inline)) result += "inline ";
+            }
+            return result;
+        }
+
+        protected override string GetMemberSignatureTooltipText(MemberModel member, string modifiers, string foundIn)
+        {
+            var flags = member.Flags;
+            if (flags.HasFlag((FlagType) HaxeFlagType.Inline) && flags.HasFlag(FlagType.Variable) && member.Value is { } value)
+                return $"{modifiers}var {member} = {value}{foundIn}";
+            return base.GetMemberSignatureTooltipText(member, modifiers, foundIn);
+        }
+
         protected override string GetCalltipDef(MemberModel member)
         {
             if ((member.Flags & FlagType.ParameterVar) != 0 && FileParser.IsFunctionType(member.Type))

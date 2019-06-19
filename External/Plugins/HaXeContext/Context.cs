@@ -751,7 +751,7 @@ namespace HaXeContext
                         {
                             var member = @class.Members[index];
                             if (!member.Flags.HasFlag(FlagType.Variable)) continue;
-                            member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
+                            member.Flags = FlagType.Enum | FlagType.Static | (FlagType) HaxeFlagType.Inline | FlagType.Variable;
                             member.Access = Visibility.Public;
                             if (string.IsNullOrEmpty(member.Type)) member.Type = @class.Type;
                             member.InFile = @class.InFile;

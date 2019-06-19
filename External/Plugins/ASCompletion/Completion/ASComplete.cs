@@ -4918,53 +4918,60 @@ namespace ASCompletion.Completion
 
         protected static string MemberTooltipText(MemberModel member, ClassModel inClass)
         {
-            // modifiers
-            var ft = member.Flags;
-            var modifiers = "";
-            if ((ft & FlagType.Class) == 0)
-            {
-                if ((ft & FlagType.LocalVar) > 0) modifiers += "(local) ";
-                else if ((ft & FlagType.ParameterVar) > 0) modifiers += "(parameter) ";
-                else if ((ft & FlagType.AutomaticVar) > 0) modifiers += "(auto) ";
-                else
-                {
-                    if ((ft & FlagType.Extern) > 0)
-                        modifiers += "extern ";
-                    if ((ft & FlagType.Native) > 0)
-                        modifiers += "native ";
-                    if ((ft & FlagType.Static) > 0)
-                        modifiers += "static ";
-                    var acc = member.Access;
-                    if ((acc & Visibility.Private) > 0)
-                        modifiers += "private ";
-                    else if ((acc & Visibility.Public) > 0)
-                        modifiers += "public ";
-                    else if ((acc & Visibility.Protected) > 0)
-                        modifiers += "protected ";
-                    else if ((acc & Visibility.Internal) > 0)
-                        modifiers += "internal ";
-                }
-            }
+            var modifiers = ASContext.Context.CodeComplete.GetMemberModifiersTooltipText(member);
             // signature
             var foundIn = "";
             if (inClass != ClassModel.VoidClass)
             {
                 var themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
-                var foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
+                var foreColorString =
+                    themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
                 foundIn = "\n[COLOR=" + foreColorString + "]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
             }
+            return ASContext.Context.CodeComplete.GetMemberSignatureTooltipText(member, modifiers, foundIn);
+        }
+
+        protected virtual string GetMemberSignatureTooltipText(MemberModel member, string modifiers, string foundIn)
+        {
+            var ft = member.Flags;
             if ((ft & (FlagType.Getter | FlagType.Setter)) > 0) return $"{modifiers}property {member}{foundIn}";
             if (ft == FlagType.Function) return $"{modifiers}function {member}{foundIn}";
             if ((ft & FlagType.Namespace) > 0) return $"{modifiers}namespace {member.Name}{foundIn}";
             if ((ft & FlagType.Constant) > 0)
             {
-                if (member.Value == null) return $"{modifiers}const {member}{foundIn}";
+                if (member.Value is null) return $"{modifiers}const {member}{foundIn}";
                 return $"{modifiers}const {member} = {member.Value}{foundIn}";
             }
+
             if ((ft & FlagType.Variable) > 0) return $"{modifiers}var {member}{foundIn}";
             if ((ft & FlagType.Delegate) > 0) return $"{modifiers}delegate {member}{foundIn}";
             return $"{modifiers}{member}{foundIn}";
         }
+
+        protected virtual string GetMemberModifiersTooltipText(MemberModel member)
+        {
+            var result = string.Empty;
+            var flags = member.Flags;
+            if ((flags & FlagType.Class) == 0)
+            {
+                if ((flags & FlagType.LocalVar) > 0) result += "(local) ";
+                else if ((flags & FlagType.ParameterVar) > 0) result += "(parameter) ";
+                else if ((flags & FlagType.AutomaticVar) > 0) result += "(auto) ";
+                else
+                {
+                    if ((flags & FlagType.Extern) > 0) result += "extern ";
+                    if ((flags & FlagType.Native) > 0) result += "native ";
+                    if ((flags & FlagType.Static) > 0) result += "static ";
+                    var access = member.Access;
+                    if ((access & Visibility.Private) > 0) result += "private ";
+                    else if ((access & Visibility.Public) > 0) result += "public ";
+                    else if ((access & Visibility.Protected) > 0) result += "protected ";
+                    else if ((access & Visibility.Internal) > 0) result += "internal ";
+                }
+            }
+            return result;
+        }
+
         #endregion
 
         #region automatic code generation
