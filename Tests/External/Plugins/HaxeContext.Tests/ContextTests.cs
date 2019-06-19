@@ -284,29 +284,7 @@ namespace HaXeContext
             }
         }
 
-        static IEnumerable<TestCaseData> ResolveTokenIssue2779TestCases
-        {
-            get
-            {
-                yield return new TestCaseData(ReadAllText("ResolveTokenIssue2779_1"))
-                    .Returns(new ClassModel
-                    {
-                        Name = "{x:Int}",
-                        Members = new MemberList
-                        {
-                            new MemberModel("x", "Int", FlagType.Access | FlagType.Variable, Visibility.Public),
-                        },
-                    })
-                    .SetName("{x:Int}. Issue 2779. Case 1")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2779");
-            }
-        }
-
-        [
-            Test,
-            TestCaseSource(nameof(ResolveTokenTestCases)),
-            TestCaseSource(nameof(ResolveTokenIssue2779TestCases)),
-        ]
+        [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
         public ClassModel ResolveToken(string token, string sdkVersion)
         {
             ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
