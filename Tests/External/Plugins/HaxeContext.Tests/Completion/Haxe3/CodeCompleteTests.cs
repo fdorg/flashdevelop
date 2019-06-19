@@ -10,7 +10,7 @@ using NUnit.Framework;
 using PluginCore;
 using PluginCore.Controls;
 
-namespace HaXeContext.Completion
+namespace HaXeContext.Completion.Haxe3
 {
     class CodeCompleteTests : ASCompleteTests
     {
@@ -470,8 +470,18 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("GetToolTipText_issue2439_1")
-                    .SetName("var type:Class|Issue2439_1. Issue 2439. Case 1")
+                    .SetName("var type:Class<complete>. Issue2439_1. Issue 2439. Case 1")
                     .Returns("public class ClassIssue2439_1");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GetToolTipTextIssue2804TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetToolTipText_issue2804_1")
+                    .SetName("case First<complete>. Issue2804_1. Issue 2804. Case 1")
+                    .Returns("static public inline var First : AInt = 1\n[COLOR=Black]in Issue2804_1[/COLOR]");
             }
         }
 
@@ -479,6 +489,7 @@ namespace HaXeContext.Completion
             Test,
             TestCaseSource(nameof(GetToolTipTextTestCases)),
             TestCaseSource(nameof(GetToolTipTextIssue2439TestCases)),
+            TestCaseSource(nameof(GetToolTipTextIssue2804TestCases)),
         ]
         public string GetToolTipText(string fileName)
         {

@@ -3,6 +3,7 @@ using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using HaXeContext.Model;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
@@ -342,7 +343,7 @@ namespace HaXeContext
                 yield return new TestCaseData("GetTopLevelElements_1", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
                     .Returns(true)
                     .SetName("Case 1. enum");
-                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
+                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | (FlagType) HaxeFlagType.Inline | FlagType.Variable, Visibility.Public))
                     .Returns(true)
                     .SetName("Case 2. @:enum abstract");
                 yield return new TestCaseData("GetTopLevelElements_3", new MemberModel("toString", string.Empty, FlagType.Function, Visibility.Public))
@@ -369,7 +370,7 @@ namespace HaXeContext
                 yield return new TestCaseData("ResolveTopLevelElement_enum")
                     .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
                 yield return new TestCaseData("ResolveTopLevelElement_abstract")
-                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | (FlagType) HaxeFlagType.Inline | FlagType.Variable, Visibility.Public));
             }
         }
 
