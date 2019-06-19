@@ -1221,20 +1221,17 @@ namespace HaXeContext.Completion
 
         protected override string GetToolTipTextEx(ASResult expr)
         {
-            if (expr.Member is null)
+            if (expr.Member is null && expr.Context is { } context)
             {
-                if (expr.Context is { } context)
+                // for example: cast<cursor>(expr, Type);
+                if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
+                else if (context.Value is { } s)
                 {
-                    // for example: cast<cursor>(expr, Type);
-                    if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
-                    else if (context.Value is { } s)
-                    {
-                        // for example: cast<cursor> expr;
-                        if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
-                        // for example: 'c'.code<complete> or "\n".code<complete>
-                        else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
-                            expr.Member = Context.StubStringCodeProperty;
-                    }
+                    // for example: cast<cursor> expr;
+                    if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
+                    // for example: 'c'.code<complete> or "\n".code<complete>
+                    else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
+                        expr.Member = Context.StubStringCodeProperty;
                 }
             }
             return base.GetToolTipTextEx(expr);
