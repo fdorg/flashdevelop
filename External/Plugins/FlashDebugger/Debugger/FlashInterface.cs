@@ -625,7 +625,7 @@ namespace FlashDebugger
         }
 
         /// <summary> Ask each swf if metadata processing is complete</summary>
-        virtual public bool MetaDataAvailable
+        public virtual bool MetaDataAvailable
         {
             get
             {

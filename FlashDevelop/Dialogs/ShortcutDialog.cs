@@ -657,7 +657,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the shortcut dialog.
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
             var shortcutDialog = new ShortcutDialog();
             shortcutDialog.CenterToParent();

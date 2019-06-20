@@ -48,7 +48,7 @@ namespace TaskListPanel
         private ImageListManager imageList;
 
         // Regex
-        static private Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
+        private static Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
 
         public PluginUI(PluginMain pluginMain)
         {

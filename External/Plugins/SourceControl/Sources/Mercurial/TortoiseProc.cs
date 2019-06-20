@@ -7,10 +7,10 @@ namespace SourceControl.Sources.Mercurial
 {
     static class TortoiseProc
     {
-        static private string resolvedCmd;
-        static private string qualifiedCmd;
+        private static string resolvedCmd;
+        private static string qualifiedCmd;
 
-        static public void Execute(string command, string path)
+        public static void Execute(string command, string path)
         {
             string args = string.Format("{0} \"{1}\"", command, path);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
@@ -26,7 +26,7 @@ namespace SourceControl.Sources.Mercurial
             proc.Start();
         }
 
-        static public void Execute(string command, string path1, string path2)
+        public static void Execute(string command, string path1, string path2)
         {
             string args = string.Format("{0} \"{1}\" \"{2}\"", command, path1, path2);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
@@ -42,7 +42,7 @@ namespace SourceControl.Sources.Mercurial
             proc.Start();
         }
 
-        static private string GetTortoiseProc()
+        private static string GetTortoiseProc()
         {
             string cmd = PluginMain.SCSettings.TortoiseHGProcPath;
             if (cmd != null && File.Exists(cmd)) return cmd;
@@ -50,7 +50,7 @@ namespace SourceControl.Sources.Mercurial
             return ResolveTortoiseProcPath(cmd);
         }
 
-        static private string ResolveTortoiseProcPath(string cmd)
+        private static string ResolveTortoiseProcPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

@@ -181,7 +181,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the recovery dialog
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
             using (RecoveryDialog recoveryDialog = new RecoveryDialog())
                 recoveryDialog.ShowDialog();

@@ -163,7 +163,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the about dialog
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
             using (AboutDialog aboutDialog = new AboutDialog())
             {

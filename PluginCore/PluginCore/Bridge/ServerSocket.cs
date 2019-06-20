@@ -8,8 +8,8 @@ namespace PluginCore.Bridge
 {
     public class ServerSocket
     {
-        static protected readonly byte[] EOL = new byte[] { 13 };
-        static protected bool bridgeNotFound;
+        protected static readonly byte[] EOL = new byte[] { 13 };
+        protected static bool bridgeNotFound;
         
         protected IPAddress ipAddress;
         protected int portNum;
@@ -125,7 +125,7 @@ namespace PluginCore.Bridge
         
         #region DATA
         
-        static public int SendTo(Socket socket, string message)
+        public static int SendTo(Socket socket, string message)
         {
             int len = socket.Send(Encoding.UTF8.GetBytes(message));
             return len + socket.Send(EOL);

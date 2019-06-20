@@ -18,7 +18,7 @@ namespace SourceControl.Sources.Subversion
             Run(args, Path.GetDirectoryName(paths[0]));
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             base.Runner_ProcessEnded(sender, exitCode);
 

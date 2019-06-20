@@ -12,7 +12,7 @@ namespace FlashDebugger.Helpers
 {
     public class DefaultDataTreeExporter : IDataTreeExporter
     {
-        private readonly static string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
+        private static readonly string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
         public int CopyTreeMaxRecursion { get; set; }
 

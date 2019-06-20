@@ -18,16 +18,16 @@ namespace ASCompletion.Model
     /// </summary>
     public class PathModel
     {
-        static internal event Action<FileModel> OnFileRemove;
-        static internal event Action<FileModel> OnFileAdded;
+        internal static event Action<FileModel> OnFileRemove;
+        internal static event Action<FileModel> OnFileAdded;
 
         //static private readonly bool cacheEnabled = false;
-        static private Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
+        private static Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
 
         /// <summary>
         /// Delete all models and remove all watchers
         /// </summary>
-        static public void ClearAll()
+        public static void ClearAll()
         {
             foreach (PathModel model in pathes.Values)
             {

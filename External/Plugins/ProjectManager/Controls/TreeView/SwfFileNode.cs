@@ -38,7 +38,7 @@ namespace ProjectManager.Controls.TreeView
 
     public class ExportNode : FakeNode
     {
-        static public Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]");
+        public static Regex reSafeChars = new Regex("[*\\:" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]");
 
         public string Export;
         public string ContainingSwfPath;

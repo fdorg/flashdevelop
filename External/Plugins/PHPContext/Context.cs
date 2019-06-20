@@ -11,10 +11,10 @@ namespace PHPContext
     public class Context : AS2Context.Context
     {
         #region initialization
-        new static readonly protected Regex re_CMD_BuildCommand =
+        protected new static readonly Regex re_CMD_BuildCommand =
             new Regex("@php[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
 
-        static private readonly Regex re_PHPext =
+        private static readonly Regex re_PHPext =
             new Regex(".php[3-9]?", RegexOptions.Compiled);
 
         private ContextSettings langSettings;
@@ -338,7 +338,7 @@ namespace PHPContext
             // to be implemented
         }
 
-        override public bool CanBuild
+        public override bool CanBuild
         {
             get { return false; }
         }
