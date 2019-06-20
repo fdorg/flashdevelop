@@ -19,9 +19,9 @@ namespace AS3Context
 {
     class MxmlComplete
     {
-        static public bool IsDirty;
-        static public Context context;
-        static public MxmlFilterContext mxmlContext;
+        public static bool IsDirty;
+        public static Context context;
+        public static MxmlFilterContext mxmlContext;
 
         #region shortcuts
         public static bool GotoDeclaration()
@@ -75,21 +75,21 @@ namespace AS3Context
         #endregion
 
         #region tag completion
-        static private XMLContextTag tagContext;
-        static private XMLContextTag parentTag;
-        static private string tokenContext;
-        static private string checksum;
-        static private Dictionary<string, List<string>> allTags;
+        private static XMLContextTag tagContext;
+        private static XMLContextTag parentTag;
+        private static string tokenContext;
+        private static string checksum;
+        private static Dictionary<string, List<string>> allTags;
         //static private Regex reIncPath = new Regex("[\"']([^\"']+)", RegexOptions.Compiled);
-        static private Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
-        static private Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
+        private static Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
+        private static Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
 
         /// <summary>
         /// Called 
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        static public bool HandleElement(object data)
+        public static bool HandleElement(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -159,7 +159,7 @@ namespace AS3Context
             return isContainer;
         }
 
-        static public bool HandleNamespace(object data)
+        public static bool HandleNamespace(object data)
         {
             if (!GetContext(data) || string.IsNullOrEmpty(tagContext.Name)) 
                 return false;
@@ -198,7 +198,7 @@ namespace AS3Context
             return true;
         }
 
-        static public bool HandleElementClose(object data)
+        public static bool HandleElementClose(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -232,7 +232,7 @@ namespace AS3Context
             return false;
         }
 
-        static public bool HandleAttribute(object data)
+        public static bool HandleAttribute(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -264,7 +264,7 @@ namespace AS3Context
             return true;
         }
 
-        static public bool HandleAttributeValue(object data)
+        public static bool HandleAttributeValue(object data)
         {
             if (!GetContext(data)) return false;
 

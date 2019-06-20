@@ -7,8 +7,8 @@ namespace SourceControl.Sources.Git
 {
     static class TortoiseProc
     {
-        static private string resolvedCmd;
-        static private string qualifiedCmd;
+        private static string resolvedCmd;
+        private static string qualifiedCmd;
 
         public static void Execute(string command, string path)
         {
@@ -54,7 +54,7 @@ namespace SourceControl.Sources.Git
             proc.Start();
         }
 
-        static private string GetTortoiseProc()
+        private static string GetTortoiseProc()
         {
             string cmd = PluginMain.SCSettings.TortoiseGITProcPath;
             if (cmd != null && File.Exists(cmd)) return cmd;
@@ -62,7 +62,7 @@ namespace SourceControl.Sources.Git
             return ResolveTortoiseProcPath(cmd);
         }
 
-        static private string ResolveTortoiseProcPath(string cmd)
+        private static string ResolveTortoiseProcPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;

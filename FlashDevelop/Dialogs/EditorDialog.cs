@@ -1885,7 +1885,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the syntax edit dialog
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
             using (EditorDialog sp = new EditorDialog())
             {

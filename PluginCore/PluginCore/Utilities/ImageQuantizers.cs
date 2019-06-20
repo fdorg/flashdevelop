@@ -528,7 +528,7 @@ namespace PluginCore.PluginCore.Utilities
     /// <summary>
     /// Summary description for Class1.
     /// </summary>
-    public unsafe abstract class Quantizer
+    public abstract unsafe class Quantizer
     {
         /// <summary>
         /// Construct the quantizer

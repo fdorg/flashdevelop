@@ -7,7 +7,7 @@ namespace PluginCore.Helpers
 {
     public class JvmConfigHelper
     {
-        static public Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
 
         /// <summary>
         /// Read a jvm.config file and returns its variables as a Dictionary.

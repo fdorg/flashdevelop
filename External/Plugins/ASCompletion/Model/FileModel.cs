@@ -31,7 +31,7 @@ namespace ASCompletion.Model
     [Serializable]
     public class ASMetaData: IComparable
     {
-        static private Regex reNameTypeParams = 
+        private static Regex reNameTypeParams = 
             new Regex("([^\"'\\s]+)\\s*=\\s*[\"']([^\"']+)[\"'],{0,1}\\s*", RegexOptions.Compiled);
 
         public int LineFrom;

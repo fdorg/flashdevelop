@@ -58,7 +58,7 @@ namespace PluginCore.FRService
         /// </summary>
         /// <param name="pattern">Text to escape</param>
         /// <returns>Regex-safe text</returns>
-        static public string Escape(string pattern)
+        public static string Escape(string pattern)
         {
             return Regex.Escape(pattern);
         }
@@ -67,7 +67,7 @@ namespace PluginCore.FRService
         /// Replace escaped characters in replacement text
         /// </summary>
         /// <param name="text">Text to unescape</param>
-        static public string Unescape(string text)
+        public static string Unescape(string text)
         {
             int p = text.IndexOf('\\');
             if (p < 0) return text;
@@ -96,7 +96,7 @@ namespace PluginCore.FRService
         /// </summary>
         /// <param name="text">Text to expand</param>
         /// <param name="match">Search result (for reinjecting groups)</param>
-        static public string ExpandGroups(string text, SearchMatch match)
+        public static string ExpandGroups(string text, SearchMatch match)
         {
             if (!text.Contains('$')) return text;
             for (int i = 0; i < match.Groups.Length; i++)
@@ -111,7 +111,7 @@ namespace PluginCore.FRService
         /// <param name="fromMatchIndex">First result to update</param>
         /// <param name="found">Text matched</param>
         /// <param name="replacement">Text replacement</param>
-        static public void PadIndexes(List<SearchMatch> matches, int fromMatchIndex, string found, string replacement)
+        public static void PadIndexes(List<SearchMatch> matches, int fromMatchIndex, string found, string replacement)
         {
             int linesDiff = CountNewLines(replacement) - CountNewLines(found);
             int charsDiff = replacement.Length - found.Length;
@@ -126,7 +126,7 @@ namespace PluginCore.FRService
                 }
         }
 
-        static private int CountNewLines(string src)
+        private static int CountNewLines(string src)
         {
             int lines = 0;
             char c2 = ' ';
@@ -140,7 +140,7 @@ namespace PluginCore.FRService
             return lines;
         }
 
-        static public void ExtractResultsLineText(List<SearchMatch> results, string src)
+        public static void ExtractResultsLineText(List<SearchMatch> results, string src)
         {
             if (results == null) 
                 return;

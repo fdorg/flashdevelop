@@ -269,7 +269,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         public const string GNU_TMAGIC  = "ustar  ";
 
         const long     timeConversionFactor = 10000000L;           // 1 tick == 100 nanoseconds
-        readonly static DateTime dateTime1970 = new DateTime(1970, 1, 1, 0, 0, 0, 0); 
+        static readonly DateTime dateTime1970 = new DateTime(1970, 1, 1, 0, 0, 0, 0); 
         #endregion
 
         #region Constructors
@@ -724,7 +724,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="userName">Value to apply as a default for userName.</param>
         /// <param name="groupId">Value to apply as a default for groupId.</param>
         /// <param name="groupName">Value to apply as a default for groupName.</param>
-        static internal void SetValueDefaults(int userId, string userName, int groupId, string groupName)
+        internal static void SetValueDefaults(int userId, string userName, int groupId, string groupName)
         {
             defaultUserId = userIdAsSet = userId;
             defaultUser = userNameAsSet = userName;
@@ -732,7 +732,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             defaultGroupName = groupNameAsSet = groupName;
         }
 
-        static internal void RestoreSetValues()
+        internal static void RestoreSetValues()
         {
             defaultUserId = userIdAsSet;
             defaultUser = userNameAsSet;
@@ -747,7 +747,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name = "offset">The offset into the buffer from which to parse.</param>
         /// <param name = "length">The number of header bytes to parse.</param>
         /// <returns>The long equivalent of the octal string.</returns>
-        static public long ParseOctal(byte[] header, int offset, int length)
+        public static long ParseOctal(byte[] header, int offset, int length)
         {
             if ( header == null ) {
                 throw new ArgumentNullException("header");
@@ -795,7 +795,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>
         /// The name parsed.
         /// </returns>
-        static public StringBuilder ParseName(byte[] header, int offset, int length)
+        public static StringBuilder ParseName(byte[] header, int offset, int length)
         {
             if ( header == null ) {
                 throw new ArgumentNullException("header");
@@ -1126,15 +1126,15 @@ namespace ICSharpCode.SharpZipLib.Tar
 
         #region Class Fields
         // Values used during recursive operations.
-        static internal int userIdAsSet;
-        static internal int groupIdAsSet;
-        static internal string userNameAsSet;
-        static internal string groupNameAsSet = "None";
+        internal static int userIdAsSet;
+        internal static int groupIdAsSet;
+        internal static string userNameAsSet;
+        internal static string groupNameAsSet = "None";
         
-        static internal int defaultUserId;
-        static internal int defaultGroupId;
-        static internal string defaultGroupName = "None";
-        static internal string defaultUser;
+        internal static int defaultUserId;
+        internal static int defaultGroupId;
+        internal static string defaultGroupName = "None";
+        internal static string defaultUser;
         #endregion
     }
 }
