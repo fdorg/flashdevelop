@@ -10,30 +10,23 @@ namespace ResultsPanel.Helpers
     internal static class ResultsPanelHelper
     {
         private static PluginMain main;
-        private static PluginUI mainUI;
         private static List<PluginUI> pluginUIs;
 
         internal static PluginUI ActiveUI { get; set; }
 
-        internal static IList<PluginUI> PluginUIs
-        {
-            get { return pluginUIs; }
-        }
+        internal static IList<PluginUI> PluginUIs => pluginUIs;
 
-        internal static PluginUI MainUI
-        {
-            get { return mainUI; }
-        }
+        internal static PluginUI MainUI { get; private set; }
 
         internal static void Initialize(PluginMain pluginMain, PluginUI pluginUI)
         {
             main = pluginMain;
-            mainUI = pluginUI;
+            MainUI = pluginUI;
             pluginUIs = new List<PluginUI>();
-            ActiveUI = mainUI;
+            ActiveUI = MainUI;
 
-            mainUI.ParentPanel.Tag = mainUI;
-            mainUI.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
+            MainUI.ParentPanel.Tag = MainUI;
+            MainUI.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
         }
 
         /// <summary>
@@ -43,14 +36,11 @@ namespace ResultsPanel.Helpers
         {
             if (groupData == null)
             {
-                mainUI.ClearOutput();
+                MainUI.ClearOutput();
                 return;
             }
 
-            string groupId;
-            string[] args;
-            TraceManager.ParseGroupData(groupData, out groupId, out args);
-
+            TraceManager.ParseGroupData(groupData, out var groupId, out var args);
             foreach (var pluginUI in pluginUIs)
             {
                 if (pluginUI.GroupData == groupData ||
@@ -73,14 +63,12 @@ namespace ResultsPanel.Helpers
         {
             if (groupData == null)
             {
-                mainUI.AddLogEntries();
-                mainUI.DisplayOutput();
+                MainUI.AddLogEntries();
+                MainUI.DisplayOutput();
                 return;
             }
 
-            string groupId;
-            string[] args;
-            TraceManager.ParseGroupData(groupData, out groupId, out args);
+            TraceManager.ParseGroupData(groupData, out var groupId, out var args);
 
             foreach (var pluginUI in pluginUIs)
             {
@@ -103,16 +91,16 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void ApplySettings()
         {
-            mainUI.ApplySettings();
+            MainUI.ApplySettings();
             foreach (var pluginUI in pluginUIs)
             {
                 pluginUI.ApplySettings();
                 pluginUI.ClearSquiggles();
             }
 
-            mainUI.ClearSquiggles();
-            mainUI.AddSquiggles();
-            if (mainUI.Settings.HighlightOnlyActivePanelEntries)
+            MainUI.ClearSquiggles();
+            MainUI.AddSquiggles();
+            if (MainUI.Settings.HighlightOnlyActivePanelEntries)
             {
                 if (ActiveUI.GroupId != null)
                 {
@@ -136,7 +124,7 @@ namespace ResultsPanel.Helpers
         /// </summary>
         public static void OnTrace()
         {
-            mainUI.AddLogEntries();
+            MainUI.AddLogEntries();
             foreach (var pluginUI in pluginUIs)
             {
                 pluginUI.AddLogEntries();
@@ -148,9 +136,9 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void OnFileOpen(TextEvent e)
         {
-            mainUI.AddSquiggles(e.Value);
+            MainUI.AddSquiggles(e.Value);
 
-            if (mainUI.Settings.HighlightOnlyActivePanelEntries)
+            if (MainUI.Settings.HighlightOnlyActivePanelEntries)
             {
                 if (ActiveUI.GroupId != null)
                 {
@@ -186,11 +174,11 @@ namespace ResultsPanel.Helpers
 
             if (args.Length > 0) // Possible multiple instances for one group id
             {
-                for (int i = 0; i < pluginUIs.Count; i++)
+                foreach (var pluginUI in pluginUIs)
                 {
-                    if (pluginUIs[i].GroupId == groupId && pluginUIs[i].ParentPanel.IsHidden)
+                    if (pluginUI.GroupId == groupId && pluginUI.ParentPanel.IsHidden)
                     {
-                        CloseResultsPanel(pluginUIs[i]);
+                        CloseResultsPanel(pluginUI);
                         break; // There should only be one panel hidden without being closed
                     }
                 }
@@ -232,9 +220,9 @@ namespace ResultsPanel.Helpers
             {
                 ui.OnPanelHidden();
 
-                for (int i = 0; i < pluginUIs.Count; i++)
+                foreach (var pluginUI in pluginUIs)
                 {
-                    if (pluginUIs[i] != ui && pluginUIs[i].GroupId == ui.GroupId)
+                    if (pluginUI != ui && pluginUI.GroupId == ui.GroupId)
                     {
                         // ui is not the only panel with the group id, so safely close it
                         CloseResultsPanel(ui);

@@ -20,14 +20,12 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
-        private ListViewEx entriesView;
         private ColumnHeader entryType;
         private ColumnHeader entryLine;
         private ColumnHeader entryDesc;
         private ColumnHeader entryFile;
         private ColumnHeader entryPath;
-        private IDictionary<string, bool> ignoredEntries;
-        private List<ListViewItem> allListViewItems;
+        private readonly List<ListViewItem> allListViewItems;
         private ToolStripButton toolStripButtonError;
         private ToolStripButton toolStripButtonWarning;
         private ToolStripButton toolStripButtonInfo;
@@ -39,15 +37,14 @@ namespace ResultsPanel
         private int errorCount;
         private int warningCount;
         private int messageCount;
-        private PluginMain pluginMain;
+        private readonly PluginMain pluginMain;
         private int logCount;
         private Timer autoShow;
         private SortOrder sortOrder;
         private int lastColumn;
         private GroupingMethod groupingMethod;
-        private int buttonsWidth;
+        private readonly int buttonsWidth;
         private Container components;
-
         private static ImageListManager imageList;
 
         #region Constructors
@@ -64,7 +61,7 @@ namespace ResultsPanel
             //this.logCount = TraceManager.TraceLog.Count;
             this.logCount = 0;
             this.allListViewItems = new List<ListViewItem>();
-            this.ignoredEntries = new Dictionary<string, bool>();
+            this.IgnoredEntries = new Dictionary<string, bool>();
             this.errorCount = 0;
             this.warningCount = 0;
             this.messageCount = 0;
@@ -74,7 +71,7 @@ namespace ResultsPanel
             this.InitializeGraphics();
             this.InitializeTexts();
             this.InitializeLayout();
-            ScrollBarEx.Attach(entriesView);
+            ScrollBarEx.Attach(EntriesView);
 
             GroupData = groupData;
             GroupId = groupId;
@@ -132,10 +129,7 @@ namespace ResultsPanel
         /// <summary>
         /// Gets whether the Keep Results button is toggled.
         /// </summary>
-        public bool Locked
-        {
-            get { return this.toolStripButtonLock.Checked; }
-        }
+        public bool Locked => this.toolStripButtonLock.Checked;
 
         /// <summary>
         /// Gets the parent <see cref="DockContent"/>.
@@ -145,20 +139,11 @@ namespace ResultsPanel
         /// <summary>
         /// Accessor for settings
         /// </summary>
-        internal Settings Settings
-        {
-            get { return (Settings) this.pluginMain.Settings; }
-        }
+        internal Settings Settings => (Settings) this.pluginMain.Settings;
 
-        internal ListViewEx EntriesView
-        {
-            get { return this.entriesView; }
-        }
+        internal ListViewEx EntriesView { get; private set; }
 
-        internal IDictionary<string, bool> IgnoredEntries
-        {
-            get { return this.ignoredEntries; }
-        }
+        internal IDictionary<string, bool> IgnoredEntries { get; }
 
         #endregion
 
@@ -186,7 +171,7 @@ namespace ResultsPanel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.entriesView = new ResultsPanel.ListViewEx();
+            this.EntriesView = new ResultsPanel.ListViewEx();
             this.entryType = new System.Windows.Forms.ColumnHeader();
             this.entryLine = new System.Windows.Forms.ColumnHeader();
             this.entryDesc = new System.Windows.Forms.ColumnHeader();
@@ -206,27 +191,27 @@ namespace ResultsPanel
             // 
             // entriesView
             // 
-            this.entriesView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.entriesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.EntriesView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.EntriesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.entryType,
             this.entryLine,
             this.entryDesc,
             this.entryFile,
             this.entryPath});
-            this.entriesView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entriesView.FullRowSelect = true;
-            this.entriesView.GridLines = false;
-            this.entriesView.Location = new System.Drawing.Point(0, 28);
-            this.entriesView.Name = "entriesView";
-            this.entriesView.ShowGroups = true;
-            this.entriesView.ShowItemToolTips = true;
-            this.entriesView.Size = new System.Drawing.Size(710, 218);
-            this.entriesView.TabIndex = 1;
-            this.entriesView.UseCompatibleStateImageBehavior = false;
-            this.entriesView.View = System.Windows.Forms.View.Details;
-            this.entriesView.ColumnClick += this.EntriesView_ColumnClick;
-            this.entriesView.DoubleClick += this.EntriesView_DoubleClick;
-            this.entriesView.KeyDown += this.EntriesView_KeyDown;
+            this.EntriesView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EntriesView.FullRowSelect = true;
+            this.EntriesView.GridLines = false;
+            this.EntriesView.Location = new System.Drawing.Point(0, 28);
+            this.EntriesView.Name = "entriesView";
+            this.EntriesView.ShowGroups = true;
+            this.EntriesView.ShowItemToolTips = true;
+            this.EntriesView.Size = new System.Drawing.Size(710, 218);
+            this.EntriesView.TabIndex = 1;
+            this.EntriesView.UseCompatibleStateImageBehavior = false;
+            this.EntriesView.View = System.Windows.Forms.View.Details;
+            this.EntriesView.ColumnClick += this.EntriesView_ColumnClick;
+            this.EntriesView.DoubleClick += this.EntriesView_DoubleClick;
+            this.EntriesView.KeyDown += this.EntriesView_KeyDown;
             // 
             // entryType
             // 
@@ -348,7 +333,7 @@ namespace ResultsPanel
             // 
             // PluginUI
             //
-            this.Controls.Add(this.entriesView);
+            this.Controls.Add(this.EntriesView);
             this.Controls.Add(this.toolStripFilters);
             this.Name = "PluginUI";
             this.Size = new System.Drawing.Size(712, 246);
@@ -368,7 +353,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeContextMenu()
         {
-            this.entriesView.ContextMenuStrip = this.pluginMain.contextMenuStrip;
+            this.EntriesView.ContextMenuStrip = this.pluginMain.contextMenuStrip;
         }
 
         /// <summary>
@@ -388,13 +373,13 @@ namespace ResultsPanel
             this.toolStripFilters.Renderer = new DockPanelStripRenderer();
             this.toolStripFilters.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.toolStripFilters.ImageList = imageList;
-            this.entriesView.SmallImageList = imageList;
+            this.EntriesView.SmallImageList = imageList;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
             this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
             this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
             this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
             this.toolStripButtonLock.Image = PluginBase.MainForm.FindImage("246");
-            this.entriesView.AddArrowImages();
+            this.EntriesView.AddArrowImages();
         }
 
         /// <summary>
@@ -418,7 +403,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeLayout()
         {
-            foreach (ColumnHeader column in entriesView.Columns)
+            foreach (ColumnHeader column in EntriesView.Columns)
             {
                 column.Width = ScaleHelper.Scale(column.Width);
             }
@@ -435,10 +420,10 @@ namespace ResultsPanel
         {
             bool showGroups = PluginBase.Settings.UseListViewGrouping; // Legacy setting - value is now stored in theme
 
-            if (entriesView.ShowGroups != showGroups)
+            if (EntriesView.ShowGroups != showGroups)
             {
-                entriesView.ShowGroups = showGroups;
-                entriesView.GridLines = !showGroups;
+                EntriesView.ShowGroups = showGroups;
+                EntriesView.GridLines = !showGroups;
             }
             else
             {
@@ -456,7 +441,7 @@ namespace ResultsPanel
         /// </summary>
         internal bool CopyTextShortcut()
         {
-            if (ContainsFocus && entriesView.Focused)
+            if (ContainsFocus && EntriesView.Focused)
             {
                 CopyText();
                 return true;
@@ -469,7 +454,7 @@ namespace ResultsPanel
         /// </summary>
         internal bool IgnoreEntryShortcut()
         {
-            if (ContainsFocus && entriesView.Focused)
+            if (ContainsFocus && EntriesView.Focused)
             {
                 IgnoreEntry();
                 return true;
@@ -488,7 +473,7 @@ namespace ResultsPanel
                 allListViewItems.Clear();
                 toolStripTextBoxFilter.Text = "";
                 errorCount = messageCount = warningCount = 0;
-                entriesView.Items.Clear();
+                EntriesView.Items.Clear();
                 entryIndex = -1;
                 UpdateButtons();
                 return true;
@@ -501,7 +486,7 @@ namespace ResultsPanel
         /// </summary>
         internal void CopyText()
         {
-            var selectedItems = entriesView.SelectedItems;
+            var selectedItems = EntriesView.SelectedItems;
             if (selectedItems.Count > 0)
             {
                 string copy = string.Empty;
@@ -516,7 +501,7 @@ namespace ResultsPanel
             else
             {
                 string copy = string.Empty;
-                foreach (ListViewItem item in entriesView.Items)
+                foreach (ListViewItem item in EntriesView.Items)
                 {
                     Match match = (Match) item.Tag;
                     copy += match.Value + "\n";
@@ -531,19 +516,19 @@ namespace ResultsPanel
         internal void IgnoreEntry()
         {
             var newIgnoredEntries = new List<ListViewItem>();
-            foreach (ListViewItem item in entriesView.SelectedItems)
+            foreach (ListViewItem item in EntriesView.SelectedItems)
             {
                 var match = (Match) item.Tag;
                 string entryValue = match.Value;
-                if (!ignoredEntries.ContainsKey(entryValue))
+                if (!IgnoredEntries.ContainsKey(entryValue))
                 {
-                    ignoredEntries.Add(entryValue, false);
+                    IgnoredEntries.Add(entryValue, false);
                     newIgnoredEntries.Add(item);
                 }
             }
             foreach (ListViewItem item in newIgnoredEntries)
             {
-                entriesView.Items.Remove(item);
+                EntriesView.Items.Remove(item);
             }
             if (newIgnoredEntries.Count > 0)
             {
@@ -556,9 +541,9 @@ namespace ResultsPanel
         /// </summary>
         internal bool ClearIgnoredEntries()
         {
-            if (this.ignoredEntries.Count > 0)
+            if (this.IgnoredEntries.Count > 0)
             {
-                this.ignoredEntries.Clear();
+                this.IgnoredEntries.Clear();
                 this.FilterResults();
                 this.RefreshSquiggles();
                 return true;
@@ -600,7 +585,7 @@ namespace ResultsPanel
                     if (fileTest.StartsWithOrdinal("~/")) fileTest = fileTest.Substring(2);
                     var match = fileEntry.Match(fileTest);
                     if (!match.Success) match = fileEntry2.Match(fileTest);
-                    if (match.Success && !ignoredEntries.ContainsKey(match.Value))
+                    if (match.Success && !IgnoredEntries.ContainsKey(match.Value))
                     {
                         var filename = match.Groups["filename"].Value;
                         if (filename.Length < 3 || badCharacters.IsMatch(filename)) continue;
@@ -653,12 +638,12 @@ namespace ResultsPanel
             this.logCount = count;
             if (newResult)
             {
-                int startIndex = this.entriesView.Items.Count;
+                int startIndex = this.EntriesView.Items.Count;
                 this.UpdateButtons();
                 this.FilterResults();
-                for (int i = startIndex; i < this.entriesView.Items.Count; i++)
+                for (int i = startIndex; i < this.EntriesView.Items.Count; i++)
                 {
-                    this.AddSquiggle(this.entriesView.Items[i]);
+                    this.AddSquiggle(this.EntriesView.Items[i]);
                 }
             }
         }
@@ -778,10 +763,10 @@ namespace ResultsPanel
         /// <param name="e"></param>
         private void EntriesView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            ColumnHeader header = this.entriesView.Columns[e.Column];
-            if (header.Tag is GroupingMethod)
+            ColumnHeader header = this.EntriesView.Columns[e.Column];
+            if (header.Tag is GroupingMethod tag)
             {
-                this.groupingMethod = (GroupingMethod) header.Tag;
+                this.groupingMethod = tag;
 
                 if (this.lastColumn == e.Column)
                 {
@@ -821,9 +806,9 @@ namespace ResultsPanel
         /// </summary>
         private void EntriesView_DoubleClick(object sender, EventArgs e)
         {
-            if (this.entriesView.SelectedIndices.Count > 0)
+            if (this.EntriesView.SelectedIndices.Count > 0)
             {
-                this.SelectItem(this.entriesView.SelectedIndices[0]);
+                this.SelectItem(this.EntriesView.SelectedIndices[0]);
                 this.NavigateToSelectedItem();
             }
         }
@@ -834,7 +819,7 @@ namespace ResultsPanel
         private void AutoShow_Tick(object sender, EventArgs e)
         {
             this.autoShow.Stop();
-            if (this.entriesView.Items.Count > 0)
+            if (this.EntriesView.Items.Count > 0)
             {
                 bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
                 if (!ParentPanel.Visible || autoHide)
@@ -887,9 +872,9 @@ namespace ResultsPanel
             bool matchInfo = this.toolStripButtonInfo.Checked;
             bool matchWarnings = this.toolStripButtonWarning.Checked;
             bool matchErrors = this.toolStripButtonError.Checked;
-            this.entriesView.BeginUpdate();
-            this.entriesView.Items.Clear();
-            this.entriesView.Groups.Clear();
+            this.EntriesView.BeginUpdate();
+            this.EntriesView.Items.Clear();
+            this.EntriesView.Groups.Clear();
             foreach (var item in this.allListViewItems)
             {
                 // Is checked?
@@ -950,36 +935,43 @@ namespace ResultsPanel
                             break;
                     }
                     this.AddToGroup(item, groupId, groupTitle);
-                    this.entriesView.Items.Add(item);
+                    this.EntriesView.Items.Add(item);
                 }
             }
 
-            if (!this.entriesView.GridLines) // if (PluginBase.Settings.UseListViewGrouping)
+            if (!this.EntriesView.GridLines) // if (PluginBase.Settings.UseListViewGrouping)
             {
-                this.entriesView.ShowGroups = this.sortOrder != SortOrder.None
+                this.EntriesView.ShowGroups = this.sortOrder != SortOrder.None
                     && this.groupingMethod != GroupingMethod.Description && this.groupingMethod != GroupingMethod.Line; // Do not group by description or line
             }
 
-            if (this.entriesView.ShowGroups)
+            if (this.EntriesView.ShowGroups)
             {
-                this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Name, y.Name));
+                this.EntriesView.SortGroups(this.EntriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Name, y.Name));
             }
             else
             {
-                this.entriesView.SortItems(this.entriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Group.Name, y.Group.Name));
+                this.EntriesView.SortItems(this.EntriesView.Columns[lastColumn], this.sortOrder, (x, y) =>
+                {
+                    var xName = x.Group.Name;
+                    var yName = y.Group.Name;
+                    if (int.TryParse(xName, out var xInt) && int.TryParse(yName, out var yInt))
+                        return xInt.CompareTo(yInt);
+                    return string.CompareOrdinal(xName, yName);
+                });
             }
 
-            if (this.entriesView.Items.Count > 0)
+            if (this.EntriesView.Items.Count > 0)
             {
                 if (this.Settings.ScrollToBottom)
                 {
-                    int last = this.entriesView.Items.Count - 1;
-                    this.entriesView.EnsureVisible(last);
+                    int last = this.EntriesView.Items.Count - 1;
+                    this.EntriesView.EnsureVisible(last);
                 }
-                else this.entriesView.EnsureVisible(0);
+                else this.EntriesView.EnsureVisible(0);
             }
 
-            this.entriesView.EndUpdate();
+            this.EntriesView.EndUpdate();
         }
 
         /// <summary>
@@ -1009,7 +1001,7 @@ namespace ResultsPanel
         /// </summary>
         private void AddToGroup(ListViewItem item, string name, string header)
         {
-            foreach (ListViewGroup lvg in entriesView.Groups)
+            foreach (ListViewGroup lvg in EntriesView.Groups)
             {
                 if (lvg.Name == name)
                 {
@@ -1022,7 +1014,7 @@ namespace ResultsPanel
             }
             var group = new ListViewGroup(name, header);
             group.Items.Add(item);
-            entriesView.Groups.Add(group);
+            EntriesView.Groups.Add(group);
         }
 
         /// <summary>
@@ -1030,7 +1022,7 @@ namespace ResultsPanel
         /// </summary>
         internal void AddSquiggles()
         {
-            foreach (ListViewItem item in entriesView.Items)
+            foreach (ListViewItem item in EntriesView.Items)
             {
                 AddSquiggle(item);
             }
@@ -1041,7 +1033,7 @@ namespace ResultsPanel
         /// </summary>
         internal void AddSquiggles(string filename)
         {
-            foreach (ListViewItem item in entriesView.Items)
+            foreach (ListViewItem item in EntriesView.Items)
             {
                 if (GetFileName(item) == filename)
                 {
@@ -1062,9 +1054,7 @@ namespace ResultsPanel
 
                 if (item.ImageIndex == 0) continue; //item is only information
 
-                int start;
-                int end;
-                var hasPos = GetPosition(document.SciControl, item, out start, out end);
+                var hasPos = GetPosition(document.SciControl, item, out var start, out var end);
                 if (!hasPos) continue; //item has no position
 
                 var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
@@ -1131,9 +1121,7 @@ namespace ResultsPanel
 
             int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
 
-            int start;
-            int end;
-            var hasPos = GetPosition(sci, item, out start, out end);
+            var hasPos = GetPosition(sci, item, out var start, out var end);
             if (!hasPos) return;
 
             if (0 <= start && start < end && end <= sci.TextLength)
@@ -1172,7 +1160,7 @@ namespace ResultsPanel
         internal void ClearSquiggles()
         {
             var cleared = new HashSet<string>();
-            foreach (ListViewItem item in this.entriesView.Items)
+            foreach (ListViewItem item in this.EntriesView.Items)
             {
                 string fileName = GetFileName(item);
                 foreach (var document in PluginBase.MainForm.Documents)
@@ -1242,13 +1230,13 @@ namespace ResultsPanel
         /**
         * Finds if a string contains invalid characters for a path
         */
-        private static Regex badCharacters = new Regex("[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        private static readonly Regex badCharacters = new Regex("[" + Regex.Escape(new string(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
 
         /**
         * Match standard file entry -- filename:line:description
         * i.e. C:/path/to/src/com/Class.as:15: description
         */
-        private static Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
+        private static readonly Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match MXMLC style errors
@@ -1256,19 +1244,19 @@ namespace ResultsPanel
         * Match TypeScript style errors
         * i.e. C:\path\to\src\Class.as(9,20): description
         */
-        private static Regex fileEntry2 = new Regex(@"^(?<filename>.*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
+        private static readonly Regex fileEntry2 = new Regex(@"^(?<filename>.*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match find in files style ranges
         */
-        private static Regex lookupRange = new Regex("lookup range[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        private static readonly Regex lookupRange = new Regex("lookup range[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
 
         /**
         * Extract error caret position
         */
-        private static Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
-        private static Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
-        private static Regex errorCharacters2 = new Regex("col: (?<start>[0-9]+)\\s*", RegexOptions.Compiled);
+        private static readonly Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
+        private static readonly Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        private static readonly Regex errorCharacters2 = new Regex("col: (?<start>[0-9]+)\\s*", RegexOptions.Compiled);
 
         #endregion
 
@@ -1281,9 +1269,9 @@ namespace ResultsPanel
         /// </summary>
         public bool NextEntry()
         {
-            if (this.entriesView.Items.Count > 0)
+            if (this.EntriesView.Items.Count > 0)
             {
-                this.SelectItem(this.entryIndex == this.entriesView.Items.Count - 1 ? 0 : this.entryIndex + 1);
+                this.SelectItem(this.entryIndex == this.EntriesView.Items.Count - 1 ? 0 : this.entryIndex + 1);
                 this.NavigateToSelectedItem();
                 return true;
             }
@@ -1295,9 +1283,9 @@ namespace ResultsPanel
         /// </summary>
         public bool PreviousEntry()
         {
-            if (this.entriesView.Items.Count > 0)
+            if (this.EntriesView.Items.Count > 0)
             {
-                this.SelectItem(this.entryIndex <= 0 ? this.entriesView.Items.Count - 1 : this.entryIndex - 1);
+                this.SelectItem(this.entryIndex <= 0 ? this.EntriesView.Items.Count - 1 : this.entryIndex - 1);
                 this.NavigateToSelectedItem();
                 return true;
             }
@@ -1306,21 +1294,21 @@ namespace ResultsPanel
 
         private void SelectItem(int index)
         {
-            if (0 <= this.entryIndex && this.entryIndex < this.entriesView.Items.Count)
+            if (0 <= this.entryIndex && this.entryIndex < this.EntriesView.Items.Count)
             {
-                this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
+                this.EntriesView.Items[this.entryIndex].ForeColor = this.EntriesView.ForeColor;
             }
             this.entryIndex = index;
-            this.entriesView.SelectedItems.Clear();
-            this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
-            this.entriesView.EnsureVisible(this.entryIndex);
+            this.EntriesView.SelectedItems.Clear();
+            this.EntriesView.Items[this.entryIndex].Selected = true;
+            this.EntriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
+            this.EntriesView.EnsureVisible(this.entryIndex);
         }
 
         private void NavigateToSelectedItem()
         {
-            if (this.entriesView.SelectedItems.Count == 0) return;
-            var item = this.entriesView.SelectedItems[0];
+            if (this.EntriesView.SelectedItems.Count == 0) return;
+            var item = this.EntriesView.SelectedItems[0];
             if (item == null) return;
             string file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
             file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
