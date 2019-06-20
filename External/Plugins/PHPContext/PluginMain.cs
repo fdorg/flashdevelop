@@ -15,7 +15,6 @@ namespace PHPContext
         private ContextSettings settingObject;
         private string settingFilename;
         private Context contextInstance;
-        private static int v;
 
         #region Required Properties
 
