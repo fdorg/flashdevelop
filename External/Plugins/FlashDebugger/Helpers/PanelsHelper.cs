@@ -71,7 +71,7 @@ namespace FlashDebugger
         /// </summary>
         public void DockTogether()
         {
-            if (watchPanel!= null && watchPanel.Pane != null)
+            if (watchPanel?.Pane != null)
             {
                 localsPanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);
                 stackframePanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);

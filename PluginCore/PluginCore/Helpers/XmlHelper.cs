@@ -11,7 +11,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string GetValue(XmlNode node)
         {
-            if (node != null && node.FirstChild != null) return node.FirstChild.Value;
+            if (node?.FirstChild != null) return node.FirstChild.Value;
             else return null;
         }
 
@@ -20,7 +20,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string GetAttribute(XmlNode node, string attName)
         {
-            if (node != null && node.Attributes[attName] != null) return node.Attributes[attName].Value;
+            if (node?.Attributes[attName] != null) return node.Attributes[attName].Value;
             else return null;
         }
         
@@ -29,7 +29,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static bool HasValue(XmlNode node)
         {
-            return (node != null && node.FirstChild != null && node.FirstChild.Value != null);
+            return (node?.FirstChild?.Value != null);
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static bool HasAttribute(XmlNode node, string attName)
         {
-            return (node != null && node.Attributes[attName] != null);
+            return (node?.Attributes[attName] != null);
         }
         
         /// <summary>

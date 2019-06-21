@@ -129,7 +129,7 @@ namespace SourceControl.Managers
             node.Meta[META_ROOT] = null;
             node.Meta[META_STATUS] = VCItemStatus.Unknown;
 
-            if (node.Parent != null && node.Parent is GenericNode)
+            if (node.Parent is GenericNode)
             {
                 GenericNode parent = (GenericNode)node.Parent;
                 if (parent.Meta != null && parent.Meta.ContainsKey(META_VC))

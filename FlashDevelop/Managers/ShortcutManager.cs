@@ -141,7 +141,7 @@ namespace FlashDevelop.Managers
         public static void ApplySecondaryShortcut(ToolStripItem item)
         {
             bool view = Globals.Settings.ViewShortcuts;
-            if (item != null && item.Tag != null)
+            if (item?.Tag != null)
             {
                 string id = string.Empty;
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');

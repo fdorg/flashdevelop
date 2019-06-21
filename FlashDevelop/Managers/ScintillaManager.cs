@@ -275,7 +275,7 @@ namespace FlashDevelop.Managers
                 * Set if themes should colorize the first margin
                 */
                 Language language = SciConfig.GetLanguage(sci.ConfigurationLanguage);
-                if (language != null && language.editorstyle != null)
+                if (language?.editorstyle != null)
                 {
                     bool colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
                     if (colorizeMarkerBack) sci.SetMarginTypeN(BookmarksMargin, (int)MarginType.Fore);
@@ -357,7 +357,7 @@ namespace FlashDevelop.Managers
         {
             int value = ScaleHelper.Scale(size);
             Language lang = SciConfig.GetLanguage(sci.ConfigurationLanguage);
-            if (lang != null && lang.usestyles != null && lang.usestyles.Length > 0)
+            if (lang?.usestyles != null && lang.usestyles.Length > 0)
             {
                 // Only larger fonts need scaling...
                 if (lang.usestyles[0].FontSize < 11) return value;

@@ -183,7 +183,7 @@ namespace ASCompletion
                 outlineTreeView.ImageList = ASContext.Panel.TreeIcons;
 
                 allTypes = new List<TreeNode>();
-                if (current == null || current.Classpath == null || current.Classpath.Count == 0) return;
+                if (current?.Classpath == null || current.Classpath.Count == 0) return;
 
                 foreach (PathModel path in current.Classpath)
                 {
@@ -360,7 +360,7 @@ namespace ASCompletion
         /// </summary>
         public FileModel OpenFile(string filename, IASContext context)
         {
-            if (context == null || context.Classpath == null)
+            if (context?.Classpath == null)
                 return null;
             FileModel model = null;
             foreach (PathModel aPath in context.Classpath)
@@ -568,7 +568,7 @@ namespace ASCompletion
         private void ConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null || current == null || current.Classpath == null) return;
+            if (node == null || current?.Classpath == null) return;
 
             ResolvedPath resolved = ResolvePath(node);
             string package = resolved.package;

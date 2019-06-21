@@ -659,7 +659,7 @@ namespace TaskListPanel
         private void ImageList_Populate(object sender, EventArgs e)
         {
             Settings settings = (Settings) this.pluginMain.Settings;
-            if (settings != null && settings.ImageIndexes != null)
+            if (settings?.ImageIndexes != null)
             {
                 foreach (int index in settings.ImageIndexes)
                 {
