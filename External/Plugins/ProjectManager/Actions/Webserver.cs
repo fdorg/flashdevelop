@@ -15,15 +15,12 @@ namespace ProjectManager.Actions
         static Process process;
         static int portServed = 2000;
 
-        public static bool Enabled
-        {
-            get { return portServed > 0; }
-        }
+        public static bool Enabled => portServed > 0;
 
         public static int Port
         {
-            get { return portServed; }
-            set { portServed = value; }
+            get => portServed;
+            set => portServed = value;
         }
                 
         public static void StartServer(string path)

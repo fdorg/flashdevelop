@@ -24,8 +24,8 @@ namespace PluginCore.BBCode
 
         public string input
         {
-            get { return _input; }
-            set { _input = value; }
+            get => _input;
+            set => _input = value;
         }
 
 

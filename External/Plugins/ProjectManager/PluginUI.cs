@@ -146,13 +146,13 @@ namespace ProjectManager
 
         #region Public Properties
 
-        public ProjectTreeView Tree  { get { return this.tree; }  }
-        public ProjectContextMenu Menu  { get { return this.menu; }  }
-        public TreeBar TreeBar  { get { return this.treeBar; } }
+        public ProjectTreeView Tree => this.tree;
+        public ProjectContextMenu Menu => this.menu;
+        public TreeBar TreeBar => this.treeBar;
 
         public bool IsTraceDisabled
         {
-            get { return menus.ConfigurationSelector.SelectedIndex == 1; }
+            get => menus.ConfigurationSelector.SelectedIndex == 1;
             set
             {
                 menus.ConfigurationSelector.SelectedIndex = (value) ? 1 : 0;
@@ -165,8 +165,8 @@ namespace ProjectManager
         /// </summary> 
         public bool IsEditingLabel
         {
-            get { return this.isEditingLabel; }
-            set { this.isEditingLabel = value; }
+            get => this.isEditingLabel;
+            set => this.isEditingLabel = value;
         }
 
         #endregion

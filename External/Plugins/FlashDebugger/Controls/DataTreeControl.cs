@@ -26,20 +26,11 @@ namespace FlashDebugger.Controls
         private bool watchMode;
         private bool addingNewExpression;
 
-        public Collection<Node> Nodes
-        {
-            get { return _model.Root.Nodes; }
-        }
+        public Collection<Node> Nodes => _model.Root.Nodes;
 
-        public TreeViewAdv Tree
-        {
-            get { return _tree; }
-        }
+        public TreeViewAdv Tree => _tree;
 
-        public ViewerForm Viewer
-        {
-            get { return viewerForm; }
-        }
+        public ViewerForm Viewer => viewerForm;
 
         public DataTreeControl() : this(false){}
 

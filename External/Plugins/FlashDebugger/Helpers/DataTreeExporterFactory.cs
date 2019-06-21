@@ -10,10 +10,7 @@ namespace FlashDebugger.Helpers
     {
 
         private static readonly IDictionary<string, IDataTreeExporter> exporters;
-        public static IDictionary<string, IDataTreeExporter> Exporters
-        {
-            get { return exporters; }
-        }
+        public static IDictionary<string, IDataTreeExporter> Exporters => exporters;
 
         static DataTreeExporterFactory()
         {

@@ -47,8 +47,8 @@ namespace PluginCore
         /// </summary> 
         public string Key
         {
-            get { return key; }
-            set { key = value; }
+            get => key;
+            set => key = value;
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace PluginCore
         /// </summary> 
         public string Value
         {
-            get { return value; }
-            set { this.value = value; }
+            get => value;
+            set => this.value = value;
         }
 
         public override string ToString()

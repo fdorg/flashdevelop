@@ -4,10 +4,7 @@ namespace WeifenLuo.WinFormsUI.Docking
     {
         private class SplitterControl : SplitterBase
         {
-            protected override int SplitterSize
-            {
-                get { return Measures.SplitterSize; }
-            }
+            protected override int SplitterSize => Measures.SplitterSize;
 
             protected override void StartDrag()
             {

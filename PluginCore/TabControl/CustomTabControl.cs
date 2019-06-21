@@ -95,15 +95,13 @@ namespace System.Windows.Forms
 				
 				return this._StyleProvider;
 			}
-			set {
-				this._StyleProvider = value;
-			}
-		}
+			set => this._StyleProvider = value;
+        }
 
 		[Category("Appearance"), DefaultValue(typeof(TabStyle), "Default"), RefreshProperties(RefreshProperties.All)]
 		public TabStyle DisplayStyle {
-			get { return this._Style; }
-			set {
+			get => this._Style;
+            set {
 				if (this._Style != value){
 					this._Style = value;
 					this._StyleProvider = TabStyleProvider.CreateProvider(this);
@@ -114,10 +112,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance"), RefreshProperties(RefreshProperties.All)]
 		public new bool Multiline {
-			get {
-				return base.Multiline;
-			}
-			set {
+			get => base.Multiline;
+            set {
 				base.Multiline = value;
 				this.Invalidate();
 			}
@@ -128,15 +124,13 @@ namespace System.Windows.Forms
 		//	We are handling this on the Style Provider
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		public new Point Padding {
-			get { return this.DisplayStyleProvider.Padding; }
-			set {
-				this.DisplayStyleProvider.Padding = value;
-			}
-		}
+			get => this.DisplayStyleProvider.Padding;
+            set => this.DisplayStyleProvider.Padding = value;
+        }
 		
 		public override bool RightToLeftLayout {
-			get { return base.RightToLeftLayout; }
-			set { 
+			get => base.RightToLeftLayout;
+            set { 
 				base.RightToLeftLayout = value; 
 				this.UpdateStyles();
 			}
@@ -147,16 +141,14 @@ namespace System.Windows.Forms
 		//	We are handling this on the Style Provider
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool HotTrack {
-			get { return this.DisplayStyleProvider.HotTrack; }
-			set {
-				this.DisplayStyleProvider.HotTrack = value;
-			}
-		}
+			get => this.DisplayStyleProvider.HotTrack;
+            set => this.DisplayStyleProvider.HotTrack = value;
+        }
 
 		[Category("Appearance")]
 		public new TabAlignment Alignment {
-			get { return base.Alignment; }
-			set {
+			get => base.Alignment;
+            set {
 				base.Alignment = value;
 				switch (value) {
 					case TabAlignment.Top:
@@ -177,14 +169,9 @@ namespace System.Windows.Forms
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value")]
 		public new TabAppearance Appearance{
-			get{
-				return base.Appearance;
-			}
-			set{
-				//	Don't permit setting to other appearances as we are doing all the painting
-				base.Appearance = TabAppearance.Normal;
-			}
-		}
+			get => base.Appearance;
+            set => base.Appearance = TabAppearance.Normal;
+        }
 		
 		public override Rectangle DisplayRectangle {
 			get {

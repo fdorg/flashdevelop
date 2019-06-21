@@ -190,10 +190,7 @@ namespace BookmarkPanel
         /// <summary>
         /// Accessor for MainForm
         /// </summary>
-        public static IMainForm MainForm
-        {
-            get { return PluginBase.MainForm; }
-        }
+        public static IMainForm MainForm => PluginBase.MainForm;
 
         /// <summary>
         /// Initializes the timers

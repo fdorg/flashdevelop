@@ -19,8 +19,8 @@ namespace CodeAnalyzer
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string PMDRuleset
         {
-            get { return pmdRuleset; }
-            set { pmdRuleset = value; }
+            get => pmdRuleset;
+            set => pmdRuleset = value;
         }
 
     }

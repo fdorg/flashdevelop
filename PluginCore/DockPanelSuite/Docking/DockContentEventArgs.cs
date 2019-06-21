@@ -11,9 +11,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_content = content;
         }
 
-        public IDockContent Content
-        {
-            get {   return m_content;   }
-        }
+        public IDockContent Content => m_content;
     }
 }

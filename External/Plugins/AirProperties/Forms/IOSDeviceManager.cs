@@ -14,7 +14,7 @@ namespace AirProperties.Forms
         private readonly DeviceClassification[] iOSDevices;
 
         private string _selectedDevices;
-        public string SelectedDevices { get { return _selectedDevices; } }
+        public string SelectedDevices => _selectedDevices;
 
         public IOSDeviceManager(string[] selectedDevices)
         {

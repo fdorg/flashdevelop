@@ -190,12 +190,8 @@ namespace System.Windows.Forms
 		    	return rect;
 		    }
 		    
-		    public Size Size{
-		        get{
-		            return new Size(this.right - this.left, this.bottom - this.top);
-		        }
-		    }
-		}
+		    public Size Size => new Size(this.right - this.left, this.bottom - this.top);
+        }
 		
 
 #endregion

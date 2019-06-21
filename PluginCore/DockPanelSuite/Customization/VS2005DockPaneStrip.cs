@@ -178,70 +178,31 @@ namespace WeifenLuo.WinFormsUI.Docking
         private IContainer Components { get; }
 
         #region Customizable Properties
-        private static int ToolWindowStripGapTop
-        {
-            get { return ScaleHelper.Scale(_ToolWindowStripGapTop); }
-        }
-        
-        private static int ToolWindowStripGapBottom
-        {
-            get { return ScaleHelper.Scale(_ToolWindowStripGapBottom); }
-        }
+        private static int ToolWindowStripGapTop => ScaleHelper.Scale(_ToolWindowStripGapTop);
 
-        private static int ToolWindowStripGapLeft
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowStripGapLeft);  }
-        }
+        private static int ToolWindowStripGapBottom => ScaleHelper.Scale(_ToolWindowStripGapBottom);
 
-        private static int ToolWindowStripGapRight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowStripGapRight); }
-        }
+        private static int ToolWindowStripGapLeft => ScaleHelper.Scale(_ToolWindowStripGapLeft);
 
-        private static int ToolWindowImageHeight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageHeight);   }
-        }
+        private static int ToolWindowStripGapRight => ScaleHelper.Scale(_ToolWindowStripGapRight);
 
-        private static int ToolWindowImageWidth
-        {
-            get { return ScaleHelper.Scale(_ToolWindowImageWidth); }
-        }
+        private static int ToolWindowImageHeight => ScaleHelper.Scale(_ToolWindowImageHeight);
 
-        private static int ToolWindowImageGapTop
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapTop);   }
-        }
+        private static int ToolWindowImageWidth => ScaleHelper.Scale(_ToolWindowImageWidth);
 
-        private static int ToolWindowImageGapBottom
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapBottom);    }
-        }
+        private static int ToolWindowImageGapTop => ScaleHelper.Scale(_ToolWindowImageGapTop);
 
-        private static int ToolWindowImageGapLeft
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapLeft);  }
-        }
+        private static int ToolWindowImageGapBottom => ScaleHelper.Scale(_ToolWindowImageGapBottom);
 
-        private static int ToolWindowImageGapRight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowImageGapRight); }
-        }
+        private static int ToolWindowImageGapLeft => ScaleHelper.Scale(_ToolWindowImageGapLeft);
 
-        private static int ToolWindowTextGapRight
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowTextGapRight);  }
-        }
+        private static int ToolWindowImageGapRight => ScaleHelper.Scale(_ToolWindowImageGapRight);
 
-        private static int ToolWindowTabSeperatorGapTop
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowTabSeperatorGapTop);    }
-        }
+        private static int ToolWindowTextGapRight => ScaleHelper.Scale(_ToolWindowTextGapRight);
 
-        private static int ToolWindowTabSeperatorGapBottom
-        {
-            get {   return ScaleHelper.Scale(_ToolWindowTabSeperatorGapBottom); }
-        }
+        private static int ToolWindowTabSeperatorGapTop => ScaleHelper.Scale(_ToolWindowTabSeperatorGapTop);
+
+        private static int ToolWindowTabSeperatorGapBottom => ScaleHelper.Scale(_ToolWindowTabSeperatorGapBottom);
 
         private static string _toolTipClose;
         private static string ToolTipClose
@@ -282,15 +243,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static int DocumentStripGapTop
-        {
-            get { return _DocumentStripGapTop; }
-        }
+        private static int DocumentStripGapTop => _DocumentStripGapTop;
 
-        private static int DocumentStripGapBottom
-        {
-            get { return _DocumentStripGapBottom; }
-        }
+        private static int DocumentStripGapBottom => _DocumentStripGapBottom;
 
         private TextFormatFlags DocumentTextFormat
         {
@@ -307,30 +262,15 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static int DocumentTabMaxWidth
-        {
-            get {   return ScaleHelper.Scale(_DocumentTabMaxWidth); }
-        }
+        private static int DocumentTabMaxWidth => ScaleHelper.Scale(_DocumentTabMaxWidth);
 
-        private static int DocumentButtonGapTop
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapTop);    }
-        }
+        private static int DocumentButtonGapTop => ScaleHelper.Scale(_DocumentButtonGapTop);
 
-        private static int DocumentButtonGapBottom
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapBottom); }
-        }
+        private static int DocumentButtonGapBottom => ScaleHelper.Scale(_DocumentButtonGapBottom);
 
-        private static int DocumentButtonGapBetween
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapBetween);    }
-        }
+        private static int DocumentButtonGapBetween => ScaleHelper.Scale(_DocumentButtonGapBetween);
 
-        private static int DocumentButtonGapRight
-        {
-            get {   return ScaleHelper.Scale(_DocumentButtonGapRight);  }
-        }
+        private static int DocumentButtonGapRight => ScaleHelper.Scale(_DocumentButtonGapRight);
 
         // HACK
         private static int DocumentTabGapTop
@@ -343,20 +283,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static int DocumentTabGapLeft
-        {
-            get {   return ScaleHelper.Scale(_DocumentTabGapLeft);  }
-        }
+        private static int DocumentTabGapLeft => ScaleHelper.Scale(_DocumentTabGapLeft);
 
-        private static int DocumentTabGapRight
-        {
-            get {   return ScaleHelper.Scale(_DocumentTabGapRight); }
-        }
+        private static int DocumentTabGapRight => ScaleHelper.Scale(_DocumentTabGapRight);
 
-        private static int DocumentIconGapBottom
-        {
-            get { return ScaleHelper.Scale(_DocumentIconGapBottom); }
-        }
+        private static int DocumentIconGapBottom => ScaleHelper.Scale(_DocumentIconGapBottom);
 
         // HACK
         private static int DocumentIconGapLeft
@@ -369,25 +300,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static int DocumentIconGapRight
-        {
-            get { return ScaleHelper.Scale(_DocumentIconGapRight); }
-        }
+        private static int DocumentIconGapRight => ScaleHelper.Scale(_DocumentIconGapRight);
 
-        private static int DocumentIconWidth
-        {
-            get {   return ScaleHelper.Scale(_DocumentIconWidth);   }
-        }
+        private static int DocumentIconWidth => ScaleHelper.Scale(_DocumentIconWidth);
 
-        private static int DocumentIconHeight
-        {
-            get {   return ScaleHelper.Scale(_DocumentIconHeight);  }
-        }
+        private static int DocumentIconHeight => ScaleHelper.Scale(_DocumentIconHeight);
 
-        private static int DocumentTextGapRight
-        {
-            get { return ScaleHelper.Scale(_DocumentTextGapRight); }
-        }
+        private static int DocumentTextGapRight => ScaleHelper.Scale(_DocumentTextGapRight);
 
         private static Pen PenToolWindowTabActiveBorder
         {
@@ -461,10 +380,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static Brush BrushDocumentInactiveBackground
-        {
-            get { return SystemBrushes.ControlLight; }
-        }
+        private static Brush BrushDocumentInactiveBackground => SystemBrushes.ControlLight;
 
         private static Color ColorToolWindowActiveText
         {
@@ -575,7 +491,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private int m_startDisplayingTab = 0;
         private int StartDisplayingTab
         {
-            get { return m_startDisplayingTab; }
+            get => m_startDisplayingTab;
             set
             {
                 m_startDisplayingTab = value;
@@ -1378,10 +1294,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private ContextMenuStrip m_selectMenu;
-        private ContextMenuStrip SelectMenu
-        {
-            get { return m_selectMenu; }
-        }
+        private ContextMenuStrip SelectMenu => m_selectMenu;
 
         private void WindowList_Click(object sender, EventArgs e)
         {

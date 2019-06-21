@@ -118,10 +118,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private DockPanel m_dockPanel;
-        private DockPanel DockPanel
-        {
-            get {   return m_dockPanel; }
-        }
+        private DockPanel DockPanel => m_dockPanel;
 
         private IDockPaneFactory m_dockPaneFactory = null;
         public IDockPaneFactory DockPaneFactory

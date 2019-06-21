@@ -40,8 +40,8 @@ namespace AirProperties.Controls
         [System.ComponentModel.Description("Style of the Tri-State Tree View")]
         public TriStateStyles TriStateStyleProperty
         {
-            get { return TriStateStyle; }
-            set { TriStateStyle = value; }
+            get => TriStateStyle;
+            set => TriStateStyle = value;
         }
 
         // <summary>

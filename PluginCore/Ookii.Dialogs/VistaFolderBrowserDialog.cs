@@ -33,14 +33,8 @@ namespace Ookii.Dialogs
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public new event EventHandler HelpRequest
         {
-            add
-            {
-                base.HelpRequest += value;
-            }
-            remove
-            {
-                base.HelpRequest -= value;
-            }
+            add => base.HelpRequest += value;
+            remove => base.HelpRequest -= value;
         }
 
         /// <summary>
@@ -63,13 +57,7 @@ namespace Ookii.Dialogs
         /// <see langword="true" /> on Windows Vista or newer operating systems; otherwise, <see langword="false" />.
         /// </value>
         [Browsable(false)]
-        public static bool IsVistaFolderDialogSupported
-        {
-            get
-            {
-                return NativeMethods.IsWindowsVistaOrLater;
-            }
-        }
+        public static bool IsVistaFolderDialogSupported => NativeMethods.IsWindowsVistaOrLater;
 
         /// <summary>
         /// Gets or sets the descriptive text displayed above the tree view control in the dialog box, or below the list view control
@@ -208,8 +196,8 @@ namespace Ookii.Dialogs
         [Category("Folder Browsing"), DefaultValue(false), Description("A value that indicates whether to use the value of the Description property as the dialog title for Vista style dialogs. This property has no effect on old style dialogs.")]
         public bool UseDescriptionForTitle
         {
-            get { return _useDescriptionForTitle; }
-            set { _useDescriptionForTitle = value; }
+            get => _useDescriptionForTitle;
+            set => _useDescriptionForTitle = value;
         }   
 
         #endregion

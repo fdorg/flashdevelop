@@ -27,8 +27,8 @@ namespace FlashLogViewer
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string FlashLogFile 
         {
-            get { return this.flashLogFile; }
-            set { this.flashLogFile = value; }
+            get => this.flashLogFile;
+            set => this.flashLogFile = value;
         }
 
         /// <summary> 
@@ -40,8 +40,8 @@ namespace FlashLogViewer
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string PolicyLogFile
         {
-            get { return this.policyLogFile; }
-            set { this.policyLogFile = value; }
+            get => this.policyLogFile;
+            set => this.policyLogFile = value;
         }
 
         /// <summary> 
@@ -52,8 +52,8 @@ namespace FlashLogViewer
         [LocalizedDescription("FlashLogViewer.Description.ColourWarnings")]
         public bool ColourWarnings
         {
-            get { return this.colourWarnings; }
-            set { this.colourWarnings = value; }
+            get => this.colourWarnings;
+            set => this.colourWarnings = value;
         }
 
         /// <summary> 
@@ -64,8 +64,8 @@ namespace FlashLogViewer
         [LocalizedDescription("FlashLogViewer.Description.KeepPopupTopMost")]
         public bool KeepPopupTopMost
         {
-            get { return this.keepPopupTopMost; }
-            set { this.keepPopupTopMost = value; }
+            get => this.keepPopupTopMost;
+            set => this.keepPopupTopMost = value;
         }
 
         /// <summary> 
@@ -76,8 +76,8 @@ namespace FlashLogViewer
         [LocalizedDescription("FlashLogViewer.Description.TrackingStartType")]
         public StartType TrackingStartType
         {
-            get { return this.trackingStartType; }
-            set { this.trackingStartType = value; }
+            get => this.trackingStartType;
+            set => this.trackingStartType = value;
         }
 
         /// <summary> 
@@ -88,8 +88,8 @@ namespace FlashLogViewer
         [LocalizedDescription("FlashLogViewer.Description.UpdateInterval")]
         public int UpdateInterval
         {
-            get { return this.updateInterval; }
-            set { this.updateInterval = value; }
+            get => this.updateInterval;
+            set => this.updateInterval = value;
         }
 
         /// <summary> 
@@ -101,8 +101,8 @@ namespace FlashLogViewer
         [LocalizedDescription("FlashLogViewer.Description.RegexWarning")]
         public string RegexWarning
         {
-            get { return this.regexWarning; }
-            set { this.regexWarning = value; }
+            get => this.regexWarning;
+            set => this.regexWarning = value;
         }
 
         /// <summary> 
@@ -114,8 +114,8 @@ namespace FlashLogViewer
         [LocalizedDescription("FlashLogViewer.Description.RegexError")]
         public string RegexError
         {
-            get { return this.regexError; }
-            set { this.regexError = value; }
+            get => this.regexError;
+            set => this.regexError = value;
         }
 
      }

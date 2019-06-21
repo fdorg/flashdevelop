@@ -15,15 +15,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_pane = pane;
             }
 
-            public DockPane DockPane
-            {
-                get { return m_pane; }
-            }
+            public DockPane DockPane => m_pane;
 
             private DockAlignment m_alignment;
             public DockAlignment Alignment
             {
-                get { return m_alignment; }
+                get => m_alignment;
                 set
                 {
                     m_alignment = value;
@@ -126,10 +123,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             #region IDragSource Members
 
-            Control IDragSource.DragControl
-            {
-                get { return this; }
-            }
+            Control IDragSource.DragControl => this;
 
             #endregion
 
@@ -137,19 +131,16 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private SplitterControl m_splitter;
-        private SplitterControl Splitter
-        {
-            get { return m_splitter; }
-        }
+        private SplitterControl Splitter => m_splitter;
 
         internal Rectangle SplitterBounds
         {
-            set { Splitter.Bounds = value; }
+            set => Splitter.Bounds = value;
         }
 
         internal DockAlignment SplitterAlignment
         {
-            set { Splitter.Alignment = value; }
+            set => Splitter.Alignment = value;
         }
     }
 }

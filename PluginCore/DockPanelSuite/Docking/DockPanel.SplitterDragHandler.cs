@@ -19,10 +19,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
 
                 DragForm m_dragForm;
-                private DragForm DragForm
-                {
-                    get { return m_dragForm; }
-                }
+                private DragForm DragForm => m_dragForm;
 
                 public void Show(Rectangle rect)
                 {
@@ -51,22 +48,22 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public new ISplitterDragSource DragSource
             {
-                get { return base.DragSource as ISplitterDragSource; }
-                private set { base.DragSource = value; }
+                get => base.DragSource as ISplitterDragSource;
+                private set => base.DragSource = value;
             }
 
             private SplitterOutline m_outline;
             private SplitterOutline Outline
             {
-                get { return m_outline; }
-                set { m_outline = value; }
+                get => m_outline;
+                set => m_outline = value;
             }
 
             private Rectangle m_rectSplitter;
             private Rectangle RectSplitter
             {
-                get { return m_rectSplitter; }
-                set { m_rectSplitter = value; }
+                get => m_rectSplitter;
+                set => m_rectSplitter = value;
             }
 
             public void BeginDrag(ISplitterDragSource dragSource, Rectangle rectSplitter)

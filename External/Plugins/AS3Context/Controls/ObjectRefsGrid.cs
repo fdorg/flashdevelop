@@ -75,22 +75,13 @@ namespace AS3Context.Controls
             this.line = line;
         }
 
-        public string Method
-        {
-            get { return method; }
-        }
-        public string Path
-        {
-            get { return path; }
-        }
-        public string File
-        {
-            get { return file; }
-        }
-        public string Line
-        {
-            get { return line; }
-        }
+        public string Method => method;
+
+        public string Path => path;
+
+        public string File => file;
+
+        public string Line => line;
     }
 
     public class ObjectRefsModel : TreeModel

@@ -44,15 +44,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                     }
 
                     private DockStyle m_dockStyle;
-                    private DockStyle DockStyle
-                    {
-                        get { return m_dockStyle; }
-                    }
+                    private DockStyle DockStyle => m_dockStyle;
 
                     private DockStyle m_status;
                     public DockStyle Status
                     {
-                        get { return m_status; }
+                        get => m_status;
                         set
                         {
                             if (value != DockStyle && value != DockStyle.None)
@@ -107,7 +104,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     private bool m_isActivated = false;
                     private bool IsActivated
                     {
-                        get { return m_isActivated; }
+                        get => m_isActivated;
                         set
                         {
                             m_isActivated = value;
@@ -135,22 +132,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                         }
 
                         private int m_x;
-                        public int X
-                        {
-                            get { return m_x; }
-                        }
+                        public int X => m_x;
 
                         private int m_y;
-                        public int Y
-                        {
-                            get { return m_y; }
-                        }
+                        public int Y => m_y;
 
                         private DockStyle m_dockStyle;
-                        public DockStyle DockStyle
-                        {
-                            get { return m_dockStyle; }
-                        }
+                        public DockStyle DockStyle => m_dockStyle;
                     }
 
                     private static Bitmap _bitmapPaneDiamond = ScaleHelper.Scale(Resources.DockIndicator_PaneDiamond);
@@ -178,10 +166,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                         Region = new Region(DisplayingGraphicsPath);
                     }
 
-                    public static GraphicsPath DisplayingGraphicsPath
-                    {
-                        get { return _displayingGraphicsPath; }
-                    }
+                    public static GraphicsPath DisplayingGraphicsPath => _displayingGraphicsPath;
 
                     public DockStyle HitTest(Point pt)
                     {
@@ -204,7 +189,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     private DockStyle m_status = DockStyle.None;
                     public DockStyle Status
                     {
-                        get { return m_status; }
+                        get => m_status;
                         set
                         {
                             m_status = value;
@@ -320,7 +305,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private bool m_fullPanelEdge = false;
                 public bool FullPanelEdge
                 {
-                    get { return m_fullPanelEdge; }
+                    get => m_fullPanelEdge;
                     set
                     {
                         if (m_fullPanelEdge == value)
@@ -331,20 +316,14 @@ namespace WeifenLuo.WinFormsUI.Docking
                     }
                 }
 
-                public DockDragHandler DragHandler
-                {
-                    get { return m_dragHandler; }
-                }
+                public DockDragHandler DragHandler => m_dragHandler;
 
-                public DockPanel DockPanel
-                {
-                    get { return DragHandler.DockPanel; }
-                }
+                public DockPanel DockPanel => DragHandler.DockPanel;
 
                 private DockPane m_dockPane = null;
                 public DockPane DockPane
                 {
-                    get { return m_dockPane; }
+                    get => m_dockPane;
                     internal set
                     {
                         if (m_dockPane == value)
@@ -360,7 +339,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 private IHitTest m_hitTest = null;
                 private IHitTest HitTestResult
                 {
-                    get { return m_hitTest; }
+                    get => m_hitTest;
                     set
                     {
                         if (m_hitTest == value)
@@ -373,10 +352,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     }
                 }
 
-                private DockPane DisplayingPane
-                {
-                    get { return ShouldPaneDiamondVisible() ? DockPane : null; }
-                }
+                private DockPane DisplayingPane => ShouldPaneDiamondVisible() ? DockPane : null;
 
                 private void RefreshChanges()
                 {
@@ -557,10 +533,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
 
                 DragForm m_dragForm;
-                private DragForm DragForm
-                {
-                    get { return m_dragForm; }
-                }
+                private DragForm DragForm => m_dragForm;
 
                 protected override void OnShow()
                 {
@@ -692,29 +665,29 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public new IDockDragSource DragSource
             {
-                get { return base.DragSource as IDockDragSource; }
-                set { base.DragSource = value; }
+                get => base.DragSource as IDockDragSource;
+                set => base.DragSource = value;
             }
 
             private DockOutlineBase m_outline;
             public DockOutlineBase Outline
             {
-                get { return m_outline; }
-                private set { m_outline = value; }
+                get => m_outline;
+                private set => m_outline = value;
             }
 
             private DockIndicator m_indicator;
             private DockIndicator Indicator
             {
-                get { return m_indicator; }
-                set { m_indicator = value; }
+                get => m_indicator;
+                set => m_indicator = value;
             }
 
             private Rectangle m_floatOutlineBounds;
             private Rectangle FloatOutlineBounds
             {
-                get { return m_floatOutlineBounds; }
-                set { m_floatOutlineBounds = value; }
+                get => m_floatOutlineBounds;
+                set => m_floatOutlineBounds = value;
             }
 
             public void BeginDrag(IDockDragSource dragSource)

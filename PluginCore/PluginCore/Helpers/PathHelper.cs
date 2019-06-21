@@ -39,24 +39,12 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Path to the docs directory
         /// </summary>
-        public static string DocDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Docs");
-            }
-        }
+        public static string DocDir => Path.Combine(AppDir, "Docs");
 
         /// <summary>
         /// Path to the data directory
         /// </summary>
-        public static string DataDir
-        {
-            get
-            {
-                return Path.Combine(BaseDir, "Data");
-            }
-        }
+        public static string DataDir => Path.Combine(BaseDir, "Data");
 
         /// <summary>
         /// Path to the snippets directory
@@ -100,101 +88,47 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Path to the settings directory
         /// </summary>
-        public static string SettingDir
-        {
-            get
-            {
-                return Path.Combine(BaseDir, "Settings");
-            }
-        }
+        public static string SettingDir => Path.Combine(BaseDir, "Settings");
 
         /// <summary>
         /// Path to the custom shortcut directory
         /// </summary>
-        public static string ShortcutsDir
-        {
-            get
-            {
-                return Path.Combine(SettingDir, "Shortcuts");
-            }
-        }
+        public static string ShortcutsDir => Path.Combine(SettingDir, "Shortcuts");
 
         /// <summary>
         /// Path to the themes directory
         /// </summary>
-        public static string ThemesDir
-        {
-            get
-            {
-                return Path.Combine(SettingDir, "Themes");
-            }
-        }
+        public static string ThemesDir => Path.Combine(SettingDir, "Themes");
 
         /// <summary>
         /// Path to the user project templates directory
         /// </summary>
-        public static string UserProjectsDir
-        {
-            get
-            {
-                return Path.Combine(UserAppDir, "Projects");
-            }
-        }
+        public static string UserProjectsDir => Path.Combine(UserAppDir, "Projects");
 
         /// <summary>
         /// Path to the user lirbrary directory
         /// </summary>
-        public static string UserLibraryDir
-        {
-            get
-            {
-                return Path.Combine(UserAppDir, "Library");
-            }
-        }
+        public static string UserLibraryDir => Path.Combine(UserAppDir, "Library");
 
         /// <summary>
         /// Path to the library directory
         /// </summary>
-        public static string LibraryDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Library");
-            }
-        }
+        public static string LibraryDir => Path.Combine(AppDir, "Library");
 
         /// <summary>
         /// Path to the plugin directory
         /// </summary>
-        public static string PluginDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Plugins");
-            }
-        }
+        public static string PluginDir => Path.Combine(AppDir, "Plugins");
 
         /// <summary>
         /// Path to the users plugin directory
         /// </summary>
-        public static string UserPluginDir
-        {
-            get
-            {
-                return Path.Combine(UserAppDir, "Plugins");
-            }
-        }
+        public static string UserPluginDir => Path.Combine(UserAppDir, "Plugins");
 
         /// <summary>
         /// Path to the tools directory
         /// </summary>
-        public static string ToolDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Tools");
-            }
-        }
+        public static string ToolDir => Path.Combine(AppDir, "Tools");
 
         /// <summary>
         /// Resolve the path to the mm.cfg file

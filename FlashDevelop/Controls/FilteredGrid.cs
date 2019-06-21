@@ -44,7 +44,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public new AttributeCollection BrowsableAttributes 
         {
-            get { return m_BrowsableAttributes; }
+            get => m_BrowsableAttributes;
             set 
             {
                 if (m_BrowsableAttributes != value) 
@@ -61,7 +61,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public AttributeCollection HiddenAttributes 
         {
-            get { return m_HiddenAttributes; }
+            get => m_HiddenAttributes;
             set 
             {
                 if (value != m_HiddenAttributes) 
@@ -78,7 +78,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public string[] BrowsableProperties 
         {
-            get { return m_BrowsableProperties; }
+            get => m_BrowsableProperties;
             set 
             {
                 if (value != m_BrowsableProperties) 
@@ -94,7 +94,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public string[] HiddenProperties 
         {
-            get { return m_HiddenProperties; }
+            get => m_HiddenProperties;
             set 
             {
                 if (value != m_HiddenProperties) 
@@ -110,7 +110,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public new object SelectedObject 
         {
-            get { return m_Wrapper != null ? ((ObjectWrapper)base.SelectedObject).SelectedObject : null; }
+            get => m_Wrapper != null ? ((ObjectWrapper)base.SelectedObject).SelectedObject : null;
             set 
             {
                 if (value != null)
@@ -289,7 +289,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public object SelectedObject
         {
-            get { return m_SelectedObject; }
+            get => m_SelectedObject;
             set { if (m_SelectedObject != value) m_SelectedObject = value; }
         }
 
@@ -298,8 +298,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         public List<PropertyDescriptor> PropertyDescriptors
         {
-            get { return m_PropertyDescriptors; }
-            set { m_PropertyDescriptors = value; }
+            get => m_PropertyDescriptors;
+            set => m_PropertyDescriptors = value;
         }
 
         #region ICustomTypeDescriptor Members

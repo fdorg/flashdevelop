@@ -14,8 +14,8 @@ namespace SourceControl.Sources.Mercurial
         Regex reIgnore = new Regex("([/\\\\]\\.hg[/\\\\]|hg-checkexec)");
         bool ignoreDirty = false;
 
-        public IVCMenuItems MenuItems { get { return menuItems; } }
-        public IVCFileActions FileActions { get { return fileActions; } }
+        public IVCMenuItems MenuItems => menuItems;
+        public IVCFileActions FileActions => fileActions;
 
         public MercurialManager()
         {

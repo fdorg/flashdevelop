@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </remarks>
         public INameTransform NameTransform
         {
-            get { return nameTransform_; }
+            get => nameTransform_;
             set 
             {
                 if (value == null) {
@@ -147,8 +147,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public TimeSetting Setting
         {
-            get { return timeSetting_; }
-            set { timeSetting_ = value; }
+            get => timeSetting_;
+            set => timeSetting_ = value;
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public DateTime FixedDateTime
         {
-            get { return fixedDateTime_; }
+            get => fixedDateTime_;
             set
             {
                 if (value.Year < 1970) {
@@ -172,8 +172,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>The default is to get all possible attributes from the actual file.</remarks>
         public int GetAttributes
         {
-            get { return getAttributes_; }
-            set { getAttributes_ = value; }
+            get => getAttributes_;
+            set => getAttributes_ = value;
         }
 
         /// <summary>
@@ -182,8 +182,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>By default no attributes are set on.</remarks>
         public int SetAttributes
         {
-            get { return setAttributes_; }
-            set { setAttributes_ = value; }
+            get => setAttributes_;
+            set => setAttributes_ = value;
         }
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool IsUnicodeText
         {
-            get { return isUnicodeText_; }
-            set { isUnicodeText_ = value; }
+            get => isUnicodeText_;
+            set => isUnicodeText_ = value;
         }
 
         #endregion

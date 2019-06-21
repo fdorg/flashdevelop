@@ -484,12 +484,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// European users, however be careful about compatability.
         /// </summary>
         public static int DefaultCodePage {
-            get {
-                return defaultCodePage; 
-            }
-            set {
-                defaultCodePage = value; 
-            }
+            get => defaultCodePage;
+            set => defaultCodePage = value;
         }
 
         /// <summary>

@@ -177,7 +177,7 @@ namespace FlashDebugger
 
         public int CurrentFrame
         {
-            get { return m_CurrentFrame; }
+            get => m_CurrentFrame;
             set
             {
                 if (m_CurrentFrame != value)
@@ -190,7 +190,7 @@ namespace FlashDebugger
 
         public Location CurrentLocation
         {
-            get { return m_CurrentLocation; }
+            get => m_CurrentLocation;
             set
             {
                 if (m_CurrentLocation != value)

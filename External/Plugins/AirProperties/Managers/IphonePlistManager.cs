@@ -21,19 +21,13 @@ namespace AirProperties
 
         public bool RemoveOnNullValue { get; set; }
 
-        public ICollection<string> Keys
-        {
-            get { return backData.Keys; }
-        }
+        public ICollection<string> Keys => backData.Keys;
 
-        public ICollection<object> Values
-        {
-            get { return backData.Values; }
-        }
+        public ICollection<object> Values => backData.Values;
 
         public object this[string key]
         {
-            get { return backData[key]; }
+            get => backData[key];
             set
             {
                 if (backData.ContainsKey(key))
@@ -58,15 +52,9 @@ namespace AirProperties
             }
         }
 
-        public int Count
-        {
-            get { return backData.Count; }
-        }
+        public int Count => backData.Count;
 
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public bool IsReadOnly => false;
 
         public IphonePlistManager()
             : this(string.Empty)

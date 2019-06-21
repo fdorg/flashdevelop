@@ -19,10 +19,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a collection of <see cref="IDataObject"/>, each representing clipboard data in history.
         /// </summary>
-        internal static FixedSizeQueue<ClipboardTextData> History
-        {
-            get { return history; }
-        }
+        internal static FixedSizeQueue<ClipboardTextData> History => history;
 
         /// <summary>
         /// Initializes <see cref="ClipboardManager"/> and places the <see cref="MainForm"/> window in the system-maintained clipboard format listener list.
@@ -192,26 +189,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the format of the <see cref="ClipboardTextData"/>.
         /// </summary>
-        public string Format
-        {
-            get { return format; }
-        }
+        public string Format => format;
 
         /// <summary>
         /// Gets the <see cref="DataFormats.Rtf"/> value of the <see cref="ClipboardTextData"/>, or <see langword="null"/> if <see cref="Format"/> is not <see cref="DataFormats.Rtf"/>.
         /// </summary>
-        public string Rtf
-        {
-            get { return rtf; }
-        }
+        public string Rtf => rtf;
 
         /// <summary>
         /// Gets the <see cref="DataFormats.Text"/> value of the <see cref="ClipboardTextData"/>.
         /// </summary>
-        public string Text
-        {
-            get { return text; }
-        }
+        public string Text => text;
 
         /// <summary>
         /// Determines whether data stored in the <see cref="IDataObject"/> is associated with a text format.

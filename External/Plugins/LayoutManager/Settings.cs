@@ -22,8 +22,8 @@ namespace LayoutManager
         /// </summary>
         public static Settings Instance
         {
-            get { return instance; }
-            set { instance = value; }
+            get => instance;
+            set => instance = value;
         }
 
         /// <summary> 
@@ -34,8 +34,8 @@ namespace LayoutManager
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string CustomLayoutPath
         {
-            get { return this.customLayoutPath; }
-            set { this.customLayoutPath = value; }
+            get => this.customLayoutPath;
+            set => this.customLayoutPath = value;
         }
 
     }

@@ -93,15 +93,9 @@ namespace ASCompletion
 
         #region Initialization
 
-        public static bool HasFocus
-        {
-            get { return instance != null && instance.filterTextBox.Focused; }
-        }
+        public static bool HasFocus => instance != null && instance.filterTextBox.Focused;
 
-        public static ModelsExplorer Instance
-        {
-            get { return instance ?? new ModelsExplorer(); }
-        }
+        public static ModelsExplorer Instance => instance ?? new ModelsExplorer();
 
         private static ModelsExplorer instance;
         private IASContext current;

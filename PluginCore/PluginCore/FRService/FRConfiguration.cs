@@ -29,8 +29,8 @@ namespace PluginCore.FRService
         /// </summary>
         public bool CacheDocuments
         {
-            get { return cacheDocuments; }
-            set { cacheDocuments = value; }
+            get => cacheDocuments;
+            set => cacheDocuments = value;
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace PluginCore.FRService
         /// </summary>
         public bool UpdateSourceFileOnly
         {
-            get { return updateSourceFile; }
-            set { updateSourceFile = value; }
+            get => updateSourceFile;
+            set => updateSourceFile = value;
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace PluginCore.FRService
         /// </summary>
         public string Replacement
         {
-            get { return replacement; }
-            set { replacement = value; }
+            get => replacement;
+            set => replacement = value;
         }
 
         /// <summary>

@@ -8,15 +8,9 @@ namespace ProjectManager.Projects
     // This class is split off because FDBuild doesn't know what "PluginMain" is
     public partial class ProjectPaths
     {
-        public static string ProjectTemplatesDirectory
-        {
-            get { return PathHelper.ProjectsDir; }
-        }
+        public static string ProjectTemplatesDirectory => PathHelper.ProjectsDir;
 
-        public static string FileTemplatesDirectory
-        {
-            get { return Path.Combine(PathHelper.TemplateDir, "ProjectFiles"); }
-        }
+        public static string FileTemplatesDirectory => Path.Combine(PathHelper.TemplateDir, "ProjectFiles");
 
         /// <summary>
         /// 

@@ -20,10 +20,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private DockPane m_dockPane = null;
-        private DockPane DockPane
-        {
-            get { return m_dockPane; }
-        }
+        private DockPane DockPane => m_dockPane;
 
         public new IDockContent this[int index]
         {

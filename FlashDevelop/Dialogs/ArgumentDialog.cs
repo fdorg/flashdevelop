@@ -235,10 +235,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// List of all custom arguments
         /// </summary>
-        public static List<Argument> CustomArguments
-        {
-            get { return arguments; }
-        }
+        public static List<Argument> CustomArguments => arguments;
 
         /// <summary>
         /// Initializes the external graphics

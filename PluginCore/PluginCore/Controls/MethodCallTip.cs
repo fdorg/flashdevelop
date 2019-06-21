@@ -43,15 +43,9 @@ namespace PluginCore.Controls
             }
         }
 
-        public bool CallTipActive
-        {
-            get { return isActive; }
-        }
+        public bool CallTipActive => isActive;
 
-        public bool Focused
-        {
-            get { return toolTipRTB.Focused; }
-        }
+        public bool Focused => toolTipRTB.Focused;
 
         public override void Hide()
         {

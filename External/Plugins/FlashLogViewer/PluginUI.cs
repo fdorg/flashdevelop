@@ -187,10 +187,7 @@ namespace FlashLogViewer
         /// <summary>
         /// Accessor for the setting from the PluginMain
         /// </summary>
-        public Settings Settings
-        {
-            get { return (Settings)this.pluginMain.Settings; }
-        }
+        public Settings Settings => (Settings)this.pluginMain.Settings;
 
         /// <summary>
         /// Ensures the update interval is valid and gets it

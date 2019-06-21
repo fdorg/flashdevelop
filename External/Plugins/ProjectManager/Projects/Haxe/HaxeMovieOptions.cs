@@ -19,13 +19,7 @@ namespace ProjectManager.Projects.Haxe
             return supported;
         }
 
-        public override OutputType[] OutputTypes
-        {
-            get
-            {
-                return new OutputType[] { OutputType.CustomBuild, OutputType.Application };
-            }
-        }
+        public override OutputType[] OutputTypes => new OutputType[] { OutputType.CustomBuild, OutputType.Application };
 
         public override bool HasOutput(OutputType output)
         {

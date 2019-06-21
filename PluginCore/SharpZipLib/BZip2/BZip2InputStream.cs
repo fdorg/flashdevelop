@@ -83,8 +83,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner; }
-            set { isStreamOwner = value; }
+            get => isStreamOwner;
+            set => isStreamOwner = value;
         }
         
 
@@ -92,53 +92,32 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Gets a value indicating if the stream supports reading
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return baseStream.CanRead;
-            }
-        }
-        
+        public override bool CanRead => baseStream.CanRead;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports seeking.
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return baseStream.CanSeek;
-            }
-        }
-        
+        public override bool CanSeek => baseStream.CanSeek;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports writing.
         /// This property always returns false
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanWrite => false;
+
         /// <summary>
         /// Gets the length in bytes of the stream.
         /// </summary>
-        public override long Length {
-            get {
-                return baseStream.Length;
-            }
-        }
-        
+        public override long Length => baseStream.Length;
+
         /// <summary>
         /// Gets or sets the streams position.
         /// Setting the position is not supported and will throw a NotSupportException
         /// </summary>
         /// <exception cref="NotSupportedException">Any attempt to set the position</exception>
         public override long Position {
-            get {
-                return baseStream.Position;
-            }
-            set {
-                throw new NotSupportedException("BZip2InputStream position cannot be set");
-            }
+            get => baseStream.Position;
+            set => throw new NotSupportedException("BZip2InputStream position cannot be set");
         }
         
         /// <summary>

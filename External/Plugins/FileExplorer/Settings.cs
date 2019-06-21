@@ -22,8 +22,8 @@ namespace FileExplorer
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string FilePath 
         {
-            get { return this.filePath; }
-            set { this.filePath = value; }
+            get => this.filePath;
+            set => this.filePath = value;
         }
 
         /// <summary> 
@@ -33,8 +33,8 @@ namespace FileExplorer
         [LocalizedDescription("FileExplorer.Description.SynchronizeToProject"), DefaultValue(true)]
         public bool SynchronizeToProject
         {
-            get { return this.synchronizeToProject; }
-            set { this.synchronizeToProject = value; }
+            get => this.synchronizeToProject;
+            set => this.synchronizeToProject = value;
         }
 
         /// <summary> 
@@ -44,8 +44,8 @@ namespace FileExplorer
         [LocalizedDescription("FileExplorer.Description.SortColumn"), DefaultValue(0)]
         public int SortColumn
         {
-            get { return this.sortColumn; }
-            set { this.sortColumn = value; }
+            get => this.sortColumn;
+            set => this.sortColumn = value;
         }
 
         /// <summary> 
@@ -55,8 +55,8 @@ namespace FileExplorer
         [LocalizedDescription("FileExplorer.Description.SortOrder"), DefaultValue(0)]
         public int SortOrder
         {
-            get { return this.sortOrder; }
-            set { this.sortOrder = value; }
+            get => this.sortOrder;
+            set => this.sortOrder = value;
         }
 
     }

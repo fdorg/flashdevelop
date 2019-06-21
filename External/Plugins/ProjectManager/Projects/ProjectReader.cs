@@ -17,7 +17,7 @@ namespace ProjectManager.Projects
             WhitespaceHandling = WhitespaceHandling.None;
         }
 
-        protected Project Project { get { return project; } }
+        protected Project Project => project;
 
         public virtual Project ReadProject()
         {
@@ -201,8 +201,8 @@ namespace ProjectManager.Projects
             ReadEndElement();
         }
 
-        public bool BoolValue { get { return Convert.ToBoolean(Value); } }
-        public int IntValue { get { return Convert.ToInt32(Value); } }
+        public bool BoolValue => Convert.ToBoolean(Value);
+        public int IntValue => Convert.ToInt32(Value);
 
         public void ReadPaths(string pathNodeName, IAddPaths paths)
         {

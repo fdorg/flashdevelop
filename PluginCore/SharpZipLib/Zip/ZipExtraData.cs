@@ -88,8 +88,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public short TagID 
         { 
-            get { return _tag; }
-            set { _tag = value; }
+            get => _tag;
+            set => _tag = value;
         }
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>The raw binary data representing this instance.</returns>
         public byte[] Data
         {
-            get { return _data; }
-            set { _data=value; }
+            get => _data;
+            set => _data=value;
         }
 
         #region Instance Fields
@@ -172,11 +172,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Get the ID
         /// </summary>
-        public short TagID
-        { 
-            get { return 0x5455; }
-        }
-        
+        public short TagID => 0x5455;
+
         /// <summary>
         /// Set the data from the raw values provided.
         /// </summary>
@@ -275,7 +272,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="IsValidValue"></seealso>
         public DateTime ModificationTime
         {
-            get { return _modificationTime; }
+            get => _modificationTime;
             set
             {
                 if ( !IsValidValue(value) ) {
@@ -294,7 +291,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="IsValidValue"></seealso>
         public DateTime AccessTime
         {
-            get { return _lastAccessTime; }
+            get => _lastAccessTime;
             set { 
                 if ( !IsValidValue(value) ) {
                     throw new ArgumentOutOfRangeException("value");
@@ -312,7 +309,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="IsValidValue"></seealso>
         public DateTime CreateTime
         {
-            get { return _createTime; }
+            get => _createTime;
             set {
                 if ( !IsValidValue(value) ) {
                     throw new ArgumentOutOfRangeException("value");
@@ -328,8 +325,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         Flags Include
         {
-            get { return _flags; }
-            set { _flags = value; }
+            get => _flags;
+            set => _flags = value;
         }
 
         #region Instance Fields
@@ -348,10 +345,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Get the ID for this tagged data value.
         /// </summary>
-        public short TagID
-        { 
-            get { return 10; }
-        }
+        public short TagID => 10;
 
         /// <summary>
         /// Set the data from the raw values provided.
@@ -443,7 +437,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public DateTime LastModificationTime
         {
-            get { return _lastModificationTime; }
+            get => _lastModificationTime;
             set {
                 if (! IsValidValue(value))
                 {
@@ -458,7 +452,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public DateTime CreateTime
         {
-            get { return _createTime; }
+            get => _createTime;
             set {
                 if ( !IsValidValue(value)) {
                     throw new ArgumentOutOfRangeException("value");
@@ -472,7 +466,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public DateTime LastAccessTime
         {
-            get { return _lastAccessTime; }
+            get => _lastAccessTime;
             set {
                 if (!IsValidValue(value)) {
                     throw new ArgumentOutOfRangeException("value");
@@ -569,10 +563,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Gets the current extra data length.
         /// </summary>
-        public int Length
-        {
-            get { return _data.Length; }
-        }
+        public int Length => _data.Length;
 
         /// <summary>
         /// Get a read-only <see cref="Stream"/> for the associated tag.
@@ -626,10 +617,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Get the length of the last value found by <see cref="Find"/>
         /// </summary>
         /// <remarks>This is only valid if <see cref="Find"/> has previously returned true.</remarks>
-        public int ValueLength
-        {
-            get { return _readValueLength; }
-        }
+        public int ValueLength => _readValueLength;
 
         /// <summary>
         /// Get the index for the current read value.
@@ -637,10 +625,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>This is only valid if <see cref="Find"/> has previously returned true.
         /// Initially the result will be the index of the first byte of actual data.  The value is updated after calls to
         /// <see cref="ReadInt"/>, <see cref="ReadShort"/> and <see cref="ReadLong"/>. </remarks>
-        public int CurrentReadIndex
-        {
-            get { return _index; }
-        }
+        public int CurrentReadIndex => _index;
 
         /// <summary>
         /// Get the number of bytes remaining to be read for the current value;

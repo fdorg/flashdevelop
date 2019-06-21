@@ -70,7 +70,7 @@ namespace CodeRefactor.Controls
             }
         }
 
-        public bool FixPackages { get { return fixPackages.Checked; }}
+        public bool FixPackages => fixPackages.Checked;
 
         void InitializeClasspaths()
         {

@@ -27,25 +27,25 @@ namespace SourceControl.Sources.Git
         ToolStripItem revert;
         ToolStripItem editConflict;
 
-        public TreeNode[] CurrentNodes { set { currentNodes = value; } }
-        public IVCManager CurrentManager { set { currentManager = value; } }
+        public TreeNode[] CurrentNodes { set => currentNodes = value; }
+        public IVCManager CurrentManager { set => currentManager = value; }
 
-        public ToolStripItem Update { get { return update; } }
-        public ToolStripItem Commit { get { return commit; } }
-        public ToolStripItem Push { get { return push; } }
-        public ToolStripItem ShowLog { get { return showLog; } }
-        public ToolStripItem MidSeparator { get { return midSeparator; } }
-        public ToolStripItem Annotate { get { return annotate; } }
-        public ToolStripItem Diff { get { return diff; } }
-        public ToolStripItem DiffChange { get { return diffChange; } }
-        public ToolStripItem Add { get { return add; } }
-        public ToolStripItem Ignore { get { return ignore; } }
-        public ToolStripItem UndoAdd { get { return undoAdd; } }
-        public ToolStripItem Revert { get { return revert; } }
-        public ToolStripItem EditConflict { get { return editConflict; } }
+        public ToolStripItem Update => update;
+        public ToolStripItem Commit => commit;
+        public ToolStripItem Push => push;
+        public ToolStripItem ShowLog => showLog;
+        public ToolStripItem MidSeparator => midSeparator;
+        public ToolStripItem Annotate => annotate;
+        public ToolStripItem Diff => diff;
+        public ToolStripItem DiffChange => diffChange;
+        public ToolStripItem Add => add;
+        public ToolStripItem Ignore => ignore;
+        public ToolStripItem UndoAdd => undoAdd;
+        public ToolStripItem Revert => revert;
+        public ToolStripItem EditConflict => editConflict;
 
         private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
-        public Dictionary<ToolStripItem, VCMenuItemProperties> Items { get { return items; } }
+        public Dictionary<ToolStripItem, VCMenuItemProperties> Items => items;
 
         public MenuItems()
         {

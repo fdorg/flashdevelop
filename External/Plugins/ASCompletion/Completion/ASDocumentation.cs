@@ -86,20 +86,13 @@ namespace ASCompletion.Completion
                 this.label = label;
             }
             
-            public string Label { 
-                get { return label; }
-            }
-            public string Description {
-                get { return TextHelper.GetString("Label.DocTagTemplate"); }
-            }
-            
-            public Bitmap Icon {
-                get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
-            }
-            
-            public string Value { 
-                get { return label; }
-            }
+            public string Label => label;
+
+            public string Description => TextHelper.GetString("Label.DocTagTemplate");
+
+            public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION);
+
+            public string Value => label;
         }
         #endregion
         

@@ -7,7 +7,7 @@ namespace ProjectManager.Controls.AS3
         // For Designer
         public AS3PropertiesDialog() { InitializeComponent(); }
 
-        AS3Project project { get { return (AS3Project)BaseProject; } }
+        AS3Project project => (AS3Project)BaseProject;
     }
 }
 

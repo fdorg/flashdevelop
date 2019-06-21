@@ -37,10 +37,7 @@ namespace AS3Context.Controls
         private string profilerItemsCheck;
         private string profilerSWF;
 
-        public bool AutoStart
-        {
-            get { return autoStart; }
-        }
+        public bool AutoStart => autoStart;
 
         public static void HandleFlashConnect(object sender, object data)
         {

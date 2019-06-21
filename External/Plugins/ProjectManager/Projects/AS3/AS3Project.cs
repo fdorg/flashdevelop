@@ -26,15 +26,15 @@ namespace ProjectManager.Projects.AS3
             } 
         }
 
-        public override string Language { get { return "as3"; } }
-        public override string LanguageDisplayName { get { return "AS3"; } }
-        public override bool IsCompilable { get { return true; } }
-        public override bool ReadOnly { get { return FileInspector.IsFlexBuilderProject(ProjectPath); } }
-        public override bool HasLibraries { get { return OutputType == OutputType.Application || OutputType == OutputType.Library; } }
-        public override int MaxTargetsCount { get { return 1; } }
-        public override string DefaultSearchFilter { get { return "*.as;*.mxml"; } }
+        public override string Language => "as3";
+        public override string LanguageDisplayName => "AS3";
+        public override bool IsCompilable => true;
+        public override bool ReadOnly => FileInspector.IsFlexBuilderProject(ProjectPath);
+        public override bool HasLibraries => OutputType == OutputType.Application || OutputType == OutputType.Library;
+        public override int MaxTargetsCount => 1;
+        public override string DefaultSearchFilter => "*.as;*.mxml";
 
-        public new MxmlcOptions CompilerOptions { get { return (MxmlcOptions)base.CompilerOptions; } }
+        public new MxmlcOptions CompilerOptions => (MxmlcOptions)base.CompilerOptions;
 
         public override PropertiesDialog CreatePropertiesDialog()
         {

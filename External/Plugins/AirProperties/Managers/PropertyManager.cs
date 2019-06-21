@@ -824,32 +824,29 @@ namespace AirProperties
 
             public string Name
             {
-                get { return _name; }
-                set { _name = value; }
+                get => _name;
+                set => _name = value;
             }
 
             public string Extension
             {
-                get { return _extension; }
-                set { _extension = value; }
+                get => _extension;
+                set => _extension = value;
             }
 
             public string Description
             {
-                get { return _description; }
-                set { _description = value; }
+                get => _description;
+                set => _description = value;
             }
 
             public string ContentType
             {
-                get { return _contentType; }
-                set { _contentType = value; }
+                get => _contentType;
+                set => _contentType = value;
             }
 
-            public List<AirFileTypeIcon> Icons
-            {
-                get { return _icons; }
-            }
+            public List<AirFileTypeIcon> Icons => _icons;
 
             public void SetIconPath(short size, string path)
             {
@@ -886,26 +883,26 @@ namespace AirProperties
 
             public bool NameIsValid
             {
-                get { return _nameIsValid; }
-                set { _nameIsValid = value; }
+                get => _nameIsValid;
+                set => _nameIsValid = value;
             }
 
             public bool ExtensionIsValid
             {
-                get { return _extensionIsValid; }
-                set { _extensionIsValid = value; }
+                get => _extensionIsValid;
+                set => _extensionIsValid = value;
             }
 
             public bool DescriptionIsValid
             {
-                get { return _descriptionIsValid; }
-                set { _descriptionIsValid = value; }
+                get => _descriptionIsValid;
+                set => _descriptionIsValid = value;
             }
 
             public bool ContentTypeIsValid
             {
-                get { return _contentTypeIsValid; }
-                set { _contentTypeIsValid = value; }
+                get => _contentTypeIsValid;
+                set => _contentTypeIsValid = value;
             }
 
             public bool IsValid
@@ -935,26 +932,20 @@ namespace AirProperties
                     _isValid = true;
                 }
 
-                public short Size
-                {
-                    get { return _size; }
-                }
+                public short Size => _size;
 
                 public string FilePath
                 {
-                    get { return _filePath; }
-                    set { _filePath = value; }
+                    get => _filePath;
+                    set => _filePath = value;
                 }
 
-                public AirVersion MinVersion
-                {
-                    get { return _minVersion; }
-                }
+                public AirVersion MinVersion => _minVersion;
 
                 public bool IsValid
                 {
-                    get { return _isValid; }
-                    set { _isValid = value; }
+                    get => _isValid;
+                    set => _isValid = value;
                 }
             }
         }
@@ -970,17 +961,11 @@ namespace AirProperties
                 _minVersion = minVersion;
             }
 
-            public string Size
-            {
-                get { return _size; }
-            }
+            public string Size => _size;
 
             public TextBox Field { get; set; }
 
-            public AirVersion MinVersion
-            {
-                get { return _minVersion; }
-            }
+            public AirVersion MinVersion => _minVersion;
         }
 
         public class AirExtension
@@ -989,8 +974,8 @@ namespace AirProperties
 
             public string ExtensionId
             {
-                get { return _extensionId; }
-                set { _extensionId = value; }
+                get => _extensionId;
+                set => _extensionId = value;
             }
 
             public bool IsValid { get; set; }

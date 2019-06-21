@@ -60,19 +60,19 @@ namespace ASClassWizard.Wizards
 
         public string StartupPackage
         {
-            set { packageBox.Text = value; }
+            set => packageBox.Text = value;
         }
 
         public string StartupClassName
         {
-            set { classBox.Text = value; }
+            set => classBox.Text = value;
         }
 
         public string Directory { get; set; }
 
         public Project Project
         {
-            get { return project; }
+            get => project;
             set 
             { 
                 this.project = value;

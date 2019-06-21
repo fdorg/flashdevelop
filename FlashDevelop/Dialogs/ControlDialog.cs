@@ -39,7 +39,7 @@ namespace FlashDevelop.Dialogs
 
         public bool ShowGroups
         {
-            get { return showGroups; }
+            get => showGroups;
             set
             {
                 this.showGroups = value;

@@ -338,10 +338,7 @@ namespace PHPContext
             // to be implemented
         }
 
-        public override bool CanBuild
-        {
-            get { return false; }
-        }
+        public override bool CanBuild => false;
 
         /// <summary>
         /// Run compiler in the current files's base folder with current classpath

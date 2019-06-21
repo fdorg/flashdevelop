@@ -168,12 +168,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// The number of bits written to the buffer
         /// </summary>
-        public int BitCount {
-            get {
-                return bitCount;
-            }
-        }
-        
+        public int BitCount => bitCount;
+
         /// <summary>
         /// Align internal buffer on a byte boundary
         /// </summary>
@@ -242,12 +238,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// Indicates if buffer has been flushed
         /// </summary>
-        public bool IsFlushed {
-            get {
-                return end == 0;
-            }
-        }
-        
+        public bool IsFlushed => end == 0;
+
         /// <summary>
         /// Flushes the pending buffer into the given output array.  If the
         /// output array is to small, only a partial flush is done.

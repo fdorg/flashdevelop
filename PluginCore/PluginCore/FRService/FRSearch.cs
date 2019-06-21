@@ -286,7 +286,7 @@ namespace PluginCore.FRService
 
         public bool IsEscaped
         {
-            get { return isEscaped; }
+            get => isEscaped;
             set
             {
                 isEscaped = value;
@@ -295,7 +295,7 @@ namespace PluginCore.FRService
         }
         public bool IsRegex
         {
-            get { return isRegex; }
+            get => isRegex;
             set
             {
                 isRegex = value;
@@ -304,7 +304,7 @@ namespace PluginCore.FRService
         }
         public bool NoCase
         {
-            get { return noCase; }
+            get => noCase;
             set
             {
                 noCase = value;
@@ -313,7 +313,7 @@ namespace PluginCore.FRService
         }
         public bool WholeWord
         {
-            get { return wholeWord; }
+            get => wholeWord;
             set
             {
                 wholeWord = value;
@@ -322,23 +322,17 @@ namespace PluginCore.FRService
         }
         public bool SingleLine
         {
-            get { return singleLine; }
-            set
-            {
-                singleLine = value;
-            }
+            get => singleLine;
+            set => singleLine = value;
         }
         public SearchFilter Filter
         {
-            get { return filter; }
-            set
-            {
-                filter = value;
-            }
+            get => filter;
+            set => filter = value;
         }
         public string Pattern
         {
-            get { return pattern; }
+            get => pattern;
             set
             {
                 pattern = value;
@@ -347,11 +341,8 @@ namespace PluginCore.FRService
         }
         public bool CopyFullLineContext
         {
-            get { return copyFullLineContext; }
-            set
-            {
-                copyFullLineContext = value;
-            }
+            get => copyFullLineContext;
+            set => copyFullLineContext = value;
         }
 
         private bool hasRegexLiterals;
@@ -359,7 +350,7 @@ namespace PluginCore.FRService
         private string sourceFile;
         public string SourceFile
         {
-            get { return sourceFile; } 
+            get => sourceFile;
             set
             {
                 if (sourceFile == value) return;

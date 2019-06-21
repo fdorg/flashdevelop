@@ -167,7 +167,7 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <exception cref="ArgumentOutOfRangeException">value is less than zero; greater than <see cref="MaxSize"/></exception>
         public long MinSize
         {
-            get { return minSize_; }
+            get => minSize_;
             set
             {
                 if ( (value < 0) || (maxSize_ < value) ) {
@@ -185,7 +185,7 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <exception cref="ArgumentOutOfRangeException">value is less than zero or less than <see cref="MinSize"/></exception>
         public long MaxSize
         {
-            get { return maxSize_; }
+            get => maxSize_;
             set
             {
                 if ( (value < 0) || (minSize_ > value) ) {
@@ -300,7 +300,7 @@ namespace ICSharpCode.SharpZipLib.Core
         /// </summary>
         public long MinSize
         {
-            get { return minSize_; }
+            get => minSize_;
             set {
                 if ( (value < 0) || (maxSize_ < value) ) {
                     throw new ArgumentOutOfRangeException("value");
@@ -315,7 +315,7 @@ namespace ICSharpCode.SharpZipLib.Core
         /// </summary>
         public long MaxSize
         {
-            get { return maxSize_; }
+            get => maxSize_;
             set
             {
                 if ( (value < 0) || (minSize_ > value) ) {

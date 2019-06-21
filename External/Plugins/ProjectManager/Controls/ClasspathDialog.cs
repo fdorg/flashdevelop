@@ -156,7 +156,7 @@ namespace ProjectManager.Controls
                 groupBox1.Text = string.Format(label, value.ToUpper());
                 classpathControl.Language = value;
             }
-            get { return classpathControl.Language; }
+            get => classpathControl.Language;
         }
 
         public void InitializeLocalization()
@@ -170,8 +170,8 @@ namespace ProjectManager.Controls
 
         public string[] Classpaths
         {
-            get { return classpathControl.Classpaths; }
-            set { classpathControl.Classpaths = value; }
+            get => classpathControl.Classpaths;
+            set => classpathControl.Classpaths = value;
         }
 
         private void classpathControl_Changed(object sender, EventArgs e)

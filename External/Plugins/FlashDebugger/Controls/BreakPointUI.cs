@@ -190,8 +190,8 @@ namespace FlashDebugger
 
         public new bool Enabled
         {
-            get { return dgv.Enabled; }
-            set { dgv.Enabled = value; }
+            get => dgv.Enabled;
+            set => dgv.Enabled = value;
         }
 
         private void AddItem(string filename, int line, string exp, bool enable)

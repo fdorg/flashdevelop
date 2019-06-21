@@ -25,8 +25,8 @@ namespace XMLCompletion
         /// </summary>
         public static Settings Instance
         {
-            get { return instance; }
-            set { instance = value; }
+            get => instance;
+            set => instance = value;
         }
 
         /// <summary> 
@@ -36,8 +36,8 @@ namespace XMLCompletion
         [LocalizedDescription("XMLCompletion.Description.DisableZenCoding"), DefaultValue(false)]
         public bool DisableZenCoding
         {
-            get { return this.disableZenCoding; }
-            set { this.disableZenCoding = value; }
+            get => this.disableZenCoding;
+            set => this.disableZenCoding = value;
         }
 
         /// <summary> 
@@ -47,8 +47,8 @@ namespace XMLCompletion
         [LocalizedDescription("XMLCompletion.Description.CloseTags"), DefaultValue(true)]
         public bool CloseTags 
         {
-            get { return this.closeTags; }
-            set { this.closeTags = value; }
+            get => this.closeTags;
+            set => this.closeTags = value;
         }
 
         /// <summary> 
@@ -58,8 +58,8 @@ namespace XMLCompletion
         [LocalizedDescription("XMLCompletion.Description.InsertQuotes"), DefaultValue(true)]
         public bool InsertQuotes 
         {
-            get { return this.insertQuotes; }
-            set { this.insertQuotes = value; }
+            get => this.insertQuotes;
+            set => this.insertQuotes = value;
         }
 
         /// <summary> 
@@ -69,8 +69,8 @@ namespace XMLCompletion
         [LocalizedDescription("XMLCompletion.Description.SmartIndenter"), DefaultValue(true)]
         public bool SmartIndenter
         {
-            get { return this.smartIndenter; }
-            set { this.smartIndenter = value; }
+            get => this.smartIndenter;
+            set => this.smartIndenter = value;
         }
 
         /// <summary> 
@@ -80,8 +80,8 @@ namespace XMLCompletion
         [LocalizedDescription("XMLCompletion.Description.UpperCaseHtmlTags"), DefaultValue(false)]
         public bool UpperCaseHtmlTags
         {
-            get { return this.upperCaseHtmlTags; }
-            set { this.upperCaseHtmlTags = value; }
+            get => this.upperCaseHtmlTags;
+            set => this.upperCaseHtmlTags = value;
         }
 
         /// <summary> 
@@ -91,8 +91,8 @@ namespace XMLCompletion
         [LocalizedDescription("XMLCompletion.Description.EnableXMLCompletion"), DefaultValue(true)]
         public bool EnableXMLCompletion
         {
-            get { return this.enableXMLCompletion; }
-            set { this.enableXMLCompletion = value; }
+            get => this.enableXMLCompletion;
+            set => this.enableXMLCompletion = value;
         }
 
     }

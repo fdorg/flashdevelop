@@ -12,8 +12,8 @@ namespace FlashDebugger.Controls.DataTree
         private int m_ChildrenShowLimit = 500;
         public int ChildrenShowLimit
         {
-            get { return m_ChildrenShowLimit; }
-            set { m_ChildrenShowLimit = value; }
+            get => m_ChildrenShowLimit;
+            set => m_ChildrenShowLimit = value;
         }
 
         public bool HideFullClasspath { get; set; }
@@ -107,10 +107,7 @@ namespace FlashDebugger.Controls.DataTree
                 }
                 return temp;
             }
-            set
-            {
-                throw new NotSupportedException();
-            }
+            set => throw new NotSupportedException();
         }
 
         /// <summary>
@@ -203,10 +200,7 @@ namespace FlashDebugger.Controls.DataTree
 
         public Value PlayerValue
         {
-            get
-            {
-                return m_Value;
-            }
+            get => m_Value;
             set
             {
                 if (m_Value == value) return;
@@ -230,14 +224,8 @@ namespace FlashDebugger.Controls.DataTree
 
         public bool IsEditing
         {
-            get
-            {
-                return m_bEditing;
-            }
-            set
-            {
-                m_bEditing = value;
-            }
+            get => m_bEditing;
+            set => m_bEditing = value;
         }
 
         public ValueNode(string text)

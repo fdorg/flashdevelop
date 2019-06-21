@@ -56,11 +56,7 @@ namespace PluginCore.Localization
         /// <summary>
         /// Gets the string value of the class
         /// </summary>
-        public string Value
-        {
-            get { return this.value; }
-        }
-
+        public string Value => this.value;
     }
 
     [AttributeUsage(AttributeTargets.Property)]

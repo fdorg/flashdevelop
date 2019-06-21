@@ -130,10 +130,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPanel m_dockPanel;
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            public DockPanel DockPanel => m_dockPanel;
 
             private bool m_disposed = false;
             protected override void Dispose(bool disposing)
@@ -156,8 +153,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             private IDockContent m_contentActivating = null;
             private IDockContent ContentActivating
             {
-                get { return m_contentActivating; }
-                set { m_contentActivating = value; }
+                get => m_contentActivating;
+                set => m_contentActivating = value;
             }
 
             public void Activate(IDockContent content)
@@ -181,10 +178,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private List<IDockContent> m_listContent = new List<IDockContent>();
-            private List<IDockContent> ListContent
-            {
-                get { return m_listContent; }
-            }
+            private List<IDockContent> ListContent => m_listContent;
+
             public void AddToList(IDockContent content)
             {
                 if (ListContent.Contains(content) || IsInActiveList(content))
@@ -204,8 +199,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             private IDockContent m_lastActiveContent = null;
             private IDockContent LastActiveContent
             {
-                get { return m_lastActiveContent; }
-                set { m_lastActiveContent = value; }
+                get => m_lastActiveContent;
+                set => m_lastActiveContent = value;
             }
 
             private bool IsInActiveList(IDockContent content)
@@ -303,10 +298,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            public bool IsFocusTrackingSuspended
-            {
-                get { return m_countSuspendFocusTracking != 0; }
-            }
+            public bool IsFocusTrackingSuspended => m_countSuspendFocusTracking != 0;
 
             // Windows hook event handler
             private void HookEventHandler(object sender, HookEventArgs e)
@@ -348,10 +340,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private bool m_inRefreshActiveWindow = false;
-            private bool InRefreshActiveWindow
-            {
-                get { return m_inRefreshActiveWindow; }
-            }
+            private bool InRefreshActiveWindow => m_inRefreshActiveWindow;
 
             private void RefreshActiveWindow()
             {
@@ -380,10 +369,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPane m_activePane = null;
-            public DockPane ActivePane
-            {
-                get { return m_activePane; }
-            }
+            public DockPane ActivePane => m_activePane;
 
             private void SetActivePane()
             {
@@ -399,10 +385,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private IDockContent m_activeContent = null;
-            public IDockContent ActiveContent
-            {
-                get { return m_activeContent; }
-            }
+            public IDockContent ActiveContent => m_activeContent;
 
             internal void SetActiveContent()
             {
@@ -424,10 +407,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPane m_activeDocumentPane = null;
-            public DockPane ActiveDocumentPane
-            {
-                get { return m_activeDocumentPane; }
-            }
+            public DockPane ActiveDocumentPane => m_activeDocumentPane;
 
             private void SetActiveDocumentPane()
             {
@@ -457,10 +437,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private IDockContent m_activeDocument = null;
-            public IDockContent ActiveDocument
-            {
-                get { return m_activeDocument; }
-            }
+            public IDockContent ActiveDocument => m_activeDocument;
 
             private void SetActiveDocument()
             {
@@ -473,15 +450,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IFocusManager FocusManager
-        {
-            get { return m_focusManager; }
-        }
+        private IFocusManager FocusManager => m_focusManager;
 
-        internal IContentFocusManager ContentFocusManager
-        {
-            get { return m_focusManager; }
-        }
+        internal IContentFocusManager ContentFocusManager => m_focusManager;
 
         internal void SaveFocus()
         {
@@ -489,36 +460,24 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         [Browsable(false)]
-        public IDockContent ActiveContent
-        {
-            get { return FocusManager.ActiveContent; }
-        }
+        public IDockContent ActiveContent => FocusManager.ActiveContent;
 
         [Browsable(false)]
-        public DockPane ActivePane
-        {
-            get { return FocusManager.ActivePane; }
-        }
+        public DockPane ActivePane => FocusManager.ActivePane;
 
         [Browsable(false)]
-        public IDockContent ActiveDocument
-        {
-            get { return FocusManager.ActiveDocument; }
-        }
+        public IDockContent ActiveDocument => FocusManager.ActiveDocument;
 
         [Browsable(false)]
-        public DockPane ActiveDocumentPane
-        {
-            get { return FocusManager.ActiveDocumentPane; }
-        }
+        public DockPane ActiveDocumentPane => FocusManager.ActiveDocumentPane;
 
         private static readonly object ActiveDocumentChangedEvent = new object();
         [LocalizedCategory("Category_PropertyChanged")]
         [LocalizedDescription("DockPanel_ActiveDocumentChanged_Description")]
         public event EventHandler ActiveDocumentChanged
         {
-            add { Events.AddHandler(ActiveDocumentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveDocumentChangedEvent, value); }
+            add => Events.AddHandler(ActiveDocumentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveDocumentChangedEvent, value);
         }
         protected virtual void OnActiveDocumentChanged(EventArgs e)
         {
@@ -531,8 +490,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ActiveContentChanged_Description")]
         public event EventHandler ActiveContentChanged
         {
-            add { Events.AddHandler(ActiveContentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveContentChangedEvent, value); }
+            add => Events.AddHandler(ActiveContentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveContentChangedEvent, value);
         }
         protected void OnActiveContentChanged(EventArgs e)
         {
@@ -545,8 +504,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ActivePaneChanged_Description")]
         public event EventHandler ActivePaneChanged
         {
-            add { Events.AddHandler(ActivePaneChangedEvent, value); }
-            remove { Events.RemoveHandler(ActivePaneChangedEvent, value); }
+            add => Events.AddHandler(ActivePaneChangedEvent, value);
+            remove => Events.RemoveHandler(ActivePaneChangedEvent, value);
         }
         protected virtual void OnActivePaneChanged(EventArgs e)
         {

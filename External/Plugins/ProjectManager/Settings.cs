@@ -55,34 +55,31 @@ namespace ProjectManager
         [Browsable(false)]
         public List<ProjectPreferences> ProjectPrefs
         {
-            get { return projectPrefList; }
-            set { projectPrefList = value; }
+            get => projectPrefList;
+            set => projectPrefList = value;
         }
 
         [Browsable(false)]
         public string LastProject
         {
-            get { return lastProject; }
+            get => lastProject;
             set { lastProject = value; FireChanged("LastProject"); }
         }
 
         [Browsable(false)]
-        public List<string> RecentProjects
-        {
-            get { return recentProjects; }
-        }
+        public List<string> RecentProjects => recentProjects;
 
         [Browsable(false)]
         public bool CreateProjectDirectory
         {
-            get { return createProjectDirectory; }
+            get => createProjectDirectory;
             set { createProjectDirectory = value; FireChanged("CreateProjectDirectory"); }
         }
 
         [Browsable(false)]
         public string NewProjectDefaultDirectory
         {
-            get { return newProjectDefaultDirectory; }
+            get => newProjectDefaultDirectory;
             set { newProjectDefaultDirectory = value; FireChanged("NewProjectDefaultDirectory"); }
         }
 
@@ -92,8 +89,8 @@ namespace ProjectManager
         [DefaultValue(true)]
         public bool SearchExternalClassPath
         {
-            get { return searchExternalClassPath; }
-            set { searchExternalClassPath = value; }
+            get => searchExternalClassPath;
+            set => searchExternalClassPath = value;
         }
 
         [DisplayName("Use Project Sessions")]
@@ -102,8 +99,8 @@ namespace ProjectManager
         [DefaultValue(false)]
         public bool UseProjectSessions
         {
-            get { return useProjectSessions; }
-            set { useProjectSessions = value; }
+            get => useProjectSessions;
+            set => useProjectSessions = value;
         }
 
         [DisplayName("Maximum Recent Projects")]
@@ -112,7 +109,7 @@ namespace ProjectManager
         [DefaultValue(10)]
         public int MaxRecentProjects
         {
-            get { return maxRecentProjects; }
+            get => maxRecentProjects;
             set { maxRecentProjects = value; FireChanged("MaxRecentProjects"); }
         }
 
@@ -122,8 +119,8 @@ namespace ProjectManager
         [DefaultValue(false)]
         public bool DisableExtFlashIntegration
         {
-            get { return disableExtFlashIntegration; }
-            set { disableExtFlashIntegration = value; }
+            get => disableExtFlashIntegration;
+            set => disableExtFlashIntegration = value;
         }
 
         [DisplayName("Webserver Port")]
@@ -132,8 +129,8 @@ namespace ProjectManager
         [DefaultValue(2000)]
         public int WebserverPort
         {
-            get { return webserverPort; }
-            set { webserverPort = value; }
+            get => webserverPort;
+            set => webserverPort = value;
         }
         
         [DisplayName("Excluded File Types")]
@@ -141,7 +138,7 @@ namespace ProjectManager
         [LocalizedCategory("ProjectManager.Category.Exclusions")]
         public string[] ExcludedFileTypes
         {
-            get { return excludedFileTypes; }
+            get => excludedFileTypes;
             set { excludedFileTypes = value; FireChanged("ExcludedFileTypes"); }
         }
 
@@ -150,7 +147,7 @@ namespace ProjectManager
         [LocalizedCategory("ProjectManager.Category.Exclusions")]
         public string[] ExecutableFileTypes
         {
-            get { return executableFileTypes; }
+            get => executableFileTypes;
             set { executableFileTypes = value; FireChanged("ExecutableFileTypes"); }
         }
 
@@ -159,7 +156,7 @@ namespace ProjectManager
         [LocalizedCategory("ProjectManager.Category.Exclusions")]
         public string[] ExcludedDirectories
         {
-            get { return excludedDirectories; }
+            get => excludedDirectories;
             set { excludedDirectories = value; FireChanged("ExcludedDirectories"); }
         }
 
@@ -168,7 +165,7 @@ namespace ProjectManager
         [LocalizedCategory("ProjectManager.Category.Exclusions")]
         public string[] FilteredDirectoryNames
         {
-            get { return filteredDirectoryNames; }
+            get => filteredDirectoryNames;
             set { filteredDirectoryNames = value; FireChanged("FilteredDirectoryNames"); }
         }
 
@@ -180,7 +177,7 @@ namespace ProjectManager
         [DefaultValue(false)]
         public bool ShowExternalLibraries
         {
-            get { return showExternalLibraries; }
+            get => showExternalLibraries;
             set { showExternalLibraries = value; FireChanged("ShowExternalLibraries"); }
         }
 
@@ -190,7 +187,7 @@ namespace ProjectManager
         [DefaultValue(true)]
         public bool ShowProjectClasspaths
         {
-            get { return showProjectClasspaths; }
+            get => showProjectClasspaths;
             set { showProjectClasspaths = value; FireChanged("ShowProjectClasspaths"); }
         }
 
@@ -200,7 +197,7 @@ namespace ProjectManager
         [DefaultValue(false)]
         public bool ShowGlobalClasspaths
         {
-            get { return showGlobalClasspaths; }
+            get => showGlobalClasspaths;
             set { showGlobalClasspaths = value; FireChanged("DisableMxmlMapping"); }
         }
 
@@ -210,7 +207,7 @@ namespace ProjectManager
         [DefaultValue(false)]
         public bool EnableMxmlMapping
         {
-            get { return enableMxmlMapping; }
+            get => enableMxmlMapping;
             set { enableMxmlMapping = value; FireChanged("ShowGlobalClasspaths"); }
         }
 
@@ -220,8 +217,8 @@ namespace ProjectManager
         [DefaultValue(HighlightType.ExternalFiles)]
         public HighlightType TabHighlightType
         {
-            get { return tabHighlightType; }
-            set { tabHighlightType = value; }
+            get => tabHighlightType;
+            set => tabHighlightType = value;
         }
 
         [DisplayName("Track Active Document")]
@@ -238,8 +235,8 @@ namespace ProjectManager
         [Browsable(false)]
         public List<string> GlobalClasspaths
         {
-            get { return this.GetGlobalClasspaths(Language); }
-            set { this.SetGlobalClasspaths(Language, value); }
+            get => this.GetGlobalClasspaths(Language);
+            set => this.SetGlobalClasspaths(Language, value);
         }
 
         public void SetGlobalClasspaths(string lang, List<string> classpaths)

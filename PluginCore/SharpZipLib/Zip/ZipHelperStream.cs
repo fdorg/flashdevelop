@@ -49,8 +49,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public long CompressedSize
         {
-            get { return compressedSize; }
-            set { compressedSize = value; }
+            get => compressedSize;
+            set => compressedSize = value;
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public long Size
         {
-            get { return size; }
-            set { size = value; }
+            get => size;
+            set => size = value;
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public long Crc
         {
-            get { return crc; }
-            set { crc = (value & 0xffffffff); }
+            get => crc;
+            set => crc = (value & 0xffffffff);
         }
 
         #region Instance Fields
@@ -82,14 +82,14 @@ namespace ICSharpCode.SharpZipLib.Zip
     {
         public long SizePatchOffset
         {
-            get { return sizePatchOffset_; }
-            set { sizePatchOffset_ = value; }
+            get => sizePatchOffset_;
+            set => sizePatchOffset_ = value;
         }
 
         public long CrcPatchOffset
         {
-            get { return crcPatchOffset_; }
-            set { crcPatchOffset_ = value; }
+            get => crcPatchOffset_;
+            set => crcPatchOffset_ = value;
         }
         
         #region Instance Fields
@@ -130,43 +130,28 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>If the stream is owned it is closed when this instance is closed.</remarks>
         public bool IsStreamOwner
         {
-            get { return isOwner_; }
-            set { isOwner_ = value; }
+            get => isOwner_;
+            set => isOwner_ = value;
         }
 
         #region Base Stream Methods
-        public override bool CanRead
-        {
-            get { return stream_.CanRead; }
-        }
+        public override bool CanRead => stream_.CanRead;
 
-        public override bool CanSeek
-        {
-            get { return stream_.CanSeek; }
-        }
+        public override bool CanSeek => stream_.CanSeek;
 
 #if !NET_1_0 && !NET_1_1 && !NETCF_1_0
-        public override bool CanTimeout
-        {
-            get { return stream_.CanTimeout; }
-        }
+        public override bool CanTimeout => stream_.CanTimeout;
 #endif
 
-        public override long Length
-        {
-            get { return stream_.Length; }
-        }
+        public override long Length => stream_.Length;
 
         public override long Position
         {
-            get { return stream_.Position; }
-            set { stream_.Position = value; }
+            get => stream_.Position;
+            set => stream_.Position = value;
         }
 
-        public override bool CanWrite
-        {
-            get { return stream_.CanWrite; }
-        }
+        public override bool CanWrite => stream_.CanWrite;
 
         public override void Flush()
         {

@@ -88,10 +88,7 @@ namespace CodeRefactor.Commands
         /// Gets a value specifying whether there is an <see cref="InlineRename"/> object currently
         /// working in progress.
         /// </summary>
-        public static bool InProgress
-        {
-            get { return Current != null; }
-        }
+        public static bool InProgress => Current != null;
 
         /// <summary>
         /// Cancels any existing <see cref="InlineRename"/> in progress, and returns a
@@ -162,26 +159,17 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a value specifying whether current renaming process includes comments.
         /// </summary>
-        public bool IncludeComments
-        {
-            get { return includeComments; }
-        }
+        public bool IncludeComments => includeComments;
 
         /// <summary>
         /// Gets a value specifying whether current renaming process includes strings.
         /// </summary>
-        public bool IncludeStrings
-        {
-            get { return includeStrings; }
-        }
+        public bool IncludeStrings => includeStrings;
 
         /// <summary>
         /// Gets a value specifying whether current renaming previews changes.
         /// </summary>
-        public bool PreviewChanges
-        {
-            get { return previewChanges; }
-        }
+        public bool PreviewChanges => previewChanges;
 
         #endregion
 
@@ -892,18 +880,12 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether the cursor is at the start of the current target.
         /// </summary>
-        private bool AtLeftmost
-        {
-            get { return sci.CurrentPos == start; }
-        }
+        private bool AtLeftmost => sci.CurrentPos == start;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether the cursor is at the end of the current target.
         /// </summary>
-        private bool AtRightmost
-        {
-            get { return sci.CurrentPos == end; }
-        }
+        private bool AtRightmost => sci.CurrentPos == end;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether a character is valid for an identifier.

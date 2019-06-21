@@ -24,8 +24,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ShowOnOutput"), DefaultValue(false)]
         public bool ShowOnOutput 
         {
-            get { return this.showOnOutput; }
-            set { this.showOnOutput = value; }
+            get => this.showOnOutput;
+            set => this.showOnOutput = value;
         }
 
         /// <summary> 
@@ -35,8 +35,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ShowOnProcessEnd"), DefaultValue(false)]
         public bool ShowOnProcessEnd 
         {
-            get { return this.showOnProcessEnd; }
-            set { this.showOnProcessEnd = value; }
+            get => this.showOnProcessEnd;
+            set => this.showOnProcessEnd = value;
         }
 
         /// <summary> 
@@ -46,8 +46,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.WrapOutput"), DefaultValue(false)]
         public bool WrapOutput
         {
-            get { return this.wrapOutput; }
-            set { this.wrapOutput = value; }
+            get => this.wrapOutput;
+            set => this.wrapOutput = value;
         }
 
         /// <summary> 
@@ -57,8 +57,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.UseLegacyColoring"), DefaultValue(false)]
         public bool UseLegacyColoring
         {
-            get { return this.useLegacyColoring; }
-            set { this.useLegacyColoring = value; }
+            get => this.useLegacyColoring;
+            set => this.useLegacyColoring = value;
         }
 
         [DisplayName("Highlight Markers")]
@@ -79,7 +79,7 @@ namespace OutputPanel
                 }
                 return highlightMarkers;
             }
-            set { this.highlightMarkers = value; }
+            set => this.highlightMarkers = value;
         }
 
         /// <summary> 
@@ -89,8 +89,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ClearMode"), DefaultValue(ClearModeAction.OnEveryProcess)]
         public ClearModeAction ClearMode
         {
-            get { return this.clearMode; }
-            set { this.clearMode = value; }
+            get => this.clearMode;
+            set => this.clearMode = value;
         }
 
     }
@@ -118,15 +118,15 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.Marker")]
         public string Marker
         {
-            get { return this.marker; }
-            set { this.marker = value; }
+            get => this.marker;
+            set => this.marker = value;
         }
 
         [LocalizedDescription("OutputPanel.Description.Level")]
         public LogLevel Level
         {
-            get { return this.level; }
-            set { this.level = value; }
+            get => this.level;
+            set => this.level = value;
         }
 
         /// <summary>

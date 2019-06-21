@@ -17,10 +17,7 @@ namespace Ookii.Dialogs.Interop
 
         #region IWin32Window Members
 
-        public IntPtr Handle
-        {
-            get { return _handle; }
-        }
+        public IntPtr Handle => _handle;
 
         #endregion
     }

@@ -25,16 +25,12 @@ namespace System.Drawing
 		#region "    Properties "
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		public static ColorScheme CurrentThemeIndex {
-			get { return ThemedColors.GetCurrentThemeIndex(); }
-		}
+		public static ColorScheme CurrentThemeIndex => ThemedColors.GetCurrentThemeIndex();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		public static Color ToolBorder {
-			get { return ThemedColors._toolBorder[(int)ThemedColors.CurrentThemeIndex]; }
-		}
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		public static Color ToolBorder => ThemedColors._toolBorder[(int)ThemedColors.CurrentThemeIndex];
 
-		#endregion
+        #endregion
 
 		#region "    Constructors "
 

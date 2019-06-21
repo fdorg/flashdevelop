@@ -483,10 +483,7 @@ namespace ASCompletion.Controls
 
         #region Utilities
 
-        public Brace[] Value
-        {
-            get { return braces; }
-        }
+        public Brace[] Value => braces;
 
         private void ShowBraceProperties()
         {
@@ -787,20 +784,11 @@ namespace ASCompletion.Controls
 
         #region IServiceProvider, ITypeDescriptorContext, IWindowsFormsEditorService
 
-        IContainer ITypeDescriptorContext.Container
-        {
-            get { return null; }
-        }
+        IContainer ITypeDescriptorContext.Container => null;
 
-        object ITypeDescriptorContext.Instance
-        {
-            get { return null; }
-        }
+        object ITypeDescriptorContext.Instance => null;
 
-        PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor
-        {
-            get { return null; }
-        }
+        PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor => null;
 
         void IWindowsFormsEditorService.CloseDropDown()
         {

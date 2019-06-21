@@ -63,8 +63,8 @@ namespace FlashDebugger
         [DefaultValue(true)]
         public bool SaveBreakPoints
         {
-            get { return m_SaveBreakPoints; }
-            set { m_SaveBreakPoints = value; }
+            get => m_SaveBreakPoints;
+            set => m_SaveBreakPoints = value;
         }
 
         [DisplayName("Disable Panel Auto Show")]
@@ -73,8 +73,8 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool DisablePanelsAutoshow
         {
-            get { return m_DisablePanelsAutoshow; }
-            set { m_DisablePanelsAutoshow = value; }
+            get => m_DisablePanelsAutoshow;
+            set => m_DisablePanelsAutoshow = value;
         }
 
         [DisplayName("Switch To Layout On Debugger Start")]
@@ -84,8 +84,8 @@ namespace FlashDebugger
         [Editor(typeof(LayoutSelectorEditor), typeof(UITypeEditor))]
         public string SwitchToLayout
         {
-            get { return m_SwitchToLayout; }
-            set { m_SwitchToLayout = value; }
+            get => m_SwitchToLayout;
+            set => m_SwitchToLayout = value;
         }
 
         [DisplayName("Verbose Output")]
@@ -94,8 +94,8 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool VerboseOutput
         {
-            get { return m_VerboseOutput; }
-            set { m_VerboseOutput = value; }
+            get => m_VerboseOutput;
+            set => m_VerboseOutput = value;
         }
 
         [DisplayName("Source Paths")]
@@ -109,7 +109,7 @@ namespace FlashDebugger
                 if (m_SourcePaths is null) m_SourcePaths = new Folder[] { };
                 return m_SourcePaths;
             }
-            set { m_SourcePaths = value; }
+            set => m_SourcePaths = value;
         }
 
         [DisplayName("Start Debugger On Test Movie")]
@@ -118,8 +118,8 @@ namespace FlashDebugger
         [DefaultValue(true)]
         public bool StartDebuggerOnTestMovie
         {
-            get { return m_StartDebuggerOnTestMovie; }
-            set { m_StartDebuggerOnTestMovie = value; }
+            get => m_StartDebuggerOnTestMovie;
+            set => m_StartDebuggerOnTestMovie = value;
         }
 
         [DisplayName("Break When Error Is Thrown")]
@@ -128,7 +128,7 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool BreakOnThrow
         {
-            get { return m_BreakOnThrow; }
+            get => m_BreakOnThrow;
             set
             {
                 if (m_BreakOnThrow == value)
@@ -158,7 +158,7 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool CombineInherited
         {
-            get { return m_CombineInherited; }
+            get => m_CombineInherited;
             set
             {
                 if (m_CombineInherited == value)
@@ -175,7 +175,7 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool HideStaticMembers
         {
-            get { return m_HideStaticMembers; }
+            get => m_HideStaticMembers;
             set
             {
                 if (m_HideStaticMembers == value)
@@ -192,7 +192,7 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool HideFullClasspaths
         {
-            get { return m_HideFullClassPaths; }
+            get => m_HideFullClassPaths;
             set
             {
                 if (m_HideFullClassPaths == value)
@@ -209,7 +209,7 @@ namespace FlashDebugger
         [DefaultValue(false)]
         public bool HideClassIds
         {
-            get { return m_HideClassIds; }
+            get => m_HideClassIds;
             set
             {
                 if (m_HideClassIds == value)
@@ -226,7 +226,7 @@ namespace FlashDebugger
         [DefaultValue(10)]
         public int CopyTreeMaxRecursion
         {
-            get { return m_CopyTreeMaxRecursion; }
+            get => m_CopyTreeMaxRecursion;
             set
             {
                 if (value < 1) value = 1;
@@ -240,7 +240,7 @@ namespace FlashDebugger
         [DefaultValue(1000000)]
         public int CopyTreeMaxChars
         {
-            get { return m_CopyTreeMaxChars; }
+            get => m_CopyTreeMaxChars;
             set
             {
                 if (value < 10) value = 10;

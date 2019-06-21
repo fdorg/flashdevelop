@@ -40,17 +40,17 @@ namespace LitJson
                 return element_type;
             }
 
-            set { element_type = value; }
+            set => element_type = value;
         }
 
         public bool IsArray {
-            get { return is_array; }
-            set { is_array = value; }
+            get => is_array;
+            set => is_array = value;
         }
 
         public bool IsList {
-            get { return is_list; }
-            set { is_list = value; }
+            get => is_list;
+            set => is_list = value;
         }
     }
 
@@ -71,17 +71,17 @@ namespace LitJson
                 return element_type;
             }
 
-            set { element_type = value; }
+            set => element_type = value;
         }
 
         public bool IsDictionary {
-            get { return is_dictionary; }
-            set { is_dictionary = value; }
+            get => is_dictionary;
+            set => is_dictionary = value;
         }
 
         public IDictionary<string, PropertyMetadata> Properties {
-            get { return properties; }
-            set { properties = value; }
+            get => properties;
+            set => properties = value;
         }
     }
 

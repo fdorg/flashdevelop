@@ -13,14 +13,9 @@ namespace ProjectManager.Projects.AS3
             Platform = TargetPlatforms[0];
         }
 
-        public override OutputType[] OutputTypes
-        {
-            get
-            {
-                return new OutputType[] { 
-                    OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application/*, OutputType.Library*/ };
-            }
-        }
+        public override OutputType[] OutputTypes =>
+            new OutputType[] { 
+                OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application/*, OutputType.Library*/ };
 
         public override OutputType DefaultOutput(string platform)
         {

@@ -21,7 +21,7 @@ namespace ProjectManager.Controls
             Index = index;
         }
 
-        public Icon Icon { get { return Icon.FromHandle((Img as Bitmap).GetHicon()); } }
+        public Icon Icon => Icon.FromHandle((Img as Bitmap).GetHicon());
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ namespace ProjectManager.Controls
         public static FDImage CommandPrompt;
         public static FDImage CollapseAll;
 
-        public static ImageList ImageList { get { return imageList; } }
+        public static ImageList ImageList => imageList;
 
         public static void Initialize(IMainForm mainForm)
         {

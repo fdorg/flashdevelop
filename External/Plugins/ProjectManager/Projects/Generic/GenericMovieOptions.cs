@@ -4,10 +4,7 @@
     {
         public const string DEFAULT = "Default";
 
-        public override string[] TargetPlatforms
-        {
-            get { return new string[] { DEFAULT }; }
-        }
+        public override string[] TargetPlatforms => new string[] { DEFAULT };
 
         public override string[] TargetVersions(string platform)
         {
@@ -19,10 +16,7 @@
             return "1.0";
         }
 
-        public override OutputType[] OutputTypes
-        {
-            get { return new OutputType[] { OutputType.Website, OutputType.CustomBuild }; }
-        }
+        public override OutputType[] OutputTypes => new OutputType[] { OutputType.Website, OutputType.CustomBuild };
 
         public override OutputType DefaultOutput(string platform)
         {

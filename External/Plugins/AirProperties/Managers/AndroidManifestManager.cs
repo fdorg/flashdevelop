@@ -17,10 +17,7 @@ namespace AirProperties
 
         private bool removeNamespace;
 
-        public UsesPermissionCollection UsesPermissions
-        {
-            get { return _usesPermissions; }
-        }
+        public UsesPermissionCollection UsesPermissions => _usesPermissions;
 
         public UsesSdkElement UsesSdk { get; set; }
 
@@ -195,15 +192,9 @@ namespace AirProperties
                 this.owner = owner;
             }
 
-            public int Count
-            {
-                get { return backData.Count; }
-            }
+            public int Count => backData.Count;
 
-            public bool IsReadOnly
-            {
-                get { return false; }
-            }
+            public bool IsReadOnly => false;
 
             public void Add(UsesPermissionElement item)
             {

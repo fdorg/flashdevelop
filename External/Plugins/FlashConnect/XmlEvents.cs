@@ -21,19 +21,12 @@ namespace FlashConnect
         /// <summary>
         /// The message as text
         /// </summary>
-        public string Text 
-        {
-            get { return this.text; }
-        }
+        public string Text => this.text;
 
         /// <summary>
         /// The sender of the message
         /// </summary>
-        public Socket Socket
-        {
-            get { return this.socket; }
-        }
-        
+        public Socket Socket => this.socket;
     }
     
     public class XmlReceivedEventArgs : EventArgs
@@ -51,19 +44,12 @@ namespace FlashConnect
         /// <summary>
         /// The message as xml document
         /// </summary>
-        public XmlDocument XmlDocument 
-        {
-            get { return this.document; }
-        }
-        
+        public XmlDocument XmlDocument => this.document;
+
         /// <summary>
         /// The sender of the message
         /// </summary> 
-        public Socket Socket
-        {
-            get { return this.socket; }
-        }
-        
+        public Socket Socket => this.socket;
     }
     
 }

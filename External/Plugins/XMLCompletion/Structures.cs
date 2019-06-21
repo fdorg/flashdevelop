@@ -81,43 +81,27 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the name of the tag (without namespace)
         /// </summary>
-        public string Name
-        {
-            get { return name; }
-        }
+        public string Name => name;
 
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public string Label
-        {
-            get { return label; }
-        }
+        public string Label => label;
 
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public string Description
-        {
-            get { return "<" + tag + ">" + (uri != null ? " - " + uri : ""); }
-        }
+        public string Description => "<" + tag + ">" + (uri != null ? " - " + uri : "");
 
         /// <summary>
         /// Gets the icon of the list item
         /// </summary>
-        public Bitmap Icon
-        {
-            get { return XMLComplete.HtmlTagIcon; }
-        }
+        public Bitmap Icon => XMLComplete.HtmlTagIcon;
 
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public string Value
-        {
-            get { return tag; }
-        }
-
+        public string Value => tag;
     }
 
     public class NamespaceItem : ICompletionListItem
@@ -139,35 +123,22 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public string Label
-        {
-            get { return label; }
-        }
+        public string Label => label;
 
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public string Description
-        {
-            get { return "xmlns:" + label + (uri != null ? " - " + uri : ""); }
-        }
+        public string Description => "xmlns:" + label + (uri != null ? " - " + uri : "");
 
         /// <summary>
         /// Gets the icon of the list item
         /// </summary>
-        public Bitmap Icon
-        {
-            get { return XMLComplete.NamespaceTagIcon; }
-        }
+        public Bitmap Icon => XMLComplete.NamespaceTagIcon;
 
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public string Value
-        {
-            get { return label; }
-        }
-
+        public string Value => label;
     }
 
     public class HtmlAttributeItem : IHtmlCompletionListItem
@@ -253,50 +224,32 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the name of the item (without namespace)
         /// </summary>
-        public string Name
-        {
-            get { return name; }
-        }
+        public string Name => name;
 
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public string Label
-        {
-            get { return this.label; }
-        }
+        public string Label => this.label;
 
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public string Description
-        {
-            get { return this.desc; }
-        }
+        public string Description => this.desc;
 
         /// <summary>
         /// Gets the icon of the list item
         /// </summary>
-        public Bitmap Icon
-        {
-            get { return this.icon; }
-        }
+        public Bitmap Icon => this.icon;
 
         /// <summary>
         /// Gets the value of the list item
         /// </summary>
-        public string Value
-        {
-            get { return this.label; }
-        }
+        public string Value => this.label;
 
         /// <summary>
         /// Gets the class name of the attribute item
         /// </summary>
-        public string ClassName
-        {
-            get { return this.className; }
-        }
+        public string ClassName => this.className;
     }
 
     public class XMLBlockItem : ICompletionListItem
@@ -315,26 +268,17 @@ namespace XMLCompletion
         /// <summary>
         /// Gets the label of the list item
         /// </summary>
-        public string Label
-        {
-            get { return this.label; }
-        }
+        public string Label => this.label;
 
         /// <summary>
         /// Gets the description of the list item
         /// </summary>
-        public string Description
-        {
-            get { return this.desc; }
-        }
+        public string Description => this.desc;
 
         /// <summary>
         /// Gets the icon of the list item
         /// </summary>
-        public Bitmap Icon
-        {
-            get { return XMLComplete.HtmlTagIcon; }
-        }
+        public Bitmap Icon => XMLComplete.HtmlTagIcon;
 
         /// <summary>
         /// Gets the value of the list item

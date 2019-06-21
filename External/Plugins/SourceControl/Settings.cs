@@ -26,8 +26,8 @@ namespace SourceControl
         [LocalizedDescription("SourceControl.Description.EnableSVN")]
         public bool EnableSVN
         {
-            get { return enableSVN; }
-            set { enableSVN = value; }
+            get => enableSVN;
+            set => enableSVN = value;
         }
 
         [DefaultValue("svn.exe")]
@@ -37,8 +37,8 @@ namespace SourceControl
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string SVNPath
         {
-            get { return svnPath ?? "svn.exe"; }
-            set { svnPath = value; }
+            get => svnPath ?? "svn.exe";
+            set => svnPath = value;
         }
 
         [DefaultValue("TortoiseProc.exe")]
@@ -48,8 +48,8 @@ namespace SourceControl
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string TortoiseSVNProcPath
         {
-            get { return tortoiseSVNProcPath ?? "TortoiseProc.exe"; }
-            set { tortoiseSVNProcPath = value; }
+            get => tortoiseSVNProcPath ?? "TortoiseProc.exe";
+            set => tortoiseSVNProcPath = value;
         }
 
         [DefaultValue(false)]
@@ -58,8 +58,8 @@ namespace SourceControl
         [LocalizedDescription("SourceControl.Description.EnableGIT")]
         public bool EnableGIT
         {
-            get { return enableGIT; }
-            set { enableGIT = value; }
+            get => enableGIT;
+            set => enableGIT = value;
         }
 
         [DefaultValue("git.exe")]
@@ -69,8 +69,8 @@ namespace SourceControl
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string GITPath
         {
-            get { return gitPath ?? "git.exe"; }
-            set { gitPath = value; }
+            get => gitPath ?? "git.exe";
+            set => gitPath = value;
         }
 
         [DefaultValue("TortoiseGitProc.exe")]
@@ -80,8 +80,8 @@ namespace SourceControl
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string TortoiseGITProcPath
         {
-            get { return tortoiseGitProcPath ?? "TortoiseGitProc.exe"; }
-            set { tortoiseGitProcPath = value; }
+            get => tortoiseGitProcPath ?? "TortoiseGitProc.exe";
+            set => tortoiseGitProcPath = value;
         }
 
         [DefaultValue(false)]
@@ -90,8 +90,8 @@ namespace SourceControl
         [LocalizedDescription("SourceControl.Description.EnableHG")]
         public bool EnableHG
         {
-            get { return enableHG; }
-            set { enableHG = value; }
+            get => enableHG;
+            set => enableHG = value;
         }
 
         [DefaultValue("hg.exe")]
@@ -101,8 +101,8 @@ namespace SourceControl
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string HGPath
         {
-            get { return hgPath ?? "hg.exe"; }
-            set { hgPath = value; }
+            get => hgPath ?? "hg.exe";
+            set => hgPath = value;
         }
 
         [DefaultValue("thgw.exe")]
@@ -112,8 +112,8 @@ namespace SourceControl
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string TortoiseHGProcPath
         {
-            get { return tortoiseHGProcPath ?? "thgw.exe"; }
-            set { tortoiseHGProcPath = value; }
+            get => tortoiseHGProcPath ?? "thgw.exe";
+            set => tortoiseHGProcPath = value;
         }
 
         [DefaultValue(false)]

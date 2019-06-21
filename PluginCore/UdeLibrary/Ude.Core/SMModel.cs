@@ -53,15 +53,11 @@ namespace Ude.Core
         
         private string name;
         
-        public string Name {
-            get { return name;  }
-        }
+        public string Name => name;
 
         private int classFactor;
 
-        public int ClassFactor {
-            get { return classFactor;  }
-        }
+        public int ClassFactor => classFactor;
 
         public SMModel(BitPackage classTable, int classFactor,
             BitPackage stateTable, int[] charLenTable, string name)

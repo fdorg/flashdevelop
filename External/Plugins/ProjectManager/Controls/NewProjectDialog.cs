@@ -371,15 +371,15 @@ namespace ProjectManager.Controls
 
         public string ProjectName
         {
-            get { return nameTextBox.Text; }
-            set { nameTextBox.Text = value; }
+            get => nameTextBox.Text;
+            set => nameTextBox.Text = value;
         }
 
         public string PackageName
         {
-            get { return packageTextBox.Text; }
+            get => packageTextBox.Text;
 
-            set { packageTextBox.Text = value; }
+            set => packageTextBox.Text = value;
         }
 
         public string ProjectExt
@@ -405,7 +405,7 @@ namespace ProjectManager.Controls
                 else
                     return locationTextBox.Text;
             }
-            set { locationTextBox.Text = value; }
+            set => locationTextBox.Text = value;
         }
 
         public string TemplateDirectory

@@ -25,10 +25,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Dispose(false);
             }
 
-            public IDockContent Content
-            {
-                get { return m_content; }
-            }
+            public IDockContent Content => m_content;
 
             public void Dispose()
             {
@@ -64,20 +61,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPane m_dockPane = null;
-            public DockPane DockPane
-            {
-                get { return m_dockPane; }
-            }
+            public DockPane DockPane => m_dockPane;
 
-            public DockPanel DockPanel
-            {
-                get { return DockPane.DockPanel; }
-            }
+            public DockPanel DockPanel => DockPane.DockPanel;
 
-            public int Count
-            {
-                get { return DockPane.DisplayingContents.Count; }
-            }
+            public int Count => DockPane.DisplayingContents.Count;
 
             public Tab this[int index]
             {
@@ -131,10 +119,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Dispose(false);
             }
 
-            public DockPane DockPane
-            {
-                get { return m_dockPane; }
-            }
+            public DockPane DockPane => m_dockPane;
 
             public TabCollection AutoHideTabs
             {
@@ -170,15 +155,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                     m_dockState = dockState;
                 }
 
-                public DockState DockState
-                {
-                    get { return m_dockState; }
-                }
+                public DockState DockState => m_dockState;
 
                 public bool Selected
                 {
-                    get { return m_selected; }
-                    set { m_selected = value; }
+                    get => m_selected;
+                    set => m_selected = value;
                 }
             }
 
@@ -234,16 +216,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPanel m_dockPanel;
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            public DockPanel DockPanel => m_dockPanel;
 
             private AutoHideStateCollection m_states;
-            private AutoHideStateCollection States
-            {
-                get { return m_states; }
-            }
+            private AutoHideStateCollection States => m_states;
 
             public int Count
             {
@@ -337,34 +313,19 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private DockPanel m_dockPanel;
-        protected DockPanel DockPanel
-        {
-            get {   return m_dockPanel; }
-        }
+        protected DockPanel DockPanel => m_dockPanel;
 
         private PaneCollection m_panesTop;
-        protected PaneCollection PanesTop
-        {
-            get {   return m_panesTop;  }
-        }
+        protected PaneCollection PanesTop => m_panesTop;
 
         private PaneCollection m_panesBottom;
-        protected PaneCollection PanesBottom
-        {
-            get {   return m_panesBottom;   }
-        }
+        protected PaneCollection PanesBottom => m_panesBottom;
 
         private PaneCollection m_panesLeft;
-        protected PaneCollection PanesLeft
-        {
-            get {   return m_panesLeft; }
-        }
+        protected PaneCollection PanesLeft => m_panesLeft;
 
         private PaneCollection m_panesRight;
-        protected PaneCollection PanesRight
-        {
-            get {   return m_panesRight;    }
-        }
+        protected PaneCollection PanesRight => m_panesRight;
 
         protected PaneCollection GetPanes(DockState dockState)
         {

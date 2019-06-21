@@ -152,8 +152,8 @@ namespace AirProperties.Controls
             private CustomCheckedListBox cclb;
             public CustomCheckedListBox List
             {
-                get { return cclb; }
-                set { cclb = value; }
+                get => cclb;
+                set => cclb = value;
             }
 
             // ********************************************* Construction *********************************************
@@ -308,35 +308,23 @@ namespace AirProperties.Controls
 
         public bool CheckOnClick
         {
-            get { return dropdown.List.CheckOnClick; }
-            set { dropdown.List.CheckOnClick = value; }
+            get => dropdown.List.CheckOnClick;
+            set => dropdown.List.CheckOnClick = value;
         }
 
         public new string DisplayMember
         {
-            get { return dropdown.List.DisplayMember; }
-            set { dropdown.List.DisplayMember = value; }
+            get => dropdown.List.DisplayMember;
+            set => dropdown.List.DisplayMember = value;
         }
 
-        public new CheckedListBox.ObjectCollection Items
-        {
-            get { return dropdown.List.Items; }
-        }
+        public new CheckedListBox.ObjectCollection Items => dropdown.List.Items;
 
-        public CheckedListBox.CheckedItemCollection CheckedItems
-        {
-            get { return dropdown.List.CheckedItems; }
-        }
+        public CheckedListBox.CheckedItemCollection CheckedItems => dropdown.List.CheckedItems;
 
-        public CheckedListBox.CheckedIndexCollection CheckedIndices
-        {
-            get { return dropdown.List.CheckedIndices; }
-        }
+        public CheckedListBox.CheckedIndexCollection CheckedIndices => dropdown.List.CheckedIndices;
 
-        public bool ValueChanged
-        {
-            get { return dropdown.ValueChanged; }
-        }
+        public bool ValueChanged => dropdown.ValueChanged;
 
         /*protected override CreateParams CreateParams
         {

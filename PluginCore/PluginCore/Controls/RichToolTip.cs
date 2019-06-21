@@ -32,30 +32,24 @@ namespace PluginCore.Controls
 
         #region Public Properties
         
-        public bool Visible 
-        {
-            get { return toolTip.Visible; }
-        }
+        public bool Visible => toolTip.Visible;
 
         public Size Size
         {
-            get { return toolTip.Size; }
-            set { toolTip.Size = value; }
+            get => toolTip.Size;
+            set => toolTip.Size = value;
         }
 
         public Point Location
         {
-            get { return toolTip.Location;  }
-            set { toolTip.Location = value; }
+            get => toolTip.Location;
+            set => toolTip.Location = value;
         }
 
         public string Text 
         {
-            get { return toolTipRTB.Text; }
-            set 
-            {
-                SetText(value, true);
-            }
+            get => toolTipRTB.Text;
+            set => SetText(value, true);
         }
                 
         #endregion

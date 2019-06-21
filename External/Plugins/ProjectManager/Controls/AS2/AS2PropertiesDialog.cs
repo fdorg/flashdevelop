@@ -15,7 +15,7 @@ namespace ProjectManager.Controls.AS2
             InitializeLocalization();
         }
 
-        AS2Project project { get { return (AS2Project)BaseProject; } }
+        AS2Project project => (AS2Project)BaseProject;
 
         protected override void BuildDisplay()
         {

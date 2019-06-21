@@ -155,10 +155,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Label of the snippet item
         /// </summary>
-        public string Label
-        {
-            get { return this.word; }
-        }
+        public string Label => this.word;
 
         /// <summary>
         /// Description of the snippet item
@@ -205,10 +202,7 @@ namespace FlashDevelop.Managers
                 }
                 return icon;
             }
-            set 
-            {
-                this.icon = value;
-            }
+            set => this.icon = value;
         }
 
         /// <summary>

@@ -29,8 +29,8 @@ namespace ProjectManager.Projects
 
         public Color BackgroundColor
         {
-            get { return ColorTranslator.FromHtml(Background); }
-            set { Background = string.Format("#{0:X6}", (value.R << 16) + (value.G << 8) + value.B); }
+            get => ColorTranslator.FromHtml(Background);
+            set => Background = string.Format("#{0:X6}", (value.R << 16) + (value.G << 8) + value.B);
         }
 
         public int BackgroundColorInt
@@ -42,25 +42,13 @@ namespace ProjectManager.Projects
             }
         }
 
-        public virtual bool HasSupport
-        {
-            get { return PlatformData.SupportedLanguages.ContainsKey(Language); }
-        }
+        public virtual bool HasSupport => PlatformData.SupportedLanguages.ContainsKey(Language);
 
-        public virtual SupportedLanguage LanguageSupport
-        {
-            get { return PlatformData.SupportedLanguages[Language]; }
-        }
+        public virtual SupportedLanguage LanguageSupport => PlatformData.SupportedLanguages[Language];
 
-        public virtual bool HasPlatformSupport
-        {
-            get { return HasSupport && Platform != null && LanguageSupport.Platforms.ContainsKey(Platform); }
-        }
+        public virtual bool HasPlatformSupport => HasSupport && Platform != null && LanguageSupport.Platforms.ContainsKey(Platform);
 
-        public virtual LanguagePlatform PlatformSupport
-        {
-            get { return LanguageSupport.Platforms[Platform]; }
-        }
+        public virtual LanguagePlatform PlatformSupport => LanguageSupport.Platforms[Platform];
 
         public virtual string[] TargetPlatforms 
         {
@@ -101,7 +89,7 @@ namespace ProjectManager.Projects
 
         public virtual string Version 
         { 
-            get { return MajorVersion + "." + MinorVersion; }
+            get => MajorVersion + "." + MinorVersion;
             set
             {
                 string[] p = value.Split('.');

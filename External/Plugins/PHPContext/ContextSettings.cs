@@ -23,8 +23,8 @@ namespace PHPContext
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.DocumentationCommandLine"), DefaultValue(DEFAULT_DOC_COMMAND)]
         public string DocumentationCommandLine
         {
-            get { return documentationCommandLine; }
-            set { documentationCommandLine = value; }
+            get => documentationCommandLine;
+            set => documentationCommandLine = value;
         }
 
         #endregion
@@ -51,42 +51,30 @@ namespace PHPContext
         protected string[] userClasspath = null;
 
         [Browsable(false)]
-        public string LanguageId
-        {
-            get { return "PHP"; }
-        }
+        public string LanguageId => "PHP";
 
         [Browsable(false)]
-        public string DefaultExtension
-        {
-            get { return ".php"; }
-        }
+        public string DefaultExtension => ".php";
 
         [Browsable(false)]
-        public string CheckSyntaxRunning
-        {
-            get { return TextHelper.GetString("Info.PHPRunning"); }
-        }
+        public string CheckSyntaxRunning => TextHelper.GetString("Info.PHPRunning");
 
         [Browsable(false)]
-        public string CheckSyntaxDone
-        {
-            get { return TextHelper.GetString("Info.PHPDone"); }
-        }
+        public string CheckSyntaxDone => TextHelper.GetString("Info.PHPDone");
 
         [DisplayName("Check Syntax On Save")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CheckSyntaxOnSave"), DefaultValue(DEFAULT_CHECKSYNTAX)]
         public bool CheckSyntaxOnSave
         {
-            get { return checkSyntaxOnSave; }
-            set { checkSyntaxOnSave = value; }
+            get => checkSyntaxOnSave;
+            set => checkSyntaxOnSave = value;
         }
 
         [DisplayName("User Classpath")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.UserClasspath")]
         public string[] UserClasspath
         {
-            get { return userClasspath; }
+            get => userClasspath;
             set
             {
                 userClasspath = value;
@@ -98,16 +86,16 @@ namespace PHPContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionEnabled"), DefaultValue(DEFAULT_COMPLETIONENABLED)]
         public bool CompletionEnabled
         {
-            get { return completionEnabled; }
-            set { completionEnabled = value; }
+            get => completionEnabled;
+            set => completionEnabled = value;
         }
 
         [DisplayName("Generate Imports")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.GenerateImports"), DefaultValue(DEFAULT_GENERATEIMPORTS)]
         public bool GenerateImports
         {
-            get { return generateImports; }
-            set { generateImports = value; }
+            get => generateImports;
+            set => generateImports = value;
         }
 
         /// <summary>
@@ -117,8 +105,8 @@ namespace PHPContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionListAllTypes"), DefaultValue(DEFAULT_LISTALL)]
         public bool CompletionListAllTypes
         {
-            get { return completionListAllTypes; }
-            set { completionListAllTypes = value; }
+            get => completionListAllTypes;
+            set => completionListAllTypes = value;
         }
 
         /// <summary>
@@ -128,8 +116,8 @@ namespace PHPContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionShowQualifiedTypes"), DefaultValue(DEFAULT_QUALIFY)]
         public bool CompletionShowQualifiedTypes
         {
-            get { return completionShowQualifiedTypes; }
-            set { completionShowQualifiedTypes = value; }
+            get => completionShowQualifiedTypes;
+            set => completionShowQualifiedTypes = value;
         }
 
         /// <summary>
@@ -139,24 +127,24 @@ namespace PHPContext
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.LazyClasspathExploration"), DefaultValue(DEFAULT_LAZYMODE)]
         public bool LazyClasspathExploration
         {
-            get { return lazyClasspathExploration; }
-            set { lazyClasspathExploration = value; }
+            get => lazyClasspathExploration;
+            set => lazyClasspathExploration = value;
         }
 
         [DisplayName("Play After Build")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.PlayAfterBuild"), DefaultValue(DEFAULT_PLAY)]
         public bool PlayAfterBuild
         {
-            get { return playAfterBuild; }
-            set { playAfterBuild = value; }
+            get => playAfterBuild;
+            set => playAfterBuild = value;
         }
 
         [DisplayName("Fix Package Automatically")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.FixPackageAutomatically"), DefaultValue(DEFAULT_FIXPACKAGEAUTOMATICALLY)]
         public bool FixPackageAutomatically
         {
-            get { return fixPackageAutomatically; }
-            set { fixPackageAutomatically = value; }
+            get => fixPackageAutomatically;
+            set => fixPackageAutomatically = value;
         }
 
         #endregion
@@ -170,7 +158,7 @@ namespace PHPContext
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("PHPContext.Description.IntrinsicDefinitions")]
         public string LanguageDefinitions
         {
-            get { return intrinsicPath; }
+            get => intrinsicPath;
             set
             {
                 if (value == intrinsicPath) return;
@@ -190,7 +178,7 @@ namespace PHPContext
         [Browsable(false)]
         public InstalledSDK[] InstalledSDKs
         {
-            get { return new InstalledSDK[0]; }
+            get => new InstalledSDK[0];
             set { /* Do nothing..*/ }
         }
 

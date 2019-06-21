@@ -184,19 +184,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner_; }
-            set { isStreamOwner_ = value; }
+            get => isStreamOwner_;
+            set => isStreamOwner_ = value;
         }
         
         /// <summary>
         /// Allows client to determine if an entry can be patched after its added
         /// </summary>
-        public bool CanPatchEntries {
-            get { 
-                return baseOutputStream_.CanSeek; 
-            }
-        }
-        
+        public bool CanPatchEntries => baseOutputStream_.CanSeek;
+
         #endregion
         
         #region Encryption
@@ -219,9 +215,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </summary>
         /// <remarks>When set to null or if the password is empty no encryption is performed</remarks>
         public string Password {
-            get { 
-                return password; 
-            }
+            get => password;
             set {
                 if ( (value != null) && (value.Length == 0) ) {
                     password = null;
@@ -365,52 +359,31 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Gets value indicating stream can be read from
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanRead => false;
+
         /// <summary>
         /// Gets a value indicating if seeking is supported for this stream
         /// This property always returns false
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanSeek => false;
+
         /// <summary>
         /// Get value indicating if this stream supports writing
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return baseOutputStream_.CanWrite;
-            }
-        }
-        
+        public override bool CanWrite => baseOutputStream_.CanWrite;
+
         /// <summary>
         /// Get current length of stream
         /// </summary>
-        public override long Length {
-            get {
-                return baseOutputStream_.Length;
-            }
-        }
-        
+        public override long Length => baseOutputStream_.Length;
+
         /// <summary>
         /// Gets the current position within the stream.
         /// </summary>
         /// <exception cref="NotSupportedException">Any attempt to set position</exception>
         public override long Position {
-            get {
-                return baseOutputStream_.Position;
-            }
-            set {
-                throw new NotSupportedException("Position property not supported");
-            }
+            get => baseOutputStream_.Position;
+            set => throw new NotSupportedException("Position property not supported");
         }
         
         /// <summary>

@@ -130,7 +130,7 @@ namespace FlashDevelop.Managers
         public string Diff;
         public string[] Parts;
         public static int Longer = 0;
-        public int Length { get { return Parts.Length; } }
+        public int Length => Parts.Length;
 
         public ExplodePath(string tab)
         {
@@ -146,11 +146,7 @@ namespace FlashDevelop.Managers
         {
             return a.Length - b.Length;
         }
-        public string this[int i]
-        {
-            get { return i < Parts.Length ? Parts[i] : null; }
-        }
-
+        public string this[int i] => i < Parts.Length ? Parts[i] : null;
     }
 
 }

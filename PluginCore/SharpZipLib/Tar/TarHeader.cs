@@ -301,7 +301,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <exception cref="ArgumentNullException">Thrown when attempting to set the property to null.</exception>
         public string Name
         {
-            get { return name; }
+            get => name;
             set { 
                 if ( value == null ) {
                     throw new ArgumentNullException("value");
@@ -325,8 +325,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public int Mode
         {
-            get { return mode; }
-            set { mode = value; }
+            get => mode;
+            set => mode = value;
         }
         
         
@@ -339,8 +339,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </remarks>
         public int UserId
         {
-            get { return userId; }
-            set { userId = value; }
+            get => userId;
+            set => userId = value;
         }
         
         
@@ -353,8 +353,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </remarks>
         public int GroupId
         {
-            get { return groupId; }
-            set { groupId = value; }
+            get => groupId;
+            set => groupId = value;
         }
         
 
@@ -405,28 +405,22 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <summary>
         /// Get the entry's checksum.  This is only valid/updated after writing or reading an entry.
         /// </summary>
-        public int Checksum
-        {
-            get { return checksum; }
-        }
-        
-        
+        public int Checksum => checksum;
+
+
         /// <summary>
         /// Get value of true if the header checksum is valid, false otherwise.
         /// </summary>
-        public bool IsChecksumValid
-        {
-            get { return isChecksumValid; }
-        }
-        
-        
+        public bool IsChecksumValid => isChecksumValid;
+
+
         /// <summary>
         /// Get/set the entry's type flag.
         /// </summary>
         public byte TypeFlag
         {
-            get { return typeFlag; }
-            set { typeFlag = value; }
+            get => typeFlag;
+            set => typeFlag = value;
         }
 
         
@@ -436,7 +430,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <exception cref="ArgumentNullException">Thrown when attempting to set LinkName to null.</exception>
         public string LinkName
         {
-            get { return linkName; }
+            get => linkName;
             set {
                 if ( value == null ) {
                     throw new ArgumentNullException("value");
@@ -452,7 +446,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <exception cref="ArgumentNullException">Thrown when attempting to set Magic to null.</exception>
         public string Magic
         {
-            get { return magic; }
+            get => magic;
             set { 
                 if ( value == null ) {
                     throw new ArgumentNullException("value");
@@ -468,9 +462,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <exception cref="ArgumentNullException">Thrown when attempting to set Version to null.</exception>
         public string Version
         {
-            get {
-                return version;
-            }
+            get => version;
 
             set { 
                 if ( value == null ) {
@@ -514,7 +506,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </remarks>
         public string GroupName
         {
-            get { return groupName; }
+            get => groupName;
             set { 
                 if ( value == null ) {
                     groupName = "None";
@@ -531,8 +523,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public int DevMajor
         {
-            get { return devMajor; }
-            set { devMajor = value; }
+            get => devMajor;
+            set => devMajor = value;
         }
         
         
@@ -541,8 +533,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public int DevMinor
         {
-            get { return devMinor; }
-            set { devMinor = value; }
+            get => devMinor;
+            set => devMinor = value;
         }
         
         #endregion

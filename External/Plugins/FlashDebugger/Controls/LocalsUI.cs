@@ -34,10 +34,7 @@ namespace FlashDebugger
             treeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        public DataTreeControl TreeControl 
-        {
-            get { return treeControl; }
-        }
+        public DataTreeControl TreeControl => treeControl;
 
         public void Clear()
         {

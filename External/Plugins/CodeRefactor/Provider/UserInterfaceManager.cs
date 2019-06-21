@@ -11,10 +11,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// 
         /// </summary>
-        private static Form Main
-        {
-            get { return PluginBase.MainForm as Form; }
-        }
+        private static Form Main => PluginBase.MainForm as Form;
 
         /// <summary>
         /// 

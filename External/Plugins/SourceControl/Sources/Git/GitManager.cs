@@ -14,8 +14,8 @@ namespace SourceControl.Sources.Git
         Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
         bool ignoreDirty = false;
 
-        public IVCMenuItems MenuItems { get { return menuItems; } }
-        public IVCFileActions FileActions { get { return fileActions; } }
+        public IVCMenuItems MenuItems => menuItems;
+        public IVCFileActions FileActions => fileActions;
 
         public GitManager()
         {

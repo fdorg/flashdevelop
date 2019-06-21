@@ -21,8 +21,8 @@ namespace FlashViewer
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string PlayerPath
         {
-            get { return this.playerPath; }
-            set { this.playerPath = value; }
+            get => this.playerPath;
+            set => this.playerPath = value;
         }
 
         /// <summary> 
@@ -32,8 +32,8 @@ namespace FlashViewer
         [LocalizedDescription("FlashViewer.Description.DisplayStyle"), DefaultValue(ViewStyle.External)]
         public ViewStyle DisplayStyle 
         {
-            get { return this.displayStyle; }
-            set { this.displayStyle = value; }
+            get => this.displayStyle;
+            set => this.displayStyle = value;
         }
 
         /// <summary> 
@@ -43,8 +43,8 @@ namespace FlashViewer
         [LocalizedDescription("FlashViewer.Description.DisableAutoConfig"), DefaultValue(false)]
         public bool DisableAutoConfig
         {
-            get { return this.disableAutoConfig; }
-            set { this.disableAutoConfig = value; }
+            get => this.disableAutoConfig;
+            set => this.disableAutoConfig = value;
         }
     }
 

@@ -8,14 +8,14 @@ namespace FlashDebugger.Controls
     {
         public string Exp
         {
-            get { return ExptextBox.Text; }
-            set { ExptextBox.Text = value; }
+            get => ExptextBox.Text;
+            set => ExptextBox.Text = value;
         }
 
         public string Value
         {
-            get { return ValuetextBox.Text; }
-            set { ValuetextBox.Text = value; }
+            get => ValuetextBox.Text;
+            set => ValuetextBox.Text = value;
         }
 
         public ViewerForm()

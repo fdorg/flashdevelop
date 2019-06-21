@@ -12,7 +12,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public override DockStyle Dock
         {
-            get {   return base.Dock;   }
+            get => base.Dock;
             set
             {
                 SuspendLayout();
@@ -36,10 +36,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        protected virtual int SplitterSize
-        {
-            get {   return 0;   }
-        }
+        protected virtual int SplitterSize => 0;
 
         protected override void OnMouseDown(MouseEventArgs e)
         {

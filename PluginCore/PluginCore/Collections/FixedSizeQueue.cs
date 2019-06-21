@@ -75,10 +75,7 @@ namespace PluginCore.Collections
         /// <exception cref="ArgumentOutOfRangeException"/>
         public int Capacity
         {
-            get
-            {
-                return _capacity;
-            }
+            get => _capacity;
             set
             {
                 if (value < 0)
@@ -133,24 +130,12 @@ namespace PluginCore.Collections
         /// <summary>
         /// Gets the number of elements contained in the <see cref="FixedSizeQueue{T}"/>.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _size;
-            }
-        }
+        public int Count => _size;
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="ICollection{T}"/> is read-only.
         /// </summary>
-        bool ICollection<T>.IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
         /// <summary>
         /// Adds an item to the <see cref="ICollection{T}"/>.

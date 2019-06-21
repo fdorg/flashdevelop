@@ -980,10 +980,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the path to the language directory
         /// </summary>
-        private string LangDir
-        {
-            get { return Path.Combine(PathHelper.SettingDir, "Languages"); }
-        }
+        private string LangDir => Path.Combine(PathHelper.SettingDir, "Languages");
 
         /// <summary>
         /// Constant xml file style paths

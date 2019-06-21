@@ -19,8 +19,8 @@ namespace FlashConnect
         [LocalizedDescription("FlashConnect.Description.Enabled"), DefaultValue(true)]
         public bool Enabled
         {
-            get { return this.enabled; }
-            set { this.enabled = value; }
+            get => this.enabled;
+            set => this.enabled = value;
         }
 
         /// <summary> 
@@ -29,8 +29,8 @@ namespace FlashConnect
         [LocalizedDescription("FlashConnect.Description.Host"), DefaultValue("127.0.0.1")]
         public string Host
         {
-            get { return this.host; }
-            set { this.host = value; }
+            get => this.host;
+            set => this.host = value;
         }
 
         /// <summary> 
@@ -39,8 +39,8 @@ namespace FlashConnect
         [LocalizedDescription("FlashConnect.Description.Port"), DefaultValue(1978)]
         public int Port
         {
-            get { return this.port; }
-            set { this.port = value; }
+            get => this.port;
+            set => this.port = value;
         }
 
         /// <summary> 
@@ -50,8 +50,8 @@ namespace FlashConnect
         [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor,System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public List<string> Commands
         {
-            get { return this.commands; }
-            set { this.commands = value; }
+            get => this.commands;
+            set => this.commands = value;
         }
 
     }

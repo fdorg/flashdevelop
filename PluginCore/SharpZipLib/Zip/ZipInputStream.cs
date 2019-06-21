@@ -151,12 +151,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <value>A password for all encrypted <see cref="ZipEntry">entries </see> in this <see cref="ZipInputStream"/></value>
         public string Password
         {
-            get {
-                return password;
-            }
-            set {
-                password = value;
-            }
+            get => password;
+            set => password = value;
         }
         
         
@@ -167,12 +163,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// The entry can only be decompressed if the library supports the zip features required to extract it.
         /// See the <see cref="ZipEntry.Version">ZipEntry Version</see> property for more details.
         /// </remarks>
-        public bool CanDecompressEntry {
-            get {
-                return (entry != null) && entry.CanDecompress;
-            }
-        }
-        
+        public bool CanDecompressEntry => (entry != null) && entry.CanDecompress;
+
         /// <summary>
         /// Advances to the next entry in the archive
         /// </summary>
@@ -411,12 +403,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Returns 1 if there is an entry available
         /// Otherwise returns 0.
         /// </summary>
-        public override int Available {
-            get {
-                return entry != null ? 1 : 0;
-            }
-        }
-        
+        public override int Available => entry != null ? 1 : 0;
+
         /// <summary>
         /// Returns the current size that can be read from the current entry if available
         /// </summary>
