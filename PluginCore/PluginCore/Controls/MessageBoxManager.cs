@@ -74,8 +74,8 @@ namespace System.Windows.Forms
             public IntPtr hwnd;
         };
 
-        private static HookProc hookProc;
-        private static EnumChildProc enumProc;
+        private static readonly HookProc hookProc;
+        private static readonly EnumChildProc enumProc;
         [ThreadStatic]
         private static IntPtr hHook;
         [ThreadStatic]

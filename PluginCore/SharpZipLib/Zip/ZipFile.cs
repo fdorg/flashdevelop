@@ -104,7 +104,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         #endregion
         
         #region Instance Fields
-        string fileName;
+
+        readonly string fileName;
         byte[] key;
         #endregion
     }
@@ -240,7 +241,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         #endregion
         
         #region Instance Fields
-        ZipFile file_;
+
+        readonly ZipFile file_;
         ZipEntry entry_;
         bool entryValid_;
         int errorCount_;
@@ -2889,11 +2891,12 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
 
             #region Instance Fields
-            ZipEntry entry_;
+
+            readonly ZipEntry entry_;
             ZipEntry outEntry_;
-            UpdateCommand command_;
-            IStaticDataSource dataSource_;
-            string filename_;
+            readonly UpdateCommand command_;
+            readonly IStaticDataSource dataSource_;
+            readonly string filename_;
             long sizePatchOffset_ = -1;
             long crcPatchOffset_ = -1;
             long _offsetBasedSize = -1;
@@ -3415,7 +3418,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             #region Instance Fields
             string comment_;
             byte[] rawComment_;
-            bool isSourceString_;
+            readonly bool isSourceString_;
             #endregion
         }
         
@@ -3445,7 +3448,8 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
             #endregion
             #region Instance Fields
-            ZipEntry[] array;
+
+            readonly ZipEntry[] array;
             int index = -1;
             #endregion
         }
@@ -3577,7 +3581,8 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
 
             #region Instance Fields
-            Stream baseStream_;
+
+            readonly Stream baseStream_;
             #endregion
         }
         
@@ -3820,12 +3825,13 @@ namespace ICSharpCode.SharpZipLib.Zip
             public override bool CanTimeout => baseStream_.CanTimeout;
 #endif          
             #region Instance Fields
-            ZipFile zipFile_;
-            Stream baseStream_;
-            long start_;
-            long length_;
+
+            readonly ZipFile zipFile_;
+            readonly Stream baseStream_;
+            readonly long start_;
+            readonly long length_;
             long readPos_;
-            long end_;
+            readonly long end_;
             #endregion  
         }
         #endregion
@@ -3890,7 +3896,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         #endregion
         #region Instance Fields
-        string fileName_;
+
+        readonly string fileName_;
         #endregion
     }
 
@@ -4037,7 +4044,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         #endregion
 
         #region Instance Fields
-        FileUpdateMode updateMode_;
+
+        readonly FileUpdateMode updateMode_;
         #endregion
     }
 
@@ -4226,7 +4234,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         #region Instance Fields
         Stream temporaryStream_;
-        string fileName_;
+        readonly string fileName_;
         string temporaryName_;
         #endregion
     }

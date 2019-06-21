@@ -6,7 +6,7 @@ namespace PluginCore.Controls
     public class WinFormUtils
     {
 
-        private static RichTextBox _tempRTB = new RichTextBox();
+        private static readonly RichTextBox _tempRTB = new RichTextBox();
 
         public static Size MeasureRichTextBox(RichTextBox richTextBox)
         {

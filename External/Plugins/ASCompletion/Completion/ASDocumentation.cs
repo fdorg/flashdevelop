@@ -79,7 +79,7 @@ namespace ASCompletion.Completion
         /// </summary>
         private class TagItem : ICompletionListItem
         {
-            private string label;
+            private readonly string label;
             
             public TagItem(string label) 
             {

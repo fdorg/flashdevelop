@@ -26,10 +26,10 @@ namespace ProjectManager.Actions
         public static int LatestSDKMatchQuality;
         static bool setPlayerglobalHomeEnv;
 
-        IMainForm mainForm;
-        PluginMain pluginMain;
-        FDProcessRunner fdProcess;
-        string ipcName;
+        readonly IMainForm mainForm;
+        readonly PluginMain pluginMain;
+        readonly FDProcessRunner fdProcess;
+        readonly string ipcName;
 
         public event BuildCompleteHandler BuildComplete;
         public event BuildCompleteHandler BuildFailed;

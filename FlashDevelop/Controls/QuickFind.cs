@@ -618,7 +618,7 @@ namespace FlashDevelop.Controls
         public class QuickFindRenderer : ToolStripRenderer
         {
             private ToolStrip toolStrip;
-            private ToolStripRenderer renderer;
+            private readonly ToolStripRenderer renderer;
 
             public QuickFindRenderer()
             {

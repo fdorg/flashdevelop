@@ -51,7 +51,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private Form m_form;
+        private readonly Form m_form;
         public Form Form => m_form;
 
         public IDockContent Content => Form as IDockContent;
@@ -70,7 +70,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             internal set => m_nextActive = value;
         }
 
-        private EventHandlerList m_events;
+        private readonly EventHandlerList m_events;
         private EventHandlerList Events => m_events;
 
         private bool m_allowEndUserDocking = true;

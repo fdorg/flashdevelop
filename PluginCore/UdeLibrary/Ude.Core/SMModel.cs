@@ -51,11 +51,11 @@ namespace Ude.Core
         public BitPackage stateTable;
         public int[] charLenTable;
         
-        private string name;
+        private readonly string name;
         
         public string Name => name;
 
-        private int classFactor;
+        private readonly int classFactor;
 
         public int ClassFactor => classFactor;
 

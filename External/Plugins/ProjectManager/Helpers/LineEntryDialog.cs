@@ -19,7 +19,7 @@ namespace ProjectManager.Helpers
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.Container components = null;
+        private readonly System.ComponentModel.Container components = null;
         private System.Windows.Forms.Label titleLabel;
 
         #endregion

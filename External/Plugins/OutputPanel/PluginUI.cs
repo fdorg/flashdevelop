@@ -17,7 +17,7 @@ namespace OutputPanel
     {
         private int logCount;
         private RichTextBoxEx textLog;
-        private PluginMain pluginMain;
+        private readonly PluginMain pluginMain;
         private string searchInvitation;
         private System.Timers.Timer scrollTimer;
         private ToolStripMenuItem wrapTextItem;
@@ -30,7 +30,9 @@ namespace OutputPanel
         private bool scrolling;
         private Timer autoShow;
         private bool muted;
-        private Image toggleButtonImagePause, toggleButtonImagePlay, toggleButtonImagePlayNew;
+        private readonly Image toggleButtonImagePause;
+        private readonly Image toggleButtonImagePlay;
+        private readonly Image toggleButtonImagePlayNew;
 
         public PluginUI(PluginMain pluginMain)
         {

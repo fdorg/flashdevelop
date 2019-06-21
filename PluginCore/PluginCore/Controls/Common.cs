@@ -137,7 +137,7 @@ namespace System.Windows.Forms
 
     public class ListViewEx : ListView
     {
-        private Timer expandDelay;
+        private readonly Timer expandDelay;
         private bool themeBorder = false;
         public bool UseTheme { get; set; } = true;
         public Color GridLineColor { get; set; } = SystemColors.Control;

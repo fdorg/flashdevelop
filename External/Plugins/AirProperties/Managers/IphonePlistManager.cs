@@ -12,12 +12,12 @@ namespace AirProperties
     class IphonePlistManager : IDictionary<string, object>
     {
 
-        private Dictionary<string, object> backData = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> backData = new Dictionary<string, object>();
 
-        private Dictionary<string, XmlNode> nodeMapping = new Dictionary<string, XmlNode>();
+        private readonly Dictionary<string, XmlNode> nodeMapping = new Dictionary<string, XmlNode>();
         // I don't think it's worth to, slightly, raise complexity by adding this mapping to backData
 
-        private XmlDocument backDoc;
+        private readonly XmlDocument backDoc;
 
         public bool RemoveOnNullValue { get; set; }
 

@@ -12,12 +12,12 @@ namespace WeifenLuo.WinFormsUI.Docking
     {
         private class DockAreasEditorControl : System.Windows.Forms.UserControl
         {
-            private CheckBox checkBoxFloat;
-            private CheckBox checkBoxDockLeft;
-            private CheckBox checkBoxDockRight;
-            private CheckBox checkBoxDockTop;
-            private CheckBox checkBoxDockBottom;
-            private CheckBox checkBoxDockFill;
+            private readonly CheckBox checkBoxFloat;
+            private readonly CheckBox checkBoxDockLeft;
+            private readonly CheckBox checkBoxDockRight;
+            private readonly CheckBox checkBoxDockTop;
+            private readonly CheckBox checkBoxDockBottom;
+            private readonly CheckBox checkBoxDockFill;
             private DockAreas m_oldDockAreas;
 
             public DockAreas DockAreas

@@ -58,10 +58,10 @@ namespace XMLCompletion
 
     public class HtmlTagItem : IHtmlCompletionListItem
     {
-        private string name;
-        private string tag;
-        private string label;
-        private string uri;
+        private readonly string name;
+        private readonly string tag;
+        private readonly string label;
+        private readonly string uri;
 
         public HtmlTagItem(string name, string tag, string uri)
         {
@@ -106,8 +106,8 @@ namespace XMLCompletion
 
     public class NamespaceItem : ICompletionListItem
     {
-        private string label;
-        private string uri;
+        private readonly string label;
+        private readonly string uri;
 
         public NamespaceItem(string name, string uri)
         {
@@ -254,9 +254,9 @@ namespace XMLCompletion
 
     public class XMLBlockItem : ICompletionListItem
     {
-        private string desc;
-        private string label;
-        private string replace;
+        private readonly string desc;
+        private readonly string label;
+        private readonly string replace;
  
         public XMLBlockItem(string label, string desc, string replace)
         {

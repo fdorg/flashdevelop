@@ -7,7 +7,7 @@ namespace ProjectManager.Projects
 {
     public class ProjectWriter : XmlTextWriter
     {
-        Project project;
+        readonly Project project;
 
         public ProjectWriter(Project project, string filename)
             : base(new FileStream(filename, File.Exists(filename) ? FileMode.Truncate : FileMode.CreateNew), Encoding.UTF8)

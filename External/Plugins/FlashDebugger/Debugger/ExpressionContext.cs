@@ -14,9 +14,9 @@ namespace FlashDebugger
 {
     public class ExpressionContext : Context
     {
-        Session session;
-        Frame frame;
-        Value contextVal;
+        readonly Session session;
+        readonly Frame frame;
+        readonly Value contextVal;
 
         public ExpressionContext(Session session, Frame frame, Value contextVal)
             : this(session, frame)

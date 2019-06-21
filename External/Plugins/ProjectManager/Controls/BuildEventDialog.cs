@@ -10,7 +10,7 @@ namespace ProjectManager.Controls
     public class BuildEventDialog : SmartForm
     {
         Project project;
-        BuildEventVars vars;
+        readonly BuildEventVars vars;
 
         #region Windows Form Designer
 

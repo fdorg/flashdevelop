@@ -19,10 +19,10 @@ namespace FlashDevelop.Docking
 {
     public class TabbedDocument : DockContent, ITabbedDocument
     {
-        private Timer focusTimer;
+        private readonly Timer focusTimer;
         private Timer backupTimer;
         private string previousText;
-        private List<int> bookmarks;
+        private readonly List<int> bookmarks;
         private ScintillaControl editor;
         private ScintillaControl editor2;
         private ScintillaControl lastEditor;

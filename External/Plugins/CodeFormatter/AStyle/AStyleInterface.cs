@@ -40,8 +40,8 @@ namespace CodeFormatter
         private delegate void AStyleErrorDelgate(int errorNum, [MarshalAs(UnmanagedType.LPStr)]string error);
 
         /// AStyleMainUtf16 Delegates.
-        private AStyleMemAllocDelgate AStyleMemAlloc;
-        private AStyleErrorDelgate AStyleError;
+        private readonly AStyleMemAllocDelgate AStyleMemAlloc;
+        private readonly AStyleErrorDelgate AStyleError;
 
         /// AStyleMainUtf16 Constants.
         public const string DefaultOptions = "--indent-namespaces --indent-preproc-block --indent-preproc-cond --indent-switches --indent-cases --pad-header --keep-one-line-blocks --keep-one-line-statements --close-templates";

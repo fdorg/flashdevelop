@@ -4,7 +4,7 @@ namespace ProjectManager.Projects.AS3
 {
     public class AS3ProjectWriter : ProjectWriter
     {
-        AS3Project project;
+        readonly AS3Project project;
 
         public AS3ProjectWriter(AS3Project project, string filename)
             : base(project, filename)

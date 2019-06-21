@@ -8,12 +8,12 @@ namespace AS3Context.Controls
 {
     class ProfilerMemView
     {
-        ToolStripLabel memLabel;
-        Label statsLabel;
-        ComboBox scaleCombo;
+        readonly ToolStripLabel memLabel;
+        readonly Label statsLabel;
+        readonly ComboBox scaleCombo;
         const int MAX_WIDTH = 1000;
         const int MAX_HEIGHT = 400;
-        private MemGraph graph;
+        private readonly MemGraph graph;
 
         public MemGraph Graph => graph;
 

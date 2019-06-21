@@ -9,9 +9,9 @@ namespace AS3Context.Controls
 {
     public class ObjectRefsGrid:TreeViewAdv
     {
-        NodeTextBox methodTB;
-        NodeTextBox fileTB;
-        NodeTextBox lineTB;
+        readonly NodeTextBox methodTB;
+        readonly NodeTextBox fileTB;
+        readonly NodeTextBox lineTB;
 
         public ObjectRefsGrid()
         {
@@ -60,10 +60,10 @@ namespace AS3Context.Controls
 
     public class ObjectRefsNode : Node
     {
-        string method;
-        string path;
-        string file;
-        string line;
+        readonly string method;
+        readonly string path;
+        readonly string file;
+        readonly string line;
 
         public ObjectRefsNode(string method, string file, string line)
         {

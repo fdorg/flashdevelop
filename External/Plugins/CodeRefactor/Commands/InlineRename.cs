@@ -47,18 +47,19 @@ namespace CodeRefactor.Commands
         #endregion
 
         private int start, end;
-        private string oldName, newName/*, prevName*/;
-        private bool includeComments;
-        private bool includeStrings;
-        private bool previewChanges;
+        private readonly string oldName/*, prevName*/;
+        private string newName/*, prevName*/;
+        private readonly bool includeComments;
+        private readonly bool includeStrings;
+        private readonly bool previewChanges;
 
-        private ScintillaControl sci;
+        private readonly ScintillaControl sci;
         private ITabbedDocument currentDoc;
 
         private ReferenceInfo currentRef;
         private ReferenceInfo[] refs;
 
-        private DelayedExecution delayedExecution;
+        private readonly DelayedExecution delayedExecution;
         private List<string> history;
         private int historyIndex;
 

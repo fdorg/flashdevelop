@@ -9,8 +9,8 @@ namespace FlashConnect
     
     public class DataReceivedEventArgs : EventArgs
     {
-        private string text;
-        private Socket socket;
+        private readonly string text;
+        private readonly Socket socket;
 
         public DataReceivedEventArgs(string text, Socket socket) 
         {
@@ -31,8 +31,8 @@ namespace FlashConnect
     
     public class XmlReceivedEventArgs : EventArgs
     {      
-        private XmlDocument document;
-        private Socket socket;
+        private readonly XmlDocument document;
+        private readonly Socket socket;
 
         public XmlReceivedEventArgs(string text, Socket socket) 
         {

@@ -81,8 +81,8 @@ namespace AS3Context
         private static string checksum;
         private static Dictionary<string, List<string>> allTags;
         //static private Regex reIncPath = new Regex("[\"']([^\"']+)", RegexOptions.Compiled);
-        private static Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
-        private static Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
+        private static readonly Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
+        private static readonly Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
 
         /// <summary>
         /// Called 
@@ -894,8 +894,8 @@ namespace AS3Context
     /// </summary>
     public class MxmlEventHandlerItem : ICompletionListItem
     {
-        private MemberModel member;
-        private int icon;
+        private readonly MemberModel member;
+        private readonly int icon;
 
         public MxmlEventHandlerItem(MemberModel oMember)
         {

@@ -16,18 +16,18 @@ namespace ASCompletion.Helpers
         private string logFile;
         private string docInfo;
         private string publishInfo;
-        private WatcherEx fsWatcher;
-        private Timer updater;
+        private readonly WatcherEx fsWatcher;
+        private readonly Timer updater;
 
-        private Regex reError = new Regex(
+        private readonly Regex reError = new Regex(
             @"^\*\*Error\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        private Regex warnError = new Regex(
+        private readonly Regex warnError = new Regex(
             @"^\*\*Warning\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        private Regex reFlashFile = new Regex(
+        private readonly Regex reFlashFile = new Regex(
             "<flashFileName>(?<output>[^<]+)</flashFileName>",
             RegexOptions.Compiled);
 

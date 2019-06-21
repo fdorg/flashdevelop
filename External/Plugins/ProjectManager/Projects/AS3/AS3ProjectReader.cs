@@ -7,7 +7,7 @@ namespace ProjectManager.Projects.AS3
 {
     public class AS3ProjectReader : ProjectReader
     {
-        AS3Project project;
+        readonly AS3Project project;
 
         public AS3ProjectReader(string filename)
             : base(filename, new AS3Project(filename))

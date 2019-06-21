@@ -13,9 +13,9 @@ namespace SourceControl.Managers
 {
     public class FSWatchers
     {
-        Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
-        HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
-        Timer updateTimer;
+        readonly Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
+        readonly HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
+        readonly Timer updateTimer;
         string lastDirtyPath;
         bool disposing;
 

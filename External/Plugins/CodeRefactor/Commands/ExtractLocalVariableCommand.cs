@@ -229,7 +229,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        string description;
+        readonly string description;
         public string Description
         {
             get

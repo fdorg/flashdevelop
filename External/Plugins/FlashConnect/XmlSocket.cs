@@ -10,7 +10,7 @@ namespace FlashConnect
 {
     public class XmlSocket
     {
-        private Socket server;
+        private readonly Socket server;
         private Socket client;
         private StringBuilder packets;
         public event XmlReceivedEventHandler XmlReceived;

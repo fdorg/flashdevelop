@@ -12,7 +12,7 @@ namespace BridgeSettings
         const int DEFAULT_PORT_NUM = 8009;
         const string DEFAULT_IP = "127.0.0.1";
         const string DEFAULT_SHARED_DRIVE = "Y:\\";
-        private static string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
+        private static readonly string[] DEFAULT_EXTENSIONS = { ".exe", ".com", ".bat", ".cmd" };
 
         private bool active = false;
         private string ip = DEFAULT_IP;

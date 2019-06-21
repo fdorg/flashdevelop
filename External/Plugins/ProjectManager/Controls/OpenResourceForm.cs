@@ -13,8 +13,8 @@ namespace ProjectManager.Controls
 {
     public class OpenResourceForm : SmartForm
     {
-        private PluginMain plugin;
-        private int MAX_ITEMS = 100;
+        private readonly PluginMain plugin;
+        private readonly int MAX_ITEMS = 100;
         private List<string> openedFiles;
         private List<string> projectFiles;
         private const string ITEM_SPACER = "-----------------";

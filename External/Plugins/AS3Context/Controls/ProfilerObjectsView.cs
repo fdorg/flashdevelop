@@ -10,13 +10,13 @@ namespace AS3Context.Controls
 {
     class ProfilerObjectsView
     {
-        ObjectRefsGrid objectsGrid;
-        Regex reStep = new Regex("([^\\[]+)\\[(.*):([0-9]+)\\]");
-        ObjectRefsModel model = new ObjectRefsModel();
-        ToolStripMenuItem openItem;
+        readonly ObjectRefsGrid objectsGrid;
+        readonly Regex reStep = new Regex("([^\\[]+)\\[(.*):([0-9]+)\\]");
+        readonly ObjectRefsModel model = new ObjectRefsModel();
+        readonly ToolStripMenuItem openItem;
         string fileToOpen;
         int lineToOpen;
-        Timer delayOpen;
+        readonly Timer delayOpen;
 
         public ObjectRefsGrid ObjectsGrid => objectsGrid;
 

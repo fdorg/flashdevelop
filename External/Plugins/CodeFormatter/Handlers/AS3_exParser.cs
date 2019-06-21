@@ -351,14 +351,14 @@ public class AS3_exParser : Parser
     //options
     private List<Exception> mParseErrors;
             
-    private ASPrettyPrinter mPrinter;
-    private CommonTokenStream mRawTokens;
+    private readonly ASPrettyPrinter mPrinter;
+    private readonly CommonTokenStream mRawTokens;
     private int mStatementCount=0;
 
-    private List<Int32> mCodeBlockStack=new List<Int32>(); //this is used for tracking which block I'm in so that I can handle the open brace differently depending on context
+    private readonly List<Int32> mCodeBlockStack=new List<Int32>(); //this is used for tracking which block I'm in so that I can handle the open brace differently depending on context
     private bool mIsFunctionDecl; //flag that tells me whether the function body is associated with an expression or a declaration
-    private List<IfElseBlockTracker> mIfElseBlocks=new List<IfElseBlockTracker>();
-    private List<bool> mXMLTextContentStack=new List<bool>();
+    private readonly List<IfElseBlockTracker> mIfElseBlocks=new List<IfElseBlockTracker>();
+    private readonly List<bool> mXMLTextContentStack=new List<bool>();
 
     private bool mInFunctionParameterDecl=false; //set during formal parameter list so that I know where variable decls came from
     private bool mInEqualAlignDecl=false; //only set to true for variable statement declarations (not ones in the parameter list, for loops, etc.)

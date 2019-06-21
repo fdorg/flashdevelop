@@ -21,7 +21,7 @@ namespace ProjectManager
 
         private bool searchExternalClassPath = true;
         List<ProjectPreferences> projectPrefList = new List<ProjectPreferences>();
-        List<string> recentProjects = new List<string>();
+        readonly List<string> recentProjects = new List<string>();
         bool showProjectClasspaths = true;
         bool showGlobalClasspaths = false;
         int maxRecentProjects = 10;

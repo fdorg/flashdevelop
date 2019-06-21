@@ -13,7 +13,7 @@ namespace CodeRefactor.Controls
 {
     public class SurroundMenu : ToolStripMenuItem
     {
-        private List<ICompletionListItem> items;
+        private readonly List<ICompletionListItem> items;
 
         public SurroundMenu()
         {

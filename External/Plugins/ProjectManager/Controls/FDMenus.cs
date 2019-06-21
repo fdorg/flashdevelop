@@ -188,7 +188,7 @@ namespace ProjectManager.Controls
         public ToolStripMenuItem CleanProject;
         public ToolStripMenuItem Properties;
 
-        private List<ToolStripItem> AllItems;
+        private readonly List<ToolStripItem> AllItems;
 
         public ProjectMenu()
         {

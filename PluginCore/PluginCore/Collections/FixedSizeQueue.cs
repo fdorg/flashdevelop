@@ -450,7 +450,7 @@ namespace PluginCore.Collections
         {
             private T m_current;
             private int m_index;
-            private FixedSizeQueue<T> m_queue;
+            private readonly FixedSizeQueue<T> m_queue;
             private int m_version;
 
             [DebuggerHidden]

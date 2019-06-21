@@ -18,12 +18,16 @@ namespace FlashDebugger.Controls
     {
         public event EventHandler ValueChanged;
 
-        private DataTreeModel _model;
+        private readonly DataTreeModel _model;
         private static ViewerForm viewerForm;
-        private ContextMenuStrip _contextMenuStrip;
-        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyValueMenuItem, copyIdMenuItem;
+        private readonly ContextMenuStrip _contextMenuStrip;
+        private readonly ToolStripMenuItem copyMenuItem;
+        private readonly ToolStripMenuItem viewerMenuItem;
+        private readonly ToolStripMenuItem watchMenuItem;
+        private readonly ToolStripMenuItem copyValueMenuItem;
+        private readonly ToolStripMenuItem copyIdMenuItem;
         private DataTreeState state;
-        private bool watchMode;
+        private readonly bool watchMode;
         private bool addingNewExpression;
 
         public Collection<Node> Nodes => _model.Root.Nodes;
@@ -634,7 +638,7 @@ namespace FlashDebugger.Controls
         private class DataTreeState
         {
 
-            public HashSet<string> Expanded = new HashSet<string>();
+            public readonly HashSet<string> Expanded = new HashSet<string>();
             public string Selected;
             public string TopPath;
             public string BottomPath;

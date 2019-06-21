@@ -86,7 +86,7 @@ namespace ASCompletion.Model
         public bool IsValid;
         public bool IsVirtual;
         public bool ValidatePackage;
-        private object lockObject = new object();
+        private readonly object lockObject = new object();
         private bool inited;
         private bool inUse;
         private WatcherEx watcher;

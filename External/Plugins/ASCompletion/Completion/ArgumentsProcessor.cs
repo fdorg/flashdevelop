@@ -12,7 +12,7 @@ namespace ASCompletion.Completion
 
         /* PRIVATE */
 
-        private static Regex re_Argument =
+        private static readonly Regex re_Argument =
             new Regex("\\$\\((?<name>[a-z]+)\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         private Hashtable variables;

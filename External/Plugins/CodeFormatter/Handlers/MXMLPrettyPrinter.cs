@@ -2681,7 +2681,7 @@ namespace CodeFormatter.Handlers
 
     public class TagStackEntry
     {
-        private string mTagName;
+        private readonly string mTagName;
         private bool mSeenFirstChild;
         public TagStackEntry(string tagName)
         {

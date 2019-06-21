@@ -16,7 +16,7 @@ namespace FlashViewer
 {
     public class PluginMain : IPlugin
     {
-        private List<Form> popups = new List<Form>();
+        private readonly List<Form> popups = new List<Form>();
         private string settingFilename;
         private Settings settingObject;
         private Icon playerIcon;

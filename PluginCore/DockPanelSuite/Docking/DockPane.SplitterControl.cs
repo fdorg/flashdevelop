@@ -7,7 +7,7 @@ namespace WeifenLuo.WinFormsUI.Docking
     {
         private class SplitterControl : Control, ISplitterDragSource
         {
-            DockPane m_pane;
+            readonly DockPane m_pane;
 
             public SplitterControl(DockPane pane)
             {

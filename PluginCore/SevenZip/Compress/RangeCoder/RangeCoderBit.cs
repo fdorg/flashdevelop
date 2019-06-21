@@ -43,7 +43,7 @@ namespace SevenZip.Compression.RangeCoder
             }
         }
 
-        private static uint[] ProbPrices = new uint[kBitModelTotal >> kNumMoveReducingBits];
+        private static readonly uint[] ProbPrices = new uint[kBitModelTotal >> kNumMoveReducingBits];
 
         static BitEncoder()
         {

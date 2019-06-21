@@ -7,7 +7,7 @@ namespace ProjectManager.Projects.Haxe
 {
     public class HaxeProjectReader : ProjectReader
     {
-        HaxeProject project;
+        readonly HaxeProject project;
 
         public HaxeProjectReader(string filename)
             : base(filename, new HaxeProject(filename))

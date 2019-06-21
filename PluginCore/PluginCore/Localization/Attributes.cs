@@ -46,7 +46,7 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class StringValueAttribute : Attribute
     {
-        private string value;
+        private readonly string value;
 
         public StringValueAttribute(string value)
         {

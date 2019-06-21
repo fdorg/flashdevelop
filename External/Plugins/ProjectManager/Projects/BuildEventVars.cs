@@ -24,8 +24,8 @@ namespace ProjectManager.Projects
 
     public class BuildEventVars
     {
-        Project project;
-        List<BuildEventInfo> additional = new List<BuildEventInfo>();
+        readonly Project project;
+        readonly List<BuildEventInfo> additional = new List<BuildEventInfo>();
 
         public BuildEventVars(Project project)
         {

@@ -18,7 +18,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DragForm.Show(false);
                 }
 
-                DragForm m_dragForm;
+                readonly DragForm m_dragForm;
                 private DragForm DragForm => m_dragForm;
 
                 public void Show(Rectangle rect)

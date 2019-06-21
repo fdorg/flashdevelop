@@ -204,8 +204,8 @@ namespace PluginCore.Bridge
     
     public class DataReceivedEventArgs : EventArgs
     {
-        private string text;
-        private Socket socket;
+        private readonly string text;
+        private readonly Socket socket;
 
         public DataReceivedEventArgs(string text, Socket socket) 
         {

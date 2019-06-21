@@ -27,12 +27,12 @@ namespace AS3Context.Controls
         private bool autoStart;
         private bool running;
         private string current;
-        private List<string> previous = new List<string>();
-        private ObjectRefsGrid objectRefsGrid;
-        private ProfilerLiveObjectsView liveObjectsView;
-        private ProfilerMemView memView;
-        private ProfilerObjectsView objectRefsView;
-        private Timer detectDisconnect;
+        private readonly List<string> previous = new List<string>();
+        private readonly ObjectRefsGrid objectRefsGrid;
+        private readonly ProfilerLiveObjectsView liveObjectsView;
+        private readonly ProfilerMemView memView;
+        private readonly ProfilerObjectsView objectRefsView;
+        private readonly Timer detectDisconnect;
         private List<ToolStripMenuItem> profilerItems;
         private string profilerItemsCheck;
         private string profilerSWF;

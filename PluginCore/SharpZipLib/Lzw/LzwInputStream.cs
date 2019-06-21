@@ -519,7 +519,7 @@ namespace ICSharpCode.SharpZipLib.LZW
 
         #region Instance Fields
 
-        Stream baseInputStream;
+        readonly Stream baseInputStream;
 
         /// <summary>
         /// Flag indicating wether this instance is designated the stream owner.

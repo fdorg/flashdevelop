@@ -13,11 +13,11 @@ namespace StartPage.Controls
 {
     public class StartPageWebBrowser : UserControl
     {
-        private string rssUrl = string.Empty;
-        private string pageUrl = string.Empty;
+        private readonly string rssUrl = string.Empty;
+        private readonly string pageUrl = string.Empty;
         private bool showingStartPage = false;
-        private RecentProjectList recentProjectList;
-        private StartPageActions startPageActions;
+        private readonly RecentProjectList recentProjectList;
+        private readonly StartPageActions startPageActions;
         private WebBrowserEx webBrowser;
         private DragDropPanel dndPanel;
 

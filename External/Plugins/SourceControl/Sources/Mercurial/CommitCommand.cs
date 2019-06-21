@@ -5,7 +5,7 @@ namespace SourceControl.Sources.Mercurial
 {
     class CommitCommand : BaseCommand
     {
-        string workingDirectory;
+        readonly string workingDirectory;
         string commitArgs;
 
 

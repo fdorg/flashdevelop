@@ -34,12 +34,12 @@ namespace LitJson
         private bool          allow_comments;
         private bool          allow_single_quoted_strings;
         private bool          end_of_input;
-        private FsmContext    fsm_context;
+        private readonly FsmContext    fsm_context;
         private int           input_buffer;
         private int           input_char;
-        private TextReader    reader;
+        private readonly TextReader    reader;
         private int           state;
-        private StringBuilder string_buffer;
+        private readonly StringBuilder string_buffer;
         private string        string_value;
         private int           token;
         private int           unichar;

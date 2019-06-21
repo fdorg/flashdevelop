@@ -46,7 +46,7 @@ namespace AS3Context.Compiler
         
         private static string ascPath;
         private static string mxmlcPath;
-        private static string flexShellsJar = "Flex4Shells.jar";
+        private static readonly string flexShellsJar = "Flex4Shells.jar";
         private static string flexShellsPath;
         private static bool running;
         private static bool silentChecking;

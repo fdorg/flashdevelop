@@ -21,21 +21,21 @@ namespace TaskListPanel
     {  
         private int totalFiles;
         private int currentPos;
-        private List<string> groups;
+        private readonly List<string> groups;
         private int processedFiles;
-        private PluginMain pluginMain;
+        private readonly PluginMain pluginMain;
         private string currentFileName;
         private List<string> extensions;
         private Regex todoParser = null;
         private bool isEnabled = false;
         private bool refreshEnabled = false;
-        private System.Windows.Forms.Timer parseTimer;
+        private readonly System.Windows.Forms.Timer parseTimer;
         private bool firstExecutionCompleted = false;
-        private Dictionary<string, DateTime> filesCache;
+        private readonly Dictionary<string, DateTime> filesCache;
         private ContextMenuStrip contextMenu;
         private ToolStripMenuItem refreshButton;
         private ToolStripLabel toolStripLabel;
-        private ListViewSorter columnSorter;
+        private readonly ListViewSorter columnSorter;
         private StatusStrip statusStrip;
         private ColumnHeader columnPos;
         private ColumnHeader columnType;
@@ -48,7 +48,7 @@ namespace TaskListPanel
         private ImageListManager imageList;
 
         // Regex
-        private static Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
+        private static readonly Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
 
         public PluginUI(PluginMain pluginMain)
         {

@@ -16,7 +16,7 @@ namespace System.Windows.Forms
 
     public class DockPanelControl : UserControl
     {
-        Pen borderPen;
+        readonly Pen borderPen;
         DockBorders borders;
         public bool AutoKeyHandling = false;
 

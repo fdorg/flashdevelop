@@ -9,7 +9,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockPane = pane;
         }
 
-        private DockPane m_dockPane = null;
+        private readonly DockPane m_dockPane = null;
         public DockPane DockPane => m_dockPane;
 
         private NestedPaneCollection m_nestedPanes = null;

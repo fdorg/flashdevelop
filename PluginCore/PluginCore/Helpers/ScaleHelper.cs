@@ -11,7 +11,7 @@ namespace PluginCore.Helpers
         /// Private properties
         /// </summary>
         private static double curScale = double.MinValue;
-        private static HashSet<Control> adjustedItems = new HashSet<Control>();
+        private static readonly HashSet<Control> adjustedItems = new HashSet<Control>();
 
         /// <summary>
         /// Gets the display scale. Ideally would probably keep separate scales for X and Y.

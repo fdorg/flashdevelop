@@ -27,8 +27,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private struct HitTestResult
         {
-            public HitTestArea HitArea;
-            public int Index;
+            public readonly HitTestArea HitArea;
+            public readonly int Index;
 
             public HitTestResult(HitTestArea hitTestArea, int index)
             {

@@ -18,7 +18,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Button downloadButton;
         private System.ComponentModel.BackgroundWorker worker;
-        private string URL = DistroConfig.DISTRIBUTION_VERSION;
+        private readonly string URL = DistroConfig.DISTRIBUTION_VERSION;
         private static bool silentCheck = false;
 
         public UpdateDialog()

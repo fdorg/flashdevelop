@@ -39,15 +39,15 @@ namespace AirProperties
 
         #endregion
                
-        private PluginMain _pluginMain;
-        private string _propertiesFilePath;
+        private readonly PluginMain _pluginMain;
+        private readonly string _propertiesFilePath;
         private string _propertiesFile;
         private bool _isPropertiesLoaded;
-        private List<string> _locales = new List<string>();
-        private List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
+        private readonly List<string> _locales = new List<string>();
+        private readonly List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
         private readonly List<PropertyManager.AirApplicationIconField> _iconFields;
-        private List<PropertyManager.AirExtension> _extensions = new List<PropertyManager.AirExtension>();
-        private List<string> _removedExtensions = new List<string>();
+        private readonly List<PropertyManager.AirExtension> _extensions = new List<PropertyManager.AirExtension>();
+        private readonly List<string> _removedExtensions = new List<string>();
 
         // Android extra
         private List<PropertyManager.AndroidPermission> _androidPermissions;

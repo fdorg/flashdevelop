@@ -29,7 +29,7 @@ namespace FlashLogViewer
         private ToolStripComboBoxEx logComboBox;
         private DateTime policyLogWrited;
         private DateTime flashLogWrited;
-        private PluginMain pluginMain;
+        private readonly PluginMain pluginMain;
         private string curLogFile;
         private Regex reWarning;
         private Regex reFilter;

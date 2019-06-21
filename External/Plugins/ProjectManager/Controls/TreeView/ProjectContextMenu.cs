@@ -21,7 +21,7 @@ namespace ProjectManager.Controls.TreeView
     {
         Project project;
         ProjectTreeView projectTree; 
-        static Image newFolderImg = Icons.Overlay(Icons.Folder.Img, Icons.BulletAdd.Img, 5, -3);
+        static readonly Image newFolderImg = Icons.Overlay(Icons.Folder.Img, Icons.BulletAdd.Img, 5, -3);
         public ToolStripMenuItem AddMenu = new ToolStripMenuItem(TextHelper.GetString("Label.Add"));
         public ToolStripMenuItem AddNewFolder = new ToolStripMenuItem(TextHelper.GetString("Label.NewFolder"), newFolderImg);
         public ToolStripMenuItem AddLibraryAsset = new ToolStripMenuItem(TextHelper.GetString("Label.LibraryAsset"), Icons.ImageResource.Img);

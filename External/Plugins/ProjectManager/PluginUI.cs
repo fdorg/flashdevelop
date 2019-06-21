@@ -17,11 +17,11 @@ namespace ProjectManager
     public class PluginUI : DockPanelControl
     {
         public FDMenus menus;
-        TreeBar treeBar;
+        readonly TreeBar treeBar;
         Project project;
-        LinkLabel help;
-        ProjectTreeView tree;
-        ProjectContextMenu menu;
+        readonly LinkLabel help;
+        readonly ProjectTreeView tree;
+        readonly ProjectContextMenu menu;
         bool isEditingLabel;
 
         public event EventHandler NewProject;

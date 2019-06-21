@@ -232,12 +232,12 @@ namespace AS3Context.Compiler
 
         #region Understanding
 
-        static Regex reTrace = new Regex(@"^?\[trace\]", RegexOptions.Compiled);
-        static Regex reFault = new Regex(@"^(\[Fault\]|Fault,) ", RegexOptions.Compiled);
-        static Regex reLoad = new Regex(@"^\[SWF\] ", RegexOptions.Compiled);
-        static Regex reUnload = new Regex(@"^\[UnloadSWF\] ", RegexOptions.Compiled);
-        static Regex reDisconnect = new Regex(@"^Player session terminated", RegexOptions.Compiled);
-        static Regex reContinue = new Regex(@"'continue'", RegexOptions.Compiled);
+        static readonly Regex reTrace = new Regex(@"^?\[trace\]", RegexOptions.Compiled);
+        static readonly Regex reFault = new Regex(@"^(\[Fault\]|Fault,) ", RegexOptions.Compiled);
+        static readonly Regex reLoad = new Regex(@"^\[SWF\] ", RegexOptions.Compiled);
+        static readonly Regex reUnload = new Regex(@"^\[UnloadSWF\] ", RegexOptions.Compiled);
+        static readonly Regex reDisconnect = new Regex(@"^Player session terminated", RegexOptions.Compiled);
+        static readonly Regex reContinue = new Regex(@"'continue'", RegexOptions.Compiled);
 
         void MatchLine(string line)
         {

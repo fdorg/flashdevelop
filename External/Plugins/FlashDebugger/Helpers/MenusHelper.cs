@@ -12,11 +12,32 @@ namespace FlashDebugger
     internal class MenusHelper
     {
         public static ImageListManager imageList;
-        private ToolStripItem[] m_ToolStripButtons;
-        private ToolStripSeparator m_ToolStripSeparator, m_ToolStripSeparator2;
-        private ToolStripButton StartContinueButton, PauseButton, StopButton, CurrentButton, RunToCursorButton, StepButton, NextButton, FinishButton;
-        private ToolStripMenuItem StartContinueMenu, PauseMenu, StopMenu, CurrentMenu, RunToCursorMenu, StepMenu, NextMenu, FinishMenu, ToggleBreakPointMenu, ToggleBreakPointEnableMenu, DeleteAllBreakPointsMenu, DisableAllBreakPointsMenu, EnableAllBreakPointsMenu, StartRemoteDebuggingMenu;
-        private ToolStripMenuItem BreakOnAllMenu;
+        private readonly ToolStripItem[] m_ToolStripButtons;
+        private readonly ToolStripSeparator m_ToolStripSeparator;
+        private readonly ToolStripSeparator m_ToolStripSeparator2;
+        private readonly ToolStripButton StartContinueButton;
+        private readonly ToolStripButton PauseButton;
+        private readonly ToolStripButton StopButton;
+        private readonly ToolStripButton CurrentButton;
+        private readonly ToolStripButton RunToCursorButton;
+        private readonly ToolStripButton StepButton;
+        private readonly ToolStripButton NextButton;
+        private readonly ToolStripButton FinishButton;
+        private readonly ToolStripMenuItem StartContinueMenu;
+        private readonly ToolStripMenuItem PauseMenu;
+        private readonly ToolStripMenuItem StopMenu;
+        private readonly ToolStripMenuItem CurrentMenu;
+        private readonly ToolStripMenuItem RunToCursorMenu;
+        private readonly ToolStripMenuItem StepMenu;
+        private readonly ToolStripMenuItem NextMenu;
+        private readonly ToolStripMenuItem FinishMenu;
+        private readonly ToolStripMenuItem ToggleBreakPointMenu;
+        private readonly ToolStripMenuItem ToggleBreakPointEnableMenu;
+        private readonly ToolStripMenuItem DeleteAllBreakPointsMenu;
+        private readonly ToolStripMenuItem DisableAllBreakPointsMenu;
+        private readonly ToolStripMenuItem EnableAllBreakPointsMenu;
+        private readonly ToolStripMenuItem StartRemoteDebuggingMenu;
+        private readonly ToolStripMenuItem BreakOnAllMenu;
         private DebuggerState CurrentState = DebuggerState.Initializing;
 
         /// <summary>

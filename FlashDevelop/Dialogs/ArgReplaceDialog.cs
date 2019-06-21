@@ -16,8 +16,8 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Panel bottomPanel;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.FlowLayoutPanel argsPanel;
-        private System.Collections.Generic.Dictionary<string, string> argDictionary = new Dictionary<string, string>();
-        private System.Text.RegularExpressions.Regex regex;
+        private readonly System.Collections.Generic.Dictionary<string, string> argDictionary = new Dictionary<string, string>();
+        private readonly System.Text.RegularExpressions.Regex regex;
         public string text;
 
         public ArgReplaceDialog(string text, Regex regex)

@@ -10,7 +10,7 @@ namespace FlashDebugger
     class LocalsUI : DockPanelControl
     {
         private PluginMain pluginMain;
-        private DataTreeControl treeControl;
+        private readonly DataTreeControl treeControl;
         private static char[] chTrims = { '.' };
 
         public LocalsUI(PluginMain pluginMain)

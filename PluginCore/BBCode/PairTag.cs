@@ -9,8 +9,8 @@ namespace PluginCore.BBCode
         }
 
 
-        private IPairTagMatch _openerMatch;
-        private IPairTagMatch _closerMatch;
+        private readonly IPairTagMatch _openerMatch;
+        private readonly IPairTagMatch _closerMatch;
 
 
         public IPairTagMatch openerMatch => _openerMatch;

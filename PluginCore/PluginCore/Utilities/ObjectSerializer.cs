@@ -12,7 +12,7 @@ namespace PluginCore.Utilities
 {
     public class ObjectSerializer
     {
-        private static BinaryFormatter formatter = new BinaryFormatter();
+        private static readonly BinaryFormatter formatter = new BinaryFormatter();
 
         static ObjectSerializer()
         {

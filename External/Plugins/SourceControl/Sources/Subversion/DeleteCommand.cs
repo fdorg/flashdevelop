@@ -5,7 +5,7 @@ namespace SourceControl.Sources.Subversion
 {
     class DeleteCommand : BaseCommand
     {
-        string[] paths;
+        readonly string[] paths;
 
         public DeleteCommand(string[] paths)
         {

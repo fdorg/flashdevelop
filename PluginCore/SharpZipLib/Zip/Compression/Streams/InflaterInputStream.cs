@@ -304,7 +304,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 
         #region Instance Fields
         int rawLength;
-        byte[] rawData;
+        readonly byte[] rawData;
         
         int clearTextLength;
         byte[] clearText;
@@ -316,8 +316,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         
 #if !NETCF_1_0
         ICryptoTransform cryptoTransform;
-#endif      
-        Stream inputStream;
+#endif
+        readonly Stream inputStream;
         #endregion
     }
     
@@ -663,7 +663,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Base stream the inflater reads from.
         /// </summary>
-        private Stream baseInputStream;
+        private readonly Stream baseInputStream;
         
         /// <summary>
         /// The compressed size

@@ -919,10 +919,10 @@ namespace AirProperties
 
             public class AirFileTypeIcon
             {
-                private short _size;
+                private readonly short _size;
                 private bool _isValid = false;
                 private string _filePath = string.Empty;
-                private AirVersion _minVersion = AirVersion.V10;
+                private readonly AirVersion _minVersion = AirVersion.V10;
 
                 public AirFileTypeIcon(short size, string filePath, AirVersion minVersion)
                 {
@@ -952,8 +952,8 @@ namespace AirProperties
 
         public class AirApplicationIconField
         {
-            private string _size = string.Empty;
-            private AirVersion _minVersion = AirVersion.V10;
+            private readonly string _size = string.Empty;
+            private readonly AirVersion _minVersion = AirVersion.V10;
 
             public AirApplicationIconField(string size, AirVersion minVersion)
             {

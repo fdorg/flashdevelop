@@ -141,7 +141,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
         #endregion
 
-        private static Matrix _matrixIdentity = new Matrix();
+        private static readonly Matrix _matrixIdentity = new Matrix();
         private static Matrix MatrixIdentity => _matrixIdentity;
 
         private static DockState[] _dockStates;

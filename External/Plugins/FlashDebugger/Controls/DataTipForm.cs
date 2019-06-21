@@ -16,7 +16,7 @@ namespace FlashDebugger.Controls
 
         public AutoRowHeightLayout RowLayout => rowLayout;
 
-        AutoRowHeightLayout rowLayout;
+        readonly AutoRowHeightLayout rowLayout;
 
         public DataTipForm()
         {

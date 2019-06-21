@@ -306,7 +306,7 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
-        static Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
+        static readonly Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
         {
             new Brace("Parentheses", '(', ')', false, true, new[]
             {

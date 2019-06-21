@@ -15,7 +15,7 @@ namespace SourceControl.Helpers
     {
         #region Fields
 
-        private static List<AnnotatedDocument> documents;
+        private static readonly List<AnnotatedDocument> documents;
 
         private IBlameCommand command;
         private string fileName;

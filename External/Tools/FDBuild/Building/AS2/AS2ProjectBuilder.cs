@@ -9,7 +9,7 @@ namespace ProjectManager.Building.AS2
 {
     public class AS2ProjectBuilder : ProjectBuilder
     {
-        AS2Project project;
+        readonly AS2Project project;
 
         #region Path Helpers
         string MtascPath

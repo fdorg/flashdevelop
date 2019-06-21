@@ -6,8 +6,8 @@ namespace PluginCore.Helpers
     public static class PlatformHelper
     {
         // INIT
-        private static bool isRunningOnWindows = (Environment.OSVersion.Platform != PlatformID.Unix) && (Environment.OSVersion.Platform != PlatformID.MacOSX);
-        private static bool isRunningOnMono = Type.GetType("Mono.Runtime") != null;
+        private static readonly bool isRunningOnWindows = (Environment.OSVersion.Platform != PlatformID.Unix) && (Environment.OSVersion.Platform != PlatformID.MacOSX);
+        private static readonly bool isRunningOnMono = Type.GetType("Mono.Runtime") != null;
 
         /// <summary>
         /// Checks if we are running on Windows

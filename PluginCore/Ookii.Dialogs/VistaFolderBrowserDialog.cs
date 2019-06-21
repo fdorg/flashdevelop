@@ -20,7 +20,7 @@ namespace Ookii.Dialogs
     [DefaultEvent("HelpRequest"), Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"), DefaultProperty("SelectedPath"), Description("Prompts the user to select a folder.")]
     public sealed class VistaFolderBrowserDialog : CommonDialog
     {
-        private FolderBrowserDialog _downlevelDialog;
+        private readonly FolderBrowserDialog _downlevelDialog;
         private string _description;
         private bool _useDescriptionForTitle;
         private string[] _selectedPaths;

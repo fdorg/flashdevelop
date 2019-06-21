@@ -110,7 +110,7 @@ namespace Ude.Core
         };
 
         private byte lastCharClass;
-        private int[] freqCounter = new int[FREQ_CAT_NUM];
+        private readonly int[] freqCounter = new int[FREQ_CAT_NUM];
         
         public Latin1Prober()
         {

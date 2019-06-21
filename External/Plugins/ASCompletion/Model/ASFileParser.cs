@@ -62,7 +62,7 @@ namespace ASCompletion.Model
     public class TypeCommentUtils
     {
         const string ObjectType = "Object";
-        private static Random random = new Random(123456);
+        private static readonly Random random = new Random(123456);
 
         /// <summary>
         /// Type-comment parsing into model (source and destination)

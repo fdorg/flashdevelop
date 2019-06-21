@@ -11,7 +11,7 @@ namespace FlashDebugger.Controls
 {
     public partial class ImmediateUI : DockPanelControl
     {
-        private List<string> history;
+        private readonly List<string> history;
         private int historyPos;
 
         public ImmediateUI()

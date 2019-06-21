@@ -7,7 +7,7 @@ namespace ProjectManager.Building.AS2
 {
     class MtascArgumentBuilder : ArgumentBuilder
     {
-        AS2Project project;
+        readonly AS2Project project;
 
         public MtascArgumentBuilder(AS2Project project)
         {

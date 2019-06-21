@@ -83,7 +83,7 @@ namespace FlashDebugger
         private bool m_RequestStop;
         private bool m_RequestDetach;
         private bool m_StepResume;
-        private EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private readonly EventWaitHandle m_SuspendWait = new EventWaitHandle(false, EventResetMode.ManualReset);
         private bool m_SuspendWaiting;
         private int m_activeSession; // 1 is m_session else lookup runningIsolates
 
@@ -119,11 +119,11 @@ namespace FlashDebugger
         }
 
         // breakpoint mappings
-        private Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
+        private readonly Dictionary<BreakPointInfo, Location> breakpointLocations = new Dictionary<BreakPointInfo, Location>();
 
         // Global Properties
-        private int m_HaltTimeout;
-        private int m_UpdateDelay;
+        private readonly int m_HaltTimeout;
+        private readonly int m_UpdateDelay;
 
         // Session Properties
         private int m_MetadataAttemptsPeriod;   // 1/4s per attempt

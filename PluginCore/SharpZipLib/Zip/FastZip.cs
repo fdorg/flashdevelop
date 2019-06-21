@@ -707,7 +707,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         bool restoreDateTimeOnExtract_;
         bool restoreAttributesOnExtract_;
         bool createEmptyDirectories_;
-        FastZipEvents events_;
+        readonly FastZipEvents events_;
         IEntryFactory entryFactory_ = new ZipEntryFactory();
         INameTransform extractNameTransform_;
         UseZip64 useZip64_=UseZip64.Dynamic;

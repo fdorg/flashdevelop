@@ -35,7 +35,7 @@ namespace FlashDebugger
         private ToolStripMenuItem setFrameContextMenuItem;
         private ToolStripMenuItem gotoSourceContextMenuItem;
         private ToolStripMenuItem justMyCodeContextMenuItem;
-        private List<ListViewItem> wholeFrameStack;
+        private readonly List<ListViewItem> wholeFrameStack;
         private int lastSelected;
         private bool justMyCode;
 

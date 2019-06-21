@@ -10,8 +10,8 @@ namespace AirProperties
     public partial class LocaleManager : Form
     {
         private bool _customLocaleIsValid;
-        private List<string> _applicationLocales;
-        private ListItem[] _defaultLocales = // The default locales supported by the AIR application installer
+        private readonly List<string> _applicationLocales;
+        private readonly ListItem[] _defaultLocales = // The default locales supported by the AIR application installer
         { 
             new ListItem(TextHelper.GetString("Locale.ChineseSimplified"), "zh"),
             new ListItem(TextHelper.GetString("Locale.ChineseTraditional"), "zh-Hant"),                                                

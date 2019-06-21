@@ -511,7 +511,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// If true no Zlib/RFC1950 headers or footers are generated
         /// </summary>
-        bool noZlibHeaderOrFooter;
+        readonly bool noZlibHeaderOrFooter;
         
         /// <summary>
         /// The current state.
@@ -526,12 +526,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// The pending output.
         /// </summary>
-        DeflaterPending pending;
+        readonly DeflaterPending pending;
         
         /// <summary>
         /// The deflater engine.
         /// </summary>
-        DeflaterEngine engine;
+        readonly DeflaterEngine engine;
         #endregion
     }
 }

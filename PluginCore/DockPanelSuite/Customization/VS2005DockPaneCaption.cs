@@ -311,7 +311,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private static TextFormatFlags _textFormat =
+        private static readonly TextFormatFlags _textFormat =
             TextFormatFlags.SingleLine |
             TextFormatFlags.EndEllipsis |
             TextFormatFlags.VerticalCenter;

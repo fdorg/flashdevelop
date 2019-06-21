@@ -392,7 +392,7 @@ namespace ProjectManager.Controls
 
         private class ClasspathEntry
         {
-            public string Classpath;
+            public readonly string Classpath;
 
             public ClasspathEntry(string classpath)
             {

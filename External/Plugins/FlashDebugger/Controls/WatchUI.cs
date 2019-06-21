@@ -11,8 +11,8 @@ namespace FlashDebugger.Controls
 {
     public class WatchUI : DockPanelControl
     {
-        private DataTreeControl treeControl;
-        private WatchManager watchManager;
+        private readonly DataTreeControl treeControl;
+        private readonly WatchManager watchManager;
 
         public WatchUI(WatchManager watchManager)
         {

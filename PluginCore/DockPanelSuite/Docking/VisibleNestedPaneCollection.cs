@@ -6,7 +6,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public sealed class VisibleNestedPaneCollection : ReadOnlyCollection<DockPane>
     {
-        private NestedPaneCollection m_nestedPanes;
+        private readonly NestedPaneCollection m_nestedPanes;
 
         internal VisibleNestedPaneCollection(NestedPaneCollection nestedPanes)
             : base(new List<DockPane>())

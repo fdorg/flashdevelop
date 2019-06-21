@@ -6,9 +6,9 @@ namespace SevenZip.Buffer
 {
     public class OutBuffer
     {
-        byte[] m_Buffer;
+        readonly byte[] m_Buffer;
         uint m_Pos;
-        uint m_BufferSize;
+        readonly uint m_BufferSize;
         Stream m_Stream;
         ulong m_ProcessedSize;
 
