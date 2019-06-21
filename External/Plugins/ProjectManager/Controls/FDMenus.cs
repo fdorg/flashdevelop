@@ -106,7 +106,7 @@ namespace ProjectManager.Controls
 
         public bool DisabledForBuild
         {
-            get { return !TestMovie.Enabled; }
+            get => !TestMovie.Enabled;
             set
             {
                 BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;

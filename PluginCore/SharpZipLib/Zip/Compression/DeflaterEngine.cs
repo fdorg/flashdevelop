@@ -279,31 +279,19 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// Get current value of Adler checksum
         /// </summary>      
-        public int Adler {
-            get {
-                return unchecked((int)adler.Value);
-            }
-        }
+        public int Adler => unchecked((int)adler.Value);
 
         /// <summary>
         /// Total data processed
         /// </summary>      
-        public long TotalIn {
-            get {
-                return totalIn;
-            }
-        }
+        public long TotalIn => totalIn;
 
         /// <summary>
         /// Get/set the <see cref="DeflateStrategy">deflate strategy</see>
         /// </summary>      
         public DeflateStrategy Strategy {
-            get {
-                return strategy;
-            }
-            set {
-                strategy = value;
-            }
+            get => strategy;
+            set => strategy = value;
         }
         
         /// <summary>

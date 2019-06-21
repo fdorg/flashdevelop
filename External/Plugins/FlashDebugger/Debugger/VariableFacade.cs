@@ -38,37 +38,16 @@ namespace FlashDebugger
 
         public virtual string Path
         {
-            get
-            {
-                return m_path;
-            }
-            
-            set
-            {
-                m_path = value;
-            }
-            
+            get => m_path;
+
+            set => m_path = value;
         }
 
         /// <summary> Our lone get context (i.e. parent) interface </summary>
-        public virtual int Context
-        {
-            get
-            {
-                return (int) m_context;
-            }
-            
-        }
+        public virtual int Context => (int) m_context;
 
-        public virtual Variable Variable
-        {
-            get
-            {
-                return m_var;
-            }
-            
-        }
-        
+        public virtual Variable Variable => m_var;
+
         public VariableFacade(Variable v, long context)
         {
             init(context, v, null);

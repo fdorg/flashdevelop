@@ -90,8 +90,8 @@ namespace ProjectManager.Controls.TreeView
 
         public ProjectTreeView ProjectTree
         {
-            get { return projectTree; }
-            set { projectTree = value; }
+            get => projectTree;
+            set => projectTree = value;
         }
 
         public bool Contains(ToolStripMenuItem item)
@@ -493,12 +493,10 @@ namespace ProjectManager.Controls.TreeView
 
         public bool DisabledForBuild
         {
-            get { return !TestMovie.Enabled; }
-            set
-            {
+            get => !TestMovie.Enabled;
+            set =>
                 TestMovie.Enabled = RunProject.Enabled = BuildProject.Enabled =
-                CleanProject.Enabled = CloseProject.Enabled = !value;
-            }
+                    CleanProject.Enabled = CloseProject.Enabled = !value;
         }
 
         private void AddGenericFileItems(MergableMenu menu, string path)

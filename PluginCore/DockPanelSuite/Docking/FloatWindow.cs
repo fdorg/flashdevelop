@@ -70,42 +70,27 @@ namespace WeifenLuo.WinFormsUI.Docking
         private bool m_allowEndUserDocking = true;
         public bool AllowEndUserDocking
         {
-            get {   return m_allowEndUserDocking;   }
-            set {   m_allowEndUserDocking = value;  }
+            get => m_allowEndUserDocking;
+            set => m_allowEndUserDocking = value;
         }
 
         private bool m_doubleClickTitleBarToDock = true;
         public bool DoubleClickTitleBarToDock
         {
-            get { return m_doubleClickTitleBarToDock; }
-            set { m_doubleClickTitleBarToDock = value; }
+            get => m_doubleClickTitleBarToDock;
+            set => m_doubleClickTitleBarToDock = value;
         }
 
-        public NestedPaneCollection NestedPanes
-        {
-            get {   return m_nestedPanes;   }
-        }
+        public NestedPaneCollection NestedPanes => m_nestedPanes;
 
-        public VisibleNestedPaneCollection VisibleNestedPanes
-        {
-            get {   return NestedPanes.VisibleNestedPanes;  }
-        }
+        public VisibleNestedPaneCollection VisibleNestedPanes => NestedPanes.VisibleNestedPanes;
 
         private DockPanel m_dockPanel;
-        public DockPanel DockPanel
-        {
-            get {   return m_dockPanel; }
-        }
+        public DockPanel DockPanel => m_dockPanel;
 
-        public DockState DockState
-        {
-            get {   return DockState.Float; }
-        }
-    
-        public bool IsFloat
-        {
-            get {   return DockState == DockState.Float;    }
-        }
+        public DockState DockState => DockState.Float;
+
+        public bool IsFloat => DockState == DockState.Float;
 
         internal bool IsDockStateValid(DockState dockState)
         {
@@ -287,10 +272,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             ControlBox = false;
         }
 
-        public virtual Rectangle DisplayingRectangle
-        {
-            get {   return ClientRectangle; }
-        }
+        public virtual Rectangle DisplayingRectangle => ClientRectangle;
 
         internal void TestDrop(IDockDragSource dragSource, DockOutlineBase dockOutline)
         {
@@ -316,10 +298,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         #region IDragSource Members
 
-        Control IDragSource.DragControl
-        {
-            get { return this; }
-        }
+        Control IDragSource.DragControl => this;
 
         #endregion
 

@@ -30,25 +30,13 @@ namespace PluginCore.Controls
             }
         }
 
-        public static CodeTip CodeTip
-        {
-            get { return manager.codeTip; }
-        }
+        public static CodeTip CodeTip => manager.codeTip;
 
-        public static RichToolTip Tip
-        {
-            get { return manager.simpleTip; }
-        }
+        public static RichToolTip Tip => manager.simpleTip;
 
-        public static RichToolTip ErrorTip
-        {
-            get { return manager.errorTip; }
-        }
+        public static RichToolTip ErrorTip => manager.errorTip;
 
-        public static MethodCallTip CallTip
-        {
-            get { return manager.callTip; }
-        }
+        public static MethodCallTip CallTip => manager.callTip;
 
         public static void Init()
         {
@@ -78,8 +66,8 @@ namespace PluginCore.Controls
         /// </remarks>
         public bool ShowDetails
         {
-            get { return showDetails; }
-            set { showDetails = value; }
+            get => showDetails;
+            set => showDetails = value;
         }
 
         private EventType eventMask = 

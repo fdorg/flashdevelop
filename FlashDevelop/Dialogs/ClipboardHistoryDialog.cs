@@ -183,10 +183,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the selected <see cref="ClipboardTextData"/>.
         /// </summary>
-        public ClipboardTextData SelectedData
-        {
-            get { return (ClipboardTextData)listBox.SelectedItem; }
-        }
+        public ClipboardTextData SelectedData => (ClipboardTextData)listBox.SelectedItem;
 
         #endregion
 

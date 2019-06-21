@@ -30,7 +30,7 @@ namespace System.Windows.Forms
 
         private DockBorders Borders
         {
-            get { return borders; }
+            get => borders;
             set
             {
                 borders = value;

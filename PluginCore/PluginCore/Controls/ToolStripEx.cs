@@ -66,8 +66,8 @@ namespace PluginCore.Controls
         /// </summary>
         public bool ClickThrough
         {
-            get { return this.clickThrough; }
-            set { this.clickThrough = value; }
+            get => this.clickThrough;
+            set => this.clickThrough = value;
         }
 
         /// <summary>

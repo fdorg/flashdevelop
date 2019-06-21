@@ -107,7 +107,7 @@ namespace ASCompletion.Model
 
         public bool InUse
         {
-            get { return inUse; }
+            get => inUse;
             set
             {
                 if (!inited) Init();

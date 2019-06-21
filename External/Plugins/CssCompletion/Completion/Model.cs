@@ -129,10 +129,8 @@ namespace CssCompletion
             this.kind = kind;
             this.description = description;
         }
-        public string Label
-        {
-            get { return label; }
-        }
+        public string Label => label;
+
         public string Description
         {
             get 
@@ -160,7 +158,8 @@ namespace CssCompletion
                 return desc;
             }
         }
-        public ItemKind Kind { get { return kind; } }
+        public ItemKind Kind => kind;
+
         public Bitmap Icon
         {
             get 
@@ -177,10 +176,8 @@ namespace CssCompletion
                 return PropertyIcon;
             }
         }
-        public string Value
-        {
-            get { return label; }
-        }
+        public string Value => label;
+
         int IComparable.CompareTo(object obj)
         {
             return string.Compare(Label, (obj as ICompletionListItem).Label, true);

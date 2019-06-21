@@ -16,10 +16,7 @@ namespace System.Windows.Forms
         /// <summary>
         /// Should we use custom border panel?
         /// </summary>
-        public static bool UseCustomBorder
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("ThemeManager.UseCustomBorder", false); }
-        }
+        public static bool UseCustomBorder => PluginBase.MainForm.GetThemeFlag("ThemeManager.UseCustomBorder", false);
 
         /// <summary>
         /// Adds a wrapper panel to the control to create a border.
@@ -300,44 +297,35 @@ namespace System.Windows.Forms
             this.FlatCombo.Font = font;
         }
 
-        protected override Size DefaultSize
-        {
-            get { return new Size(100, 22); }
-        }
+        protected override Size DefaultSize => new Size(100, 22);
 
         public ComboBoxStyle DropDownStyle
         {
-            set { this.FlatCombo.DropDownStyle = value; }
-            get { return this.FlatCombo.DropDownStyle; }
+            set => this.FlatCombo.DropDownStyle = value;
+            get => this.FlatCombo.DropDownStyle;
         }
 
         public FlatStyle FlatStyle
         {
-            set { this.FlatCombo.FlatStyle = FlatStyle.Popup; }
-            get { return this.FlatCombo.FlatStyle; }
+            set => this.FlatCombo.FlatStyle = FlatStyle.Popup;
+            get => this.FlatCombo.FlatStyle;
         }
 
         public int SelectedIndex
         {
-            set { this.FlatCombo.SelectedIndex = value; }
-            get { return this.FlatCombo.SelectedIndex; }
+            set => this.FlatCombo.SelectedIndex = value;
+            get => this.FlatCombo.SelectedIndex;
         }
 
         public object SelectedItem
         {
-            set { this.FlatCombo.SelectedItem = value; }
-            get { return this.FlatCombo.SelectedItem; }
+            set => this.FlatCombo.SelectedItem = value;
+            get => this.FlatCombo.SelectedItem;
         }
 
-        public FlatCombo.ObjectCollection Items
-        {
-            get { return this.FlatCombo.Items; }
-        }
+        public FlatCombo.ObjectCollection Items => this.FlatCombo.Items;
 
-        public FlatCombo FlatCombo
-        {
-            get { return this.Control as FlatCombo; }
-        }
+        public FlatCombo FlatCombo => this.Control as FlatCombo;
     }
 
     public class FlatCombo : ComboBox, IThemeHandler
@@ -833,10 +821,7 @@ namespace System.Windows.Forms
 
     public class TabControlEx : CustomTabControl, IThemeHandler
     {
-        public bool UseTheme
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme", false); }
-        }
+        public bool UseTheme => PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme", false);
 
         public TabControlEx()
         {
@@ -932,10 +917,7 @@ namespace System.Windows.Forms
             this.Invalidate();
         }
 
-        protected override Size DefaultSize
-        {
-            get { return new Size(100, 12); }
-        }
+        protected override Size DefaultSize => new Size(100, 12);
 
         protected override Padding DefaultMargin
         {

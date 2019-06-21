@@ -903,31 +903,13 @@ namespace AS3Context
             icon = PluginUI.GetIcon(member.Flags, member.Access);
         }
 
-        public string Label
-        {
-            get { return member.FullName; }
-        }
+        public string Label => member.FullName;
 
-        public string Description
-        {
-            get
-            {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
-            }
-        }
+        public string Description => ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
 
-        public Bitmap Icon
-        {
-            get { return (Bitmap)ASContext.Panel.GetIcon(icon); }
-        }
+        public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(icon);
 
-        public string Value
-        {
-            get
-            {
-                return member.Name + "(event)";
-            }
-        }
+        public string Value => member.Name + "(event)";
     }
     #endregion
 

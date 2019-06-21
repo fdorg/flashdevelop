@@ -203,8 +203,8 @@ namespace ProjectManager.Controls
 
         public string CommandLine
         {
-            get { return textBox.Text; }
-            set { textBox.Text = value; }
+            get => textBox.Text;
+            set => textBox.Text = value;
         }
 
         private void Add(BuildEventInfo info)

@@ -28,8 +28,8 @@ namespace TaskListPanel
         [DefaultValue(ExploringMode.Light)]
         public ExploringMode ExploringMode
         {
-            get { return this.exploringMode; }
-            set { this.exploringMode = value; }
+            get => this.exploringMode;
+            set => this.exploringMode = value;
         }
 
         /// <summary> 
@@ -40,8 +40,8 @@ namespace TaskListPanel
         [DefaultValue(new string[0] {})]
         public string[] ExcludedPaths
         {
-            get { return this.excluded; }
-            set { this.excluded = value; }
+            get => this.excluded;
+            set => this.excluded = value;
         }
 
         /// <summary> 
@@ -52,8 +52,8 @@ namespace TaskListPanel
         [DefaultValue(new string[] { ".txt" })]
         public string[] FileExtensions
         {
-            get { return this.extensions; }
-            set { this.extensions = value; }
+            get => this.extensions;
+            set => this.extensions = value;
         }
 
         /// <summary> 
@@ -64,8 +64,8 @@ namespace TaskListPanel
         [DefaultValue(new string[] { "TODO", "FIXME", "BUG" })]
         public string[] GroupValues
         {
-            get { return this.groups; }
-            set { this.groups = value; }
+            get => this.groups;
+            set => this.groups = value;
         }
 
         /// <summary> 
@@ -76,8 +76,8 @@ namespace TaskListPanel
         [DefaultValue(new int[] { 229, 197, 197 })]
         public int[] ImageIndexes
         {
-            get { return this.images; }
-            set { this.images = value; }
+            get => this.images;
+            set => this.images = value;
         }
 
     }

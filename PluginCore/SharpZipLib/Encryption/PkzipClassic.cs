@@ -213,42 +213,22 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <summary>
         /// Gets a value indicating whether the current transform can be reused.
         /// </summary>
-        public bool CanReuseTransform
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanReuseTransform => true;
 
         /// <summary>
         /// Gets the size of the input data blocks in bytes.
         /// </summary>
-        public int InputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int InputBlockSize => 1;
 
         /// <summary>
         /// Gets the size of the output data blocks in bytes.
         /// </summary>
-        public int OutputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int OutputBlockSize => 1;
 
         /// <summary>
         /// Gets a value indicating whether multiple blocks can be transformed.
         /// </summary>
-        public bool CanTransformMultipleBlocks
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanTransformMultipleBlocks => true;
 
         #endregion
 
@@ -319,42 +299,22 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <summary>
         /// Gets a value indicating whether the current transform can be reused.
         /// </summary>
-        public bool CanReuseTransform
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanReuseTransform => true;
 
         /// <summary>
         /// Gets the size of the input data blocks in bytes.
         /// </summary>
-        public int InputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int InputBlockSize => 1;
 
         /// <summary>
         /// Gets the size of the output data blocks in bytes.
         /// </summary>
-        public int OutputBlockSize
-        {
-            get {
-                return 1;
-            }
-        }
+        public int OutputBlockSize => 1;
 
         /// <summary>
         /// Gets a value indicating whether multiple blocks can be transformed.
         /// </summary>
-        public bool CanTransformMultipleBlocks
-        {
-            get {
-                return true;
-            }
-        }
+        public bool CanTransformMultipleBlocks => true;
 
         #endregion
 
@@ -383,9 +343,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
         /// <remarks>The only valid block size is 8.</remarks>
         public override int BlockSize 
         {
-            get { 
-                return 8; 
-            }
+            get => 8;
 
             set {
                 if (value != 8) {

@@ -36,15 +36,11 @@ namespace PluginCore.Bridge
             portNum = port;
         }
         
-        public IPAddress IP {
-            get { return ipAddress; }
-        }
-        
-        public int PortNum {
-            get { return portNum; }
-        }
-        
-        
+        public IPAddress IP => ipAddress;
+
+        public int PortNum => portNum;
+
+
         #region SERVER
         
         public bool StartServer()
@@ -217,16 +213,9 @@ namespace PluginCore.Bridge
             this.socket = socket;
         }
 
-        public string Text 
-        {
-            get { return this.text; }
-        }
+        public string Text => this.text;
 
-        public Socket Socket
-        {
-            get { return this.socket; }
-        }
-        
+        public Socket Socket => this.socket;
     }
     
     

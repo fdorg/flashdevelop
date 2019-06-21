@@ -339,23 +339,16 @@ public class AS3_exParser : Parser
 
     public ITreeAdaptor TreeAdaptor
     {
-        get { return adaptor; }
-        set {
-        adaptor = value;
-        }
+        get => adaptor;
+        set => adaptor = value;
     }
 
-    override public string[] TokenNames {
-        get { return tokenNames; }
-    }
+    override public string[] TokenNames => tokenNames;
 
-    override public string GrammarFileName {
-        get { return "AS3_ex.g3"; }
-    }
+    override public string GrammarFileName => "AS3_ex.g3";
 
 
-       
-            //options
+    //options
     private List<Exception> mParseErrors;
             
     private ASPrettyPrinter mPrinter;
@@ -1050,8 +1043,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -1164,8 +1157,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -1278,8 +1271,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -1392,8 +1385,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -1463,8 +1456,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -1573,8 +1566,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -1858,8 +1851,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2033,8 +2026,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2161,8 +2154,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2232,8 +2225,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2303,8 +2296,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2374,8 +2367,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2463,8 +2456,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2589,8 +2582,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -2827,8 +2820,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -3014,8 +3007,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -3217,8 +3210,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -3489,8 +3482,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -3599,8 +3592,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -3732,8 +3725,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -3838,8 +3831,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4105,8 +4098,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4207,8 +4200,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4313,8 +4306,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4451,8 +4444,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4553,8 +4546,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4832,8 +4825,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -4977,8 +4970,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -5148,8 +5141,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -5333,8 +5326,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -5515,8 +5508,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -5737,8 +5730,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -5977,8 +5970,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6111,8 +6104,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6321,8 +6314,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6500,8 +6493,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6619,8 +6612,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6695,8 +6688,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6780,8 +6773,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -6915,8 +6908,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -7216,8 +7209,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -7305,8 +7298,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -7632,8 +7625,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -7774,8 +7767,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -7906,8 +7899,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -8097,8 +8090,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -8229,8 +8222,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -8439,8 +8432,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -8649,8 +8642,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -8990,8 +8983,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -9243,8 +9236,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -9583,8 +9576,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -9751,8 +9744,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -10022,8 +10015,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -10100,8 +10093,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -10275,8 +10268,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -10388,8 +10381,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -10468,8 +10461,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -11077,8 +11070,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -11244,8 +11237,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -11342,8 +11335,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -11463,8 +11456,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -11635,8 +11628,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -11769,8 +11762,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12028,8 +12021,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12151,8 +12144,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12245,8 +12238,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12345,8 +12338,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12521,8 +12514,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12670,8 +12663,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12821,8 +12814,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -12965,8 +12958,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13082,8 +13075,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13199,8 +13192,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13316,8 +13309,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13460,8 +13453,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13604,8 +13597,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13759,8 +13752,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -13927,8 +13920,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14012,8 +14005,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14146,8 +14139,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14280,8 +14273,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14347,8 +14340,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14523,8 +14516,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14646,8 +14639,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14904,8 +14897,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -14975,8 +14968,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15166,8 +15159,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15305,8 +15298,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15444,8 +15437,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15561,8 +15554,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15676,8 +15669,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15780,8 +15773,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -15928,8 +15921,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16067,8 +16060,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16192,8 +16185,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16290,8 +16283,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16464,8 +16457,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16535,8 +16528,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16644,8 +16637,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16790,8 +16783,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -16929,8 +16922,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -17050,8 +17043,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -17171,8 +17164,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -17249,8 +17242,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -17614,8 +17607,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -17761,8 +17754,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -17903,8 +17896,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18040,8 +18033,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18170,8 +18163,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18307,8 +18300,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18437,8 +18430,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18574,8 +18567,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18704,8 +18697,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18841,8 +18834,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -18971,8 +18964,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -19108,8 +19101,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -19238,8 +19231,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -19384,8 +19377,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -19523,8 +19516,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -19801,8 +19794,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20020,8 +20013,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20330,8 +20323,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20476,8 +20469,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20633,8 +20626,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20764,8 +20757,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20844,8 +20837,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -20942,8 +20935,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -21022,8 +21015,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -21251,8 +21244,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -21329,8 +21322,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -21617,8 +21610,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -21858,8 +21851,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22025,8 +22018,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22105,8 +22098,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22216,8 +22209,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22296,8 +22289,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22489,8 +22482,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22595,8 +22588,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22684,8 +22677,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -22935,8 +22928,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23002,8 +22995,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23308,8 +23301,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23420,8 +23413,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23568,8 +23561,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23656,8 +23649,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23796,8 +23789,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -23904,8 +23897,8 @@ public class AS3_exParser : Parser
         private object tree;
         override public object Tree
         {
-            get { return tree; }
-            set { tree = (object) value; }
+            get => tree;
+            set => tree = (object) value;
         }
     };
 
@@ -27806,11 +27799,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "()* loopback of 1548:80: ({...}? => (s= SUB | d= DOT | c= COLON ) {...}? => (I2= IDENTIFIER | allKeywords ) )*"; }
-        }
-
+        override public string Description => "()* loopback of 1548:80: ({...}? => (s= SUB | d= DOT | c= COLON ) {...}? => (I2= IDENTIFIER | allKeywords ) )*";
     }
 
 
@@ -28592,11 +28581,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "()* loopback of 1849:3: ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )*"; }
-        }
-
+        override public string Description => "()* loopback of 1849:3: ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )*";
     }
 
 
@@ -28945,11 +28930,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "1864:1: packageElement : ( conditionalCompilerOption l= LCURLY ( packageElement )* r= RCURLY | classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive );"; }
-        }
-
+        override public string Description => "1864:1: packageElement : ( conditionalCompilerOption l= LCURLY ( packageElement )* r= RCURLY | classOrInterfaceDecl | propertyDeclaration | functionDeclaration | interfaceFunctionDeclaration | statement | directive );";
     }
 
 
@@ -29285,11 +29266,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "1993:5: ( eitherIdentifier E= ASSIGN )?"; }
-        }
-
+        override public string Description => "1993:5: ( eitherIdentifier E= ASSIGN )?";
     }
 
 
@@ -29483,11 +29460,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "2075:1: classBodyElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( classBodyElement )* r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive );"; }
-        }
-
+        override public string Description => "2075:1: classBodyElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( classBodyElement )* r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive );";
     }
 
 
@@ -29819,11 +29792,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "2093:1: interfaceElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( interfaceElement )* r= RCURLY | propertyDeclaration | interfaceFunctionDeclaration | statement | directive );"; }
-        }
-
+        override public string Description => "2093:1: interfaceElement : ( ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( interfaceElement )* r= RCURLY | propertyDeclaration | interfaceFunctionDeclaration | statement | directive );";
     }
 
 
@@ -30151,11 +30120,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "2226:8: ( statement | functionDeclaration )"; }
-        }
-
+        override public string Description => "2226:8: ( statement | functionDeclaration )";
     }
 
 
@@ -30381,11 +30346,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "2273:5: ( blockStatement | directive | namespaceDirective | constantVarStatement | tryStatement | switchStatement | withStatement | returnStatement | breakStatement | continueStatement | forStatement | forInStatement | forEachInStatement | doWhileStatement | whileStatement | ifStatement | variableStatement | throwStatement | labelledStatement | expression semic | emptyStatement )"; }
-        }
-
+        override public string Description => "2273:5: ( blockStatement | directive | namespaceDirective | constantVarStatement | tryStatement | switchStatement | withStatement | returnStatement | breakStatement | continueStatement | forStatement | forInStatement | forEachInStatement | doWhileStatement | whileStatement | ifStatement | variableStatement | throwStatement | labelledStatement | expression semic | emptyStatement )";
     }
 
 
@@ -30836,11 +30797,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "()* loopback of 2465:6: ( statement )*"; }
-        }
-
+        override public string Description => "()* loopback of 2465:6: ( statement )*";
     }
 
 
@@ -30982,11 +30939,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "3017:7: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpression | conditionalExpression )"; }
-        }
-
+        override public string Description => "3017:7: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpression | conditionalExpression )";
     }
 
 
@@ -31473,11 +31426,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "3032:8: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpressionNoIn | conditionalExpressionNoIn )"; }
-        }
-
+        override public string Description => "3032:8: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpressionNoIn | conditionalExpressionNoIn )";
     }
 
 
@@ -31944,11 +31893,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "3052:1: assignmentOperator_int : ( ASSIGN | s= STAR a= ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | ( ( '>' '>' '=' )=>t1= '>' t2= '>' t3= '=' {...}? -> SHR_ASSIGN ) | ( ( '>' '>' '>' '=' )=>t1= '>' t2= '>' t3= '>' t4= '=' {...}? -> SHU_ASSIGN ) | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | LOR_ASSIGN | LAND_ASSIGN );"; }
-        }
-
+        override public string Description => "3052:1: assignmentOperator_int : ( ASSIGN | s= STAR a= ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | ( ( '>' '>' '=' )=>t1= '>' t2= '>' t3= '=' {...}? -> SHR_ASSIGN ) | ( ( '>' '>' '>' '=' )=>t1= '>' t2= '>' t3= '>' t4= '=' {...}? -> SHU_ASSIGN ) | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | LOR_ASSIGN | LAND_ASSIGN );";
     }
 
     const string DFA148_eotS =
@@ -32025,11 +31970,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "3335:1: unaryExpression : ( postfixExpression | op= ( NOT | INV ) unaryExpression | unaryOp postfixExpression );"; }
-        }
-
+        override public string Description => "3335:1: unaryExpression : ( postfixExpression | op= ( NOT | INV ) unaryExpression | unaryOp postfixExpression );";
     }
 
 
@@ -32133,11 +32074,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "()* loopback of 3376:5: ( arguments | L= LBRACK expression R= RBRACK | E= XML_ELLIPSIS eitherIdentifier | D= DOT ( eitherIdentifier | parExpression ) | typePostfixSyntax | op= XML_NS_OP expression )*"; }
-        }
-
+        override public string Description => "()* loopback of 3376:5: ( arguments | L= LBRACK expression R= RBRACK | E= XML_ELLIPSIS eitherIdentifier | D= DOT ( eitherIdentifier | parExpression ) | typePostfixSyntax | op= XML_NS_OP expression )*";
     }
 
 
@@ -32305,11 +32242,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "3521:1: primaryExpressionHelper : (T= THIS | S= SUPER | literal | arrayLiteral | objectLiteral | ( identifierLiteral x= XML_NS_OP )? identifierLiteral | xmlPrimaryExpression | parExpression | l= LT type g= GT ( arrayLiteral )? );"; }
-        }
-
+        override public string Description => "3521:1: primaryExpressionHelper : (T= THIS | S= SUPER | literal | arrayLiteral | objectLiteral | ( identifierLiteral x= XML_NS_OP )? identifierLiteral | xmlPrimaryExpression | parExpression | l= LT type g= GT ( arrayLiteral )? );";
     }
 
 
@@ -32577,11 +32510,7 @@ public class AS3_exParser : Parser
 
         }
 
-        override public string Description
-        {
-            get { return "3530:48: ( arrayLiteral )?"; }
-        }
-
+        override public string Description => "3530:48: ( arrayLiteral )?";
     }
 
 

@@ -43,7 +43,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public bool AutoScroll
             {
-                get { return m_autoScroll; }
+                get => m_autoScroll;
                 set
                 {
                     // By default the MdiClient control scrolls. It can appear though that
@@ -119,15 +119,12 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            public MdiClient MdiClient
-            {
-                get { return m_mdiClient; }
-            }
+            public MdiClient MdiClient => m_mdiClient;
 
             [Browsable(false)]
             public Form ParentForm
             {
-                get { return m_parentForm; }
+                get => m_parentForm;
                 set
                 {
                     // If the ParentForm has previously been set,
@@ -159,7 +156,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public ISite Site
             {
-                get { return m_site; }
+                get => m_site;
                 set
                 {
                     m_site = value;
@@ -354,10 +351,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 content.DockHandler.Pane.ActiveContent = content;
         }
 
-        private bool MdiClientExists
-        {
-            get { return GetMdiClientController().MdiClient != null; }
-        }
+        private bool MdiClientExists => GetMdiClientController().MdiClient != null;
 
         private void SetMdiClientBounds(Rectangle bounds)
         {

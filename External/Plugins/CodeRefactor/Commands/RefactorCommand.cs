@@ -37,14 +37,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         public virtual RefactorResultType Results
         {
-            get
-            {
-                return results;
-            }
-            protected set
-            {
-                results = value;
-            }
+            get => results;
+            protected set => results = value;
         }
 
         /// <summary>
@@ -62,22 +56,13 @@ namespace CodeRefactor.Commands
                 }
                 return associatedDocumentHelper;
             }
-            private set
-            {
-                associatedDocumentHelper = value;
-            }
+            private set => associatedDocumentHelper = value;
         }
 
         /// <summary>
         /// Indicates if this command already has a DocumentHelper registered with it.
         /// </summary>
-        public bool HasRegisteredDocumentHelper
-        {
-            get
-            {
-                return associatedDocumentHelper != null;
-            }
-        }
+        public bool HasRegisteredDocumentHelper => associatedDocumentHelper != null;
 
         /// <summary>
         /// Registers a new DocumentHelper to the command.

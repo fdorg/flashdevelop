@@ -201,17 +201,14 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// The document that contains this control
         /// </summary>
-        public ITabbedDocument Document
-        {
-            get { return ((ITabbedDocument)this.Parent); }
-        }
+        public ITabbedDocument Document => ((ITabbedDocument)this.Parent);
 
         /// <summary>
         /// Enables or disables controls
         /// </summary>
         public bool CanSearch
         {
-            get { return this.findTextBox.Enabled; }
+            get => this.findTextBox.Enabled;
             set
             {
                 this.nextButton.Enabled = value;

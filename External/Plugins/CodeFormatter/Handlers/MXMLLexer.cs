@@ -91,10 +91,7 @@ public class MXMLLexer : Lexer {
 
     }
     
-    public override string GrammarFileName
-    {
-        get { return "MXMLLexer.g3";} 
-    }
+    public override string GrammarFileName => "MXMLLexer.g3";
 
     // $ANTLR start "DOCUMENT"
     public void mDOCUMENT() // throws RecognitionException [2]
@@ -2492,11 +2489,7 @@ public class MXMLLexer : Lexer {
 
         }
 
-        public override string Description
-        {
-            get { return "108:7: ( START_TAG ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )* END_TAG | EMPTY_ELEMENT )"; }
-        }
-
+        public override string Description => "108:7: ( START_TAG ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )* END_TAG | EMPTY_ELEMENT )";
     }
 
 
@@ -2604,11 +2597,7 @@ public class MXMLLexer : Lexer {
 
         }
 
-        public override string Description
-        {
-            get { return "()* loopback of 109:13: ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )*"; }
-        }
-
+        public override string Description => "()* loopback of 109:13: ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )*";
     }
 
 

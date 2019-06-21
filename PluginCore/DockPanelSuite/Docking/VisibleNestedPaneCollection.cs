@@ -14,25 +14,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_nestedPanes = nestedPanes;
         }
 
-        public NestedPaneCollection NestedPanes
-        {
-            get {   return m_nestedPanes;   }
-        }
+        public NestedPaneCollection NestedPanes => m_nestedPanes;
 
-        public INestedPanesContainer Container
-        {
-            get {   return NestedPanes.Container;   }
-        }
+        public INestedPanesContainer Container => NestedPanes.Container;
 
-        public DockState DockState
-        {
-            get {   return NestedPanes.DockState;   }
-        }
+        public DockState DockState => NestedPanes.DockState;
 
-        public bool IsFloat
-        {
-            get {   return NestedPanes.IsFloat; }
-        }
+        public bool IsFloat => NestedPanes.IsFloat;
 
         internal void Refresh()
         {

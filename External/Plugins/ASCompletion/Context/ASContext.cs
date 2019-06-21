@@ -111,19 +111,19 @@ namespace ASCompletion.Context
         
         public virtual IContextSettings Settings
         {
-            get { return null; }
+            get => null;
             set { }
         }
 
         public virtual ContextFeatures Features 
         {
-            get { return features; }
-            set { features = value; }
+            get => features;
+            set => features = value;
         }
 
         public virtual int CurrentLine
         {
-            get { return cLine; }
+            get => cLine;
             set
             {
                 if (cFile != null)
@@ -156,7 +156,7 @@ namespace ASCompletion.Context
                 if (cFile.OutOfDate) UpdateCurrentFile(true);
                 return cClass ?? ClassModel.VoidClass;
             }
-            set { cClass = value; }
+            set => cClass = value;
         }
 
         public virtual string CurrentFile
@@ -189,8 +189,8 @@ namespace ASCompletion.Context
 
         public virtual FileModel CurrentModel
         {
-            get { return cFile; }
-            set { cFile = value; }
+            get => cFile;
+            set => cFile = value;
         }
 
         /// <summary>
@@ -198,8 +198,8 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual bool InPrivateSection
         {
-            get { return inPrivateSection; }
-            set { inPrivateSection = value; }
+            get => inPrivateSection;
+            set => inPrivateSection = value;
         }
 
         /// <summary>
@@ -229,8 +229,8 @@ namespace ASCompletion.Context
         /// </summary>
         public FileModel TopLevel
         {
-            get { return topLevel; }
-            set { topLevel = value; }
+            get => topLevel;
+            set => topLevel = value;
         }
 
         /// <summary>
@@ -238,8 +238,8 @@ namespace ASCompletion.Context
         /// </summary>
         public List<PathModel> Classpath
         {
-            get { return classPath; }
-            set { classPath = value; }
+            get => classPath;
+            set => classPath = value;
         }
         #endregion
 
@@ -1559,7 +1559,7 @@ namespace ASCompletion.Context
         public MemberList Imports;
         public bool IsDirty
         {
-            get { return isDirty; }
+            get => isDirty;
             set { isDirty = value; Imports = null; }
         }
 

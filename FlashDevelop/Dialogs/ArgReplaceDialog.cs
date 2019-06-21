@@ -129,10 +129,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Accessor for the dictionary
         /// </summary>
-        public Dictionary<string, string> Dictionary
-        {
-            get { return this.argDictionary; }
-        }
+        public Dictionary<string, string> Dictionary => this.argDictionary;
 
         /// <summary>
         /// Make sure back colors match

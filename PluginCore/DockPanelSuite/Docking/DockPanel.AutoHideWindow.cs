@@ -71,7 +71,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             private IDockContent m_activeContent = null;
             public IDockContent ActiveContent
             {
-                get { return m_activeContent; }
+                get => m_activeContent;
                 set
                 {
                     if (value == m_activeContent)
@@ -109,22 +109,19 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            public DockState DockState
-            {
-                get { return ActiveContent?.DockHandler.DockState ?? DockState.Unknown; }
-            }
+            public DockState DockState => ActiveContent?.DockHandler.DockState ?? DockState.Unknown;
 
             private bool m_flagAnimate = true;
             private bool FlagAnimate
             {
-                get { return m_flagAnimate; }
-                set { m_flagAnimate = value; }
+                get => m_flagAnimate;
+                set => m_flagAnimate = value;
             }
 
             private bool m_flagDragging = false;
             internal bool FlagDragging
             {
-                get { return m_flagDragging; }
+                get => m_flagDragging;
                 set
                 {
                     if (m_flagDragging == value)
@@ -440,10 +437,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 FlagDragging = false;
             }
 
-            bool ISplitterDragSource.IsVertical
-            {
-                get { return (DockState == DockState.DockLeftAutoHide || DockState == DockState.DockRightAutoHide); }
-            }
+            bool ISplitterDragSource.IsVertical => (DockState == DockState.DockLeftAutoHide || DockState == DockState.DockRightAutoHide);
 
             Rectangle ISplitterDragSource.DragLimitBounds
             {
@@ -502,25 +496,16 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             #region IDragSource Members
 
-            Control IDragSource.DragControl
-            {
-                get { return this; }
-            }
+            Control IDragSource.DragControl => this;
 
             #endregion
 
             #endregion
         }
 
-        private AutoHideWindowControl AutoHideWindow
-        {
-            get { return m_autoHideWindow; }
-        }
+        private AutoHideWindowControl AutoHideWindow => m_autoHideWindow;
 
-        internal Control AutoHideControl
-        {
-            get { return m_autoHideWindow; }
-        }
+        internal Control AutoHideControl => m_autoHideWindow;
 
         internal void RefreshActiveAutoHideContent()
         {

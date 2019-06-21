@@ -63,7 +63,7 @@ namespace FlashViewer.Controls
         /// </summary>
         public string MoviePath
         {
-            get { return this.moviePath; }
+            get => this.moviePath;
             set 
             { 
                 this.moviePath = value;
@@ -74,10 +74,7 @@ namespace FlashViewer.Controls
         /// <summary>
         /// Accessor for the flash movie
         /// </summary>
-        public AxShockwaveFlash FlashMovie
-        {
-            get { return this.flashMovie; }
-        }
+        public AxShockwaveFlash FlashMovie => this.flashMovie;
 
         /// <summary>
         /// Initializes the control

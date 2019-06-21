@@ -21,8 +21,8 @@ namespace ProjectManager.Building
 
         public string CompilerPath
         {
-            get { return compilerPath; }
-            set { compilerPath = value; }
+            get => compilerPath;
+            set => compilerPath = value;
         }
 
         public ProjectBuilder(Project project, string compilerPath)

@@ -215,10 +215,7 @@ namespace FlashDevelop.Managers
             /// <summary>
             /// Returns a string to use as a dictionary key.
             /// </summary>
-            public string Key
-            {
-                get { return Size + "_" + Icon + "|" + Bullet + "|" + X + "|" + Y; }
-            }
+            public string Key => Size + "_" + Icon + "|" + Bullet + "|" + X + "|" + Y;
 
             /// <summary>
             /// Parses an image data string with default size.
@@ -287,18 +284,15 @@ namespace FlashDevelop.Managers
             /// <summary>
             /// The original image.
             /// </summary>
-            public Image Original
-            {
-                get { return original; }
-            }
+            public Image Original => original;
 
             /// <summary>
             /// The copy of <see cref="Original"/> that changes color according to the theme.
             /// </summary>
             public Image Adjusted
             {
-                get { return adjusted.Target as Image; }
-                set { adjusted.Target = value; }
+                get => adjusted.Target as Image;
+                set => adjusted.Target = value;
             }
         }
     }

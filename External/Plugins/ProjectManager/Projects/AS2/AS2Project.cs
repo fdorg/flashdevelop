@@ -16,15 +16,15 @@ namespace ProjectManager.Projects.AS2
             movieOptions = new AS2MovieOptions();
         }
 
-        public override string Language { get { return "as2"; } }
-        public override string LanguageDisplayName { get { return "AS2"; } }
-        public override bool IsCompilable { get { return true; } }
-        public override bool UsesInjection { get { return InputPath != ""; } }
-        public override bool HasLibraries { get { return OutputType == OutputType.Application && !UsesInjection; } }
-        public override bool RequireLibrary { get { return true; } }
-        public override string DefaultSearchFilter { get { return "*.as"; } }
+        public override string Language => "as2";
+        public override string LanguageDisplayName => "AS2";
+        public override bool IsCompilable => true;
+        public override bool UsesInjection => InputPath != "";
+        public override bool HasLibraries => OutputType == OutputType.Application && !UsesInjection;
+        public override bool RequireLibrary => true;
+        public override string DefaultSearchFilter => "*.as";
 
-        public new MtascOptions CompilerOptions { get { return (MtascOptions)base.CompilerOptions; } }
+        public new MtascOptions CompilerOptions => (MtascOptions)base.CompilerOptions;
 
         public override PropertiesDialog CreatePropertiesDialog()
         {

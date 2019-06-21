@@ -134,8 +134,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner; }
-            set { isStreamOwner = value; }
+            get => isStreamOwner;
+            set => isStreamOwner = value;
         }
         
 
@@ -143,50 +143,29 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Gets a value indicating whether the current stream supports reading
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanRead => false;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports seeking
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanSeek => false;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports writing
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return baseStream.CanWrite;
-            }
-        }
-        
+        public override bool CanWrite => baseStream.CanWrite;
+
         /// <summary>
         /// Gets the length in bytes of the stream
         /// </summary>
-        public override long Length {
-            get {
-                return baseStream.Length;
-            }
-        }
-        
+        public override long Length => baseStream.Length;
+
         /// <summary>
         /// Gets or sets the current position of this stream.
         /// </summary>
         public override long Position {
-            get {
-                return baseStream.Position;
-            }
-            set {
-                throw new NotSupportedException("BZip2OutputStream position cannot be set");
-            }
+            get => baseStream.Position;
+            set => throw new NotSupportedException("BZip2OutputStream position cannot be set");
         }
         
         /// <summary>
@@ -367,10 +346,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Get the number of bytes written to the output.
         /// </summary>
-        public int BytesWritten
-        {
-            get { return bytesOut; }
-        }
+        public int BytesWritten => bytesOut;
 
         /// <summary>
         /// Releases the unmanaged resources used by the <see cref="BZip2OutputStream"/> and optionally releases the managed resources.

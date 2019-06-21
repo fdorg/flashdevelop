@@ -27,10 +27,10 @@ namespace SourceControl.Actions
         static Project currentProject;
         static HashSet<string> addBuffer = new HashSet<string>();
 
-        public static bool Initialized { get { return initialized; } }
+        public static bool Initialized => initialized;
         public static Image Skin { get; set; }
-        public static Project CurrentProject { get { return currentProject; } }
-        public static VCManager VCManager { get { return vcManager; } }
+        public static Project CurrentProject => currentProject;
+        public static VCManager VCManager => vcManager;
 
         public static void Init()
         {

@@ -122,12 +122,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Gets a flag value of true if the central header has been added for this archive; false if it has not been added.
         /// </summary>
         /// <remarks>No further entries can be added once this has been done.</remarks>
-        public bool IsFinished 
-        {
-            get {
-                return entries == null;
-            }
-        }
+        public bool IsFinished => entries == null;
 
         /// <summary>
         /// Set the zip file comment.
@@ -181,8 +176,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// larger then 4GB will fail.</remarks>
         public UseZip64 UseZip64
         {
-            get { return useZip64_; }
-            set { useZip64_ = value; }
+            get => useZip64_;
+            set => useZip64_ = value;
         }
         
         /// <summary>

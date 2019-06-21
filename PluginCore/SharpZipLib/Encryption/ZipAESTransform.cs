@@ -140,11 +140,7 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         /// <summary>
         /// Returns the 2 byte password verifier
         /// </summary>
-        public byte[] PwdVerifier {
-            get {
-                return _pwdVerifier;
-            }
-        }
+        public byte[] PwdVerifier => _pwdVerifier;
 
         /// <summary>
         /// Returns the 10 byte AUTH CODE to be checked or appended immediately following the AES data stream.
@@ -172,38 +168,22 @@ namespace ICSharpCode.SharpZipLib.Encryption {
         /// <summary>
         /// Gets the size of the input data blocks in bytes.
         /// </summary>
-        public int InputBlockSize {
-            get {
-                return _blockSize;
-            }
-        }
+        public int InputBlockSize => _blockSize;
 
         /// <summary>
         /// Gets the size of the output data blocks in bytes.
         /// </summary>
-        public int OutputBlockSize {
-            get {
-                return _blockSize;
-            }
-        }
+        public int OutputBlockSize => _blockSize;
 
         /// <summary>
         /// Gets a value indicating whether multiple blocks can be transformed.
         /// </summary>
-        public bool CanTransformMultipleBlocks {
-            get {
-                return true;
-            }
-        }
+        public bool CanTransformMultipleBlocks => true;
 
         /// <summary>
         /// Gets a value indicating whether the current transform can be reused.
         /// </summary>
-        public bool CanReuseTransform {
-            get {
-                return true;
-            }
-        }
+        public bool CanReuseTransform => true;
 
         /// <summary>
         /// Cleanup internal state.

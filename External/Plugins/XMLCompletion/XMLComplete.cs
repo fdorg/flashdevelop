@@ -19,7 +19,7 @@ namespace XMLCompletion
     {
         #region Properties
 
-        public static bool Active { get { return cType != XMLType.Invalid; } }
+        public static bool Active => cType != XMLType.Invalid;
 
         public static Bitmap HtmlAttributeIcon;
         public static Bitmap StyleAttributeIcon;
@@ -42,7 +42,7 @@ namespace XMLCompletion
         /// </summary> 
         public static string CurrentFile
         {
-            get { return cFile; }
+            get => cFile;
             set
             {
                 cFile = value;
@@ -73,10 +73,7 @@ namespace XMLCompletion
         /// <summary>
         /// Gets an instance of the settings class
         /// </summary> 
-        private static Settings PluginSettings
-        {
-            get { return Settings.Instance; }
-        }
+        private static Settings PluginSettings => Settings.Instance;
 
         #endregion
 

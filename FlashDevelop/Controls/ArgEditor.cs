@@ -82,8 +82,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         public string Argument
         {
-            get { return this.argLabel.Text; }
-            set { this.argLabel.Text = value; }
+            get => this.argLabel.Text;
+            set => this.argLabel.Text = value;
         }
 
         /// <summary>
@@ -91,8 +91,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         public string Value
         {
-            get { return this.argValues.Text; }
-            set { this.argValues.Text = value; }
+            get => this.argValues.Text;
+            set => this.argValues.Text = value;
         }
 
         #endregion

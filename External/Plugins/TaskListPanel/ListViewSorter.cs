@@ -48,8 +48,8 @@ namespace TaskListPanel
         /// </summary>
         public int SortColumn
         {
-            set { this.ColumnToSort = value; }
-            get { return this.ColumnToSort; }
+            set => this.ColumnToSort = value;
+            get => this.ColumnToSort;
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace TaskListPanel
         /// </summary>
         public SortOrder Order
         {
-            set { this.OrderOfSort = value; }
-            get { return this.OrderOfSort; }
+            set => this.OrderOfSort = value;
+            get => this.OrderOfSort;
         }
 
     }

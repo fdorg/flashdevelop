@@ -164,18 +164,12 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Accessor for the webBrowser
         /// </summary>
-        public WebBrowser WebBrowser
-        {
-            get { return this.webBrowser; }
-        }
+        public WebBrowser WebBrowser => this.webBrowser;
 
         /// <summary>
         /// Accessor for the addressComboBox
         /// </summary>
-        public ToolStripComboBoxEx AddressBox
-        {
-            get { return this.addressComboBox; }
-        }
+        public ToolStripComboBoxEx AddressBox => this.addressComboBox;
 
         /// <summary>
         /// Initializes localized texts to the controls

@@ -133,12 +133,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// <summary>
         /// Get the current Crc value.
         /// </summary>
-        public long Value {
-            get {
-                return ~globalCrc;
-            }
-        }
-        
+        public long Value => ~globalCrc;
+
         /// <summary>
         /// Update the Crc value.
         /// </summary>

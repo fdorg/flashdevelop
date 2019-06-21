@@ -16,7 +16,7 @@ namespace ProjectManager.Projects
             Formatting = Formatting.Indented;
         }
 
-        protected Project Project { get { return project; } }
+        protected Project Project => project;
 
         public void WriteProject()
         {

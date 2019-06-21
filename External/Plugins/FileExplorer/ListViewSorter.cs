@@ -59,8 +59,8 @@ namespace FileExplorer
         /// </summary>
         public int SortColumn
         {
-            set { this.columnToSort = value; }
-            get { return this.columnToSort; }
+            set => this.columnToSort = value;
+            get => this.columnToSort;
         }
         
         /// <summary>
@@ -68,8 +68,8 @@ namespace FileExplorer
         /// </summary>      
         public SortOrder Order
         {
-            set { this.orderOfSort = value; }
-            get { return this.orderOfSort; }
+            set => this.orderOfSort = value;
+            get => this.orderOfSort;
         }
         
     }

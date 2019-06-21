@@ -164,7 +164,7 @@ namespace ProjectManager.Controls.TreeView
 
         public Project Project
         {
-            get { return activeProject; }
+            get => activeProject;
             set
             {
                 activeProject = value;
@@ -185,7 +185,7 @@ namespace ProjectManager.Controls.TreeView
 
         public List<Project> Projects
         {
-            get { return projects; }
+            get => projects;
             set
             {
                 projects = value != null ? new List<Project>(value) : new List<Project>();
@@ -223,8 +223,8 @@ namespace ProjectManager.Controls.TreeView
 
         public new GenericNode SelectedNode
         {
-            get { return base.SelectedNode as GenericNode; }
-            set { base.SelectedNode = value; }
+            get => base.SelectedNode as GenericNode;
+            set => base.SelectedNode = value;
         }
 
         public string SelectedPath => SelectedNode?.BackingPath;

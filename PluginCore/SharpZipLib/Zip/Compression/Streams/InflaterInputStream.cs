@@ -86,51 +86,31 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Get the length of bytes bytes in the <see cref="RawData"/>
         /// </summary>
-        public int RawLength
-        {
-            get { 
-                return rawLength; 
-            }
-        }
-        
+        public int RawLength => rawLength;
+
         /// <summary>
         /// Get the contents of the raw data buffer.
         /// </summary>
         /// <remarks>This may contain encrypted data.</remarks>
-        public byte[] RawData
-        {
-            get {
-                return rawData;
-            }
-        }
-        
+        public byte[] RawData => rawData;
+
         /// <summary>
         /// Get the number of useable bytes in <see cref="ClearText"/>
         /// </summary>
-        public int ClearTextLength
-        {
-            get {
-                return clearTextLength;
-            }
-        }
-        
+        public int ClearTextLength => clearTextLength;
+
         /// <summary>
         /// Get the contents of the clear text buffer.
         /// </summary>
-        public byte[] ClearText
-        {
-            get {
-                return clearText;
-            }
-        }
-        
+        public byte[] ClearText => clearText;
+
         /// <summary>
         /// Get/set the number of bytes available
         /// </summary>
         public int Available
         {
-            get { return available; }
-            set { available = value; }
+            get => available;
+            set => available = value;
         }
 
         /// <summary>
@@ -424,8 +404,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </remarks>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner; }
-            set { isStreamOwner = value; }
+            get => isStreamOwner;
+            set => isStreamOwner = value;
         }
         
         /// <summary>
@@ -489,13 +469,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// Returns 0 once the end of the stream (EOF) has been reached.
         /// Otherwise returns 1.
         /// </summary>
-        public virtual int Available 
-        {
-            get {
-                return inf.IsFinished ? 0 : 1;
-            }
-        }
-        
+        public virtual int Available => inf.IsFinished ? 0 : 1;
+
         /// <summary>
         /// Fills the buffer with more data to decompress.
         /// </summary>
@@ -518,52 +493,31 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Gets a value indicating whether the current stream supports reading
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return baseInputStream.CanRead;
-            }
-        }
-        
+        public override bool CanRead => baseInputStream.CanRead;
+
         /// <summary>
         /// Gets a value of false indicating seeking is not supported for this stream.
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanSeek => false;
+
         /// <summary>
         /// Gets a value of false indicating that this stream is not writeable.
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanWrite => false;
+
         /// <summary>
         /// A value representing the length of the stream in bytes.
         /// </summary>
-        public override long Length {
-            get {
-                return inputBuffer.RawLength;
-            }
-        }
-        
+        public override long Length => inputBuffer.RawLength;
+
         /// <summary>
         /// The current position within the stream.
         /// Throws a NotSupportedException when attempting to set the position
         /// </summary>
         /// <exception cref="NotSupportedException">Attempting to set the position</exception>
         public override long Position {
-            get {
-                return baseInputStream.Position;
-            }
-            set {
-                throw new NotSupportedException("InflaterInputStream Position not supported");
-            }
+            get => baseInputStream.Position;
+            set => throw new NotSupportedException("InflaterInputStream Position not supported");
         }
         
         /// <summary>

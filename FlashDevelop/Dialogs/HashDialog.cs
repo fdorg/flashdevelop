@@ -199,10 +199,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Result hash text of the dialog
         /// </summary>
-        public string HashResultText
-        {
-            get { return this.resultHashText; }
-        }
+        public string HashResultText => this.resultHashText;
 
         /// <summary>
         /// Applies the localized texts

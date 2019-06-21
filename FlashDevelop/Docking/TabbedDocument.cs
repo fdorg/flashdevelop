@@ -52,8 +52,8 @@ namespace FlashDevelop.Docking
         /// </summary>
         public bool UseCustomIcon
         {
-            get { return this.useCustomIcon; }
-            set { this.useCustomIcon = value; }
+            get => this.useCustomIcon;
+            set => this.useCustomIcon = value;
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace FlashDevelop.Docking
         /// </summary> 
         public bool IsModified
         {
-            get { return this.isModified; }
+            get => this.isModified;
             set 
             {
                 if (!this.IsEditable) return;

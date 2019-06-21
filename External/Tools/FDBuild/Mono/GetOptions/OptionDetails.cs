@@ -357,37 +357,13 @@ namespace Mono.GetOptions
             }
         }
 
-        internal string Key
-        {
-            get
-            {
-                return (this.LongForm + " " + this.ShortForm);
-            }
-        }
+        internal string Key => (this.LongForm + " " + this.ShortForm);
 
-        private string linuxLongPrefix
-        {
-            get
-            {
-                return (((this.parsingMode & OptionsParsingMode.GNU_DoubleDash) != OptionsParsingMode.GNU_DoubleDash) ? "-" : "--");
-            }
-        }
+        private string linuxLongPrefix => (((this.parsingMode & OptionsParsingMode.GNU_DoubleDash) != OptionsParsingMode.GNU_DoubleDash) ? "-" : "--");
 
-        public string ParamName
-        {
-            get
-            {
-                return this.paramName;
-            }
-        }
+        public string ParamName => this.paramName;
 
-        private OptionsParsingMode parsingMode
-        {
-            get
-            {
-                return this.OptionBundle.ParsingMode;
-            }
-        }
+        private OptionsParsingMode parsingMode => this.OptionBundle.ParsingMode;
 
 
         // Fields

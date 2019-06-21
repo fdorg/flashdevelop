@@ -174,8 +174,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>The default interval is three seconds.</remarks>
         public TimeSpan ProgressInterval
         {
-            get { return progressInterval_; }
-            set { progressInterval_ = value; }
+            get => progressInterval_;
+            set => progressInterval_ = value;
         }
 
         #region Instance Fields
@@ -233,8 +233,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool CreateEmptyDirectories
         {
-            get { return createEmptyDirectories_; }
-            set { createEmptyDirectories_ = value; }
+            get => createEmptyDirectories_;
+            set => createEmptyDirectories_ = value;
         }
 
 #if !NETCF_1_0
@@ -243,8 +243,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public string Password
         {
-            get { return password_; }
-            set { password_ = value; }
+            get => password_;
+            set => password_ = value;
         }
 #endif
 
@@ -254,10 +254,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="EntryFactory"></seealso>
         public INameTransform NameTransform
         {
-            get { return entryFactory_.NameTransform; }
-            set {
-                entryFactory_.NameTransform = value;
-            }
+            get => entryFactory_.NameTransform;
+            set => entryFactory_.NameTransform = value;
         }
 
         /// <summary>
@@ -265,7 +263,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public IEntryFactory EntryFactory
         {
-            get { return entryFactory_; }
+            get => entryFactory_;
             set {
                 if ( value == null ) {
                     entryFactory_ = new ZipEntryFactory();
@@ -289,8 +287,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </remarks>
         public UseZip64 UseZip64
         {
-            get { return useZip64_; }
-            set { useZip64_ = value; }
+            get => useZip64_;
+            set => useZip64_ = value;
         }
         
         /// <summary>
@@ -300,12 +298,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>The default value is false.</remarks>
         public bool RestoreDateTimeOnExtract
         {
-            get {
-                return restoreDateTimeOnExtract_;
-            }
-            set {
-                restoreDateTimeOnExtract_ = value;
-            }
+            get => restoreDateTimeOnExtract_;
+            set => restoreDateTimeOnExtract_ = value;
         }
         
         /// <summary>
@@ -314,8 +308,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool RestoreAttributesOnExtract
         {
-            get { return restoreAttributesOnExtract_; }
-            set { restoreAttributesOnExtract_ = value; }
+            get => restoreAttributesOnExtract_;
+            set => restoreAttributesOnExtract_ = value;
         }
         #endregion
         

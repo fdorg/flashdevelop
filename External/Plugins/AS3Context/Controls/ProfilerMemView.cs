@@ -15,10 +15,7 @@ namespace AS3Context.Controls
         const int MAX_HEIGHT = 400;
         private MemGraph graph;
 
-        public MemGraph Graph
-        {
-            get { return graph; }
-        }
+        public MemGraph Graph => graph;
 
         public ProfilerMemView(ToolStripLabel label, Label stats, ComboBox scale, TabPage memoryPage)
         {

@@ -252,175 +252,85 @@ namespace FlashDevelop
 
         public ISettings Settings { get; set; }
 
-        public ToolStrip ToolStrip
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ToolStrip ToolStrip => throw new NotImplementedException();
 
-        public MenuStrip MenuStrip
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public MenuStrip MenuStrip => throw new NotImplementedException();
 
-        public Scintilla SciConfig
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Scintilla SciConfig => throw new NotImplementedException();
 
-        public DockPanel DockPanel
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public DockPanel DockPanel => throw new NotImplementedException();
 
-        public string[] StartArguments
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string[] StartArguments => throw new NotImplementedException();
 
-        public List<Argument> CustomArguments
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public List<Argument> CustomArguments => throw new NotImplementedException();
 
-        public StatusStrip StatusStrip
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public StatusStrip StatusStrip => throw new NotImplementedException();
 
         public string WorkingDirectory
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
-        public ToolStripPanel ToolStripPanel
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ToolStripPanel ToolStripPanel => throw new NotImplementedException();
 
-        public ToolStripStatusLabel StatusLabel
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ToolStripStatusLabel StatusLabel => throw new NotImplementedException();
 
-        public ToolStripStatusLabel ProgressLabel
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ToolStripStatusLabel ProgressLabel => throw new NotImplementedException();
 
-        public ToolStripProgressBar ProgressBar
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ToolStripProgressBar ProgressBar => throw new NotImplementedException();
 
-        public ContextMenuStrip TabMenu
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ContextMenuStrip TabMenu => throw new NotImplementedException();
 
-        public ContextMenuStrip EditorMenu
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ContextMenuStrip EditorMenu => throw new NotImplementedException();
 
         private ITabbedDocument _currentDocument;
         public ITabbedDocument CurrentDocument
         {
-            get { return _currentDocument; }
-            set { _currentDocument = value; }
+            get => _currentDocument;
+            set => _currentDocument = value;
         }
 
-        public ITabbedDocument[] Documents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public ITabbedDocument[] Documents => throw new NotImplementedException();
 
-        public bool HasModifiedDocuments
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool HasModifiedDocuments => throw new NotImplementedException();
 
-        public bool ClosingEntirely
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool ClosingEntirely => throw new NotImplementedException();
 
-        public bool ProcessIsRunning
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool ProcessIsRunning => throw new NotImplementedException();
 
-        public bool ReloadingDocument
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool ReloadingDocument => throw new NotImplementedException();
 
-        public bool ProcessingContents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool ProcessingContents => throw new NotImplementedException();
 
-        public bool RestoringContents
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool RestoringContents => throw new NotImplementedException();
 
-        public bool SavingMultiple
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool SavingMultiple => throw new NotImplementedException();
 
-        public bool PanelIsActive
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool PanelIsActive => throw new NotImplementedException();
 
-        public bool IsFullScreen
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsFullScreen => throw new NotImplementedException();
 
         private bool _standaloneMode;
         public bool StandaloneMode
         {
-            get { return _standaloneMode; }
-            set { _standaloneMode = value; }
+            get => _standaloneMode;
+            set => _standaloneMode = value;
         }
 
-        public bool MultiInstanceMode
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool MultiInstanceMode => throw new NotImplementedException();
 
-        public bool IsFirstInstance
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsFirstInstance => throw new NotImplementedException();
 
-        public bool RestartRequested
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool RestartRequested => throw new NotImplementedException();
 
-        public bool RequiresRestart
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool RequiresRestart => throw new NotImplementedException();
 
 
-        public bool RefreshConfig
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool RefreshConfig => throw new NotImplementedException();
 
-        public List<Keys> IgnoredKeys
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public List<Keys> IgnoredKeys => throw new NotImplementedException();
 
-        public string CommandPromptExecutable
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string CommandPromptExecutable => throw new NotImplementedException();
     }
 }

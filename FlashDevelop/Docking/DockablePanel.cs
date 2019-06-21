@@ -34,7 +34,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         public Image Image
         {
-            get { return image; }
+            get => image;
             set
             {
                 image = value;

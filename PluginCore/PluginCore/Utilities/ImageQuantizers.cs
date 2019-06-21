@@ -181,17 +181,14 @@ namespace PluginCore.PluginCore.Utilities
             /// </summary>
             public int Leaves
             {
-                get { return _leafCount; }
-                set { _leafCount = value; }
+                get => _leafCount;
+                set => _leafCount = value;
             }
 
             /// <summary>
             /// Return the array of reducible nodes
             /// </summary>
-            protected OctreeNode[] ReducibleNodes
-            {
-                get { return _reducibleNodes; }
-            }
+            protected OctreeNode[] ReducibleNodes => _reducibleNodes;
 
             /// <summary>
             /// Keep track of the previous node that was quantized
@@ -345,17 +342,14 @@ namespace PluginCore.PluginCore.Utilities
                 /// </summary>
                 public OctreeNode NextReducible
                 {
-                    get { return _nextReducible; }
-                    set { _nextReducible = value; }
+                    get => _nextReducible;
+                    set => _nextReducible = value;
                 }
 
                 /// <summary>
                 /// Return the child nodes
                 /// </summary>
-                public OctreeNode[] Children
-                {
-                    get { return _children; }
-                }
+                public OctreeNode[] Children => _children;
 
                 /// <summary>
                 /// Reduce this node by removing all of its children
@@ -779,10 +773,7 @@ namespace PluginCore.PluginCore.Utilities
             /// <summary>
             /// Return the color for this Color32 object
             /// </summary>
-            public Color Color
-            {
-                get { return Color.FromArgb(Alpha, Red, Green, Blue); }
-            }
+            public Color Color => Color.FromArgb(Alpha, Red, Green, Blue);
         }
     }
 }

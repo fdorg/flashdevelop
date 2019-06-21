@@ -28,14 +28,11 @@ namespace FlashDebugger
         public event ChangeBreakPointEventHandler ChangeBreakPointEvent = null;
         public event UpdateBreakPointEventHandler UpdateBreakPointEvent = null;
 
-        public List<BreakPointInfo> BreakPoints
-        {
-            get { return m_BreakPointList; }
-        }
+        public List<BreakPointInfo> BreakPoints => m_BreakPointList;
 
         public IProject Project
         {
-            get { return m_Project; }
+            get => m_Project;
             set 
             {
                 if (value != null)
@@ -426,31 +423,31 @@ namespace FlashDebugger
 
         public string FileFullPath
         {
-            get { return m_FileFullPath; }
-            set { m_FileFullPath = value; }
+            get => m_FileFullPath;
+            set => m_FileFullPath = value;
         }
 
         public int Line
         {
-            get { return m_Line; }
-            set { m_Line = value; }
+            get => m_Line;
+            set => m_Line = value;
         }
 
         public bool IsDeleted
         {
-            get { return m_bDeleted; }
-            set { m_bDeleted = value; }
+            get => m_bDeleted;
+            set => m_bDeleted = value;
         }
 
         public bool IsEnabled
         {
-            get { return m_bEnabled; }
-            set { m_bEnabled = value; }
+            get => m_bEnabled;
+            set => m_bEnabled = value;
         }
 
         public string Exp
         {
-            get { return m_ConditionalExpression; }
+            get => m_ConditionalExpression;
             set
             {
                 m_ConditionalExpression = value;

@@ -186,23 +186,23 @@ namespace FlashDevelop.Managers
         }
         public int Index
         {
-            get { return this.index; }
-            set { this.index = value; }
+            get => this.index;
+            set => this.index = value;
         }
         public SessionType Type
         {
-            get { return this.type; }
-            set { this.type = value; }
+            get => this.type;
+            set => this.type = value;
         }
         public List<string> Files
         {
-            get { return this.files; }
-            set { this.files = value; }
+            get => this.files;
+            set => this.files = value;
         }
         public List<NestedDock> Nested
         {
-            get { return this.nested; }
-            set { this.nested = value; }
+            get => this.nested;
+            set => this.nested = value;
         }
 
     }
@@ -227,28 +227,28 @@ namespace FlashDevelop.Managers
         }
         public string FileName
         {
-            get { return this.file; }
-            set { this.file = value; }
+            get => this.file;
+            set => this.file = value;
         }
         public int PaneIndex
         {
-            get { return this.index; }
-            set { this.index = value; }
+            get => this.index;
+            set => this.index = value;
         }
         public int NestIndex
         {
-            get { return this.nest; }
-            set { this.nest = value; }
+            get => this.nest;
+            set => this.nest = value;
         }
         public DockAlignment Alignment
         {
-            get { return this.align; }
-            set { this.align = value; }
+            get => this.align;
+            set => this.align = value;
         }
         public double Proportion
         {
-            get { return this.prop; }
-            set { this.prop = value; }
+            get => this.prop;
+            set => this.prop = value;
         }
 
     }

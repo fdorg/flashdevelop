@@ -50,10 +50,7 @@ namespace Mono.GetOptions
         [Option("Show verbose parsing of options", "verbosegetoptions", SecondLevelHelp=true)]
         public bool VerboseParsingOfOptions
         {
-            set
-            {
-                OptionDetails.Verbose = value;
-            }
+            set => OptionDetails.Verbose = value;
         }
 
 

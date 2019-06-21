@@ -10,29 +10,11 @@ namespace FlashDebugger.Controls
 {
     public partial class DataTipForm : Form
     {
-        public TreeViewAdv Tree
-        {
-            get
-            {
-                return dataTreeControl.Tree;
-            }
-        }
+        public TreeViewAdv Tree => dataTreeControl.Tree;
 
-        public DataTreeControl DataTree
-        {
-            get
-            {
-                return dataTreeControl;
-            }
-        }
+        public DataTreeControl DataTree => dataTreeControl;
 
-        public AutoRowHeightLayout RowLayout
-        {
-            get
-            {
-                return rowLayout;
-            }
-        }
+        public AutoRowHeightLayout RowLayout => rowLayout;
 
         AutoRowHeightLayout rowLayout;
 

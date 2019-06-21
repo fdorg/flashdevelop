@@ -41,13 +41,7 @@ namespace FlashDebugger
 
         public BreakPointManager m_BreakPointManager = null;
 
-        public bool isDebuggerStarted
-        {
-            get
-            {
-                return m_Session != null && m_CurrentState != DebuggerState.Initializing && m_CurrentState != DebuggerState.Stopped;
-            }
-        }
+        public bool isDebuggerStarted => m_Session != null && m_CurrentState != DebuggerState.Initializing && m_CurrentState != DebuggerState.Stopped;
 
         public bool isDebuggerSuspended
         {
@@ -61,36 +55,15 @@ namespace FlashDebugger
             }
         }
 
-        public int suspendReason
-        {
-            get
-            {
-                return m_Session.suspendReason();
-            }
-        }
+        public int suspendReason => m_Session.suspendReason();
 
-        public Session Session
-        {
-            get
-            {
-                return m_Session;
-            }
-        }
+        public Session Session => m_Session;
 
-        public Dictionary<int, IsolateInfo> IsolateSessions
-        {
-            get
-            {
-                return runningIsolates;
-            }
-        }
+        public Dictionary<int, IsolateInfo> IsolateSessions => runningIsolates;
 
         public int ActiveSession
         {
-            get
-            {
-                return m_activeSession;
-            }
+            get => m_activeSession;
             set
             {
                 // todo

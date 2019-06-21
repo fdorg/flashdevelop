@@ -31,8 +31,8 @@ namespace AS3Context
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.DocumentationCommandLine"), DefaultValue(DEFAULT_DOC_COMMAND)]
         public string DocumentationCommandLine
         {
-            get { return documentationCommandLine; }
-            set { documentationCommandLine = value; }
+            get => documentationCommandLine;
+            set => documentationCommandLine = value;
         }
 
         #endregion
@@ -61,42 +61,30 @@ namespace AS3Context
         protected InstalledSDK[] installedSDKs = null;
 
         [Browsable(false)]
-        public string LanguageId
-        {
-            get { return "AS3"; }
-        }
+        public string LanguageId => "AS3";
 
         [Browsable(false)]
-        public string DefaultExtension
-        {
-            get { return ".as"; }
-        }
+        public string DefaultExtension => ".as";
 
         [Browsable(false)]
-        public string CheckSyntaxRunning
-        {
-            get { return TextHelper.GetString("Info.MxmlcRunning"); }
-        }
+        public string CheckSyntaxRunning => TextHelper.GetString("Info.MxmlcRunning");
 
         [Browsable(false)]
-        public string CheckSyntaxDone
-        {
-            get { return TextHelper.GetString("Info.MxmlcDone"); }
-        }
+        public string CheckSyntaxDone => TextHelper.GetString("Info.MxmlcDone");
 
         [DisplayName("Check Syntax On Save")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CheckSyntaxOnSave"), DefaultValue(DEFAULT_CHECKSYNTAX)]
         public bool CheckSyntaxOnSave
         {
-            get { return checkSyntaxOnSave; }
-            set { checkSyntaxOnSave = value; }
+            get => checkSyntaxOnSave;
+            set => checkSyntaxOnSave = value;
         }
 
         [DisplayName("User Classpath")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.UserClasspath"), DefaultValue(DEFAULT_AS3LIBRARY)]
         public string[] UserClasspath
         {
-            get { return userClasspath; }
+            get => userClasspath;
             set
             {
                 userClasspath = value;
@@ -108,7 +96,7 @@ namespace AS3Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.FlexSDK")]
         public InstalledSDK[] InstalledSDKs
         {
-            get { return installedSDKs; }
+            get => installedSDKs;
             set
             {
                 installedSDKs = value;
@@ -131,56 +119,56 @@ namespace AS3Context
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionEnabled"), DefaultValue(DEFAULT_COMPLETIONENABLED)]
         public bool CompletionEnabled
         {
-            get { return completionEnabled; }
-            set { completionEnabled = value; }
+            get => completionEnabled;
+            set => completionEnabled = value;
         }
 
         [DisplayName("Generate Imports")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.GenerateImports"), DefaultValue(DEFAULT_GENERATEIMPORTS)]
         public bool GenerateImports
         {
-            get { return generateImports; }
-            set { generateImports = value; }
+            get => generateImports;
+            set => generateImports = value;
         }
 
         [DisplayName("List All Types In Completion")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionListAllTypes"), DefaultValue(DEFAULT_LISTALL)]
         public bool CompletionListAllTypes
         {
-            get { return completionListAllTypes; }
-            set { completionListAllTypes = value; }
+            get => completionListAllTypes;
+            set => completionListAllTypes = value;
         }
 
         [DisplayName("Show Qualified Types In Completion")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionShowQualifiedTypes"), DefaultValue(DEFAULT_QUALIFY)]
         public bool CompletionShowQualifiedTypes
         {
-            get { return completionShowQualifiedTypes; }
-            set { completionShowQualifiedTypes = value; }
+            get => completionShowQualifiedTypes;
+            set => completionShowQualifiedTypes = value;
         }
 
         [DisplayName("Lazy Classpath Exploration")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.LazyClasspathExploration"), DefaultValue(DEFAULT_LAZYMODE)]
         public bool LazyClasspathExploration
         {
-            get { return lazyClasspathExploration; }
-            set { lazyClasspathExploration = value; }
+            get => lazyClasspathExploration;
+            set => lazyClasspathExploration = value;
         }
 
         [DisplayName("Play After Build")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.PlayAfterBuild"), DefaultValue(DEFAULT_PLAY)]
         public bool PlayAfterBuild
         {
-            get { return playAfterBuild; }
-            set { playAfterBuild = value; }
+            get => playAfterBuild;
+            set => playAfterBuild = value;
         }
 
         [DisplayName("Fix Package Automatically")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.FixPackageAutomatically"), DefaultValue(DEFAULT_FIXPACKAGEAUTOMATICALLY)]
         public bool FixPackageAutomatically
         {
-            get { return fixPackageAutomatically; }
-            set { fixPackageAutomatically = value; }
+            get => fixPackageAutomatically;
+            set => fixPackageAutomatically = value;
         }
 
         #endregion
@@ -197,7 +185,7 @@ namespace AS3Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
         public string DefaultFlashVersion
         {
-            get { return flashVersion ?? DEFAULT_FLASHVERSION; }
+            get => flashVersion ?? DEFAULT_FLASHVERSION;
             set
             {
                 if (value == flashVersion) return;
@@ -211,7 +199,7 @@ namespace AS3Context
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string AS3ClassPath
         {
-            get { return as3ClassPath; }
+            get => as3ClassPath;
             set
             {
                 if (value == as3ClassPath) return;
@@ -224,7 +212,7 @@ namespace AS3Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.AS3FileTypes")]
         public string[] AS3FileTypes
         {
-            get { return as3FileTypes; }
+            get => as3FileTypes;
             set
             {
                 if (value == as3FileTypes) return;
@@ -244,16 +232,16 @@ namespace AS3Context
         [LocalizedCategory("AS3Context.Category.Profiler"), LocalizedDescription("AS3Context.Description.ProfilerTimeout"), DefaultValue(DEFAULT_PROFILER_TIMEOUT)]
         public int ProfilerTimeout
         {
-            get { return profilerTimeout; }
-            set { profilerTimeout = Math.Max(5, value); }
+            get => profilerTimeout;
+            set => profilerTimeout = Math.Max(5, value);
         }
 
         [DisplayName("Custom Profilers")]
         [LocalizedCategory("AS3Context.Category.Profiler"), LocalizedDescription("AS3Context.Description.CustomProfilers")]
         public string[] CustomProfilers
         {
-            get { return customProfilers; }
-            set { customProfilers = value; }
+            get => customProfilers;
+            set => customProfilers = value;
         }
         #endregion
 
@@ -271,24 +259,24 @@ namespace AS3Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("ASCompletion.Description.DisableFDB"), DefaultValue(DEFAULT_DISABLEFDB)]
         public bool DisableFDB
         {
-            get { return disableFDB; }
-            set { disableFDB = value; }
+            get => disableFDB;
+            set => disableFDB = value;
         }
 
         [DisplayName("Verbose Flex Debugger Output")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("ASCompletion.Description.VerboseFDB"), DefaultValue(DEFAULT_VERBOSEFDB)]
         public bool VerboseFDB
         {
-            get { return verboseFDB; }
-            set { verboseFDB = value; }
+            get => verboseFDB;
+            set => verboseFDB = value;
         }
 
         [DisplayName("Disable Live Syntax Checking")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("ASCompletion.Description.DisableLiveSyntaxChecking"), DefaultValue(DEFAULT_DISABLELIVECHECKING)]
         public bool DisableLiveChecking
         {
-            get { return disableLiveChecking; }
-            set { disableLiveChecking = value; }
+            get => disableLiveChecking;
+            set => disableLiveChecking = value;
         }
 
         #endregion

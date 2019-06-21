@@ -19,14 +19,11 @@ namespace FlashDebugger.Debugger
         public event EventHandler ExpressionsCleared;
         public event EventHandler ExpressionsLoaded;
 
-        public IList<string> Watches
-        {
-            get { return m_WatchList.AsReadOnly(); }
-        }
+        public IList<string> Watches => m_WatchList.AsReadOnly();
 
         public IProject Project
         {
-            get { return m_Project; }
+            get => m_Project;
             set
             {
                 if (value != null)

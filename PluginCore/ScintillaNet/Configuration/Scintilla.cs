@@ -31,11 +31,8 @@ namespace ScintillaNet.Configuration
         [XmlArray("character-classes")]
         public CharacterClass[] characterclasses;
 
-        protected override Scintilla ChildScintilla
-        {
-            get { return this; }
-        }
-        
+        protected override Scintilla ChildScintilla => this;
+
         public bool IsKnownFile(string file)
         {
             string filemask = Path.GetExtension(file).ToLower().Substring(1);

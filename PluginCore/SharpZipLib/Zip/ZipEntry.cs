@@ -279,12 +279,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Get a value indicating wether the entry has a CRC value available.
         /// </summary>
-        public bool HasCrc 
-        {
-            get {
-                return (known & Known.Crc) != 0;
-            }
-        }
+        public bool HasCrc => (known & Known.Crc) != 0;
 
         /// <summary>
         /// Get/Set flag indicating if entry is encrypted.
@@ -293,9 +288,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>This is an assistant that interprets the <see cref="Flags">flags</see> property.</remarks>
         public bool IsCrypted 
         {
-            get {
-                return (flags & 1) != 0; 
-            }
+            get => (flags & 1) != 0;
             set {
                 if (value) {
                     flags |= 1;
@@ -313,9 +306,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>This is an assistant that interprets the <see cref="Flags">flags</see> property.</remarks>
         public bool IsUnicodeText
         {
-            get {
-                return ( flags & (int)GeneralBitFlags.UnicodeText ) != 0;
-            }
+            get => ( flags & (int)GeneralBitFlags.UnicodeText ) != 0;
             set {
                 if ( value ) {
                     flags |= (int)GeneralBitFlags.UnicodeText;
@@ -331,13 +322,9 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         internal byte CryptoCheckValue
         {
-            get {
-                return cryptoCheckValue_;
-            }
+            get => cryptoCheckValue_;
 
-            set {
-                cryptoCheckValue_ = value;
-            }
+            set => cryptoCheckValue_ = value;
         }
 
         /// <summary>
@@ -373,12 +360,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="IsCrypted"></seealso>
         public int Flags 
         {
-            get { 
-                return flags; 
-            }
-            set {
-                flags = value; 
-            }
+            get => flags;
+            set => flags = value;
         }
 
         /// <summary>
@@ -387,12 +370,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>This is only valid when the entry is part of a <see cref="ZipFile"></see></remarks>
         public long ZipFileIndex 
         {
-            get {
-                return zipFileIndex;
-            }
-            set {
-                zipFileIndex = value;
-            }
+            get => zipFileIndex;
+            set => zipFileIndex = value;
         }
         
         /// <summary>
@@ -400,12 +379,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public long Offset 
         {
-            get {
-                return offset;
-            }
-            set {
-                offset = value;
-            }
+            get => offset;
+            set => offset = value;
         }
 
         /// <summary>
@@ -435,23 +410,14 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// The value / 10 indicates the major version number, and 
         /// the value mod 10 is the minor version number
         /// </summary>
-        public int VersionMadeBy 
-        {
-            get { 
-                return (versionMadeBy & 0xff);
-            }
-        }
+        public int VersionMadeBy => (versionMadeBy & 0xff);
 
         /// <summary>
         /// Get a value indicating this entry is for a DOS/Windows system.
         /// </summary>
-        public bool IsDOSEntry
-        {
-            get {
-                return ((HostSystem == ( int )HostSystemID.Msdos) ||
-                    (HostSystem == ( int )HostSystemID.WindowsNT));
-            }
-        }
+        public bool IsDOSEntry =>
+            ((HostSystem == ( int )HostSystemID.Msdos) ||
+             (HostSystem == ( int )HostSystemID.WindowsNT));
 
         /// <summary>
         /// Test the external attributes for this <see cref="ZipEntry"/> to
@@ -513,9 +479,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </remarks>
         public int HostSystem 
         {
-            get {
-                return (versionMadeBy >> 8) & 0xff; 
-            }
+            get => (versionMadeBy >> 8) & 0xff;
 
             set {
                 versionMadeBy &= 0xff;
@@ -590,18 +554,14 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         /// <remarks>This is based on the <see cref="Version"></see> and 
         /// wether the <see cref="IsCompressionMethodSupported()">compression method</see> is supported.</remarks>
-        public bool CanDecompress
-        {
-            get {
-                return (Version <= ZipConstants.VersionMadeBy) &&
-                    ((Version == 10) ||
-                    (Version == 11) ||
-                    (Version == 20) ||
-                    (Version == 45) ||
-                    (Version == 51)) &&
-                    IsCompressionMethodSupported();
-            }
-        }
+        public bool CanDecompress =>
+            (Version <= ZipConstants.VersionMadeBy) &&
+            ((Version == 10) ||
+             (Version == 11) ||
+             (Version == 20) ||
+             (Version == 45) ||
+             (Version == 51)) &&
+            IsCompressionMethodSupported();
 
         /// <summary>
         /// Force this entry to be recorded using Zip64 extensions.
@@ -651,13 +611,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Get a value indicating wether the central directory entry requires Zip64 extensions to be stored.
         /// </summary>
-        public bool CentralHeaderRequiresZip64
-        {
-            get {
-                return LocalHeaderRequiresZip64 || (offset >= uint.MaxValue);
-            }
-        }
-        
+        public bool CentralHeaderRequiresZip64 => LocalHeaderRequiresZip64 || (offset >= uint.MaxValue);
+
         /// <summary>
         /// Get/Set DosTime value.
         /// </summary>
@@ -745,13 +700,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Dos device names like C: should also be removed.
         /// See the <see cref="ZipNameTransform"/> class, or <see cref="CleanName(string)"/>
         ///</remarks>
-        public string Name 
-        {
-            get {
-                return name;
-            }
-        }
-        
+        public string Name => name;
+
         /// <summary>
         /// Gets/Sets the size of the uncompressed data.
         /// </summary>
@@ -762,9 +712,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// avoid compatability problems with some archivers which dont understand Zip64 extensions.</remarks>
         public long Size 
         {
-            get {
-                return (known & Known.Size) != 0 ? (long)size : -1L;
-            }
+            get => (known & Known.Size) != 0 ? (long)size : -1L;
             set {
                 this.size  = (ulong)value;
                 this.known |= Known.Size;
@@ -779,9 +727,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public long CompressedSize 
         {
-            get {
-                return (known & Known.CompressedSize) != 0 ? (long)compressedSize : -1L;
-            }
+            get => (known & Known.CompressedSize) != 0 ? (long)compressedSize : -1L;
             set {
                 this.compressedSize = (ulong)value;
                 this.known |= Known.CompressedSize;
@@ -799,9 +745,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public long Crc 
         {
-            get {
-                return (known & Known.Crc) != 0 ? crc & 0xffffffffL : -1L;
-            }
+            get => (known & Known.Crc) != 0 ? crc & 0xffffffffL : -1L;
             set {
                 if (((ulong)crc & 0xffffffff00000000L) != 0) {
                     throw new ArgumentOutOfRangeException("value");
@@ -820,9 +764,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <see cref="ICSharpCode.SharpZipLib.Zip.CompressionMethod.Deflated"/>
         /// <see cref="ICSharpCode.SharpZipLib.Zip.CompressionMethod.Stored"/>
         public CompressionMethod CompressionMethod {
-            get {
-                return method;
-            }
+            get => method;
 
             set {
                 if ( !IsCompressionMethodSupported(value) ) {
@@ -837,11 +779,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Returns same value as CompressionMethod except when AES encrypting, which
         /// places 99 in the method and places the real method in the extra data.
         /// </summary>
-        internal CompressionMethod CompressionMethodForHeader {
-            get {
-                return (AESKeySize > 0) ? CompressionMethod.WinZipAES : method;
-            }
-        }
+        internal CompressionMethod CompressionMethodForHeader => (AESKeySize > 0) ? CompressionMethod.WinZipAES : method;
 
         /// <summary>
         /// Gets/Sets the extra data.
@@ -854,11 +792,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </returns>
         public byte[] ExtraData {
             
-            get {
-// TODO: This is slightly safer but less efficient.  Think about wether it should change.
-//              return (byte[]) extra.Clone();
-                return extra;
-            }
+            get => extra;
 
             set {
                 if (value == null) {
@@ -906,11 +840,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// AES Encryption strength for storage in extra data in entry header.
         /// 1 is 128 bit, 2 is 192 bit, 3 is 256 bit.
         /// </summary>
-        internal byte AESEncryptionStrength {
-            get {
-                return (byte)_aesEncryptionStrength;
-            }
-        }
+        internal byte AESEncryptionStrength => (byte)_aesEncryptionStrength;
 #else
         /// <summary>
         /// AES unsupported prior to .NET 2.0
@@ -921,27 +851,12 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// Returns the length of the salt, in bytes 
         /// </summary>
-        internal int AESSaltLen {
-            get {
-                // Key size -> Salt length: 128 bits = 8 bytes, 192 bits = 12 bytes, 256 bits = 16 bytes.
-                return AESKeySize / 16;
-            }
-        }
+        internal int AESSaltLen => AESKeySize / 16;
 
         /// <summary>
         /// Number of extra bytes required to hold the AES Header fields (Salt, Pwd verify, AuthCode)
         /// </summary>
-        internal int AESOverheadSize {
-            get {
-                // File format:
-                //   Bytes      Content
-                // Variable     Salt value
-                //     2        Password verification value
-                // Variable     Encrypted file data
-                //    10        Authentication code
-                return 12 + AESSaltLen;
-            }
-        }
+        internal int AESOverheadSize => 12 + AESSaltLen;
 
         /// <summary>
         /// Process extra data fields updating the entry based on the contents.
@@ -1128,13 +1043,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// This only takes account of DOS/Windows attributes.  Other operating systems are ignored.
         /// For linux and others the result may be incorrect.
         /// </remarks>
-        public bool IsFile
-        {
-            get {
-                return !IsDirectory && !HasDosAttributes(8);
-            }
-        }
-        
+        public bool IsFile => !IsDirectory && !HasDosAttributes(8);
+
         /// <summary>
         /// Test entry to see if data can be extracted.
         /// </summary>

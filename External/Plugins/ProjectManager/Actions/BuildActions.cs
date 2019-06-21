@@ -34,7 +34,7 @@ namespace ProjectManager.Actions
         public event BuildCompleteHandler BuildComplete;
         public event BuildCompleteHandler BuildFailed;
 
-        public string IPCName { get { return ipcName; } }
+        public string IPCName => ipcName;
 
         public BuildActions(IMainForm mainForm, PluginMain pluginMain)
         {

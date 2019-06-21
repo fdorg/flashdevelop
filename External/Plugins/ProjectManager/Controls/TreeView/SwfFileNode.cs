@@ -166,7 +166,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        public bool FileExists { get { return File.Exists(BackingPath); } }
+        public bool FileExists => File.Exists(BackingPath);
 
         public override void Refresh(bool recursive)
         {

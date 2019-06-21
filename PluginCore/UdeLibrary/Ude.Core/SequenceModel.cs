@@ -50,23 +50,17 @@ namespace Ude.Core
         // freqSeqs / totalSeqs
         protected float typicalPositiveRatio;
         
-        public float TypicalPositiveRatio {
-            get { return typicalPositiveRatio; }
-        }
-        
+        public float TypicalPositiveRatio => typicalPositiveRatio;
+
         // not used            
         protected bool keepEnglishLetter;
         
-        public bool KeepEnglishLetter {
-            get { return keepEnglishLetter; }
-        }
-        
+        public bool KeepEnglishLetter => keepEnglishLetter;
+
         protected string charsetName;
 
-        public string CharsetName {
-            get { return charsetName; }
-        }
-        
+        public string CharsetName => charsetName;
+
         public SequenceModel(
                 byte[] charToOrderMap,
                 byte[] precedenceMatrix,

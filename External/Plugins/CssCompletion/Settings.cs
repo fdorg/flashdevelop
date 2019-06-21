@@ -18,48 +18,48 @@ namespace CssCompletion
         [LocalizedDescription("CssCompletion.Description.DisableAutoCloseBraces")]
         public bool DisableAutoCloseBraces
         {
-            get { return disableAutoCloseBraces; }
-            set { disableAutoCloseBraces = value; }
+            get => disableAutoCloseBraces;
+            set => disableAutoCloseBraces = value;
         }
 
         [DisplayName("Disable Auto Completion"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableAutoCompletion")]
         public bool DisableAutoCompletion
         {
-            get { return disableAutoCompletion; }
-            set { disableAutoCompletion = value; }
+            get => disableAutoCompletion;
+            set => disableAutoCompletion = value;
         }
 
         [DisplayName("Disable Insert Colon"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableInsertColon")]
         public bool DisableInsertColon
         {
-            get { return disableInsertColon; }
-            set { disableInsertColon = value; }
+            get => disableInsertColon;
+            set => disableInsertColon = value;
         }
 
         [DisplayName("Disable Compile To CSS On Save"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableCompileOnSave")]
         public bool DisableCompileOnSave
         {
-            get { return disableCompileOnSave; }
-            set { disableCompileOnSave = value; }
+            get => disableCompileOnSave;
+            set => disableCompileOnSave = value;
         }
 
         [DisplayName("Disable Minify CSS On Save"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.DisableMinifyOnSave")]
         public bool DisableMinifyOnSave
         {
-            get { return disableMinifyOnSave; }
-            set { disableMinifyOnSave = value; }
+            get => disableMinifyOnSave;
+            set => disableMinifyOnSave = value;
         }
 
         [DisplayName("Enable Verbose Compilation"), DefaultValue(false)]
         [LocalizedDescription("CssCompletion.Description.EnableVerboseCompilation")]
         public bool EnableVerboseCompilation
         {
-            get { return enableVerboseCompilation; }
-            set { enableVerboseCompilation = value; }
+            get => enableVerboseCompilation;
+            set => enableVerboseCompilation = value;
         }
     }
 

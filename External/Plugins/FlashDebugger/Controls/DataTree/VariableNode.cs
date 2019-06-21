@@ -12,10 +12,7 @@ namespace FlashDebugger.Controls.DataTree
 
         public override string Value
         {
-            get
-            {
-                return base.Value;
-            }
+            get => base.Value;
             set
             {
                 if (m_Variable == null)
@@ -32,7 +29,7 @@ namespace FlashDebugger.Controls.DataTree
         private Variable m_Variable;
         public Variable Variable
         {
-            get { return m_Variable; }
+            get => m_Variable;
             set
             {
                 if (m_Variable == value) return;

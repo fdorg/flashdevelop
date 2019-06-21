@@ -31,7 +31,7 @@ namespace System.Windows.Forms
 
         public bool MultiSelect
         {
-            get { return multiSelect; }
+            get => multiSelect;
             set
             {
                 multiSelect = value;
@@ -349,7 +349,7 @@ namespace System.Windows.Forms
 
         public Color ForeColorRequest
         {
-            get { return foreColorRequest; }
+            get => foreColorRequest;
             set
             {
                 foreColorRequest = value;

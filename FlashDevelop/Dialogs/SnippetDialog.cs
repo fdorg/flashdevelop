@@ -286,10 +286,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the path to the language directory
         /// </summary>
-        private string SnippetDir
-        {
-            get { return PathHelper.SnippetDir; }
-        }
+        private string SnippetDir => PathHelper.SnippetDir;
 
         /// <summary>
         /// Initializes the graphics

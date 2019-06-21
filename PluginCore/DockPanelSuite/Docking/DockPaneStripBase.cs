@@ -29,15 +29,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Dispose(false);
             }
 
-            public IDockContent Content
-            {
-                get { return m_content; }
-            }
+            public IDockContent Content => m_content;
 
-            public Form ContentForm
-            {
-                get { return m_content as Form; }
-            }
+            public Form ContentForm => m_content as Form;
 
             public void Dispose()
             {
@@ -73,15 +67,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPane m_dockPane;
-            public DockPane DockPane
-            {
-                get { return m_dockPane; }
-            }
+            public DockPane DockPane => m_dockPane;
 
-            public int Count
-            {
-                get { return DockPane.DisplayingContents.Count; }
-            }
+            public int Count => DockPane.DisplayingContents.Count;
 
             public Tab this[int index]
             {
@@ -128,15 +116,9 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private DockPane m_dockPane;
-        protected DockPane DockPane
-        {
-            get {   return m_dockPane;  }
-        }
+        protected DockPane DockPane => m_dockPane;
 
-        protected DockPane.AppearanceStyle Appearance
-        {
-            get {   return DockPane.Appearance; }
-        }
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
         private TabCollection m_tabs = null;
         protected TabCollection Tabs
@@ -214,10 +196,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 || Math.Abs(p1.Y - p2.Y) > (SystemInformation.DragSize.Height / 2);
         }
 
-        protected bool HasTabPageContextMenu
-        {
-            get { return DockPane.HasTabPageContextMenu; }
-        }
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
 
         protected void ShowTabPageContextMenu(Point position)
         {

@@ -17,8 +17,8 @@ namespace ASClassWizard.Wizards
 
         public ImageList ImageList
         {
-            get { return _myImageList; }
-            set { _myImageList = value; }
+            get => _myImageList;
+            set => _myImageList = value;
         }
 
         public void AfterTheming()
@@ -78,13 +78,13 @@ namespace ASClassWizard.Wizards
             // properties 
             public string Text
             {
-                get { return _myText; }
-                set { _myText = value; }
+                get => _myText;
+                set => _myText = value;
             }
             public int ImageIndex
             {
-                get { return _myImageIndex; }
-                set { _myImageIndex = value; }
+                get => _myImageIndex;
+                set => _myImageIndex = value;
             }
         
             public ListBoxItem(string text, int index)

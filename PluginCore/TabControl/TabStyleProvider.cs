@@ -291,14 +291,14 @@ namespace System.Windows.Forms
 
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TabStyle DisplayStyle {
-			get { return this._Style; }
-			set { this._Style = value; }
-		}
+			get => this._Style;
+            set => this._Style = value;
+        }
 
 		[Category("Appearance")]
 		public ContentAlignment ImageAlign {
-			get { return this._ImageAlign; }
-			set {
+			get => this._ImageAlign;
+            set {
 				this._ImageAlign = value;
 				this._TabControl.Invalidate();
 			}
@@ -306,8 +306,8 @@ namespace System.Windows.Forms
 		
 		[Category("Appearance")]
 		public Point Padding {
-			get { return this._Padding; }
-			set {
+			get => this._Padding;
+            set {
 				this._Padding = value;
 				//	This line will trigger the handle to recreate, therefore invalidating the control
 				if (this._ShowTabCloser){
@@ -329,8 +329,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance"), DefaultValue(1), Browsable(true)]
 		public int Radius {
-			get { return this._Radius; }
-			set {
+			get => this._Radius;
+            set {
 				if (value < 1){
 					throw new ArgumentException("The radius must be greater than 1", "value");
 				}
@@ -342,8 +342,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance")]
 		public int Overlap {
-			get { return this._Overlap; }
-			set {
+			get => this._Overlap;
+            set {
 				if (value < 0){
 					throw new ArgumentException("The tabs cannot have a negative overlap", "value");
 				}
@@ -355,8 +355,8 @@ namespace System.Windows.Forms
 		
 		[Category("Appearance")]
 		public bool FocusTrack {
-			get { return this._FocusTrack; }
-			set {
+			get => this._FocusTrack;
+            set {
 				this._FocusTrack = value;
 				this._TabControl.Invalidate();
 			}
@@ -364,8 +364,8 @@ namespace System.Windows.Forms
 		
 		[Category("Appearance")]
 		public bool HotTrack {
-			get { return this._HotTrack; }
-			set {
+			get => this._HotTrack;
+            set {
 				this._HotTrack = value;
 				((TabControl)this._TabControl).HotTrack = value;
 			}
@@ -373,8 +373,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance")]
 		public bool ShowTabCloser {
-			get { return this._ShowTabCloser; }
-			set {
+			get => this._ShowTabCloser;
+            set {
 				this._ShowTabCloser = value;
 				//	Adjust padding
 				this.Padding = this._Padding;
@@ -383,8 +383,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance")]
 		public float Opacity {
-			get { return this._Opacity; }
-			set {
+			get => this._Opacity;
+            set {
 				if (value < 0){
 					throw new ArgumentException("The opacity must be between 0 and 1", "value");
 				}
@@ -520,8 +520,8 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "Orange")]
 		public Color FocusColor
 		{
-			get { return this._FocusColor; }
-			set { this._FocusColor = value;
+			get => this._FocusColor;
+            set { this._FocusColor = value;
 				this._TabControl.Invalidate();
 			}
 		}
@@ -529,8 +529,8 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "Black")]
 		public Color CloserColorActive
 		{
-			get { return this._CloserColorActive; }
-			set { this._CloserColorActive = value;
+			get => this._CloserColorActive;
+            set { this._CloserColorActive = value;
 				this._TabControl.Invalidate();
 			}
 		}
@@ -538,8 +538,8 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "DarkGrey")]
 		public Color CloserColor
 		{
-			get { return this._CloserColor; }
-			set { this._CloserColor = value;
+			get => this._CloserColor;
+            set { this._CloserColor = value;
 				this._TabControl.Invalidate();
 			}
 		}

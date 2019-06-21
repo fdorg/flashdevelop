@@ -19,10 +19,7 @@ namespace AS3Context.Controls
         private TypeItemComparer comparer;
         private ToolStripMenuItem viewObjectsItem;
 
-        public ListView ListView
-        {
-            get { return listView; }
-        }
+        public ListView ListView => listView;
 
         public ProfilerLiveObjectsView(ListView view)
         {

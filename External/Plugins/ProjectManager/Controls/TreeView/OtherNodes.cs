@@ -70,14 +70,11 @@ namespace ProjectManager.Controls.TreeView
                 Nodes.Remove(References);
         }
 
-        public Project ProjectRef
-        {
-            get { return project; }
-        }
+        public Project ProjectRef => project;
 
         public ReferencesNode References
         {
-            get { return references; }
+            get => references;
             set
             {
                 references = value;
@@ -88,7 +85,7 @@ namespace ProjectManager.Controls.TreeView
 
         public bool IsActive 
         {
-            get { return isActive; }
+            get => isActive;
             set 
             {
                 if (isActive == value) return;

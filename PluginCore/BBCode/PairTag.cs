@@ -13,14 +13,9 @@ namespace PluginCore.BBCode
         private IPairTagMatch _closerMatch;
 
 
-        public IPairTagMatch openerMatch
-        {
-            get { return _openerMatch; }
-        }
-        public IPairTagMatch closerMatch
-        {
-            get { return _closerMatch; }
-        }
+        public IPairTagMatch openerMatch => _openerMatch;
+
+        public IPairTagMatch closerMatch => _closerMatch;
 
 
         public override string ToString()
@@ -52,25 +47,14 @@ namespace PluginCore.BBCode
         private int _tagIndex;
 
 
-        public bool isTagOpener
-        {
-            get { return false; }
-        }
-        public int tagIndex
-        {
-            get { return _tagIndex; }
-        }
-        public uint tagLength
-        {
-            get { return 0; }
-        }
-        public string tagValue
-        {
-            get { return ""; }
-        }
-        public string tagName
-        {
-            get { return null; }
-        }
+        public bool isTagOpener => false;
+
+        public int tagIndex => _tagIndex;
+
+        public uint tagLength => 0;
+
+        public string tagValue => "";
+
+        public string tagName => null;
     }
 }

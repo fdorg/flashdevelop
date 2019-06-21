@@ -200,24 +200,15 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>
         /// This entry's TarHeader.
         /// </returns>
-        public TarHeader TarHeader 
-        {
-            get {
-                return header;
-            }
-        }
-        
+        public TarHeader TarHeader => header;
+
         /// <summary>
         /// Get/Set this entry's name.
         /// </summary>
         public string Name 
         {
-            get {
-                return header.Name;
-            }
-            set {
-                header.Name = value;
-            }
+            get => header.Name;
+            set => header.Name = value;
         }
         
         /// <summary>
@@ -225,12 +216,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public int UserId 
         {
-            get {
-                return header.UserId;
-            }
-            set {
-                header.UserId = value;
-            }
+            get => header.UserId;
+            set => header.UserId = value;
         }
         
         /// <summary>
@@ -238,12 +225,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public int GroupId 
         {
-            get {
-                return header.GroupId;
-            }
-            set {
-                header.GroupId = value;
-            }
+            get => header.GroupId;
+            set => header.GroupId = value;
         }
         
         /// <summary>
@@ -251,12 +234,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public string UserName 
         {
-            get {
-                return header.UserName;
-            }
-            set {
-                header.UserName = value;
-            }
+            get => header.UserName;
+            set => header.UserName = value;
         }
         
         /// <summary>
@@ -264,12 +243,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public string GroupName 
         {
-            get {
-                return header.GroupName;
-            }
-            set {
-                header.GroupName = value;
-            }
+            get => header.GroupName;
+            set => header.GroupName = value;
         }
         
         /// <summary>
@@ -306,12 +281,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// Get/Set the modification time for this entry
         /// </summary>
         public DateTime ModTime {
-            get {
-                return header.ModTime;
-            }
-            set {
-                header.ModTime = value;
-            }
+            get => header.ModTime;
+            set => header.ModTime = value;
         }
         
         /// <summary>
@@ -320,22 +291,14 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>
         /// This entry's file.
         /// </returns>
-        public string File {
-            get {
-                return file;
-            }
-        }
-        
+        public string File => file;
+
         /// <summary>
         /// Get/set this entry's recorded file size.
         /// </summary>
         public long Size {
-            get {
-                return header.Size;
-            }
-            set {
-                header.Size = value;
-            }
+            get => header.Size;
+            set => header.Size = value;
         }
         
         /// <summary>

@@ -13,13 +13,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// 
         /// </summary>
-        public virtual RefactorResultType Results
-        {
-            get
-            {
-                return results;
-            }
-        }
+        public virtual RefactorResultType Results => results;
 
         /// <summary>
         /// 

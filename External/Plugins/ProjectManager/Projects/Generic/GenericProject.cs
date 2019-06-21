@@ -12,9 +12,9 @@ namespace ProjectManager.Projects.Generic
             movieOptions = new GenericMovieOptions();
         }
 
-        public override string Language { get { return "*"; } }
-        public override string LanguageDisplayName { get { return "*"; } }
-        public override bool IsCompilable { get { return false; } }
+        public override string Language => "*";
+        public override string LanguageDisplayName => "*";
+        public override bool IsCompilable => false;
 
         public override string DefaultSearchFilter
         {

@@ -131,8 +131,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         [Browsable(false)]
         public IDockContent ActiveAutoHideContent
         {
-            get {   return AutoHideWindow.ActiveContent;    }
-            set {   AutoHideWindow.ActiveContent = value;   }
+            get => AutoHideWindow.ActiveContent;
+            set => AutoHideWindow.ActiveContent = value;
         }
 
         private bool m_allowEndUserFloatChange = NativeMethods.ShouldUseWin32();
@@ -207,15 +207,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private DockContentCollection m_contents = new DockContentCollection();
         [Browsable(false)]
-        public DockContentCollection Contents
-        {
-            get {   return m_contents;  }
-        }
+        public DockContentCollection Contents => m_contents;
 
-        internal DockContent DummyContent
-        {
-            get {   return m_dummyContent;  }
-        }
+        internal DockContent DummyContent => m_dummyContent;
 
         private bool m_rightToLeftLayout = false;
         [DefaultValue(false)]
@@ -223,7 +217,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_RightToLeftLayout_Description")]
         public bool RightToLeftLayout
         {
-            get { return m_rightToLeftLayout; }
+            get => m_rightToLeftLayout;
             set
             {
                 if (m_rightToLeftLayout == value)
@@ -251,7 +245,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ShowDocumentIcon_Description")]
         public bool ShowDocumentIcon
         {
-            get {   return m_showDocumentIcon;  }
+            get => m_showDocumentIcon;
             set
             {
                 if (m_showDocumentIcon == value)
@@ -265,51 +259,25 @@ namespace WeifenLuo.WinFormsUI.Docking
         public bool ShowAutoHideContentOnHover { get; set; }
 
         [Browsable(false)]
-        public DockPanelExtender Extender
-        {
-            get {   return m_extender;  }
-        }
+        public DockPanelExtender Extender => m_extender;
 
-        public DockPanelExtender.IDockPaneFactory DockPaneFactory
-        {
-            get {   return Extender.DockPaneFactory;    }
-        }
+        public DockPanelExtender.IDockPaneFactory DockPaneFactory => Extender.DockPaneFactory;
 
-        public DockPanelExtender.IFloatWindowFactory FloatWindowFactory
-        {
-            get {   return Extender.FloatWindowFactory; }
-        }
+        public DockPanelExtender.IFloatWindowFactory FloatWindowFactory => Extender.FloatWindowFactory;
 
-        internal DockPanelExtender.IDockPaneCaptionFactory DockPaneCaptionFactory
-        {
-            get {   return Extender.DockPaneCaptionFactory; }
-        }
+        internal DockPanelExtender.IDockPaneCaptionFactory DockPaneCaptionFactory => Extender.DockPaneCaptionFactory;
 
-        internal DockPanelExtender.IDockPaneStripFactory DockPaneStripFactory
-        {
-            get {   return Extender.DockPaneStripFactory;   }
-        }
+        internal DockPanelExtender.IDockPaneStripFactory DockPaneStripFactory => Extender.DockPaneStripFactory;
 
-        internal DockPanelExtender.IAutoHideStripFactory AutoHideStripFactory
-        {
-            get {   return Extender.AutoHideStripFactory;   }
-        }
+        internal DockPanelExtender.IAutoHideStripFactory AutoHideStripFactory => Extender.AutoHideStripFactory;
 
         [Browsable(false)]
-        public DockPaneCollection Panes
-        {
-            get {   return m_panes; }
-        }
+        public DockPaneCollection Panes => m_panes;
 
-        internal Rectangle DockArea
-        {
-            get
-            {
-                return new Rectangle(DockPadding.Left, DockPadding.Top,
-                    ClientRectangle.Width - DockPadding.Left - DockPadding.Right,
-                    ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom);
-            }
-        }
+        internal Rectangle DockArea =>
+            new Rectangle(DockPadding.Left, DockPadding.Top,
+                ClientRectangle.Width - DockPadding.Left - DockPadding.Right,
+                ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom);
 
         private double m_dockBottomPortion = 0.25;
         [LocalizedCategory("Category_Docking")]
@@ -317,7 +285,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [DefaultValue(0.25)]
         public double DockBottomPortion
         {
-            get {   return m_dockBottomPortion; }
+            get => m_dockBottomPortion;
             set
             {
                 if (value <= 0)
@@ -344,7 +312,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [DefaultValue(0.25)]
         public double DockLeftPortion
         {
-            get {   return m_dockLeftPortion;   }
+            get => m_dockLeftPortion;
             set
             {
                 if (value <= 0)
@@ -370,7 +338,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [DefaultValue(0.25)]
         public double DockRightPortion
         {
-            get {   return m_dockRightPortion;  }
+            get => m_dockRightPortion;
             set
             {
                 if (value <= 0)
@@ -396,7 +364,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [DefaultValue(0.25)]
         public double DockTopPortion
         {
-            get {   return m_dockTopPortion;    }
+            get => m_dockTopPortion;
             set
             {
                 if (value <= 0)
@@ -417,10 +385,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         [Browsable(false)]
-        public DockWindowCollection DockWindows
-        {
-            get {   return m_dockWindows;   }
-        }
+        public DockWindowCollection DockWindows => m_dockWindows;
 
         public void UpdateDockWindowZOrder(DockStyle dockStyle, bool fullPanelEdge)
         {
@@ -516,24 +481,18 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private Control DummyControl
-        {
-            get {   return m_dummyControl;  }
-        }
+        private Control DummyControl => m_dummyControl;
 
         [Browsable(false)]
-        public FloatWindowCollection FloatWindows
-        {
-            get {   return m_floatWindows;  }
-        }
+        public FloatWindowCollection FloatWindows => m_floatWindows;
 
         private Size m_defaultFloatWindowSize = new Size(600, 400);
         [Category("Layout")]
         [LocalizedDescription("DockPanel_DefaultFloatWindowSize_Description")]
         public Size DefaultFloatWindowSize
         {
-            get { return m_defaultFloatWindowSize; }
-            set { m_defaultFloatWindowSize = value; }
+            get => m_defaultFloatWindowSize;
+            set => m_defaultFloatWindowSize = value;
         }
         private bool ShouldSerializeDefaultFloatWindowSize()
         {
@@ -546,7 +505,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [DefaultValue(DocumentStyle.DockingMdi)]
         public DocumentStyle DocumentStyle
         {
-            get {   return m_documentStyle; }
+            get => m_documentStyle;
             set
             {
                 if (value == m_documentStyle)
@@ -1004,8 +963,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ContentAdded_Description")]
         public event EventHandler<DockContentEventArgs> ContentAdded
         {
-            add {   Events.AddHandler(ContentAddedEvent, value);    }
-            remove  {   Events.RemoveHandler(ContentAddedEvent, value); }
+            add => Events.AddHandler(ContentAddedEvent, value);
+            remove => Events.RemoveHandler(ContentAddedEvent, value);
         }
         protected virtual void OnContentAdded(DockContentEventArgs e)
         {
@@ -1018,8 +977,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ContentRemoved_Description")]
         public event EventHandler<DockContentEventArgs> ContentRemoved
         {
-            add {   Events.AddHandler(ContentRemovedEvent, value);  }
-            remove  {   Events.RemoveHandler(ContentRemovedEvent, value);   }
+            add => Events.AddHandler(ContentRemovedEvent, value);
+            remove => Events.RemoveHandler(ContentRemovedEvent, value);
         }
         protected virtual void OnContentRemoved(DockContentEventArgs e)
         {

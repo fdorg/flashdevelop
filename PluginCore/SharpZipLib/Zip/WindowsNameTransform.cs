@@ -72,7 +72,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public string BaseDirectory
         {
-            get { return _baseDirectory; }
+            get => _baseDirectory;
             set {
                 if ( value == null ) {
                     throw new ArgumentNullException("value");
@@ -87,8 +87,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public bool TrimIncomingPaths
         {
-            get { return _trimIncomingPaths; }
-            set { _trimIncomingPaths = value; }
+            get => _trimIncomingPaths;
+            set => _trimIncomingPaths = value;
         }
         
         /// <summary>
@@ -237,7 +237,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public char Replacement
         {
-            get { return _replacementChar; }
+            get => _replacementChar;
             set { 
                 for ( int i = 0; i < InvalidEntryChars.Length; ++i ) {
                     if ( InvalidEntryChars[i] == value ) {

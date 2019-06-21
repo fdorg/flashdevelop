@@ -590,10 +590,7 @@ namespace PluginCore.Controls
         [DefaultValue(-1)]
         public int CurrentPosition
         {
-            get
-            {
-                return this.curPos;
-            }
+            get => this.curPos;
             set
             {
                 // no change, return
@@ -614,10 +611,7 @@ namespace PluginCore.Controls
         [DefaultValue(-1)]
         public int MaxCurrentPosition
         {
-            get
-            {
-                return this.maxCurPos;
-            }
+            get => this.maxCurPos;
             set
             {
                 // no change, return
@@ -638,10 +632,7 @@ namespace PluginCore.Controls
         [DefaultValue(ScrollBarOrientation.Vertical)]
         public ScrollBarOrientation Orientation
         {
-            get
-            {
-                return this.orientation;
-            }
+            get => this.orientation;
             set
             {
                 // no change - return
@@ -672,10 +663,7 @@ namespace PluginCore.Controls
         [DefaultValue(0)]
         public int Minimum
         {
-            get
-            {
-                return this.minimum;
-            }
+            get => this.minimum;
             set
             {
                 // no change or value invalid - return
@@ -716,10 +704,7 @@ namespace PluginCore.Controls
         [DefaultValue(100)]
         public int Maximum
         {
-            get
-            {
-                return this.maximum;
-            }
+            get => this.maximum;
             set
             {
                 // no change or new max. value invalid - return
@@ -755,10 +740,7 @@ namespace PluginCore.Controls
         [DefaultValue(10)]
         public int ViewPortSize
         {
-            get
-            {
-                return this.viewPortSize;
-            }
+            get => this.viewPortSize;
             set
             {
                 // no change or new value invalid - return
@@ -781,10 +763,7 @@ namespace PluginCore.Controls
         [DefaultValue(1)]
         public int SmallChange
         {
-            get
-            {
-                return this.smallChange;
-            }
+            get => this.smallChange;
             set
             {
                 // no change or new small change value invalid - return
@@ -805,10 +784,7 @@ namespace PluginCore.Controls
         [DefaultValue(10)]
         public int LargeChange
         {
-            get
-            {
-                return this.largeChange;
-            }
+            get => this.largeChange;
             set
             {
                 // no change or new large change value is invalid - return
@@ -838,10 +814,7 @@ namespace PluginCore.Controls
         [DefaultValue(0)]
         public int Value
         {
-            get
-            {
-                return this.value;
-            }
+            get => this.value;
             set
             {
                 // no change or invalid value - return
@@ -866,10 +839,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ActiveBorder")]
         public Color BorderColor
         {
-            get
-            {
-                return this.borderColor;
-            }
+            get => this.borderColor;
             set
             {
                 this.borderColor = value;
@@ -885,10 +855,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "InactiveBorder")]
         public Color DisabledBorderColor
         {
-            get
-            {
-                return this.borderColorDisabled;
-            }
+            get => this.borderColorDisabled;
             set
             {
                 this.borderColorDisabled = value;
@@ -904,10 +871,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "Control")]
         public override Color BackColor
         {
-            get
-            {
-                return this.backColor;
-            }
+            get => this.backColor;
             set
             {
                 this.backColor = value;
@@ -923,10 +887,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlLight")]
         public Color DisabledBackColor
         {
-            get
-            {
-                return this.backColorDisabled;
-            }
+            get => this.backColorDisabled;
             set
             {
                 this.backColorDisabled = value;
@@ -942,10 +903,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ScrollBar")]
         public override Color ForeColor
         {
-            get
-            {
-                return this.foreColor;
-            }
+            get => this.foreColor;
             set
             {
                 this.foreColor = value;
@@ -961,7 +919,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDark")]
         public Color HotForeColor
         {
-            get { return this.foreColorHot; }
+            get => this.foreColorHot;
             set
             {
                 this.foreColorHot = value;
@@ -977,10 +935,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDarkDark")]
         public Color ActiveForeColor
         {
-            get
-            {
-                return this.foreColorPressed;
-            }
+            get => this.foreColorPressed;
             set
             {
                 this.foreColorPressed = value;
@@ -996,7 +951,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDark")]
         public Color ArrowColor
         {
-            get { return this.arrowColor; }
+            get => this.arrowColor;
             set
             {
                 this.arrowColor = value;
@@ -1012,7 +967,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "Highlight")]
         public Color HotArrowColor
         {
-            get { return this.arrowColorHot; }
+            get => this.arrowColorHot;
             set
             {
                 this.arrowColorHot = value;
@@ -1028,7 +983,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "HotTrack")]
         public Color ActiveArrowColor
         {
-            get { return this.arrowColorPressed; }
+            get => this.arrowColorPressed;
             set
             {
                 this.arrowColorPressed = value;
@@ -1044,10 +999,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(Color), "DarkBlue")]
         public Color CurrentPositionColor
         {
-            get
-            {
-                return this.curPosColor;
-            }
+            get => this.curPosColor;
             set
             {
                 this.curPosColor = value;
@@ -1063,10 +1015,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(double), "1")]
         public double Opacity
         {
-            get
-            {
-                return this.contextMenu.Opacity;
-            }
+            get => this.contextMenu.Opacity;
             set
             {
                 // no change - return

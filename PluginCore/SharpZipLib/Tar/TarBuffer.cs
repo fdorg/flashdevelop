@@ -104,12 +104,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         /// <value>The record size in bytes.
         /// This is equal to the <see cref="BlockFactor"/> multiplied by the <see cref="BlockSize"/></value>
-        public int RecordSize 
-        {
-            get { 
-                return recordSize; 
-            }
-        }
+        public int RecordSize => recordSize;
 
         /// <summary>
         /// Get the TAR Buffer's record size.
@@ -126,11 +121,7 @@ or which contains garbage records after a zero block.
         /// Get the Blocking factor for the buffer
         /// </summary>
         /// <value>This is the number of blocks in each record.</value>
-        public int BlockFactor {
-            get { 
-                return blockFactor; 
-            }
-        }
+        public int BlockFactor => blockFactor;
 
         /// <summary>
         /// Get the TAR Buffer's block factor
@@ -410,10 +401,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         /// <remarks>Block numbers are zero based values</remarks>
         /// <seealso cref="RecordSize"/>
-        public int CurrentBlock
-        {
-            get { return currentBlockIndex; }
-        }
+        public int CurrentBlock => currentBlockIndex;
 
         /// <summary>
         /// Get/set flag indicating ownership of the underlying stream.
@@ -421,8 +409,8 @@ or which contains garbage records after a zero block.
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner_; }
-            set { isStreamOwner_ = value; }
+            get => isStreamOwner_;
+            set => isStreamOwner_ = value;
         }
 
         /// <summary>
@@ -446,10 +434,7 @@ or which contains garbage records after a zero block.
         /// <returns>
         /// The current zero based record number.
         /// </returns>
-        public int CurrentRecord
-        {
-            get { return currentRecordIndex; }
-        }
+        public int CurrentRecord => currentRecordIndex;
 
         /// <summary>
         /// Get the current record number.

@@ -699,25 +699,19 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the associated <see cref="ShortcutItem"/> object.
             /// </summary>
-            public ShortcutItem Item
-            {
-                get { return this.item; }
-            }
+            public ShortcutItem Item => this.item;
 
             /// <summary>
             /// Gets whether this <see cref="ShortcutListItem"/> has other conflicting <see cref="ShortcutListItem"/> objects.
             /// </summary>
-            public bool HasConflicts
-            {
-                get { return this.Conflicts != null; }
-            }
+            public bool HasConflicts => this.Conflicts != null;
 
             /// <summary>
             /// Gets or sets a collection of <see cref="ShortcutListItem"/> objects that have conflicting keys with this instance.
             /// </summary>
             public List<ShortcutListItem> Conflicts
             {
-                get { return this.conflicts; }
+                get => this.conflicts;
                 set
                 {
                     if (this.conflicts == value) return;
@@ -729,25 +723,19 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the ID of the associated <see cref="ShortcutItem"/>.
             /// </summary>
-            public string Id
-            {
-                get { return this.Item.Id; }
-            }
+            public string Id => this.Item.Id;
 
             /// <summary>
             /// Gets the default shortcut keys.
             /// </summary>
-            public Keys Default
-            {
-                get { return this.Item.Default; }
-            }
+            public Keys Default => this.Item.Default;
 
             /// <summary>
             /// Gets or sets the custom shortcut keys.
             /// </summary>
             public Keys Custom
             {
-                get { return this.custom; }
+                get => this.custom;
                 set
                 {
                     if (this.custom == value) return;
@@ -771,10 +759,7 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the modification status of the shortcut.
             /// </summary>
-            public bool IsModified
-            {
-                get { return this.Custom != this.Default; }
-            }
+            public bool IsModified => this.Custom != this.Default;
 
             /// <summary>
             /// Creates a new instance of <see cref="ShortcutListItem"/> with an associated <see cref="ShortcutItem"/>.

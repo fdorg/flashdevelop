@@ -8,14 +8,11 @@ namespace FlashDebugger.Controls.DataTree
         private string _value;
         public override string Value
         {
-            get { return _value; }
-            set { throw new NotSupportedException(); }
+            get => _value;
+            set => throw new NotSupportedException();
         }
 
-        public override bool IsLeaf
-        {
-            get { return true; }
-        }
+        public override bool IsLeaf => true;
 
         public ErrorNode(string text, Exception ex)
             : base(text)

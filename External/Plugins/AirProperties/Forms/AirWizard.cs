@@ -57,10 +57,7 @@ namespace AirProperties
         private IphonePlistManager iPhoneAdditions;
         private IphonePlistManager iPhoneEntitlements;
 
-        public bool IsPropertiesLoaded
-        {
-            get { return _isPropertiesLoaded; }
-        }
+        public bool IsPropertiesLoaded => _isPropertiesLoaded;
 
         public AirWizard(PluginMain pluginMain)
         {

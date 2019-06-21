@@ -54,7 +54,7 @@ namespace LitJson
 
         #region Properties
         public int IndentValue {
-            get { return indent_value; }
+            get => indent_value;
             set {
                 indentation = (indentation / indent_value) * value;
                 indent_value = value;
@@ -62,17 +62,15 @@ namespace LitJson
         }
 
         public bool PrettyPrint {
-            get { return pretty_print; }
-            set { pretty_print = value; }
+            get => pretty_print;
+            set => pretty_print = value;
         }
 
-        public TextWriter TextWriter {
-            get { return writer; }
-        }
+        public TextWriter TextWriter => writer;
 
         public bool Validate {
-            get { return validate; }
-            set { validate = value; }
+            get => validate;
+            set => validate = value;
         }
         #endregion
 

@@ -170,19 +170,19 @@ namespace ProjectManager.Controls
 
         public Project Project
         {
-            get { return project; }
-            set { project = value; }
+            get => project;
+            set => project = value;
         }
 
         public ComboBox LanguageBox
         {
-            get { return this.langComboBox; }
-            set { this.langComboBox = value; }
+            get => this.langComboBox;
+            set => this.langComboBox = value;
         }
 
         public string Language
         {
-            get { return this.language; }
+            get => this.language;
             set 
             {
                 if (value == null) return;

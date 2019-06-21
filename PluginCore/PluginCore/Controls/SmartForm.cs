@@ -34,8 +34,8 @@ namespace PluginCore.Controls
         /// </summary>
         public string HelpLink
         {
-            get { return this.helpLink; }
-            set { this.helpLink = value; }
+            get => this.helpLink;
+            set => this.helpLink = value;
         }
 
         /// <summary>
@@ -43,25 +43,19 @@ namespace PluginCore.Controls
         /// </summary>
         public string FormGuid
         {
-            get { return this.formGuid; }
-            set { this.formGuid = value.ToUpper(); }
+            get => this.formGuid;
+            set => this.formGuid = value.ToUpper();
         }
 
         /// <summary>
         /// Gets or sets the help link
         /// </summary>
-        public override bool UseTheme
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
-        }
+        public override bool UseTheme => PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false);
 
         /// <summary>
         /// Path to the unique setting file
         /// </summary>
-        private string FormPropsFile
-        {
-            get { return Path.Combine(this.FormStatesDir, this.formGuid + ".fdb"); }
-        }
+        private string FormPropsFile => Path.Combine(this.FormStatesDir, this.formGuid + ".fdb");
 
         /// <summary>
         /// Path to the form state file directory

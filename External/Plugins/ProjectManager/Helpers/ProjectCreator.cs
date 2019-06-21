@@ -38,7 +38,7 @@ namespace ProjectManager.Helpers
         private static bool projectTypesSet = false;
 
         private static bool isRunning;
-        public static bool IsRunning { get { return isRunning; } }
+        public static bool IsRunning => isRunning;
 
         /// <summary>
         /// Creates a new project based on the specified template directory.

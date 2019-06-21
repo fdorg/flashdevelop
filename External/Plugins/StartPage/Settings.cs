@@ -26,8 +26,8 @@ namespace StartPage
         [DefaultValue(false)]
         public bool CloseOnProjectOpen
         {
-            get { return closeOnProjectOpen; }
-            set { this.closeOnProjectOpen = value; }
+            get => closeOnProjectOpen;
+            set => this.closeOnProjectOpen = value;
         }
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace StartPage
         [DefaultValue(false)]
         public bool ShowStartPageInsteadOfUntitled
         {
-            get { return showStartPageInsteadOfUntitled; }
-            set { this.showStartPageInsteadOfUntitled = value; }
+            get => showStartPageInsteadOfUntitled;
+            set => this.showStartPageInsteadOfUntitled = value;
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace StartPage
         [DefaultValue(ShowStartPageOnStartupEnum.NotRestoringSession)]
         public ShowStartPageOnStartupEnum ShowStartPageOnStartup
         {
-            get { return showStartPageOnStartup; }
-            set { this.showStartPageOnStartup = value; }
+            get => showStartPageOnStartup;
+            set => this.showStartPageOnStartup = value;
         }
 
         #endregion
@@ -69,8 +69,8 @@ namespace StartPage
         [DefaultValue("")]
         public string CustomStartPage
         {
-            get { return customStartPage; }
-            set { this.customStartPage = value; }
+            get => customStartPage;
+            set => this.customStartPage = value;
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace StartPage
         [DefaultValue(false)]
         public bool UseCustomStartPage
         {
-            get { return useCustomStartPage; }
-            set { this.useCustomStartPage = value; }
+            get => useCustomStartPage;
+            set => this.useCustomStartPage = value;
         }
 
         /// <summary>
@@ -95,8 +95,8 @@ namespace StartPage
         [DefaultValue("")]
         public string CustomRssFeed
         {
-            get { return customRssFeed; }
-            set { this.customRssFeed = value; }
+            get => customRssFeed;
+            set => this.customRssFeed = value;
         }
 
         /// <summary>
@@ -108,8 +108,8 @@ namespace StartPage
         [DefaultValue(false)]
         public bool UseCustomRssFeed
         {
-            get { return useCustomRssFeed; }
-            set { this.useCustomRssFeed = value; }
+            get => useCustomRssFeed;
+            set => this.useCustomRssFeed = value;
         }
 
         #endregion

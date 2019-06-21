@@ -23,7 +23,7 @@ namespace PluginCore.Bridge
             }
         }
 
-        public static int BridgePort { get { return BridgeManager.Settings.Port; } }
+        public static int BridgePort => BridgeManager.Settings.Port;
 
         static string DetectIP()
         {
@@ -50,7 +50,7 @@ namespace PluginCore.Bridge
 
         #endregion
 
-        public bool Connected { get { return conn != null && conn.Connected; } }
+        public bool Connected => conn != null && conn.Connected;
 
         public BridgeClient()
             : base(BridgeIP, BridgePort)

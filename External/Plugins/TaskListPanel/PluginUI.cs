@@ -274,7 +274,7 @@ namespace TaskListPanel
         /// </summary>
         public bool RefreshEnabled
         {
-            get { return this.refreshEnabled; }
+            get => this.refreshEnabled;
             set
             {
                 this.refreshEnabled = value;

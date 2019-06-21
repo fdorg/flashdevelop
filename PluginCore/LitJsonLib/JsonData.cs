@@ -36,73 +36,39 @@ namespace LitJson
 
 
         #region Properties
-        public int Count {
-            get { return EnsureCollection ().Count; }
-        }
+        public int Count => EnsureCollection ().Count;
 
-        public bool IsArray {
-            get { return type == JsonType.Array; }
-        }
+        public bool IsArray => type == JsonType.Array;
 
-        public bool IsBoolean {
-            get { return type == JsonType.Boolean; }
-        }
+        public bool IsBoolean => type == JsonType.Boolean;
 
-        public bool IsDouble {
-            get { return type == JsonType.Double; }
-        }
+        public bool IsDouble => type == JsonType.Double;
 
-        public bool IsInt {
-            get { return type == JsonType.Int; }
-        }
+        public bool IsInt => type == JsonType.Int;
 
-        public bool IsLong {
-            get { return type == JsonType.Long; }
-        }
+        public bool IsLong => type == JsonType.Long;
 
-        public bool IsObject {
-            get { return type == JsonType.Object; }
-        }
+        public bool IsObject => type == JsonType.Object;
 
-        public bool IsString {
-            get { return type == JsonType.String; }
-        }
+        public bool IsString => type == JsonType.String;
+
         #endregion
 
 
         #region ICollection Properties
-        int ICollection.Count {
-            get {
-                return Count;
-            }
-        }
+        int ICollection.Count => Count;
 
-        bool ICollection.IsSynchronized {
-            get {
-                return EnsureCollection ().IsSynchronized;
-            }
-        }
+        bool ICollection.IsSynchronized => EnsureCollection ().IsSynchronized;
 
-        object ICollection.SyncRoot {
-            get {
-                return EnsureCollection ().SyncRoot;
-            }
-        }
+        object ICollection.SyncRoot => EnsureCollection ().SyncRoot;
+
         #endregion
 
 
         #region IDictionary Properties
-        bool IDictionary.IsFixedSize {
-            get {
-                return EnsureDictionary ().IsFixedSize;
-            }
-        }
+        bool IDictionary.IsFixedSize => EnsureDictionary ().IsFixedSize;
 
-        bool IDictionary.IsReadOnly {
-            get {
-                return EnsureDictionary ().IsReadOnly;
-            }
-        }
+        bool IDictionary.IsReadOnly => EnsureDictionary ().IsReadOnly;
 
         ICollection IDictionary.Keys {
             get {
@@ -136,56 +102,34 @@ namespace LitJson
 
 
         #region IJsonWrapper Properties
-        bool IJsonWrapper.IsArray {
-            get { return IsArray; }
-        }
+        bool IJsonWrapper.IsArray => IsArray;
 
-        bool IJsonWrapper.IsBoolean {
-            get { return IsBoolean; }
-        }
+        bool IJsonWrapper.IsBoolean => IsBoolean;
 
-        bool IJsonWrapper.IsDouble {
-            get { return IsDouble; }
-        }
+        bool IJsonWrapper.IsDouble => IsDouble;
 
-        bool IJsonWrapper.IsInt {
-            get { return IsInt; }
-        }
+        bool IJsonWrapper.IsInt => IsInt;
 
-        bool IJsonWrapper.IsLong {
-            get { return IsLong; }
-        }
+        bool IJsonWrapper.IsLong => IsLong;
 
-        bool IJsonWrapper.IsObject {
-            get { return IsObject; }
-        }
+        bool IJsonWrapper.IsObject => IsObject;
 
-        bool IJsonWrapper.IsString {
-            get { return IsString; }
-        }
+        bool IJsonWrapper.IsString => IsString;
+
         #endregion
 
 
         #region IList Properties
-        bool IList.IsFixedSize {
-            get {
-                return EnsureList ().IsFixedSize;
-            }
-        }
+        bool IList.IsFixedSize => EnsureList ().IsFixedSize;
 
-        bool IList.IsReadOnly {
-            get {
-                return EnsureList ().IsReadOnly;
-            }
-        }
+        bool IList.IsReadOnly => EnsureList ().IsReadOnly;
+
         #endregion
 
 
         #region IDictionary Indexer
         object IDictionary.this[object key] {
-            get {
-                return EnsureDictionary ()[key];
-            }
+            get => EnsureDictionary ()[key];
 
             set {
                 if (! (key is string))
@@ -226,9 +170,7 @@ namespace LitJson
 
         #region IList Indexer
         object IList.this[int index] {
-            get {
-                return EnsureList ()[index];
-            }
+            get => EnsureList ()[index];
 
             set {
                 EnsureList ();
@@ -951,9 +893,7 @@ namespace LitJson
         IEnumerator<KeyValuePair<string, JsonData>> list_enumerator;
 
 
-        public object Current {
-            get { return Entry; }
-        }
+        public object Current => Entry;
 
         public DictionaryEntry Entry {
             get {
@@ -962,13 +902,9 @@ namespace LitJson
             }
         }
 
-        public object Key {
-            get { return list_enumerator.Current.Key; }
-        }
+        public object Key => list_enumerator.Current.Key;
 
-        public object Value {
-            get { return list_enumerator.Current.Value; }
-        }
+        public object Value => list_enumerator.Current.Value;
 
 
         public OrderedDictionaryEnumerator (
