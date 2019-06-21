@@ -28,7 +28,7 @@ namespace ProjectManager.Actions
     /// </summary>
     public class ProjectActions
     {
-        IWin32Window owner; // for dialogs
+        readonly IWin32Window owner; // for dialogs
         string currentLang;
 
         public event ProjectModifiedHandler ProjectModified;

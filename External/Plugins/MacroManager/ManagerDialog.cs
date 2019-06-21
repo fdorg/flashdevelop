@@ -20,7 +20,7 @@ namespace MacroManager
         private PropertyGrid propertyGrid;
         private ColumnHeader columnHeader;
         private ListViewGroup macroGroup;
-        private PluginMain pluginMain;
+        private readonly PluginMain pluginMain;
         private Button deleteButton;
         private Button closeButton;
         private Button addButton;

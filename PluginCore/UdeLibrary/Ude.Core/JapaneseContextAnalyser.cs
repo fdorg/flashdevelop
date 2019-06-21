@@ -135,7 +135,7 @@ namespace Ude.Core
         };
         
         // category counters, each integer counts sequence in its category
-        int[] relSample = new int[CATEGORIES_NUM];
+        readonly int[] relSample = new int[CATEGORIES_NUM];
 
         // total sequence received
         int totalRel;

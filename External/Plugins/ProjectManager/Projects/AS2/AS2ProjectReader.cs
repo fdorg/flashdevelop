@@ -5,7 +5,7 @@ namespace ProjectManager.Projects.AS2
 {
     public class AS2ProjectReader : ProjectReader
     {
-        AS2Project project;
+        readonly AS2Project project;
 
         public AS2ProjectReader(string filename)
             : base(filename, new AS2Project(filename))

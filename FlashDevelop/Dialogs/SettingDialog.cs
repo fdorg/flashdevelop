@@ -31,11 +31,11 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label descLabel;
-        private string itemFilter = string.Empty;
-        private string itemName = string.Empty;
+        private readonly string itemFilter = string.Empty;
+        private readonly string itemName = string.Empty;
         private static int lastItemIndex = 0;
         private InstalledSDKContext sdkContext;
-        private static Hashtable requireRestart = new Hashtable();
+        private static readonly Hashtable requireRestart = new Hashtable();
 
         public SettingDialog(string name, string filter)
         {

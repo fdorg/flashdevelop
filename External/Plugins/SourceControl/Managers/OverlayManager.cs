@@ -154,7 +154,7 @@ namespace SourceControl.Managers
     class OverlayMap: Dictionary<int, int>
     {
         static Image iconSkin;
-        static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
+        static readonly Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
 
         public static void Init()
         {

@@ -15,7 +15,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Dictionary containing the loaded theme values
         /// </summary>
-        private static Dictionary<string, string> valueMap = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> valueMap = new Dictionary<string, string>();
 
         /// <summary>
         /// Gets a value entry from the config.

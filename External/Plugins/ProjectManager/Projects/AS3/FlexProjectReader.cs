@@ -10,9 +10,9 @@ namespace ProjectManager.Projects.AS3
 {
     class FlexProjectReader : ProjectReader
     {
-        private static Regex reArgs = new Regex(@"\$\{(\w+)\}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        private static readonly Regex reArgs = new Regex(@"\$\{(\w+)\}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
-        private AS3Project project;
+        private readonly AS3Project project;
         private string mainApp;
         private string outputPath;
         private string fpVersion;

@@ -37,7 +37,7 @@ namespace LitJson
     public class JsonWriter
     {
         #region Fields
-        private static NumberFormatInfo number_format;
+        private static readonly NumberFormatInfo number_format;
 
         private WriterContext        context;
         private Stack<WriterContext> ctx_stack;
@@ -45,10 +45,10 @@ namespace LitJson
         private char[]               hex_seq;
         private int                  indentation;
         private int                  indent_value;
-        private StringBuilder        inst_string_builder;
+        private readonly StringBuilder        inst_string_builder;
         private bool                 pretty_print;
         private bool                 validate;
-        private TextWriter           writer;
+        private readonly TextWriter           writer;
         #endregion
 
 

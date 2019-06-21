@@ -22,7 +22,7 @@ namespace ASCompletion
     {
         #region Docking
 
-        private static string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
+        private static readonly string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
         private static DockContent panelCtrl;
 
         public static void CreatePanel()
@@ -43,7 +43,7 @@ namespace ASCompletion
 
         class ClasspathTreeNode : TreeNode
         {
-            public string Path;
+            public readonly string Path;
             public ClasspathTreeNode(string path, int count)
                 : base(path + " (" + count + ")", PluginUI.ICON_FOLDER_CLOSED, PluginUI.ICON_FOLDER_OPEN) 
             {

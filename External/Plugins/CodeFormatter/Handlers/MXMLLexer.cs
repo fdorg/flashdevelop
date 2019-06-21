@@ -45,7 +45,7 @@ public class MXMLLexer : Lexer {
     public const int EQ_int = 31;
     public const int CDATA = 26;
 
-       private List<CommonToken> mRawTokens=new List<CommonToken>();
+       private readonly List<CommonToken> mRawTokens=new List<CommonToken>();
        int lastLine=1;
        int lastCharPos=0;
        public void AddToken( CommonToken t, int type, int channel)

@@ -12,19 +12,19 @@ namespace SourceControl.Sources.Subversion
         TreeNode[] currentNodes;
         IVCManager currentManager;
 
-        ToolStripItem update;
-        ToolStripItem commit;
-        ToolStripItem push;
-        ToolStripItem showLog;
-        ToolStripItem midSeparator;
-        ToolStripItem annotate;
-        ToolStripItem diff;
-        ToolStripItem diffChange;
-        ToolStripItem add;
-        ToolStripItem ignore;
-        ToolStripItem undoAdd;
-        ToolStripItem revert;
-        ToolStripItem editConflict;
+        readonly ToolStripItem update;
+        readonly ToolStripItem commit;
+        readonly ToolStripItem push;
+        readonly ToolStripItem showLog;
+        readonly ToolStripItem midSeparator;
+        readonly ToolStripItem annotate;
+        readonly ToolStripItem diff;
+        readonly ToolStripItem diffChange;
+        readonly ToolStripItem add;
+        readonly ToolStripItem ignore;
+        readonly ToolStripItem undoAdd;
+        readonly ToolStripItem revert;
+        readonly ToolStripItem editConflict;
 
         public TreeNode[] CurrentNodes { set => currentNodes = value; }
         public IVCManager CurrentManager { set => currentManager = value; }
@@ -43,7 +43,7 @@ namespace SourceControl.Sources.Subversion
         public ToolStripItem Revert => revert;
         public ToolStripItem EditConflict => editConflict;
 
-        private Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
+        private readonly Dictionary<ToolStripItem, VCMenuItemProperties> items = new Dictionary<ToolStripItem, VCMenuItemProperties>();
         public Dictionary<ToolStripItem, VCMenuItemProperties> Items => items;
 
         public MenuItems()

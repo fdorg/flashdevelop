@@ -8,7 +8,7 @@ namespace ProjectManager.Controls.AS3
 {
     static class MxmlFileMapping
     {
-        private static Regex reSource = new Regex("\\ssource=\"(?<file>[^\"]+)\"", RegexOptions.Compiled);
+        private static readonly Regex reSource = new Regex("\\ssource=\"(?<file>[^\"]+)\"", RegexOptions.Compiled);
 
         public static void AddMxmlMapping(FileMappingRequest request)
         {

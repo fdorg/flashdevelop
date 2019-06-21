@@ -10,7 +10,7 @@ namespace FlashDevelop.Docking
     public class DockablePanel : DockContent
     {
         private Image image;
-        private string pluginGuid;
+        private readonly string pluginGuid;
 
         public DockablePanel(Control ctrl, string pluginGuid)
         {
@@ -63,7 +63,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         internal class Template : DockContent
         {
-            private string persistString;
+            private readonly string persistString;
 
             internal Template(string persistString)
             {

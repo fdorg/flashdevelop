@@ -11,7 +11,7 @@ namespace PHPContext
 {
     public class PluginMain : IPlugin
     {
-        private string associatedSyntax = "HTML"; // ie. coloring syntax file name
+        private readonly string associatedSyntax = "HTML"; // ie. coloring syntax file name
         private ContextSettings settingObject;
         private string settingFilename;
         private Context contextInstance;

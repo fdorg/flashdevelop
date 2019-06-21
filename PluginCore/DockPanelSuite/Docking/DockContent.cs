@@ -15,7 +15,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_dockHandler.IsActivatedChanged += DockHandler_IsActivatedChanged;
         }
 
-        private DockContentHandler m_dockHandler = null;
+        private readonly DockContentHandler m_dockHandler = null;
         [Browsable(false)]
         public DockContentHandler DockHandler => m_dockHandler;
 

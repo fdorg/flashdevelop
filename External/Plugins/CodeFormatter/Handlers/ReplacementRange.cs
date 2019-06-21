@@ -5,7 +5,7 @@ namespace CodeFormatter.Handlers
     public class ReplacementRange
     {
         public Point mRangeInFormattedDoc;
-        private Point mRangeInOriginalDoc;
+        private readonly Point mRangeInOriginalDoc;
         private string mAddedText;
         private string mDeletedText;
 

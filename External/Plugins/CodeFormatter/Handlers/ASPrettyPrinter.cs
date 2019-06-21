@@ -10,10 +10,10 @@ namespace CodeFormatter.Handlers
 {
     public class ASPrettyPrinter
     {
-        private static int AddCRIfBeyondMaxCol=8;
-        private static int AddCR=9;
-        private static int AddCR_BlankLine=10;
-        private static int ADD_WS=11;
+        private static readonly int AddCRIfBeyondMaxCol=8;
+        private static readonly int AddCR=9;
+        private static readonly int AddCR_BlankLine=10;
+        private static readonly int ADD_WS=11;
     
         public static int INDENT_LIKE_SUBITEM=16;
         public static int INDENT_TO_WRAP_ELEMENT=32;
@@ -1795,9 +1795,9 @@ namespace CodeFormatter.Handlers
             }
         }
 
-        private static int Nesting_Opposite=1; 
-        private static int Nesting_Unrelated=2; 
-        private static int Nesting_Deeper=3; 
+        private static readonly int Nesting_Opposite=1; 
+        private static readonly int Nesting_Unrelated=2; 
+        private static readonly int Nesting_Deeper=3; 
         /**
          * 
          * @param currentChar
@@ -4545,7 +4545,7 @@ namespace CodeFormatter.Handlers
 
     public class EditItem
     {
-        private int mLocation;
+        private readonly int mLocation;
         public EditItem(int location)
         {
             mLocation=location;
@@ -4557,8 +4557,8 @@ namespace CodeFormatter.Handlers
     
     public class InsertItem : EditItem
     {
-        private String mData;
-        private int mOriginalInsertLocation;
+        private readonly String mData;
+        private readonly int mOriginalInsertLocation;
         public InsertItem(int location, String insertString, int originalPos) : base(location)
         {
             mData=insertString;
@@ -4578,8 +4578,8 @@ namespace CodeFormatter.Handlers
 
     public class DeleteItem : EditItem
     {
-        private int mLength;
-        private int mOriginalDeleteLocation;
+        private readonly int mLength;
+        private readonly int mOriginalDeleteLocation;
         public DeleteItem(int location, int length, int originalLocation) : base(location)
         {
             mLength=length;
@@ -4604,7 +4604,7 @@ namespace CodeFormatter.Handlers
         private int mEndBracePos;
         private bool mBracesCurrentlyExist;
         private bool mHasComment;
-        private int mStatementType;
+        private readonly int mStatementType;
         private int mOriginalDocStartPosition;
         private int mOriginalDocEndPosition;
         private int mOriginalDocStatementStartPos;
@@ -4720,10 +4720,10 @@ namespace CodeFormatter.Handlers
 
     public class EqualContext
     {
-        List<EqualContext> mChildren;
+        readonly List<EqualContext> mChildren;
         int mMaxPosition;
-        EqualContext mParent;
-        String mPathCode;
+        readonly EqualContext mParent;
+        readonly String mPathCode;
         bool mNeedChanges;
         int mItemsSeen=0;
         public EqualContext(EqualContext parent, int index)
@@ -4800,9 +4800,9 @@ namespace CodeFormatter.Handlers
     public class WrapInfo
     {
         public List<WrapItem> mWrapItems = new List<WrapItem>();
-        private int mStartPos;
-        private bool mNewLevel; //if true, this is an important grouping level
-        private int mBaseLevel;
+        private readonly int mStartPos;
+        private readonly bool mNewLevel; //if true, this is an important grouping level
+        private readonly int mBaseLevel;
         public WrapInfo(bool newLevel, int start, int baseLevel)
         {
             mStartPos = start;
@@ -4848,10 +4848,10 @@ namespace CodeFormatter.Handlers
     public class WrapItem
     {
         public int mDepth;
-        private String mText;
+        private readonly String mText;
         public int mStartPos;
-        private int mBreakType;
-        private bool mBreakBefore;
+        private readonly int mBreakType;
+        private readonly bool mBreakBefore;
         private int mFirstParmPos;
         private int mIndent;
         private bool mBreakUsed;

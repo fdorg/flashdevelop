@@ -7,7 +7,7 @@ namespace StartPage.ProjectInfo
 {
     public class RecentProjectList : List<RecentProject>
     {
-        private XmlSerializer xmlSerializer;
+        private readonly XmlSerializer xmlSerializer;
 
         public RecentProjectList()
         {

@@ -7,12 +7,12 @@ namespace FlashDebugger
 {
     class ThreadsUI : DockPanelControl
     {
-        private ListViewEx lv;
-        private ColumnHeader imageColumnHeader;
-        private ColumnHeader frameColumnHeader;
+        private readonly ListViewEx lv;
+        private readonly ColumnHeader imageColumnHeader;
+        private readonly ColumnHeader frameColumnHeader;
         private PluginMain pluginMain;
-        private int runningImageIndex;
-        private int suspendedImageIndex;
+        private readonly int runningImageIndex;
+        private readonly int suspendedImageIndex;
 
         public ThreadsUI(PluginMain pluginMain, ImageList imageList)
         {

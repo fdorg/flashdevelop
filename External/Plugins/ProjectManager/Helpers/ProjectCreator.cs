@@ -23,7 +23,7 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class ProjectCreator
     {
-        private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        private static readonly Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         string projectName;
         string projectId;
         string packageName;
@@ -33,8 +33,8 @@ namespace ProjectManager.Helpers
         string defaultFlexSDK;
         Argument[] arguments;
 
-        private static Hashtable projectTypes = new Hashtable();
-        private static List<string> projectExt = new List<string>();
+        private static readonly Hashtable projectTypes = new Hashtable();
+        private static readonly List<string> projectExt = new List<string>();
         private static bool projectTypesSet = false;
 
         private static bool isRunning;

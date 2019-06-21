@@ -70,16 +70,16 @@ namespace PluginCore.Controls
             set => showDetails = value;
         }
 
-        private EventType eventMask = 
+        private readonly EventType eventMask = 
             EventType.Keys | 
             EventType.FileSave | 
             EventType.Command | 
             EventType.FileSwitch;
 
-        private CodeTip codeTip;
-        private RichToolTip simpleTip;
-        private MethodCallTip callTip;
-        private RichToolTip errorTip;
+        private readonly CodeTip codeTip;
+        private readonly RichToolTip simpleTip;
+        private readonly MethodCallTip callTip;
+        private readonly RichToolTip errorTip;
 
         private bool ignoreKeys;
         private bool showDetails;

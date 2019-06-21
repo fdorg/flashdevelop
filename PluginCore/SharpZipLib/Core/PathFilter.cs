@@ -76,7 +76,8 @@ namespace ICSharpCode.SharpZipLib.Core
         #endregion
 
         #region Instance Fields
-        NameFilter nameFilter_;
+
+        readonly NameFilter nameFilter_;
         #endregion
     }
 

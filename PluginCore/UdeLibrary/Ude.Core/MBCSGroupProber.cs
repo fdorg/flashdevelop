@@ -48,8 +48,8 @@ namespace Ude.Core
         private const int PROBERS_NUM = 7;
         private static readonly string[] ProberName = 
             { "UTF8", "SJIS", "EUCJP", "GB18030", "EUCKR", "Big5", "EUCTW" };
-        private CharsetProber[] probers = new CharsetProber[PROBERS_NUM];
-        private bool[] isActive = new bool[PROBERS_NUM];
+        private readonly CharsetProber[] probers = new CharsetProber[PROBERS_NUM];
+        private readonly bool[] isActive = new bool[PROBERS_NUM];
         private int bestGuess;
         private int activeNum;
             

@@ -2,7 +2,7 @@ namespace ProjectManager.Projects.Haxe
 {
     public class HaxeProjectWriter : ProjectWriter
     {
-        HaxeProject project;
+        readonly HaxeProject project;
 
         public HaxeProjectWriter(HaxeProject project, string filename)
             : base(project, filename)

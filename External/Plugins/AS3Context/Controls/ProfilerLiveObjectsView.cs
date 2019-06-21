@@ -13,11 +13,11 @@ namespace AS3Context.Controls
     {
         public event ViewObjectEvent OnViewObject;
 
-        ListView listView;
+        readonly ListView listView;
         private Dictionary<string, TypeItem> items;
         private Dictionary<string, bool> finished = new Dictionary<string, bool>();
-        private TypeItemComparer comparer;
-        private ToolStripMenuItem viewObjectsItem;
+        private readonly TypeItemComparer comparer;
+        private readonly ToolStripMenuItem viewObjectsItem;
 
         public ListView ListView => listView;
 

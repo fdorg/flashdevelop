@@ -122,7 +122,7 @@ namespace AirProperties.Controls
 
             // ********************************************* Data *********************************************
 
-            private CheckedComboBox ccbParent;
+            private readonly CheckedComboBox ccbParent;
 
             // Keeps track of whether checked item(s) changed, hence the value of the CheckedComboBox as a whole changed.
             // This is simply done via maintaining the old string-representation of the value(s) and the new one and comparing them!
@@ -298,9 +298,9 @@ namespace AirProperties.Controls
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private readonly System.ComponentModel.IContainer components = null;
         // A form-derived object representing the drop-down list of the checked combo box.
-        private Dropdown dropdown;
+        private readonly Dropdown dropdown;
 
         // The valueSeparator character(s) between the ticked elements as they appear in the 
         // text portion of the CheckedComboBox.

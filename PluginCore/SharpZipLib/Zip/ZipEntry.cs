@@ -1134,8 +1134,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         
         ushort versionMadeBy;                   // Contains host system and version information
                                                 // only relevant for central header entries
-        
-        string name;
+
+                                                readonly string name;
         ulong  size;
         ulong  compressedSize;
         ushort versionToExtract;                // Version required to extract (library handles <= 2.0)

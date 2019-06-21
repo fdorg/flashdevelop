@@ -44,10 +44,10 @@ namespace System.Windows.Forms
 
     public class DockPanelStripRenderer : ToolStripRenderer
     {
-        private bool useTheme;
+        private readonly bool useTheme;
         private ToolStrip toolStrip;
-        private bool drawBottomBorder;
-        private ProfessionalColorTable colorTable;
+        private readonly bool drawBottomBorder;
+        private readonly ProfessionalColorTable colorTable;
         private static ToolStripRenderer renderer;
 
         public DockPanelStripRenderer() : this(true) {}

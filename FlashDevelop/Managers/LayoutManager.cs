@@ -12,9 +12,9 @@ namespace FlashDevelop.Managers
     class LayoutManager
     {
         public static List<DockContent> PluginPanels;
-        private static DeserializeDockContent contentDeserializer;
-        private static HashSet<string> savedPersistStrings;
-        private static List<DockContent> dynamicContentTemplates;
+        private static readonly DeserializeDockContent contentDeserializer;
+        private static readonly HashSet<string> savedPersistStrings;
+        private static readonly List<DockContent> dynamicContentTemplates;
 
         static LayoutManager()
         {

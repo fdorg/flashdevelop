@@ -17,7 +17,7 @@ namespace SourceControl.Sources.Mercurial
         StatusNode temp;
         string dirty;
         string updatingPath;
-        Ignores ignores;
+        readonly Ignores ignores;
 
         public Status(string path)
         {

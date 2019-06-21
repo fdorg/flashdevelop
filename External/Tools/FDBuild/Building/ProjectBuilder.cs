@@ -16,7 +16,7 @@ namespace ProjectManager.Building
 {
     public abstract class ProjectBuilder
     {
-        Project project;
+        readonly Project project;
         string compilerPath;
 
         public string CompilerPath

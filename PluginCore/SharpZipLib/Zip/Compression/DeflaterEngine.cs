@@ -779,7 +779,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// Note that the array should really be unsigned short, so you need
         /// to and the values with 0xffff.
         /// </summary>
-        short[] head;
+        readonly short[] head;
 
         /// <summary>
         /// <code>prev[index &amp; WMASK]</code> points to the previous index that has the
@@ -788,7 +788,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// Note that the array should really be unsigned short, so you need
         /// to and the values with 0xffff.
         /// </summary>
-        short[] prev;
+        readonly short[] prev;
         
         int    matchStart;
         // Length of best match
@@ -814,7 +814,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// This array contains the part of the uncompressed stream that 
         /// is of relevance.  The current character is indexed by strstart.
         /// </summary>
-        byte[] window;
+        readonly byte[] window;
         
         DeflateStrategy strategy;
         int max_chain, max_lazy, niceLength, goodLength;
@@ -843,14 +843,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// The end offset of the input data.
         /// </summary>
         int inputEnd;
-        
-        DeflaterPending pending;
-        DeflaterHuffman huffman;
+
+        readonly DeflaterPending pending;
+        readonly DeflaterHuffman huffman;
         
         /// <summary>
         /// The adler checksum
         /// </summary>
-        Adler32 adler;
+        readonly Adler32 adler;
         #endregion
     }
 }

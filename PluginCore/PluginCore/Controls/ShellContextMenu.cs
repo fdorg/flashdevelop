@@ -565,8 +565,8 @@ namespace PluginCore.Controls
         private const int S_OK = 0;
         private const int S_FALSE = 1;
 
-        private static int cbMenuItemInfo = Marshal.SizeOf(typeof(MENUITEMINFO));
-        private static int cbInvokeCommand = Marshal.SizeOf(typeof(CMINVOKECOMMANDINFOEX));
+        private static readonly int cbMenuItemInfo = Marshal.SizeOf(typeof(MENUITEMINFO));
+        private static readonly int cbInvokeCommand = Marshal.SizeOf(typeof(CMINVOKECOMMANDINFOEX));
 
         #endregion
 
@@ -612,10 +612,10 @@ namespace PluginCore.Controls
         [StructLayout(LayoutKind.Sequential)]
         private struct CWPSTRUCT
         {
-            public IntPtr lparam;
-            public IntPtr wparam;
-            public int message;
-            public IntPtr hwnd;
+            public readonly IntPtr lparam;
+            public readonly IntPtr wparam;
+            public readonly int message;
+            public readonly IntPtr hwnd;
         }
 
         // Contains extended information about a shortcut menu command
@@ -624,24 +624,24 @@ namespace PluginCore.Controls
         {
             public int cbSize;
             public CMIC fMask;
-            public IntPtr hwnd;
+            public readonly IntPtr hwnd;
             public IntPtr lpVerb;
             [MarshalAs(UnmanagedType.LPStr)]
-            public string lpParameters;
+            public readonly string lpParameters;
             [MarshalAs(UnmanagedType.LPStr)]
             public string lpDirectory;
             public SW nShow;
-            public int dwHotKey;
-            public IntPtr hIcon;
+            public readonly int dwHotKey;
+            public readonly IntPtr hIcon;
             [MarshalAs(UnmanagedType.LPStr)]
-            public string lpTitle;
+            public readonly string lpTitle;
             public IntPtr lpVerbW;
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string lpParametersW;
+            public readonly string lpParametersW;
             [MarshalAs(UnmanagedType.LPWStr)]
             public string lpDirectoryW;
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string lpTitleW;
+            public readonly string lpTitleW;
             public POINT ptInvoke;
         }
 
@@ -665,19 +665,19 @@ namespace PluginCore.Controls
                 hbmpItem = IntPtr.Zero;
             }
 
-            public int cbSize;
-            public MIIM fMask;
-            public MFT fType;
-            public MFS fState;
-            public uint wID;
-            public IntPtr hSubMenu;
-            public IntPtr hbmpChecked;
-            public IntPtr hbmpUnchecked;
-            public IntPtr dwItemData;
+            public readonly int cbSize;
+            public readonly MIIM fMask;
+            public readonly MFT fType;
+            public readonly MFS fState;
+            public readonly uint wID;
+            public readonly IntPtr hSubMenu;
+            public readonly IntPtr hbmpChecked;
+            public readonly IntPtr hbmpUnchecked;
+            public readonly IntPtr dwItemData;
             [MarshalAs(UnmanagedType.LPTStr)]
-            public string dwTypeData;
-            public int cch;
-            public IntPtr hbmpItem;
+            public readonly string dwTypeData;
+            public readonly int cch;
+            public readonly IntPtr hbmpItem;
         }
 
         // A generalized global memory handle used for data transfer operations by the 
@@ -685,15 +685,15 @@ namespace PluginCore.Controls
         [StructLayout(LayoutKind.Sequential)]
         private struct STGMEDIUM
         {
-            public TYMED tymed;
-            public IntPtr hBitmap;
-            public IntPtr hMetaFilePict;
-            public IntPtr hEnhMetaFile;
-            public IntPtr hGlobal;
-            public IntPtr lpszFileName;
-            public IntPtr pstm;
-            public IntPtr pstg;
-            public IntPtr pUnkForRelease;
+            public readonly TYMED tymed;
+            public readonly IntPtr hBitmap;
+            public readonly IntPtr hMetaFilePict;
+            public readonly IntPtr hEnhMetaFile;
+            public readonly IntPtr hGlobal;
+            public readonly IntPtr lpszFileName;
+            public readonly IntPtr pstm;
+            public readonly IntPtr pstg;
+            public readonly IntPtr pUnkForRelease;
         }
 
         // Defines the x- and y-coordinates of a point
@@ -706,8 +706,8 @@ namespace PluginCore.Controls
                 this.y = y;
             }
 
-            public int x;
-            public int y;
+            public readonly int x;
+            public readonly int y;
         }
 
         #endregion

@@ -18,7 +18,7 @@ namespace FlashDebugger
     {
         private DataGridView dgv;
         private PluginMain pluginMain;
-        private BreakPointManager breakPointManager;
+        private readonly BreakPointManager breakPointManager;
         private DataGridViewCheckBoxColumn ColumnBreakPointEnable;
         private DataGridViewTextBoxColumn ColumnBreakPointFilePath;
         private DataGridViewTextBoxColumn ColumnBreakPointFileName;

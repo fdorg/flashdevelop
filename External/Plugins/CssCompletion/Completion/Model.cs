@@ -113,9 +113,9 @@ namespace CssCompletion
         public static Bitmap PseudoIcon;
         public static Bitmap PrefixesIcon;
 
-        private string label;
-        private string description;
-        private ItemKind kind;
+        private readonly string label;
+        private readonly string description;
+        private readonly ItemKind kind;
 
         public CompletionItem(string label, ItemKind kind)
         {

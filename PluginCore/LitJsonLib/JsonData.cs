@@ -890,7 +890,7 @@ namespace LitJson
 
     internal class OrderedDictionaryEnumerator : IDictionaryEnumerator
     {
-        IEnumerator<KeyValuePair<string, JsonData>> list_enumerator;
+        readonly IEnumerator<KeyValuePair<string, JsonData>> list_enumerator;
 
 
         public object Current => Entry;

@@ -18,7 +18,7 @@ namespace SourceControl.Dialogs
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private Container components = null;
+        private readonly Container components = null;
         private Button btnNever;
         private Label titleLabel;
 

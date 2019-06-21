@@ -8,7 +8,7 @@ namespace Ookii.Dialogs.Interop
 {
     class WindowHandleWrapper : IWin32Window
     {
-        private IntPtr _handle;
+        private readonly IntPtr _handle;
 
         public WindowHandleWrapper(IntPtr handle)
         {

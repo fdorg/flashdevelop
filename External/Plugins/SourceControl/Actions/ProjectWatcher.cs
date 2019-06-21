@@ -25,7 +25,7 @@ namespace SourceControl.Actions
         static FSWatchers fsWatchers;
         static OverlayManager ovManager;
         static Project currentProject;
-        static HashSet<string> addBuffer = new HashSet<string>();
+        static readonly HashSet<string> addBuffer = new HashSet<string>();
 
         public static bool Initialized => initialized;
         public static Image Skin { get; set; }

@@ -13,7 +13,7 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class FDProcessRunner
     {
-        IMainForm mainForm;
+        readonly IMainForm mainForm;
 
         // some fudging to detect if a particular process was started by us and if so, what
         // name to associate with that process.

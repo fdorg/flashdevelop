@@ -8,7 +8,7 @@ namespace ProjectManager.Projects
 {
     public class ProjectReader : XmlTextReader
     {
-        Project project;
+        readonly Project project;
         protected int version;
 
         public ProjectReader(string filename, Project project) : base(new FileStream(filename,FileMode.Open,FileAccess.Read))

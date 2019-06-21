@@ -49,10 +49,10 @@ namespace ProjectManager.Building
 
     class LineFilter
     {
-        static Regex reSplitError = new Regex(@"\.[a-z]+:[0-9]+$");
-        TextReader reader;
-        TextWriter writer;
-        bool mergeErrors;
+        static readonly Regex reSplitError = new Regex(@"\.[a-z]+:[0-9]+$");
+        readonly TextReader reader;
+        readonly TextWriter writer;
+        readonly bool mergeErrors;
         string unsplit = null;
         public int Lines;
 

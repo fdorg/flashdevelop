@@ -4,7 +4,7 @@ namespace PluginCore.Utilities
 {
     public class LogicalComparer : IComparer // (c) Vasian Cepa 2005
     {
-        private bool zeroesFirst = false;
+        private readonly bool zeroesFirst = false;
 
         public LogicalComparer() { }
         public LogicalComparer(bool zeroesFirst)

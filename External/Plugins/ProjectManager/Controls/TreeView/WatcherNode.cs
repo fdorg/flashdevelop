@@ -13,9 +13,9 @@ namespace ProjectManager.Controls.TreeView
     /// </summary>
     public class WatcherNode : DirectoryNode
     {
-        Timer updateTimer;
+        readonly Timer updateTimer;
         WatcherEx watcher;
-        List<string> changedPaths;
+        readonly List<string> changedPaths;
         string[] excludedFiles;
         string[] excludedDirs;
         bool updateNeeded;

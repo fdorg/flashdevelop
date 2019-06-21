@@ -7,7 +7,7 @@ namespace LintingHelper
 {
     class LintingCache
     {
-        Dictionary<string, List<LintingResult>> results;
+        readonly Dictionary<string, List<LintingResult>> results;
 
         public LintingCache()
         {

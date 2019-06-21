@@ -43,8 +43,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 // Internal properties
                 private IntPtr m_hHook = IntPtr.Zero;
-                private NativeMethods.HookProc m_filterFunc = null;
-                private Win32.HookType m_hookType;
+                private readonly NativeMethods.HookProc m_filterFunc = null;
+                private readonly Win32.HookType m_hookType;
 
                 // Event delegate
                 public delegate void HookEventHandler(object sender, HookEventArgs e);
@@ -116,8 +116,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            private LocalWindowsHook m_localWindowsHook;
-            private LocalWindowsHook.HookEventHandler m_hookEventHandler;
+            private readonly LocalWindowsHook m_localWindowsHook;
+            private readonly LocalWindowsHook.HookEventHandler m_hookEventHandler;
 
             public FocusManagerImpl(DockPanel dockPanel)
             {
@@ -129,7 +129,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_localWindowsHook.Install();
             }
 
-            private DockPanel m_dockPanel;
+            private readonly DockPanel m_dockPanel;
             public DockPanel DockPanel => m_dockPanel;
 
             private bool m_disposed = false;
@@ -177,7 +177,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            private List<IDockContent> m_listContent = new List<IDockContent>();
+            private readonly List<IDockContent> m_listContent = new List<IDockContent>();
             private List<IDockContent> ListContent => m_listContent;
 
             public void AddToList(IDockContent content)

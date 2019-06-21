@@ -400,8 +400,8 @@ namespace PluginCore.Controls
 
         class Item : ListViewItem
         {
-            bool locked;
-            T value;
+            readonly bool locked;
+            readonly T value;
 
             public bool Locked => locked;
 

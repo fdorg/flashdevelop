@@ -9,7 +9,7 @@ namespace FileExplorer
     public class ListViewSorter : IComparer
     {
         private int columnToSort;
-        private GenericComparer comparer;
+        private readonly GenericComparer comparer;
         private SortOrder orderOfSort;
 
         public ListViewSorter()

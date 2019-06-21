@@ -18,7 +18,7 @@ namespace ProjectManager.Controls
     public class NewProjectDialog : SmartForm, IThemeHandler
     {
         static string lastTemplate;
-        string defaultProjectImage;
+        readonly string defaultProjectImage;
 
         #region Windows Form Designer
 

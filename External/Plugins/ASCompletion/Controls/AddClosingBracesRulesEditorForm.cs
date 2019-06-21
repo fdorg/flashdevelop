@@ -831,7 +831,7 @@ namespace ASCompletion.Controls
             public char Close;
             public bool AddSpace;
             public bool IgnoreWhitespace;
-            public List<Brace.Rule> Rules;
+            public readonly List<Brace.Rule> Rules;
 
             public BraceInEdit()
             {

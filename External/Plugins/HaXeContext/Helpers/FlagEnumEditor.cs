@@ -8,7 +8,7 @@ namespace HaXeContext.Helpers
 {
     class FlagEnumEditor : UITypeEditor
     {
-        FlagCheckedListBox<CompletionFeatures> list;
+        readonly FlagCheckedListBox<CompletionFeatures> list;
 
         public FlagEnumEditor()
         {

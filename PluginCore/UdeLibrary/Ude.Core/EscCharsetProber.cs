@@ -41,7 +41,7 @@ namespace Ude.Core
     {
         private const int CHARSETS_NUM = 4;
         private string detectedCharset;
-        private CodingStateMachine[] codingSM; 
+        private readonly CodingStateMachine[] codingSM; 
         int activeSM;
 
         public EscCharsetProber()

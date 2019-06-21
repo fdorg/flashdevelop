@@ -30,7 +30,7 @@ namespace ProjectManager.Controls
     public class Icons
     {
         // store all extension icons we've pulled from the file system
-        static Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
+        static readonly Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
 
         private static IMainForm mainForm;
         private static FDImageList imageList;

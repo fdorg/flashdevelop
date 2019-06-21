@@ -10,19 +10,19 @@ namespace CodeFormatter.Preferences
     public class AttrGroup
     {
         private int mSortMode;
-        private List<string> mAttrs;
+        private readonly List<string> mAttrs;
         private string mName;
         private int mWrapMode;
         private List<string> mRegexAttrs;
         private int mData; //depends on wrap mode.  
         private bool mIncludeStates;
         public static int Wrap_Data_Use_Default=-1;
-        private static string Tag_name = "name=";
-        private static string Tag_sort = "sort=";
-        private static string Tag_includeStates = "includeStates=";
-        private static string Tag_wrap = "wrap=";
-        private static string Tag_attrs = "attrs=";
-        private static string Tag_data = "data=";
+        private static readonly string Tag_name = "name=";
+        private static readonly string Tag_sort = "sort=";
+        private static readonly string Tag_includeStates = "includeStates=";
+        private static readonly string Tag_wrap = "wrap=";
+        private static readonly string Tag_attrs = "attrs=";
+        private static readonly string Tag_data = "data=";
         public static string TagSplitter = "|";
         public static string GroupingSplitter = ",";
         public static string SplitterEscape = "char(Splitter)";

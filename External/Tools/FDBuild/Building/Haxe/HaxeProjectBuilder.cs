@@ -7,9 +7,9 @@ namespace ProjectManager.Building.Haxe
 {
     public class HaxeProjectBuilder : ProjectBuilder
     {
-        HaxeProject project;
+        readonly HaxeProject project;
 
-        string haxePath;
+        readonly string haxePath;
 
         public HaxeProjectBuilder(HaxeProject project, string compilerPath)
             : base(project, compilerPath)

@@ -7,10 +7,10 @@ namespace WeifenLuo.WinFormsUI.Docking
     [ToolboxItem(false)]
     public partial class DockWindow : Panel, INestedPanesContainer, ISplitterDragSource
     {
-        private DockPanel m_dockPanel;
-        private DockState m_dockState;
-        private SplitterControl m_splitter;
-        private NestedPaneCollection m_nestedPanes;
+        private readonly DockPanel m_dockPanel;
+        private readonly DockState m_dockState;
+        private readonly SplitterControl m_splitter;
+        private readonly NestedPaneCollection m_nestedPanes;
 
         internal DockWindow(DockPanel dockPanel, DockState dockState)
         {

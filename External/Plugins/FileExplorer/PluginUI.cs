@@ -42,9 +42,9 @@ namespace FileExplorer
         private string autoSelectItem;
         private long lastUpdateTimeStamp;
         private int prevColumnClick;
-        private ListViewSorter listViewSorter;
+        private readonly ListViewSorter listViewSorter;
         private FileSystemWatcher watcher;
-        private PluginMain pluginMain;
+        private readonly PluginMain pluginMain;
         
         public PluginUI(PluginMain pluginMain)
         {

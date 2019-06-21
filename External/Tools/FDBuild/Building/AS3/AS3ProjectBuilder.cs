@@ -13,15 +13,15 @@ namespace ProjectManager.Building.AS3
 {
     public class AS3ProjectBuilder : ProjectBuilder
     {
-        AS3Project project;
-        FlexCompilerShell fcsh;
+        readonly AS3Project project;
+        readonly FlexCompilerShell fcsh;
         string VMARGS = "-Xmx384m -Xmx1024m -Dsun.io.useCanonCaches=false -Duser.language=en";
         string sdkPath;
         string mxmlcPath;
         string asc2Path;
         string fcshPath;
         string ascshPath;
-        bool asc2Mode;
+        readonly bool asc2Mode;
         Dictionary<string, string> jvmConfig;
 
         public AS3ProjectBuilder(AS3Project project, string compilerPath, string ipcName)

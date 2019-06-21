@@ -17,7 +17,7 @@ namespace PHPContext
         private static readonly Regex re_PHPext =
             new Regex(".php[3-9]?", RegexOptions.Compiled);
 
-        private ContextSettings langSettings;
+        private readonly ContextSettings langSettings;
         private List<InlineRange> phpRanges; // inlined PHP ranges in HTML
 
         public Context(ContextSettings initSettings)

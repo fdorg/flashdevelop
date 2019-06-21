@@ -408,8 +408,8 @@ namespace PluginCore.Helpers
             /// </summary>
             public const string EllipsisChars = "...";
 
-            private static Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
-            private static Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
+            private static readonly Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
+            private static readonly Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
 
             /// <summary>
             /// Truncates a text string to fit within a given width by replacing trimmed text with ellipses. 

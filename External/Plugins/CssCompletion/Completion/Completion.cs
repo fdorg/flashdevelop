@@ -13,9 +13,9 @@ namespace CssCompletion
 {
     public class Completion
     {
-        Regex reNavPrefix = new Regex("\\-[a-z]+\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        Settings settings;
-        Language lang;
+        readonly Regex reNavPrefix = new Regex("\\-[a-z]+\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        readonly Settings settings;
+        readonly Language lang;
         string wordChars;
         List<ICompletionListItem> htmlTags;
         List<ICompletionListItem> properties;

@@ -51,11 +51,11 @@ namespace PluginCore.Utilities
         static readonly SingleInstanceApp _theInstance = new SingleInstanceApp();
 
         //this is a uniqe id used to identify the application
-        string _id;
+        readonly string _id;
         //The is a named mutex used to determine if another application instance already exists
-        Mutex _instanceCounter;
+        readonly Mutex _instanceCounter;
         //Is this the first instance?
-        bool _firstInstance;
+        readonly bool _firstInstance;
         //Utility window for communication between apps
         SIANativeWindow _notifcationWindow;
 

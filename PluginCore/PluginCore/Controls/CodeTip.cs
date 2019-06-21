@@ -10,8 +10,8 @@ namespace PluginCore.Controls
 {
     public class CodeTip
     {
-        ScintillaControl editor;
-        Panel codeTip;
+        readonly ScintillaControl editor;
+        readonly Panel codeTip;
         int columnWidth;
         int rowHeight;
 

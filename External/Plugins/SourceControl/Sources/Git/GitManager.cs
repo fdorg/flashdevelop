@@ -8,10 +8,10 @@ namespace SourceControl.Sources.Git
     {
         public event VCManagerStatusChange OnChange;
 
-        Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        IVCMenuItems menuItems = new MenuItems();
-        IVCFileActions fileActions = new FileActions();
-        Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
+        readonly Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
+        readonly IVCMenuItems menuItems = new MenuItems();
+        readonly IVCFileActions fileActions = new FileActions();
+        readonly Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
         bool ignoreDirty = false;
 
         public IVCMenuItems MenuItems => menuItems;

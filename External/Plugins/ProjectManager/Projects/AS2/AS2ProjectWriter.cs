@@ -4,8 +4,8 @@ namespace ProjectManager.Projects.AS2
 {
     public class AS2ProjectWriter : ProjectWriter
     {
-        AS2Project project;
-        string filename;
+        readonly AS2Project project;
+        readonly string filename;
 
         public AS2ProjectWriter(AS2Project project, string filename)
             : base(project, filename)

@@ -141,9 +141,9 @@ namespace FlashDevelop.Managers
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        private string word;
+        private readonly string word;
         private string snippet;
-        private string fileName;
+        private readonly string fileName;
         private Bitmap icon;
 
         public SnippetItem(string word, string fileName)

@@ -4157,7 +4157,7 @@ namespace ScintillaNet
         private class ShortcutOverride
         {
             public Keys keys;
-            public Action<ScintillaControl> action;
+            public readonly Action<ScintillaControl> action;
 
             public ShortcutOverride(Keys keys, Action<ScintillaControl> action)
             {

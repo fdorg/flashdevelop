@@ -41,17 +41,17 @@ namespace LitJson
         #region Fields
         private static IDictionary<int, IDictionary<int, int[]>> parse_table;
 
-        private Stack<int>    automaton_stack;
+        private readonly Stack<int>    automaton_stack;
         private int           current_input;
         private int           current_symbol;
         private bool          end_of_json;
         private bool          end_of_input;
-        private Lexer         lexer;
+        private readonly Lexer         lexer;
         private bool          parser_in_string;
         private bool          parser_return;
         private bool          read_started;
         private TextReader    reader;
-        private bool          reader_is_owned;
+        private readonly bool          reader_is_owned;
         private object        token_value;
         private JsonToken     token;
         #endregion

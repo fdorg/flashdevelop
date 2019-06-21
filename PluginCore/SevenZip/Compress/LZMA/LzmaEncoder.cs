@@ -17,7 +17,7 @@ namespace SevenZip.Compression.LZMA
 
         const uint kIfinityPrice = 0xFFFFFFF;
 
-        static byte[] g_FastPos = new byte[1 << 11];
+        static readonly byte[] g_FastPos = new byte[1 << 11];
 
         static Encoder()
         {
@@ -53,7 +53,7 @@ namespace SevenZip.Compression.LZMA
 
         Base.State _state = new Base.State();
         byte _previousByte;
-        uint[] _repDistances = new uint[Base.kNumRepDistances];
+        readonly uint[] _repDistances = new uint[Base.kNumRepDistances];
 
         void BaseInit()
         {
@@ -169,8 +169,8 @@ namespace SevenZip.Compression.LZMA
         {
             BitEncoder _choice = new BitEncoder();
             BitEncoder _choice2 = new BitEncoder();
-            BitTreeEncoder[] _lowCoder = new BitTreeEncoder[Base.kNumPosStatesEncodingMax];
-            BitTreeEncoder[] _midCoder = new BitTreeEncoder[Base.kNumPosStatesEncodingMax];
+            readonly BitTreeEncoder[] _lowCoder = new BitTreeEncoder[Base.kNumPosStatesEncodingMax];
+            readonly BitTreeEncoder[] _midCoder = new BitTreeEncoder[Base.kNumPosStatesEncodingMax];
             BitTreeEncoder _highCoder = new BitTreeEncoder(Base.kNumHighLenBits);
 
             public LenEncoder()
@@ -246,9 +246,9 @@ namespace SevenZip.Compression.LZMA
 
         class LenPriceTableEncoder : LenEncoder
         {
-            uint[] _prices = new uint[Base.kNumLenSymbols << Base.kNumPosStatesBitsEncodingMax];
+            readonly uint[] _prices = new uint[Base.kNumLenSymbols << Base.kNumPosStatesBitsEncodingMax];
             uint _tableSize;
-            uint[] _counters = new uint[Base.kNumPosStatesEncodingMax];
+            readonly uint[] _counters = new uint[Base.kNumPosStatesEncodingMax];
 
             public void SetTableSize(uint tableSize) { _tableSize = tableSize; }
 
@@ -301,28 +301,29 @@ namespace SevenZip.Compression.LZMA
             public void MakeAsShortRep() { BackPrev = 0; ; Prev1IsChar = false; }
             public bool IsShortRep() { return (BackPrev == 0); }
         };
-        Optimal[] _optimum = new Optimal[kNumOpts];
+
+        readonly Optimal[] _optimum = new Optimal[kNumOpts];
         IMatchFinder _matchFinder = null;
-        RangeCoder.Encoder _rangeEncoder = new RangeCoder.Encoder();
+        readonly RangeCoder.Encoder _rangeEncoder = new RangeCoder.Encoder();
 
-        BitEncoder[] _isMatch = new BitEncoder[Base.kNumStates << Base.kNumPosStatesBitsMax];
-        BitEncoder[] _isRep = new BitEncoder[Base.kNumStates];
-        BitEncoder[] _isRepG0 = new BitEncoder[Base.kNumStates];
-        BitEncoder[] _isRepG1 = new BitEncoder[Base.kNumStates];
-        BitEncoder[] _isRepG2 = new BitEncoder[Base.kNumStates];
-        BitEncoder[] _isRep0Long = new BitEncoder[Base.kNumStates << Base.kNumPosStatesBitsMax];
+        readonly BitEncoder[] _isMatch = new BitEncoder[Base.kNumStates << Base.kNumPosStatesBitsMax];
+        readonly BitEncoder[] _isRep = new BitEncoder[Base.kNumStates];
+        readonly BitEncoder[] _isRepG0 = new BitEncoder[Base.kNumStates];
+        readonly BitEncoder[] _isRepG1 = new BitEncoder[Base.kNumStates];
+        readonly BitEncoder[] _isRepG2 = new BitEncoder[Base.kNumStates];
+        readonly BitEncoder[] _isRep0Long = new BitEncoder[Base.kNumStates << Base.kNumPosStatesBitsMax];
 
-        BitTreeEncoder[] _posSlotEncoder = new BitTreeEncoder[Base.kNumLenToPosStates];
-        
-        BitEncoder[] _posEncoders = new BitEncoder[Base.kNumFullDistances - Base.kEndPosModelIndex];
+        readonly BitTreeEncoder[] _posSlotEncoder = new BitTreeEncoder[Base.kNumLenToPosStates];
+
+        readonly BitEncoder[] _posEncoders = new BitEncoder[Base.kNumFullDistances - Base.kEndPosModelIndex];
         BitTreeEncoder _posAlignEncoder = new BitTreeEncoder(Base.kNumAlignBits);
 
-        LenPriceTableEncoder _lenEncoder = new LenPriceTableEncoder();
-        LenPriceTableEncoder _repMatchLenEncoder = new LenPriceTableEncoder();
+        readonly LenPriceTableEncoder _lenEncoder = new LenPriceTableEncoder();
+        readonly LenPriceTableEncoder _repMatchLenEncoder = new LenPriceTableEncoder();
 
-        LiteralEncoder _literalEncoder = new LiteralEncoder();
+        readonly LiteralEncoder _literalEncoder = new LiteralEncoder();
 
-        uint[] _matchDistances = new uint[Base.kMatchMaxLen * 2 + 2];
+        readonly uint[] _matchDistances = new uint[Base.kMatchMaxLen * 2 + 2];
         
         uint _numFastBytes = kNumFastBytesDefault;
         uint _longestMatchLength;
@@ -335,9 +336,9 @@ namespace SevenZip.Compression.LZMA
 
         bool _longestMatchWasFound;
 
-        uint[] _posSlotPrices = new uint[1 << (Base.kNumPosSlotBits + Base.kNumLenToPosStatesBits)];
-        uint[] _distancesPrices = new uint[Base.kNumFullDistances << Base.kNumLenToPosStatesBits];
-        uint[] _alignPrices = new uint[Base.kAlignTableSize];
+        readonly uint[] _posSlotPrices = new uint[1 << (Base.kNumPosSlotBits + Base.kNumLenToPosStatesBits)];
+        readonly uint[] _distancesPrices = new uint[Base.kNumFullDistances << Base.kNumLenToPosStatesBits];
+        readonly uint[] _alignPrices = new uint[Base.kAlignTableSize];
         uint _alignPriceCount;
 
         uint _distTableSize = (kDefaultDictionaryLogSize * 2);
@@ -533,8 +534,8 @@ namespace SevenZip.Compression.LZMA
             return _optimumCurrentIndex;
         }
 
-        uint[] reps = new uint[Base.kNumRepDistances];
-        uint[] repLens = new uint[Base.kNumRepDistances];
+        readonly uint[] reps = new uint[Base.kNumRepDistances];
+        readonly uint[] repLens = new uint[Base.kNumRepDistances];
 
 
         uint GetOptimum(uint position, out uint backRes)
@@ -1296,7 +1297,7 @@ namespace SevenZip.Compression.LZMA
         }
 
         const int kPropSize = 5;
-        byte[] properties = new byte[kPropSize];
+        readonly byte[] properties = new byte[kPropSize];
 
         public void WriteCoderProperties(Stream outStream)
         {
@@ -1305,8 +1306,8 @@ namespace SevenZip.Compression.LZMA
                 properties[1 + i] = (byte)((_dictionarySize >> (8 * i)) & 0xFF);
             outStream.Write(properties, 0, kPropSize);
         }
-        
-        uint[] tempPrices = new uint[Base.kNumFullDistances];
+
+        readonly uint[] tempPrices = new uint[Base.kNumFullDistances];
         uint _matchPriceCount;
 
         void FillDistancesPrices()
@@ -1349,7 +1350,7 @@ namespace SevenZip.Compression.LZMA
         }
 
 
-        static string[] kMatchFinderIDs = 
+        static readonly string[] kMatchFinderIDs = 
         {
             "BT2",
             "BT4",

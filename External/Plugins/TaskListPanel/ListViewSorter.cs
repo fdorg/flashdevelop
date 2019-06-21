@@ -8,7 +8,7 @@ namespace TaskListPanel
     {
         private int ColumnToSort;
         private SortOrder OrderOfSort;
-        private CaseInsensitiveComparer Comparer;
+        private readonly CaseInsensitiveComparer Comparer;
 
         public ListViewSorter()
         {

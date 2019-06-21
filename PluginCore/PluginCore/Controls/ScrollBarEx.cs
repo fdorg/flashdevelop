@@ -477,7 +477,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// The progress timer for moving the thumb.
         /// </summary>
-        private Timer progressTimer = new Timer();
+        private readonly Timer progressTimer = new Timer();
 
         /// <summary>
         /// Context menu strip.

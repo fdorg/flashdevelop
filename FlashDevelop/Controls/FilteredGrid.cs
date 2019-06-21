@@ -14,7 +14,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Contain a reference to the collection of properties to show in the parent PropertyGrid.
         /// </summary>
-        List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
+        readonly List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
 
         /// <summary>
         /// Contain a reference to the array of properties to display in the PropertyGrid.

@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <summary>
         /// Internal work buffer
         /// </summary>
-        byte[] buffer_;
+        readonly byte[] buffer_;
         
         int    start;
         int    end;

@@ -891,16 +891,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
         
         int bsBuff;
         int bsLive;
-        IChecksum mCrc = new StrangeCRC();
-        
-        bool[] inUse = new bool[256];
+        readonly IChecksum mCrc = new StrangeCRC();
+
+        readonly bool[] inUse = new bool[256];
         int    nInUse;
-        
-        byte[] seqToUnseq = new byte[256];
-        byte[] unseqToSeq = new byte[256];
-        
-        byte[] selector    = new byte[BZip2Constants.MaximumSelectors];
-        byte[] selectorMtf = new byte[BZip2Constants.MaximumSelectors];
+
+        readonly byte[] seqToUnseq = new byte[256];
+        readonly byte[] unseqToSeq = new byte[256];
+
+        readonly byte[] selector    = new byte[BZip2Constants.MaximumSelectors];
+        readonly byte[] selectorMtf = new byte[BZip2Constants.MaximumSelectors];
         
         int[] tt;
         byte[] ll8;
@@ -909,12 +909,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
         freq table collected to save a pass over the data
         during decompression.
         --*/
-        int[] unzftab = new int[256];
-        
-        int[][] limit     = new int[BZip2Constants.GroupCount][];
-        int[][] baseArray = new int[BZip2Constants.GroupCount][];
-        int[][] perm      = new int[BZip2Constants.GroupCount][];
-        int[] minLens     = new int[BZip2Constants.GroupCount];
+        readonly int[] unzftab = new int[256];
+
+        readonly int[][] limit     = new int[BZip2Constants.GroupCount][];
+        readonly int[][] baseArray = new int[BZip2Constants.GroupCount][];
+        readonly int[][] perm      = new int[BZip2Constants.GroupCount][];
+        readonly int[] minLens     = new int[BZip2Constants.GroupCount];
         
         Stream baseStream;
         bool   streamEnd;

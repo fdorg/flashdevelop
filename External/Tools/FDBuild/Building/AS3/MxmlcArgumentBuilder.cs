@@ -5,10 +5,10 @@ namespace ProjectManager.Building.AS3
 {
     class MxmlcArgumentBuilder : ArgumentBuilder
     {
-        AS3Project project;
-        bool flex45;
-        bool flex410;
-        bool asc2;
+        readonly AS3Project project;
+        readonly bool flex45;
+        readonly bool flex410;
+        readonly bool asc2;
 
         public MxmlcArgumentBuilder(AS3Project project, double sdkVersion, bool asc2Mode)
         {

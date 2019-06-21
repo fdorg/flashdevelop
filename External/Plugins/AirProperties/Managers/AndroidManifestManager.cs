@@ -11,11 +11,11 @@ namespace AirProperties
     {
         private const string AndroidNamespace = "http://schemas.android.com/apk/res/android";
 
-        private XmlDocument backDoc;
+        private readonly XmlDocument backDoc;
         private XmlNode usesSdkNode;
-        private UsesPermissionCollection _usesPermissions;
+        private readonly UsesPermissionCollection _usesPermissions;
 
-        private bool removeNamespace;
+        private readonly bool removeNamespace;
 
         public UsesPermissionCollection UsesPermissions => _usesPermissions;
 
@@ -183,9 +183,9 @@ namespace AirProperties
         public class UsesPermissionCollection : ICollection<UsesPermissionElement>
         {
 
-            private Dictionary<string, UsesPermissionElement> backData = new Dictionary<string, UsesPermissionElement>();
-            private Dictionary<string, XmlElement> mapping = new Dictionary<string, XmlElement>();
-            private AndroidManifestManager owner;
+            private readonly Dictionary<string, UsesPermissionElement> backData = new Dictionary<string, UsesPermissionElement>();
+            private readonly Dictionary<string, XmlElement> mapping = new Dictionary<string, XmlElement>();
+            private readonly AndroidManifestManager owner;
 
             internal UsesPermissionCollection(AndroidManifestManager owner)
             {

@@ -174,7 +174,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private static GraphicsPath GraphicsPath => VS2005AutoHideStrip.GraphicsPath;
 
-        private ToolTip m_toolTip;
+        private readonly ToolTip m_toolTip;
         private IContainer Components { get; }
 
         #region Customizable Properties
@@ -1293,7 +1293,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private ContextMenuStrip m_selectMenu;
+        private readonly ContextMenuStrip m_selectMenu;
         private ContextMenuStrip SelectMenu => m_selectMenu;
 
         private void WindowList_Click(object sender, EventArgs e)

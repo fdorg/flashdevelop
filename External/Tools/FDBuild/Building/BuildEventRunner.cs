@@ -8,8 +8,8 @@ namespace ProjectManager.Building
     /// </summary>
     public class BuildEventRunner
     {
-        Project project;
-        BuildEventVars vars;
+        readonly Project project;
+        readonly BuildEventVars vars;
 
         public BuildEventRunner(Project project, string compilerPath)
         {

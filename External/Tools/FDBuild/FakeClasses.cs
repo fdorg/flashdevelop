@@ -43,7 +43,7 @@ namespace ProjectManager.Helpers
     /// </summary>
     class ProjectCreator
     {
-        private static Hashtable projectTypes = new Hashtable();
+        private static readonly Hashtable projectTypes = new Hashtable();
         private static bool projectTypesSet = false;
 
         private static void SetInitialProjectHash()

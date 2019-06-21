@@ -19,7 +19,7 @@ namespace System.Drawing
 		private const string Metallic = "Metallic";
 		private const string NoTheme = "NoTheme";
 
-		private static Color[] _toolBorder;
+		private static readonly Color[] _toolBorder;
 		#endregion
 
 		#region "    Properties "

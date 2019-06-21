@@ -8,7 +8,7 @@ namespace CodeRefactor.Commands
     /// <typeparam name="RefactorResultType">The type of the results</typeparam>
     public class RefactorCompleteEventArgs<RefactorResultType> : EventArgs
     {
-        private RefactorResultType results;
+        private readonly RefactorResultType results;
         
         /// <summary>
         /// 

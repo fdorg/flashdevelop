@@ -151,7 +151,7 @@ namespace ProjectManager.Controls.TreeView
     public class SwfFileNode : FileNode
     {
         bool explored;
-        bool explorable;
+        readonly bool explorable;
         BackgroundWorker runner;
         ContentParser parser;
 
@@ -409,7 +409,7 @@ namespace ProjectManager.Controls.TreeView
 
         class ExportComparer : IComparer<DeclEntry>
         {
-            public Dictionary<int, List<string>> groups = new Dictionary<int, List<string>>();
+            public readonly Dictionary<int, List<string>> groups = new Dictionary<int, List<string>>();
             private List<DeclEntry> frames;
 
             public ExportComparer(List<DeclEntry> swfFrames)

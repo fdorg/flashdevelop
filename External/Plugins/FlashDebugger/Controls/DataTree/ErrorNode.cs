@@ -5,7 +5,7 @@ namespace FlashDebugger.Controls.DataTree
     public class ErrorNode : DataNode
     {
 
-        private string _value;
+        private readonly string _value;
         public override string Value
         {
             get => _value;

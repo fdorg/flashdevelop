@@ -259,8 +259,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         class ImagePair
         {
-            Image original;
-            WeakReference adjusted;
+            readonly Image original;
+            readonly WeakReference adjusted;
 
             /// <summary>
             /// Creates an instance of <see cref="ImagePair"/>.

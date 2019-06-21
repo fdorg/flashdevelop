@@ -7,7 +7,7 @@ namespace HaXeContext
 {
     public class CompilerCompletionHandler : IHaxeCompletionHandler
     {
-        private ThreadLocal<ProcessStartInfo> haxeProcessStartInfo;
+        private readonly ThreadLocal<ProcessStartInfo> haxeProcessStartInfo;
 
         public CompilerCompletionHandler(ProcessStartInfo haxeProcessStartInfo)
         {

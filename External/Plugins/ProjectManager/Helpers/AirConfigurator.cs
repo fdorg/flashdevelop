@@ -8,7 +8,7 @@ namespace ProjectManager.Helpers
     public class AirConfigurator
     {
 
-        private static Regex BatchParamRegEx = new Regex("(^\\s*set\\s+)(\\w+)(\\s*=\\s*)(.*)", RegexOptions.IgnoreCase | RegexOptions.Multiline |
+        private static readonly Regex BatchParamRegEx = new Regex("(^\\s*set\\s+)(\\w+)(\\s*=\\s*)(.*)", RegexOptions.IgnoreCase | RegexOptions.Multiline |
                                                              RegexOptions.Compiled);
 
         public const string DescriptorPath = "APP_XML";

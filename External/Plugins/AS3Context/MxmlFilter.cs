@@ -29,8 +29,8 @@ namespace AS3Context
         public static string BETA_MX = "library://ns.adobe.com/flex/halo";
         public static string NEW_MX = "library://ns.adobe.com/flex/mx";
 
-        private static List<MxmlCatalog> catalogs = new List<MxmlCatalog>();
-        private static Dictionary<string, MxmlCatalogs> archive = new Dictionary<string, MxmlCatalogs>();
+        private static readonly List<MxmlCatalog> catalogs = new List<MxmlCatalog>();
+        private static readonly Dictionary<string, MxmlCatalogs> archive = new Dictionary<string, MxmlCatalogs>();
 
         /// <summary>
         /// Reset catalogs for new classpath definition

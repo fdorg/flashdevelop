@@ -55,20 +55,20 @@ namespace Ude.Core
         protected SequenceModel model;
         
         // true if we need to reverse every pair in the model lookup        
-        bool reversed; 
+        readonly bool reversed; 
 
         // char order of last character
         byte lastOrder;
 
         int totalSeqs;
         int totalChar;
-        int[] seqCounters = new int[NUMBER_OF_SEQ_CAT];
+        readonly int[] seqCounters = new int[NUMBER_OF_SEQ_CAT];
         
         // characters that fall in our sampling range
         int freqChar;
   
         // Optional auxiliary prober for name decision. created and destroyed by the GroupProber
-        CharsetProber nameProber; 
+        readonly CharsetProber nameProber; 
                     
         public SingleByteCharSetProber(SequenceModel model) 
             : this(model, false, null)
