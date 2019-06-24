@@ -18,7 +18,7 @@ namespace Ookii.Dialogs
             {
                 if (value != null)
                 {
-                    browser.SelectedPath = string.Format("{0}", value);
+                    browser.SelectedPath = $"{value}";
                 }
 
                 if (browser.ShowDialog(null) == DialogResult.OK)

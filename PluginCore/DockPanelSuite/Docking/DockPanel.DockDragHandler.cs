@@ -147,7 +147,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     private static readonly Bitmap _bitmapPaneDiamondFill = ScaleHelper.Scale(Resources.DockIndicator_PaneDiamond_Fill);
                     private static readonly Bitmap _bitmapPaneDiamondHotSpot = ScaleHelper.Scale(Resources.DockIndicator_PaneDiamond_Hotspot);
                     private static readonly Bitmap _bitmapPaneDiamondHotSpotIndex = Resources.DockIndicator_PaneDiamond_HotspotIndex;
-                    private static readonly HotSpotIndex[] _hotSpots = new HotSpotIndex[]
+                    private static readonly HotSpotIndex[] _hotSpots = new[]
             {
                 new HotSpotIndex(1, 0, DockStyle.Top),
                 new HotSpotIndex(0, 1, DockStyle.Left),
@@ -411,7 +411,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                         PaneDiamond.Visible = true;
                         using (GraphicsPath graphicsPath = PaneIndicator.DisplayingGraphicsPath.Clone() as GraphicsPath)
                         {
-                            Point[] pts = new Point[]
+                            Point[] pts = new[]
                         {
                             new Point(PaneDiamond.Left, PaneDiamond.Top),
                             new Point(PaneDiamond.Right, PaneDiamond.Top),
@@ -630,7 +630,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                         {
                             RectangleF rectF = path.GetBounds();
                             Rectangle rect = new Rectangle((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
-                            using (Matrix matrix = new Matrix(rect, new Point[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) }))
+                            using (Matrix matrix = new Matrix(rect, new[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) }))
                             {
                                 path.Transform(matrix);
                             }

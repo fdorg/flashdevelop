@@ -95,7 +95,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException("g");
+            if (g == null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
@@ -120,7 +120,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException("g");
+            if (g == null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
                 return;
@@ -160,7 +160,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException("g");
+            if (g == null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
@@ -266,7 +266,7 @@ namespace PluginCore.Controls
                 // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
                 PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
                 float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
-                g.FillPolygon(brush, new PointF[]
+                g.FillPolygon(brush, new[]
                     {
                         new PointF(rect.Left - 0.5f, baseY),
                         new PointF(rect.Right - 0.5f, baseY),
@@ -291,7 +291,7 @@ namespace PluginCore.Controls
                 // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
                 PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
                 float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
-                g.FillPolygon(brush, new PointF[]
+                g.FillPolygon(brush, new[]
                     {
                         new PointF(baseX, rect.Top - 0.5f),
                         new PointF(baseX, rect.Bottom - 0.5f),
@@ -1130,7 +1130,7 @@ namespace PluginCore.Controls
             int bottomLimit = (this.maxCurPos > this.maximum) ? thumbBottomLimitBottom : this.thumbBottomLimitTop;
             int pixelRange = bottomLimit - this.thumbTopLimit; // == size - (overScroll ? thumbSize : 0) - arrows - paddings
             int realRange = this.maxCurPos - this.minimum;
-            float perc = (realRange != 0) ? ((float)(this.curPos - this.minimum) / (float)realRange) : 0f;
+            float perc = (realRange != 0) ? ((this.curPos - this.minimum) / (float)realRange) : 0f;
             return Math.Max(this.thumbTopLimit, Math.Min(bottomLimit, perc * pixelRange + this.arrowPaddedLength));
         }
 
@@ -1287,7 +1287,7 @@ namespace PluginCore.Controls
                         int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
                         int position = ((this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X) - this.arrowPaddedLength;
                         // percent of the new position
-                        float perc = (pixelRange != 0) ? ((float)position / (float)pixelRange) : 0f;
+                        float perc = (pixelRange != 0) ? (position / (float)pixelRange) : 0f;
                         // the new value is somewhere between max and min, starting
                         // at min position
                         this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
@@ -1593,7 +1593,7 @@ namespace PluginCore.Controls
         {
             int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
             int realRange = this.maximum - this.minimum;
-            float perc = (realRange != 0) ? ((float)(this.value - this.minimum) / (float)realRange) : 0f;
+            float perc = (realRange != 0) ? ((this.value - this.minimum) / (float)realRange) : 0f;
             return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + this.arrowPaddedLength)));
         }
 
@@ -1604,8 +1604,8 @@ namespace PluginCore.Controls
         private int GetThumbSize()
         {
             int trackSize = (this.orientation == ScrollBarOrientation.Vertical ? this.Height : this.Width) - 2 * this.arrowPaddedLength;
-            float newThumbSize = (float)this.viewPortSize * (float)trackSize / (float)(this.maximum - this.minimum + this.viewPortSize);
-            return Convert.ToInt32(Math.Min((float)trackSize, Math.Max(newThumbSize, ScaleHelper.Scale(8))));
+            float newThumbSize = this.viewPortSize * (float)trackSize / (this.maximum - this.minimum + this.viewPortSize);
+            return Convert.ToInt32(Math.Min(trackSize, Math.Max(newThumbSize, ScaleHelper.Scale(8))));
         }
 
         /// <summary>
@@ -1857,7 +1857,7 @@ namespace PluginCore.Controls
             int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
             int position = ((this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X) - this.arrowPaddedLength;
             // percent of the new position
-            float perc = (pixelRange != 0) ? ((float)position / (float)pixelRange) : 0f;
+            float perc = (pixelRange != 0) ? (position / (float)pixelRange) : 0f;
             int oldValue = this.value;
             this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
             this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, oldValue, this.value, this.scrollOrientation));
@@ -2195,7 +2195,7 @@ namespace PluginCore.Controls
         /// </summary>
         public int GetFirstVisibleLine()
         {
-            return (int)Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
+            return Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
         }
 
         /// <summary>
@@ -2563,11 +2563,11 @@ namespace PluginCore.Controls
             if (e.OldValue == -1 || listBox.Items.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Win32.PostMessage((IntPtr)listBox.Handle, Win32.WM_VSCROLL, 4 + 0x10000 * e.NewValue, 0);
+                Win32.PostMessage(listBox.Handle, Win32.WM_VSCROLL, 4 + 0x10000 * e.NewValue, 0);
             }
             else
             {
-                Win32.PostMessage((IntPtr)listBox.Handle, Win32.WM_HSCROLL, 4 + 0x10000 * e.NewValue, 0);
+                Win32.PostMessage(listBox.Handle, Win32.WM_HSCROLL, 4 + 0x10000 * e.NewValue, 0);
             }
         }
     }

@@ -139,7 +139,7 @@ namespace Ookii.Dialogs
             get
             {
                 if (_downlevelDialog != null)
-                    return new string[] {_downlevelDialog.SelectedPath };
+                    return new[] {_downlevelDialog.SelectedPath };
                 return SelectedPathsInternal;
             }
         }
@@ -231,7 +231,7 @@ namespace Ookii.Dialogs
         {
             _description = string.Empty;
             _useDescriptionForTitle = false;
-            _selectedPaths = new string[] { string.Empty };
+            _selectedPaths = new[] { string.Empty };
             _rootFolder = Environment.SpecialFolder.Desktop;
             _showNewFolderButton = true;
             _multiselect = false;

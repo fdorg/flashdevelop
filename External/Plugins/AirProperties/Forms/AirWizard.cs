@@ -234,8 +234,8 @@ namespace AirProperties
             SoftKeyboardField.Items.Add(new ListItem(TextHelper.GetString("SoftKeyboard.Pan"), "pan"));
             OpenIconFileDialog.InitialDirectory = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             OpenPropertiesFileDialog.InitialDirectory = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-            AndroidManifestAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };
-            IPhoneInfoAdditionsField.SelectionTabs = new int[] { 25, 50, 75, 100, 125, 150, 175, 200 };     
+            AndroidManifestAdditionsField.SelectionTabs = new[] { 25, 50, 75, 100, 125, 150, 175, 200 };
+            IPhoneInfoAdditionsField.SelectionTabs = new[] { 25, 50, 75, 100, 125, 150, 175, 200 };     
         }
 
         private void InitializeLocales()

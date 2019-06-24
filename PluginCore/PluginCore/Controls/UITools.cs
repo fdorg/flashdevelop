@@ -300,8 +300,7 @@ namespace PluginCore.Controls
 
         public void UnlockControl()
         {
-            if (CompletionList.Active || CallTip.CallTipActive)
-                return;
+            if (CompletionList.Active || CallTip.CallTipActive) return;
             Application.RemoveMessageFilter(this);
             if (lockedSciControl != null && lockedSciControl.IsAlive)
             {
@@ -313,10 +312,10 @@ namespace PluginCore.Controls
 
         private void OnUIRefresh(ScintillaControl sci)
         {
-            Form mainForm = PluginBase.MainForm as Form;
+            var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { this.OnUIRefresh(sci); });
+                mainForm.BeginInvoke((MethodInvoker)delegate { OnUIRefresh(sci); });
                 return;
             }
             if (sci != null && sci.IsFocus)
@@ -365,11 +364,8 @@ namespace PluginCore.Controls
             else SendChar(sci, value);
         }
 
-        public void SendChar(ScintillaControl sci, int value)
-        {
-            OnCharAdded?.Invoke(sci, value);
-        }
-        
+        public void SendChar(ScintillaControl sci, int value) => OnCharAdded?.Invoke(sci, value);
+
         private bool HandleKeys(Keys key)
         {
             // UITools is currently broadcasting a shortcut, ignore!

@@ -167,10 +167,7 @@ namespace PluginCore.Helpers
         /// - absolute or
         /// - relative to base path
         /// </summary>
-        public static string ResolvePath(string path)
-        {
-            return ResolvePath(path, null);
-        }
+        public static string ResolvePath(string path) => ResolvePath(path, null);
 
         /// <summary>
         /// Resolve a path which may be:
@@ -210,7 +207,7 @@ namespace PluginCore.Helpers
             {
                 if (Win32.ShouldUseWin32())
                 {
-                    int max = 64;
+                    const int max = 64;
                     StringBuilder sb = new StringBuilder(max);
                     Win32.PathCompactPathEx(sb, path, max, 0);
                     return sb.ToString();
@@ -284,10 +281,8 @@ namespace PluginCore.Helpers
             {
                 if (Win32.ShouldUseWin32())
                 {
-                    uint r;
-                    IntPtr ppidl;
                     int rgflnOut = 0;
-                    r = Win32.SHILCreateFromPath(path, out ppidl, ref rgflnOut);
+                    var r = Win32.SHILCreateFromPath(path, out var ppidl, ref rgflnOut);
                     if (r == 0)
                     {
                         StringBuilder sb = new StringBuilder(260);
@@ -331,14 +326,10 @@ namespace PluginCore.Helpers
         public static string GetJavaInstallPath()
         {
             string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-            using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(javaKey))
-            {
-                string currentVersion = rk.GetValue("CurrentVersion").ToString();
-                using (RegistryKey key = rk.OpenSubKey(currentVersion))
-                {
-                    return key.GetValue("JavaHome").ToString();
-                }
-            }
+            using var rk = Registry.LocalMachine.OpenSubKey(javaKey);
+            string currentVersion = rk.GetValue("CurrentVersion").ToString();
+            using var key = rk.OpenSubKey(currentVersion);
+            return key.GetValue("JavaHome").ToString();
         }
 
         private static string GetAssemblyPath(Assembly assembly)
@@ -424,12 +415,12 @@ namespace PluginCore.Helpers
                 if (string.IsNullOrEmpty(text))
                     return text;
 
-                // no aligment information
+                // no alignment information
                 if (((EllipsisFormat.Path | EllipsisFormat.Start | EllipsisFormat.End | EllipsisFormat.Middle) & options) == 0)
                     return text;
 
                 if (font == null)
-                    throw new ArgumentNullException("font");
+                    throw new ArgumentNullException(nameof(font));
 
                 Size s = TextRenderer.MeasureText(text, font);
 

@@ -83,7 +83,7 @@ namespace PluginCore.Utilities
                 Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0 && aColor.Length >= 6)
                 {
-                    int col = 0;
+                    int col;
                     if (aColor.StartsWithOrdinal("0x")) int.TryParse(aColor.Substring(2), NumberStyles.HexNumber, null, out col);
                     else int.TryParse(aColor, out col);
                     return TO_COLORREF(col);
@@ -92,10 +92,7 @@ namespace PluginCore.Utilities
             }
             return 0;
         }
-        private static int TO_COLORREF(int c)
-        {
-            return (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
-        }
+        private static int TO_COLORREF(int c) => (((c & 0xff0000) >> 16) + ((c & 0x0000ff) << 16) + (c & 0x00ff00));
 
         /// <summary>
         /// Converts a color to a string
@@ -116,19 +113,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Converts a color to an integer (BGR order)
         /// </summary>
-        public static int ColorToBGR(Color color)
-        {
-            return TO_COLORREF(color.ToArgb() & 0x00ffffff);
-        }
+        public static int ColorToBGR(Color color) => TO_COLORREF(color.ToArgb() & 0x00ffffff);
 
         /// <summary>
         /// Alias for ColorToBGR to not break the API.
         /// </summary>
-        public static int ColorToInt32(Color color)
-        {
-            return ColorToBGR(color);
-        }
-
+        public static int ColorToInt32(Color color) => ColorToBGR(color);
     }
 
 }

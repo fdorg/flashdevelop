@@ -7,9 +7,12 @@ namespace PluginCore.Utilities
         /// </summary>
         public static string GetNewLineMarker(int eolMode)
         {
-            if (eolMode == 1) return "\r";
-            if (eolMode == 2) return "\n";
-            return "\r\n";
+            return eolMode switch
+            {
+                1 => "\r",
+                2 => "\n",
+                _ => "\r\n",
+            };
         }
 
         /// <summary>

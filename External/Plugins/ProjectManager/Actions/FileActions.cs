@@ -318,8 +318,8 @@ namespace ProjectManager.Actions
 
         public void Delete(string path, bool confirm)
         {
-            if (confirm && CancelAction(ProjectFileActionsEvents.FileDelete, new string[] { path })) return;
-            if (!confirm && CancelAction(ProjectFileActionsEvents.FileDeleteSilent, new string[] { path })) return;
+            if (confirm && CancelAction(ProjectFileActionsEvents.FileDelete, new[] { path })) return;
+            if (!confirm && CancelAction(ProjectFileActionsEvents.FileDeleteSilent, new[] { path })) return;
 
             try
             {
@@ -336,7 +336,7 @@ namespace ProjectManager.Actions
                     string msg = TextHelper.GetString("Info.AndAllItsContents");
                     message = string.Format("\"{0}\" " + msg + " {1}", name, message);
                 }
-                else message = string.Format("\"{0}\" {1}", name, message);
+                else message = $"\"{name}\" {message}";
 
                 DialogResult result = DialogResult.OK;
 
@@ -443,7 +443,7 @@ namespace ProjectManager.Actions
                     return false;
             }
 
-            if (CancelAction(ProjectFileActionsEvents.FileRename, new string[] { oldPath, newName })) return false;
+            if (CancelAction(ProjectFileActionsEvents.FileRename, new[] { oldPath, newName })) return false;
 
             try
             {
@@ -508,7 +508,7 @@ namespace ProjectManager.Actions
 
         public void Move(string fromPath, string toPath)
         {
-            if (CancelAction(ProjectFileActionsEvents.FileMove, new string[] { fromPath, toPath })) return;
+            if (CancelAction(ProjectFileActionsEvents.FileMove, new[] { fromPath, toPath })) return;
 
             try
             {
@@ -553,7 +553,7 @@ namespace ProjectManager.Actions
 
         public void Copy(string fromPath, string toPath)
         {
-            if (CancelAction(ProjectFileActionsEvents.FileCopy, new string[] { fromPath, toPath })) return;
+            if (CancelAction(ProjectFileActionsEvents.FileCopy, new[] { fromPath, toPath })) return;
 
             try
             {

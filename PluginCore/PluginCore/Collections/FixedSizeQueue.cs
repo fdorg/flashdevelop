@@ -9,7 +9,7 @@ namespace PluginCore.Collections
     /// Represents a first-in, first-out collection of objects with a fixed capacity.
     /// </summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [DebuggerNonUserCode]
     [Serializable]
     public class FixedSizeQueue<T> : ICollection<T>, IEnumerable<T>, IEnumerable
@@ -18,7 +18,6 @@ namespace PluginCore.Collections
         private int _capacity;
         private int _head;
         private int _tail;
-        private int _size;
         private int _version;
 
         /// <summary>
@@ -37,7 +36,7 @@ namespace PluginCore.Collections
             _capacity = capacity;
             _head = 0;
             _tail = 0;
-            _size = 0;
+            Count = 0;
             _version = 0;
         }
 
@@ -50,7 +49,7 @@ namespace PluginCore.Collections
         {
             get
             {
-                if (index < 0 || index >= _size)
+                if (index < 0 || index >= Count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
@@ -59,7 +58,7 @@ namespace PluginCore.Collections
             }
             set
             {
-                if (index < 0 || index >= _size)
+                if (index < 0 || index >= Count)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index));
                 }
@@ -92,14 +91,14 @@ namespace PluginCore.Collections
                 int head;
                 int size;
 
-                if (_size <= value)
+                if (Count <= value)
                 {
                     head = _head;
-                    size = _size;
+                    size = Count;
                 }
                 else
                 {
-                    head = (_head + _size - value) % _capacity;
+                    head = (_head + Count - value) % _capacity;
                     size = value;
                 }
 
@@ -121,7 +120,7 @@ namespace PluginCore.Collections
                 _capacity = value;
                 _head = 0;
                 _tail = size == value ? 0 : size;
-                _size = size;
+                Count = size;
 
                 _version++;
             }
@@ -130,7 +129,7 @@ namespace PluginCore.Collections
         /// <summary>
         /// Gets the number of elements contained in the <see cref="FixedSizeQueue{T}"/>.
         /// </summary>
-        public int Count => _size;
+        public int Count { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="ICollection{T}"/> is read-only.
@@ -143,7 +142,7 @@ namespace PluginCore.Collections
         /// <param name="item">The object to add to the <see cref="ICollection{T}"/>.</param>
         void ICollection<T>.Add(T item)
         {
-            if (_size == _capacity)
+            if (Count == _capacity)
             {
                 Capacity = Math.Max(_capacity * 2, _capacity + 4);
             }
@@ -156,11 +155,11 @@ namespace PluginCore.Collections
         /// </summary>
         public void Clear()
         {
-            if (_size > 0)
+            if (Count > 0)
             {
                 if (_head < _tail)
                 {
-                    Array.Clear(_array, _head, _size);
+                    Array.Clear(_array, _head, Count);
                 }
                 else
                 {
@@ -171,7 +170,7 @@ namespace PluginCore.Collections
 
             _head = 0;
             _tail = 0;
-            _size = 0;
+            Count = 0;
 
             _version++;
         }
@@ -182,12 +181,12 @@ namespace PluginCore.Collections
         /// <param name="item">The object to locate in the <see cref="FixedSizeQueue{T}"/>. The value can be <see langword="null"/> for reference types.</param>
         public bool Contains(T item)
         {
-            if (_size > 0)
+            if (Count > 0)
             {
                 int index = _head;
                 var equalityComparer = EqualityComparer<T>.Default;
 
-                for (int i = _size; i > 0; i--)
+                for (int i = Count; i > 0; i--)
                 {
                     if (item == null)
                     {
@@ -234,16 +233,16 @@ namespace PluginCore.Collections
             {
                 throw new ArgumentOutOfRangeException(nameof(arrayIndex));
             }
-            if (array.Length - arrayIndex < _size)
+            if (array.Length - arrayIndex < Count)
             {
                 throw new ArgumentException("The number of elements in the source " + nameof(FixedSizeQueue<T>) + " is greater than the available space from " + nameof(arrayIndex) + " to the end of the destination " + nameof(array));
             }
 
-            if (_size > 0)
+            if (Count > 0)
             {
                 if (_head < _tail)
                 {
-                    Array.Copy(_array, _head, array, arrayIndex, _size);
+                    Array.Copy(_array, _head, array, arrayIndex, Count);
                 }
                 else
                 {
@@ -260,14 +259,14 @@ namespace PluginCore.Collections
         /// <exception cref="InvalidOperationException"/>
         public T Dequeue()
         {
-            if (_size == 0)
+            if (Count == 0)
             {
                 throw new InvalidOperationException("The " + nameof(FixedSizeQueue<T>) + " is empty.");
             }
 
             var obj = _array[_head];
-            _array[_head] = default(T);
-            _size--;
+            _array[_head] = default;
+            Count--;
 
             _head++;
             if (_head == _capacity)
@@ -300,7 +299,7 @@ namespace PluginCore.Collections
                 _tail = 0;
             }
 
-            if (_size == _capacity)
+            if (Count == _capacity)
             {
                 _head++;
                 if (_head == _capacity)
@@ -310,7 +309,7 @@ namespace PluginCore.Collections
             }
             else
             {
-                _size++;
+                Count++;
             }
 
             _version++;
@@ -346,7 +345,7 @@ namespace PluginCore.Collections
         /// <exception cref="InvalidOperationException"/>
         public T Peek()
         {
-            if (_size == 0)
+            if (Count == 0)
             {
                 throw new InvalidOperationException("The " + nameof(FixedSizeQueue<T>) + " is empty.");
             }
@@ -360,7 +359,7 @@ namespace PluginCore.Collections
         /// <exception cref="InvalidOperationException"/>
         public T PeekEnd()
         {
-            if (_size == 0)
+            if (Count == 0)
             {
                 throw new InvalidOperationException("The " + nameof(FixedSizeQueue<T>) + " is empty.");
             }
@@ -374,7 +373,7 @@ namespace PluginCore.Collections
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
         bool ICollection<T>.Remove(T item)
         {
-            if (_size > 0)
+            if (Count > 0)
             {
                 var equalityComparer = EqualityComparer<T>.Default;
 
@@ -383,8 +382,8 @@ namespace PluginCore.Collections
                     if (item == null ? _array[i] == null : _array[i] != null && equalityComparer.Equals(_array[i], item))
                     {
                         Array.Copy(_array, i + 1, _array, i, (_tail - 1) - i);
-                        _array[_tail - 1] = default(T);
-                        _size--;
+                        _array[_tail - 1] = default;
+                        Count--;
                         _tail--;
 
                         _version++;
@@ -402,8 +401,8 @@ namespace PluginCore.Collections
                     if (item == null ? _array[i] == null : _array[i] != null && equalityComparer.Equals(_array[i], item))
                     {
                         Array.Copy(_array, _head, _array, _head + 1, (i - 1) - _head);
-                        _array[_head] = default(T);
-                        _size--;
+                        _array[_head] = default;
+                        Count--;
                         _head++;
                         if (_head == _capacity)
                         {
@@ -424,13 +423,13 @@ namespace PluginCore.Collections
         /// </summary>
         public T[] ToArray()
         {
-            var array = new T[_size];
+            var array = new T[Count];
 
-            if (_size > 0)
+            if (Count > 0)
             {
                 if (_head < _tail)
                 {
-                    Array.Copy(_array, _head, array, 0, _size);
+                    Array.Copy(_array, _head, array, 0, Count);
                 }
                 else
                 {
@@ -457,7 +456,7 @@ namespace PluginCore.Collections
             [DebuggerHidden]
             internal Enumerator(FixedSizeQueue<T> queue)
             {
-                m_current = default(T);
+                m_current = default;
                 m_index = -1;
                 m_queue = queue;
                 m_version = m_queue._version;
@@ -503,7 +502,7 @@ namespace PluginCore.Collections
             [DebuggerHidden]
             public void Dispose()
             {
-                m_current = default(T);
+                m_current = default;
                 m_index = -2;
             }
 
@@ -522,7 +521,7 @@ namespace PluginCore.Collections
                 switch (m_index)
                 {
                     case -1:
-                        if (m_queue._size == 0)
+                        if (m_queue.Count == 0)
                         {
                             m_index = -2;
                             goto case -2;
@@ -560,7 +559,7 @@ namespace PluginCore.Collections
             [DebuggerHidden]
             public void Reset()
             {
-                m_current = default(T);
+                m_current = default;
                 m_index = -1;
                 m_version = m_queue._version;
             }

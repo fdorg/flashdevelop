@@ -131,7 +131,8 @@ namespace Mono.GetOptions
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine(string.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", text1, this.ParameterType.GetElementType().Name, this.DefaultForm));
+                        Console.WriteLine(
+                            $"The value '{text1}' is not convertible to the appropriate type '{this.ParameterType.GetElementType().Name}' for the {this.DefaultForm} option");
                     }
                     this.Values.Add(obj1);
                 }
@@ -145,7 +146,8 @@ namespace Mono.GetOptions
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine(string.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", text1, this.ParameterType.Name, this.DefaultForm));
+                            Console.WriteLine(
+                                $"The value '{text1}' is not convertible to the appropriate type '{this.ParameterType.Name}' for the {this.DefaultForm} option");
                             goto Label_01B1;
                         }
                     }
@@ -159,7 +161,7 @@ namespace Mono.GetOptions
                     }
                     else
                     {
-                        object[] objArray1 = new object[] { obj1 } ;
+                        object[] objArray1 = new[] { obj1 } ;
                         if (((WhatToDoNext) ((MethodInfo) this.MemberInfo).Invoke(this.OptionBundle, objArray1)) == WhatToDoNext.AbandonProgram)
                         {
                             Environment.Exit(1);
@@ -194,11 +196,11 @@ namespace Mono.GetOptions
             {
                 return false;
             }
-            char[] chArray1 = new char[] { '-', '/' } ;
+            char[] chArray1 = new[] { '-', '/' } ;
             arg = arg.TrimStart(chArray1);
             if (this.VBCStyleBoolean)
             {
-                char[] chArray2 = new char[] { '-', '+' } ;
+                char[] chArray2 = new[] { '-', '+' } ;
                 arg = arg.TrimEnd(chArray2);
             }
             return (((arg == this.ShortForm) || (arg == this.LongForm)) || (arg == this.AlternateForm));

@@ -64,7 +64,7 @@ namespace FlashDebugger.Controls
 
         private void CopyAllbutton_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(string.Format("{0} = {1}", ExptextBox.Text, ValuetextBox.Text));
+            Clipboard.SetText($"{ExptextBox.Text} = {ValuetextBox.Text}");
         }
 
     }

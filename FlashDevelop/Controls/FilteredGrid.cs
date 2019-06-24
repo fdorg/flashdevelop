@@ -122,8 +122,7 @@ namespace FlashDevelop.Controls
                     }
                     else if (m_Wrapper.SelectedObject != value) 
                     {
-                        bool needrefresh;
-                        needrefresh = (value.GetType() != m_Wrapper.SelectedObject.GetType());
+                        var needrefresh = (value.GetType() != m_Wrapper.SelectedObject.GetType());
                         m_Wrapper.SelectedObject = value;
                         if (needrefresh) RefreshProperties();
                     }
@@ -225,7 +224,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void HideAttribute(Attribute attribute) 
         {
-            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new Attribute[] { attribute });
+            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new[] { attribute });
             if(filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) HideProperty(propertydescriptor);
         }
@@ -235,7 +234,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void ShowAttribute(Attribute attribute) 
         {
-            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new Attribute[] { attribute });
+            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new[] { attribute });
             if (filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) ShowProperty(propertydescriptor);
         }
@@ -266,41 +265,23 @@ namespace FlashDevelop.Controls
     internal class ObjectWrapper : ICustomTypeDescriptor
     {
         /// <summary>
-        /// Contain a reference to the selected objet that will linked to the parent PropertyGrid.
-        /// </summary>
-        private object m_SelectedObject = null;
-
-        /// <summary>
-        /// Contain a reference to the collection of properties to show in the parent PropertyGrid.
-        /// </summary>
-        List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
-
-        /// <summary>
         /// Simple constructor.
         /// </summary>
         /// <param name="obj">A reference to the selected object that will linked to the parent PropertyGrid.</param>
         internal ObjectWrapper(object obj)
         {
-            m_SelectedObject = obj;
+            SelectedObject = obj;
         }
 
         /// <summary>
-        /// Get or set a reference to the selected objet that will linked to the parent PropertyGrid.
+        /// Get or set a reference to the selected object that will linked to the parent PropertyGrid.
         /// </summary>
-        public object SelectedObject
-        {
-            get => m_SelectedObject;
-            set { if (m_SelectedObject != value) m_SelectedObject = value; }
-        }
+        public object SelectedObject { get; set; }
 
         /// <summary>
         /// Get or set a reference to the collection of properties to show in the parent PropertyGrid.
         /// </summary>
-        public List<PropertyDescriptor> PropertyDescriptors
-        {
-            get => m_PropertyDescriptors;
-            set => m_PropertyDescriptors = value;
-        }
+        public List<PropertyDescriptor> PropertyDescriptors { get; set; } = new List<PropertyDescriptor>();
 
         #region ICustomTypeDescriptor Members
 
@@ -311,37 +292,37 @@ namespace FlashDevelop.Controls
 
         public PropertyDescriptorCollection GetProperties()
         {
-            return new PropertyDescriptorCollection(m_PropertyDescriptors.ToArray(), true);
+            return new PropertyDescriptorCollection(PropertyDescriptors.ToArray(), true);
         }
 
         public AttributeCollection GetAttributes()
         {
-            return TypeDescriptor.GetAttributes(m_SelectedObject, true);
+            return TypeDescriptor.GetAttributes(SelectedObject, true);
         }
 
         public string GetClassName()
         {
-            return TypeDescriptor.GetClassName(m_SelectedObject, true);
+            return TypeDescriptor.GetClassName(SelectedObject, true);
         }
 
         public string GetComponentName()
         {
-            return TypeDescriptor.GetComponentName(m_SelectedObject, true);
+            return TypeDescriptor.GetComponentName(SelectedObject, true);
         }
 
         public TypeConverter GetConverter()
         {
-            return TypeDescriptor.GetConverter(m_SelectedObject, true);
+            return TypeDescriptor.GetConverter(SelectedObject, true);
         }
 
         public EventDescriptor GetDefaultEvent()
         {
-            return TypeDescriptor.GetDefaultEvent(m_SelectedObject, true);
+            return TypeDescriptor.GetDefaultEvent(SelectedObject, true);
         }
 
         public PropertyDescriptor GetDefaultProperty()
         {
-            return TypeDescriptor.GetDefaultProperty(m_SelectedObject, true);
+            return TypeDescriptor.GetDefaultProperty(SelectedObject, true);
         }
 
         public object GetEditor(Type editorBaseType)
@@ -351,17 +332,17 @@ namespace FlashDevelop.Controls
 
         public EventDescriptorCollection GetEvents(Attribute[] attributes)
         {
-            return TypeDescriptor.GetEvents(m_SelectedObject, attributes, true);
+            return TypeDescriptor.GetEvents(SelectedObject, attributes, true);
         }
 
         public EventDescriptorCollection GetEvents()
         {
-            return TypeDescriptor.GetEvents(m_SelectedObject, true);
+            return TypeDescriptor.GetEvents(SelectedObject, true);
         }
 
         public object GetPropertyOwner(PropertyDescriptor pd)
         {
-            return m_SelectedObject;
+            return SelectedObject;
         }
 
         #endregion

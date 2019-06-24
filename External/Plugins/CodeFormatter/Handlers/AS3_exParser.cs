@@ -1046,7 +1046,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1096,11 +1096,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1538:40: T= TRUE
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         T=(IToken)Match(input,TRUE,FOLLOW_TRUE_in_booleanLiteral3643); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {T_tree = (object)adaptor.Create(T);
+                        {T_tree = adaptor.Create(T);
                             adaptor.AddChild(root_0, T_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1113,11 +1113,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1538:61: F= FALSE
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         F=(IToken)Match(input,FALSE,FOLLOW_FALSE_in_booleanLiteral3651); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {F_tree = (object)adaptor.Create(F);
+                        {F_tree = adaptor.Create(F);
                             adaptor.AddChild(root_0, F_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1132,7 +1132,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -1140,7 +1140,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -1160,7 +1160,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1210,11 +1210,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1540:40: D= DEC_NUMBER_LITERAL
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DEC_NUMBER_LITERAL,FOLLOW_DEC_NUMBER_LITERAL_in_numericLiteral3685); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1227,11 +1227,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1540:75: H= HEX_NUMBER_LITERAL
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         H=(IToken)Match(input,HEX_NUMBER_LITERAL,FOLLOW_HEX_NUMBER_LITERAL_in_numericLiteral3693); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {H_tree = (object)adaptor.Create(H);
+                        {H_tree = adaptor.Create(H);
                             adaptor.AddChild(root_0, H_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1246,7 +1246,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -1254,7 +1254,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -1274,7 +1274,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1324,11 +1324,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1542:40: S= SINGLE_QUOTE_LITERAL
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         S=(IToken)Match(input,SINGLE_QUOTE_LITERAL,FOLLOW_SINGLE_QUOTE_LITERAL_in_stringLiteral3728); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {S_tree = (object)adaptor.Create(S);
+                        {S_tree = adaptor.Create(S);
                             adaptor.AddChild(root_0, S_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1341,11 +1341,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1542:76: D= DOUBLE_QUOTE_LITERAL
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DOUBLE_QUOTE_LITERAL,FOLLOW_DOUBLE_QUOTE_LITERAL_in_stringLiteral3735); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1360,7 +1360,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -1368,7 +1368,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -1388,7 +1388,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1414,11 +1414,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1544:36: (R= REGULAR_EXPR_LITERAL )
             // AS3_ex.g3:1544:40: R= REGULAR_EXPR_LITERAL
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 R=(IToken)Match(input,REGULAR_EXPR_LITERAL,FOLLOW_REGULAR_EXPR_LITERAL_in_regularExpresionLiteral3760); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -1431,7 +1431,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -1439,7 +1439,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -1459,7 +1459,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1509,11 +1509,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1546:83: I= IDENTIFIER
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_identifierLiteral3793); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {I_tree = (object)adaptor.Create(I);
+                        {I_tree = adaptor.Create(I);
                             adaptor.AddChild(root_0, I_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1526,7 +1526,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1546:109: notQuiteReservedWord
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_notQuiteReservedWord_in_identifierLiteral3798);
                         notQuiteReservedWord1 = notQuiteReservedWord();
@@ -1541,7 +1541,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -1549,7 +1549,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -1569,7 +1569,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1607,7 +1607,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1548:36: ( (I= IDENTIFIER | allKeywords ) ({...}? => (s= SUB | d= DOT | c= COLON ) {...}? => (I2= IDENTIFIER | allKeywords ) )* )
             // AS3_ex.g3:1548:40: (I= IDENTIFIER | allKeywords ) ({...}? => (s= SUB | d= DOT | c= COLON ) {...}? => (I2= IDENTIFIER | allKeywords ) )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:1548:40: (I= IDENTIFIER | allKeywords )
                 int alt5 = 2;
@@ -1636,7 +1636,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_xmlNameLiteral3833); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -1709,7 +1709,7 @@ public class AS3_exParser : Parser
                                         {
                                             s=(IToken)Match(input,SUB,FOLLOW_SUB_in_xmlNameLiteral3849); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {s_tree = (object)adaptor.Create(s);
+                                            {s_tree = adaptor.Create(s);
                                                 adaptor.AddChild(root_0, s_tree);
                                             }
                                             if ( state.backtracking == 0 ) 
@@ -1724,7 +1724,7 @@ public class AS3_exParser : Parser
                                         {
                                             d=(IToken)Match(input,DOT,FOLLOW_DOT_in_xmlNameLiteral3857); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {d_tree = (object)adaptor.Create(d);
+                                            {d_tree = adaptor.Create(d);
                                                 adaptor.AddChild(root_0, d_tree);
                                             }
                                             if ( state.backtracking == 0 ) 
@@ -1739,7 +1739,7 @@ public class AS3_exParser : Parser
                                         {
                                             c=(IToken)Match(input,COLON,FOLLOW_COLON_in_xmlNameLiteral3865); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {c_tree = (object)adaptor.Create(c);
+                                            {c_tree = adaptor.Create(c);
                                                 adaptor.AddChild(root_0, c_tree);
                                             }
                                             if ( state.backtracking == 0 ) 
@@ -1784,7 +1784,7 @@ public class AS3_exParser : Parser
                                         {
                                             I2=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_xmlNameLiteral3876); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {I2_tree = (object)adaptor.Create(I2);
+                                            {I2_tree = adaptor.Create(I2);
                                                 adaptor.AddChild(root_0, I2_tree);
                                             }
                                             if ( state.backtracking == 0 ) 
@@ -1826,7 +1826,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -1834,7 +1834,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -1854,7 +1854,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -1930,11 +1930,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1551:40: N= NULL
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         N=(IToken)Match(input,NULL,FOLLOW_NULL_in_literal3935); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {N_tree = (object)adaptor.Create(N);
+                        {N_tree = adaptor.Create(N);
                             adaptor.AddChild(root_0, N_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -1947,7 +1947,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1551:61: booleanLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_booleanLiteral_in_literal3941);
                         booleanLiteral4 = booleanLiteral();
@@ -1960,7 +1960,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1551:78: numericLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_numericLiteral_in_literal3945);
                         numericLiteral5 = numericLiteral();
@@ -1973,7 +1973,7 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:1551:95: stringLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_stringLiteral_in_literal3949);
                         stringLiteral6 = stringLiteral();
@@ -1986,7 +1986,7 @@ public class AS3_exParser : Parser
                 case 5 :
                     // AS3_ex.g3:1551:111: regularExpresionLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_regularExpresionLiteral_in_literal3953);
                         regularExpresionLiteral7 = regularExpresionLiteral();
@@ -2001,7 +2001,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2009,7 +2009,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2029,7 +2029,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2088,7 +2088,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1554:40: xmlComment
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlComment_in_xmlMarkup3989);
                         xmlComment8 = xmlComment();
@@ -2101,7 +2101,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1554:53: xmlCDATA
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlCDATA_in_xmlMarkup3993);
                         xmlCDATA9 = xmlCDATA();
@@ -2114,7 +2114,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1554:64: xmlPI
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlPI_in_xmlMarkup3997);
                         xmlPI10 = xmlPI();
@@ -2129,7 +2129,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2137,7 +2137,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2157,7 +2157,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2183,11 +2183,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1555:36: (x= XML_COMMENT )
             // AS3_ex.g3:1555:40: x= XML_COMMENT
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 x=(IToken)Match(input,XML_COMMENT,FOLLOW_XML_COMMENT_in_xmlComment4032); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -2200,7 +2200,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2208,7 +2208,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2228,7 +2228,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2254,11 +2254,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1556:36: (x= XML_CDATA )
             // AS3_ex.g3:1556:40: x= XML_CDATA
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 x=(IToken)Match(input,XML_CDATA,FOLLOW_XML_CDATA_in_xmlCDATA4074); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -2271,7 +2271,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2279,7 +2279,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2299,7 +2299,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2325,11 +2325,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1557:36: (x= XML_PI )
             // AS3_ex.g3:1557:40: x= XML_PI
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 x=(IToken)Match(input,XML_PI,FOLLOW_XML_PI_in_xmlPI4117); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -2342,7 +2342,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2350,7 +2350,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2370,7 +2370,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2400,11 +2400,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1558:36: (L= LCURLY expression R= RCURLY )
             // AS3_ex.g3:1558:40: L= LCURLY expression R= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 L=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_xmlExprEval4155); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -2418,7 +2418,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, expression11.Tree);
                 R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_xmlExprEval4163); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -2431,7 +2431,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2439,7 +2439,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2459,7 +2459,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2509,7 +2509,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1563:3: allKeywords
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_allKeywords_in_xmlTextElement4181);
                         allKeywords12 = allKeywords();
@@ -2526,13 +2526,13 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1564:7: lexToken= ( DEC_NUMBER_LITERAL | HEX_NUMBER_LITERAL | SINGLE_QUOTE_LITERAL | DOUBLE_QUOTE_LITERAL | IDENTIFIER | XML_TEXT | DIV | SEMI | RCURLY | LPAREN | RPAREN | LBRACK | RBRACK | DOT | COMMA | GT | LTE | EQ | NEQ | SAME | NSAME | PLUS | SUB | STAR | MOD | INC | DEC | SHL | AND | OR | XOR | NOT | INV | LAND | LOR | QUE | COLON | ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN | SUB_ASSIGN | SHL_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | LOR_ASSIGN | LAND_ASSIGN | ELLIPSIS | XML_ELLIPSIS | XML_NS_OP | XML_AT )
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
-                        lexToken = (IToken)input.LT(1);
+                        lexToken = input.LT(1);
                         if ( input.LA(1) == SEMI || (input.LA(1) >= RCURLY && input.LA(1) <= COMMA) || (input.LA(1) >= GT && input.LA(1) <= LTE) || (input.LA(1) >= EQ && input.LA(1) <= SHL) || (input.LA(1) >= AND && input.LA(1) <= SHL_ASSIGN) || (input.LA(1) >= LAND_ASSIGN && input.LA(1) <= XML_ELLIPSIS) || (input.LA(1) >= XML_NS_OP && input.LA(1) <= XML_AT) || (input.LA(1) >= SINGLE_QUOTE_LITERAL && input.LA(1) <= DOUBLE_QUOTE_LITERAL) || input.LA(1) == HEX_NUMBER_LITERAL || input.LA(1) == DEC_NUMBER_LITERAL || input.LA(1) == IDENTIFIER || input.LA(1) == XML_TEXT ) 
                         {
                             input.Consume();
-                            if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(lexToken));
+                            if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(lexToken));
                             state.errorRecovery = false;state.failed = false;
                         }
                         else 
@@ -2557,7 +2557,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2565,7 +2565,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2585,7 +2585,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2611,7 +2611,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1636:5: ( ( xmlTextElement )+ )
             // AS3_ex.g3:1637:5: ( xmlTextElement )+
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:1637:5: ( xmlTextElement )+
                 int cnt12 = 0;
@@ -2795,7 +2795,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2803,7 +2803,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -2823,7 +2823,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -2941,7 +2941,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1642:9: xmlPropertyIdentifier
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlPropertyIdentifier_in_xmlPrimaryExpression4933);
                         xmlPropertyIdentifier14 = xmlPropertyIdentifier();
@@ -2954,7 +2954,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1643:9: xmlInitialiser
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlInitialiser_in_xmlPrimaryExpression4943);
                         xmlInitialiser15 = xmlInitialiser();
@@ -2967,7 +2967,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1644:9: xmlListInitialiser
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlListInitialiser_in_xmlPrimaryExpression4953);
                         xmlListInitialiser16 = xmlListInitialiser();
@@ -2982,7 +2982,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -2990,7 +2990,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -3010,7 +3010,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -3140,7 +3140,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1658:11: xmlAttributeIdentifier
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlAttributeIdentifier_in_xmlPropertyIdentifier5046);
                         xmlAttributeIdentifier17 = xmlAttributeIdentifier();
@@ -3153,7 +3153,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1659:11: xmlQualifiedIdentifier
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlQualifiedIdentifier_in_xmlPropertyIdentifier5058);
                         xmlQualifiedIdentifier18 = xmlQualifiedIdentifier();
@@ -3166,11 +3166,11 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1660:11: s= STAR
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         s=(IToken)Match(input,STAR,FOLLOW_STAR_in_xmlPropertyIdentifier5072); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {s_tree = (object)adaptor.Create(s);
+                        {s_tree = adaptor.Create(s);
                             adaptor.AddChild(root_0, s_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -3185,7 +3185,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -3193,7 +3193,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -3213,7 +3213,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -3245,11 +3245,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1664:5: (at= XML_AT ( xmlQualifiedIdentifier | xmlPropertySelector | indexSuffix ) )
             // AS3_ex.g3:1664:9: at= XML_AT ( xmlQualifiedIdentifier | xmlPropertySelector | indexSuffix )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 at=(IToken)Match(input,XML_AT,FOLLOW_XML_AT_in_xmlAttributeIdentifier5137); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {at_tree = (object)adaptor.Create(at);
+                {at_tree = adaptor.Create(at);
                     adaptor.AddChild(root_0, at_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -3457,7 +3457,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -3465,7 +3465,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -3485,7 +3485,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -3535,7 +3535,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1673:9: xmlNameLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlNameLiteral_in_xmlPropertySelector5283);
                         xmlNameLiteral22 = xmlNameLiteral();
@@ -3548,11 +3548,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1674:9: s= STAR
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         s=(IToken)Match(input,STAR,FOLLOW_STAR_in_xmlPropertySelector5296); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {s_tree = (object)adaptor.Create(s);
+                        {s_tree = adaptor.Create(s);
                             adaptor.AddChild(root_0, s_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -3567,7 +3567,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -3575,7 +3575,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -3595,7 +3595,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -3627,7 +3627,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1678:5: ( xmlPropertySelector x= XML_NS_OP ( xmlPropertySelector | indexSuffix ) )
             // AS3_ex.g3:1678:9: xmlPropertySelector x= XML_NS_OP ( xmlPropertySelector | indexSuffix )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_xmlPropertySelector_in_xmlQualifiedIdentifier5317);
                 xmlPropertySelector23 = xmlPropertySelector();
@@ -3636,7 +3636,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, xmlPropertySelector23.Tree);
                 x=(IToken)Match(input,XML_NS_OP,FOLLOW_XML_NS_OP_in_xmlQualifiedIdentifier5322); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -3700,7 +3700,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -3708,7 +3708,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -3728,7 +3728,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -3778,7 +3778,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1687:9: xmlMarkup
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlMarkup_in_xmlInitialiser5400);
                         xmlMarkup26 = xmlMarkup();
@@ -3791,7 +3791,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1688:9: xmlElement
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlElement_in_xmlInitialiser5410);
                         xmlElement27 = xmlElement();
@@ -3806,7 +3806,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -3814,7 +3814,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -3834,7 +3834,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -3877,7 +3877,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1706:5: (L= LT xmlTagName ( xmlAttributes )? (x= XML_TEND | G= GT ( xmlElementContent[false] )? x= XML_E_TEND xmlTagName G= GT ) )
             // AS3_ex.g3:1707:5: L= LT xmlTagName ( xmlAttributes )? (x= XML_TEND | G= GT ( xmlElementContent[false] )? x= XML_E_TEND xmlTagName G= GT )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -3893,7 +3893,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LT,FOLLOW_LT_in_xmlElement5476); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -3964,7 +3964,7 @@ public class AS3_exParser : Parser
                         {
                             x=(IToken)Match(input,XML_TEND,FOLLOW_XML_TEND_in_xmlElement5504); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {x_tree = (object)adaptor.Create(x);
+                            {x_tree = adaptor.Create(x);
                                 adaptor.AddChild(root_0, x_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -3987,7 +3987,7 @@ public class AS3_exParser : Parser
                         {
                             G=(IToken)Match(input,GT,FOLLOW_GT_in_xmlElement5560); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {G_tree = (object)adaptor.Create(G);
+                            {G_tree = adaptor.Create(G);
                                 adaptor.AddChild(root_0, G_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -4020,7 +4020,7 @@ public class AS3_exParser : Parser
 
                             x=(IToken)Match(input,XML_E_TEND,FOLLOW_XML_E_TEND_in_xmlElement5579); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {x_tree = (object)adaptor.Create(x);
+                            {x_tree = adaptor.Create(x);
                                 adaptor.AddChild(root_0, x_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -4042,7 +4042,7 @@ public class AS3_exParser : Parser
                             if ( state.backtracking == 0 ) adaptor.AddChild(root_0, xmlTagName31.Tree);
                             G=(IToken)Match(input,GT,FOLLOW_GT_in_xmlElement5598); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {G_tree = (object)adaptor.Create(G);
+                            {G_tree = adaptor.Create(G);
                                 adaptor.AddChild(root_0, G_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -4073,7 +4073,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4081,7 +4081,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4101,7 +4101,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -4127,7 +4127,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1730:5: ( ( xmlAttribute )+ )
             // AS3_ex.g3:1730:9: ( xmlAttribute )+
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:1730:9: ( xmlAttribute )+
                 int cnt22 = 0;
@@ -4175,7 +4175,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4183,7 +4183,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4203,7 +4203,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -4253,7 +4253,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1734:9: xmlExprEval
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlExprEval_in_xmlTagName5667);
                         xmlExprEval33 = xmlExprEval();
@@ -4266,7 +4266,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1735:4: xmlNameLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlNameLiteral_in_xmlTagName5672);
                         xmlNameLiteral34 = xmlNameLiteral();
@@ -4281,7 +4281,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4289,7 +4289,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4309,7 +4309,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -4341,7 +4341,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1739:5: ({...}? xmlTagName A= ASSIGN ( xmlExprEval | stringLiteral ) )
             // AS3_ex.g3:1739:8: {...}? xmlTagName A= ASSIGN ( xmlExprEval | stringLiteral )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( !((promoteWhitespace())) ) 
                 {
@@ -4359,7 +4359,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, xmlTagName35.Tree);
                 A=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_xmlAttribute5699); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {A_tree = (object)adaptor.Create(A);
+                {A_tree = adaptor.Create(A);
                     adaptor.AddChild(root_0, A_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -4419,7 +4419,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4427,7 +4427,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4447,7 +4447,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -4473,7 +4473,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1747:5: ( ( xmlElementContentHelper[crAfterTags] )+ )
             // AS3_ex.g3:1747:8: ( xmlElementContentHelper[crAfterTags] )+
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:1747:8: ( xmlElementContentHelper[crAfterTags] )+
                 int cnt25 = 0;
@@ -4521,7 +4521,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4529,7 +4529,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4549,7 +4549,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -4722,7 +4722,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1751:7: xmlExprEval
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlExprEval_in_xmlElementContentHelper5782);
                         xmlExprEval39 = xmlExprEval();
@@ -4739,7 +4739,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1752:7: xmlMarkup
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlMarkup_in_xmlElementContentHelper5792);
                         xmlMarkup40 = xmlMarkup();
@@ -4756,7 +4756,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1753:7: xmlElement
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlElement_in_xmlElementContentHelper5802);
                         xmlElement41 = xmlElement();
@@ -4773,7 +4773,7 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:1754:7: xmlText
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         if ( state.backtracking == 0 ) 
                         {
@@ -4800,7 +4800,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4808,7 +4808,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4828,7 +4828,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -4860,7 +4860,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1763:5: (x= XML_LS_STD ( xmlElementContent[true] )? x= XML_LS_END )
             // AS3_ex.g3:1764:3: x= XML_LS_STD ( xmlElementContent[true] )? x= XML_LS_END
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -4872,7 +4872,7 @@ public class AS3_exParser : Parser
                 }
                 x=(IToken)Match(input,XML_LS_STD,FOLLOW_XML_LS_STD_in_xmlListInitialiser5855); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -4917,7 +4917,7 @@ public class AS3_exParser : Parser
                 }
                 x=(IToken)Match(input,XML_LS_END,FOLLOW_XML_LS_END_in_xmlListInitialiser5883); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -4945,7 +4945,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -4953,7 +4953,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -4973,7 +4973,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -5055,11 +5055,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1801:9: S= SEMI
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         S=(IToken)Match(input,SEMI,FOLLOW_SEMI_in_semic5921); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {S_tree = (object)adaptor.Create(S);
+                        {S_tree = adaptor.Create(S);
                             adaptor.AddChild(root_0, S_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -5072,11 +5072,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1802:9: E= EOF
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         E=(IToken)Match(input,EOF,FOLLOW_EOF_in_semic5935); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {E_tree = (object)adaptor.Create(E);
+                        {E_tree = adaptor.Create(E);
                             adaptor.AddChild(root_0, E_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -5089,11 +5089,11 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1803:9: R= RCURLY
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_semic5949); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {R_tree = (object)adaptor.Create(R);
+                        {R_tree = adaptor.Create(R);
                             adaptor.AddChild(root_0, R_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -5116,7 +5116,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -5124,7 +5124,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -5144,7 +5144,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -5209,7 +5209,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1818:4: ( ( packageDeclaration )? ( packageElement )* )
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         // AS3_ex.g3:1818:4: ( ( packageDeclaration )? ( packageElement )* )
                         // AS3_ex.g3:1818:5: ( packageDeclaration )? ( packageElement )*
@@ -5286,11 +5286,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1818:44: EOF
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         EOF46=(IToken)Match(input,EOF,FOLLOW_EOF_in_fileContents5978); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {EOF46_tree = (object)adaptor.Create(EOF46);
+                        {EOF46_tree = adaptor.Create(EOF46);
                             adaptor.AddChild(root_0, EOF46_tree);
                         }
 
@@ -5301,7 +5301,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -5309,7 +5309,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -5329,7 +5329,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -5363,11 +5363,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1824:2: (p= PACKAGE ( type )? l= LCURLY ( packageElement )* r= RCURLY )
             // AS3_ex.g3:1824:6: p= PACKAGE ( type )? l= LCURLY ( packageElement )* r= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 p=(IToken)Match(input,PACKAGE,FOLLOW_PACKAGE_in_packageDeclaration5995); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {p_tree = (object)adaptor.Create(p);
+                {p_tree = adaptor.Create(p);
                     adaptor.AddChild(root_0, p_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -5408,7 +5408,7 @@ public class AS3_exParser : Parser
                 }
                 l=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_packageDeclaration6016); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {l_tree = (object)adaptor.Create(l);
+                {l_tree = adaptor.Create(l);
                     adaptor.AddChild(root_0, l_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -5470,7 +5470,7 @@ public class AS3_exParser : Parser
                 }
                 r=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_packageDeclaration6058); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {r_tree = (object)adaptor.Create(r);
+                {r_tree = adaptor.Create(r);
                     adaptor.AddChild(root_0, r_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -5483,7 +5483,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -5491,7 +5491,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -5511,7 +5511,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -5555,7 +5555,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1848:2: ( ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )* ( EOF )? )
             // AS3_ex.g3:1849:3: ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )* ( EOF )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:1849:3: ( conditionalCompilerOption l= LCURLY mxmlEmbedded r= RCURLY | propertyDeclaration | functionDeclaration | statement | directive | interfaceFunctionDeclaration )*
                 do 
@@ -5578,7 +5578,7 @@ public class AS3_exParser : Parser
                                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, conditionalCompilerOption49.Tree);
                                 l=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_mxmlEmbedded6090); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {l_tree = (object)adaptor.Create(l);
+                                {l_tree = adaptor.Create(l);
                                     adaptor.AddChild(root_0, l_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -5601,7 +5601,7 @@ public class AS3_exParser : Parser
                                 }
                                 r=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_mxmlEmbedded6109); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {r_tree = (object)adaptor.Create(r);
+                                {r_tree = adaptor.Create(r);
                                     adaptor.AddChild(root_0, r_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -5690,7 +5690,7 @@ public class AS3_exParser : Parser
                         {
                             EOF56=(IToken)Match(input,EOF,FOLLOW_EOF_in_mxmlEmbedded6155); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {EOF56_tree = (object)adaptor.Create(EOF56);
+                            {EOF56_tree = adaptor.Create(EOF56);
                                 adaptor.AddChild(root_0, EOF56_tree);
                             }
 
@@ -5705,7 +5705,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -5713,7 +5713,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -5733,7 +5733,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -5782,7 +5782,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:1866:6: conditionalCompilerOption l= LCURLY ( packageElement )* r= RCURLY
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         if ( state.backtracking == 0 ) 
                         {
@@ -5795,7 +5795,7 @@ public class AS3_exParser : Parser
                         if ( state.backtracking == 0 ) adaptor.AddChild(root_0, conditionalCompilerOption57.Tree);
                         l=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_packageElement6189); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {l_tree = (object)adaptor.Create(l);
+                        {l_tree = adaptor.Create(l);
                             adaptor.AddChild(root_0, l_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -5852,7 +5852,7 @@ public class AS3_exParser : Parser
                         }
                         r=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_packageElement6214); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {r_tree = (object)adaptor.Create(r);
+                        {r_tree = adaptor.Create(r);
                             adaptor.AddChild(root_0, r_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -5865,7 +5865,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:1878:8: classOrInterfaceDecl
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_classOrInterfaceDecl_in_packageElement6229);
                         classOrInterfaceDecl59 = classOrInterfaceDecl();
@@ -5878,7 +5878,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:1878:31: propertyDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_propertyDeclaration_in_packageElement6233);
                         propertyDeclaration60 = propertyDeclaration();
@@ -5891,7 +5891,7 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:1878:53: functionDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_functionDeclaration_in_packageElement6237);
                         functionDeclaration61 = functionDeclaration();
@@ -5904,7 +5904,7 @@ public class AS3_exParser : Parser
                 case 5 :
                     // AS3_ex.g3:1878:75: interfaceFunctionDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_interfaceFunctionDeclaration_in_packageElement6241);
                         interfaceFunctionDeclaration62 = interfaceFunctionDeclaration();
@@ -5917,7 +5917,7 @@ public class AS3_exParser : Parser
                 case 6 :
                     // AS3_ex.g3:1878:106: statement
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_statement_in_packageElement6245);
                         statement63 = statement();
@@ -5930,7 +5930,7 @@ public class AS3_exParser : Parser
                 case 7 :
                     // AS3_ex.g3:1878:118: directive
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_directive_in_packageElement6249);
                         directive64 = directive();
@@ -5945,7 +5945,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -5953,7 +5953,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -5973,7 +5973,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6007,7 +6007,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1882:2: (i= IMPORT type (D= DOT S= STAR )? semic )
             // AS3_ex.g3:1883:2: i= IMPORT type (D= DOT S= STAR )? semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -6019,7 +6019,7 @@ public class AS3_exParser : Parser
                 }
                 i=(IToken)Match(input,IMPORT,FOLLOW_IMPORT_in_importDeclaration6274); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {i_tree = (object)adaptor.Create(i);
+                {i_tree = adaptor.Create(i);
                     adaptor.AddChild(root_0, i_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -6046,7 +6046,7 @@ public class AS3_exParser : Parser
                         {
                             D=(IToken)Match(input,DOT,FOLLOW_DOT_in_importDeclaration6283); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {D_tree = (object)adaptor.Create(D);
+                            {D_tree = adaptor.Create(D);
                                 adaptor.AddChild(root_0, D_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -6055,7 +6055,7 @@ public class AS3_exParser : Parser
                             }
                             S=(IToken)Match(input,STAR,FOLLOW_STAR_in_importDeclaration6289); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {S_tree = (object)adaptor.Create(S);
+                            {S_tree = adaptor.Create(S);
                                 adaptor.AddChild(root_0, S_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -6079,7 +6079,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6087,7 +6087,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6107,7 +6107,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6139,7 +6139,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1888:2: ( ( conditionalDirAndBindingDecls )? ( memberModifiers )? ( interfaceDeclaration | classDeclaration ) )
             // AS3_ex.g3:1888:6: ( conditionalDirAndBindingDecls )? ( memberModifiers )? ( interfaceDeclaration | classDeclaration )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -6289,7 +6289,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6297,7 +6297,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6317,7 +6317,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6351,7 +6351,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1892:2: ( ( bindingDecl | includeDirective | useNamespaceDirective | importDeclaration | defaultXMLNamespaceDirective ) )
             // AS3_ex.g3:1893:2: ( bindingDecl | includeDirective | useNamespaceDirective | importDeclaration | defaultXMLNamespaceDirective )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -6468,7 +6468,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6476,7 +6476,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6496,7 +6496,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6524,7 +6524,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1897:2: ( conditionalCompilerOption ( bindingDecl )* )
             // AS3_ex.g3:1897:4: conditionalCompilerOption ( bindingDecl )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -6587,7 +6587,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6595,7 +6595,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6615,7 +6615,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6641,7 +6641,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1905:2: ({...}?I= IDENTIFIER )
             // AS3_ex.g3:1905:4: {...}?I= IDENTIFIER
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( !((input.LT(1).Text.ToLower() == "xml")) ) 
                 {
@@ -6650,7 +6650,7 @@ public class AS3_exParser : Parser
                 }
                 I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_xmlKeyword6424); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -6663,7 +6663,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6671,7 +6671,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6691,7 +6691,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6721,7 +6721,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1909:2: ( identifierLiteral x= XML_NS_OP identifierLiteral )
             // AS3_ex.g3:1910:2: identifierLiteral x= XML_NS_OP identifierLiteral
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_identifierLiteral_in_conditionalCompilerOption6440);
                 identifierLiteral78 = identifierLiteral();
@@ -6730,7 +6730,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, identifierLiteral78.Tree);
                 x=(IToken)Match(input,XML_NS_OP,FOLLOW_XML_NS_OP_in_conditionalCompilerOption6444); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {x_tree = (object)adaptor.Create(x);
+                {x_tree = adaptor.Create(x);
                     adaptor.AddChild(root_0, x_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -6748,7 +6748,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6756,7 +6756,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6776,7 +6776,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6816,7 +6816,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1919:2: (D= DEFAULT xmlKeyword N= NAMESPACE A= ASSIGN assignmentExpression semic )
             // AS3_ex.g3:1920:2: D= DEFAULT xmlKeyword N= NAMESPACE A= ASSIGN assignmentExpression semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -6828,7 +6828,7 @@ public class AS3_exParser : Parser
                 }
                 D=(IToken)Match(input,DEFAULT,FOLLOW_DEFAULT_in_defaultXMLNamespaceDirective6475); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {D_tree = (object)adaptor.Create(D);
+                {D_tree = adaptor.Create(D);
                     adaptor.AddChild(root_0, D_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -6842,7 +6842,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, xmlKeyword80.Tree);
                 N=(IToken)Match(input,NAMESPACE,FOLLOW_NAMESPACE_in_defaultXMLNamespaceDirective6487); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {N_tree = (object)adaptor.Create(N);
+                {N_tree = adaptor.Create(N);
                     adaptor.AddChild(root_0, N_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -6851,7 +6851,7 @@ public class AS3_exParser : Parser
                 }
                 A=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_defaultXMLNamespaceDirective6495); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {A_tree = (object)adaptor.Create(A);
+                {A_tree = adaptor.Create(A);
                     adaptor.AddChild(root_0, A_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -6883,7 +6883,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -6891,7 +6891,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -6911,7 +6911,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -6957,7 +6957,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1942:2: (L= LBRACK (XA= XML_AT )? I= IDENTIFIER (L= LPAREN ( bindingDeclArg (C= COMMA bindingDeclArg )* )? R= RPAREN )? R= RBRACK (s= SEMI )? )
             // AS3_ex.g3:1943:6: L= LBRACK (XA= XML_AT )? I= IDENTIFIER (L= LPAREN ( bindingDeclArg (C= COMMA bindingDeclArg )* )? R= RPAREN )? R= RBRACK (s= SEMI )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -6967,7 +6967,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LBRACK,FOLLOW_LBRACK_in_bindingDecl6536); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 // AS3_ex.g3:1947:5: (XA= XML_AT )?
@@ -6985,7 +6985,7 @@ public class AS3_exParser : Parser
                         {
                             XA=(IToken)Match(input,XML_AT,FOLLOW_XML_AT_in_bindingDecl6547); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {XA_tree = (object)adaptor.Create(XA);
+                            {XA_tree = adaptor.Create(XA);
                                 adaptor.AddChild(root_0, XA_tree);
                             }
 
@@ -6996,7 +6996,7 @@ public class AS3_exParser : Parser
 
                 I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_bindingDecl6553); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7030,7 +7030,7 @@ public class AS3_exParser : Parser
                         {
                             L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_bindingDecl6577); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {L_tree = (object)adaptor.Create(L);
+                            {L_tree = adaptor.Create(L);
                                 adaptor.AddChild(root_0, L_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -7074,7 +7074,7 @@ public class AS3_exParser : Parser
                                                     {
                                                         C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_bindingDecl6594); if (state.failed) return retval;
                                                         if ( state.backtracking == 0 )
-                                                        {C_tree = (object)adaptor.Create(C);
+                                                        {C_tree = adaptor.Create(C);
                                                             adaptor.AddChild(root_0, C_tree);
                                                         }
                                                         if ( state.backtracking == 0 ) 
@@ -7106,7 +7106,7 @@ public class AS3_exParser : Parser
 
                             R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_bindingDecl6609); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {R_tree = (object)adaptor.Create(R);
+                            {R_tree = adaptor.Create(R);
                                 adaptor.AddChild(root_0, R_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -7121,7 +7121,7 @@ public class AS3_exParser : Parser
 
                 R=(IToken)Match(input,RBRACK,FOLLOW_RBRACK_in_bindingDecl6630); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7148,7 +7148,7 @@ public class AS3_exParser : Parser
                         {
                             s=(IToken)Match(input,SEMI,FOLLOW_SEMI_in_bindingDecl6636); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {s_tree = (object)adaptor.Create(s);
+                            {s_tree = adaptor.Create(s);
                                 adaptor.AddChild(root_0, s_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -7184,7 +7184,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -7192,7 +7192,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -7212,7 +7212,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -7242,7 +7242,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1980:2: (I= INCLUDE stringLiteral semic )
             // AS3_ex.g3:1981:2: I= INCLUDE stringLiteral semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -7250,7 +7250,7 @@ public class AS3_exParser : Parser
                 }
                 I=(IToken)Match(input,INCLUDE,FOLLOW_INCLUDE_in_includeDirective6666); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7273,7 +7273,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -7281,7 +7281,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -7301,7 +7301,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -7343,7 +7343,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:1986:2: ( ( eitherIdentifier E= ASSIGN )? ( stringLiteral | (P= PLUS | S= SUB )? numericLiteral | ( eitherIdentifier (D= DOT eitherIdentifier )* ) ) )
             // AS3_ex.g3:1993:5: ( eitherIdentifier E= ASSIGN )? ( stringLiteral | (P= PLUS | S= SUB )? numericLiteral | ( eitherIdentifier (D= DOT eitherIdentifier )* ) )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:1993:5: ( eitherIdentifier E= ASSIGN )?
                 int alt49 = 2;
@@ -7360,7 +7360,7 @@ public class AS3_exParser : Parser
                             if ( state.backtracking == 0 ) adaptor.AddChild(root_0, eitherIdentifier87.Tree);
                             E=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_bindingDeclArg6704); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {E_tree = (object)adaptor.Create(E);
+                            {E_tree = adaptor.Create(E);
                                 adaptor.AddChild(root_0, E_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -7495,7 +7495,7 @@ public class AS3_exParser : Parser
                                     {
                                         P=(IToken)Match(input,PLUS,FOLLOW_PLUS_in_bindingDeclArg6724); if (state.failed) return retval;
                                         if ( state.backtracking == 0 )
-                                        {P_tree = (object)adaptor.Create(P);
+                                        {P_tree = adaptor.Create(P);
                                             adaptor.AddChild(root_0, P_tree);
                                         }
                                         if ( state.backtracking == 0 ) 
@@ -7510,7 +7510,7 @@ public class AS3_exParser : Parser
                                     {
                                         S=(IToken)Match(input,SUB,FOLLOW_SUB_in_bindingDeclArg6732); if (state.failed) return retval;
                                         if ( state.backtracking == 0 )
-                                        {S_tree = (object)adaptor.Create(S);
+                                        {S_tree = adaptor.Create(S);
                                             adaptor.AddChild(root_0, S_tree);
                                         }
                                         if ( state.backtracking == 0 ) 
@@ -7561,7 +7561,7 @@ public class AS3_exParser : Parser
                                             {
                                                 D=(IToken)Match(input,DOT,FOLLOW_DOT_in_bindingDeclArg6749); if (state.failed) return retval;
                                                 if ( state.backtracking == 0 )
-                                                {D_tree = (object)adaptor.Create(D);
+                                                {D_tree = adaptor.Create(D);
                                                     adaptor.AddChild(root_0, D_tree);
                                                 }
                                                 if ( state.backtracking == 0 ) 
@@ -7600,7 +7600,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -7608,7 +7608,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -7628,7 +7628,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -7666,11 +7666,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2007:2: (i= INTERFACE type (e= EXTENDS typeList )? interfaceBody )
             // AS3_ex.g3:2008:6: i= INTERFACE type (e= EXTENDS typeList )? interfaceBody
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 i=(IToken)Match(input,INTERFACE,FOLLOW_INTERFACE_in_interfaceDeclaration6790); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {i_tree = (object)adaptor.Create(i);
+                {i_tree = adaptor.Create(i);
                     adaptor.AddChild(root_0, i_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7697,7 +7697,7 @@ public class AS3_exParser : Parser
                         {
                             e=(IToken)Match(input,EXTENDS,FOLLOW_EXTENDS_in_interfaceDeclaration6802); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {e_tree = (object)adaptor.Create(e);
+                            {e_tree = adaptor.Create(e);
                                 adaptor.AddChild(root_0, e_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -7742,7 +7742,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -7750,7 +7750,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -7770,7 +7770,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -7800,11 +7800,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2019:2: (l= LCURLY ( interfaceElement )* r= RCURLY )
             // AS3_ex.g3:2019:6: l= LCURLY ( interfaceElement )* r= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 l=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_interfaceBody6859); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {l_tree = (object)adaptor.Create(l);
+                {l_tree = adaptor.Create(l);
                     adaptor.AddChild(root_0, l_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7861,7 +7861,7 @@ public class AS3_exParser : Parser
                 }
                 r=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_interfaceBody6901); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {r_tree = (object)adaptor.Create(r);
+                {r_tree = adaptor.Create(r);
                     adaptor.AddChild(root_0, r_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7874,7 +7874,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -7882,7 +7882,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -7902,7 +7902,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -7944,11 +7944,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2038:2: (c= CLASS type (E= EXTENDS type )? (I= IMPLEMENTS typeList )? classBody )
             // AS3_ex.g3:2039:6: c= CLASS type (E= EXTENDS type )? (I= IMPLEMENTS typeList )? classBody
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 c=(IToken)Match(input,CLASS,FOLLOW_CLASS_in_classDeclaration6928); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {c_tree = (object)adaptor.Create(c);
+                {c_tree = adaptor.Create(c);
                     adaptor.AddChild(root_0, c_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -7975,7 +7975,7 @@ public class AS3_exParser : Parser
                         {
                             E=(IToken)Match(input,EXTENDS,FOLLOW_EXTENDS_in_classDeclaration6941); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {E_tree = (object)adaptor.Create(E);
+                            {E_tree = adaptor.Create(E);
                                 adaptor.AddChild(root_0, E_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -8020,7 +8020,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IMPLEMENTS,FOLLOW_IMPLEMENTS_in_classDeclaration6973); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -8065,7 +8065,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -8073,7 +8073,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -8093,7 +8093,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -8123,11 +8123,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2057:2: (L= LCURLY ( classBodyElement )* R= RCURLY )
             // AS3_ex.g3:2057:6: L= LCURLY ( classBodyElement )* R= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 L=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_classBody7042); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -8184,7 +8184,7 @@ public class AS3_exParser : Parser
                 }
                 R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_classBody7069); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -8197,7 +8197,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -8205,7 +8205,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -8225,7 +8225,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -8270,7 +8270,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:2076:7: ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( classBodyElement )* r= RCURLY
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         if ( state.backtracking == 0 ) 
                         {
@@ -8283,7 +8283,7 @@ public class AS3_exParser : Parser
                         if ( state.backtracking == 0 ) adaptor.AddChild(root_0, conditionalCompilerOption101.Tree);
                         l=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_classBodyElement7116); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {l_tree = (object)adaptor.Create(l);
+                        {l_tree = adaptor.Create(l);
                             adaptor.AddChild(root_0, l_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -8340,7 +8340,7 @@ public class AS3_exParser : Parser
                         }
                         r=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_classBodyElement7145); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {r_tree = (object)adaptor.Create(r);
+                        {r_tree = adaptor.Create(r);
                             adaptor.AddChild(root_0, r_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -8353,7 +8353,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:2090:7: propertyDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_propertyDeclaration_in_classBodyElement7159);
                         propertyDeclaration103 = propertyDeclaration();
@@ -8366,7 +8366,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:2090:29: functionDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_functionDeclaration_in_classBodyElement7163);
                         functionDeclaration104 = functionDeclaration();
@@ -8379,7 +8379,7 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:2090:51: statement
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_statement_in_classBodyElement7167);
                         statement105 = statement();
@@ -8392,7 +8392,7 @@ public class AS3_exParser : Parser
                 case 5 :
                     // AS3_ex.g3:2090:63: directive
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_directive_in_classBodyElement7171);
                         directive106 = directive();
@@ -8407,7 +8407,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -8415,7 +8415,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -8435,7 +8435,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -8480,7 +8480,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:2094:7: ( conditionalCompilerOption LCURLY )=> conditionalCompilerOption l= LCURLY ( interfaceElement )* r= RCURLY
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         if ( state.backtracking == 0 ) 
                         {
@@ -8493,7 +8493,7 @@ public class AS3_exParser : Parser
                         if ( state.backtracking == 0 ) adaptor.AddChild(root_0, conditionalCompilerOption107.Tree);
                         l=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_interfaceElement7211); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {l_tree = (object)adaptor.Create(l);
+                        {l_tree = adaptor.Create(l);
                             adaptor.AddChild(root_0, l_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -8550,7 +8550,7 @@ public class AS3_exParser : Parser
                         }
                         r=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_interfaceElement7240); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {r_tree = (object)adaptor.Create(r);
+                        {r_tree = adaptor.Create(r);
                             adaptor.AddChild(root_0, r_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -8563,7 +8563,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:2108:7: propertyDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_propertyDeclaration_in_interfaceElement7254);
                         propertyDeclaration109 = propertyDeclaration();
@@ -8576,7 +8576,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:2108:29: interfaceFunctionDeclaration
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_interfaceFunctionDeclaration_in_interfaceElement7258);
                         interfaceFunctionDeclaration110 = interfaceFunctionDeclaration();
@@ -8589,7 +8589,7 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:2108:60: statement
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_statement_in_interfaceElement7262);
                         statement111 = statement();
@@ -8602,7 +8602,7 @@ public class AS3_exParser : Parser
                 case 5 :
                     // AS3_ex.g3:2108:71: directive
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_directive_in_interfaceElement7265);
                         directive112 = directive();
@@ -8617,7 +8617,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -8625,7 +8625,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -8645,7 +8645,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -8695,7 +8695,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2122:5: ( ( conditionalDirAndBindingDecls )? ( memberModifiers )? F= FUNCTION (S= SET | G= GET )? (I= IDENTIFIER | notQuiteReservedWord ) formalParameterList (C= COLON type )? semic )
             // AS3_ex.g3:2122:10: ( conditionalDirAndBindingDecls )? ( memberModifiers )? F= FUNCTION (S= SET | G= GET )? (I= IDENTIFIER | notQuiteReservedWord ) formalParameterList (C= COLON type )? semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -8786,7 +8786,7 @@ public class AS3_exParser : Parser
 
                 F=(IToken)Match(input,FUNCTION,FOLLOW_FUNCTION_in_interfaceFunctionDeclaration7311); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -8822,7 +8822,7 @@ public class AS3_exParser : Parser
                         {
                             S=(IToken)Match(input,SET,FOLLOW_SET_in_interfaceFunctionDeclaration7330); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {S_tree = (object)adaptor.Create(S);
+                            {S_tree = adaptor.Create(S);
                                 adaptor.AddChild(root_0, S_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -8837,7 +8837,7 @@ public class AS3_exParser : Parser
                         {
                             G=(IToken)Match(input,GET,FOLLOW_GET_in_interfaceFunctionDeclaration7337); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {G_tree = (object)adaptor.Create(G);
+                            {G_tree = adaptor.Create(G);
                                 adaptor.AddChild(root_0, G_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -8881,7 +8881,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_interfaceFunctionDeclaration7354); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -8925,7 +8925,7 @@ public class AS3_exParser : Parser
                         {
                             C=(IToken)Match(input,COLON,FOLLOW_COLON_in_interfaceFunctionDeclaration7368); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -8958,7 +8958,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -8966,7 +8966,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -8986,7 +8986,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -9020,7 +9020,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2135:2: ( ( conditionalDirAndBindingDecls )? ( memberModifiers )? ( variableStatement | constantVarStatement | namespaceDirective ) )
             // AS3_ex.g3:2135:7: ( conditionalDirAndBindingDecls )? ( memberModifiers )? ( variableStatement | constantVarStatement | namespaceDirective )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -9211,7 +9211,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -9219,7 +9219,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -9239,7 +9239,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -9287,7 +9287,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2147:5: ( ( conditionalDirAndBindingDecls )? ( memberModifiers )? F= FUNCTION (funcType= ( SET | GET ) )? (I= IDENTIFIER | notQuiteReservedWord ) formalParameterList (C= COLON type )? functionBody )
             // AS3_ex.g3:2148:5: ( conditionalDirAndBindingDecls )? ( memberModifiers )? F= FUNCTION (funcType= ( SET | GET ) )? (I= IDENTIFIER | notQuiteReservedWord ) formalParameterList (C= COLON type )? functionBody
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -9382,7 +9382,7 @@ public class AS3_exParser : Parser
 
                 F=(IToken)Match(input,FUNCTION,FOLLOW_FUNCTION_in_functionDeclaration7471); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -9411,11 +9411,11 @@ public class AS3_exParser : Parser
                     case 1 :
                         // AS3_ex.g3:2150:6: funcType= ( SET | GET )
                         {
-                            funcType = (IToken)input.LT(1);
+                            funcType = input.LT(1);
                             if ( (input.LA(1) >= GET && input.LA(1) <= SET) ) 
                             {
                                 input.Consume();
-                                if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(funcType));
+                                if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(funcType));
                                 state.errorRecovery = false;state.failed = false;
                             }
                             else 
@@ -9466,7 +9466,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_functionDeclaration7513); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -9510,7 +9510,7 @@ public class AS3_exParser : Parser
                         {
                             C=(IToken)Match(input,COLON,FOLLOW_COLON_in_functionDeclaration7527); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -9551,7 +9551,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -9559,7 +9559,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -9579,7 +9579,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -9615,11 +9615,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2161:2: (F= FUNCTION (I= IDENTIFIER )? formalParameterList (C= COLON type )? functionBody )
             // AS3_ex.g3:2161:6: F= FUNCTION (I= IDENTIFIER )? formalParameterList (C= COLON type )? functionBody
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 F=(IToken)Match(input,FUNCTION,FOLLOW_FUNCTION_in_functionExpression7582); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -9641,7 +9641,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_functionExpression7589); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -9674,7 +9674,7 @@ public class AS3_exParser : Parser
                         {
                             C=(IToken)Match(input,COLON,FOLLOW_COLON_in_functionExpression7599); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -9719,7 +9719,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -9727,7 +9727,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -9747,7 +9747,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -9792,7 +9792,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2174:5: (L= LPAREN ( ( variableDeclaration (C= COMMA variableDeclaration )* (C= COMMA formalEllipsisParameter )? ) | formalEllipsisParameter )? R= RPAREN )
             // AS3_ex.g3:2175:3: L= LPAREN ( ( variableDeclaration (C= COMMA variableDeclaration )* (C= COMMA formalEllipsisParameter )? ) | formalEllipsisParameter )? R= RPAREN
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -9805,7 +9805,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_formalParameterList7653); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -9879,7 +9879,7 @@ public class AS3_exParser : Parser
                                             {
                                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_formalParameterList7711); if (state.failed) return retval;
                                                 if ( state.backtracking == 0 )
-                                                {C_tree = (object)adaptor.Create(C);
+                                                {C_tree = adaptor.Create(C);
                                                     adaptor.AddChild(root_0, C_tree);
                                                 }
                                                 if ( state.backtracking == 0 ) 
@@ -9918,7 +9918,7 @@ public class AS3_exParser : Parser
                                         {
                                             C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_formalParameterList7781); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {C_tree = (object)adaptor.Create(C);
+                                            {C_tree = adaptor.Create(C);
                                                 adaptor.AddChild(root_0, C_tree);
                                             }
                                             if ( state.backtracking == 0 ) 
@@ -9962,7 +9962,7 @@ public class AS3_exParser : Parser
 
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_formalParameterList7836); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -9990,7 +9990,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -9998,7 +9998,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -10018,7 +10018,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -10046,11 +10046,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2209:5: (E= ELLIPSIS variableIdentifierDecl )
             // AS3_ex.g3:2209:9: E= ELLIPSIS variableIdentifierDecl
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 E=(IToken)Match(input,ELLIPSIS,FOLLOW_ELLIPSIS_in_formalEllipsisParameter7883); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {E_tree = (object)adaptor.Create(E);
+                {E_tree = adaptor.Create(E);
                     adaptor.AddChild(root_0, E_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -10068,7 +10068,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -10076,7 +10076,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -10096,7 +10096,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -10131,11 +10131,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2217:5: (L= LCURLY ( ( statement | functionDeclaration ) )* R= RCURLY )
             // AS3_ex.g3:2217:9: L= LCURLY ( ( statement | functionDeclaration ) )* R= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 L=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_functionBody7917); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -10230,7 +10230,7 @@ public class AS3_exParser : Parser
                 }
                 R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_functionBody7973); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -10243,7 +10243,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -10251,7 +10251,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -10271,7 +10271,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -10297,7 +10297,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2241:5: ( ( memberModifier )+ )
             // AS3_ex.g3:2241:9: ( memberModifier )+
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:2241:9: ( memberModifier )+
                 int cnt82 = 0;
@@ -10356,7 +10356,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -10364,7 +10364,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -10384,7 +10384,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -10410,13 +10410,13 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2249:5: (x= ( DYNAMIC | FINAL | INTERNAL | NATIVE | OVERRIDE | PRIVATE | PROTECTED | PUBLIC | STATIC | IDENTIFIER ) )
             // AS3_ex.g3:2249:9: x= ( DYNAMIC | FINAL | INTERNAL | NATIVE | OVERRIDE | PRIVATE | PROTECTED | PUBLIC | STATIC | IDENTIFIER )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
-                x = (IToken)input.LT(1);
+                x = input.LT(1);
                 if ( input.LA(1) == INTERNAL || input.LA(1) == NATIVE || (input.LA(1) >= PRIVATE && input.LA(1) <= PUBLIC) || (input.LA(1) >= DYNAMIC && input.LA(1) <= STATIC) || input.LA(1) == IDENTIFIER ) 
                 {
                     input.Consume();
-                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(x));
+                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(x));
                     state.errorRecovery = false;state.failed = false;
                 }
                 else 
@@ -10436,7 +10436,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -10444,7 +10444,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -10464,7 +10464,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -10532,7 +10532,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2271:5: ( ( blockStatement | directive | namespaceDirective | constantVarStatement | tryStatement | switchStatement | withStatement | returnStatement | breakStatement | continueStatement | forStatement | forInStatement | forEachInStatement | doWhileStatement | whileStatement | ifStatement | variableStatement | throwStatement | labelledStatement | expression semic | emptyStatement ) )
             // AS3_ex.g3:2272:6: ( blockStatement | directive | namespaceDirective | constantVarStatement | tryStatement | switchStatement | withStatement | returnStatement | breakStatement | continueStatement | forStatement | forInStatement | forEachInStatement | doWhileStatement | whileStatement | ifStatement | variableStatement | throwStatement | labelledStatement | expression semic | emptyStatement )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -11045,7 +11045,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -11053,7 +11053,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -11073,7 +11073,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -11105,7 +11105,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2311:5: ( (conditionalToken= conditionalCompilerOption )? L= LCURLY ( statement )* R= RCURLY )
             // AS3_ex.g3:2311:9: (conditionalToken= conditionalCompilerOption )? L= LCURLY ( statement )* R= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:2311:9: (conditionalToken= conditionalCompilerOption )?
                 int alt84 = 2;
@@ -11137,7 +11137,7 @@ public class AS3_exParser : Parser
 
                 L=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_blockStatement8535); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11199,7 +11199,7 @@ public class AS3_exParser : Parser
                 }
                 R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_blockStatement8572); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11212,7 +11212,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -11220,7 +11220,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -11240,7 +11240,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -11270,7 +11270,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2328:2: (T= THROW expression semic )
             // AS3_ex.g3:2328:5: T= THROW expression semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -11278,7 +11278,7 @@ public class AS3_exParser : Parser
                 }
                 T=(IToken)Match(input,THROW,FOLLOW_THROW_in_throwStatement8597); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {T_tree = (object)adaptor.Create(T);
+                {T_tree = adaptor.Create(T);
                     adaptor.AddChild(root_0, T_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11310,7 +11310,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -11318,7 +11318,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -11338,7 +11338,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -11368,7 +11368,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2342:5: (C= CONST variableDeclarationList (S= SEMI )? )
             // AS3_ex.g3:2343:5: C= CONST variableDeclarationList (S= SEMI )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -11376,7 +11376,7 @@ public class AS3_exParser : Parser
                 }
                 C=(IToken)Match(input,CONST,FOLLOW_CONST_in_constantVarStatement8641); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {C_tree = (object)adaptor.Create(C);
+                {C_tree = adaptor.Create(C);
                     adaptor.AddChild(root_0, C_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11408,7 +11408,7 @@ public class AS3_exParser : Parser
                         {
                             S=(IToken)Match(input,SEMI,FOLLOW_SEMI_in_constantVarStatement8651); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {S_tree = (object)adaptor.Create(S);
+                            {S_tree = adaptor.Create(S);
                                 adaptor.AddChild(root_0, S_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -11431,7 +11431,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -11439,7 +11439,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -11459,7 +11459,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -11501,7 +11501,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2357:2: (U= USE N= NAMESPACE qualifiedIdentifier (C= COMMA qualifiedIdentifier )* semic )
             // AS3_ex.g3:2358:6: U= USE N= NAMESPACE qualifiedIdentifier (C= COMMA qualifiedIdentifier )* semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -11515,7 +11515,7 @@ public class AS3_exParser : Parser
                 }
                 U=(IToken)Match(input,USE,FOLLOW_USE_in_useNamespaceDirective8699); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {U_tree = (object)adaptor.Create(U);
+                {U_tree = adaptor.Create(U);
                     adaptor.AddChild(root_0, U_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11524,7 +11524,7 @@ public class AS3_exParser : Parser
                 }
                 N=(IToken)Match(input,NAMESPACE,FOLLOW_NAMESPACE_in_useNamespaceDirective8708); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {N_tree = (object)adaptor.Create(N);
+                {N_tree = adaptor.Create(N);
                     adaptor.AddChild(root_0, N_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11555,7 +11555,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_useNamespaceDirective8720); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -11603,7 +11603,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -11611,7 +11611,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -11631,7 +11631,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -11665,7 +11665,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2381:5: (N= NAMESPACE qualifiedIdentifier (A= ASSIGN stringLiteral )? semic )
             // AS3_ex.g3:2382:5: N= NAMESPACE qualifiedIdentifier (A= ASSIGN stringLiteral )? semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -11673,7 +11673,7 @@ public class AS3_exParser : Parser
                 }
                 N=(IToken)Match(input,NAMESPACE,FOLLOW_NAMESPACE_in_namespaceDirective8767); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {N_tree = (object)adaptor.Create(N);
+                {N_tree = adaptor.Create(N);
                     adaptor.AddChild(root_0, N_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11704,7 +11704,7 @@ public class AS3_exParser : Parser
                         {
                             A=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_namespaceDirective8784); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {A_tree = (object)adaptor.Create(A);
+                            {A_tree = adaptor.Create(A);
                                 adaptor.AddChild(root_0, A_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -11737,7 +11737,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -11745,7 +11745,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -11765,7 +11765,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -11801,7 +11801,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2393:5: (T= TRY blockStatement ( ( catchClause )+ finallyClause | ( catchClause )+ | finallyClause ) )
             // AS3_ex.g3:2394:5: T= TRY blockStatement ( ( catchClause )+ finallyClause | ( catchClause )+ | finallyClause )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -11813,7 +11813,7 @@ public class AS3_exParser : Parser
                 }
                 T=(IToken)Match(input,TRY,FOLLOW_TRY_in_tryStatement8833); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {T_tree = (object)adaptor.Create(T);
+                {T_tree = adaptor.Create(T);
                     adaptor.AddChild(root_0, T_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -11996,7 +11996,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12004,7 +12004,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12024,7 +12024,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12058,7 +12058,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2403:2: (C= CATCH L= LPAREN variableIdentifierDecl R= RPAREN blockStatement )
             // AS3_ex.g3:2403:4: C= CATCH L= LPAREN variableIdentifierDecl R= RPAREN blockStatement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -12070,7 +12070,7 @@ public class AS3_exParser : Parser
                 }
                 C=(IToken)Match(input,CATCH,FOLLOW_CATCH_in_catchClause8910); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {C_tree = (object)adaptor.Create(C);
+                {C_tree = adaptor.Create(C);
                     adaptor.AddChild(root_0, C_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12083,7 +12083,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_catchClause8917); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12097,7 +12097,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, variableIdentifierDecl178.Tree);
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_catchClause8925); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12119,7 +12119,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12127,7 +12127,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12147,7 +12147,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12175,7 +12175,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2407:5: (F= FINALLY blockStatement )
             // AS3_ex.g3:2407:7: F= FINALLY blockStatement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -12187,7 +12187,7 @@ public class AS3_exParser : Parser
                 }
                 F=(IToken)Match(input,FINALLY,FOLLOW_FINALLY_in_finallyClause8953); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12213,7 +12213,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12221,7 +12221,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12241,7 +12241,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12271,11 +12271,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2415:5: (I= IDENTIFIER C= COLON statement )
             // AS3_ex.g3:2415:8: I= IDENTIFIER C= COLON statement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_labelledStatement8984); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12288,7 +12288,7 @@ public class AS3_exParser : Parser
                 }
                 C=(IToken)Match(input,COLON,FOLLOW_COLON_in_labelledStatement8997); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {C_tree = (object)adaptor.Create(C);
+                {C_tree = adaptor.Create(C);
                     adaptor.AddChild(root_0, C_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12313,7 +12313,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12321,7 +12321,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12341,7 +12341,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12375,7 +12375,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2430:5: (S= SWITCH parExpression L= LCURLY ( switchBlockStatementGroup )* R= RCURLY )
             // AS3_ex.g3:2431:5: S= SWITCH parExpression L= LCURLY ( switchBlockStatementGroup )* R= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -12391,7 +12391,7 @@ public class AS3_exParser : Parser
                 }
                 S=(IToken)Match(input,SWITCH,FOLLOW_SWITCH_in_switchStatement9065); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {S_tree = (object)adaptor.Create(S);
+                {S_tree = adaptor.Create(S);
                     adaptor.AddChild(root_0, S_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12415,7 +12415,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_switchStatement9088); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12476,7 +12476,7 @@ public class AS3_exParser : Parser
                 }
                 R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_switchStatement9124); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12489,7 +12489,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12497,7 +12497,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12517,7 +12517,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12550,7 +12550,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2463:5: ( switchLabel ( statement )* ( breakStatement )? )
             // AS3_ex.g3:2463:9: switchLabel ( statement )* ( breakStatement )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -12638,7 +12638,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12646,7 +12646,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12666,7 +12666,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12720,11 +12720,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:2471:9: C= CASE expression O= COLON
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         C=(IToken)Match(input,CASE,FOLLOW_CASE_in_switchLabel9228); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {C_tree = (object)adaptor.Create(C);
+                        {C_tree = adaptor.Create(C);
                             adaptor.AddChild(root_0, C_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -12742,7 +12742,7 @@ public class AS3_exParser : Parser
                         if ( state.backtracking == 0 ) adaptor.AddChild(root_0, expression187.Tree);
                         O=(IToken)Match(input,COLON,FOLLOW_COLON_in_switchLabel9238); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {O_tree = (object)adaptor.Create(O);
+                        {O_tree = adaptor.Create(O);
                             adaptor.AddChild(root_0, O_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -12758,11 +12758,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:2476:9: D= DEFAULT C= COLON
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DEFAULT,FOLLOW_DEFAULT_in_switchLabel9259); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -12771,7 +12771,7 @@ public class AS3_exParser : Parser
                         }
                         C=(IToken)Match(input,COLON,FOLLOW_COLON_in_switchLabel9265); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {C_tree = (object)adaptor.Create(C);
+                        {C_tree = adaptor.Create(C);
                             adaptor.AddChild(root_0, C_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -12789,7 +12789,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12797,7 +12797,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12817,7 +12817,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12856,7 +12856,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2494:5: (W= WITH L= LPAREN expression R= RPAREN statement )
             // AS3_ex.g3:2495:5: W= WITH L= LPAREN expression R= RPAREN statement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -12864,7 +12864,7 @@ public class AS3_exParser : Parser
                 }
                 W=(IToken)Match(input,WITH,FOLLOW_WITH_in_withStatement9313); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {W_tree = (object)adaptor.Create(W);
+                {W_tree = adaptor.Create(W);
                     adaptor.AddChild(root_0, W_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12877,7 +12877,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_withStatement9321); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12891,7 +12891,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, expression188.Tree);
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_withStatement9331); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -12933,7 +12933,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -12941,7 +12941,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -12961,7 +12961,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -12991,11 +12991,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2512:5: (R= RETURN ( expression )? semic )
             // AS3_ex.g3:2512:9: R= RETURN ( expression )? semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 R=(IToken)Match(input,RETURN,FOLLOW_RETURN_in_returnStatement9396); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13050,7 +13050,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13058,7 +13058,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13078,7 +13078,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13108,11 +13108,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2528:5: (B= BREAK (I= IDENTIFIER )? semic )
             // AS3_ex.g3:2528:9: B= BREAK (I= IDENTIFIER )? semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 B=(IToken)Match(input,BREAK,FOLLOW_BREAK_in_breakStatement9448); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {B_tree = (object)adaptor.Create(B);
+                {B_tree = adaptor.Create(B);
                     adaptor.AddChild(root_0, B_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13143,7 +13143,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_breakStatement9471); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -13167,7 +13167,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13175,7 +13175,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13195,7 +13195,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13225,11 +13225,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2544:5: (C= CONTINUE (I= IDENTIFIER )? semic )
             // AS3_ex.g3:2544:9: C= CONTINUE (I= IDENTIFIER )? semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 C=(IToken)Match(input,CONTINUE,FOLLOW_CONTINUE_in_continueStatement9502); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {C_tree = (object)adaptor.Create(C);
+                {C_tree = adaptor.Create(C);
                     adaptor.AddChild(root_0, C_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13260,7 +13260,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_continueStatement9522); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -13284,7 +13284,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13292,7 +13292,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13312,7 +13312,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13351,7 +13351,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2566:5: (F= FOR L= LPAREN forControl R= RPAREN statement )
             // AS3_ex.g3:2567:6: F= FOR L= LPAREN forControl R= RPAREN statement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -13359,7 +13359,7 @@ public class AS3_exParser : Parser
                 }
                 F=(IToken)Match(input,FOR,FOLLOW_FOR_in_forStatement9565); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13372,7 +13372,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_forStatement9573); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13386,7 +13386,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, forControl194.Tree);
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_forStatement9581); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13428,7 +13428,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13436,7 +13436,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13456,7 +13456,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13495,7 +13495,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2586:5: (F= FOR L= LPAREN forInControl R= RPAREN statement )
             // AS3_ex.g3:2587:6: F= FOR L= LPAREN forInControl R= RPAREN statement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -13503,7 +13503,7 @@ public class AS3_exParser : Parser
                 }
                 F=(IToken)Match(input,FOR,FOLLOW_FOR_in_forInStatement9656); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13516,7 +13516,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_forInStatement9664); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13530,7 +13530,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, forInControl196.Tree);
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_forInStatement9672); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13572,7 +13572,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13580,7 +13580,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13600,7 +13600,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13641,7 +13641,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2606:5: (F= FOR E= EACH L= LPAREN forInControl R= RPAREN statement )
             // AS3_ex.g3:2607:5: F= FOR E= EACH L= LPAREN forInControl R= RPAREN statement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -13649,7 +13649,7 @@ public class AS3_exParser : Parser
                 }
                 F=(IToken)Match(input,FOR,FOLLOW_FOR_in_forEachInStatement9755); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {F_tree = (object)adaptor.Create(F);
+                {F_tree = adaptor.Create(F);
                     adaptor.AddChild(root_0, F_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13662,7 +13662,7 @@ public class AS3_exParser : Parser
                 }
                 E=(IToken)Match(input,EACH,FOLLOW_EACH_in_forEachInStatement9773); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {E_tree = (object)adaptor.Create(E);
+                {E_tree = adaptor.Create(E);
                     adaptor.AddChild(root_0, E_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13671,7 +13671,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_forEachInStatement9781); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13685,7 +13685,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, forInControl198.Tree);
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_forEachInStatement9789); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13727,7 +13727,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13735,7 +13735,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13755,7 +13755,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13789,7 +13789,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2623:5: ( ( forInit )? semic ( expression )? semic ( forUpdate )? )
             // AS3_ex.g3:2623:9: ( forInit )? semic ( expression )? semic ( forUpdate )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:2623:9: ( forInit )?
                 int alt99 = 2;
@@ -13895,7 +13895,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13903,7 +13903,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -13923,7 +13923,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -13953,7 +13953,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2628:5: ( forInDecl I= IN expression )
             // AS3_ex.g3:2628:9: forInDecl I= IN expression
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_forInDecl_in_forInControl9894);
                 forInDecl205 = forInDecl();
@@ -13962,7 +13962,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, forInDecl205.Tree);
                 I=(IToken)Match(input,IN,FOLLOW_IN_in_forInControl9898); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -13980,7 +13980,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -13988,7 +13988,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14008,7 +14008,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14077,7 +14077,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:2632:9: leftHandSideExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_leftHandSideExpression_in_forInDecl9921);
                         leftHandSideExpression207 = leftHandSideExpression();
@@ -14090,11 +14090,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:2633:9: V= VAR variableDeclarationNoIn
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         V=(IToken)Match(input,VAR,FOLLOW_VAR_in_forInDecl9933); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {V_tree = (object)adaptor.Create(V);
+                        {V_tree = adaptor.Create(V);
                             adaptor.AddChild(root_0, V_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -14114,7 +14114,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14122,7 +14122,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14142,7 +14142,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14211,11 +14211,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:2637:9: V= VAR variableDeclarationNoInList
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         V=(IToken)Match(input,VAR,FOLLOW_VAR_in_forInit9958); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {V_tree = (object)adaptor.Create(V);
+                        {V_tree = adaptor.Create(V);
                             adaptor.AddChild(root_0, V_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -14233,7 +14233,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:2638:9: expressionNoIn
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_expressionNoIn_in_forInit9971);
                         expressionNoIn210 = expressionNoIn();
@@ -14248,7 +14248,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14256,7 +14256,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14276,7 +14276,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14302,7 +14302,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2642:5: ( expression )
             // AS3_ex.g3:2642:9: expression
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_expression_in_forUpdate9990);
                 expression211 = expression();
@@ -14315,7 +14315,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14323,7 +14323,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14343,7 +14343,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14382,7 +14382,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2655:5: (D= DO statement W= WHILE parExpression semic (S= SEMI )? )
             // AS3_ex.g3:2656:5: D= DO statement W= WHILE parExpression semic (S= SEMI )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -14390,7 +14390,7 @@ public class AS3_exParser : Parser
                 }
                 D=(IToken)Match(input,DO,FOLLOW_DO_in_doWhileStatement10032); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {D_tree = (object)adaptor.Create(D);
+                {D_tree = adaptor.Create(D);
                     adaptor.AddChild(root_0, D_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -14431,7 +14431,7 @@ public class AS3_exParser : Parser
                 }
                 W=(IToken)Match(input,WHILE,FOLLOW_WHILE_in_doWhileStatement10091); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {W_tree = (object)adaptor.Create(W);
+                {W_tree = adaptor.Create(W);
                     adaptor.AddChild(root_0, W_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -14468,7 +14468,7 @@ public class AS3_exParser : Parser
                         {
                             S=(IToken)Match(input,SEMI,FOLLOW_SEMI_in_doWhileStatement10102); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {S_tree = (object)adaptor.Create(S);
+                            {S_tree = adaptor.Create(S);
                                 adaptor.AddChild(root_0, S_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -14491,7 +14491,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14499,7 +14499,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14519,7 +14519,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14555,7 +14555,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2681:5: (W= WHILE parExpression statement )
             // AS3_ex.g3:2682:8: W= WHILE parExpression statement
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -14563,7 +14563,7 @@ public class AS3_exParser : Parser
                 }
                 W=(IToken)Match(input,WHILE,FOLLOW_WHILE_in_whileStatement10151); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {W_tree = (object)adaptor.Create(W);
+                {W_tree = adaptor.Create(W);
                     adaptor.AddChild(root_0, W_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -14614,7 +14614,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14622,7 +14622,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14642,7 +14642,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14686,7 +14686,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2712:5: (I= IF parExpression statement ( options {k=1; } : E= ELSE statement )? )
             // AS3_ex.g3:2713:6: I= IF parExpression statement ( options {k=1; } : E= ELSE statement )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -14710,7 +14710,7 @@ public class AS3_exParser : Parser
                 }
                 I=(IToken)Match(input,IF,FOLLOW_IF_in_ifStatement10263); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -14802,7 +14802,7 @@ public class AS3_exParser : Parser
                         {
                             E=(IToken)Match(input,ELSE,FOLLOW_ELSE_in_ifStatement10447); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {E_tree = (object)adaptor.Create(E);
+                            {E_tree = adaptor.Create(E);
                                 adaptor.AddChild(root_0, E_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -14872,7 +14872,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14880,7 +14880,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14900,7 +14900,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -14926,11 +14926,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2780:5: (S= SEMI )
             // AS3_ex.g3:2780:11: S= SEMI
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 S=(IToken)Match(input,SEMI,FOLLOW_SEMI_in_emptyStatement10618); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {S_tree = (object)adaptor.Create(S);
+                {S_tree = adaptor.Create(S);
                     adaptor.AddChild(root_0, S_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -14943,7 +14943,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -14951,7 +14951,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -14971,7 +14971,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15013,7 +15013,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2795:5: ( (I= IDENTIFIER )? V= VAR variableDeclaration (C= COMMA variableDeclaration )* semic )
             // AS3_ex.g3:2796:6: (I= IDENTIFIER )? V= VAR variableDeclaration (C= COMMA variableDeclaration )* semic
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -15036,7 +15036,7 @@ public class AS3_exParser : Parser
                         {
                             I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_variableStatement10665); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {I_tree = (object)adaptor.Create(I);
+                            {I_tree = adaptor.Create(I);
                                 adaptor.AddChild(root_0, I_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -15051,7 +15051,7 @@ public class AS3_exParser : Parser
 
                 V=(IToken)Match(input,VAR,FOLLOW_VAR_in_variableStatement10673); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {V_tree = (object)adaptor.Create(V);
+                {V_tree = adaptor.Create(V);
                     adaptor.AddChild(root_0, V_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -15086,7 +15086,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_variableStatement10685); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -15134,7 +15134,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15142,7 +15142,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15162,7 +15162,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15198,7 +15198,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2819:5: ( variableDeclaration (C= COMMA variableDeclaration )* )
             // AS3_ex.g3:2820:6: variableDeclaration (C= COMMA variableDeclaration )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -15230,7 +15230,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_variableDeclarationList10750); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -15273,7 +15273,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15281,7 +15281,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15301,7 +15301,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15337,7 +15337,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2843:5: ( variableDeclarationNoIn (C= COMMA variableDeclarationNoIn )* )
             // AS3_ex.g3:2844:6: variableDeclarationNoIn (C= COMMA variableDeclarationNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -15369,7 +15369,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_variableDeclarationNoInList10809); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -15412,7 +15412,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15420,7 +15420,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15440,7 +15440,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15473,7 +15473,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2864:5: ( variableIdentifierDecl (A= ASSIGN assignmentExpression )? )
             // AS3_ex.g3:2864:9: variableIdentifierDecl (A= ASSIGN assignmentExpression )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_variableIdentifierDecl_in_variableDeclaration10850);
                 variableIdentifierDecl227 = variableIdentifierDecl();
@@ -15495,7 +15495,7 @@ public class AS3_exParser : Parser
                         {
                             A=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_variableDeclaration10856); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {A_tree = (object)adaptor.Create(A);
+                            {A_tree = adaptor.Create(A);
                                 adaptor.AddChild(root_0, A_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -15529,7 +15529,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15537,7 +15537,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15557,7 +15557,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15590,7 +15590,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2879:5: ( variableIdentifierDecl (A= ASSIGN assignmentExpressionNoIn )? )
             // AS3_ex.g3:2879:10: variableIdentifierDecl (A= ASSIGN assignmentExpressionNoIn )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_variableIdentifierDecl_in_variableDeclarationNoIn10901);
                 variableIdentifierDecl229 = variableIdentifierDecl();
@@ -15612,7 +15612,7 @@ public class AS3_exParser : Parser
                         {
                             A=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_variableDeclarationNoIn10907); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {A_tree = (object)adaptor.Create(A);
+                            {A_tree = adaptor.Create(A);
                                 adaptor.AddChild(root_0, A_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -15644,7 +15644,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15652,7 +15652,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15672,7 +15672,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15702,7 +15702,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2889:2: ( identifierLiteral (C= COLON type )? )
             // AS3_ex.g3:2889:7: identifierLiteral (C= COLON type )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_identifierLiteral_in_variableIdentifierDecl10956);
                 identifierLiteral231 = identifierLiteral();
@@ -15724,7 +15724,7 @@ public class AS3_exParser : Parser
                         {
                             C=(IToken)Match(input,COLON,FOLLOW_COLON_in_variableIdentifierDecl10962); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -15748,7 +15748,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15756,7 +15756,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15776,7 +15776,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15847,7 +15847,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:2895:9: qualifiedName
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_qualifiedName_in_type10990);
                         qualifiedName233 = qualifiedName();
@@ -15860,11 +15860,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:2895:25: S= STAR
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         S=(IToken)Match(input,STAR,FOLLOW_STAR_in_type10996); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {S_tree = (object)adaptor.Create(S);
+                        {S_tree = adaptor.Create(S);
                             adaptor.AddChild(root_0, S_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -15877,11 +15877,11 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:2895:46: V= VOID
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         V=(IToken)Match(input,VOID,FOLLOW_VOID_in_type11004); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {V_tree = (object)adaptor.Create(V);
+                        {V_tree = adaptor.Create(V);
                             adaptor.AddChild(root_0, V_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -15896,7 +15896,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -15904,7 +15904,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -15924,7 +15924,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -15960,7 +15960,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2904:5: ( type (C= COMMA type )* )
             // AS3_ex.g3:2905:6: type (C= COMMA type )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -15992,7 +15992,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_typeList11042); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -16035,7 +16035,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16043,7 +16043,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16063,7 +16063,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16093,7 +16093,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2923:2: ( typeSpecifier (D= DOT typeSpecifier )* )
             // AS3_ex.g3:2924:2: typeSpecifier (D= DOT typeSpecifier )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_typeSpecifier_in_standardQualifiedName11077);
                 typeSpecifier236 = typeSpecifier();
@@ -16126,7 +16126,7 @@ public class AS3_exParser : Parser
                             {
                                 D=(IToken)Match(input,DOT,FOLLOW_DOT_in_standardQualifiedName11082); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {D_tree = (object)adaptor.Create(D);
+                                {D_tree = adaptor.Create(D);
                                     adaptor.AddChild(root_0, D_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -16160,7 +16160,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16168,7 +16168,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16188,7 +16188,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16216,7 +16216,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2929:5: ( standardQualifiedName ( typePostfixSyntax )? )
             // AS3_ex.g3:2930:6: standardQualifiedName ( typePostfixSyntax )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_standardQualifiedName_in_qualifiedName11115);
                 standardQualifiedName238 = standardQualifiedName();
@@ -16258,7 +16258,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16266,7 +16266,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16286,7 +16286,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16322,11 +16322,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2933:18: (D= DOT L= LT ( standardQualifiedName | st= STAR ) ( typePostfixSyntax )? G= GT )
             // AS3_ex.g3:2934:2: D= DOT L= LT ( standardQualifiedName | st= STAR ) ( typePostfixSyntax )? G= GT
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 D=(IToken)Match(input,DOT,FOLLOW_DOT_in_typePostfixSyntax11140); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {D_tree = (object)adaptor.Create(D);
+                {D_tree = adaptor.Create(D);
                     adaptor.AddChild(root_0, D_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -16335,7 +16335,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LT,FOLLOW_LT_in_typePostfixSyntax11150); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -16380,7 +16380,7 @@ public class AS3_exParser : Parser
                         {
                             st=(IToken)Match(input,STAR,FOLLOW_STAR_in_typePostfixSyntax11161); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {st_tree = (object)adaptor.Create(st);
+                            {st_tree = adaptor.Create(st);
                                 adaptor.AddChild(root_0, st_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -16419,7 +16419,7 @@ public class AS3_exParser : Parser
 
                 G=(IToken)Match(input,GT,FOLLOW_GT_in_typePostfixSyntax11173); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {G_tree = (object)adaptor.Create(G);
+                {G_tree = adaptor.Create(G);
                     adaptor.AddChild(root_0, G_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -16432,7 +16432,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16440,7 +16440,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16460,7 +16460,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16486,11 +16486,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2942:5: (I= IDENTIFIER )
             // AS3_ex.g3:2943:6: I= IDENTIFIER
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_qualifiedIdentifier11206); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {I_tree = (object)adaptor.Create(I);
+                {I_tree = adaptor.Create(I);
                     adaptor.AddChild(root_0, I_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -16503,7 +16503,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16511,7 +16511,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16531,7 +16531,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16565,7 +16565,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2955:5: (L= LPAREN expression R= RPAREN )
             // AS3_ex.g3:2956:5: L= LPAREN expression R= RPAREN
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -16573,7 +16573,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_parExpression11243); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -16591,7 +16591,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, expression242.Tree);
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_parExpression11255); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -16612,7 +16612,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16620,7 +16620,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16640,7 +16640,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16676,7 +16676,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2968:5: ( assignmentExpression (C= COMMA assignmentExpression )* )
             // AS3_ex.g3:2969:6: assignmentExpression (C= COMMA assignmentExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -16715,7 +16715,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_expression11309); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -16758,7 +16758,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16766,7 +16766,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16786,7 +16786,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16822,7 +16822,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:2992:5: ( assignmentExpressionNoIn (C= COMMA assignmentExpressionNoIn )* )
             // AS3_ex.g3:2993:6: assignmentExpressionNoIn (C= COMMA assignmentExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -16854,7 +16854,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_expressionNoIn11365); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -16897,7 +16897,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -16905,7 +16905,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -16925,7 +16925,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -16961,7 +16961,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3015:5: ( ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpression | conditionalExpression ) )
             // AS3_ex.g3:3016:8: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpression | conditionalExpression )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -17018,7 +17018,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -17026,7 +17026,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -17046,7 +17046,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -17082,7 +17082,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3031:5: ( ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpressionNoIn | conditionalExpressionNoIn ) )
             // AS3_ex.g3:3031:8: ( ( leftHandSideExpression assignmentOperator )=> leftHandSideExpression assignmentOperator assignmentExpressionNoIn | conditionalExpressionNoIn )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -17139,7 +17139,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -17147,7 +17147,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -17167,7 +17167,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -17196,7 +17196,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3044:2: (op= assignmentOperator_int )
             // AS3_ex.g3:3044:4: op= assignmentOperator_int
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_assignmentOperator_int_in_assignmentOperator11575);
                 op = assignmentOperator_int();
@@ -17217,7 +17217,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -17225,7 +17225,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -17245,7 +17245,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -17310,11 +17310,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3053:7: ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         ASSIGN255=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_assignmentOperator_int11601); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {ASSIGN255_tree = (object)adaptor.Create(ASSIGN255);
+                        {ASSIGN255_tree = adaptor.Create(ASSIGN255);
                             adaptor.AddChild(root_0, ASSIGN255_tree);
                         }
 
@@ -17323,11 +17323,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3055:4: s= STAR a= ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         s=(IToken)Match(input,STAR,FOLLOW_STAR_in_assignmentOperator_int11610); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {s_tree = (object)adaptor.Create(s);
+                        {s_tree = adaptor.Create(s);
                             adaptor.AddChild(root_0, s_tree);
                         }
                         a=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_assignmentOperator_int11614); if (state.failed) return retval;
@@ -17341,11 +17341,11 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3056:7: DIV_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         DIV_ASSIGN256=(IToken)Match(input,DIV_ASSIGN,FOLLOW_DIV_ASSIGN_in_assignmentOperator_int11625); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {DIV_ASSIGN256_tree = (object)adaptor.Create(DIV_ASSIGN256);
+                        {DIV_ASSIGN256_tree = adaptor.Create(DIV_ASSIGN256);
                             adaptor.AddChild(root_0, DIV_ASSIGN256_tree);
                         }
 
@@ -17354,11 +17354,11 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:3057:7: MOD_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         MOD_ASSIGN257=(IToken)Match(input,MOD_ASSIGN,FOLLOW_MOD_ASSIGN_in_assignmentOperator_int11634); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {MOD_ASSIGN257_tree = (object)adaptor.Create(MOD_ASSIGN257);
+                        {MOD_ASSIGN257_tree = adaptor.Create(MOD_ASSIGN257);
                             adaptor.AddChild(root_0, MOD_ASSIGN257_tree);
                         }
 
@@ -17367,11 +17367,11 @@ public class AS3_exParser : Parser
                 case 5 :
                     // AS3_ex.g3:3058:7: ADD_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         ADD_ASSIGN258=(IToken)Match(input,ADD_ASSIGN,FOLLOW_ADD_ASSIGN_in_assignmentOperator_int11643); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {ADD_ASSIGN258_tree = (object)adaptor.Create(ADD_ASSIGN258);
+                        {ADD_ASSIGN258_tree = adaptor.Create(ADD_ASSIGN258);
                             adaptor.AddChild(root_0, ADD_ASSIGN258_tree);
                         }
 
@@ -17380,11 +17380,11 @@ public class AS3_exParser : Parser
                 case 6 :
                     // AS3_ex.g3:3059:7: SUB_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         SUB_ASSIGN259=(IToken)Match(input,SUB_ASSIGN,FOLLOW_SUB_ASSIGN_in_assignmentOperator_int11652); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {SUB_ASSIGN259_tree = (object)adaptor.Create(SUB_ASSIGN259);
+                        {SUB_ASSIGN259_tree = adaptor.Create(SUB_ASSIGN259);
                             adaptor.AddChild(root_0, SUB_ASSIGN259_tree);
                         }
 
@@ -17393,11 +17393,11 @@ public class AS3_exParser : Parser
                 case 7 :
                     // AS3_ex.g3:3060:7: SHL_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         SHL_ASSIGN260=(IToken)Match(input,SHL_ASSIGN,FOLLOW_SHL_ASSIGN_in_assignmentOperator_int11660); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {SHL_ASSIGN260_tree = (object)adaptor.Create(SHL_ASSIGN260);
+                        {SHL_ASSIGN260_tree = adaptor.Create(SHL_ASSIGN260);
                             adaptor.AddChild(root_0, SHL_ASSIGN260_tree);
                         }
 
@@ -17438,10 +17438,10 @@ public class AS3_exParser : Parser
                             retval.Tree = root_0;
                             RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(adaptor, "token retval", (retval!=null ? retval.Tree : null));
 
-                            root_0 = (object)adaptor.GetNilNode();
+                            root_0 = adaptor.GetNilNode();
                             // 3074:7: -> SHR_ASSIGN
                             {
-                                adaptor.AddChild(root_0, (object)adaptor.Create(SHR_ASSIGN, "SHR_ASSIGN"));
+                                adaptor.AddChild(root_0, adaptor.Create(SHR_ASSIGN, "SHR_ASSIGN"));
 
                             }
 
@@ -17495,10 +17495,10 @@ public class AS3_exParser : Parser
                             retval.Tree = root_0;
                             RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(adaptor, "token retval", (retval!=null ? retval.Tree : null));
 
-                            root_0 = (object)adaptor.GetNilNode();
+                            root_0 = adaptor.GetNilNode();
                             // 3083:7: -> SHU_ASSIGN
                             {
-                                adaptor.AddChild(root_0, (object)adaptor.Create(SHU_ASSIGN, "SHU_ASSIGN"));
+                                adaptor.AddChild(root_0, adaptor.Create(SHU_ASSIGN, "SHU_ASSIGN"));
 
                             }
 
@@ -17515,11 +17515,11 @@ public class AS3_exParser : Parser
                 case 10 :
                     // AS3_ex.g3:3084:7: AND_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         AND_ASSIGN261=(IToken)Match(input,AND_ASSIGN,FOLLOW_AND_ASSIGN_in_assignmentOperator_int11783); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {AND_ASSIGN261_tree = (object)adaptor.Create(AND_ASSIGN261);
+                        {AND_ASSIGN261_tree = adaptor.Create(AND_ASSIGN261);
                             adaptor.AddChild(root_0, AND_ASSIGN261_tree);
                         }
 
@@ -17528,11 +17528,11 @@ public class AS3_exParser : Parser
                 case 11 :
                     // AS3_ex.g3:3085:7: XOR_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         XOR_ASSIGN262=(IToken)Match(input,XOR_ASSIGN,FOLLOW_XOR_ASSIGN_in_assignmentOperator_int11792); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {XOR_ASSIGN262_tree = (object)adaptor.Create(XOR_ASSIGN262);
+                        {XOR_ASSIGN262_tree = adaptor.Create(XOR_ASSIGN262);
                             adaptor.AddChild(root_0, XOR_ASSIGN262_tree);
                         }
 
@@ -17541,11 +17541,11 @@ public class AS3_exParser : Parser
                 case 12 :
                     // AS3_ex.g3:3086:7: OR_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         OR_ASSIGN263=(IToken)Match(input,OR_ASSIGN,FOLLOW_OR_ASSIGN_in_assignmentOperator_int11801); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {OR_ASSIGN263_tree = (object)adaptor.Create(OR_ASSIGN263);
+                        {OR_ASSIGN263_tree = adaptor.Create(OR_ASSIGN263);
                             adaptor.AddChild(root_0, OR_ASSIGN263_tree);
                         }
 
@@ -17554,11 +17554,11 @@ public class AS3_exParser : Parser
                 case 13 :
                     // AS3_ex.g3:3087:7: LOR_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         LOR_ASSIGN264=(IToken)Match(input,LOR_ASSIGN,FOLLOW_LOR_ASSIGN_in_assignmentOperator_int11809); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {LOR_ASSIGN264_tree = (object)adaptor.Create(LOR_ASSIGN264);
+                        {LOR_ASSIGN264_tree = adaptor.Create(LOR_ASSIGN264);
                             adaptor.AddChild(root_0, LOR_ASSIGN264_tree);
                         }
 
@@ -17567,11 +17567,11 @@ public class AS3_exParser : Parser
                 case 14 :
                     // AS3_ex.g3:3088:7: LAND_ASSIGN
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         LAND_ASSIGN265=(IToken)Match(input,LAND_ASSIGN,FOLLOW_LAND_ASSIGN_in_assignmentOperator_int11817); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {LAND_ASSIGN265_tree = (object)adaptor.Create(LAND_ASSIGN265);
+                        {LAND_ASSIGN265_tree = adaptor.Create(LAND_ASSIGN265);
                             adaptor.AddChild(root_0, LAND_ASSIGN265_tree);
                         }
 
@@ -17582,7 +17582,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -17590,7 +17590,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -17610,7 +17610,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -17648,7 +17648,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3097:5: ( logicalORExpression (Q= QUE assignmentExpression C= COLON assignmentExpression )? )
             // AS3_ex.g3:3097:9: logicalORExpression (Q= QUE assignmentExpression C= COLON assignmentExpression )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -17679,7 +17679,7 @@ public class AS3_exParser : Parser
                         {
                             Q=(IToken)Match(input,QUE,FOLLOW_QUE_in_conditionalExpression11858); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {Q_tree = (object)adaptor.Create(Q);
+                            {Q_tree = adaptor.Create(Q);
                                 adaptor.AddChild(root_0, Q_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -17697,7 +17697,7 @@ public class AS3_exParser : Parser
                             }
                             C=(IToken)Match(input,COLON,FOLLOW_COLON_in_conditionalExpression11870); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -17729,7 +17729,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -17737,7 +17737,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -17757,7 +17757,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -17795,7 +17795,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3107:5: ( logicalORExpressionNoIn (Q= QUE assignmentExpression C= COLON assignmentExpression )? )
             // AS3_ex.g3:3107:9: logicalORExpressionNoIn (Q= QUE assignmentExpression C= COLON assignmentExpression )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -17821,7 +17821,7 @@ public class AS3_exParser : Parser
                         {
                             Q=(IToken)Match(input,QUE,FOLLOW_QUE_in_conditionalExpressionNoIn11933); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {Q_tree = (object)adaptor.Create(Q);
+                            {Q_tree = adaptor.Create(Q);
                                 adaptor.AddChild(root_0, Q_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -17839,7 +17839,7 @@ public class AS3_exParser : Parser
                             }
                             C=(IToken)Match(input,COLON,FOLLOW_COLON_in_conditionalExpressionNoIn11944); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -17871,7 +17871,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -17879,7 +17879,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -17899,7 +17899,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -17933,7 +17933,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3118:5: ( logicalANDExpression (L= LOR logicalANDExpression )* )
             // AS3_ex.g3:3118:9: logicalANDExpression (L= LOR logicalANDExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -17970,7 +17970,7 @@ public class AS3_exParser : Parser
                             {
                                 L=(IToken)Match(input,LOR,FOLLOW_LOR_in_logicalORExpression12012); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {L_tree = (object)adaptor.Create(L);
+                                {L_tree = adaptor.Create(L);
                                     adaptor.AddChild(root_0, L_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18008,7 +18008,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18016,7 +18016,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18036,7 +18036,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18070,7 +18070,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3128:5: ( logicalANDExpressionNoIn (L= LOR logicalANDExpressionNoIn )* )
             // AS3_ex.g3:3128:9: logicalANDExpressionNoIn (L= LOR logicalANDExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18100,7 +18100,7 @@ public class AS3_exParser : Parser
                             {
                                 L=(IToken)Match(input,LOR,FOLLOW_LOR_in_logicalORExpressionNoIn12075); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {L_tree = (object)adaptor.Create(L);
+                                {L_tree = adaptor.Create(L);
                                     adaptor.AddChild(root_0, L_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18138,7 +18138,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18146,7 +18146,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18166,7 +18166,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18200,7 +18200,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3138:5: ( bitwiseORExpression (L= LAND bitwiseORExpression )* )
             // AS3_ex.g3:3138:9: bitwiseORExpression (L= LAND bitwiseORExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18237,7 +18237,7 @@ public class AS3_exParser : Parser
                             {
                                 L=(IToken)Match(input,LAND,FOLLOW_LAND_in_logicalANDExpression12142); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {L_tree = (object)adaptor.Create(L);
+                                {L_tree = adaptor.Create(L);
                                     adaptor.AddChild(root_0, L_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18275,7 +18275,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18283,7 +18283,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18303,7 +18303,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18337,7 +18337,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3148:5: ( bitwiseORExpressionNoIn (L= LAND bitwiseORExpressionNoIn )* )
             // AS3_ex.g3:3148:9: bitwiseORExpressionNoIn (L= LAND bitwiseORExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18367,7 +18367,7 @@ public class AS3_exParser : Parser
                             {
                                 L=(IToken)Match(input,LAND,FOLLOW_LAND_in_logicalANDExpressionNoIn12204); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {L_tree = (object)adaptor.Create(L);
+                                {L_tree = adaptor.Create(L);
                                     adaptor.AddChild(root_0, L_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18405,7 +18405,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18413,7 +18413,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18433,7 +18433,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18467,7 +18467,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3159:5: ( bitwiseXORExpression (O= OR bitwiseXORExpression )* )
             // AS3_ex.g3:3159:9: bitwiseXORExpression (O= OR bitwiseXORExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18504,7 +18504,7 @@ public class AS3_exParser : Parser
                             {
                                 O=(IToken)Match(input,OR,FOLLOW_OR_in_bitwiseORExpression12271); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {O_tree = (object)adaptor.Create(O);
+                                {O_tree = adaptor.Create(O);
                                     adaptor.AddChild(root_0, O_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18542,7 +18542,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18550,7 +18550,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18570,7 +18570,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18604,7 +18604,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3169:5: ( bitwiseXORExpressionNoIn (O= OR bitwiseXORExpressionNoIn )* )
             // AS3_ex.g3:3169:9: bitwiseXORExpressionNoIn (O= OR bitwiseXORExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18634,7 +18634,7 @@ public class AS3_exParser : Parser
                             {
                                 O=(IToken)Match(input,OR,FOLLOW_OR_in_bitwiseORExpressionNoIn12333); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {O_tree = (object)adaptor.Create(O);
+                                {O_tree = adaptor.Create(O);
                                     adaptor.AddChild(root_0, O_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18672,7 +18672,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18680,7 +18680,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18700,7 +18700,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18734,7 +18734,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3179:5: ( bitwiseANDExpression (x= XOR bitwiseANDExpression )* )
             // AS3_ex.g3:3179:9: bitwiseANDExpression (x= XOR bitwiseANDExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18771,7 +18771,7 @@ public class AS3_exParser : Parser
                             {
                                 x=(IToken)Match(input,XOR,FOLLOW_XOR_in_bitwiseXORExpression12399); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {x_tree = (object)adaptor.Create(x);
+                                {x_tree = adaptor.Create(x);
                                     adaptor.AddChild(root_0, x_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18809,7 +18809,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18817,7 +18817,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18837,7 +18837,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -18871,7 +18871,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3189:5: ( bitwiseANDExpressionNoIn (x= XOR bitwiseANDExpressionNoIn )* )
             // AS3_ex.g3:3189:9: bitwiseANDExpressionNoIn (x= XOR bitwiseANDExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -18901,7 +18901,7 @@ public class AS3_exParser : Parser
                             {
                                 x=(IToken)Match(input,XOR,FOLLOW_XOR_in_bitwiseXORExpressionNoIn12461); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {x_tree = (object)adaptor.Create(x);
+                                {x_tree = adaptor.Create(x);
                                     adaptor.AddChild(root_0, x_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -18939,7 +18939,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -18947,7 +18947,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -18967,7 +18967,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -19001,7 +19001,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3199:5: ( equalityExpression (A= AND equalityExpression )* )
             // AS3_ex.g3:3199:9: equalityExpression (A= AND equalityExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -19038,7 +19038,7 @@ public class AS3_exParser : Parser
                             {
                                 A=(IToken)Match(input,AND,FOLLOW_AND_in_bitwiseANDExpression12523); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {A_tree = (object)adaptor.Create(A);
+                                {A_tree = adaptor.Create(A);
                                     adaptor.AddChild(root_0, A_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -19076,7 +19076,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -19084,7 +19084,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -19104,7 +19104,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -19138,7 +19138,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3209:5: ( equalityExpressionNoIn (A= AND equalityExpressionNoIn )* )
             // AS3_ex.g3:3209:9: equalityExpressionNoIn (A= AND equalityExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -19168,7 +19168,7 @@ public class AS3_exParser : Parser
                             {
                                 A=(IToken)Match(input,AND,FOLLOW_AND_in_bitwiseANDExpressionNoIn12585); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {A_tree = (object)adaptor.Create(A);
+                                {A_tree = adaptor.Create(A);
                                     adaptor.AddChild(root_0, A_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -19206,7 +19206,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -19214,7 +19214,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -19234,7 +19234,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -19268,7 +19268,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3220:5: ( relationalExpression (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpression )* )
             // AS3_ex.g3:3220:9: relationalExpression (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -19303,11 +19303,11 @@ public class AS3_exParser : Parser
                         case 1 :
                             // AS3_ex.g3:3221:32: eq= ( EQ | NEQ | SAME | NSAME ) relationalExpression
                             {
-                                eq = (IToken)input.LT(1);
+                                eq = input.LT(1);
                                 if ( (input.LA(1) >= EQ && input.LA(1) <= NSAME) ) 
                                 {
                                     input.Consume();
-                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(eq));
+                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(eq));
                                     state.errorRecovery = false;state.failed = false;
                                 }
                                 else 
@@ -19352,7 +19352,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -19360,7 +19360,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -19380,7 +19380,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -19414,7 +19414,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3230:5: ( relationalExpressionNoIn (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpressionNoIn )* )
             // AS3_ex.g3:3230:9: relationalExpressionNoIn (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpressionNoIn )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -19442,11 +19442,11 @@ public class AS3_exParser : Parser
                         case 1 :
                             // AS3_ex.g3:3231:36: eq= ( EQ | NEQ | SAME | NSAME ) relationalExpressionNoIn
                             {
-                                eq = (IToken)input.LT(1);
+                                eq = input.LT(1);
                                 if ( (input.LA(1) >= EQ && input.LA(1) <= NSAME) ) 
                                 {
                                     input.Consume();
-                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(eq));
+                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(eq));
                                     state.errorRecovery = false;state.failed = false;
                                 }
                                 else 
@@ -19491,7 +19491,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -19499,7 +19499,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -19519,7 +19519,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -19557,7 +19557,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3241:5: ( shiftExpression ( (g= GT (assign= ASSIGN )? | eq= ( IN | LT | LTE | INSTANCEOF | IS | AS ) ) shiftExpression )* )
             // AS3_ex.g3:3241:9: shiftExpression ( (g= GT (assign= ASSIGN )? | eq= ( IN | LT | LTE | INSTANCEOF | IS | AS ) ) shiftExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -19671,7 +19671,7 @@ public class AS3_exParser : Parser
                                         {
                                             g=(IToken)Match(input,GT,FOLLOW_GT_in_relationalExpression12804); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {g_tree = (object)adaptor.Create(g);
+                                            {g_tree = adaptor.Create(g);
                                                 adaptor.AddChild(root_0, g_tree);
                                             }
                                             // AS3_ex.g3:3244:14: (assign= ASSIGN )?
@@ -19689,7 +19689,7 @@ public class AS3_exParser : Parser
                                                     {
                                                         assign=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_relationalExpression12809); if (state.failed) return retval;
                                                         if ( state.backtracking == 0 )
-                                                        {assign_tree = (object)adaptor.Create(assign);
+                                                        {assign_tree = adaptor.Create(assign);
                                                             adaptor.AddChild(root_0, assign_tree);
                                                         }
 
@@ -19714,11 +19714,11 @@ public class AS3_exParser : Parser
                                     case 2 :
                                         // AS3_ex.g3:3252:14: eq= ( IN | LT | LTE | INSTANCEOF | IS | AS )
                                         {
-                                            eq = (IToken)input.LT(1);
+                                            eq = input.LT(1);
                                             if ( input.LA(1) == AS || (input.LA(1) >= IN && input.LA(1) <= INSTANCEOF) || input.LA(1) == IS || input.LA(1) == LT || input.LA(1) == LTE ) 
                                             {
                                                 input.Consume();
-                                                if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(eq));
+                                                if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(eq));
                                                 state.errorRecovery = false;state.failed = false;
                                             }
                                             else 
@@ -19769,7 +19769,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -19777,7 +19777,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -19797,7 +19797,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -19835,7 +19835,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3264:5: ( shiftExpression ( (g= GT (assign= ASSIGN )? | eq= ( LT | LTE | INSTANCEOF | IS | AS ) ) shiftExpression )* )
             // AS3_ex.g3:3264:9: shiftExpression ( (g= GT (assign= ASSIGN )? | eq= ( LT | LTE | INSTANCEOF | IS | AS ) ) shiftExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -19890,7 +19890,7 @@ public class AS3_exParser : Parser
                                         {
                                             g=(IToken)Match(input,GT,FOLLOW_GT_in_relationalExpressionNoIn12961); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {g_tree = (object)adaptor.Create(g);
+                                            {g_tree = adaptor.Create(g);
                                                 adaptor.AddChild(root_0, g_tree);
                                             }
                                             // AS3_ex.g3:3267:14: (assign= ASSIGN )?
@@ -19908,7 +19908,7 @@ public class AS3_exParser : Parser
                                                     {
                                                         assign=(IToken)Match(input,ASSIGN,FOLLOW_ASSIGN_in_relationalExpressionNoIn12966); if (state.failed) return retval;
                                                         if ( state.backtracking == 0 )
-                                                        {assign_tree = (object)adaptor.Create(assign);
+                                                        {assign_tree = adaptor.Create(assign);
                                                             adaptor.AddChild(root_0, assign_tree);
                                                         }
 
@@ -19933,11 +19933,11 @@ public class AS3_exParser : Parser
                                     case 2 :
                                         // AS3_ex.g3:3275:14: eq= ( LT | LTE | INSTANCEOF | IS | AS )
                                         {
-                                            eq = (IToken)input.LT(1);
+                                            eq = input.LT(1);
                                             if ( input.LA(1) == AS || input.LA(1) == INSTANCEOF || input.LA(1) == IS || input.LA(1) == LT || input.LA(1) == LTE ) 
                                             {
                                                 input.Consume();
-                                                if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(eq));
+                                                if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(eq));
                                                 state.errorRecovery = false;state.failed = false;
                                             }
                                             else 
@@ -19988,7 +19988,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -19996,7 +19996,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20016,7 +20016,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20191,10 +20191,10 @@ public class AS3_exParser : Parser
                                                 retval.Tree = root_0;
                                                 RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(adaptor, "token retval", (retval!=null ? retval.Tree : null));
 
-                                                root_0 = (object)adaptor.GetNilNode();
+                                                root_0 = adaptor.GetNilNode();
                                                 // 3299:10: -> SHR
                                                 {
-                                                    adaptor.AddChild(root_0, (object)adaptor.Create(SHR, "SHR"));
+                                                    adaptor.AddChild(root_0, adaptor.Create(SHR, "SHR"));
 
                                                 }
 
@@ -20243,10 +20243,10 @@ public class AS3_exParser : Parser
                                                 retval.Tree = root_0;
                                                 RewriteRuleSubtreeStream stream_retval = new RewriteRuleSubtreeStream(adaptor, "token retval", (retval!=null ? retval.Tree : null));
 
-                                                root_0 = (object)adaptor.GetNilNode();
+                                                root_0 = adaptor.GetNilNode();
                                                 // 3305:10: -> SHU
                                                 {
-                                                    adaptor.AddChild(root_0, (object)adaptor.Create(SHU, "SHU"));
+                                                    adaptor.AddChild(root_0, adaptor.Create(SHU, "SHU"));
 
                                                 }
 
@@ -20298,7 +20298,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20306,7 +20306,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20326,7 +20326,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20360,7 +20360,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3318:5: ( multiplicativeExpression (op= ( PLUS | SUB ) multiplicativeExpression )* )
             // AS3_ex.g3:3318:9: multiplicativeExpression (op= ( PLUS | SUB ) multiplicativeExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -20395,11 +20395,11 @@ public class AS3_exParser : Parser
                         case 1 :
                             // AS3_ex.g3:3319:36: op= ( PLUS | SUB ) multiplicativeExpression
                             {
-                                op = (IToken)input.LT(1);
+                                op = input.LT(1);
                                 if ( (input.LA(1) >= PLUS && input.LA(1) <= SUB) ) 
                                 {
                                     input.Consume();
-                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(op));
+                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(op));
                                     state.errorRecovery = false;state.failed = false;
                                 }
                                 else 
@@ -20444,7 +20444,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20452,7 +20452,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20472,7 +20472,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20506,7 +20506,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3329:5: ( unaryExpression (op= ( STAR | DIV | MOD ) unaryExpression )* )
             // AS3_ex.g3:3329:9: unaryExpression (op= ( STAR | DIV | MOD ) unaryExpression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -20552,11 +20552,11 @@ public class AS3_exParser : Parser
                         case 1 :
                             // AS3_ex.g3:3330:27: op= ( STAR | DIV | MOD ) unaryExpression
                             {
-                                op = (IToken)input.LT(1);
+                                op = input.LT(1);
                                 if ( (input.LA(1) >= STAR && input.LA(1) <= MOD) ) 
                                 {
                                     input.Consume();
-                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(op));
+                                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(op));
                                     state.errorRecovery = false;state.failed = false;
                                 }
                                 else 
@@ -20601,7 +20601,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20609,7 +20609,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20629,7 +20629,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20668,7 +20668,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3336:9: postfixExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_postfixExpression_in_unaryExpression13421);
                         postfixExpression306 = postfixExpression();
@@ -20681,13 +20681,13 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3337:8: op= ( NOT | INV ) unaryExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
-                        op = (IToken)input.LT(1);
+                        op = input.LT(1);
                         if ( (input.LA(1) >= NOT && input.LA(1) <= INV) ) 
                         {
                             input.Consume();
-                            if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(op));
+                            if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(op));
                             state.errorRecovery = false;state.failed = false;
                         }
                         else 
@@ -20712,7 +20712,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3338:9: unaryOp postfixExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_unaryOp_in_unaryExpression13452);
                         unaryOp308 = unaryOp();
@@ -20732,7 +20732,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20740,7 +20740,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20760,7 +20760,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20786,13 +20786,13 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3344:5: (op= ( DELETE | VOID | TYPEOF | INC | DEC | PLUS | SUB | INV | NOT ) )
             // AS3_ex.g3:3344:9: op= ( DELETE | VOID | TYPEOF | INC | DEC | PLUS | SUB | INV | NOT )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
-                op = (IToken)input.LT(1);
+                op = input.LT(1);
                 if ( input.LA(1) == DELETE || input.LA(1) == TYPEOF || input.LA(1) == VOID || (input.LA(1) >= PLUS && input.LA(1) <= SUB) || (input.LA(1) >= INC && input.LA(1) <= DEC) || (input.LA(1) >= NOT && input.LA(1) <= INV) ) 
                 {
                     input.Consume();
-                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(op));
+                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(op));
                     state.errorRecovery = false;state.failed = false;
                 }
                 else 
@@ -20812,7 +20812,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20820,7 +20820,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20840,7 +20840,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20868,7 +20868,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3350:5: ( leftHandSideExpression ( postfixOp )? )
             // AS3_ex.g3:3350:9: leftHandSideExpression ( postfixOp )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_leftHandSideExpression_in_postfixExpression13542);
                 leftHandSideExpression310 = leftHandSideExpression();
@@ -20910,7 +20910,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20918,7 +20918,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -20938,7 +20938,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -20964,13 +20964,13 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3354:5: (op= ( INC | DEC ) )
             // AS3_ex.g3:3354:9: op= ( INC | DEC )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
-                op = (IToken)input.LT(1);
+                op = input.LT(1);
                 if ( (input.LA(1) >= INC && input.LA(1) <= DEC) ) 
                 {
                     input.Consume();
-                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(op));
+                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(op));
                     state.errorRecovery = false;state.failed = false;
                 }
                 else 
@@ -20990,7 +20990,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -20998,7 +20998,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -21018,7 +21018,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -21178,7 +21178,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3359:4: primaryExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_primaryExpression_in_memberExpression13592);
                         primaryExpression312 = primaryExpression();
@@ -21191,7 +21191,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3360:4: functionExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_functionExpression_in_memberExpression13597);
                         functionExpression313 = functionExpression();
@@ -21204,7 +21204,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3361:4: newExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_newExpression_in_memberExpression13602);
                         newExpression314 = newExpression();
@@ -21219,7 +21219,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -21227,7 +21227,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -21247,7 +21247,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -21275,11 +21275,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3365:2: (N= NEW primaryExpression )
             // AS3_ex.g3:3365:4: N= NEW primaryExpression
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 N=(IToken)Match(input,NEW,FOLLOW_NEW_in_newExpression13615); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {N_tree = (object)adaptor.Create(N);
+                {N_tree = adaptor.Create(N);
                     adaptor.AddChild(root_0, N_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -21297,7 +21297,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -21305,7 +21305,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -21325,7 +21325,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -21379,7 +21379,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3374:5: ( memberExpression ( arguments | L= LBRACK expression R= RBRACK | E= XML_ELLIPSIS eitherIdentifier | D= DOT ( eitherIdentifier | parExpression ) | typePostfixSyntax | op= XML_NS_OP expression )* )
             // AS3_ex.g3:3374:7: memberExpression ( arguments | L= LBRACK expression R= RBRACK | E= XML_ELLIPSIS eitherIdentifier | D= DOT ( eitherIdentifier | parExpression ) | typePostfixSyntax | op= XML_NS_OP expression )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -21413,7 +21413,7 @@ public class AS3_exParser : Parser
                             {
                                 L=(IToken)Match(input,LBRACK,FOLLOW_LBRACK_in_leftHandSideExpression13673); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {L_tree = (object)adaptor.Create(L);
+                                {L_tree = adaptor.Create(L);
                                     adaptor.AddChild(root_0, L_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -21427,7 +21427,7 @@ public class AS3_exParser : Parser
                                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, expression318.Tree);
                                 R=(IToken)Match(input,RBRACK,FOLLOW_RBRACK_in_leftHandSideExpression13681); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {R_tree = (object)adaptor.Create(R);
+                                {R_tree = adaptor.Create(R);
                                     adaptor.AddChild(root_0, R_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -21442,7 +21442,7 @@ public class AS3_exParser : Parser
                             {
                                 E=(IToken)Match(input,XML_ELLIPSIS,FOLLOW_XML_ELLIPSIS_in_leftHandSideExpression13697); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {E_tree = (object)adaptor.Create(E);
+                                {E_tree = adaptor.Create(E);
                                     adaptor.AddChild(root_0, E_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -21466,7 +21466,7 @@ public class AS3_exParser : Parser
                             {
                                 D=(IToken)Match(input,DOT,FOLLOW_DOT_in_leftHandSideExpression13714); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {D_tree = (object)adaptor.Create(D);
+                                {D_tree = adaptor.Create(D);
                                     adaptor.AddChild(root_0, D_tree);
                                 }
                                 // AS3_ex.g3:3382:15: ( eitherIdentifier | parExpression )
@@ -21547,7 +21547,7 @@ public class AS3_exParser : Parser
                             {
                                 op=(IToken)Match(input,XML_NS_OP,FOLLOW_XML_NS_OP_in_leftHandSideExpression13750); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {op_tree = (object)adaptor.Create(op);
+                                {op_tree = adaptor.Create(op);
                                     adaptor.AddChild(root_0, op_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -21585,7 +21585,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -21593,7 +21593,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -21613,7 +21613,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -21781,11 +21781,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3390:4: I= IDENTIFIER
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_eitherIdentifier13791); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {I_tree = (object)adaptor.Create(I);
+                        {I_tree = adaptor.Create(I);
                             adaptor.AddChild(root_0, I_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -21798,7 +21798,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3391:5: xmlPropertyIdentifier
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlPropertyIdentifier_in_eitherIdentifier13801);
                         xmlPropertyIdentifier324 = xmlPropertyIdentifier();
@@ -21811,7 +21811,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3392:5: allKeywords
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_allKeywords_in_eitherIdentifier13807);
                         allKeywords325 = allKeywords();
@@ -21826,7 +21826,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -21834,7 +21834,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -21854,7 +21854,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -21927,11 +21927,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3396:2: I= IDENTIFIER
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_typeSpecifier13820); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {I_tree = (object)adaptor.Create(I);
+                        {I_tree = adaptor.Create(I);
                             adaptor.AddChild(root_0, I_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -21944,7 +21944,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3396:29: notQuiteReservedWord
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_notQuiteReservedWord_in_typeSpecifier13826);
                         notQuiteReservedWord326 = notQuiteReservedWord();
@@ -21957,11 +21957,11 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3396:52: I= INTERNAL
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         I=(IToken)Match(input,INTERNAL,FOLLOW_INTERNAL_in_typeSpecifier13832); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {I_tree = (object)adaptor.Create(I);
+                        {I_tree = adaptor.Create(I);
                             adaptor.AddChild(root_0, I_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -21974,11 +21974,11 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:3396:77: D= DEFAULT
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DEFAULT,FOLLOW_DEFAULT_in_typeSpecifier13840); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -21993,7 +21993,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22001,7 +22001,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22021,7 +22021,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22047,13 +22047,13 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3400:2: (word= ( TO | NATIVE | EACH | GET | SET | NAMESPACE | DYNAMIC | FINAL | OVERRIDE | STATIC ) )
             // AS3_ex.g3:3401:2: word= ( TO | NATIVE | EACH | GET | SET | NAMESPACE | DYNAMIC | FINAL | OVERRIDE | STATIC )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
-                word = (IToken)input.LT(1);
+                word = input.LT(1);
                 if ( input.LA(1) == NATIVE || input.LA(1) == TO || (input.LA(1) >= EACH && input.LA(1) <= NAMESPACE) || (input.LA(1) >= DYNAMIC && input.LA(1) <= STATIC) ) 
                 {
                     input.Consume();
-                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(word));
+                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(word));
                     state.errorRecovery = false;state.failed = false;
                 }
                 else 
@@ -22073,7 +22073,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22081,7 +22081,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22101,7 +22101,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22129,7 +22129,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3405:2: ( ( reservedWord | notQuiteReservedWord ) )
             // AS3_ex.g3:3405:4: ( reservedWord | notQuiteReservedWord )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 // AS3_ex.g3:3405:4: ( reservedWord | notQuiteReservedWord )
                 int alt155 = 2;
@@ -22184,7 +22184,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22192,7 +22192,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22212,7 +22212,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22238,13 +22238,13 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3408:2: (word= ( AS | BREAK | CASE | CATCH | CLASS | CONST | CONTINUE | DEFAULT | DELETE | DO | ELSE | EXTENDS | FALSE | FINALLY | FOR | FUNCTION | IF | IMPLEMENTS | IMPORT | IN | INSTANCEOF | INTERFACE | INTERNAL | IS | NEW | NULL | PACKAGE | PRIVATE | PROTECTED | PUBLIC | RETURN | SUPER | SWITCH | THIS | THROW | TRUE | TRY | TYPEOF | USE | VAR | VOID | WHILE | WITH | INCLUDE ) )
             // AS3_ex.g3:3409:5: word= ( AS | BREAK | CASE | CATCH | CLASS | CONST | CONTINUE | DEFAULT | DELETE | DO | ELSE | EXTENDS | FALSE | FINALLY | FOR | FUNCTION | IF | IMPLEMENTS | IMPORT | IN | INSTANCEOF | INTERFACE | INTERNAL | IS | NEW | NULL | PACKAGE | PRIVATE | PROTECTED | PUBLIC | RETURN | SUPER | SWITCH | THIS | THROW | TRUE | TRY | TYPEOF | USE | VAR | VOID | WHILE | WITH | INCLUDE )
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
-                word = (IToken)input.LT(1);
+                word = input.LT(1);
                 if ( (input.LA(1) >= AS && input.LA(1) <= IS) || (input.LA(1) >= NEW && input.LA(1) <= THROW) || (input.LA(1) >= TRUE && input.LA(1) <= WITH) || input.LA(1) == INCLUDE ) 
                 {
                     input.Consume();
-                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, (object)adaptor.Create(word));
+                    if ( state.backtracking == 0 ) adaptor.AddChild(root_0, adaptor.Create(word));
                     state.errorRecovery = false;state.failed = false;
                 }
                 else 
@@ -22264,7 +22264,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22272,7 +22272,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22292,7 +22292,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22333,7 +22333,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3475:2: (L= LPAREN ( assignmentExpression (C= COMMA assignmentExpression )* )? R= RPAREN )
             // AS3_ex.g3:3476:4: L= LPAREN ( assignmentExpression (C= COMMA assignmentExpression )* )? R= RPAREN
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -22343,7 +22343,7 @@ public class AS3_exParser : Parser
                 }
                 L=(IToken)Match(input,LPAREN,FOLLOW_LPAREN_in_arguments14494); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -22399,7 +22399,7 @@ public class AS3_exParser : Parser
                                         {
                                             C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_arguments14537); if (state.failed) return retval;
                                             if ( state.backtracking == 0 )
-                                            {C_tree = (object)adaptor.Create(C);
+                                            {C_tree = adaptor.Create(C);
                                                 adaptor.AddChild(root_0, C_tree);
                                             }
                                             if ( state.backtracking == 0 ) 
@@ -22431,7 +22431,7 @@ public class AS3_exParser : Parser
 
                 R=(IToken)Match(input,RPAREN,FOLLOW_RPAREN_in_arguments14588); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -22457,7 +22457,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22465,7 +22465,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22485,7 +22485,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22535,7 +22535,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3502:10: indexSuffix
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_indexSuffix_in_suffix14618);
                         indexSuffix331 = indexSuffix();
@@ -22548,7 +22548,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3502:24: propertyReferenceSuffix
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_propertyReferenceSuffix_in_suffix14622);
                         propertyReferenceSuffix332 = propertyReferenceSuffix();
@@ -22563,7 +22563,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22571,7 +22571,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22591,7 +22591,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22621,11 +22621,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3506:5: (L= LBRACK expression R= RBRACK )
             // AS3_ex.g3:3506:10: L= LBRACK expression R= RBRACK
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 L=(IToken)Match(input,LBRACK,FOLLOW_LBRACK_in_indexSuffix14663); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -22639,7 +22639,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, expression333.Tree);
                 R=(IToken)Match(input,RBRACK,FOLLOW_RBRACK_in_indexSuffix14673); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -22652,7 +22652,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22660,7 +22660,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22680,7 +22680,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22824,11 +22824,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3510:10: D= DOT I= IDENTIFIER
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DOT,FOLLOW_DOT_in_propertyReferenceSuffix14701); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -22837,7 +22837,7 @@ public class AS3_exParser : Parser
                         }
                         I=(IToken)Match(input,IDENTIFIER,FOLLOW_IDENTIFIER_in_propertyReferenceSuffix14708); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {I_tree = (object)adaptor.Create(I);
+                        {I_tree = adaptor.Create(I);
                             adaptor.AddChild(root_0, I_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -22854,11 +22854,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3511:10: D= DOT xmlPropertyIdentifier
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DOT,FOLLOW_DOT_in_propertyReferenceSuffix14725); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -22880,11 +22880,11 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3512:10: D= DOT
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         D=(IToken)Match(input,DOT,FOLLOW_DOT_in_propertyReferenceSuffix14745); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {D_tree = (object)adaptor.Create(D);
+                        {D_tree = adaptor.Create(D);
                             adaptor.AddChild(root_0, D_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -22903,7 +22903,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22911,7 +22911,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22931,7 +22931,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -22957,7 +22957,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3517:5: ( primaryExpressionHelper )
             // AS3_ex.g3:3517:10: primaryExpressionHelper
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_primaryExpressionHelper_in_primaryExpression14775);
                 primaryExpressionHelper335 = primaryExpressionHelper();
@@ -22970,7 +22970,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -22978,7 +22978,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -22998,7 +22998,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23055,11 +23055,11 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3522:9: T= THIS
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         T=(IToken)Match(input,THIS,FOLLOW_THIS_in_primaryExpressionHelper14802); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {T_tree = (object)adaptor.Create(T);
+                        {T_tree = adaptor.Create(T);
                             adaptor.AddChild(root_0, T_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -23072,11 +23072,11 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3523:9: S= SUPER
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         S=(IToken)Match(input,SUPER,FOLLOW_SUPER_in_primaryExpressionHelper14816); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {S_tree = (object)adaptor.Create(S);
+                        {S_tree = adaptor.Create(S);
                             adaptor.AddChild(root_0, S_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -23089,7 +23089,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3524:9: literal
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_literal_in_primaryExpressionHelper14828);
                         literal336 = literal();
@@ -23102,7 +23102,7 @@ public class AS3_exParser : Parser
                 case 4 :
                     // AS3_ex.g3:3525:9: arrayLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_arrayLiteral_in_primaryExpressionHelper14840);
                         arrayLiteral337 = arrayLiteral();
@@ -23115,7 +23115,7 @@ public class AS3_exParser : Parser
                 case 5 :
                     // AS3_ex.g3:3526:9: objectLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_objectLiteral_in_primaryExpressionHelper14851);
                         objectLiteral338 = objectLiteral();
@@ -23128,7 +23128,7 @@ public class AS3_exParser : Parser
                 case 6 :
                     // AS3_ex.g3:3527:9: ( identifierLiteral x= XML_NS_OP )? identifierLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         // AS3_ex.g3:3527:9: ( identifierLiteral x= XML_NS_OP )?
                         int alt160 = 2;
@@ -23174,7 +23174,7 @@ public class AS3_exParser : Parser
                                     if ( state.backtracking == 0 ) adaptor.AddChild(root_0, identifierLiteral339.Tree);
                                     x=(IToken)Match(input,XML_NS_OP,FOLLOW_XML_NS_OP_in_primaryExpressionHelper14868); if (state.failed) return retval;
                                     if ( state.backtracking == 0 )
-                                    {x_tree = (object)adaptor.Create(x);
+                                    {x_tree = adaptor.Create(x);
                                         adaptor.AddChild(root_0, x_tree);
                                     }
                                     if ( state.backtracking == 0 ) 
@@ -23198,7 +23198,7 @@ public class AS3_exParser : Parser
                 case 7 :
                     // AS3_ex.g3:3528:9: xmlPrimaryExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_xmlPrimaryExpression_in_primaryExpressionHelper14885);
                         xmlPrimaryExpression341 = xmlPrimaryExpression();
@@ -23211,7 +23211,7 @@ public class AS3_exParser : Parser
                 case 8 :
                     // AS3_ex.g3:3529:9: parExpression
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_parExpression_in_primaryExpressionHelper14895);
                         parExpression342 = parExpression();
@@ -23224,11 +23224,11 @@ public class AS3_exParser : Parser
                 case 9 :
                     // AS3_ex.g3:3530:9: l= LT type g= GT ( arrayLiteral )?
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         l=(IToken)Match(input,LT,FOLLOW_LT_in_primaryExpressionHelper14908); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {l_tree = (object)adaptor.Create(l);
+                        {l_tree = adaptor.Create(l);
                             adaptor.AddChild(root_0, l_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -23242,7 +23242,7 @@ public class AS3_exParser : Parser
                         if ( state.backtracking == 0 ) adaptor.AddChild(root_0, type343.Tree);
                         g=(IToken)Match(input,GT,FOLLOW_GT_in_primaryExpressionHelper14916); if (state.failed) return retval;
                         if ( state.backtracking == 0 )
-                        {g_tree = (object)adaptor.Create(g);
+                        {g_tree = adaptor.Create(g);
                             adaptor.AddChild(root_0, g_tree);
                         }
                         if ( state.backtracking == 0 ) 
@@ -23276,7 +23276,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -23284,7 +23284,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -23304,7 +23304,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23334,11 +23334,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3535:5: (L= LCURLY ( propertyNameAndValueList )? R= RCURLY )
             // AS3_ex.g3:3535:9: L= LCURLY ( propertyNameAndValueList )? R= RCURLY
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 L=(IToken)Match(input,LCURLY,FOLLOW_LCURLY_in_objectLiteral14946); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -23373,7 +23373,7 @@ public class AS3_exParser : Parser
 
                 R=(IToken)Match(input,RCURLY,FOLLOW_RCURLY_in_objectLiteral14955); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -23388,7 +23388,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -23396,7 +23396,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -23416,7 +23416,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23453,7 +23453,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3551:5: ( propertyNameAndValue (C= COMMA propertyNameAndValue )* )
             // AS3_ex.g3:3552:4: propertyNameAndValue (C= COMMA propertyNameAndValue )*
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -23493,7 +23493,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_propertyNameAndValueList15022); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -23536,7 +23536,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -23544,7 +23544,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -23564,7 +23564,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23594,7 +23594,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3572:5: ( propertyName C= COLON assignmentExpression )
             // AS3_ex.g3:3572:9: propertyName C= COLON assignmentExpression
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 PushFollow(FOLLOW_propertyName_in_propertyNameAndValue15056);
                 propertyName348 = propertyName();
@@ -23603,7 +23603,7 @@ public class AS3_exParser : Parser
                 if ( state.backtracking == 0 ) adaptor.AddChild(root_0, propertyName348.Tree);
                 C=(IToken)Match(input,COLON,FOLLOW_COLON_in_propertyNameAndValue15060); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {C_tree = (object)adaptor.Create(C);
+                {C_tree = adaptor.Create(C);
                     adaptor.AddChild(root_0, C_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -23624,7 +23624,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -23632,7 +23632,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -23652,7 +23652,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23723,7 +23723,7 @@ public class AS3_exParser : Parser
                 case 1 :
                     // AS3_ex.g3:3581:9: identifierLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_identifierLiteral_in_propertyName15097);
                         identifierLiteral350 = identifierLiteral();
@@ -23736,7 +23736,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3582:9: stringLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_stringLiteral_in_propertyName15108);
                         stringLiteral351 = stringLiteral();
@@ -23749,7 +23749,7 @@ public class AS3_exParser : Parser
                 case 3 :
                     // AS3_ex.g3:3583:9: numericLiteral
                     {
-                        root_0 = (object)adaptor.GetNilNode();
+                        root_0 = adaptor.GetNilNode();
 
                         PushFollow(FOLLOW_numericLiteral_in_propertyName15119);
                         numericLiteral352 = numericLiteral();
@@ -23764,7 +23764,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -23772,7 +23772,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -23792,7 +23792,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23822,11 +23822,11 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3588:5: (L= LBRACK ( elementList )? R= RBRACK )
             // AS3_ex.g3:3588:9: L= LBRACK ( elementList )? R= RBRACK
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 L=(IToken)Match(input,LBRACK,FOLLOW_LBRACK_in_arrayLiteral15142); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {L_tree = (object)adaptor.Create(L);
+                {L_tree = adaptor.Create(L);
                     adaptor.AddChild(root_0, L_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -23859,7 +23859,7 @@ public class AS3_exParser : Parser
 
                 R=(IToken)Match(input,RBRACK,FOLLOW_RBRACK_in_arrayLiteral15151); if (state.failed) return retval;
                 if ( state.backtracking == 0 )
-                {R_tree = (object)adaptor.Create(R);
+                {R_tree = adaptor.Create(R);
                     adaptor.AddChild(root_0, R_tree);
                 }
                 if ( state.backtracking == 0 ) 
@@ -23872,7 +23872,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -23880,7 +23880,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -23900,7 +23900,7 @@ public class AS3_exParser : Parser
         override public object Tree
         {
             get => tree;
-            set => tree = (object) value;
+            set => tree = value;
         }
     };
 
@@ -23937,7 +23937,7 @@ public class AS3_exParser : Parser
             // AS3_ex.g3:3600:5: ( assignmentExpression (C= COMMA assignmentExpression )* (C= COMMA )? )
             // AS3_ex.g3:3601:6: assignmentExpression (C= COMMA assignmentExpression )* (C= COMMA )?
             {
-                root_0 = (object)adaptor.GetNilNode();
+                root_0 = adaptor.GetNilNode();
 
                 if ( state.backtracking == 0 ) 
                 {
@@ -23988,7 +23988,7 @@ public class AS3_exParser : Parser
                             {
                                 C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_elementList15219); if (state.failed) return retval;
                                 if ( state.backtracking == 0 )
-                                {C_tree = (object)adaptor.Create(C);
+                                {C_tree = adaptor.Create(C);
                                     adaptor.AddChild(root_0, C_tree);
                                 }
                                 if ( state.backtracking == 0 ) 
@@ -24027,7 +24027,7 @@ public class AS3_exParser : Parser
                         {
                             C=(IToken)Match(input,COMMA,FOLLOW_COMMA_in_elementList15249); if (state.failed) return retval;
                             if ( state.backtracking == 0 )
-                            {C_tree = (object)adaptor.Create(C);
+                            {C_tree = adaptor.Create(C);
                                 adaptor.AddChild(root_0, C_tree);
                             }
                             if ( state.backtracking == 0 ) 
@@ -24059,7 +24059,7 @@ public class AS3_exParser : Parser
             retval.Stop = input.LT(-1);
 
             if ( state.backtracking==0 )
-            {   retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+            {   retval.Tree = adaptor.RulePostProcessing(root_0);
                 adaptor.SetTokenBoundaries(retval.Tree, (IToken) retval.Start, (IToken) retval.Stop);}
         }
         catch (RecognitionException re) 
@@ -24067,7 +24067,7 @@ public class AS3_exParser : Parser
             ReportError(re);
             Recover(input,re);
         // Conversion of the second argument necessary, but harmless
-        retval.Tree = (object)adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
+        retval.Tree = adaptor.ErrorNode(input, (IToken) retval.Start, input.LT(-1), re);
 
         }
         finally 
@@ -25357,7 +25357,7 @@ public class AS3_exParser : Parser
         // AS3_ex.g3:3221:32: (eq= ( EQ | NEQ | SAME | NSAME ) relationalExpression )
         // AS3_ex.g3:3221:32: eq= ( EQ | NEQ | SAME | NSAME ) relationalExpression
         {
-            eq = (IToken)input.LT(1);
+            eq = input.LT(1);
             if ( (input.LA(1) >= EQ && input.LA(1) <= NSAME) ) 
             {
                 input.Consume();
@@ -25440,7 +25440,7 @@ public class AS3_exParser : Parser
                 case 2 :
                     // AS3_ex.g3:3252:14: eq= ( IN | LT | LTE | INSTANCEOF | IS | AS )
                     {
-                        eq = (IToken)input.LT(1);
+                        eq = input.LT(1);
                         if ( input.LA(1) == AS || (input.LA(1) >= IN && input.LA(1) <= INSTANCEOF) || input.LA(1) == IS || input.LA(1) == LT || input.LA(1) == LTE ) 
                         {
                             input.Consume();
@@ -25611,7 +25611,7 @@ public class AS3_exParser : Parser
         // AS3_ex.g3:3319:36: (op= ( PLUS | SUB ) multiplicativeExpression )
         // AS3_ex.g3:3319:36: op= ( PLUS | SUB ) multiplicativeExpression
         {
-            op = (IToken)input.LT(1);
+            op = input.LT(1);
             if ( (input.LA(1) >= PLUS && input.LA(1) <= SUB) ) 
             {
                 input.Consume();
@@ -25640,7 +25640,7 @@ public class AS3_exParser : Parser
         // AS3_ex.g3:3330:27: (op= ( STAR | DIV | MOD ) unaryExpression )
         // AS3_ex.g3:3330:27: op= ( STAR | DIV | MOD ) unaryExpression
         {
-            op = (IToken)input.LT(1);
+            op = input.LT(1);
             if ( (input.LA(1) >= STAR && input.LA(1) <= MOD) ) 
             {
                 input.Consume();
@@ -25683,7 +25683,7 @@ public class AS3_exParser : Parser
         // AS3_ex.g3:3337:8: (op= ( NOT | INV ) unaryExpression )
         // AS3_ex.g3:3337:8: op= ( NOT | INV ) unaryExpression
         {
-            op = (IToken)input.LT(1);
+            op = input.LT(1);
             if ( (input.LA(1) >= NOT && input.LA(1) <= INV) ) 
             {
                 input.Consume();

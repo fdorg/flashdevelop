@@ -64,8 +64,8 @@ namespace PHPContext
             features.dot = "->";
             features.voidKey = "void";
             features.objectKey = "Object";
-            features.typesPreKeys = new string[] { "namespace", "new", "extends", "implements", "as" };
-            features.codeKeywords = new string[] {
+            features.typesPreKeys = new[] { "namespace", "new", "extends", "implements", "as" };
+            features.codeKeywords = new[] {
                 "and", "or", "xor", "exception", "as", "break", "case", "continue", "declare", "default", 
                 "do", "else", "elseif", "enddeclare", "endfor", "endforeach", "endif", "endswitch", 
                 "endwhile", "for", "foreach", "global", "if", "new", "switch", "use", "while", 

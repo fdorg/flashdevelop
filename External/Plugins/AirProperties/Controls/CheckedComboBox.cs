@@ -433,7 +433,7 @@ namespace AirProperties.Controls
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
 
             return dropdown.List.GetItemChecked(index);
@@ -443,7 +443,7 @@ namespace AirProperties.Controls
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
 
             dropdown.List.SetItemChecked(index, isChecked);
@@ -455,7 +455,7 @@ namespace AirProperties.Controls
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
 
             return dropdown.List.GetItemCheckState(index);
@@ -465,7 +465,7 @@ namespace AirProperties.Controls
         {
             if (index < 0 || index > Items.Count)
             {
-                throw new ArgumentOutOfRangeException("index", "value out of range");
+                throw new ArgumentOutOfRangeException(nameof(index), "value out of range");
             }
 
             dropdown.List.SetItemCheckState(index, state);

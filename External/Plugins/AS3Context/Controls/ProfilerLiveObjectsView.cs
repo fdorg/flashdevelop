@@ -13,68 +13,62 @@ namespace AS3Context.Controls
     {
         public event ViewObjectEvent OnViewObject;
 
-        readonly ListView listView;
         private Dictionary<string, TypeItem> items;
-        private Dictionary<string, bool> finished = new Dictionary<string, bool>();
         private readonly TypeItemComparer comparer;
         private readonly ToolStripMenuItem viewObjectsItem;
 
-        public ListView ListView => listView;
+        public ListView ListView { get; }
 
         public ProfilerLiveObjectsView(ListView view)
         {
             // config
-            listView = view;
+            ListView = view;
 
             comparer = new TypeItemComparer();
             comparer.SortColumn = TypeItem.COL_COUNT;
             comparer.Sorting = SortOrder.Descending;
 
-            listView.ListViewItemSorter = comparer;
-            listView.ColumnClick += listView_ColumnClick;
+            ListView.ListViewItemSorter = comparer;
+            ListView.ColumnClick += listView_ColumnClick;
 
             // action
             viewObjectsItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewObjectsItem"));
             viewObjectsItem.Click += onViewObjects;
 
-            listView.ContextMenuStrip = new ContextMenuStrip();
-            listView.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
-            listView.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
-            listView.ContextMenuStrip.Items.Add(viewObjectsItem);
+            ListView.ContextMenuStrip = new ContextMenuStrip();
+            ListView.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
+            ListView.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            ListView.ContextMenuStrip.Items.Add(viewObjectsItem);
 
-            listView.DoubleClick += onViewObjects;
+            ListView.DoubleClick += onViewObjects;
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             if (comparer.SortColumn == e.Column)
             {
-                if (comparer.Sorting == SortOrder.Ascending)
-                    comparer.Sorting = SortOrder.Descending;
-                else comparer.Sorting = SortOrder.Ascending;
+                comparer.Sorting = comparer.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
             }
             else
             {
                 comparer.SortColumn = e.Column;
-                if (e.Column >= 2)
-                    comparer.Sorting = SortOrder.Descending;
-                else comparer.Sorting = SortOrder.Ascending;
+                comparer.Sorting = e.Column >= 2 ? SortOrder.Descending : SortOrder.Ascending;
             }
-            listView.Sort();
+            ListView.Sort();
         }
 
         private void onViewObjects(object sender, EventArgs e)
         {
-            if (listView.SelectedItems.Count == 1)
+            if (ListView.SelectedItems.Count == 1)
             {
-                OnViewObject?.Invoke(listView.SelectedItems[0].Tag as TypeItem);
+                OnViewObject?.Invoke(ListView.SelectedItems[0].Tag as TypeItem);
             }
         }
 
         public void Clear()
         {
             items = new Dictionary<string, TypeItem>();
-            listView.Items.Clear();
+            ListView.Items.Clear();
         }
 
         /// <summary>
@@ -83,7 +77,7 @@ namespace AS3Context.Controls
         /// <param name="lines"></param>
         public void UpdateTypeGrid(string[] lines)
         {
-            listView.BeginUpdate();
+            ListView.BeginUpdate();
             foreach (TypeItem item in items.Values)
                 item.Zero();
 
@@ -97,44 +91,40 @@ namespace AS3Context.Controls
                     {
                         item = new TypeItem(parts[3]);
                         items[parts[0]] = item;
-                        listView.Items.Add(item.ListItem);
+                        ListView.Items.Add(item.ListItem);
                     }
                     else if (!items.ContainsKey(parts[0])) continue;
                     else item = items[parts[0]];
                     item.Update(parts[1], parts[2]);
                 }
-                listView.Sort();
+                ListView.Sort();
             }
             finally
             {
-                listView.EndUpdate();
+                ListView.EndUpdate();
             }
         }
     }
-
 
     #region Model
 
     class TypeItemComparer : IComparer
     {
-        public int SortColumn = 0;
+        public int SortColumn;
         public SortOrder Sorting;
 
         int IComparer.Compare(object x, object y)
         {
-            TypeItem a = (TypeItem)((ListViewItem)x).Tag;
-            TypeItem b = (TypeItem)((ListViewItem)y).Tag;
-
-            int comp;
-            switch (SortColumn)
+            var a = (TypeItem)((ListViewItem)x).Tag;
+            var b = (TypeItem)((ListViewItem)y).Tag;
+            var comp = SortColumn switch
             {
-                case TypeItem.COL_PKG: comp = a.Package.CompareTo(b.Package); break;
-                case TypeItem.COL_MAX: comp = a.Maximum.CompareTo(b.Maximum); break;
-                case TypeItem.COL_COUNT: comp = a.Count.CompareTo(b.Count); break;
-                case TypeItem.COL_MEM: comp = a.Memory.CompareTo(b.Memory); break;
-                default: comp = a.Name.CompareTo(b.Name); break;
-            }
-
+                TypeItem.COL_PKG => a.Package.CompareTo(b.Package),
+                TypeItem.COL_MAX => a.Maximum.CompareTo(b.Maximum),
+                TypeItem.COL_COUNT => a.Count.CompareTo(b.Count),
+                TypeItem.COL_MEM => a.Memory.CompareTo(b.Memory),
+                _ => a.Name.CompareTo(b.Name),
+            };
             return Sorting == SortOrder.Ascending ? comp : -comp;
         }
     }
@@ -166,8 +156,7 @@ namespace AS3Context.Controls
                 Package = fullName.Substring(0, p);
             }
             else Name = fullName;
-            ListItem = new ListViewItem(Name);
-            ListItem.Tag = this;
+            ListItem = new ListViewItem(Name) {Tag = this};
             ListItem.SubItems.Add(new ListViewItem.ListViewSubItem(ListItem, Package));
             ListItem.SubItems.Add(new ListViewItem.ListViewSubItem(ListItem, "0"));
             ListItem.SubItems.Add(new ListViewItem.ListViewSubItem(ListItem, "0"));

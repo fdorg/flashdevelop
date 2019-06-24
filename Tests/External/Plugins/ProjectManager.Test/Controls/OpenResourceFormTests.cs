@@ -12,7 +12,7 @@ namespace ProjectManager.Controls
             public void SimpleTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "src\\Main.hx",
                     "src\\StaticClass.hx",
                     "src\\com\\Test.xml",
@@ -37,7 +37,7 @@ namespace ProjectManager.Controls
             public void LimitTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "Main.hx",
                     "src\\com\\module\\example\\ExampleModule.hx",
                     "src\\com\\module\\example\\IExampleModule.hx",
@@ -55,7 +55,7 @@ namespace ProjectManager.Controls
             public void IClassTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "hexannotation\\hex\\annotation\\AnnotationData.hx",
                     "hexannotation\\hex\\annotation\\AnnotationReader.hx",
                     "hexannotation\\hex\\annotation\\ArgumentData.hx",
@@ -80,7 +80,7 @@ namespace ProjectManager.Controls
             public void TestTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "src\\StaticClass.hx",
                     "src\\com\\module\\ITestModule.hx",
                     "src\\com\\module\\TestModule.hx",

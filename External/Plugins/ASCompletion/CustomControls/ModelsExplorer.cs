@@ -557,7 +557,7 @@ namespace ASCompletion
 
             string path = GetPathFromNode(node);
             if (path != null)
-                PluginBase.MainForm.CallCommand("RunProcess", string.Format("explorer.exe;/e,\"{0}\"", path));
+                PluginBase.MainForm.CallCommand("RunProcess", $"explorer.exe;/e,\"{path}\"");
         }
 
         private void EditToolStripMenuItem_Click(object sender, EventArgs e)

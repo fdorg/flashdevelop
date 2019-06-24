@@ -93,7 +93,7 @@ namespace FlashDebugger.Controls
             if (Win32.ShouldUseWin32())
             {
                 Win32.ReleaseCapture();
-                Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
+                Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, screenPoint.Y << 16 | screenPoint.X);
             }
         }
 

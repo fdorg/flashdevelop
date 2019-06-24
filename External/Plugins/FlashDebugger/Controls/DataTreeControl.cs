@@ -340,7 +340,7 @@ namespace FlashDebugger.Controls
         private void CopyItemClick(object sender, EventArgs e)
         {
             DataNode node = Tree.SelectedNode.Tag as DataNode;
-            Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
+            Clipboard.SetText($"{node.Text} = {node.Value}");
         }
         private void ViewerItemClick(object sender, EventArgs e)
         {

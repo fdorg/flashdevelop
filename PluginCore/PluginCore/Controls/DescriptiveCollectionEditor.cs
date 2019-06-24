@@ -31,15 +31,11 @@ namespace PluginCore.Controls
             return list.ToArray();
         }
 
-        protected override Type CreateCollectionItemType()
-        {
-            return typeof(T);
-        }
+        protected override Type CreateCollectionItemType() => typeof(T);
 
         static void ShowDescription(Control control)
         {
-            var grid = control as PropertyGrid;
-            if (grid != null) grid.HelpVisible = true;
+            if (control is PropertyGrid grid) grid.HelpVisible = true;
             foreach (Control child in control.Controls) ShowDescription(child);
         }
     }

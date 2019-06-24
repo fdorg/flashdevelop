@@ -147,7 +147,8 @@ namespace CodeAnalyzer
                                 case "3": state = 2; break;
                                 case "5": state = 0; break;
                             }
-                            string item = string.Format("{0}:{1}: col: {2}: {3}", currFile, line, col, reader.ReadElementContentAsString().Trim());
+                            string item =
+                                $"{currFile}:{line}: col: {col}: {reader.ReadElementContentAsString().Trim()}";
                             TraceManager.Add(item, state);
                         }
                     }

@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpZipLib.Core
         public static bool IsValidFilterExpression(string toTest)
         {
             if ( toTest == null ) {
-                throw new ArgumentNullException("toTest");
+                throw new ArgumentNullException(nameof(toTest));
             }
 
             bool result = true;
@@ -158,7 +158,7 @@ namespace ICSharpCode.SharpZipLib.Core
 #if NETCF_1_0
                             throw new ArgumentException("Missing terminating escape character");
 #else
-                            throw new ArgumentException("Missing terminating escape character", "original");
+                            throw new ArgumentException("Missing terminating escape character", nameof(original));
 #endif
                         }
                         // include escape if this is not an escaped separator

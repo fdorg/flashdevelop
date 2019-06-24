@@ -14,12 +14,7 @@ namespace PluginCore.Bridge
             get
             {
                 if (BridgeManager.Settings.CustomIP.Length > 0) return BridgeManager.Settings.CustomIP;
-                if (ip == null)
-                {
-                    ip = DetectIP();
-                    if (ip == null) ip = "invalid";
-                }
-                return ip;
+                return ip ??= DetectIP() ?? "invalid";
             }
         }
 

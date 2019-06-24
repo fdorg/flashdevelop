@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 using Antlr.Runtime;
-using Stack         = Antlr.Runtime.Collections.StackList;
+using Stack = Antlr.Runtime.Collections.StackList;
 
 
 /** XML parser by Oliver Zeigermann October 10, 2005; posted to Antlr examples */
@@ -66,10 +66,7 @@ public class MXMLLexer : Lexer {
        public override void Reset()
        {
           base.Reset(); // reset all recognizer state variables
-          if (input is ANTLRStringStream)
-          {
-         ((ANTLRStringStream)input).Reset();
-          }
+          (input as ANTLRStringStream)?.Reset();
        }
 
        

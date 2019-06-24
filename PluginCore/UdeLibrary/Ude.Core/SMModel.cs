@@ -71,7 +71,7 @@ namespace Ude.Core
         
         public int GetClass(byte b)
         {        
-            return classTable.Unpack((int)b);            
+            return classTable.Unpack(b);            
         }
     }    
 }

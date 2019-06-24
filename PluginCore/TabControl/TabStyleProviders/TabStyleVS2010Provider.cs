@@ -72,8 +72,8 @@ namespace System.Windows.Forms
 		}
 		
 		private static Blend GetBackgroundBlend(){
-			float[] relativeIntensities = new float[]{0f, 0.5f, 1f, 1f};
-			float[] relativePositions = new float[]{0f, 0.5f, 0.51f, 1f};
+			float[] relativeIntensities = new[]{0f, 0.5f, 1f, 1f};
+			float[] relativePositions = new[]{0f, 0.5f, 0.51f, 1f};
 
 
 			Blend blend = new Blend();

@@ -10,33 +10,31 @@ namespace AS3Context.Controls
 {
     class ProfilerObjectsView
     {
-        readonly ObjectRefsGrid objectsGrid;
         readonly Regex reStep = new Regex("([^\\[]+)\\[(.*):([0-9]+)\\]");
         readonly ObjectRefsModel model = new ObjectRefsModel();
-        readonly ToolStripMenuItem openItem;
         string fileToOpen;
         int lineToOpen;
         readonly Timer delayOpen;
 
-        public ObjectRefsGrid ObjectsGrid => objectsGrid;
+        public ObjectRefsGrid ObjectsGrid { get; }
 
         public ProfilerObjectsView(ObjectRefsGrid grid)
         {
-            objectsGrid = grid;
+            ObjectsGrid = grid;
 
             delayOpen = new Timer();
             delayOpen.Interval = 100;
             delayOpen.Tick += delayOpen_Tick;
 
             // action
-            openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
+            var openItem = new ToolStripMenuItem(TextHelper.GetString("Label.OpenMethodFile"));
             openItem.Click += objectsGrid_Open;
 
-            objectsGrid.ContextMenuStrip = new ContextMenuStrip();
-            objectsGrid.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
-            objectsGrid.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
-            objectsGrid.ContextMenuStrip.Items.Add(openItem);
-            objectsGrid.DoubleClick += objectsGrid_Open;
+            ObjectsGrid.ContextMenuStrip = new ContextMenuStrip();
+            ObjectsGrid.ContextMenuStrip.Font = PluginBase.Settings.DefaultFont;
+            ObjectsGrid.ContextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            ObjectsGrid.ContextMenuStrip.Items.Add(openItem);
+            ObjectsGrid.DoubleClick += objectsGrid_Open;
         }
 
         void delayOpen_Tick(object sender, EventArgs e)
@@ -62,8 +60,7 @@ namespace AS3Context.Controls
 
         void objectsGrid_Open(object sender, EventArgs e)
         {
-            ObjectRefsNode node = objectsGrid.SelectedNode?.Tag as ObjectRefsNode;
-            if (node != null && node.Line.Length > 0)
+            if (ObjectsGrid.SelectedNode?.Tag is ObjectRefsNode node && node.Line.Length > 0)
             {
                 fileToOpen = node.Path.Replace(';', Path.DirectorySeparatorChar);
                 lineToOpen = int.Parse(node.Line) - 1;
@@ -71,10 +68,7 @@ namespace AS3Context.Controls
             }
         }
 
-        public void Clear()
-        {
-            model.Root.Nodes.Clear();
-        }
+        public void Clear() => model.Root.Nodes.Clear();
 
         public void Display(string qname, string[] info)
         {
@@ -101,7 +95,7 @@ namespace AS3Context.Controls
                 model.Root.Nodes.Add(node);
             }
 
-            objectsGrid.Model = model;
+            ObjectsGrid.Model = model;
         }
     }
 }

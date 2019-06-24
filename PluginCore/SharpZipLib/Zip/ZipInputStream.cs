@@ -210,7 +210,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
             
             if (header != ZipConstants.LocalHeaderSignature) {
-                throw new ZipException("Wrong Local header signature: 0x" + string.Format("{0:X}", header));
+                throw new ZipException("Wrong Local header signature: 0x" + $"{header:X}");
             }
             
             short versionRequiredToExtract = (short)inputBuffer.ReadLeShort();
@@ -381,7 +381,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
         
             if ( (inputBuffer.Available > csize) && (csize >= 0) ) {
-                inputBuffer.Available = (int)((long)inputBuffer.Available - csize);
+                inputBuffer.Available = (int)(inputBuffer.Available - csize);
             } else {
                 csize -= inputBuffer.Available;
                 inputBuffer.Available = 0;
@@ -503,7 +503,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                     csize -= ZipConstants.CryptoHeaderSize;
                 }
                 else if ( (entry.Flags & (int)GeneralBitFlags.Descriptor) == 0 ) {
-                    throw new ZipException(string.Format("Entry compressed size {0} too small for encryption", csize));
+                    throw new ZipException($"Entry compressed size {csize} too small for encryption");
                 }
 #endif              
             } else {
@@ -536,14 +536,14 @@ namespace ICSharpCode.SharpZipLib.Zip
         public override int Read(byte[] buffer, int offset, int count)
         {
             if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( offset < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "Cannot be negative");
 #endif              
             }
 
@@ -551,7 +551,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "Cannot be negative");
 #endif
             }
 

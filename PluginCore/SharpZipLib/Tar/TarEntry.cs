@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             if ( header == null )
             {
-                throw new ArgumentNullException("header");
+                throw new ArgumentNullException(nameof(header));
             }
 
             this.header = (TarHeader)header.Clone();
@@ -188,7 +188,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         public bool IsDescendent(TarEntry toTest)
         {
             if ( toTest == null ) {
-                throw new ArgumentNullException("toTest");
+                throw new ArgumentNullException(nameof(toTest));
             }
 
             return toTest.Name.StartsWithOrdinal(Name);
@@ -334,11 +334,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         public void GetFileTarHeader(TarHeader header, string file)
         {
             if ( header == null ) {
-                throw new ArgumentNullException("header");
+                throw new ArgumentNullException(nameof(header));
             }
 
             if ( file == null ) {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException(nameof(file));
             }
 
             this.file = file;
@@ -463,11 +463,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         public static void NameTarHeader(TarHeader header, string name)
         {
             if ( header == null ) {
-                throw new ArgumentNullException("header");
+                throw new ArgumentNullException(nameof(header));
             }
 
             if ( name == null ) {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             bool isDir = name.EndsWith('/');

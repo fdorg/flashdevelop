@@ -556,7 +556,7 @@ namespace XMLCompletion
             if (tag.Length > 3 && tag[0] == '<') 
             {
                 // extract tag name
-                tag = tag.Substring(1).Split(new char[] { ' ', '"', '\'', '/', '|', '>' }, 2)[0];
+                tag = tag.Substring(1).Split(new[] { ' ', '"', '\'', '/', '|', '>' }, 2)[0];
             }
             return lang.element_types.inline_level.ContainsKey(tag);
         }

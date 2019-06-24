@@ -141,7 +141,7 @@ namespace PluginCore.Controls
             // 
             // buttonClose
             // 
-            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.buttonClose.BorderWidth = 1;
             this.buttonClose.ImageDisabled = null;
             this.buttonClose.ImageIndexDisabled = -1;
@@ -160,8 +160,8 @@ namespace PluginCore.Controls
             // 
             // label
             // 
-            this.label.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+                                | System.Windows.Forms.AnchorStyles.Right;
             this.label.ForeColor = System.Drawing.SystemColors.InfoText;
             this.label.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label.Location = new System.Drawing.Point(2, 0);

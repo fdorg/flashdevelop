@@ -156,7 +156,7 @@ namespace Mono.GetOptions
         {
             if (optionBundle == null)
             {
-                throw new ArgumentNullException("optionBundle");
+                throw new ArgumentNullException(nameof(optionBundle));
             }
             entry = Assembly.GetEntryAssembly();
             appExeName = entry.GetName().Name;
@@ -173,7 +173,7 @@ namespace Mono.GetOptions
             appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
             if (appAuthors.Length == 0)
             {
-                appAuthors = new string[] { "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly" } ;
+                appAuthors = new[] { "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly" } ;
             }
             MemberInfo[] infoArray1 = optionBundle.GetType().GetMembers();
             for (int num1 = 0; num1 < infoArray1.Length; num1++)
@@ -237,7 +237,7 @@ namespace Mono.GetOptions
                             {
                                 goto Label_014D;
                             }
-                            char[] chArray1 = new char[] { ':', '=' } ;
+                            char[] chArray1 = new[] { ':', '=' } ;
                             int num1 = IndexOfAny(text1, chArray1);
                             if (num1 < 0)
                             {

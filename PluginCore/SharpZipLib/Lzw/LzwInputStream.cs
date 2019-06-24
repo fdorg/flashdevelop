@@ -359,9 +359,7 @@ namespace ICSharpCode.SharpZipLib.LZW
                 throw new LzwException("Failed to read LZW header");
 
             if (hdr[0] != (LzwConstants.MAGIC >> 8) || hdr[1] != (LzwConstants.MAGIC & 0xff)) {
-                throw new LzwException(string.Format(
-                    "Wrong LZW header. Magic bytes don't match. 0x{0:x2} 0x{1:x2}",
-                    hdr[0], hdr[1]));
+                throw new LzwException($"Wrong LZW header. Magic bytes don't match. 0x{hdr[0]:x2} 0x{hdr[1]:x2}");
             }
 
             // Check the 3rd header byte

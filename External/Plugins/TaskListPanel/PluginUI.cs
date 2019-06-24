@@ -112,7 +112,7 @@ namespace TaskListPanel
             // listView
             // 
             this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listView.Columns.AddRange(new[] {
             this.columnIcon,
             this.columnPos,
             this.columnType,
@@ -548,7 +548,7 @@ namespace TaskListPanel
                     itemTag["FullPath"] = path;
                     itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
                     itemTag["Position"] = match.Groups[2].Index;
-                    item = new ListViewItem(new string[] {
+                    item = new ListViewItem(new[] {
                         "",
                         match.Groups[2].Index.ToString(),
                         match.Groups[2].Value,
@@ -590,7 +590,7 @@ namespace TaskListPanel
                     itemTag["FullPath"] = path;
                     itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
                     itemTag["Position"] = match.Groups[2].Index;
-                    item = new ListViewItem(new string[] {
+                    item = new ListViewItem(new[] {
                         "",
                         match.Groups[2].Index.ToString(),
                         match.Groups[2].Value,

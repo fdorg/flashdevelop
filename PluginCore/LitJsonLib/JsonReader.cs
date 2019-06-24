@@ -98,7 +98,7 @@ namespace LitJson
         private JsonReader (TextReader reader, bool owned)
         {
             if (reader == null)
-                throw new ArgumentNullException ("reader");
+                throw new ArgumentNullException (nameof(reader));
 
             parser_in_string = false;
             parser_return = false;

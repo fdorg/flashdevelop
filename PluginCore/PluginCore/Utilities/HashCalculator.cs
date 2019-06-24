@@ -12,9 +12,9 @@ namespace PluginCore.Utilities
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
             byte[] hash = MD5.Compute(inputBytes);
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
+            foreach (var it in hash)
             {
-                builder.Append(hash[i].ToString("X2"));
+                builder.Append(it.ToString("X2"));
             }
             return builder.ToString();
         }
@@ -27,9 +27,9 @@ namespace PluginCore.Utilities
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
             byte[] hash = SHA1.Compute(inputBytes);
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
+            foreach (var it in hash)
             {
-                builder.Append(hash[i].ToString("X2"));
+                builder.Append(it.ToString("X2"));
             }
             return builder.ToString();
         }

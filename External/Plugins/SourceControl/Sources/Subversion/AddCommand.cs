@@ -6,7 +6,7 @@ namespace SourceControl.Sources.Subversion
     {
         public AddCommand(string path)
         {
-            string args = string.Format("add \"{0}\"", Path.GetFileName(path));
+            string args = $"add \"{Path.GetFileName(path)}\"";
             Run(args, Path.GetDirectoryName(path));
         }
     }

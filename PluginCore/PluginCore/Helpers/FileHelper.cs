@@ -57,12 +57,10 @@ namespace PluginCore.Helpers
         /// </summary>
         public static string ReadFile(string file, Encoding encoding)
         {
-            using (StreamReader sr = new StreamReader(file, encoding))
-            {
-                string src = sr.ReadToEnd();
-                sr.Close();
-                return src;
-            }
+            using var sr = new StreamReader(file, encoding);
+            string src = sr.ReadToEnd();
+            sr.Close();
+            return src;
         }
         
         /// <summary>
@@ -79,14 +77,10 @@ namespace PluginCore.Helpers
             if (encoding == Encoding.UTF7) encoding = new UTF7EncodingFixed();
             if (!File.Exists(file) && Path.GetDirectoryName(file) is var dir && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            using (var fs = new FileStream(file, File.Exists(file) ? FileMode.Truncate : FileMode.CreateNew))
-            {
-                using (var sw = useSkipBomWriter ? new StreamWriter(fs) : new StreamWriter(fs, encoding))
-                {
-                    sw.Write(text);
-                    sw.Close();
-                }
-            }
+            using var fs = new FileStream(file, File.Exists(file) ? FileMode.Truncate : FileMode.CreateNew);
+            using var sw = useSkipBomWriter ? new StreamWriter(fs) : new StreamWriter(fs, encoding);
+            sw.Write(text);
+            sw.Close();
         }
 
         /// <summary>
@@ -94,11 +88,9 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void AddToFile(string file, string text, Encoding encoding)
         {
-            using (StreamWriter sw = new StreamWriter(file, true, encoding))
-            {
-                sw.Write(text);
-                sw.Close();
-            }
+            using var sw = new StreamWriter(file, true, encoding);
+            sw.Write(text);
+            sw.Close();
         }
 
         /// <summary>
@@ -277,15 +269,15 @@ namespace PluginCore.Helpers
         /// </summary>
         public static bool ContainsInvalidUTF8Bytes(byte[] bytes)
         {
-            int bits = 0;
-            int i = 0, c = 0, b = 0;
+            int i;
             int length = bytes.Length;
             for (i = 0; i < length; i++)
             {
-                c = bytes[i];
+                int c = bytes[i];
                 if (c > 128)
                 {
                     if ((c >= 254)) return true;
+                    int bits;
                     if (c >= 252) bits = 6;
                     else if (c >= 248) bits = 5;
                     else if (c >= 240) bits = 4;
@@ -296,7 +288,7 @@ namespace PluginCore.Helpers
                     while (bits > 1)
                     {
                         i++;
-                        b = bytes[i];
+                        int b = bytes[i];
                         if (b < 128 || b > 191) return true;
                         bits--;
                     }
@@ -467,7 +459,7 @@ namespace PluginCore.Helpers
         public int CodePage = -1;
         public string Charset = string.Empty;
         public string Contents = string.Empty;
-        public bool ContainsBOM = false;
+        public bool ContainsBOM;
         public int BomLength = 0;
     }
 

@@ -71,7 +71,7 @@ namespace ProjectManager.Controls
             // 
             // insertButton
             // 
-            this.insertButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.insertButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.insertButton.Enabled = false;
             this.insertButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.insertButton.Location = new System.Drawing.Point(7, 288);
@@ -104,7 +104,7 @@ namespace ProjectManager.Controls
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okButton.Enabled = false;
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -116,7 +116,7 @@ namespace ProjectManager.Controls
             // 
             // listView
             // 
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listView.Columns.AddRange(new[] {
             this.nameColumn,
             this.valueColumn});
             this.listView.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -147,7 +147,7 @@ namespace ProjectManager.Controls
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(302, 288);

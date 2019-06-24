@@ -208,8 +208,8 @@ namespace ProjectManager.Projects.AS3
             }
             catch (XmlException exception)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.",
-                    exception.LineNumber, exception.LinePosition);
+                string format =
+                    $"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.";
                 throw new Exception(format, exception);
             }
             finally { reader.Close(); }

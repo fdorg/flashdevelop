@@ -467,28 +467,28 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (DockState == DockState.DockLeftAutoHide && rectDockArea.Width > 0)
                 {
                     if (content.DockHandler.AutoHidePortion < 1)
-                        content.DockHandler.AutoHidePortion += ((double)offset) / (double)rectDockArea.Width;
+                        content.DockHandler.AutoHidePortion += offset / (double)rectDockArea.Width;
                     else
                         content.DockHandler.AutoHidePortion = Width + offset;
                 }
                 else if (DockState == DockState.DockRightAutoHide && rectDockArea.Width > 0)
                 {
                     if (content.DockHandler.AutoHidePortion < 1)
-                        content.DockHandler.AutoHidePortion -= ((double)offset) / (double)rectDockArea.Width;
+                        content.DockHandler.AutoHidePortion -= offset / (double)rectDockArea.Width;
                     else
                         content.DockHandler.AutoHidePortion = Width - offset;
                 }
                 else if (DockState == DockState.DockBottomAutoHide && rectDockArea.Height > 0)
                 {
                     if (content.DockHandler.AutoHidePortion < 1)
-                        content.DockHandler.AutoHidePortion -= ((double)offset) / (double)rectDockArea.Height;
+                        content.DockHandler.AutoHidePortion -= offset / (double)rectDockArea.Height;
                     else
                         content.DockHandler.AutoHidePortion = Height - offset;
                 }
                 else if (DockState == DockState.DockTopAutoHide && rectDockArea.Height > 0)
                 {
                     if (content.DockHandler.AutoHidePortion < 1)
-                        content.DockHandler.AutoHidePortion += ((double)offset) / (double)rectDockArea.Height;
+                        content.DockHandler.AutoHidePortion += offset / (double)rectDockArea.Height;
                     else
                         content.DockHandler.AutoHidePortion = Height + offset;
                 }

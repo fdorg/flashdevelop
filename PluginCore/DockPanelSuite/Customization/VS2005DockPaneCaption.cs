@@ -243,8 +243,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     Blend blend = new Blend(2);
 
-                    blend.Factors = new float[]{0.5F, 1.0F};
-                    blend.Positions = new float[]{0.0F, 1.0F};
+                    blend.Factors = new[]{0.5F, 1.0F};
+                    blend.Positions = new[]{0.0F, 1.0F};
                     _activeBackColorGradientBlend = blend;
                 }
 

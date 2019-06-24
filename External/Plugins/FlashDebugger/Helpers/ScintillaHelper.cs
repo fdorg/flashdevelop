@@ -270,7 +270,7 @@ namespace FlashDebugger
         {
             if (sci == null) return;
             int es = sci.EndStyled;
-            int[] indics = new int[] { indicatorDebugCurrentLine, indicatorDebugDisabledBreakpoint, indicatorDebugEnabledBreakpoint };
+            int[] indics = new[] { indicatorDebugCurrentLine, indicatorDebugDisabledBreakpoint, indicatorDebugEnabledBreakpoint };
             foreach (int indicator in indics)
             {
                 sci.CurrentIndicator = indicator;

@@ -86,7 +86,7 @@ namespace FileExplorer
             // watcher
             // 
             this.watcher.EnableRaisingEvents = true;
-            this.watcher.NotifyFilter = ((System.IO.NotifyFilters)((System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.DirectoryName)));
+            this.watcher.NotifyFilter = System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.DirectoryName;
             this.watcher.SynchronizingObject = this;
             this.watcher.Renamed += this.WatcherRenamed;
             this.watcher.Deleted += this.WatcherChanged;
@@ -106,7 +106,7 @@ namespace FileExplorer
             // 
             this.fileView.AllowDrop = true;
             this.fileView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.fileView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.fileView.Columns.AddRange(new[] {
             this.fileHeader,
             this.sizeHeader,
             this.typeHeader,

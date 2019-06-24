@@ -143,12 +143,12 @@ namespace System.Windows.Forms
 		}
 		
 		private Blend GetBackgroundBlend(int index){
-			float[] relativeIntensities = new float[]{0f, 0.7f, 1f};
-			float[] relativePositions = new float[]{0f, 0.8f, 1f};
+			float[] relativeIntensities = new[]{0f, 0.7f, 1f};
+			float[] relativePositions = new[]{0f, 0.8f, 1f};
 
 			if (this._TabControl.SelectedIndex != index) {
-				relativeIntensities = new float[]{0f, 0.3f, 1f};
-				relativePositions = new float[]{0f, 0.2f, 1f};
+				relativeIntensities = new[]{0f, 0.3f, 1f};
+				relativePositions = new[]{0f, 0.2f, 1f};
 			}
 	
 			Blend blend = new Blend();

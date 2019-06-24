@@ -18,7 +18,7 @@ namespace SourceControl.Sources.Mercurial
                 return;
             }
 
-            string args = string.Format("mv \"{0}\" \"{1}\"", Path.GetFileName(path), newName);
+            string args = $"mv \"{Path.GetFileName(path)}\" \"{newName}\"";
 
             Run(args, Path.GetDirectoryName(path));
         }

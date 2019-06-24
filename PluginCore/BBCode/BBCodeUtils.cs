@@ -37,18 +37,11 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle getNodeStyle(IndexTree tree)
         {
-            if (tree == null)
-                return null;
+            IPairTag pairTag = tree?.data as IPairTag;
 
-            IPairTag pairTag = tree.data as IPairTag;
-            if (pairTag == null)
-                return null;
+            BBCodeTagMatch tm = pairTag?.openerMatch as BBCodeTagMatch;
 
-            BBCodeTagMatch tm = pairTag.openerMatch as BBCodeTagMatch;
-            if (tm == null)
-                return null;
-
-            return tm.bbCodeStyle;
+            return tm?.bbCodeStyle;
         }
 
         public static BBCodeStyle getCascadedNodeStyle(IndexTree tree)
@@ -111,13 +104,13 @@ namespace PluginCore.BBCode
 
 
             if (style.foreColor != null)
-                tf.SelectionColor = Color.FromArgb((int)((uint)(0xFF000000) | (uint)(style.foreColor.color & 0xFFFFFF)));
+                tf.SelectionColor = Color.FromArgb((int)(0xFF000000 | style.foreColor.color & 0xFFFFFF));
 
             if (style.backColor != null)
-                tf.SelectionBackColor = Color.FromArgb((int)((uint)(0xFF000000) | (uint)(style.backColor.color & 0xFFFFFF)));
+                tf.SelectionBackColor = Color.FromArgb((int)(0xFF000000 | style.backColor.color & 0xFFFFFF));
 
 
-            Font font = new Font(fontName, (float)(fontSize > 1.0f ? fontSize : 1.0f), fontStyle);
+            Font font = new Font(fontName, fontSize > 1.0f ? fontSize : 1.0f, fontStyle);
             tf.SelectionFont = font;
         }
 
@@ -133,8 +126,8 @@ namespace PluginCore.BBCode
             rootStyle.fontName = tf.Font.Name;
             rootStyle.fontSize = tf.Font.Size;
             rootStyle.isAbsFontSize = true;
-            rootStyle.foreColor = new BBCodeStyle.Color((uint)0xFF000000 | (uint)(tf.SelectionColor.ToArgb() & (int)0xFFFFFF), BBCodeStyle.Mode.NORMAL);
-            rootStyle.backColor = new BBCodeStyle.Color((uint)0xFF000000 | (uint)(tf.SelectionBackColor.ToArgb() & (int)0xFFFFFF), BBCodeStyle.Mode.NORMAL);
+            rootStyle.foreColor = new BBCodeStyle.Color(0xFF000000 | (uint)(tf.SelectionColor.ToArgb() & 0xFFFFFF), BBCodeStyle.Mode.NORMAL);
+            rootStyle.backColor = new BBCodeStyle.Color(0xFF000000 | (uint)(tf.SelectionBackColor.ToArgb() & 0xFFFFFF), BBCodeStyle.Mode.NORMAL);
             rootStyle.isBold = tf.Font.Bold ? StateMode.ON : StateMode.OFF;
             rootStyle.isItalic = tf.Font.Italic ? StateMode.ON : StateMode.OFF;
             rootStyle.isStriked = tf.Font.Strikeout ? StateMode.ON : StateMode.OFF;

@@ -18,7 +18,7 @@ namespace SourceControl.Sources.Git
                 return;
             }
 
-            string args = string.Format("mv \"{0}\" \"{1}\"", Path.GetFileName(fromPath), toPath);
+            string args = $"mv \"{Path.GetFileName(fromPath)}\" \"{toPath}\"";
 
             Run(args, Path.GetDirectoryName(fromPath));
         }

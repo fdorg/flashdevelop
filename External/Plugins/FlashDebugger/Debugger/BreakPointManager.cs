@@ -235,7 +235,7 @@ namespace FlashDebugger
             if (m_TemporaryBreakPointInfo != null)
             {
                 m_TemporaryBreakPointInfo.IsDeleted = true;
-                List<BreakPointInfo> bpList = new List<BreakPointInfo>(new BreakPointInfo[] { m_TemporaryBreakPointInfo });
+                List<BreakPointInfo> bpList = new List<BreakPointInfo>(new[] { m_TemporaryBreakPointInfo });
                 PluginMain.debugManager.FlashInterface.UpdateBreakpoints(bpList);
                 m_TemporaryBreakPointInfo = null;
             }
@@ -245,7 +245,7 @@ namespace FlashDebugger
         {
             ClearTemporaryBreakPoint();
             m_TemporaryBreakPointInfo = new BreakPointInfo(filefullpath, line, string.Empty, false, true);
-            List<BreakPointInfo> bpList = new List<BreakPointInfo>(new BreakPointInfo[] { m_TemporaryBreakPointInfo });
+            List<BreakPointInfo> bpList = new List<BreakPointInfo>(new[] { m_TemporaryBreakPointInfo });
             PluginMain.debugManager.FlashInterface.UpdateBreakpoints(bpList);
         }
 

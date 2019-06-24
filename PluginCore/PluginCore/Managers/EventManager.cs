@@ -155,17 +155,13 @@ namespace PluginCore.Managers
         /// </summary>
         private static List<EventObject> GetEventObjects(HandlingPriority priority)
         {
-            switch (priority)
+            return priority switch
             {
-                case HandlingPriority.High:
-                    return highObjects;
-                case HandlingPriority.Normal:
-                    return normalObjects;
-                case HandlingPriority.Low:
-                    return lowObjects;
-                default:
-                    throw new InvalidEnumArgumentException(nameof(priority), (int) priority, typeof(HandlingPriority));
-            }
+                HandlingPriority.High => highObjects,
+                HandlingPriority.Normal => normalObjects,
+                HandlingPriority.Low => lowObjects,
+                _ => throw new InvalidEnumArgumentException(nameof(priority), (int) priority, typeof(HandlingPriority)),
+            };
         }
 
         private sealed class EventObject

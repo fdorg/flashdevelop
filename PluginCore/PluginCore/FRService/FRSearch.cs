@@ -58,10 +58,7 @@ namespace PluginCore.FRService
         /// </summary>
         /// <param name="pattern">Text to escape</param>
         /// <returns>Regex-safe text</returns>
-        public static string Escape(string pattern)
-        {
-            return Regex.Escape(pattern);
-        }
+        public static string Escape(string pattern) => Regex.Escape(pattern);
 
         /// <summary>
         /// Replace escaped characters in replacement text
@@ -130,9 +127,8 @@ namespace PluginCore.FRService
         {
             int lines = 0;
             char c2 = ' ';
-            for (int i = 0; i < src.Length; i++)
+            foreach (var c1 in src)
             {
-                var c1 = src[i];
                 if (c1 == '\r') lines++;
                 else if (c1 == '\n' && c2 != '\r') lines++;
                 c2 = c1;
@@ -210,8 +206,7 @@ namespace PluginCore.FRService
         /// <returns>Updated text</returns>
         public string Replace(string input, string replacement, SearchMatch match)
         {
-            List<SearchMatch> matches = new List<SearchMatch>();
-            matches.Add(match);
+            var matches = new List<SearchMatch> {match};
             return ReplaceOneMatch(input, replacement, matches, 0);
         }
 
@@ -320,16 +315,8 @@ namespace PluginCore.FRService
                 needParsePattern = true;
             }
         }
-        public bool SingleLine
-        {
-            get => singleLine;
-            set => singleLine = value;
-        }
-        public SearchFilter Filter
-        {
-            get => filter;
-            set => filter = value;
-        }
+        public bool SingleLine { get; set; }
+        public SearchFilter Filter { get; set; }
         public string Pattern
         {
             get => pattern;
@@ -339,11 +326,7 @@ namespace PluginCore.FRService
                 needParsePattern = true;
             }
         }
-        public bool CopyFullLineContext
-        {
-            get => copyFullLineContext;
-            set => copyFullLineContext = value;
-        }
+        public bool CopyFullLineContext { get; set; } = true;
 
         private bool hasRegexLiterals;
         private bool isHaxeFile;
@@ -394,10 +377,7 @@ namespace PluginCore.FRService
         /// </summary>
         /// <param name="input">Source text</param>
         /// <returns>Search result</returns>
-        public SearchMatch Match(string input)
-        {
-            return Match(input, 0, 1);
-        }
+        public SearchMatch Match(string input) => Match(input, 0, 1);
 
         /// <summary>
         /// Find a match - both startIndex & startLine must be defined
@@ -419,10 +399,7 @@ namespace PluginCore.FRService
         /// </summary>
         /// <param name="input">Source text</param>
         /// <returns>Search results</returns>
-        public List<SearchMatch> Matches(string input)
-        {
-            return Matches(input, 0, 1);
-        }
+        public List<SearchMatch> Matches(string input) => Matches(input, 0, 1);
 
         /// <summary>
         /// Find all matches - both startIndex & startLine must be defined
@@ -447,10 +424,7 @@ namespace PluginCore.FRService
         private bool wholeWord;
         private bool isRegex;
         private bool isEscaped;
-        private bool singleLine;
         private bool returnAllMatches;
-        private bool copyFullLineContext = true;
-        private SearchFilter filter;
 
         #endregion
 
@@ -467,7 +441,7 @@ namespace PluginCore.FRService
             }
             
             RegexOptions options = RegexOptions.None;
-            if (!singleLine) options |= RegexOptions.Multiline;
+            if (!SingleLine) options |= RegexOptions.Multiline;
             if (noCase) options |= RegexOptions.IgnoreCase;
 
             try
@@ -506,12 +480,12 @@ namespace PluginCore.FRService
             int nextPos = match.Index;
 
             // filters
-            bool inComments = (filter & SearchFilter.InCodeComments) > 0;
-            bool outComments = (filter & SearchFilter.OutsideCodeComments) > 0;
+            bool inComments = (Filter & SearchFilter.InCodeComments) > 0;
+            bool outComments = (Filter & SearchFilter.OutsideCodeComments) > 0;
             bool filterComments = inComments || outComments;
             int commentMatch = 0;
-            bool inLiterals = (filter & SearchFilter.InStringLiterals) > 0;
-            bool outLiterals = (filter & SearchFilter.OutsideStringLiterals) > 0;
+            bool inLiterals = (Filter & SearchFilter.InStringLiterals) > 0;
+            bool outLiterals = (Filter & SearchFilter.OutsideStringLiterals) > 0;
             bool filterLiterals = inLiterals || outLiterals;
             int literalMatch = 0;
 

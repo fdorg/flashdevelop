@@ -24,8 +24,6 @@ namespace PluginCore.Controls
         protected readonly Panel toolTip;
         protected readonly RichTextBox toolTipRTB;
         protected string rawText;
-        protected string lastRawText;
-        protected string cachedRtf;
         protected readonly Dictionary<string, string> rtfCache;
         protected readonly List<string> rtfCacheList;
         protected Point mousePos;
@@ -104,6 +102,7 @@ namespace PluginCore.Controls
         #region Tip Methods
 
         public bool AutoSize() => AutoSize(0);
+
         public bool AutoSize(int availableWidth) => AutoSize(availableWidth, 1024);
 
         public bool AutoSize(int availableWidth, int maxWidth)

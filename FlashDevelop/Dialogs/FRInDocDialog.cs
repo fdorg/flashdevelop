@@ -80,7 +80,7 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceButton
             //
-            this.replaceButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.replaceButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceButton.Location = new System.Drawing.Point(277, 112);
             this.replaceButton.Name = "replaceButton";
@@ -91,7 +91,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findNextButton
             // 
-            this.findNextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.findNextButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.findNextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findNextButton.Location = new System.Drawing.Point(277, 22);
             this.findNextButton.Name = "findNextButton";
@@ -124,7 +124,7 @@ namespace FlashDevelop.Dialogs
             // 
             // closeButton
             //
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(277, 172);
             this.closeButton.Name = "closeButton";
@@ -135,7 +135,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findPrevButton
             // 
-            this.findPrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.findPrevButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.findPrevButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findPrevButton.Location = new System.Drawing.Point(277, 52);
             this.findPrevButton.Name = "findPrevButton";
@@ -146,7 +146,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findComboBox
             //
-            this.findComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.findComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.findComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findComboBox.Location = new System.Drawing.Point(13, 23);
             this.findComboBox.Name = "findComboBox";
@@ -189,7 +189,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoPictureBox
             //
-            this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.infoPictureBox.Location = new System.Drawing.Point(14, 202);
             this.infoPictureBox.Name = "infoPictureBox";
@@ -199,7 +199,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoLabel
             //
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoLabel.AutoSize = true;
             this.infoLabel.BackColor = System.Drawing.SystemColors.Control;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -212,7 +212,7 @@ namespace FlashDevelop.Dialogs
             // 
             // optionsGroupBox
             //
-            this.optionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.optionsGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.optionsGroupBox.Controls.Add(this.useRegexCheckBox);
             this.optionsGroupBox.Controls.Add(this.escapedCheckBox);
             this.optionsGroupBox.Controls.Add(this.wholeWordCheckBox);
@@ -227,7 +227,7 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceComboBox
             //
-            this.replaceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.replaceComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceComboBox.Location = new System.Drawing.Point(13, 62);
             this.replaceComboBox.Name = "replaceComboBox";
@@ -247,7 +247,7 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceAllButton
             //
-            this.replaceAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceAllButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.replaceAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceAllButton.Location = new System.Drawing.Point(277, 142);
             this.replaceAllButton.Name = "replaceAllButton";
@@ -258,7 +258,7 @@ namespace FlashDevelop.Dialogs
             // 
             // lookComboBox
             //
-            this.lookComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.lookComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.lookComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lookComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lookComboBox.Items.AddRange(new object[] {
@@ -285,7 +285,7 @@ namespace FlashDevelop.Dialogs
             // 
             // bookmarkAllButton
             //
-            this.bookmarkAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bookmarkAllButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.bookmarkAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.bookmarkAllButton.Location = new System.Drawing.Point(277, 82);
             this.bookmarkAllButton.Name = "bookmarkAllButton";

@@ -34,10 +34,7 @@ namespace PluginCore.Utilities
             Win32.DestroyIcon(info.hIcon);
             return icon;
         }
-        public static Icon GetFileIcon(string path, bool small)
-        {
-            return GetFileIcon(path, small, false);
-        }
+        public static Icon GetFileIcon(string path, bool small) => GetFileIcon(path, small, false);
 
         /// <summary>
         /// Get the associated Icon for a file or application, this method always returns
@@ -55,11 +52,7 @@ namespace PluginCore.Utilities
             Win32.DestroyIcon(info.hIcon);
             return icon;
         }
-        public static Icon GetFolderIcon(string path, bool small)
-        {
-            return GetFileIcon(path, small, false);
-        }
-
+        public static Icon GetFolderIcon(string path, bool small) => GetFileIcon(path, small, false);
     }
     
 }

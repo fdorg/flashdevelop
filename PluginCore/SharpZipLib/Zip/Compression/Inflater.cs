@@ -593,15 +593,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         public void SetDictionary(byte[] buffer, int index, int count)
         {
             if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( index < 0 ) {
-                throw new ArgumentOutOfRangeException("index");
+                throw new ArgumentOutOfRangeException(nameof(index));
             }
 
             if ( count < 0 ) {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             if (!IsNeedingDictionary) {
@@ -652,7 +652,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         public void SetInput(byte[] buffer, int index, int count)
         {
             input.SetInput(buffer, index, count);
-            totalIn += (long)count;
+            totalIn += count;
         }
         
         /// <summary>
@@ -678,7 +678,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         {
             if ( buffer == null )
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             return Inflate(buffer, 0, buffer.Length);
@@ -715,14 +715,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         {
             if ( buffer == null )
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( count < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "count cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "count cannot be negative");
 #endif
             }
 
@@ -730,7 +730,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "offset cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "offset cannot be negative");
 #endif
             }
 
@@ -763,7 +763,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                         adler.Update(buffer, offset, more);
                         offset += more;
                         bytesCopied += more;
-                        totalOut += (long)more;
+                        totalOut += more;
                         count -= more;
                         if (count == 0) {
                             return bytesCopied;
@@ -817,7 +817,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
         /// <returns>
         /// The total number of bytes of processed input bytes.
         /// </returns>
-        public long TotalIn => totalIn - (long)RemainingInput;
+        public long TotalIn => totalIn - RemainingInput;
 
         /// <summary>
         /// Gets the number of unprocessed input bytes.  Useful, if the end of the

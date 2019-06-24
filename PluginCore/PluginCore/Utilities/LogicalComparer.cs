@@ -4,7 +4,7 @@ namespace PluginCore.Utilities
 {
     public class LogicalComparer : IComparer // (c) Vasian Cepa 2005
     {
-        private readonly bool zeroesFirst = false;
+        private readonly bool zeroesFirst;
 
         public LogicalComparer() { }
         public LogicalComparer(bool zeroesFirst)
@@ -27,10 +27,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// 
         /// </summary>
-        public static int Compare(string s1, string s2)
-        {
-            return Compare(s1, s2, false);
-        }
+        public static int Compare(string s1, string s2) => Compare(s1, s2, false);
 
         /// <summary>
         /// 
@@ -52,19 +49,17 @@ namespace PluginCore.Utilities
             if (sp1 && !sp2) return 1;
             if (!sp1 && sp2) return -1;
             int i1 = 0, i2 = 0; //current index
-            int r = 0; // temp result
-            char c1, c2;
-            bool letter1, letter2;
             while (true)
             {
-                c1 = s1[i1];
-                c2 = s2[i2];
+                var c1 = s1[i1];
+                var c2 = s2[i2];
                 sp1 = char.IsDigit(c1);
                 sp2 = char.IsDigit(c2);
+                int r; // temp result
                 if (!sp1 && !sp2)
                 {
-                    letter1 = char.IsLetter(c1);
-                    letter2 = char.IsLetter(c2);
+                    var letter1 = char.IsLetter(c1);
+                    var letter2 = char.IsLetter(c2);
 
                     if (letter1 && letter2)
                     {

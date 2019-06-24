@@ -311,16 +311,16 @@ namespace System.Windows.Forms
 				this._Padding = value;
 				//	This line will trigger the handle to recreate, therefore invalidating the control
 				if (this._ShowTabCloser){
-					if (value.X + (int)(this._Radius/2) < -6){
+					if (value.X + this._Radius/2 < -6){
 						((TabControl)this._TabControl).Padding = new Point(0, value.Y);
 					} else {
-						((TabControl)this._TabControl).Padding = new Point(value.X + (int)(this._Radius/2) + 6, value.Y);
+						((TabControl)this._TabControl).Padding = new Point(value.X + this._Radius/2 + 6, value.Y);
 					}
 				} else {
-					if (value.X + (int)(this._Radius/2) < 1){
+					if (value.X + this._Radius/2 < 1){
 						((TabControl)this._TabControl).Padding = new Point(0, value.Y);
 					} else {
-						((TabControl)this._TabControl).Padding = new Point(value.X + (int)(this._Radius/2) -1, value.Y);
+						((TabControl)this._TabControl).Padding = new Point(value.X + this._Radius/2 -1, value.Y);
 					}
 				}
 			}
@@ -332,7 +332,7 @@ namespace System.Windows.Forms
 			get => this._Radius;
             set {
 				if (value < 1){
-					throw new ArgumentException("The radius must be greater than 1", "value");
+					throw new ArgumentException("The radius must be greater than 1", nameof(value));
 				}
 				this._Radius = value;
 				//	Adjust padding
@@ -345,7 +345,7 @@ namespace System.Windows.Forms
 			get => this._Overlap;
             set {
 				if (value < 0){
-					throw new ArgumentException("The tabs cannot have a negative overlap", "value");
+					throw new ArgumentException("The tabs cannot have a negative overlap", nameof(value));
 				}
 				this._Overlap = value;
 				
@@ -386,10 +386,10 @@ namespace System.Windows.Forms
 			get => this._Opacity;
             set {
 				if (value < 0){
-					throw new ArgumentException("The opacity must be between 0 and 1", "value");
+					throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
 				}
 				if (value > 1){
-					throw new ArgumentException("The opacity must be between 0 and 1", "value");
+					throw new ArgumentException("The opacity must be between 0 and 1", nameof(value));
 				}
 				this._Opacity = value;
 				this._TabControl.Invalidate();
@@ -642,13 +642,13 @@ namespace System.Windows.Forms
 		#region Background brushes
 
 		private Blend GetBackgroundBlend(){
-			float[] relativeIntensities = new float[]{0f, 0.7f, 1f};
-			float[] relativePositions = new float[]{0f, 0.6f, 1f};
+			float[] relativeIntensities = new[]{0f, 0.7f, 1f};
+			float[] relativePositions = new[]{0f, 0.6f, 1f};
 
 			//	Glass look to top aligned tabs
 			if (this._TabControl.Alignment == TabAlignment.Top){
-				relativeIntensities = new float[]{0f, 0.5f, 1f, 1f};
-				relativePositions = new float[]{0f, 0.5f, 0.51f, 1f};
+				relativeIntensities = new[]{0f, 0.5f, 1f, 1f};
+				relativePositions = new[]{0f, 0.5f, 0.51f, 1f};
 			}
 			
 			Blend blend = new Blend();

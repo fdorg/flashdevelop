@@ -19,28 +19,24 @@ namespace LitJson
         }
 
         internal JsonException (ParserToken token) :
-            base (string.Format (
-                    "Invalid token '{0}' in input string", token))
+            base ($"Invalid token '{token}' in input string")
         {
         }
 
         internal JsonException (ParserToken token,
                                 Exception inner_exception) :
-            base (string.Format (
-                    "Invalid token '{0}' in input string", token),
+            base ($"Invalid token '{token}' in input string",
                 inner_exception)
         {
         }
 
         internal JsonException (int c) :
-            base (string.Format (
-                    "Invalid character '{0}' in input string", (char) c))
+            base ($"Invalid character '{(char) c}' in input string")
         {
         }
 
         internal JsonException (int c, Exception inner_exception) :
-            base (string.Format (
-                    "Invalid character '{0}' in input string", (char) c),
+            base ($"Invalid character '{(char) c}' in input string",
                 inner_exception)
         {
         }

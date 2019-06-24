@@ -9,37 +9,26 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the value of the specified XmlNode.
         /// </summary>
-        public static string GetValue(XmlNode node)
-        {
-            if (node?.FirstChild != null) return node.FirstChild.Value;
-            return null;
-        }
+        public static string GetValue(XmlNode node) => node?.FirstChild?.Value;
 
         /// <summary>
         /// Gets the specified attribute from the specified XmlNode.
         /// </summary>
         public static string GetAttribute(XmlNode node, string attName)
         {
-            if (node?.Attributes[attName] != null) return node.Attributes[attName].Value;
-            return null;
+            return node?.Attributes?[attName] != null ? node.Attributes[attName].Value : null;
         }
         
         /// <summary>
         /// Checks that if the XmlNode has a value.
         /// </summary>
-        public static bool HasValue(XmlNode node)
-        {
-            return (node?.FirstChild?.Value != null);
-        }
+        public static bool HasValue(XmlNode node) => node?.FirstChild?.Value != null;
 
         /// <summary>
         /// Checks if the XmlNode has the specified attribute.
         /// </summary>
-        public static bool HasAttribute(XmlNode node, string attName)
-        {
-            return (node?.Attributes[attName] != null);
-        }
-        
+        public static bool HasAttribute(XmlNode node, string attName) => node?.Attributes?[attName] != null;
+
         /// <summary>
         /// Reads a xml file and returns it as a XmlNode. Returns null on failure.
         /// </summary>

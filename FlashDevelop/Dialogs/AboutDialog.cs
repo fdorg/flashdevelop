@@ -54,7 +54,7 @@ namespace FlashDevelop.Dialogs
             //
             this.copyLabel.AutoSize = true;
             this.copyLabel.ForeColor = System.Drawing.Color.DarkGray;
-            this.copyLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            this.copyLabel.BackColor = System.Drawing.Color.FromArgb(37, 37, 37);
             this.copyLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.copyLabel.Location = new System.Drawing.Point(25, 192);
             this.copyLabel.Name = "copyLabel";
@@ -67,7 +67,7 @@ namespace FlashDevelop.Dialogs
             //
             this.versionLabel.AutoSize = true;
             this.versionLabel.ForeColor = System.Drawing.Color.DarkGray;
-            this.versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(37)))), ((int)(((byte)(37)))));
+            this.versionLabel.BackColor = System.Drawing.Color.FromArgb(37, 37, 37);
             this.versionLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.versionLabel.Location = new System.Drawing.Point(23, 172);
             this.versionLabel.Name = "versionLabel";

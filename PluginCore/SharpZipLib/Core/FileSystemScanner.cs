@@ -126,7 +126,7 @@ namespace ICSharpCode.SharpZipLib.Core
                 }
                 else
                 {
-                    result = ((float)processed_ / (float)target_) * 100.0f;
+                    result = (processed_ / (float)target_) * 100.0f;
                 }
                 return result;
             }

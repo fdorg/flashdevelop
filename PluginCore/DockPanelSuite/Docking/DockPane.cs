@@ -52,7 +52,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected internal DockPane(IDockContent content, FloatWindow floatWindow, bool show)
         {
             if (floatWindow == null)
-                throw new ArgumentNullException("floatWindow");
+                throw new ArgumentNullException(nameof(floatWindow));
 
             InternalConstruct(content, DockState.Float, false, Rectangle.Empty, floatWindow.NestedPanes.GetDefaultPreviousPane(this), DockAlignment.Right, 0.5, show);
         }
@@ -60,7 +60,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected internal DockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion, bool show)
         {
             if (previousPane == null)
-                throw(new ArgumentNullException("previousPane"));
+                throw(new ArgumentNullException(nameof(previousPane)));
             InternalConstruct(content, previousPane.DockState, false, Rectangle.Empty, previousPane, alignment, proportion, show);
         }
 
@@ -1199,7 +1199,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         public void DockTo(DockPanel panel, DockStyle dockStyle)
         {
             if (panel != DockPanel)
-                throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, "panel");
+                throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, nameof(panel));
 
             if (dockStyle == DockStyle.Top)
                 DockState = DockState.DockTop;

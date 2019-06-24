@@ -43,7 +43,7 @@ namespace SevenZip.Compression.LZMA
             len -= kMatchMinLen;
             if (len < kNumLenToPosStates)
                 return len;
-            return (uint)(kNumLenToPosStates - 1);
+            return kNumLenToPosStates - 1;
         }
 
         public const int kNumAlignBits = 4;

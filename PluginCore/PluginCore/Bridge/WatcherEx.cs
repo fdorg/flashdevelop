@@ -42,7 +42,7 @@ namespace PluginCore.Bridge
 
         #region Tracing
 
-        static bool errorDone = false;
+        static bool errorDone;
         public void TraceError()
         {
             if (errorDone) return;
@@ -50,7 +50,7 @@ namespace PluginCore.Bridge
             TraceManager.AddAsync("Unable to connect to FlashDevelop Bridge.");
         }
 
-        static bool okDone = false;
+        static bool okDone;
         public void TraceOk()
         {
             if (okDone) return;
