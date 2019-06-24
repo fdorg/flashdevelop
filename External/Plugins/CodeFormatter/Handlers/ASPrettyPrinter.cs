@@ -3487,7 +3487,7 @@ namespace CodeFormatter.Handlers
                 if (removedWSCount>0)
                 {
                     lengthAtSplit=getColumnLength(0, restOfText, 0, (splitPoint-lineStart)-removedWSCount);
-                    splitPoint=splitPoint-removedWSCount;
+                    splitPoint -= removedWSCount;
                 }
             }
             else

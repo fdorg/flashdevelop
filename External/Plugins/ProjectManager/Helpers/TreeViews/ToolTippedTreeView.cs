@@ -19,7 +19,7 @@ namespace System.Windows.Forms
             get 
             {
                 CreateParams p = base.CreateParams;
-                p.Style = p.Style | TVS_NOTOOLTIPS;
+                p.Style |= TVS_NOTOOLTIPS;
                 return p;
             }
         }

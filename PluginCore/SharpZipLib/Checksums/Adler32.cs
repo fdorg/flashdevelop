@@ -216,8 +216,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
                 }
                 count -= n;
                 while (--n >= 0) {
-                    s1 = s1 + (uint)(buffer[offset++] & 0xff);
-                    s2 = s2 + s1;
+                    s1 += (uint)(buffer[offset++] & 0xff);
+                    s2 += s1;
                 }
                 s1 %= BASE;
                 s2 %= BASE;

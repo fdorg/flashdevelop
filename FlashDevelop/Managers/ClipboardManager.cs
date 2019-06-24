@@ -14,12 +14,11 @@ namespace FlashDevelop.Managers
     internal static class ClipboardManager
     {
         private static IntPtr hwnd;
-        private static FixedSizeQueue<ClipboardTextData> history;
 
         /// <summary>
         /// Gets a collection of <see cref="IDataObject"/>, each representing clipboard data in history.
         /// </summary>
-        internal static FixedSizeQueue<ClipboardTextData> History => history;
+        internal static FixedSizeQueue<ClipboardTextData> History { get; set; }
 
         /// <summary>
         /// Initializes <see cref="ClipboardManager"/> and places the <see cref="MainForm"/> window in the system-maintained clipboard format listener list.
@@ -35,7 +34,7 @@ namespace FlashDevelop.Managers
                 throw new ArgumentNullException(nameof(window));
             }
 
-            if (history != null)
+            if (History != null)
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is already initialized.");
             }
@@ -57,13 +56,13 @@ namespace FlashDevelop.Managers
                     hwnd = IntPtr.Zero;
                 }
             }
-            history = new FixedSizeQueue<ClipboardTextData>(Globals.Settings.ClipboardHistorySize);
+            History = new FixedSizeQueue<ClipboardTextData>(Globals.Settings.ClipboardHistorySize);
             try
             {
                 var dataObject = Clipboard.GetDataObject();
                 if (ClipboardTextData.IsTextFormat(dataObject))
                 {
-                    history.Enqueue(new ClipboardTextData(dataObject));
+                    History.Enqueue(new ClipboardTextData(dataObject));
                 }
             }
             catch (ExternalException) { }
@@ -77,7 +76,7 @@ namespace FlashDevelop.Managers
         /// <exception cref="NotSupportedException"/>
         internal static void Dispose()
         {
-            if (history == null)
+            if (History == null)
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
             }
@@ -91,7 +90,7 @@ namespace FlashDevelop.Managers
                 }
             }
             hwnd = IntPtr.Zero;
-            history = null;
+            History = null;
         }
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace FlashDevelop.Managers
                     var dataObject = Clipboard.GetDataObject();
                     if (ClipboardTextData.IsTextFormat(dataObject))
                     {
-                        history.Enqueue(new ClipboardTextData(dataObject));
+                        History.Enqueue(new ClipboardTextData(dataObject));
                         return true;
                     }
                 }
@@ -130,9 +129,9 @@ namespace FlashDevelop.Managers
         /// </summary>
         internal static void ApplySettings()
         {
-            if (history != null)
+            if (History != null)
             {
-                history.Capacity = Globals.Settings.ClipboardHistorySize;
+                History.Capacity = Globals.Settings.ClipboardHistorySize;
             }
         }
 
@@ -168,10 +167,6 @@ namespace FlashDevelop.Managers
     /// </summary>
     public sealed class ClipboardTextData
     {
-        private string format;
-        private string rtf;
-        private string text;
-
         /// <summary>
         /// Creates a new instance of <see cref="ClipboardTextData"/> with the specified <see cref="IDataObject"/>.
         /// </summary>
@@ -191,17 +186,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the format of the <see cref="ClipboardTextData"/>.
         /// </summary>
-        public string Format => format;
+        public string Format { get; set; }
 
         /// <summary>
         /// Gets the <see cref="DataFormats.Rtf"/> value of the <see cref="ClipboardTextData"/>, or <see langword="null"/> if <see cref="Format"/> is not <see cref="DataFormats.Rtf"/>.
         /// </summary>
-        public string Rtf => rtf;
+        public string Rtf { get; set; }
 
         /// <summary>
         /// Gets the <see cref="DataFormats.Text"/> value of the <see cref="ClipboardTextData"/>.
         /// </summary>
-        public string Text => text;
+        public string Text { get; set; }
 
         /// <summary>
         /// Determines whether data stored in the <see cref="IDataObject"/> is associated with a text format.
@@ -226,15 +221,15 @@ namespace FlashDevelop.Managers
         {
             if (dataObject.GetDataPresent(DataFormats.Rtf))
             {
-                format = DataFormats.Rtf;
-                rtf = (string) dataObject.GetData(DataFormats.Rtf);
-                text = (string) dataObject.GetData(DataFormats.Text);
+                Format = DataFormats.Rtf;
+                Rtf = (string) dataObject.GetData(DataFormats.Rtf);
+                Text = (string) dataObject.GetData(DataFormats.Text);
             }
             else if (dataObject.GetDataPresent(DataFormats.Text))
             {
-                format = DataFormats.Text;
-                rtf = null;
-                text = (string) dataObject.GetData(DataFormats.Text);
+                Format = DataFormats.Text;
+                Rtf = null;
+                Text = (string) dataObject.GetData(DataFormats.Text);
             }
             else
             {

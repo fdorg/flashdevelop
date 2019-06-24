@@ -319,7 +319,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
             
             // 1528150659
             computedCombinedCRC = ((computedCombinedCRC << 1) & 0xFFFFFFFF) | (computedCombinedCRC >> 31);
-            computedCombinedCRC = computedCombinedCRC ^ (uint)computedBlockCRC;
+            computedCombinedCRC ^= (uint)computedBlockCRC;
         }
         
         void Complete() 

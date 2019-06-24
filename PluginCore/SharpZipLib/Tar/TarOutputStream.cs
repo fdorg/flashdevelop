@@ -241,7 +241,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             if (entry.TarHeader.Name.Length >= TarHeader.NAMELEN) {
                 TarHeader longHeader = new TarHeader();
                 longHeader.TypeFlag = TarHeader.LF_GNU_LONGNAME;
-                longHeader.Name = longHeader.Name + "././@LongLink";
+                longHeader.Name += "././@LongLink";
                 longHeader.UserId = 0;
                 longHeader.GroupId = 0;
                 longHeader.GroupName = "";

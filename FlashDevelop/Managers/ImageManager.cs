@@ -125,8 +125,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static Image SetImageAdjustment(Image original)
         {
-            int saturation, brightness;
-            if (GetImageAdjustments(out saturation, out brightness))
+            if (GetImageAdjustments(out var saturation, out var brightness))
             {
                 return ImageKonverter.ImageAdjust(original, saturation, brightness);
             }
@@ -159,9 +158,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void AdjustAllImages()
         {
-            int saturation, brightness;
-            GetImageAdjustments(out saturation, out brightness);
-
+            GetImageAdjustments(out var saturation, out var brightness);
             for (int i = 0, length = AutoAdjusted.Count; i < length; i++)
             {
                 var imagePair = AutoAdjusted[i];
@@ -259,7 +256,6 @@ namespace FlashDevelop.Managers
         /// </summary>
         class ImagePair
         {
-            readonly Image original;
             readonly WeakReference adjusted;
 
             /// <summary>
@@ -277,14 +273,14 @@ namespace FlashDevelop.Managers
             /// <param name="adjusted"><see cref="Adjusted"/></param>
             public ImagePair(Image original, Image adjusted)
             {
-                this.original = original;
+                this.Original = original;
                 this.adjusted = new WeakReference(adjusted);
             }
 
             /// <summary>
             /// The original image.
             /// </summary>
-            public Image Original => original;
+            public Image Original { get; }
 
             /// <summary>
             /// The copy of <see cref="Original"/> that changes color according to the theme.

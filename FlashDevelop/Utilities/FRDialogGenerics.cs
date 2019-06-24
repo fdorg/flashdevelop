@@ -74,9 +74,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)
         {
-            for (int i = 0; i < matches.Count; i++)
+            foreach (var match in matches)
             {
-                int line = matches[i].Line - 1;
+                int line = match.Line - 1;
                 sci.EnsureVisible(line);
                 sci.MarkerAdd(line, 0);
             }
@@ -87,7 +87,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static List<SearchMatch> FilterMatches(List<SearchMatch> matches, int start, int end)
         {
-            List<SearchMatch> filtered = new List<SearchMatch>();
+            var filtered = new List<SearchMatch>();
             foreach (SearchMatch match in matches)
             {
                 if (match.Index >= start && (match.Index + match.Length) <= end)
@@ -106,7 +106,7 @@ namespace FlashDevelop.Utilities
             SearchMatch nearestMatch = matches[0];
             int currentPosition = sci.MBSafeCharPosition(sci.CurrentPos);
             if (fixedPosition) currentPosition -= sci.MBSafeTextLength(sci.SelText);
-            for (int i = 0; i < matches.Count; i++)
+            foreach (var match in matches)
             {
                 if (forward)
                 {
@@ -114,9 +114,9 @@ namespace FlashDevelop.Utilities
                     {
                         return matches[0];
                     }
-                    if (matches[i].Index >= currentPosition)
+                    if (match.Index >= currentPosition)
                     {
-                        return matches[i];
+                        return match;
                     }
                 }
                 else
@@ -129,13 +129,13 @@ namespace FlashDevelop.Utilities
                     {
                         return matches[matches.Count - 1];
                     }
-                    if (sci.SelText.Length == 0 && currentPosition == matches[i].Index + matches[i].Value.Length)
+                    if (sci.SelText.Length == 0 && currentPosition == match.Index + match.Value.Length)
                     {
-                        return matches[i];
+                        return match;
                     }
-                    if (matches[i].Index > nearestMatch.Index && matches[i].Index + matches[i].Value.Length < currentPosition)
+                    if (match.Index > nearestMatch.Index && match.Index + match.Value.Length < currentPosition)
                     {
-                        nearestMatch = matches[i];
+                        nearestMatch = match;
                     }
                 }
             }

@@ -78,7 +78,7 @@ namespace CodeRefactor.Provider
                     var lineNumber = match.Line;
                     var changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
                     var offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
-                    column = column + offset;
+                    column += offset;
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (match.Value.Length - match.Length);
                     if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();

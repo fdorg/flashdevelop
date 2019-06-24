@@ -22,9 +22,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static string GetThemeValue(string id)
         {
-            string result;
-            if (valueMap.TryGetValue(id, out result)) return result;
-            return null;
+            return valueMap.TryGetValue(id, out var result) ? result : null;
         }
 
         /// <summary>
@@ -72,41 +70,36 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (obj is ListView)
+                if (obj is ListView parent1)
                 {
-                    ListView parent = obj as ListView;
-                    foreach (ListViewItem item in parent.Items)
+                    foreach (ListViewItem item in parent1.Items)
                     {
                         SetUseTheme(item, use);
                     }
                 }
-                else if (obj is TreeView)
+                else if (obj is TreeView parent2)
                 {
-                    TreeView parent = obj as TreeView;
-                    foreach (TreeNode item in parent.Nodes)
+                    foreach (TreeNode item in parent2.Nodes)
                     {
                         SetUseTheme(item, use);
                     }
                 }
-                else if (obj is MenuStrip)
+                else if (obj is MenuStrip parent3)
                 {
-                    MenuStrip parent = obj as MenuStrip;
-                    foreach (ToolStripItem item in parent.Items)
+                    foreach (ToolStripItem item in parent3.Items)
                     {
                         SetUseTheme(item, use);
                     }
                 }
-                else if (obj is ToolStripMenuItem)
+                else if (obj is ToolStripMenuItem parent4)
                 {
-                    ToolStripMenuItem parent = obj as ToolStripMenuItem;
-                    foreach (ToolStripItem item in parent.DropDownItems)
+                    foreach (ToolStripItem item in parent4.DropDownItems)
                     {
                         SetUseTheme(item, use);
                     }
                 }
-                else if (obj is Control)
+                else if (obj is Control parent)
                 {
-                    Control parent = obj as Control;
                     foreach (Control item in parent.Controls)
                     {
                         SetUseTheme(item, use);
@@ -131,50 +124,44 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (obj is ListView)
+                if (obj is ListView parent1)
                 {
-                    ListView parent = obj as ListView;
-                    foreach (ListViewItem item in parent.Items)
+                    foreach (ListViewItem item in parent1.Items)
                     {
                         WalkControls(item);
                     }
                 }
-                else if (obj is TreeView)
+                else if (obj is TreeView parent2)
                 {
-                    TreeView parent = obj as TreeView;
-                    foreach (TreeNode item in parent.Nodes)
+                    foreach (TreeNode item in parent2.Nodes)
                     {
                         WalkControls(item);
                     }
                 }
-                else if (obj is MenuStrip)
+                else if (obj is MenuStrip parent3)
                 {
-                    MenuStrip parent = obj as MenuStrip;
-                    foreach (ToolStripItem item in parent.Items)
+                    foreach (ToolStripItem item in parent3.Items)
                     {
                         WalkControls(item);
                     }
                 }
-                else if (obj is ToolStripMenuItem)
+                else if (obj is ToolStripMenuItem parent4)
                 {
-                    ToolStripMenuItem parent = obj as ToolStripMenuItem;
-                    foreach (ToolStripItem item in parent.DropDownItems)
+                    foreach (ToolStripItem item in parent4.DropDownItems)
                     {
                         WalkControls(item);
                     }
                 }
-                else if (obj is Control)
+                else if (obj is Control parent)
                 {
-                    Control parent = obj as Control;
                     foreach (Control item in parent.Controls)
                     {
                         WalkControls(item);
                     }
                 }
                 ThemeControl(obj);
-                if (obj is IThemeHandler)
+                if (obj is IThemeHandler th)
                 {
-                    var th = obj as IThemeHandler;
                     th.AfterTheming();
                 }
                 if (obj is MainForm)
@@ -247,8 +234,6 @@ namespace FlashDevelop.Managers
                         case "FixedSingle":
                             bstyle.SetValue(obj, BorderStyle.FixedSingle, null);
                             break;
-                        default:
-                            break;
                     }
                 }
                 // Set flat style from flat style key
@@ -271,32 +256,28 @@ namespace FlashDevelop.Managers
                         case "Standard":
                             fstyle.SetValue(obj, FlatStyle.Standard, null);
                             break;
-                        default:
-                            break;
                     }
                 }
                 // Control specific style assignments
-                if (obj is Button)
+                if (obj is Button parent1)
                 {
                     Color color = Color.Empty;
-                    Button parent = obj as Button;
                     bool flat = GetThemeValue("Button.FlatStyle") == "Flat";
                     if (flat)
                     {
                         color = GetThemeColor("Button.BorderColor");
-                        if (color != Color.Empty) parent.FlatAppearance.BorderColor = color;
+                        if (color != Color.Empty) parent1.FlatAppearance.BorderColor = color;
                         color = GetThemeColor("Button.CheckedBackColor");
-                        if (color != Color.Empty) parent.FlatAppearance.CheckedBackColor = color;
+                        if (color != Color.Empty) parent1.FlatAppearance.CheckedBackColor = color;
                         color = GetThemeColor("Button.MouseDownBackColor");
-                        if (color != Color.Empty) parent.FlatAppearance.MouseDownBackColor = color;
+                        if (color != Color.Empty) parent1.FlatAppearance.MouseDownBackColor = color;
                         color = GetThemeColor("Button.MouseOverBackColor");
-                        if (color != Color.Empty) parent.FlatAppearance.MouseOverBackColor = color;
+                        if (color != Color.Empty) parent1.FlatAppearance.MouseOverBackColor = color;
                     }
                 }
-                else if (obj is CheckBox)
+                else if (obj is CheckBox parent)
                 {
                     Color color = Color.Empty;
-                    CheckBox parent = obj as CheckBox;
                     bool flat = GetThemeValue("CheckBox.FlatStyle") == "Flat";
                     if (flat)
                     {
@@ -310,9 +291,8 @@ namespace FlashDevelop.Managers
                         if (color != Color.Empty) parent.FlatAppearance.MouseOverBackColor = color;
                     }
                 }
-                else if (obj is PropertyGrid)
+                else if (obj is PropertyGrid grid)
                 {
-                    PropertyGrid grid = obj as PropertyGrid;
                     ApplyPropColor(grid, "PropertyGrid.ViewBackColor");
                     ApplyPropColor(grid, "PropertyGrid.ViewForeColor");
                     ApplyPropColor(grid, "PropertyGrid.ViewBorderColor");

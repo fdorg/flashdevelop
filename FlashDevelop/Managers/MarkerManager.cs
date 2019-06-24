@@ -42,11 +42,10 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void NextMarker(ScintillaControl sci, int marker, int line)
         {
-            int next = 0;
             int lineMask = sci.MarkerGet(line);
             if ((lineMask & GetMarkerMask(marker)) != 0)
             {
-                next = sci.MarkerNext(line + 1, GetMarkerMask(marker));
+                int next = sci.MarkerNext(line + 1, GetMarkerMask(marker));
                 if (next != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(next);
@@ -65,7 +64,7 @@ namespace FlashDevelop.Managers
             }
             else
             {
-                next = sci.MarkerNext(line, GetMarkerMask(marker));
+                int next = sci.MarkerNext(line, GetMarkerMask(marker));
                 if (next != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(next);
@@ -88,11 +87,10 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void PreviousMarker(ScintillaControl sci, int marker, int line)
         {
-            int prev = 0; int count = 0;
             int lineMask = sci.MarkerGet(line);
             if ((lineMask & GetMarkerMask(marker)) != 0)
             {
-                prev = sci.MarkerPrevious(line - 1, GetMarkerMask(marker));
+                int prev = sci.MarkerPrevious(line - 1, GetMarkerMask(marker));
                 if (prev != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(prev);
@@ -100,7 +98,7 @@ namespace FlashDevelop.Managers
                 }
                 else
                 {
-                    count = sci.LineCount;
+                    int count = sci.LineCount;
                     prev = sci.MarkerPrevious(count, GetMarkerMask(marker));
                     if (prev != -1)
                     {
@@ -111,7 +109,7 @@ namespace FlashDevelop.Managers
             }
             else
             {
-                prev = sci.MarkerPrevious(line, GetMarkerMask(marker));
+                int prev = sci.MarkerPrevious(line, GetMarkerMask(marker));
                 if (prev != -1)
                 {
                     sci.EnsureVisibleEnforcePolicy(prev);
@@ -119,7 +117,7 @@ namespace FlashDevelop.Managers
                 }
                 else
                 {
-                    count = sci.LineCount;
+                    int count = sci.LineCount;
                     prev = sci.MarkerPrevious(count, GetMarkerMask(marker));
                     if (prev != -1)
                     {

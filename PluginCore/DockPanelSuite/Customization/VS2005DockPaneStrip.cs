@@ -1335,7 +1335,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             var lastItem = ts.Items[ts.Items.Count - 1];
             if (lastItem.Bounds.Bottom < ts.Height && firstItem.Bounds.Top > 0)
                 return;
-            delta = delta / -4;
+            delta /= -4;
             if (delta < 0 && firstItem.Bounds.Top - delta > scrollButtonHeight)
             {
                 delta = firstItem.Bounds.Top - scrollButtonHeight;
@@ -1398,7 +1398,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int height = rectTabStrip.Height - DocumentButtonGapTop - DocumentButtonGapBottom;
             if (buttonHeight < height)
             {
-                buttonWidth = buttonWidth * (height / buttonHeight);
+                buttonWidth *= (height / buttonHeight);
                 buttonHeight = height;
             }
             Size buttonSize = new Size(buttonWidth, buttonHeight);

@@ -913,7 +913,7 @@ namespace System.Windows.Forms
 				format.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.Hide;
 			}
 			if (this.RightToLeft == RightToLeft.Yes){
-				format.FormatFlags = format.FormatFlags | StringFormatFlags.DirectionRightToLeft;
+				format.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 			}
 			return format;
 		}

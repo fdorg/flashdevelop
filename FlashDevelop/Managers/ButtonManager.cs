@@ -355,7 +355,6 @@ namespace FlashDevelop.Managers
                         return name + " (" + info.Charset + ")";
                     }
                 }
-
                 bool hasBOM = document.SciControl.SaveBOM;
                 if (codepage == Encoding.UTF8.CodePage)
                 {
@@ -375,7 +374,6 @@ namespace FlashDevelop.Managers
                 }
                 return GetLabelAsPlainText("Label.8Bits", false, false);
             }
-
             return TextHelper.GetString("Info.Unknown");
         }
 

@@ -2370,14 +2370,14 @@ namespace AirProperties
                 List<string> selectedValues = null;
                 foreach (ListItem item in IPhoneBGModesCombo.CheckedItems)
                 {
-                    selectedValues = selectedValues ?? new List<string>();
+                    selectedValues ??= new List<string>();
                     selectedValues.Add(item.Value);
                 }
                 iPhoneAdditions["UIBackgroundModes"] = selectedValues;
                 selectedValues = null;
                 foreach (ListItem item in IPhoneDeviceCombo.CheckedItems)
                 {
-                    selectedValues = selectedValues ?? new List<string>();
+                    selectedValues ??= new List<string>();
                     selectedValues.Add(item.Value);
                 }
                 iPhoneAdditions["UIDeviceFamily"] = selectedValues;

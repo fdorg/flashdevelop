@@ -264,24 +264,24 @@ namespace Mono.GetOptions
                     text1 = this.linuxLongPrefix;
                 }
                 this.optionHelp = "  ";
-                this.optionHelp = this.optionHelp + ((this.ShortForm == string.Empty) ? "   " : (text2 + this.ShortForm + " "));
-                this.optionHelp = this.optionHelp + (!flag1 ? "" : (text1 + this.LongForm));
+                this.optionHelp += ((this.ShortForm == string.Empty) ? "   " : (text2 + this.ShortForm + " "));
+                this.optionHelp += (!flag1 ? "" : (text1 + this.LongForm));
                 if (this.NeedsParameter)
                 {
                     if (flag1)
                     {
-                        this.optionHelp = this.optionHelp + ":";
+                        this.optionHelp += ":";
                     }
-                    this.optionHelp = this.optionHelp + this.ParamName;
+                    this.optionHelp += this.ParamName;
                 }
                 else if (this.BooleanOption && this.VBCStyleBoolean)
                 {
-                    this.optionHelp = this.optionHelp + "[+|-]";
+                    this.optionHelp += "[+|-]";
                 }
-                this.optionHelp = this.optionHelp + ("\t" + this.ShortDescription);
+                this.optionHelp += ("\t" + this.ShortDescription);
                 if (!string.IsNullOrEmpty(this.AlternateForm))
                 {
-                    this.optionHelp = this.optionHelp + (" [short form: " + text2 + this.AlternateForm + "]");
+                    this.optionHelp += (" [short form: " + text2 + this.AlternateForm + "]");
                 }
             }
             return this.optionHelp;

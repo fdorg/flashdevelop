@@ -43,34 +43,22 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the FlashDevelop root directory
         /// </summary>
-        public static string GetAppDir()
-        {
-            return PathHelper.AppDir;
-        }
+        public static string GetAppDir() => PathHelper.AppDir;
 
         /// <summary>
         /// Gets the user's FlashDevelop directory
         /// </summary>
-        public static string GetUserAppDir()
-        {
-            return PathHelper.UserAppDir;
-        }
+        public static string GetUserAppDir() => PathHelper.UserAppDir;
 
         /// <summary>
         /// Gets the data file directory
         /// </summary>
-        public static string GetBaseDir()
-        {
-            return PathHelper.BaseDir;
-        }
+        public static string GetBaseDir() => PathHelper.BaseDir;
 
         /// <summary>
         /// Gets the template file directory
         /// </summary>
-        public static string GetTemplateDir()
-        {
-            return PathHelper.TemplateDir;
-        }
+        public static string GetTemplateDir() => PathHelper.TemplateDir;
 
         /// <summary>
         /// Gets the selected text
@@ -134,11 +122,8 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the timestamp
         /// </summary>
-        public static string GetTimestamp()
-        {
-            return DateTime.Now.ToString("g");
-        }
-        
+        public static string GetTimestamp() => DateTime.Now.ToString("g");
+
         /// <summary>
         /// Gets the desktop path
         /// </summary>
@@ -184,13 +169,11 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenFile()
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.InitialDirectory = GetCurDir();
-                ofd.Multiselect = false;
-                if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
-                return string.Empty;
-            }
+            using OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = GetCurDir();
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
+            return string.Empty;
         }
         
         /// <summary>
@@ -198,12 +181,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetSaveFile()
         {
-            using (SaveFileDialog sfd = new SaveFileDialog())
-            {
-                sfd.InitialDirectory = GetCurDir();
-                if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
-                return string.Empty;
-            }
+            using var sfd = new SaveFileDialog {InitialDirectory = GetCurDir()};
+            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
+            return string.Empty;
         }
         
         /// <summary>
@@ -211,12 +191,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenDir()
         {
-            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
-            {
-                fbd.RootFolder = Environment.SpecialFolder.MyComputer;
-                if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
-                return string.Empty;
-            }
+            using var fbd = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
+            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
+            return string.Empty;
         }
         
         /// <summary>
@@ -229,7 +206,6 @@ namespace FlashDevelop.Utilities
             {
                 return cbdata.GetData("System.String", true).ToString();
             }
-
             return string.Empty;
         }
 
@@ -246,11 +222,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the space or tab character based on settings
         /// </summary>
-        public static string GetSTC()
-        {
-            if (Globals.Settings.UseTabs) return "\t";
-            return " ";
-        }
+        public static string GetSTC() => Globals.Settings.UseTabs ? "\t" : " ";
 
         /// <summary>
         /// Gets the current syntax based on project or current file.
@@ -319,10 +291,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the current locale
         /// </summary>
-        private static string GetLocale()
-        {
-            return Globals.Settings.LocaleVersion.ToString();
-        }
+        private static string GetLocale() => Globals.Settings.LocaleVersion.ToString();
 
         /// <summary>
         /// Processes the argument String variables
@@ -422,15 +391,13 @@ namespace FlashDevelop.Utilities
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
-                using (ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs))
+                using ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs);
+                userArgs = rvd.Dictionary; // Save dictionary temporarily...
+                if (rvd.ShowDialog() == DialogResult.OK)
                 {
-                    userArgs = rvd.Dictionary; // Save dictionary temporarily...
-                    if (rvd.ShowDialog() == DialogResult.OK)
-                    {
-                        args = reUserArgs.Replace(args, ReplaceUserArgs);
-                    }
-                    else args = reUserArgs.Replace(args, ReplaceWithEmpty);
+                    args = reUserArgs.Replace(args, ReplaceUserArgs);
                 }
+                else args = reUserArgs.Replace(args, ReplaceWithEmpty);
             }
             return args;
         }
@@ -438,10 +405,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Match evaluator for to clear args
         /// </summary>
-        public static string ReplaceWithEmpty(Match match)
-        {
-            return string.Empty;
-        }
+        public static string ReplaceWithEmpty(Match match) => string.Empty;
 
         /// <summary>
         /// Match evaluator for User Arguments

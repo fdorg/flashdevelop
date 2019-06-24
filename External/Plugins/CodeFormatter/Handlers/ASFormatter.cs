@@ -107,7 +107,7 @@ namespace CodeFormatter.Handlers
                 {
                     buffer += '\t';
                 }
-                spaces=spaces%tabSize; //change value of spaces to be left-over spaces
+                spaces %= tabSize; //change value of spaces to be left-over spaces
             }
 
             for (int i=0;i<spaces;i++)

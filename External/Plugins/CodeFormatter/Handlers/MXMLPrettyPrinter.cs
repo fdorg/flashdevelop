@@ -800,7 +800,7 @@ namespace CodeFormatter.Handlers
                                         int offset = token.Line - 1;
                                         if (t != null)
                                         {
-                                            t.Line = t.Line + offset;
+                                            t.Line += offset;
                                         }
                                         rex.Line += offset;
                                     }
