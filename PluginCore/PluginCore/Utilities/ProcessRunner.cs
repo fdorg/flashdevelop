@@ -23,10 +23,7 @@ namespace PluginCore.Utilities
         public bool RedirectInput;
         NextTask nextTask;
 
-        public void Run(string fileName, string arguments)
-        {
-            Run(fileName, arguments, false);
-        }
+        public void Run(string fileName, string arguments) => Run(fileName, arguments, false);
 
         public void Run(string fileName, string arguments, bool shellCommand)
         {

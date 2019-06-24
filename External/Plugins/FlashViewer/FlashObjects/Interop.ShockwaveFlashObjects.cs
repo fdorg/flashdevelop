@@ -33,7 +33,7 @@ namespace Interop.ShockwaveFlashObjects
   // Event interface for Shockwave Flash
   [Guid("D27CDB6D-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)4112)]
+  [TypeLibType(4112)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface _IShockwaveFlashEvents
   {
@@ -358,7 +358,7 @@ namespace Interop.ShockwaveFlashObjects
   // Shockwave Flash
   [Guid("D27CDB6C-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)4160)]
+  [TypeLibType(4160)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IShockwaveFlash
   {
@@ -1176,7 +1176,7 @@ namespace Interop.ShockwaveFlashObjects
   /// <summary><para><c>IDispatchEx</c> interface.</para></summary>
   [Guid("A6EF9860-C720-11D0-9337-00A0C90DCAA9")]
   [ComImport]
-  [TypeLibType((short)4096)]
+  [TypeLibType(4096)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IDispatchEx
   {
@@ -1251,7 +1251,7 @@ namespace Interop.ShockwaveFlashObjects
   // IFlashObjectInterface Interface
   [Guid("D27CDB72-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)4096)]
+  [TypeLibType(4096)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IFlashObjectInterface
   {
@@ -1288,7 +1288,7 @@ namespace Interop.ShockwaveFlashObjects
   // IFlashObjectInterface Interface
   [Guid("D27CDB71-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)2)]
+  [TypeLibType(2)]
   [ClassInterface(ClassInterfaceType.None)]
   public class FlashObjectInterfaceClass // : IFlashObjectInterface, FlashObjectInterface
   {
@@ -1310,7 +1310,7 @@ namespace Interop.ShockwaveFlashObjects
   // Macromedia Flash Player Properties
   [Guid("1171A62F-05D2-11D1-83FC-00A0C9089C5A")]
   [ComImport]
-  [TypeLibType((short)2)]
+  [TypeLibType(2)]
   [ClassInterface(ClassInterfaceType.None)]
   public class FlashPropClass // : FlashProp
   {
@@ -1333,7 +1333,7 @@ namespace Interop.ShockwaveFlashObjects
   // Shockwave Flash
   [Guid("D27CDB6E-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)2)]
+  [TypeLibType(2)]
   [ClassInterface(ClassInterfaceType.None)]
   [ComSourceInterfaces("_IShockwaveFlashEvents")]
   public class ShockwaveFlashClass // : IShockwaveFlash, ShockwaveFlash, _IShockwaveFlashEvents_Event

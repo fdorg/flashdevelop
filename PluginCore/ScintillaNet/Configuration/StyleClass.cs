@@ -267,9 +267,9 @@ namespace ScintillaNet.Configuration
 
         public string ResolveString(string number)
         {
-            Value value = null;
             if (number != null)
             {
+                Value value;
                 for (value = _parent.MasterScintilla.GetValue(number); value != null; value = _parent.MasterScintilla.GetValue(number))
                 {
                     number = value.val;
@@ -280,9 +280,9 @@ namespace ScintillaNet.Configuration
 
         public string ResolveFont(string name)
         {
-            Value value = null;
             if (name != null)
             {
+                Value value;
                 for (value = _parent.MasterScintilla.GetValue(name); value != null; value = _parent.MasterScintilla.GetValue(name))
                 {
                     name = value.val;
@@ -302,10 +302,8 @@ namespace ScintillaNet.Configuration
 
         private static bool IsFontInstalled(string fontName)
         {
-            using (var testFont = new Font(fontName, 9))
-            {
-                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
-            }
+            using var testFont = new Font(fontName, 9);
+            return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
         }
         
     }

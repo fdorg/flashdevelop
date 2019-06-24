@@ -138,7 +138,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             // TODO: Its not yet clear how to handle unicode comments here.
             byte[] commentBytes = ZipConstants.ConvertToArray(comment);
             if (commentBytes.Length > 0xffff) {
-                throw new ArgumentOutOfRangeException("comment");
+                throw new ArgumentOutOfRangeException(nameof(comment));
             }
             zipComment = commentBytes;
         }
@@ -240,7 +240,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public void PutNextEntry(ZipEntry entry)
         {
             if ( entry == null ) {
-                throw new ArgumentNullException("entry");
+                throw new ArgumentNullException(nameof(entry));
             }
 
             if (entries == null) {
@@ -319,7 +319,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
 
             entry.Offset = offset;
-            entry.CompressionMethod = (CompressionMethod)method;
+            entry.CompressionMethod = method;
             
             curMethod = method;
             sizePatchPos = -1;
@@ -629,14 +629,14 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
             
             if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if ( offset < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "Cannot be negative");
 #endif
             }
 
@@ -644,7 +644,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "Cannot be negative");
 #endif
             }
 

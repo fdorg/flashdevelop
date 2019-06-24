@@ -25,7 +25,7 @@ namespace FlashDebugger
             imageColumnHeader.Width = 20;
             frameColumnHeader = new ColumnHeader();
             frameColumnHeader.Text = string.Empty;
-            lv.Columns.AddRange(new ColumnHeader[] {
+            lv.Columns.AddRange(new[] {
             imageColumnHeader,
             frameColumnHeader});
             lv.FullRowSelect = true;
@@ -77,7 +77,7 @@ namespace FlashDebugger
             // add primary -- flash specific
             string title = "Main thread";
             int image = PluginMain.debugManager.FlashInterface.Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
-            lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
+            lv.Items.Add(new ListViewItem(new[] { "", title }, image));
             lv.Items[lv.Items.Count - 1].Tag = 1;
             foreach (KeyValuePair<int, FlashInterface.IsolateInfo> ii_pair in isolates)
             {
@@ -85,7 +85,7 @@ namespace FlashDebugger
                 FlashInterface.IsolateInfo ii = ii_pair.Value;
                 title = "Worker " + i_id;
                 image = ii.i_Session.isSuspended() ? suspendedImageIndex : runningImageIndex;
-                lv.Items.Add(new ListViewItem(new string[] { "", title }, image));
+                lv.Items.Add(new ListViewItem(new[] { "", title }, image));
                 lv.Items[lv.Items.Count - 1].Tag = i_id;
             }
             ActiveItem();

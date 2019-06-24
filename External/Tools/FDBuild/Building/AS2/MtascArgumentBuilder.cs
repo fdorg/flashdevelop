@@ -30,11 +30,8 @@ namespace ProjectManager.Building.AS2
             if (htmlColor.Length > 0)
                 htmlColor = ":" + htmlColor;
 
-            Add("-header", string.Format("{0}:{1}:{2}{3}",
-                project.MovieOptions.Width,
-                project.MovieOptions.Height,
-                project.MovieOptions.Fps,
-                htmlColor));
+            Add("-header",
+                $"{project.MovieOptions.Width}:{project.MovieOptions.Height}:{project.MovieOptions.Fps}{htmlColor}");
         }
 
         public void AddCompileTargets()

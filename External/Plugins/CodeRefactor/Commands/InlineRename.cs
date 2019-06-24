@@ -125,7 +125,7 @@ namespace CodeRefactor.Commands
         {
             if (previewChanges.HasValue && previewTarget == null)
             {
-                throw new ArgumentNullException("previewTarget");
+                throw new ArgumentNullException(nameof(previewTarget));
             }
 
             CancelCurrent();

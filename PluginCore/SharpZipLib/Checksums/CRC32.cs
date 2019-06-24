@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         
         internal static uint ComputeCrc32(uint oldCrc, byte value)
         {
-            return (uint)(CrcTable[(oldCrc ^ value) & 0xFF] ^ (oldCrc >> 8));
+            return CrcTable[(oldCrc ^ value) & 0xFF] ^ (oldCrc >> 8);
         }
         
         /// <summary>
@@ -137,7 +137,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// Returns the CRC32 data checksum computed so far.
         /// </summary>
         public long Value {
-            get => (long)crc;
+            get => crc;
             set => crc = (uint)value;
         }
         
@@ -171,7 +171,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         public void Update(byte[] buffer)
         {
             if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             Update(buffer, 0, buffer.Length);
@@ -192,19 +192,19 @@ namespace ICSharpCode.SharpZipLib.Checksums
         public void Update(byte[] buffer, int offset, int count)
         {
             if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if ( count < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Count cannot be less than zero");
+                throw new ArgumentOutOfRangeException(nameof(count), "Count cannot be less than zero");
 #endif              
             }
             
             if (offset < 0 || offset + count > buffer.Length) {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
             
             crc ^= CrcSeed;

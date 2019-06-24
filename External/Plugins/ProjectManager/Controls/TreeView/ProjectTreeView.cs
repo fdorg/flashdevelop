@@ -59,9 +59,9 @@ namespace ProjectManager.Controls.TreeView
             {
                 if (recursive) RefreshNodeColors(node.Nodes, recursive);
 
-                node.BackColor = this.BackColor;
-                node.ForeColor = this.ForeColor;
-                node.ForeColorRequest = this.ForeColor;
+                node.BackColor = BackColor;
+                node.ForeColor = ForeColor;
+                node.ForeColorRequest = ForeColor;
             }
         }
 
@@ -80,8 +80,7 @@ namespace ProjectManager.Controls.TreeView
             var p = node;
             while (p != null && !(p is ProjectNode))
                 p = p.Parent as GenericNode;
-            if (p is ProjectNode) return (p as ProjectNode).ProjectRef;
-            return null;
+            return (p as ProjectNode)?.ProjectRef;
         }
 
         public void Select(string path)
@@ -144,7 +143,7 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void DefWndProc(ref Message m)
         {
-            if (m.Msg == 515 && DoubleClick is EventHandler doubleClick) // WM_LBUTTONDBLCLK - &H203
+            if (m.Msg == 515 && DoubleClick is { } doubleClick) // WM_LBUTTONDBLCLK - &H203
             {
                 // ok, we only want the base treeview to handle double-clicking to expand things
                 // if there's one node selected and it's a folder.
@@ -462,7 +461,7 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnMoveNode(TreeNode node, TreeNode targetNode)
         {
-            if (node is GenericNode genericNode && MovePath is DragPathEventHandler movePath)
+            if (node is GenericNode genericNode && MovePath is { } movePath)
             {
                 var fromPath = genericNode.BackingPath;
                 var toPath = ((GenericNode) targetNode).BackingPath;
@@ -472,7 +471,7 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnCopyNode(TreeNode node, TreeNode targetNode)
         {
-            if (node is GenericNode genericNode && CopyPath is DragPathEventHandler copePath)
+            if (node is GenericNode genericNode && CopyPath is { } copePath)
             {
                 var fromPath = genericNode.BackingPath;
                 var toPath = ((GenericNode) targetNode).BackingPath;
@@ -482,7 +481,7 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnFileDrop(string[] paths, TreeNode targetNode)
         {
-            if (targetNode is GenericNode node && CopyPath is DragPathEventHandler copePath)
+            if (targetNode is GenericNode node && CopyPath is { } copePath)
             {
                 var toPath = node.BackingPath;
                 foreach (var fromPath in paths)

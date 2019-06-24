@@ -47,10 +47,8 @@ namespace PluginCore.Utilities
             {
                 try
                 {
-                    using (FileStream stream = File.Create(file))
-                    {
-                        formatter.Serialize(stream, obj);
-                    }
+                    using var stream = File.Create(file);
+                    formatter.Serialize(stream, obj);
                     return;
                 }
                 catch (Exception ex)

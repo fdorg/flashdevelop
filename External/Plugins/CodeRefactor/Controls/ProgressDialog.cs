@@ -35,7 +35,7 @@ namespace CodeRefactor.Controls
             // 
             // progressBar
             // 
-            progressBar.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
+            progressBar.Anchor = (AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right;
             progressBar.Location = new System.Drawing.Point(12, 23);
             progressBar.Name = "progressBar";
             progressBar.Size = new System.Drawing.Size(491, 14);
@@ -44,7 +44,7 @@ namespace CodeRefactor.Controls
             // 
             // labelStatus
             // 
-            labelStatus.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
+            labelStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             labelStatus.AutoEllipsis = true;
             labelStatus.AutoSize = true;
             labelStatus.BackColor = System.Drawing.SystemColors.Control;

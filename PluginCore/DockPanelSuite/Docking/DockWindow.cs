@@ -190,28 +190,28 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (DockPanel.DockLeftPortion > 1)
                     DockPanel.DockLeftPortion = Width + offset;
                 else
-                    DockPanel.DockLeftPortion += ((double)offset) / (double)rectDockArea.Width;
+                    DockPanel.DockLeftPortion += offset / (double)rectDockArea.Width;
             }
             else if (DockState == DockState.DockRight && rectDockArea.Width > 0)
             {
                 if (DockPanel.DockRightPortion > 1)
                     DockPanel.DockRightPortion = Width - offset;
                 else
-                    DockPanel.DockRightPortion -= ((double)offset) / (double)rectDockArea.Width;
+                    DockPanel.DockRightPortion -= offset / (double)rectDockArea.Width;
             }
             else if (DockState == DockState.DockBottom && rectDockArea.Height > 0)
             {
                 if (DockPanel.DockBottomPortion > 1)
                     DockPanel.DockBottomPortion = Height - offset;
                 else
-                    DockPanel.DockBottomPortion -= ((double)offset) / (double)rectDockArea.Height;
+                    DockPanel.DockBottomPortion -= offset / (double)rectDockArea.Height;
             }
             else if (DockState == DockState.DockTop && rectDockArea.Height > 0)
             {
                 if (DockPanel.DockTopPortion > 1)
                     DockPanel.DockTopPortion = Height + offset;
                 else
-                    DockPanel.DockTopPortion += ((double)offset) / (double)rectDockArea.Height;
+                    DockPanel.DockTopPortion += offset / (double)rectDockArea.Height;
             }
         }
 

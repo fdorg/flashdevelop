@@ -66,7 +66,7 @@ namespace ProjectManager.Controls
             // 
             // listBox
             // 
-            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.listBox.Location = new System.Drawing.Point(1, 1);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(271, 133);
@@ -78,7 +78,7 @@ namespace ProjectManager.Controls
             // 
             // btnNewClasspath
             // 
-            this.btnNewClasspath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnNewClasspath.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.btnNewClasspath.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnNewClasspath.Location = new System.Drawing.Point(0, 147);
             this.btnNewClasspath.Name = "btnNewClasspath";
@@ -89,7 +89,7 @@ namespace ProjectManager.Controls
             // 
             // btnRemove
             // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRemove.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.btnRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnRemove.Location = new System.Drawing.Point(111, 147);
             this.btnRemove.Name = "btnRemove";
@@ -100,7 +100,7 @@ namespace ProjectManager.Controls
             // 
             // btnUp
             // 
-            this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUp.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnUp.Location = new System.Drawing.Point(278, 0);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(24, 24);
@@ -109,7 +109,7 @@ namespace ProjectManager.Controls
             // 
             // btnDown
             // 
-            this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDown.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnDown.Location = new System.Drawing.Point(278, 24);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(24, 24);
@@ -118,7 +118,7 @@ namespace ProjectManager.Controls
             // 
             // langComboBox
             // 
-            this.langComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.langComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.langComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.langComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.langComboBox.FormattingEnabled = true;

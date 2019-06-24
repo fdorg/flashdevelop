@@ -162,14 +162,14 @@ namespace PluginCore.BBCode
                 if (back == null || fore == null)
                     return null;
 
-                float backR = ((float)((back.color >> 16) & 0xFF) / 255.0f);
-                float backG = ((float)((back.color >> 8) & 0xFF) / 255.0f);
-                float backB = ((float)((back.color) & 0xFF) / 255.0f);
+                float backR = (((back.color >> 16) & 0xFF) / 255.0f);
+                float backG = (((back.color >> 8) & 0xFF) / 255.0f);
+                float backB = (((back.color) & 0xFF) / 255.0f);
 
-                float foreA = ((float)((fore.color >> 24) & 0xFF) / 255.0f);
-                float foreR = ((float)((fore.color >> 16) & 0xFF) / 255.0f);
-                float foreG = ((float)((fore.color >> 8) & 0xFF) / 255.0f);
-                float foreB = ((float)((fore.color) & 0xFF) / 255.0f);
+                float foreA = (((fore.color >> 24) & 0xFF) / 255.0f);
+                float foreR = (((fore.color >> 16) & 0xFF) / 255.0f);
+                float foreG = (((fore.color >> 8) & 0xFF) / 255.0f);
+                float foreB = (((fore.color) & 0xFF) / 255.0f);
 
                 float outR = MixChannel(backR, foreR, fore.mode);
                 float outG = MixChannel(backG, foreG, fore.mode);
@@ -189,10 +189,10 @@ namespace PluginCore.BBCode
                 if (outB < 0.0f) outB = 0.0f;
                 if (outB > 1.0f) outB = 1.0f;
 
-                return new Color((uint)( ((uint)0xFF000000)
-                                        |((uint)(255.0f * outR) << 16)
-                                        |((uint)(255.0f * outG) << 8)
-                                        |((uint)(255.0f * outB))), Mode.NORMAL);
+                return new Color(0xFF000000
+                                 |((uint)(255.0f * outR) << 16)
+                                 |((uint)(255.0f * outG) << 8)
+                                 |((uint)(255.0f * outB)), Mode.NORMAL);
             }
 
             public static float MixChannel(float back, float fore, Mode mode)

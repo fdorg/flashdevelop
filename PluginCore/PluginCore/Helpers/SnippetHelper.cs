@@ -152,9 +152,9 @@ namespace PluginCore.Helpers
 
         public ActionPoint(string text, int entryPosition, int exitPosition)
         {
-            this.Text = text;
-            this.EntryPosition = entryPosition;
-            this.ExitPosition = exitPosition;
+            Text = text;
+            EntryPosition = entryPosition;
+            ExitPosition = exitPosition;
         }
 
     }

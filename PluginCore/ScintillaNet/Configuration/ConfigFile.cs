@@ -34,10 +34,10 @@ namespace ScintillaNet.Configuration
             includedFiles = new ConfigFile[0];
             base.init(utility, theParent);
             if (includes == null) includes = new include[0];
-            for (int j = 0; j<includes.Length; j++) includes[j].init(utility, _parent);
-            for (int i = 0; i<includes.Length; i++)
+            foreach (var include in includes) include.init(utility, _parent);
+            foreach (var include in includes)
             {
-                var configFile = (ConfigFile)utility.LoadConfiguration(base.GetType(), includes[i].file, _parent);
+                var configFile = (ConfigFile)utility.LoadConfiguration(base.GetType(), include.file, _parent);
                 addIncludedFile(configFile);
             }
             CollectScintillaNodes(null);
@@ -55,9 +55,8 @@ namespace ScintillaNet.Configuration
 
             if (includedFiles != null)
             {
-                for (int i = 0 ; i<includedFiles.Length; i++)
+                foreach (var cf in includedFiles)
                 {
-                    var cf = includedFiles[i];
                     if (cf == null) continue;
                     if (cf.ChildScintilla != null) list.Add(cf.ChildScintilla);
                     cf.ChildScintilla?.CollectScintillaNodes(list);

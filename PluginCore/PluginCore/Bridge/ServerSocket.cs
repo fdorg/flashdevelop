@@ -8,7 +8,7 @@ namespace PluginCore.Bridge
 {
     public class ServerSocket
     {
-        protected static readonly byte[] EOL = new byte[] { 13 };
+        protected static readonly byte[] EOL = { 13 };
         protected static bool bridgeNotFound;
         
         protected IPAddress ipAddress;
@@ -50,7 +50,7 @@ namespace PluginCore.Bridge
                 conn = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conn.Bind(new IPEndPoint(ipAddress, portNum));
                 conn.Listen(10);
-                conn.BeginAccept(this.OnConnectRequest, conn);
+                conn.BeginAccept(OnConnectRequest, conn);
             }
             catch (Exception ex)
             {
@@ -69,8 +69,8 @@ namespace PluginCore.Bridge
             {
                 Socket server = (Socket)result.AsyncState;
                 Socket client = server.EndAccept(result);
-                this.SetupReceiveCallback(client);
-                server.BeginAccept(this.OnConnectRequest, server);
+                SetupReceiveCallback(client);
+                server.BeginAccept(OnConnectRequest, server);
             }
             catch (Exception ex)
             {
@@ -135,7 +135,7 @@ namespace PluginCore.Bridge
             StateObject so = new StateObject(client);
             try
             {
-                AsyncCallback receiveData = this.OnReceivedData;
+                AsyncCallback receiveData = OnReceivedData;
                 so.Client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, receiveData, so);
             }
             catch (SocketException)
@@ -204,18 +204,15 @@ namespace PluginCore.Bridge
     
     public class DataReceivedEventArgs : EventArgs
     {
-        private readonly string text;
-        private readonly Socket socket;
-
         public DataReceivedEventArgs(string text, Socket socket) 
         {
-            this.text = text;
-            this.socket = socket;
+            Text = text;
+            Socket = socket;
         }
 
-        public string Text => this.text;
+        public string Text { get; }
 
-        public Socket Socket => this.socket;
+        public Socket Socket { get; }
     }
     
     
@@ -228,10 +225,10 @@ namespace PluginCore.Bridge
         
         public StateObject(Socket client)
         {
-            this.Size = 1024;
-            this.Data = new StringBuilder();
-            this.Buffer = new byte[this.Size];
-            this.Client = client;
+            Size = 1024;
+            Data = new StringBuilder();
+            Buffer = new byte[Size];
+            Client = client;
         }
         
     }

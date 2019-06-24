@@ -110,7 +110,7 @@ namespace FlashDevelop.Dialogs
             System.Windows.Forms.TreeNode treeNode72 = new System.Windows.Forms.TreeNode("Node3");
             System.Windows.Forms.TreeNode treeNode73 = new System.Windows.Forms.TreeNode("Node4");
             System.Windows.Forms.TreeNode treeNode74 = new System.Windows.Forms.TreeNode("Node5");
-            System.Windows.Forms.TreeNode treeNode75 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode75 = new System.Windows.Forms.TreeNode("Node0", new[] {
             treeNode70,
             treeNode71,
             treeNode72,
@@ -122,7 +122,7 @@ namespace FlashDevelop.Dialogs
             System.Windows.Forms.TreeNode treeNode79 = new System.Windows.Forms.TreeNode("Node10");
             System.Windows.Forms.TreeNode treeNode80 = new System.Windows.Forms.TreeNode("Node11");
             System.Windows.Forms.TreeNode treeNode81 = new System.Windows.Forms.TreeNode("Node12");
-            System.Windows.Forms.TreeNode treeNode82 = new System.Windows.Forms.TreeNode("Node6", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode82 = new System.Windows.Forms.TreeNode("Node6", new[] {
             treeNode76,
             treeNode77,
             treeNode78,
@@ -139,7 +139,7 @@ namespace FlashDevelop.Dialogs
             System.Windows.Forms.TreeNode treeNode90 = new System.Windows.Forms.TreeNode("Node21");
             System.Windows.Forms.TreeNode treeNode91 = new System.Windows.Forms.TreeNode("Node22, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, F" +
         "iller, Filler, Filler, Filler, Filler, Filler, Filler");
-            System.Windows.Forms.TreeNode treeNode92 = new System.Windows.Forms.TreeNode("Node13", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode92 = new System.Windows.Forms.TreeNode("Node13", new[] {
             treeNode83,
             treeNode84,
             treeNode85,
@@ -169,8 +169,8 @@ namespace FlashDevelop.Dialogs
             this.buttonEx2 = new System.Windows.Forms.ButtonEx();
             this.listBoxEx = new System.Windows.Forms.ListBoxEx();
             this.listViewEx = new System.Windows.Forms.ListViewEx();
-            this.columnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.textBoxEx = new System.Windows.Forms.TextBoxEx();
             this.treeViewEx = new System.Windows.Forms.TreeViewEx();
             this.richTextBoxEx = new System.Windows.Forms.RichTextBoxEx();
@@ -192,8 +192,8 @@ namespace FlashDevelop.Dialogs
             // 
             // customTabControl
             // 
-            this.customTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.customTabControl.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+                                           | System.Windows.Forms.AnchorStyles.Right;
             this.customTabControl.Controls.Add(this.tabPage2);
             this.customTabControl.Controls.Add(this.tabPage1);
             // 
@@ -201,7 +201,7 @@ namespace FlashDevelop.Dialogs
             // 
             this.customTabControl.DisplayStyleProvider.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.customTabControl.DisplayStyleProvider.BorderColorHot = System.Drawing.SystemColors.ControlDark;
-            this.customTabControl.DisplayStyleProvider.BorderColorSelected = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(157)))), ((int)(((byte)(185)))));
+            this.customTabControl.DisplayStyleProvider.BorderColorSelected = System.Drawing.Color.FromArgb(127, 157, 185);
             this.customTabControl.DisplayStyleProvider.CloserColor = System.Drawing.Color.DarkGray;
             this.customTabControl.DisplayStyleProvider.FocusTrack = true;
             this.customTabControl.DisplayStyleProvider.HotTrack = true;
@@ -271,8 +271,8 @@ namespace FlashDevelop.Dialogs
             // 
             // propertyGridEx
             // 
-            this.propertyGridEx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.propertyGridEx.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+                                         | System.Windows.Forms.AnchorStyles.Right;
             this.propertyGridEx.LineColor = System.Drawing.SystemColors.ControlDark;
             this.propertyGridEx.Location = new System.Drawing.Point(822, 13);
             this.propertyGridEx.Name = "propertyGridEx";
@@ -283,7 +283,7 @@ namespace FlashDevelop.Dialogs
             // 
             // groupBoxEx
             // 
-            this.groupBoxEx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBoxEx.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.groupBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.groupBoxEx.Controls.Add(this.pictureBoxEx);
             this.groupBoxEx.Controls.Add(this.progressBarEx);
@@ -422,7 +422,7 @@ namespace FlashDevelop.Dialogs
             // 
             // listBoxEx
             // 
-            this.listBoxEx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxEx.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.listBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.listBoxEx.FormattingEnabled = true;
             this.listBoxEx.IntegralHeight = false;
@@ -434,10 +434,10 @@ namespace FlashDevelop.Dialogs
             // 
             // listViewEx
             // 
-            this.listViewEx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.listViewEx.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+                                     | System.Windows.Forms.AnchorStyles.Left;
             this.listViewEx.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.listViewEx.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listViewEx.Columns.AddRange(new[] {
             this.columnHeader,
             this.columnHeader1});
             this.listViewEx.GridLineColor = System.Drawing.SystemColors.Control;
@@ -445,7 +445,7 @@ namespace FlashDevelop.Dialogs
             listViewGroup7.Name = "listViewGroup";
             listViewGroup8.Header = "Second Group";
             listViewGroup8.Name = "listViewGroup2";
-            this.listViewEx.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            this.listViewEx.Groups.AddRange(new[] {
             listViewGroup7,
             listViewGroup8});
             listViewItem61.Group = listViewGroup7;
@@ -468,7 +468,7 @@ namespace FlashDevelop.Dialogs
             listViewItem78.Group = listViewGroup8;
             listViewItem79.Group = listViewGroup8;
             listViewItem80.Group = listViewGroup8;
-            this.listViewEx.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            this.listViewEx.Items.AddRange(new[] {
             listViewItem61,
             listViewItem62,
             listViewItem63,
@@ -510,8 +510,8 @@ namespace FlashDevelop.Dialogs
             // 
             // textBoxEx
             // 
-            this.textBoxEx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxEx.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+                                    | System.Windows.Forms.AnchorStyles.Right;
             this.textBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.textBoxEx.Location = new System.Drawing.Point(282, 12);
             this.textBoxEx.Multiline = true;
@@ -523,9 +523,9 @@ namespace FlashDevelop.Dialogs
             // 
             // treeViewEx
             // 
-            this.treeViewEx.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewEx.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+                                      | System.Windows.Forms.AnchorStyles.Left) 
+                                     | System.Windows.Forms.AnchorStyles.Right;
             this.treeViewEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.treeViewEx.Location = new System.Drawing.Point(416, 301);
             this.treeViewEx.Name = "treeViewEx";
@@ -576,7 +576,7 @@ namespace FlashDevelop.Dialogs
     "iller, Filler, Filler, Filler, Filler, Filler, Filler";
             treeNode92.Name = "Node13";
             treeNode92.Text = "Node13";
-            this.treeViewEx.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            this.treeViewEx.Nodes.AddRange(new[] {
             treeNode75,
             treeNode82,
             treeNode92});

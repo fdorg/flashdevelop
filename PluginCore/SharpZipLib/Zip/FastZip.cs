@@ -439,7 +439,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                        bool isStreamOwner)
         {
             if ((overwrite == Overwrite.Prompt) && (confirmDelegate == null)) {
-                throw new ArgumentNullException("confirmDelegate");
+                throw new ArgumentNullException(nameof(confirmDelegate));
             }
 
             continueRunning_ = true;
@@ -496,10 +496,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         
         void ProcessFile(object sender, ScanEventArgs e)
         {
-            if ( (events_ != null) ) {
-                events_.ProcessFile?.Invoke(sender, e);
-            }
-            
+            events_?.ProcessFile?.Invoke(sender, e);
+
             if ( e.ContinueRunning ) {
                 try {
                     // The open below is equivalent to OpenRead which gaurantees that if opened the 
@@ -526,7 +524,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         void AddFileContents(string name, Stream stream)
         {
             if( stream==null ) {
-                throw new ArgumentNullException("stream");
+                throw new ArgumentNullException(nameof(stream));
             }
 
             if( buffer_==null ) {

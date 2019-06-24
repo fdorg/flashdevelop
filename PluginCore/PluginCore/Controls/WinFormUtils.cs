@@ -43,7 +43,7 @@ namespace PluginCore.Controls
 
             lastIdx = -1;
             int maxW = rtb.GetPositionFromCharIndex(rtb.TextLength).X;
-            int currW = 0;
+            int currW;
             while (true)
             {
                 lastIdx = rtb.Text.IndexOf('\n', lastIdx + 1);
@@ -77,7 +77,7 @@ namespace PluginCore.Controls
                         currLineChars = 0;
 
                         if (--firstLineCount <= 0)
-                            maxDelta = 0.5f * (float)firstLineChars;
+                            maxDelta = 0.5f * firstLineChars;
                     }
                     prevW = currW;
 
@@ -88,7 +88,7 @@ namespace PluginCore.Controls
                         continue;
                     }
 
-                    var delta = lerp(maxDelta, -0.1f * maxDelta, ((float)currW) / ((float)width));
+                    var delta = lerp(maxDelta, -0.1f * maxDelta, currW / ((float)width));
 
                     if (delta < 1.0f)
                         delta = 1.0f;

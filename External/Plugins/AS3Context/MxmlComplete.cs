@@ -222,7 +222,7 @@ namespace AS3Context
                     {
                         string uri = mxmlContext.namespaces[ns];
                         if (ns != "fx")
-                            snip += string.Format("\n\t@namespace {0} \"{1}\";", ns, uri);
+                            snip += $"\n\t@namespace {ns} \"{uri}\";";
                     }
                     snip += "\n\t$(EntryPoint)\n</" + tagContext.Name + ">";
                     SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snip);

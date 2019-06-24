@@ -131,7 +131,7 @@ namespace FlashDevelop.Dialogs
             // 
             // optionsGroupBox
             // 
-            this.optionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.optionsGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.optionsGroupBox.Controls.Add(this.stringsCheckBox);
             this.optionsGroupBox.Controls.Add(this.commentsCheckBox);
             this.optionsGroupBox.Controls.Add(this.regexCheckBox);
@@ -215,7 +215,7 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceComboBox
             // 
-            this.replaceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.replaceComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceComboBox.Location = new System.Drawing.Point(12, 61);
             this.replaceComboBox.Name = "replaceComboBox";
@@ -234,7 +234,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findComboBox
             // 
-            this.findComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.findComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.findComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findComboBox.Location = new System.Drawing.Point(12, 22);
             this.findComboBox.Name = "findComboBox";
@@ -263,7 +263,7 @@ namespace FlashDevelop.Dialogs
             // 
             // folderComboBox
             // 
-            this.folderComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.folderComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.folderComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.folderComboBox.Location = new System.Drawing.Point(12, 139);
             this.folderComboBox.Name = "folderComboBox";
@@ -297,7 +297,7 @@ namespace FlashDevelop.Dialogs
             // 
             // extensionComboBox
             // 
-            this.extensionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.extensionComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.extensionComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.extensionComboBox.Location = new System.Drawing.Point(12, 100);
             this.extensionComboBox.Name = "extensionComboBox";
@@ -331,7 +331,7 @@ namespace FlashDevelop.Dialogs
             // 
             // browseButton
             // 
-            this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.browseButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.browseButton.Location = new System.Drawing.Point(311, 136);
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(26, 24);
@@ -388,8 +388,8 @@ namespace FlashDevelop.Dialogs
             // 
             // resultsView
             // 
-            this.resultsView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.resultsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.resultsView.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.resultsView.Columns.AddRange(new[] {
             this.lineHeader,
             this.descHeader,
             this.fileHeader,
@@ -409,7 +409,7 @@ namespace FlashDevelop.Dialogs
             // 
             // progressBar
             // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.progressBar.Location = new System.Drawing.Point(12, 392);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(491, 14);
@@ -427,7 +427,7 @@ namespace FlashDevelop.Dialogs
             // 
             // sendCheckBox
             // 
-            this.redirectCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right)));
+            this.redirectCheckBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right;
             this.redirectCheckBox.AutoSize = true;
             this.redirectCheckBox.Checked = true;
             this.redirectCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;

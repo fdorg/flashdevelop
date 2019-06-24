@@ -61,17 +61,13 @@ namespace PluginCore.Controls
             base.Hide();
         }
 
-        public bool CheckPosition(int position)
-        {
-            return position == currentPos;
-        }
+        public bool CheckPosition(int position) => position == currentPos;
 
         public void CallTipShow(ScintillaControl sci, int position, string text) => CallTipShow(sci, position, text, true);
 
         public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
         {
-            if (toolTip.Visible && position == memberPos && text == currentText)
-                return;
+            if (toolTip.Visible && position == memberPos && text == currentText) return;
 
             toolTip.Visible = false;
             currentText = text;
@@ -147,10 +143,7 @@ namespace PluginCore.Controls
             UpdateTip(sci);
         }
 
-        public new void UpdateTip(ScintillaControl sci)
-        {
-            OnUpdateCallTip?.Invoke(sci, currentPos);
-        }
+        public new void UpdateTip(ScintillaControl sci) => OnUpdateCallTip?.Invoke(sci, currentPos);
 
         public bool HandleKeys(ScintillaControl sci, Keys key)
         {

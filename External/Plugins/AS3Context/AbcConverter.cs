@@ -648,7 +648,7 @@ namespace AS3Context
 
     class ASDocsReader : XmlTextReader
     {
-        public List<string> ExcludedASDocs = null;
+        public List<string> ExcludedASDocs;
         private Dictionary<string, ASDocItem> docs;
 
 
@@ -680,8 +680,8 @@ namespace AS3Context
             if (IsEmptyElement)
                 return;
 
-            if (this.ExcludedASDocs == null)
-                this.ExcludedASDocs = new List<string>();
+            if (ExcludedASDocs == null)
+                ExcludedASDocs = new List<string>();
 
             ASDocItem doc = new ASDocItem();
             doc.DeclType = declType;
@@ -724,16 +724,16 @@ namespace AS3Context
                 if (doc.LongDesc.Length == 0 && doc.ShortDesc.Length > 0)
                     doc.LongDesc = doc.ShortDesc;
 
-                if (!this.ExcludedASDocs.Contains("param") && doc.Params != null)
+                if (!ExcludedASDocs.Contains("param") && doc.Params != null)
                     foreach (string name in doc.Params.Keys)
                         doc.LongDesc += "\n@param\t" + name + "\t" + doc.Params[name].Trim();
 
-                if (!this.ExcludedASDocs.Contains("return") && doc.Returns != null)
+                if (!ExcludedASDocs.Contains("return") && doc.Returns != null)
                     doc.LongDesc += "\n@return\t" + doc.Returns.Trim();
 
                 if (doc.ExtraAsDocs != null)
                     foreach (KeyValuePair<string, string> extraASDoc in doc.ExtraAsDocs)
-                        if (!this.ExcludedASDocs.Contains(extraASDoc.Key))
+                        if (!ExcludedASDocs.Contains(extraASDoc.Key))
                             doc.LongDesc += "\n@" + extraASDoc.Key + "\t" + extraASDoc.Value;
 
                 // keep definitions including either documentation or static values
@@ -821,11 +821,10 @@ namespace AS3Context
             string prefix = "";
             string postfix = "";
             string eon = Name;
-            string lcName; // name in lower case
             ReadStartElement();
             while (Name != eon)
             {
-                lcName = Name.ToLower();
+                var lcName = Name.ToLower(); // name in lower case
                 if (lcName == "codeblock" || lcName == "listing")
                 {
                     if (NodeType == XmlNodeType.Element)
@@ -884,17 +883,17 @@ namespace AS3Context
                         break;
 
                     case "apiDesc":
-                        doc.LongDesc += this.ReadInnerXml() +"\n";
+                        doc.LongDesc += ReadInnerXml() +"\n";
                     //    Read();
                         break;
 
                     case "example":
-                        doc.LongDesc += "\nEXAMPLE: \n\n" + this.ReadInnerXml() +"\n";
+                        doc.LongDesc += "\nEXAMPLE: \n\n" + ReadInnerXml() +"\n";
                     //    Read();
                         break;
 
                     default:
-                        this.ReadInnerXml();
+                        ReadInnerXml();
                         break;
                 }
             }
@@ -986,13 +985,12 @@ namespace AS3Context
             if (IsEmptyElement)
                 return;
 
-            string asdocKey;
-            string asdocVal;
-
             string eon = Name;
             ReadStartElement();
             while (Name != eon)
             {
+                string asdocVal;
+                string asdocKey;
                 if (Name == "apiLanguage")
                 {
                     string sVers = GetAttribute("version");
@@ -1055,7 +1053,7 @@ namespace AS3Context
             string defValue = GetAttribute("name");
             meta.Params["default"] = defValue;
 
-            meta.RawParams = string.Format("\"{0}\"", defValue);
+            meta.RawParams = $"\"{defValue}\"";
 
             if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
             doc.Meta.Add(meta);
@@ -1066,14 +1064,11 @@ namespace AS3Context
             if (IsEmptyElement)
                 return;
 
-            string asdocKey;
-            string asdocVal;
-
             string eon = terminationNode;
             ReadStartElement();
             while (!(Name == eon && NodeType == XmlNodeType.EndElement))
             {
-                asdocKey = this.Name;
+                var asdocKey = Name;
 
                 /*
                 if (asdocKey == "maelexample")
@@ -1084,7 +1079,7 @@ namespace AS3Context
                 else
                 {
                     */
-                    asdocVal = this.ReadInnerXml();
+                    var asdocVal = ReadInnerXml();
               //  }
 
                 doc.ExtraAsDocs.Add(new KeyValuePair<string, string>(asdocKey, asdocVal));
@@ -1096,20 +1091,11 @@ namespace AS3Context
         //  apiType
         //---------------------------
 
-        private void ReadApiType(ASDocItem doc)
-        {
-            SetApiType(doc, GetAttribute("value"));
-        }
+        private void ReadApiType(ASDocItem doc) => SetApiType(doc, GetAttribute("value"));
 
-        private void ReadApiTypeAsClassifier(ASDocItem doc)
-        {
-            SetApiType(doc, ReadValue());
-        }
+        private void ReadApiTypeAsClassifier(ASDocItem doc) => SetApiType(doc, ReadValue());
 
-        private void SetApiType(ASDocItem doc, string apiType)
-        {
-            doc.ApiType = apiType == "any" ? "*" : apiType;
-        }
+        private void SetApiType(ASDocItem doc, string apiType) => doc.ApiType = apiType == "any" ? "*" : apiType;
 
 
         //---------------------------
@@ -1168,7 +1154,7 @@ namespace AS3Context
             ReadStartElement();
             while (Name != eon)
             {
-                switch (this.Name)
+                switch (Name)
                 {
                     case "apiDesc":
                         doc.Returns = ReadValue();
@@ -1199,7 +1185,6 @@ namespace AS3Context
 
             string apiDesc = "";
             string apiItemName = "";
-            string apiOperationClassifier = "";
 
             string eon = Name;
             ReadStartElement();
@@ -1216,7 +1201,7 @@ namespace AS3Context
                         break;
 
                     case "apiOperationClassifier":
-                        apiOperationClassifier = ReadValue();
+                        ReadValue();
                         break;
                 }
                 Read();
@@ -1243,7 +1228,7 @@ namespace AS3Context
             meta.Params = new Dictionary<string, string>();
             meta.Params["kind"] = sKind;
             meta.Params["name"] = sName;
-            meta.RawParams = string.Format("kind=\"{0}\", name=\"{1}\"", sKind, sName);
+            meta.RawParams = $"kind=\"{sKind}\", name=\"{sName}\"";
             doc.Meta.Add(meta);
         }
 
@@ -1280,7 +1265,7 @@ namespace AS3Context
             meta.Params = new Dictionary<string, string>();
             meta.Params["name"] = sName;
             meta.Params["type"] = sType;
-            meta.RawParams = string.Format("name=\"{0}\", type=\"{1}\"", sName, sType);
+            meta.RawParams = $"name=\"{sName}\", type=\"{sType}\"";
             if (sInherit != null)
             {
                 meta.Params["inherit"] = sInherit;
@@ -1327,7 +1312,7 @@ namespace AS3Context
             meta.Params["type"] = eType;
             if (eFullType != null)
                 meta.Comments = meta.Comments.Trim() + "\n@eventType\t" + eFullType.Replace(':', '.');
-            meta.RawParams = string.Format("name=\"{0}\", type=\"{1}\"", eName, eType);
+            meta.RawParams = $"name=\"{eName}\", type=\"{eType}\"";
             doc.Meta.Add(meta);
         }
     }

@@ -35,10 +35,7 @@ namespace AS3Context
         /// <summary>
         /// Reset catalogs for new classpath definition
         /// </summary>
-        public static void ClearCatalogs()
-        {
-            catalogs.Clear();
-        }
+        public static void ClearCatalogs() => catalogs.Clear();
 
         /// <summary>
         /// Look in current project configuration for user-defined namespaces
@@ -71,10 +68,7 @@ namespace AS3Context
         /// <summary>
         /// Check if a catalog was already extracted from indicated SWC 
         /// </summary>
-        public static bool HasCatalog(string file)
-        {
-            return archive.ContainsKey(file);
-        }
+        public static bool HasCatalog(string file) => archive.ContainsKey(file);
 
         /// <summary>
         /// Read a SWC catalog file
@@ -223,7 +217,7 @@ namespace AS3Context
 
                             if (firstNode && src[i + 1] != '?')
                             {
-                                int space = src.IndexOfAny(new char[] { ' ', '\n' }, i);
+                                int space = src.IndexOfAny(new[] { ' ', '\n' }, i);
                                 string tag = GetXMLContextTag(src, space);
                                 if (tag != null && space > 0)
                                 {
@@ -322,13 +316,12 @@ namespace AS3Context
         private static string GetAttributeName(string src, ref int i)
         {
             string name = "";
-            char c;
             int oldPos = 0;
             int len = src.Length;
             bool skip = true;
             while (i < len)
             {
-                c = src[i++];
+                var c = src[i++];
                 if (c == '>') return null;
                 if (skip && c > 32) skip = false;
                 if (c == '=')
@@ -349,13 +342,12 @@ namespace AS3Context
         private static string GetAttributeValue(string src, ref int i)
         {
             string value = "";
-            char c;
             int oldPos = i;
             int len = src.Length;
             bool skip = true;
             while (i < len)
             {
-                c = src[i++];
+                var c = src[i++];
                 if (c == 10 || c == 13) break;
                 if (c == '"')
                 {
@@ -422,7 +414,7 @@ namespace AS3Context
             foreach (MemberModel mxmember in ctx.mxmlMembers)
             {
                 string tag = mxmember.Type;
-                string type = null;
+                string type;
                 if (resolved.ContainsKey(tag)) type = resolved[tag];
                 else
                 {

@@ -46,7 +46,7 @@ namespace FlashDevelop.Dialogs
             // 
             // downloadButton
             //
-            this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.downloadButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.downloadButton.Enabled = false;
             this.downloadButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.downloadButton.Location = new System.Drawing.Point(72, 69);
@@ -59,7 +59,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoLabel
             //
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.infoLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.infoLabel.Location = new System.Drawing.Point(13, 13);
             this.infoLabel.Name = "infoLabel";
@@ -70,7 +70,7 @@ namespace FlashDevelop.Dialogs
             // 
             // closeButton
             //
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(194, 69);
             this.closeButton.Name = "closeButton";

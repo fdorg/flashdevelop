@@ -289,7 +289,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
 
                 if (value == m_dockBottomPortion)
                     return;
@@ -316,7 +316,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
 
                 if (value == m_dockLeftPortion)
                     return;
@@ -342,7 +342,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
 
                 if (value == m_dockRightPortion)
                     return;
@@ -368,7 +368,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
 
                 if (value == m_dockTopPortion)
                     return;
@@ -866,7 +866,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private void UpdateWindowRegion_EmptyDocumentArea()
         {
             Rectangle rect = DocumentWindowBounds;
-            SetRegion(new Rectangle[] { rect });
+            SetRegion(new[] { rect });
         }
 
         private void UpdateWindowRegion_ClipContent()

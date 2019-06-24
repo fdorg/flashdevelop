@@ -206,7 +206,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             if ( buffer == null ) 
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             int totalRead = 0;
@@ -487,8 +487,8 @@ namespace ICSharpCode.SharpZipLib.Tar
                     entrySize = 0;
                     entryOffset = 0;
                     currentEntry = null;
-                    string errorText = string.Format("Bad header in record {0} block {1} {2}",
-                        tarBuffer.CurrentRecord, tarBuffer.CurrentBlock, ex.Message);
+                    string errorText =
+                        $"Bad header in record {tarBuffer.CurrentRecord} block {tarBuffer.CurrentBlock} {ex.Message}";
                     throw new InvalidHeaderException(errorText);
                 }
             }

@@ -145,7 +145,7 @@ namespace FlashDebugger
             imageColumnHeader.Width = 20;
             frameColumnHeader = new ColumnHeader();
             frameColumnHeader.Text = string.Empty;
-            lv.Columns.AddRange(new ColumnHeader[] {
+            lv.Columns.AddRange(new[] {
             imageColumnHeader,
             frameColumnHeader});
             lv.FullRowSelect = true;

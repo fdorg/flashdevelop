@@ -252,7 +252,7 @@ namespace AS3Context.Compiler
             // [trace] Hello World!
             else if (reTrace.IsMatch(line))
             {
-                if (OnTrace is LineEvent onTrace)
+                if (OnTrace is { } onTrace)
                 {
                     var trace = line.Substring(line.IndexOf(']') + 1);
                     if (trace.Length > 0 && char.IsWhiteSpace(trace[0])) onTrace(trace.Substring(1));
@@ -265,7 +265,7 @@ namespace AS3Context.Compiler
             // 20 <code extract>
             else if (reFault.IsMatch(line))
             {
-                if (OnError is LineEvent onError)
+                if (OnError is { } onError)
                 {
                     onError(line);
                     return;

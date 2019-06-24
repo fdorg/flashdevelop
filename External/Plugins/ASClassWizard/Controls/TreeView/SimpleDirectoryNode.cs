@@ -11,11 +11,11 @@ namespace ASClassWizard.Controls.TreeView
         public SimpleDirectoryNode(string directory, string path) 
             : base(Path.GetFileName(directory))
         {
-            this.dirty = true;
-            this.directoryPath = path;
+            dirty = true;
+            directoryPath = path;
 
             if (Directory.GetDirectories(path).Length > 0)
-                this.Nodes.Add(new TreeNode(""));
+                Nodes.Add(new TreeNode(""));
         }
     }
 }

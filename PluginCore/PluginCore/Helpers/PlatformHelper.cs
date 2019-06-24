@@ -12,10 +12,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks if we are running on Windows
         /// </summary>
-        public static bool IsRunningOnWindows()
-        {
-            return isRunningOnWindows;
-        }
+        public static bool IsRunningOnWindows() => isRunningOnWindows;
 
         /// <summary>
         ///  Checks if we are running on Wine
@@ -28,9 +25,6 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Checks if we are running on Mono
         /// </summary>
-        public static bool IsRunningOnMono()
-        {
-            return isRunningOnMono;
-        }
+        public static bool IsRunningOnMono() => isRunningOnMono;
     }
 }

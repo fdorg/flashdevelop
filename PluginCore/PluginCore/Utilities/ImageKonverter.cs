@@ -90,11 +90,11 @@ namespace PluginCore.Utilities
                 Bitmap bitmap = new Bitmap(image.Width, image.Height);
                 using (Graphics graphics = Graphics.FromImage(bitmap))
                 {
-                    ColorMatrix matrix = new ColorMatrix(new float[][]
+                    ColorMatrix matrix = new ColorMatrix(new[]
                     {
-                        new float[] { 0.30f, 0.30f, 0.30f, 0, 0 },
-                        new float[] { 0.59f, 0.59f, 0.59f, 0, 0},
-                        new float[] { 0.11f, 0.11f, 0.11f, 0, 0},
+                        new[] { 0.30f, 0.30f, 0.30f, 0, 0 },
+                        new[] { 0.59f, 0.59f, 0.59f, 0, 0},
+                        new[] { 0.11f, 0.11f, 0.11f, 0, 0},
                         new float[] { 0, 0, 0, 1, 0, 0},
                         new float[] { 0, 0, 0, 0, 1, 0},
                         new float[] { 0, 0, 0, 0, 0, 1 }

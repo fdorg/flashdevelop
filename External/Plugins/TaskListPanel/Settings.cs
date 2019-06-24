@@ -15,9 +15,9 @@ namespace TaskListPanel
     public class Settings
     {
         private ExploringMode exploringMode = ExploringMode.Light;
-        private int[] images = new int[] { 229, 197, 197 };
-        private string[] extensions = new string[] { ".txt" };
-        private string[] groups = new string[] { "TODO", "FIXME", "BUG" };
+        private int[] images = new[] { 229, 197, 197 };
+        private string[] extensions = new[] { ".txt" };
+        private string[] groups = new[] { "TODO", "FIXME", "BUG" };
         private string[] excluded = new string[0] {};
 
         /// <summary> 
@@ -49,7 +49,7 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("File Extensions")]
         [LocalizedDescription("TaskListPanel.Description.FileExtensions")]
-        [DefaultValue(new string[] { ".txt" })]
+        [DefaultValue(new[] { ".txt" })]
         public string[] FileExtensions
         {
             get => this.extensions;
@@ -61,7 +61,7 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Group Values")]
         [LocalizedDescription("TaskListPanel.Description.GroupValues")]
-        [DefaultValue(new string[] { "TODO", "FIXME", "BUG" })]
+        [DefaultValue(new[] { "TODO", "FIXME", "BUG" })]
         public string[] GroupValues
         {
             get => this.groups;
@@ -73,7 +73,7 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Image Indexes")]
         [LocalizedDescription("TaskListPanel.Description.ImageIndexes")]
-        [DefaultValue(new int[] { 229, 197, 197 })]
+        [DefaultValue(new[] { 229, 197, 197 })]
         public int[] ImageIndexes
         {
             get => this.images;

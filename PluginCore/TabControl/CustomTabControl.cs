@@ -777,7 +777,7 @@ namespace System.Windows.Forms
 				GraphicsState state = graphics.Save();
 				
 				//	Set the graphicsobject to be relative to the parent
-				graphics.TranslateTransform((float)-this.Location.X, (float)-this.Location.Y);
+				graphics.TranslateTransform(-this.Location.X, -this.Location.Y);
 				graphics.SmoothingMode = SmoothingMode.HighSpeed;
 				
 				//	Paint the parent
@@ -979,7 +979,7 @@ namespace System.Windows.Forms
 				                               || (!string.IsNullOrEmpty(this.TabPages[index].ImageKey)
 				                                   && !this.TabPages[index].ImageKey.Equals("(none)", StringComparison.OrdinalIgnoreCase)))){
 					Rectangle imageRect = this.GetTabImageRect(index);
-					if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != ((ContentAlignment) 0)) {
+					if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != 0) {
 						if (this.Alignment <= TabAlignment.Bottom) {
 							textRect.X = imageRect.Right + 4;
 							textRect.Width -= (textRect.Right - (int)tabBounds.Right);
@@ -1006,7 +1006,7 @@ namespace System.Windows.Forms
 								}
 							}
 						}
-					} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != ((ContentAlignment) 0)) {
+					} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != 0) {
 						//	If there is a closer allow for it
 						if (this._StyleProvider.ShowTabCloser) {
 							Rectangle closerRect = this.GetTabCloserRect(index);
@@ -1242,14 +1242,14 @@ namespace System.Windows.Forms
 			
 			//	Ensure image is fully visible
 			if (this.Alignment <= TabAlignment.Bottom) {
-				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != ((ContentAlignment) 0)){
+				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != 0){
 					imageRect = new Rectangle((int)rect.X, (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 16)/2), 16, 16);
 					while (!tabBorderPath.IsVisible(imageRect.X, imageRect.Y)) {
 						imageRect.X += 1;	
 					}
 					imageRect.X += 4;
 
-				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != ((ContentAlignment) 0)){
+				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != 0){
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)(((int)rect.Right - (int)rect.X - (int)rect.Height + 2)/2)), (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 16)/2), 16, 16);
 				} else {
 					imageRect = new Rectangle((int)rect.Right, (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 16)/2), 16, 16);
@@ -1264,13 +1264,13 @@ namespace System.Windows.Forms
 					}
 				}
 			} else {
-				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != ((ContentAlignment) 0)){
+				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != 0){
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)((int)rect.Width - 16)/2), (int)rect.Y, 16, 16);
 					while (!tabBorderPath.IsVisible(imageRect.X, imageRect.Y)) {
 						imageRect.Y += 1;	
 					}
 					imageRect.Y += 4;
-				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != ((ContentAlignment) 0)){
+				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != 0){
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)((int)rect.Width - 16)/2), (int)rect.Y + (int)Math.Floor((double)(((int)rect.Bottom - (int)rect.Y - (int)rect.Width + 2)/2)), 16, 16);
 				} else {
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)((int)rect.Width - 16)/2), (int)rect.Bottom , 16, 16);

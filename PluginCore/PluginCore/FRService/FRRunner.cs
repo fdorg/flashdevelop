@@ -192,8 +192,7 @@ namespace PluginCore.FRService
         {
             try
             {
-                var configuration = e.Argument as FRConfiguration;
-                if (configuration == null)
+                if (!(e.Argument is FRConfiguration configuration))
                 {
                     e.Result = null;
                     return;
@@ -211,7 +210,7 @@ namespace PluginCore.FRService
                 FRSearch search = configuration.GetSearch();
                 string replacement = configuration.Replacement;
 
-                if (this.backgroundWorker.CancellationPending) e.Cancel = true;
+                if (backgroundWorker.CancellationPending) e.Cancel = true;
                 else
                 {
                     // do search
@@ -219,7 +218,7 @@ namespace PluginCore.FRService
                     int lastPercent = 0;
                     foreach (string file in files)
                     {
-                        if (this.backgroundWorker.CancellationPending) e.Cancel = true;
+                        if (backgroundWorker.CancellationPending) e.Cancel = true;
                         else
                         {
                             // work
@@ -244,7 +243,7 @@ namespace PluginCore.FRService
                             int percent = (100 * count) / total;
                             if (lastPercent != percent)
                             {
-                                this.backgroundWorker.ReportProgress(percent);
+                                backgroundWorker.ReportProgress(percent);
                                 lastPercent = percent;
                             }
                         }

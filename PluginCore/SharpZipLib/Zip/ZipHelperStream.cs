@@ -408,7 +408,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             int commentLength = (comment != null) ? comment.Length : 0;
 
             if ( commentLength > 0xffff ) {
-                throw new ZipException(string.Format("Comment length({0}) is too long can only be 64K", commentLength));
+                throw new ZipException($"Comment length({commentLength}) is too long can only be 64K");
             }
 
             WriteLEShort(commentLength);
@@ -539,7 +539,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public int WriteDataDescriptor(ZipEntry entry)
         {
             if (entry == null) {
-                throw new ArgumentNullException("entry");
+                throw new ArgumentNullException(nameof(entry));
             }
 
             int result=0;

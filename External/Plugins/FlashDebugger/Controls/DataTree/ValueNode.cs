@@ -66,7 +66,7 @@ namespace FlashDebugger.Controls.DataTree
                 if (type == VariableType_.NUMBER)
                 {
                     double number = ((Double)m_Value.getValueAsObject()).doubleValue();
-                    if (!double.IsNaN(number) && (double)(long)number == number)
+                    if (!double.IsNaN(number) && (long)number == number)
                     {
                         if (!m_bEditing)
                         {

@@ -51,8 +51,7 @@ namespace AS3Context.Compiler
 
         static void debugger_OnStarted(string line)
         {
-            if (startMessage == null) 
-                return;
+            if (startMessage == null) return;
             PluginBase.RunAsync(delegate
             {
                 // send message again
@@ -63,19 +62,10 @@ namespace AS3Context.Compiler
             });
         }
 
-        static void debugger_OnError(string line)
-        {
-            TraceManager.AddAsync(line, 3);
-        }
+        static void debugger_OnError(string line) => TraceManager.AddAsync(line, 3);
 
-        static void debugger_OnOutput(string line)
-        {
-            TraceManager.AddAsync(line, 1);
-        }
+        static void debugger_OnOutput(string line) => TraceManager.AddAsync(line, 1);
 
-        static void debugger_OnTrace(string line)
-        {
-            TraceManager.AddAsync(line, 1);
-        }
+        static void debugger_OnTrace(string line) => TraceManager.AddAsync(line, 1);
     }
 }

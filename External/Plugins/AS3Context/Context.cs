@@ -609,10 +609,7 @@ namespace AS3Context
             }
         }
 
-        private void timerCheck_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            BackgroundSyntaxCheck();
-        }
+        private void timerCheck_Elapsed(object sender, ElapsedEventArgs e) => BackgroundSyntaxCheck();
 
         /// <summary>
         /// Checking syntax of current file
@@ -958,8 +955,9 @@ namespace AS3Context
                 if (member.Name == baseType) member.Name = baseType.Replace("<T>", typed);
                 if (member.Type != null && member.Type.Contains('T'))
                 {
-                    if (member.Type == "T") member.Type = indexType;
-                    else member.Type = member.Type.Replace("<T>", typed);
+                    member.Type = member.Type == "T"
+                        ? indexType
+                        : member.Type.Replace("<T>", typed);
                 }
                 if (member.Parameters != null)
                 {
@@ -967,8 +965,9 @@ namespace AS3Context
                     {
                         if (param.Type != null && param.Type.Contains('T'))
                         {
-                            if (param.Type == "T") param.Type = indexType;
-                            else param.Type = param.Type.Replace("<T>", typed);
+                            param.Type = param.Type == "T"
+                                ? indexType
+                                : param.Type.Replace("<T>", typed);
                         }
                     }
                 }
@@ -1068,25 +1067,20 @@ namespace AS3Context
         /// <summary>
         /// Retrieve the context's default compiler path
         /// </summary>
-        public override string GetCompilerPath()
-        {
-            return as3settings.GetDefaultSDK().Path ?? "Tools\\flexsdk";
-        }
+        public override string GetCompilerPath() => as3settings.GetDefaultSDK().Path ?? "Tools\\flexsdk";
 
         /// <summary>
         /// Check current file's syntax
         /// </summary>
         public override void CheckSyntax()
         {
-            if (IsFileValid && cFile.InlinedIn == null)
-            {
-                PluginBase.MainForm.CallCommand("Save", null);
+            if (!IsFileValid || cFile.InlinedIn != null) return;
+            PluginBase.MainForm.CallCommand("Save", null);
 
-                string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : PathHelper.ResolvePath(as3settings.GetDefaultSDK().Path);
-                FlexShells.Instance.CheckAS3(cFile.FileName, sdk);
-            }
+            var sdk = PluginBase.CurrentProject != null
+                ? PluginBase.CurrentProject.CurrentSDK
+                : PathHelper.ResolvePath(as3settings.GetDefaultSDK().Path);
+            FlexShells.Instance.CheckAS3(cFile.FileName, sdk);
         }
 
         /// <summary>
@@ -1105,10 +1099,7 @@ namespace AS3Context
             FlexShells.Instance.RunMxmlc(command, as3settings.GetDefaultSDK().Path);
         }
 
-        private bool IsCompilationTarget()
-        {
-            return (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
-        }
+        private bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
 
         /// <summary>
         /// Calls RunCMD with additional parameters taken from the classes @mxmlc doc tag
@@ -1123,7 +1114,7 @@ namespace AS3Context
             
             MainForm.CallCommand("SaveAllModified", null);
 
-            string sdk = PluginBase.CurrentProject != null 
+            var sdk = PluginBase.CurrentProject != null 
                     ? PluginBase.CurrentProject.CurrentSDK
                     : as3settings.GetDefaultSDK().Path;
             FlexShells.Instance.QuickBuild(CurrentModel, sdk, failSilently, as3settings.PlayAfterBuild);

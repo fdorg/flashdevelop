@@ -11,9 +11,9 @@ namespace PluginCore.Utilities
         public static string Encode(byte[] bytes)
         {
             string hex = "";
-            for (int i = 0; i < bytes.Length; i++)
+            foreach (var it in bytes)
             {
-                hex += bytes[i].ToString("x2");
+                hex += it.ToString("x2");
             }
             return hex;
         }
@@ -39,19 +39,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Encodes bytes to a base64 string.
         /// </summary>
-        public static string Encode(byte[] bytes)
-        {
-            return Convert.ToBase64String(bytes);
-        }
+        public static string Encode(byte[] bytes) => Convert.ToBase64String(bytes);
 
         /// <summary>
         /// Decodes base64 string to bytes.
         /// </summary>
-        public static byte[] Decode(string base64)
-        {
-            return Convert.FromBase64String(base64);
-        }
-
+        public static byte[] Decode(string base64) => Convert.FromBase64String(base64);
     }
 
     public class MD5

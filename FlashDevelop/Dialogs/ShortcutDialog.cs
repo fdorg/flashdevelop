@@ -107,7 +107,7 @@ namespace FlashDevelop.Dialogs
             // listView
             // 
             this.listView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.idHeader, this.keyHeader });
+            this.listView.Columns.AddRange(new[] { this.idHeader, this.keyHeader });
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
             this.listView.Location = new System.Drawing.Point(12, 62);

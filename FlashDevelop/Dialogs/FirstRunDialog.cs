@@ -45,7 +45,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoLabel
             //
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.infoLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.infoLabel.BackColor = System.Drawing.SystemColors.Control;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.infoLabel.Location = new System.Drawing.Point(13, 36);

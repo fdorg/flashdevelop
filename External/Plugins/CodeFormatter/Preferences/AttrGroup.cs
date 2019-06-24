@@ -162,7 +162,7 @@ namespace CodeFormatter.Preferences
             string attrString = getValue(data, Tag_attrs);
             if (attrString != null)
             {
-                string[] atts = attrString.Split(new string[]{GroupingSplitter}, StringSplitOptions.RemoveEmptyEntries);
+                string[] atts = attrString.Split(new[]{GroupingSplitter}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string attr in atts) 
                 {
                     string attr2 = AntlrUtilities.asTrim(attr);

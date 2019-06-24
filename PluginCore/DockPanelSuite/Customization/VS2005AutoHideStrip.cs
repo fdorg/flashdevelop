@@ -212,8 +212,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
             {
                 Matrix matrixRotated = new Matrix();
-                matrixRotated.RotateAt(90, new PointF((float)rectTabStrip.X + (float)rectTabStrip.Height / 2,
-                    (float)rectTabStrip.Y + (float)rectTabStrip.Height / 2));
+                matrixRotated.RotateAt(90, new PointF(rectTabStrip.X + (float)rectTabStrip.Height / 2,
+                    rectTabStrip.Y + (float)rectTabStrip.Height / 2));
                 g.Transform = matrixRotated;
             }
 
@@ -462,12 +462,12 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             PointF[] pts = new PointF[1];
             // the center of the rectangle
-            pts[0].X = (float)rect.X + (float)rect.Width / 2;
-            pts[0].Y = (float)rect.Y + (float)rect.Height / 2;
+            pts[0].X = rect.X + (float)rect.Width / 2;
+            pts[0].Y = rect.Y + (float)rect.Height / 2;
             Rectangle rectTabStrip = GetLogicalTabStripRectangle(dockState);
             Matrix matrix = new Matrix();
-            matrix.RotateAt(90, new PointF((float)rectTabStrip.X + (float)rectTabStrip.Height / 2,
-                (float)rectTabStrip.Y + (float)rectTabStrip.Height / 2));
+            matrix.RotateAt(90, new PointF(rectTabStrip.X + (float)rectTabStrip.Height / 2,
+                rectTabStrip.Y + (float)rectTabStrip.Height / 2));
             matrix.TransformPoints(pts);
 
             return new Rectangle((int)(pts[0].X - (float)rect.Height / 2 + .5F),

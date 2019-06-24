@@ -71,7 +71,7 @@ namespace BookmarkPanel
             // listView
             // 
             this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listView.Columns.AddRange(new[] {
             this.columnLine,
             this.columnText});
             this.listView.LabelWrap = false;
@@ -486,7 +486,7 @@ namespace BookmarkPanel
                 ListViewItem[] items = new ListViewItem[markers.Count];
                 foreach (int marker in markers)
                 {
-                    item = new ListViewItem(new string[]{(marker + 1).ToString(), sci.GetLine(marker).Trim()}, 0);
+                    item = new ListViewItem(new[]{(marker + 1).ToString(), sci.GetLine(marker).Trim()}, 0);
                     item.ToolTipText = sci.GetLine(marker).Trim();
                     item.Name = group.Name;
                     item.Group = group;

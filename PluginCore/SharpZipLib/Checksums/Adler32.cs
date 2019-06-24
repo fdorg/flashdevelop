@@ -143,7 +143,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         public void Update(byte[] buffer)
         {
             if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             Update(buffer, 0, buffer.Length);
@@ -164,14 +164,14 @@ namespace ICSharpCode.SharpZipLib.Checksums
         public void Update(byte[] buffer, int offset, int count)
         {
             if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if (offset < 0) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "cannot be negative");
 #endif              
             }
 
@@ -180,7 +180,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "cannot be negative");
 #endif              
             }
 
@@ -189,7 +189,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "not a valid index into buffer");
+                throw new ArgumentOutOfRangeException(nameof(offset), "not a valid index into buffer");
 #endif              
             }
             
@@ -198,7 +198,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "exceeds buffer size");
+                throw new ArgumentOutOfRangeException(nameof(count), "exceeds buffer size");
 #endif              
             }
 

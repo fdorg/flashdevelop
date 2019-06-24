@@ -192,7 +192,7 @@ namespace ResultsPanel
             // entriesView
             // 
             this.EntriesView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.EntriesView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.EntriesView.Columns.AddRange(new[] {
             this.entryType,
             this.entryLine,
             this.entryDesc,

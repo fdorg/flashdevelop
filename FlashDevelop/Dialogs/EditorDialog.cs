@@ -268,8 +268,8 @@ namespace FlashDevelop.Dialogs
             // itemListView
             // 
             this.itemListView.Alignment = System.Windows.Forms.ListViewAlignment.Left;
-            this.itemListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left)));
-            this.itemListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.columnHeader});
+            this.itemListView.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left;
+            this.itemListView.Columns.AddRange(new[] {this.columnHeader});
             this.itemListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.itemListView.HideSelection = false;
             this.itemListView.Location = new System.Drawing.Point(14, 49);
@@ -306,7 +306,7 @@ namespace FlashDevelop.Dialogs
             // 
             // sampleTextLabel
             // 
-            this.sampleTextLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left)| System.Windows.Forms.AnchorStyles.Right)));
+            this.sampleTextLabel.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left)| System.Windows.Forms.AnchorStyles.Right;
             this.sampleTextLabel.BackColor = System.Drawing.Color.White;
             this.sampleTextLabel.Location = new System.Drawing.Point(15, 130);
             this.sampleTextLabel.Name = "sampleTextLabel";

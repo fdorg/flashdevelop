@@ -160,7 +160,7 @@ namespace ASCompletion.Model
                 try
                 {
                     basePath = System.IO.Path.GetDirectoryName(Path);
-                    masks = new string[] { System.IO.Path.GetFileName(Path) };
+                    masks = new[] { System.IO.Path.GetFileName(Path) };
                     watcher = new WatcherEx(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileName(Path));
                     watcher.Deleted += watcher_Deleted;
                     watcher.Changed += watcher_Changed;

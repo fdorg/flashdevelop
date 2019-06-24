@@ -68,7 +68,7 @@ namespace System.Windows.Forms
             switch (m.Msg)
             {
                 case 0x0014: // Stop erase background message
-                    m.Msg = (int)0x0000; // Set to null
+                    m.Msg = 0x0000; // Set to null
                     break;
                 case 0xf: // WM_PAINT
                     OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));

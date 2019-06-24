@@ -377,7 +377,7 @@ namespace System.Windows.Forms
                     if (this.Enabled) g.FillRectangle(back, dropRect);
                     g.DrawRectangle(pen, backRect);
                     Point middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
-                    Point[] shape = new Point[]
+                    Point[] shape = new[]
                     {
                         new Point(middle.X - pad, middle.Y - 1),
                         new Point(middle.X + pad + 1, middle.Y - 1),
@@ -592,7 +592,7 @@ namespace System.Windows.Forms
             if (this.UseTheme)
             {
                 Rectangle rec = new Rectangle(0, 0, this.Width, this.Height);
-                double scaleFactor = (((double)Value - (double)Minimum) / ((double)Maximum - (double)Minimum));
+                double scaleFactor = ((Value - (double)Minimum) / (Maximum - (double)Minimum));
                 rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
                 e.Graphics.FillRectangle(new SolidBrush(this.BackColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
                 e.Graphics.FillRectangle(new SolidBrush(this.ForeColor), 1, 1, rec.Width, rec.Height);

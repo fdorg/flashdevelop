@@ -82,7 +82,7 @@ namespace FlashDevelop.Dialogs
             // 
             // itemListView
             //
-            this.itemListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left)));
+            this.itemListView.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left;
             this.itemListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.itemListView.HideSelection = false;
             this.itemListView.Location = new System.Drawing.Point(12, 12);
@@ -98,7 +98,7 @@ namespace FlashDevelop.Dialogs
             // 
             // itemPropertyGrid
             // 
-            this.itemPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.itemPropertyGrid.Location = new System.Drawing.Point(183, 54);
             this.itemPropertyGrid.Name = "itemPropertyGrid";
             this.itemPropertyGrid.Size = new System.Drawing.Size(502, 386);
@@ -109,7 +109,7 @@ namespace FlashDevelop.Dialogs
             // 
             // closeButton
             // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(586, 447);
             this.closeButton.Name = "closeButton";
@@ -121,7 +121,7 @@ namespace FlashDevelop.Dialogs
             // 
             // nameLabel
             // 
-            this.nameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.nameLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.nameLabel.AutoSize = true;
             this.nameLabel.Enabled = false;
             this.nameLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -134,7 +134,7 @@ namespace FlashDevelop.Dialogs
             // infoPictureBox
             //
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoPictureBox.Location = new System.Drawing.Point(13, 451);
             this.infoPictureBox.Name = "infoPictureBox";
             this.infoPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -143,7 +143,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoLabel
             // 
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoLabel.AutoSize = true;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.infoLabel.Location = new System.Drawing.Point(34, 452);
@@ -154,7 +154,7 @@ namespace FlashDevelop.Dialogs
             // 
             // descLabel
             // 
-            this.descLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.descLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.descLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.descLabel.Location = new System.Drawing.Point(185, 31);
             this.descLabel.Name = "descLabel";
@@ -187,7 +187,7 @@ namespace FlashDevelop.Dialogs
             // 
             // filterText
             //
-            this.filterText.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.filterText.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.filterText.Location = new System.Drawing.Point(537, 26);
             this.filterText.Name = "FilterText";
             this.filterText.Size = new System.Drawing.Size(120, 20);
@@ -196,7 +196,7 @@ namespace FlashDevelop.Dialogs
             // 
             // clearFilterButton
             //
-            this.clearFilterButton.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.clearFilterButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.clearFilterButton.Location = new System.Drawing.Point(661, 24);
             this.clearFilterButton.Name = "clearFilterButton";
             this.clearFilterButton.Size = new System.Drawing.Size(26, 23);
@@ -206,7 +206,7 @@ namespace FlashDevelop.Dialogs
             // 
             // filterLabel
             // 
-            this.filterLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.filterLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.filterLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.filterLabel.Location = new System.Drawing.Point(538, 10);
             this.filterLabel.Name = "filterLabel";

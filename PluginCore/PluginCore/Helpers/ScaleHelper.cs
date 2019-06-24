@@ -29,34 +29,22 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static int Scale(int value)
-        {
-            return (int)(value * GetScale());
-        }
+        public static int Scale(int value) => (int)(value * GetScale());
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static long Scale(long value)
-        {
-            return (long)(value * GetScale());
-        }
+        public static long Scale(long value) => (long)(value * GetScale());
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static float Scale(float value)
-        {
-            return (float)(value * GetScale());
-        }
+        public static float Scale(float value) => (float)(value * GetScale());
 
         /// <summary>
         /// Resizes based on display scale.
         /// </summary>
-        public static double Scale(double value)
-        {
-            return value * GetScale();
-        }
+        public static double Scale(double value) => value * GetScale();
 
         /// <summary>
         /// Resizes based on display scale.
@@ -105,10 +93,7 @@ namespace PluginCore.Helpers
                 AdjustForHighDPI(ctrl, multi);
             }
         }
-        public static void AdjustForHighDPI(Control control)
-        {
-            AdjustForHighDPI(control, 0.92);
-        }
+        public static void AdjustForHighDPI(Control control) => AdjustForHighDPI(control, 0.92);
 
         /// <summary>
         /// Keep track and adjust forms only once

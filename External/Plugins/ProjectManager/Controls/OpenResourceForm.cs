@@ -53,7 +53,7 @@ namespace ProjectManager.Controls
             // 
             // textBox
             // 
-            this.textBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.textBox.Location = new System.Drawing.Point(12, 32);
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(466, 22);
@@ -63,7 +63,7 @@ namespace ProjectManager.Controls
             // 
             // refreshButton
             //
-            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.refreshButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.refreshButton.Location = new System.Drawing.Point(485, 30);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(26, 23);
@@ -72,7 +72,7 @@ namespace ProjectManager.Controls
             // 
             // cbInClasspathsOnly
             // 
-            this.cbInClasspathsOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbInClasspathsOnly.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.cbInClasspathsOnly.Location = new System.Drawing.Point(380, 9);
             this.cbInClasspathsOnly.Size = new System.Drawing.Size(26, 24);
             this.cbInClasspathsOnly.Text = "In Classpaths only";
@@ -84,7 +84,7 @@ namespace ProjectManager.Controls
             // 
             // checkBox
             //
-            this.checkBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.checkBox.Location = new System.Drawing.Point(480, 9);
             this.checkBox.Size = new System.Drawing.Size(26, 24);
             this.checkBox.Text = "Code files only";
@@ -96,7 +96,7 @@ namespace ProjectManager.Controls
             // 
             // listBox
             // 
-            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.listBox.IntegralHeight = false;
             this.listBox.FormattingEnabled = true;

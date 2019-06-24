@@ -49,7 +49,7 @@ namespace FlashDevelop.Managers
                     {
                         string line = rawLine.Trim();
                         if (line.Length < 2 || line.StartsWith('#')) continue;
-                        string[] entry = line.Split(new char[] { '=' }, 2);
+                        string[] entry = line.Split(new[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         valueMap[entry[0]] = entry[1];
                     }

@@ -83,10 +83,8 @@ namespace PluginCore.Managers
             try
             {
                 var fileName = Path.Combine(PathHelper.BaseDir, "Exceptions.log");
-                using (var sw = new StreamWriter(fileName, true))
-                {
-                    sw.Write(result);
-                }
+                using var sw = new StreamWriter(fileName, true);
+                sw.Write(result);
             }
             catch {}
         }

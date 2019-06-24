@@ -30,7 +30,7 @@ namespace ProjectManager.Projects
         public Color BackgroundColor
         {
             get => ColorTranslator.FromHtml(Background);
-            set => Background = string.Format("#{0:X6}", (value.R << 16) + (value.G << 8) + value.B);
+            set => Background = $"#{(value.R << 16) + (value.G << 8) + value.B:X6}";
         }
 
         public int BackgroundColorInt
@@ -55,7 +55,7 @@ namespace ProjectManager.Projects
             get
             {
                 if (HasSupport) return LanguageSupport.PlatformNames;
-                return new string[] { "Custom" };
+                return new[] { "Custom" };
             }
         }
 
@@ -66,7 +66,7 @@ namespace ProjectManager.Projects
                 var platforms = LanguageSupport.Platforms;
                 if (platform != null && platforms.ContainsKey(platform)) return platforms[platform].VersionNames;
             }
-            return new string[] { "0.0" };
+            return new[] { "0.0" };
         }
 
         public virtual string DefaultVersion(string platform)

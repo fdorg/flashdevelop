@@ -80,7 +80,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(239, 202);
@@ -92,7 +92,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.okButton.Location = new System.Drawing.Point(156, 202);
             this.okButton.Name = "okButton";
@@ -103,7 +103,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // autoIDBox
             // 
-            this.autoIDBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.autoIDBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.autoIDBox.Checked = true;
             this.autoIDBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.autoIDBox.Location = new System.Drawing.Point(16, 73);
@@ -115,7 +115,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // idTextBox
             // 
-            this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.idTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.idTextBox.Enabled = false;
             this.idTextBox.Location = new System.Drawing.Point(34, 94);
             this.idTextBox.Name = "idTextBox";
@@ -126,7 +126,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.tabControl.Controls.Add(this.swfTabPage);
             this.tabControl.Controls.Add(this.swcTabPage);
             this.tabControl.Controls.Add(this.fontTabPage);
@@ -154,7 +154,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // specifySharepointBox
             // 
-            this.specifySharepointBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.specifySharepointBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.specifySharepointBox.BackColor = System.Drawing.Color.Transparent;
             this.specifySharepointBox.Location = new System.Drawing.Point(35, 81);
             this.specifySharepointBox.Name = "specifySharepointBox";
@@ -275,7 +275,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // charactersTextBox
             // 
-            this.charactersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.charactersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.charactersTextBox.Location = new System.Drawing.Point(35, 64);
             this.charactersTextBox.Multiline = true;
             this.charactersTextBox.Name = "charactersTextBox";
@@ -285,7 +285,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // embedTheseButton
             // 
-            this.embedTheseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.embedTheseButton.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.embedTheseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.embedTheseButton.Location = new System.Drawing.Point(16, 36);
             this.embedTheseButton.Name = "embedTheseButton";
@@ -296,7 +296,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // embedAllButton
             // 
-            this.embedAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.embedAllButton.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.embedAllButton.Checked = true;
             this.embedAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.embedAllButton.Location = new System.Drawing.Point(16, 16);
@@ -334,7 +334,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // updatedTextBox
             // 
-            this.updatedTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.updatedTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.updatedTextBox.Enabled = false;
             this.updatedTextBox.Location = new System.Drawing.Point(34, 37);
             this.updatedTextBox.Name = "updatedTextBox";
@@ -344,7 +344,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // keepUpdatedBox
             // 
-            this.keepUpdatedBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.keepUpdatedBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.keepUpdatedBox.Location = new System.Drawing.Point(16, 16);
             this.keepUpdatedBox.Name = "keepUpdatedBox";
             this.keepUpdatedBox.Size = new System.Drawing.Size(266, 18);

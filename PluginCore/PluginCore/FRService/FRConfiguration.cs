@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -20,9 +19,9 @@ namespace PluginCore.FRService
         protected OperationType type;
         protected FRSearch search;
         protected string replacement;
-        protected bool cacheDocuments = false;
+        protected bool cacheDocuments;
         protected bool updateSourceFile = true;
-        protected IDictionary<string, ITabbedDocument> openDocuments = null;
+        protected IDictionary<string, ITabbedDocument> openDocuments;
 
         /// <summary>
         /// Enables the caching
@@ -67,53 +66,47 @@ namespace PluginCore.FRService
         /// </summary> 
         public FRConfiguration(List<string> files, FRSearch search)
         {
-            this.type = OperationType.FindInRange;
+            type = OperationType.FindInRange;
             this.search = search;
             this.files = files;
         }
         public FRConfiguration(string fileName, string source, FRSearch search)
         {
-            this.type = OperationType.FindInSource;
-            this.path = fileName;
+            type = OperationType.FindInSource;
+            path = fileName;
             this.search = search;
             this.source = source;
         }
         public FRConfiguration(string fileName, FRSearch search)
         {
-            this.type = OperationType.FindInFile;
-            this.path = fileName;
+            type = OperationType.FindInFile;
+            path = fileName;
             this.search = search;
         }
         public FRConfiguration(string path, string fileMask, bool recursive, FRSearch search)
         {
             this.path = path;
-            this.type = OperationType.FindInPath;
+            type = OperationType.FindInPath;
             this.recursive = recursive;
-            this.mask = fileMask;
+            mask = fileMask;
             this.search = search;
         }
 
         /// <summary>
         /// Gets the search
         /// </summary> 
-        public FRSearch GetSearch()
-        {
-            return this.search;
-        }
+        public FRSearch GetSearch() => search;
 
         /// <summary>
         /// Gets the source
         /// </summary>
         public string GetSource(string file)
         {
-            switch (type)
+            return type switch
             {
-                case OperationType.FindInSource:
-                    return this.source;
-
-                default:
-                    return ReadCurrentFileSource(file);
-            }
+                OperationType.FindInSource => source,
+                _ => ReadCurrentFileSource(file),
+            };
         }
 
         /// <summary>
@@ -132,22 +125,19 @@ namespace PluginCore.FRService
         /// <summary>
         /// Checks if the document is cached
         /// </summary>
-        protected bool IsDocumentCached(string file)
-        {
-            return openDocuments.ContainsKey(file);
-        }
+        protected bool IsDocumentCached(string file) => openDocuments.ContainsKey(file);
 
         /// <summary>
         /// Caches the documents
         /// </summary>
         protected void CacheOpenDocuments()
         {
-            this.openDocuments = new Dictionary<string, ITabbedDocument>();
+            openDocuments = new Dictionary<string, ITabbedDocument>();
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
                 if (document.IsEditable)
                 {
-                    this.openDocuments[document.FileName] = document;
+                    openDocuments[document.FileName] = document;
                 }
             }
         }
@@ -160,21 +150,21 @@ namespace PluginCore.FRService
             switch (type)
             {
                 case OperationType.FindInSource:
-                    this.source = src;
+                    source = src;
                     break;
 
                 default:
                     EncodingFileInfo info = FileHelper.GetEncodingFileInfo(file);
-                    if (this.updateSourceFile || !this.IsDocumentCached(file))
+                    if (updateSourceFile || !IsDocumentCached(file))
                     {
                         FileHelper.WriteFile(file, src, Encoding.GetEncoding(info.CodePage), info.ContainsBOM);
                     }
                     else 
                     {
                         // make this method thread safe
-                        if ((PluginBase.MainForm as Form).InvokeRequired)
+                        if (((Form) PluginBase.MainForm).InvokeRequired)
                         {
-                            (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker) delegate {
+                            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) delegate {
                                 openDocuments[file].SciControl.Text = src;
                             });
                         }
@@ -192,31 +182,21 @@ namespace PluginCore.FRService
             switch (type)
             {
                 case OperationType.FindInRange:
-                    return this.files;
-
-                case OperationType.FindInSource:
-                    if (this.files == null)
-                    {
-                        this.files = new List<string>();
-                        this.files.Add(path);
-                    }
                     return files;
 
+                case OperationType.FindInSource:
+                    return files ??= new List<string> {path};
+
                 case OperationType.FindInFile:
-                    if (this.files == null)
-                    {
-                        this.files = new List<string>();
-                        this.files.Add(path);
-                    }
-                    return this.files;
+                    return files ??= new List<string> {path};
 
                 case OperationType.FindInPath:
-                    if (this.files == null)
+                    if (files == null)
                     {
-                        PathWalker walker = new PathWalker(this.path, this.mask, this.recursive);
-                        this.files = walker.GetFiles();
+                        PathWalker walker = new PathWalker(path, mask, recursive);
+                        files = walker.GetFiles();
                     }
-                    return this.files;
+                    return files;
             }
             return null;
         }

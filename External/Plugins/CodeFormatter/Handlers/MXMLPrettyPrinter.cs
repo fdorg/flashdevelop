@@ -1077,7 +1077,7 @@ namespace CodeFormatter.Handlers
             {
                 string[] lines = AntlrUtilities.asTrim(token.Text).Split('\n');
                 if (lines.Length == 0 && token.Text == "\n")
-                    lines = new string[] { "", "" };
+                    lines = new[] { "", "" };
                 //if all whitespace but no carriage returns, then we don't want to go through the loop
                 else if (!token.Text.Contains('\n') && AntlrUtilities.asTrim(token.Text).Length == 0)
                     lines = new string[] { };

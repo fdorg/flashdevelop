@@ -91,23 +91,19 @@ namespace FlashDebugger.Controls.DataTree
         public static string GetVariablePath(this Node node)
         {
             string ret = string.Empty;
-            if (node.Tag is string)
-                return (string)node.Tag; // fix for: live tip value has no parent
+            if (node.Tag is string tag) return tag; // fix for: live tip value has no parent
             if (node.Parent != null) ret = node.Parent.GetVariablePath();
-            if (node is VariableNode)
+            VariableNode datanode = node as VariableNode;
+            if (datanode?.Variable != null)
             {
-                VariableNode datanode = node as VariableNode;
-                if (datanode.Variable != null)
+                if (ret == "") return datanode.Variable.getName();
+                if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
                 {
-                    if (ret == "") return datanode.Variable.getName();
-                    if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
-                    {
-                        ret += "[\"" + datanode.Variable.getName() + "\"]";
-                    }
-                    else
-                    {
-                        ret += "." + datanode.Variable.getName();
-                    }
+                    ret += "[\"" + datanode.Variable.getName() + "\"]";
+                }
+                else
+                {
+                    ret += "." + datanode.Variable.getName();
                 }
             }
             return ret;

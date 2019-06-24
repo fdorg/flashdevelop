@@ -217,26 +217,26 @@ namespace ScintillaNet.Configuration
             if (styleclasses == null)  styleclasses = new StyleClass[0];
             if (keywordclass == null) keywordclass = new KeywordClass[0];
             if (globals == null) globals = new Value[0];
-            for (int i2 = 0; i2<languages.Length; i2++)
+            foreach (var it in languages)
             {
-                languages[i2].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int k = 0; k<styleclasses.Length; k++)
+            foreach (var it in styleclasses)
             {
-                styleclasses[k].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int j = 0; j<keywordclass.Length; j++)
+            foreach (var it in keywordclass)
             {
-                keywordclass[j].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int i1 = 0; i1<globals.Length; i1++)
+            foreach (var it in globals)
             {
-                globals[i1].init(utility, _parent);
+                it.init(utility, _parent);
             }
             if (characterclasses == null) characterclasses = new CharacterClass[0];
-            for (int k = 0; k<characterclasses.Length; k++)
+            foreach (var it in characterclasses)
             {
-                characterclasses[k].init(utility, _parent);
+                it.init(utility, _parent);
             }
         }
         

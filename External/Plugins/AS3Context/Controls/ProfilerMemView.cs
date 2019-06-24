@@ -11,18 +11,14 @@ namespace AS3Context.Controls
         readonly ToolStripLabel memLabel;
         readonly Label statsLabel;
         readonly ComboBox scaleCombo;
-        const int MAX_WIDTH = 1000;
-        const int MAX_HEIGHT = 400;
-        private readonly MemGraph graph;
 
-        public MemGraph Graph => graph;
+        public MemGraph Graph { get; }
 
-        public ProfilerMemView(ToolStripLabel label, Label stats, ComboBox scale, TabPage memoryPage)
+        public ProfilerMemView(ToolStripLabel label, Label stats, ComboBox scale, Control memoryPage)
         {
-            graph = new MemGraph();
-            graph.Dock = DockStyle.Fill;
-            memoryPage.Controls.Add(graph);
-            graph.BringToFront();
+            Graph = new MemGraph {Dock = DockStyle.Fill};
+            memoryPage.Controls.Add(Graph);
+            Graph.BringToFront();
 
             memLabel = label;
             statsLabel = stats;
@@ -30,21 +26,21 @@ namespace AS3Context.Controls
             scaleCombo = scale;
             scaleCombo.SelectedIndex = scaleCombo.Items.Count - 1;
             scaleCombo.SelectedIndexChanged += scaleCombo_SelectedIndexChanged;
-            graph.TimeScale = scaleCombo.SelectedIndex + 1;
+            Graph.TimeScale = scaleCombo.SelectedIndex + 1;
 
             Clear();
         }
 
         void scaleCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            graph.TimeScale = scaleCombo.SelectedIndex + 1;
-            graph.Invalidate();
+            Graph.TimeScale = scaleCombo.SelectedIndex + 1;
+            Graph.Invalidate();
         }
 
         public void Clear()
         {
-            graph.Values = new List<float>();
-            graph.MaxValue = 1;
+            Graph.Values = new List<float>();
+            Graph.MaxValue = 1;
             memLabel.Text = string.Format(TextHelper.GetString("Label.MemoryDisplay"), FormatMemory(0), FormatMemory(0));
             statsLabel.Text = string.Format(TextHelper.GetString("Label.MemoryStats"), "\n", FormatMemory(0), FormatMemory(0));
         }
@@ -55,15 +51,14 @@ namespace AS3Context.Controls
         /// <param name="info"></param>
         public void UpdateStats(string[] info)
         {
-            int mem = 0;
-            int.TryParse(info[1], out mem);
-            graph.Values.Add((float)mem);
-            if (mem > graph.MaxValue) graph.MaxValue = mem;
+            int.TryParse(info[1], out var mem);
+            Graph.Values.Add(mem);
+            if (mem > Graph.MaxValue) Graph.MaxValue = mem;
             string raw = TextHelper.GetString("Label.MemoryDisplay");
-            memLabel.Text = string.Format(raw, FormatMemory(mem), FormatMemory((int)graph.MaxValue));
+            memLabel.Text = string.Format(raw, FormatMemory(mem), FormatMemory((int)Graph.MaxValue));
             raw = TextHelper.GetString("Label.MemoryStats");
-            statsLabel.Text = string.Format(raw, "\n", FormatMemory(mem), FormatMemory((int)graph.MaxValue));
-            graph.Invalidate();
+            statsLabel.Text = string.Format(raw, "\n", FormatMemory(mem), FormatMemory((int)Graph.MaxValue));
+            Graph.Invalidate();
         }
 
         private string FormatMemory(int mem)
@@ -116,11 +111,10 @@ namespace AS3Context.Controls
             int diff = Math.Min(Width / TimeScale, n);
             int x0 = Width - diff * TimeScale;
             int i = Math.Max(0, n - diff);
-            float h = (float)Height;
-            Pen line;
+            float h = Height;
 
             // peak
-            line = new Pen(norm, 1);
+            var line = new Pen(norm, 1);
             float step = 25000000f;
             while (step * 4 < MaxValue) step *= 2;
             float top = step;
@@ -136,15 +130,14 @@ namespace AS3Context.Controls
             g.DrawLine(line, 0f, y, Width - 1, y);
 
             // graph
-            List<PointF> points = new List<PointF>();
+            var points = new List<PointF>();
             while (i < n)
             {
                 points.Add(new PointF(x0, h * (1f - 0.9f * Values[i] / MaxValue)));
                 i++;
                 x0 += TimeScale;
             }
-            line = new Pen(cur, 2);
-            line.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
+            line = new Pen(cur, 2) {LineJoin = System.Drawing.Drawing2D.LineJoin.Round};
             g.DrawLines(line, points.ToArray());
         }
 

@@ -45,7 +45,7 @@ namespace FlashDevelop.Dialogs
             // 
             // exitButton
             // 
-            this.exitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.exitButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.exitButton.Location = new System.Drawing.Point(331, 351);
             this.exitButton.Name = "exitButton";
@@ -67,7 +67,7 @@ namespace FlashDevelop.Dialogs
             // 
             // continueButton
             // 
-            this.continueButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.continueButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.continueButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.continueButton.Location = new System.Drawing.Point(421, 351);
             this.continueButton.Name = "continueButton";
@@ -82,7 +82,7 @@ namespace FlashDevelop.Dialogs
             //
             this.infoTextBox.Font = Globals.Settings.ConsoleFont;
             this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.infoTextBox.Location = new System.Drawing.Point(13, 35);
             this.infoTextBox.Multiline = true;
             this.infoTextBox.Name = "infoTextBox";
@@ -92,7 +92,7 @@ namespace FlashDevelop.Dialogs
             // 
             // countLabel
             // 
-            this.countLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.countLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.countLabel.AutoSize = true;
             this.countLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.countLabel.Location = new System.Drawing.Point(14, 355);

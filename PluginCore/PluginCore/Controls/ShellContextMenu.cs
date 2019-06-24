@@ -38,7 +38,7 @@ namespace PluginCore.Controls
         /// <summary>Default constructor</summary>
         public ShellContextMenu()
         {
-            this.CreateHandle(new CreateParams());
+            CreateHandle(new CreateParams());
         }
         #endregion
 
@@ -443,7 +443,7 @@ namespace PluginCore.Controls
             // Release all resources first.
             ReleaseAll();
             _arrPIDLs = GetPIDLs(files);
-            this.ShowContextMenu(pointScreen);
+            ShowContextMenu(pointScreen);
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace PluginCore.Controls
             // Release all resources first.
             ReleaseAll();
             _arrPIDLs = GetPIDLs(dirs);
-            this.ShowContextMenu(pointScreen);
+            ShowContextMenu(pointScreen);
         }
 
         /// <summary>
@@ -507,7 +507,7 @@ namespace PluginCore.Controls
                     TPM.RETURNCMD,
                     pointScreen.X,
                     pointScreen.Y,
-                    this.Handle,
+                    Handle,
                     IntPtr.Zero);
 
                 DestroyMenu(pMenu);
@@ -1446,7 +1446,7 @@ namespace PluginCore.Controls
         // ************************************************************************
         // Internal properties
         protected IntPtr m_hhook = IntPtr.Zero;
-        protected HookProc m_filterFunc = null;
+        protected HookProc m_filterFunc;
         protected HookType m_hookType;
         // ************************************************************************
 
@@ -1469,7 +1469,7 @@ namespace PluginCore.Controls
         public LocalWindowsHook(HookType hook)
         {
             m_hookType = hook;
-            m_filterFunc = this.CoreHookProc;
+            m_filterFunc = CoreHookProc;
         }
         public LocalWindowsHook(HookType hook, HookProc func)
         {

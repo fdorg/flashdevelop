@@ -15,7 +15,7 @@ namespace ASCompletion.Settings
 
         const bool DEFAULT_SMARTTIPS = true;
         const bool DEFAULT_JAVADOCS = true;
-        public static string[] DEFAULT_TAGS = new string[] {
+        public static string[] DEFAULT_TAGS = new[] {
             "author","copy","default","deprecated","eventType","example","exampleText","exception",
             "haxe","inheritDoc","internal","link","mtasc","mxmlc","param","private","return","see",
             "serial","serialData","serialField","since","throws","usage","version"

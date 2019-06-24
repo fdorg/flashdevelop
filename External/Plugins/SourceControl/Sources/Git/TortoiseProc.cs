@@ -12,7 +12,7 @@ namespace SourceControl.Sources.Git
 
         public static void Execute(string command, string path)
         {
-            string args = string.Format("/command:{0} /path:\"{1}\"", command, path);
+            string args = $"/command:{command} /path:\"{path}\"";
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
 
@@ -27,7 +27,7 @@ namespace SourceControl.Sources.Git
 
         public static void Execute(string command, string path1, string path2)
         {
-            string args = string.Format("/command:{0} /path:\"{1}\" /path2:\"{2}\"", command, path1, path2);
+            string args = $"/command:{command} /path:\"{path1}\" /path2:\"{path2}\"";
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore;
@@ -49,18 +50,18 @@ namespace SourceControl.Managers
             }
         }
 
-        private void RefreshNodes(TreeNodeCollection nodes)
+        private void RefreshNodes(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node is DirectoryNode)
+                if (node is DirectoryNode directoryNode)
                 {
-                    if (UpdateNodeStatus(node as GenericNode))
-                        RefreshNodes(node.Nodes);
+                    if (UpdateNodeStatus(directoryNode))
+                        RefreshNodes(directoryNode.Nodes);
                 }
-                else if (node is FileNode)
+                else if (node is FileNode fileNode)
                 {
-                    UpdateNodeStatus(node as GenericNode);
+                    UpdateNodeStatus(fileNode);
                 }
             }
         }
@@ -71,19 +72,16 @@ namespace SourceControl.Managers
             TreeContextMenuUpdate.SetMenu(currentTree, state);
         }
 
-        void ResetNodes(TreeNodeCollection nodes)
+        void ResetNodes(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node is GenericNode)
+                GenericNode gnode = node as GenericNode;
+                if (gnode?.Meta != null && gnode.Meta.ContainsKey(META_VC))
                 {
-                    GenericNode gnode = (GenericNode)node;
-                    if (gnode.Meta != null && gnode.Meta.ContainsKey(META_VC))
-                    {
-                        gnode.Meta.Remove(META_VC);
-                        gnode.Meta.Remove(META_ROOT);
-                        gnode.Meta.Remove(META_STATUS);
-                    }
+                    gnode.Meta.Remove(META_VC);
+                    gnode.Meta.Remove(META_ROOT);
+                    gnode.Meta.Remove(META_STATUS);
                 }
                 if (node.Nodes.Count > 0) ResetNodes(node.Nodes);
             }
@@ -97,10 +95,7 @@ namespace SourceControl.Managers
             UpdateNodeStatus(node);
         }
 
-        void FileNode_OnFileNodeRefresh(FileNode node)
-        {
-            UpdateNodeStatus(node);
-        }
+        void FileNode_OnFileNodeRefresh(FileNode node) => UpdateNodeStatus(node);
 
         bool UpdateNodeStatus(GenericNode node)
         {
@@ -129,15 +124,12 @@ namespace SourceControl.Managers
             node.Meta[META_ROOT] = null;
             node.Meta[META_STATUS] = VCItemStatus.Unknown;
 
-            if (node.Parent is GenericNode)
+            GenericNode parent = node.Parent as GenericNode;
+            if (parent?.Meta != null && parent.Meta.ContainsKey(META_VC))
             {
-                GenericNode parent = (GenericNode)node.Parent;
-                if (parent.Meta != null && parent.Meta.ContainsKey(META_VC))
-                {
-                    node.Meta[META_VC] = parent.Meta[META_VC];
-                    node.Meta[META_ROOT] = parent.Meta[META_ROOT];
-                    return;
-                }
+                node.Meta[META_VC] = parent.Meta[META_VC];
+                node.Meta[META_ROOT] = parent.Meta[META_ROOT];
+                return;
             }
 
             WatcherVCResult result = fsWatchers.ResolveVC(node.BackingPath);
@@ -227,21 +219,21 @@ namespace SourceControl.Managers
 
     public class ProjectSelectionState
     {
-        public int Files = 0;
-        public int Dirs = 0;
-        public int Unknown = 0;
-        public int Ignored = 0;
-        public int Added = 0;
-        public int Revert = 0;
-        public int Diff = 0;
-        public int Conflict = 0;
-        public int Modified = 0;
-        public int Replaced = 0;
-        public int Other = 0;
-        public int Total = 0;
-        public IVCManager Manager = null;
+        public int Files;
+        public int Dirs;
+        public int Unknown;
+        public int Ignored;
+        public int Added;
+        public int Revert;
+        public int Diff;
+        public int Conflict;
+        public int Modified;
+        public int Replaced;
+        public int Other;
+        public int Total;
+        public IVCManager Manager;
 
-        public ProjectSelectionState(ProjectTreeView tree)
+        public ProjectSelectionState(MultiSelectTreeView tree)
         {
             if (tree == null || tree.SelectedNodes.Count == 0)
                 return;

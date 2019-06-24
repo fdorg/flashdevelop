@@ -206,10 +206,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Initializes the <see cref="ImageList"/> by raising the <see cref="Populate"/> event.
         /// </summary>
-        public void Initialize()
-        {
-            Populate?.Invoke(this, EventArgs.Empty);
-        }
+        public void Initialize() => Populate?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
         /// Assigns the specified <see cref="EventHandler"/> to <see cref="Populate"/> and initializes the <see cref="ImageList"/> by calling <see cref="Initialize"/>.

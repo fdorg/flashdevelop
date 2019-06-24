@@ -73,7 +73,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     IDockContent content = DockPane.DisplayingContents[index];
                     if (content == null)
-                        throw (new ArgumentOutOfRangeException("index"));
+                        throw (new ArgumentOutOfRangeException(nameof(index)));
                     if (content.DockHandler.AutoHideTab == null)
                         content.DockHandler.AutoHideTab = (DockPanel.AutoHideStripControl.CreateTab(content));
                     return content.DockHandler.AutoHideTab as Tab;
@@ -170,7 +170,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 public AutoHideStateCollection()
                 {
-                    m_states = new AutoHideState[]  {   
+                    m_states = new[]  {   
                                                 new AutoHideState(DockState.DockTopAutoHide),
                                                 new AutoHideState(DockState.DockBottomAutoHide),
                                                 new AutoHideState(DockState.DockLeftAutoHide),
@@ -187,7 +187,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                             if (m_states[i].DockState == dockState)
                                 return m_states[i];
                         }
-                        throw new ArgumentOutOfRangeException("dockState");
+                        throw new ArgumentOutOfRangeException(nameof(dockState));
                     }
                 }
 
@@ -255,7 +255,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                         count++;
                     }
-                    throw new ArgumentOutOfRangeException("index");
+                    throw new ArgumentOutOfRangeException(nameof(index));
                 }
             }
 
@@ -337,7 +337,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return PanesLeft;
             if (dockState == DockState.DockRightAutoHide)
                 return PanesRight;
-            throw new ArgumentOutOfRangeException("dockState");
+            throw new ArgumentOutOfRangeException(nameof(dockState));
         }
 
         internal int GetNumberOfPanes(DockState dockState)

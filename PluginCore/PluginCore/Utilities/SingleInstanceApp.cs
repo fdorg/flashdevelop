@@ -149,19 +149,15 @@ namespace PluginCore.Utilities
         //2 utility methods for object serialization\deserialization
         private static object Deserialize(byte[] buffer)
         {
-            using (var stream = new MemoryStream(buffer))
-            {
-                return new BinaryFormatter().Deserialize(stream);
-            }
+            using var stream = new MemoryStream(buffer);
+            return new BinaryFormatter().Deserialize(stream);
         }
 
         private static byte[] Serialize(object obj)
         {
-            using (var stream = new MemoryStream())
-            {
-                new BinaryFormatter().Serialize(stream, obj);
-                return stream.ToArray();
-            }
+            using var stream = new MemoryStream();
+            new BinaryFormatter().Serialize(stream, obj);
+            return stream.ToArray();
         }
 
         public static bool AlreadyExists => _theInstance.Exists;

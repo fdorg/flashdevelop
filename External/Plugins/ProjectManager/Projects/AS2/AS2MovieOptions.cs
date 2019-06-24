@@ -10,7 +10,7 @@
         }
 
         public override OutputType[] OutputTypes =>
-            new OutputType[] { 
+            new[] { 
                 OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application };
 
         public override OutputType DefaultOutput(string platform)

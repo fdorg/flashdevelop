@@ -380,28 +380,28 @@ namespace ProjectManager.Controls.TreeView
         private Rectangle GetSwfRect(byte[] bytes)
         {
             BitArray ba = BitParser.GetBitValues(bytes);
-            int Nbits = (int)BitParser.ReadUInt32(ba, 5);
+            int Nbits = BitParser.ReadUInt32(ba, 5);
             int index = 5;
-            int xmin = (int)BitParser.ReadUInt32(ba, index, Nbits) / 20;
+            int xmin = BitParser.ReadUInt32(ba, index, Nbits) / 20;
             index += Nbits;
-            int xmax = (int)BitParser.ReadUInt32(ba, index, Nbits) / 20;
+            int xmax = BitParser.ReadUInt32(ba, index, Nbits) / 20;
             index += Nbits;
-            int ymin = (int)BitParser.ReadUInt32(ba, index, Nbits) / 20;
+            int ymin = BitParser.ReadUInt32(ba, index, Nbits) / 20;
             index += Nbits;
-            int ymax = (int)BitParser.ReadUInt32(ba, index, Nbits) / 20;
+            int ymax = BitParser.ReadUInt32(ba, index, Nbits) / 20;
             return new Rectangle(xmin, ymin, xmax, ymax);
         }
 
         public string FormatBytes(long bytes)
         {
             const int scale = 1024;
-            string[] orders = new string[] { "Gb", "Mb", "Kb", "b" };
+            string[] orders = new[] { "Gb", "Mb", "Kb", "b" };
             long max = (long)Math.Pow(scale, orders.Length - 1);
 
             foreach (string order in orders)
             {
                 if (bytes > max)
-                    return string.Format("{0:##.##} {1}", decimal.Divide(bytes, max), order);
+                    return $"{decimal.Divide(bytes, max):##.##} {order}";
 
                 max /= scale;
             }

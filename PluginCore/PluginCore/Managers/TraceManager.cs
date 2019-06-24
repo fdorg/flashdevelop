@@ -130,10 +130,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupData(string groupId, params string[] args)
         {
-            if (args is null || args.Length == 0)
-            {
-                return groupId;
-            }
+            if (args is null || args.Length == 0) return groupId;
             return groupId + ":" + string.Join(",", args);
         }
 

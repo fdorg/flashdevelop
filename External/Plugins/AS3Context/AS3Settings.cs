@@ -57,8 +57,8 @@ namespace AS3Context
         protected bool generateImports = DEFAULT_GENERATEIMPORTS;
         protected bool playAfterBuild = DEFAULT_PLAY;
         protected bool fixPackageAutomatically = DEFAULT_FIXPACKAGEAUTOMATICALLY;
-        protected string[] userClasspath = null;
-        protected InstalledSDK[] installedSDKs = null;
+        protected string[] userClasspath;
+        protected InstalledSDK[] installedSDKs;
 
         [Browsable(false)]
         public string LanguageId => "AS3";

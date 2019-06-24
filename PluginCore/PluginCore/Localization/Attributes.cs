@@ -11,17 +11,13 @@ namespace PluginCore.Localization
         /// <summary>
         /// Gets the localized string
         /// </summary>
-        protected override string GetLocalizedString(string key)
-        {
-            return TextHelper.GetString(key);
-        }
-
+        protected override string GetLocalizedString(string key) => TextHelper.GetString(key);
     }
 
     [AttributeUsage(AttributeTargets.All)]
     public class LocalizedDescriptionAttribute : DescriptionAttribute
     {
-        private bool initialized = false;
+        private bool initialized;
 
         public LocalizedDescriptionAttribute(string key) : base(key) { }
 
@@ -62,9 +58,6 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.Property)]
     public class RequiresRestartAttribute : Attribute
     {
-        public override bool Match(object obj)
-        {
-            return obj is RequiresRestartAttribute;
-        }
+        public override bool Match(object obj) => obj is RequiresRestartAttribute;
     }
 }
