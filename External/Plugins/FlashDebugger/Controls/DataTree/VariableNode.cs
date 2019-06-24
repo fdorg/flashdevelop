@@ -91,7 +91,7 @@ namespace FlashDebugger.Controls.DataTree
         public static string GetVariablePath(this Node node)
         {
             string ret = string.Empty;
-            if (node.Tag != null && node.Tag is string)
+            if (node.Tag is string)
                 return (string)node.Tag; // fix for: live tip value has no parent
             if (node.Parent != null) ret = node.Parent.GetVariablePath();
             if (node is VariableNode)

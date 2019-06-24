@@ -474,7 +474,7 @@ namespace AS3Context
 
         private static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
         {
-            if (model != null && model.MetaDatas != null)
+            if (model?.MetaDatas != null)
             {
                 foreach (ASMetaData meta in model.MetaDatas)
                 {
@@ -630,8 +630,7 @@ namespace AS3Context
 
         private static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
-            if (model == null || model.MetaDatas == null) 
-                return;
+            if (model?.MetaDatas == null) return;
             string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;
             foreach (ASMetaData meta in model.MetaDatas)
             {
@@ -705,8 +704,7 @@ namespace AS3Context
         #region context detection
         private static bool GetContext(object data)
         {
-            if (mxmlContext == null || mxmlContext.model == null) 
-                return false;
+            if (mxmlContext?.model == null) return false;
 
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci == null) return false;

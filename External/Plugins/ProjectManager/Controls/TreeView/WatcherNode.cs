@@ -180,7 +180,7 @@ namespace ProjectManager.Controls.TreeView
                 excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as string[];
             }
             // new folder name edition
-            if (Tree.PathToSelect != null && Tree.SelectedNode != null && Tree.SelectedNode is DirectoryNode && (Tree.SelectedNode as DirectoryNode).BackingPath == Tree.PathToSelect)
+            if (Tree.PathToSelect != null && Tree.SelectedNode is DirectoryNode && (Tree.SelectedNode as DirectoryNode).BackingPath == Tree.PathToSelect)
             {
                 DirectoryNode node = Tree.SelectedNode as DirectoryNode;
                 Tree.PathToSelect = null;

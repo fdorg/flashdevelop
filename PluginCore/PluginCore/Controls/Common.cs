@@ -923,7 +923,7 @@ namespace System.Windows.Forms
         {
             get
             {
-                if (this.Owner != null && this.Owner is StatusStrip)
+                if (Owner is StatusStrip)
                 {
                     return defaultStatusStripMargin;
                 }

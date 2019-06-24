@@ -95,7 +95,7 @@ namespace CodeFormatter.InfoCollector
         {
             if (tree.Tree==null)
             {
-                if (tree.Stop!=null && tree.Stop is CommonToken)
+                if (tree.Stop is CommonToken)
                 {
                     return ((CommonToken)tree.Stop).StopIndex+1; //this is necessary for implicit semicolon cases.  You will get an extra CR here
                 }

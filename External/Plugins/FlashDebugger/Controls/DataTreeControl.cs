@@ -280,7 +280,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
             VariableNode node = e.Node.Tag as VariableNode;
-            if (node == null || node.Variable == null)
+            if (node?.Variable == null)
             {
                 e.Value = false;
                 return;

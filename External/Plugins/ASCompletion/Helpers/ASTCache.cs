@@ -85,7 +85,7 @@ namespace ASCompletion.Helpers
                 try
                 {
                     var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                    if (context == null || context.Classpath == null)
+                    if (context?.Classpath == null)
                         return;
 
                     List<ClassModel> outdated;
@@ -158,7 +158,7 @@ namespace ASCompletion.Helpers
                 try
                 {
                     var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                    if (context == null || context.Classpath == null || PathExplorer.IsWorking)
+                    if (context?.Classpath == null || PathExplorer.IsWorking)
                     {
                         if (FinishedUpdate != null)
                             PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));

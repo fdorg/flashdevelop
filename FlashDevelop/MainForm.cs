@@ -1395,7 +1395,7 @@ namespace FlashDevelop
                     DockContent doc = OpenEditableDocument(file);
                     if (doc == null || ModifierKeys == Keys.Control) return;
                     DockContent drop = DocumentManager.FindDocument(sci) as DockContent;
-                    if (drop != null && drop.Pane != null)
+                    if (drop?.Pane != null)
                     {
                         doc.DockTo(drop.Pane, DockStyle.Fill, -1);
                         doc.Activate();

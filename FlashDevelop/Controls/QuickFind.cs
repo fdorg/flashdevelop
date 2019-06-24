@@ -420,7 +420,7 @@ namespace FlashDevelop.Controls
         private void HighlightTimerTick()
         {
             this.highlightTimer.Stop();
-            if (this.highlightTimer.Tag != null && this.highlightTimer.Tag is Hashtable)
+            if (highlightTimer.Tag is Hashtable)
             {
                 try
                 {

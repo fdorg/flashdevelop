@@ -170,7 +170,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (result == 2)    // HITTEST_CAPTION
                 {
                     DockPane theOnlyPane = (VisibleNestedPanes.Count == 1) ? VisibleNestedPanes[0] : null;
-                    if (theOnlyPane != null && theOnlyPane.ActiveContent != null)
+                    if (theOnlyPane?.ActiveContent != null)
                     {
                         theOnlyPane.ShowTabPageContextMenu(this, PointToClient(Control.MousePosition));
                         return;

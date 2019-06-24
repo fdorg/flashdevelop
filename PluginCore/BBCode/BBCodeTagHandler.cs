@@ -41,7 +41,7 @@ namespace PluginCore.BBCode
             if (!isHandleable(tagMatch))
                 return false;
 
-            if (_tm == null || _tm.bbCodeStyle == null)
+            if (_tm?.bbCodeStyle == null)
                 return false;
 
             return _handlers[_tmName](_tm);

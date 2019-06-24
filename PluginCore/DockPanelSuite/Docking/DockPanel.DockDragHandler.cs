@@ -789,7 +789,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     panel.UpdateDockWindowZOrder(Outline.Dock, Outline.FlagFullEdge);
                     DragSource.DockTo(panel, Outline.Dock);
                 }
-                if (DragSource is DockContentHandler && ((DockContentHandler)DragSource).Content is ITabbedDocument)
+                if ((DragSource as DockContentHandler)?.Content is ITabbedDocument)
                 {
                     ((DockContentHandler)DragSource).Content.DockHandler.Activate();
                 }

@@ -536,7 +536,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 buffer_=new byte[4096];
             }
 
-            if( (events_!=null)&&(events_.Progress!=null) ) {
+            if( events_?.Progress != null ) {
                 StreamUtils.Copy(stream, outputStream_, buffer_,
                     events_.Progress, events_.ProgressInterval, this, name);
             }
@@ -574,7 +574,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                             if ( buffer_ == null ) {
                                 buffer_ = new byte[4096];
                             }
-                            if ((events_ != null) && (events_.Progress != null))
+                            if (events_?.Progress != null)
                             {
                                 StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_,
                                     events_.Progress, events_.ProgressInterval, this, entry.Name, entry.Size);
