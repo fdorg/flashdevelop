@@ -76,7 +76,7 @@ namespace AirProperties
             get
             {
                 if (_rootNode == null) return "0.0";
-                else return _rootNode.NamespaceURI.Replace(_BaseAirNamespace, string.Empty);
+                return _rootNode.NamespaceURI.Replace(_BaseAirNamespace, string.Empty);
             }
         }
 
@@ -236,14 +236,14 @@ namespace AirProperties
         {
             var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
-            else return "";
+            return "";
         }
 
         private static string GetProperty(string property, XmlNode rootNode)
         {
             var propertyNode = rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
-            else return "";
+            return "";
         }
 
         public static void GetProperty(string property, TextBox field)
@@ -270,7 +270,8 @@ namespace AirProperties
                                     field.Text = childNode.InnerText.Trim();
                                     break;
                                 }
-                                else field.Text = "";
+
+                                field.Text = "";
                             }
                         }
                         else field.Text = "";

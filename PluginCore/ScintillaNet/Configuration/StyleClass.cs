@@ -229,14 +229,11 @@ namespace ScintillaNet.Configuration
                 if (c.ToArgb() == 0)
                 {
                     if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(int.Parse(aColor.Substring(2), NumberStyles.HexNumber));
-                    else 
+                    try
                     {
-                        try
-                        {
-                            return TO_COLORREF(int.Parse(aColor));
-                        }
-                        catch(Exception){}
+                        return TO_COLORREF(int.Parse(aColor));
                     }
+                    catch(Exception){}
                 }
                 return TO_COLORREF(c.ToArgb() & 0x00ffffff);
             }
@@ -258,14 +255,11 @@ namespace ScintillaNet.Configuration
                     v = _parent.MasterScintilla.GetValue(number);
                 }
                 if (number.IndexOfOrdinal("0x") == 0) return int.Parse(number.Substring(2), NumberStyles.HexNumber);
-                else
+                try
                 {
-                    try
-                    {
-                        return int.Parse(number);
-                    }
-                    catch(Exception){}
+                    return int.Parse(number);
                 }
+                catch(Exception){}
             }
             return 0;
 

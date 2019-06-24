@@ -55,7 +55,7 @@ namespace PluginCore.Helpers
             {
                 string custom = PluginBase.Settings.CustomSnippetDir;
                 if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                else return Path.Combine(BaseDir, "Snippets");
+                return Path.Combine(BaseDir, "Snippets");
             }
         }
 
@@ -68,7 +68,7 @@ namespace PluginCore.Helpers
             {
                 string custom = PluginBase.Settings.CustomTemplateDir;
                 if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                else return Path.Combine(BaseDir, "Templates");
+                return Path.Combine(BaseDir, "Templates");
             }
         }
 
@@ -81,7 +81,7 @@ namespace PluginCore.Helpers
             {
                 string custom = PluginBase.Settings.CustomProjectsDir;
                 if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                else return Path.Combine(AppDir, "Projects");
+                return Path.Combine(AppDir, "Projects");
             }
         }
 
@@ -215,13 +215,11 @@ namespace PluginCore.Helpers
                     Win32.PathCompactPathEx(sb, path, max, 0);
                     return sb.ToString();
                 }
-                else // For other platforms
-                {
-                    const string pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
-                    const string replacement = "$1$2...$3";
-                    if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
-                    else return path;
-                }
+
+                const string pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
+                const string replacement = "$1$2...$3";
+                if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
+                return path;
             }
             catch (Exception ex)
             {
@@ -244,7 +242,8 @@ namespace PluginCore.Helpers
                     Win32.GetShortPathName(longName, sb, max);
                     return sb.ToString();
                 }
-                else return longName; // For other platforms
+
+                return longName; // For other platforms
             }
             catch (Exception ex)
             {
@@ -266,7 +265,8 @@ namespace PluginCore.Helpers
                     Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
                     return longNameBuffer.ToString();
                 }
-                else return shortName; // For other platforms
+
+                return shortName; // For other platforms
             }
             catch (Exception ex)
             {

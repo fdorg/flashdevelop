@@ -131,13 +131,13 @@ namespace FlashDevelop.Utilities
 
     public class AvailablePlugin
     {
-        public bool IsActive = false;
-        public string Assembly = string.Empty;
-        public IPlugin Instance = null;
+        public bool IsActive;
+        public string Assembly;
+        public IPlugin Instance;
 
         public AvailablePlugin(string assembly)
         {
-            this.Assembly = assembly;
+            Assembly = assembly;
         }
         
     }

@@ -203,27 +203,29 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                     symbol = tree[subtree | (lookahead >> 9)];
                     input.DropBits(symbol & 15);
                     return symbol >> 4;
-                } else {
-                    int bits = input.AvailableBits;
-                    lookahead = input.PeekBits(bits);
-                    symbol = tree[subtree | (lookahead >> 9)];
-                    if ((symbol & 15) <= bits) {
-                        input.DropBits(symbol & 15);
-                        return symbol >> 4;
-                    } else {
-                        return -1;
-                    }
                 }
-            } else {
+
+                int bits = input.AvailableBits;
+                lookahead = input.PeekBits(bits);
+                symbol = tree[subtree | (lookahead >> 9)];
+                if ((symbol & 15) <= bits) {
+                    input.DropBits(symbol & 15);
+                    return symbol >> 4;
+                }
+
+                return -1;
+            }
+
+            {
                 int bits = input.AvailableBits;
                 lookahead = input.PeekBits(bits);
                 symbol = tree[lookahead];
                 if (symbol >= 0 && (symbol & 15) <= bits) {
                     input.DropBits(symbol & 15);
                     return symbol >> 4;
-                } else {
-                    return -1;
                 }
+
+                return -1;
             }
         }
     }

@@ -336,7 +336,8 @@ namespace XMLCompletion
                 delayOpenConfig.Start();
                 return "";
             }
-            else if (expr.EndsWith('+'))
+
+            if (expr.EndsWith('+'))
             {
                 if (lang.abbreviations.ContainsKey(expr))
                     expr = (string)lang.abbreviations[expr]; // expandos
@@ -349,7 +350,7 @@ namespace XMLCompletion
             int p = src.IndexOf('|');
             src = src.Replace("|", "");
             if (p < 0) return src;
-            else return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
+            return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
         }
 
         private static string expandZen(string expr)
@@ -534,7 +535,7 @@ namespace XMLCompletion
             string name = m.Groups[1].Value;
             if (name != "child" && settings.variables.ContainsKey(name)) 
                 return (string)settings.variables[name];
-            else return m.Value;
+            return m.Value;
         }
 
         private static string addIndent(string res)

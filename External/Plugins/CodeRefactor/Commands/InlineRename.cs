@@ -680,10 +680,6 @@ namespace CodeRefactor.Commands
                 end -= length;
                 OnUpdate();
             }
-            else
-            {
-                //OnCancel();
-            }
         }
 
         #endregion

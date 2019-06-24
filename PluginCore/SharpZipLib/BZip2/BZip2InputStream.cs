@@ -319,7 +319,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
             
             // 1528150659
             computedCombinedCRC = ((computedCombinedCRC << 1) & 0xFFFFFFFF) | (computedCombinedCRC >> 31);
-            computedCombinedCRC = computedCombinedCRC ^ (uint)computedBlockCRC;
+            computedCombinedCRC ^= (uint)computedBlockCRC;
         }
         
         void Complete() 
@@ -584,42 +584,42 @@ namespace ICSharpCode.SharpZipLib.BZip2
                         BlockOverrun();
                     }
                     continue;
-                } else {
-                    last++;
-                    if (last >= limitLast) {
-                        BlockOverrun();
-                    }
-                    
-                    byte tmp = yy[nextSym - 1];
-                    unzftab[seqToUnseq[tmp]]++;
-                    ll8[last] = seqToUnseq[tmp];
-                    
-                    for (int j = nextSym-1; j > 0; --j) {
-                        yy[j] = yy[j - 1];
-                    }
-                    yy[0] = tmp;
-                    
-                    if (groupPos == 0) {
-                        groupNo++;
-                        groupPos = BZip2Constants.GroupSize;
-                    }
-                    
-                    groupPos--;
-                    zt = selector[groupNo];
-                    zn = minLens[zt];
-                    zvec = BsR(zn);
-                    while (zvec > limit[zt][zn]) {
-                        zn++;
-                        while (bsLive < 1) {
-                            FillBuffer();
-                        }
-                        zj = (bsBuff >> (bsLive-1)) & 1;
-                        bsLive--;
-                        zvec = (zvec << 1) | zj;
-                    }
-                    nextSym = perm[zt][zvec - baseArray[zt][zn]];
-                    continue;
                 }
+
+                last++;
+                if (last >= limitLast) {
+                    BlockOverrun();
+                }
+                    
+                byte tmp = yy[nextSym - 1];
+                unzftab[seqToUnseq[tmp]]++;
+                ll8[last] = seqToUnseq[tmp];
+                    
+                for (int j = nextSym-1; j > 0; --j) {
+                    yy[j] = yy[j - 1];
+                }
+                yy[0] = tmp;
+                    
+                if (groupPos == 0) {
+                    groupNo++;
+                    groupPos = BZip2Constants.GroupSize;
+                }
+                    
+                groupPos--;
+                zt = selector[groupNo];
+                zn = minLens[zt];
+                zvec = BsR(zn);
+                while (zvec > limit[zt][zn]) {
+                    zn++;
+                    while (bsLive < 1) {
+                        FillBuffer();
+                    }
+                    zj = (bsBuff >> (bsLive-1)) & 1;
+                    bsLive--;
+                    zvec = (zvec << 1) | zj;
+                }
+                nextSym = perm[zt][zvec - baseArray[zt][zn]];
+                continue;
             }
         }
         

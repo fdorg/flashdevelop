@@ -47,11 +47,12 @@ namespace FileExplorer
             {
                 return compareResult;
             }
-            else if (this.orderOfSort == SortOrder.Descending)
+
+            if (this.orderOfSort == SortOrder.Descending)
             {
                 return (-compareResult);
             }
-            else return 0;
+            return 0;
         }
     
         /// <summary>
@@ -146,8 +147,8 @@ namespace FileExplorer
             int numX = int.Parse(xVal);
             int numY = int.Parse(yVal);
             if (numX > numY) return -1;
-            else if(numX < numY) return 1;
-            else return 0;
+            if(numX < numY) return 1;
+            return 0;
         }
         
         /// <summary>

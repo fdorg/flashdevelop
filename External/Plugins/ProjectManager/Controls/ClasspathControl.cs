@@ -409,7 +409,7 @@ namespace ProjectManager.Controls
             {
                 ClasspathEntry entry = obj as ClasspathEntry;
                 if (entry != null) return entry.Classpath == Classpath;
-                else return base.Equals(obj);
+                return base.Equals(obj);
             }
 
             public override int GetHashCode()

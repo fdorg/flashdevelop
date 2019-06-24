@@ -94,7 +94,8 @@ namespace ProjectManager.Actions
                 }
                 return false;
             }
-            else if (project.OutputType == OutputType.CustomBuild)
+
+            if (project.OutputType == OutputType.CustomBuild)
             {
                 // validate commands not empty
                 if (project.PreBuildEvent.Trim().Length == 0 && project.PostBuildEvent.Trim().Length == 0)
@@ -129,7 +130,7 @@ namespace ProjectManager.Actions
                     return false;
                 }
             }
-            
+
             // close running AIR projector
             if (project.MovieOptions.Platform.StartsWithOrdinal("AIR"))
             {
@@ -158,12 +159,10 @@ namespace ProjectManager.Actions
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.JsflNotFound"));
                 return false;
             }
-            else
-            {
-                DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CallFlashIDE", cmd);
-                EventManager.DispatchEvent(project, de);
-                return de.Handled;
-            }
+
+            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CallFlashIDE", cmd);
+            EventManager.DispatchEvent(project, de);
+            return de.Handled;
         }
 
         public bool FDBuild(Project project, bool runOutput, bool releaseMode, InstalledSDK sdk)
@@ -385,7 +384,7 @@ namespace ProjectManager.Actions
             DataEvent de = new DataEvent(EventType.Command, "ASCompletion.InstalledSDKs", infos);
             EventManager.DispatchEvent(null, de);
             if (infos.ContainsKey("sdks") && infos["sdks"] != null) return (InstalledSDK[])infos["sdks"];
-            else return null;
+            return null;
         }
     }
 

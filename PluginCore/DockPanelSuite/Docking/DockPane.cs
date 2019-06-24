@@ -237,10 +237,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 if (content.DockHandler.TabPageContextMenuStrip != null)
                     return content.DockHandler.TabPageContextMenuStrip;
-                else
-                {
-                    return content.DockHandler.TabPageContextMenu;
-                }
+                return content.DockHandler.TabPageContextMenu;
             }
         }
 
@@ -306,8 +303,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 if (Appearance == AppearanceStyle.ToolWindow)
                     return TabStripRectangle_ToolWindow;
-                else
-                    return TabStripRectangle_Document;
+                return TabStripRectangle_Document;
             }
         }
 
@@ -366,14 +362,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         public bool HasCaption
         {
             get
-            {   
+            {
                 if (DockState == DockState.Document ||
                     DockState == DockState.Hidden ||
                     DockState == DockState.Unknown ||
                     (DockState == DockState.Float && FloatWindow.VisibleNestedPanes.Count <= 1))
                     return false;
-                else
-                    return true;
+                return true;
             }
         }
 
@@ -1081,8 +1076,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 if (floatPane != null && content.DockHandler.FloatPane != floatPane)
                     return null;
-                else
-                    floatPane = content.DockHandler.FloatPane;
+                floatPane = content.DockHandler.FloatPane;
             }
 
             return floatPane;

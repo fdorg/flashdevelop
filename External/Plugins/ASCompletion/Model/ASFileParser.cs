@@ -423,10 +423,7 @@ namespace ASCompletion.Model
                 }
             }
             // this is a package
-            else
-            {
-                // ignore
-            }
+
             return fileModel;
         }
         #endregion
@@ -1412,7 +1409,7 @@ namespace ASCompletion.Model
                                 var meta = LookupMeta(ref src, ref i);
                                 if (meta != null)
                                 {
-                                    carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
+                                    carriedMetaData ??= new List<ASMetaData>();
                                     carriedMetaData.Add(meta);
                                 }
                             }

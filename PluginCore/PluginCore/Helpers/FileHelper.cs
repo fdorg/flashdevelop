@@ -28,20 +28,19 @@ namespace PluginCore.Helpers
                 fo.pFrom = path;
                 return fo.Execute();
             }
-            else // Delete directly on other platforms
+
+            if (File.Exists(path))
             {
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                    return true;
-                }
-                else if (Directory.Exists(path))
-                {
-                    Directory.Delete(path);
-                    return true;
-                }
-                return false;
+                File.Delete(path);
+                return true;
             }
+
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -246,14 +245,15 @@ namespace PluginCore.Helpers
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
-            else if (File.Exists(path))
+
+            if (File.Exists(path))
             {
                 string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
                 string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
-            else return true;
+            return true;
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace PluginCore.Helpers
                 if (c > 128)
                 {
                     if ((c >= 254)) return true;
-                    else if (c >= 252) bits = 6;
+                    if (c >= 252) bits = 6;
                     else if (c >= 248) bits = 5;
                     else if (c >= 240) bits = 4;
                     else if (c >= 224) bits = 3;

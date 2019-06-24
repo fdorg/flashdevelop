@@ -105,16 +105,14 @@ namespace FlashDevelop.Managers
         {
             if (so.LineCount != sci.LineCount) return;
             sci.Refresh(); // Update the scintilla control state
-            for (int i = 0; i < so.FoldedLines.Count; i++)
+            foreach (var foldedLine in so.FoldedLines)
             {
-                int foldedLine = so.FoldedLines[i];
                 sci.ToggleFold(foldedLine);
             }
             if (so.BookmarkedLines != null)
             {
-                for (int i = 0; i < so.BookmarkedLines.Count; i++)
+                foreach (var bookmarkedLine in so.BookmarkedLines)
                 {
-                    int bookmarkedLine = so.BookmarkedLines[i];
                     sci.MarkerAdd(bookmarkedLine, 0);
                 }
                 sci.Refresh(); // Update again

@@ -178,7 +178,8 @@ namespace FlashDebugger
                         return true;
                     }
                 }
-                else return true;
+
+                return true;
             }
 
             return true;

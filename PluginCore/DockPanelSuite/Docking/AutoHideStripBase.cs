@@ -331,14 +331,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (dockState == DockState.DockTopAutoHide)
                 return PanesTop;
-            else if (dockState == DockState.DockBottomAutoHide)
+            if (dockState == DockState.DockBottomAutoHide)
                 return PanesBottom;
-            else if (dockState == DockState.DockLeftAutoHide)
+            if (dockState == DockState.DockLeftAutoHide)
                 return PanesLeft;
-            else if (dockState == DockState.DockRightAutoHide)
+            if (dockState == DockState.DockRightAutoHide)
                 return PanesRight;
-            else
-                throw new ArgumentOutOfRangeException("dockState");
+            throw new ArgumentOutOfRangeException("dockState");
         }
 
         internal int GetNumberOfPanes(DockState dockState)
@@ -387,14 +386,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             int height = MeasureHeight();
             if (dockState == DockState.DockTopAutoHide && PanesTop.Count > 0)
                 return new Rectangle(RectangleTopLeft.Width, 0, Width - RectangleTopLeft.Width - RectangleTopRight.Width, height);
-            else if (dockState == DockState.DockBottomAutoHide && PanesBottom.Count > 0)
+            if (dockState == DockState.DockBottomAutoHide && PanesBottom.Count > 0)
                 return new Rectangle(RectangleBottomLeft.Width, Height - height, Width - RectangleBottomLeft.Width - RectangleBottomRight.Width, height);
-            else if (dockState == DockState.DockLeftAutoHide && PanesLeft.Count > 0)
+            if (dockState == DockState.DockLeftAutoHide && PanesLeft.Count > 0)
                 return new Rectangle(0, RectangleTopLeft.Width, height, Height - RectangleTopLeft.Height - RectangleBottomLeft.Height);
-            else if (dockState == DockState.DockRightAutoHide && PanesRight.Count > 0)
+            if (dockState == DockState.DockRightAutoHide && PanesRight.Count > 0)
                 return new Rectangle(Width - height, RectangleTopRight.Width, height, Height - RectangleTopRight.Height - RectangleBottomRight.Height);
-            else
-                return Rectangle.Empty;
+            return Rectangle.Empty;
         }
 
         private GraphicsPath m_displayingArea = null;

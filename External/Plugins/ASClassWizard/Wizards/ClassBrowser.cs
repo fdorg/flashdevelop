@@ -123,7 +123,8 @@ namespace ASClassWizard.Wizards
                 resultCount++;
                 return true;
             }
-            else return false;
+
+            return false;
         }
 
         /// <summary>

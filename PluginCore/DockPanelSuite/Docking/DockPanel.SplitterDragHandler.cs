@@ -105,8 +105,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Rectangle rect = GetSplitterOutlineBounds(ptMouse);
                 if (DragSource.IsVertical)
                     return rect.X - RectSplitter.X;
-                else
-                    return rect.Y - RectSplitter.Y;
+                return rect.Y - RectSplitter.Y;
             }
 
             private Rectangle GetSplitterOutlineBounds(Point ptMouse)

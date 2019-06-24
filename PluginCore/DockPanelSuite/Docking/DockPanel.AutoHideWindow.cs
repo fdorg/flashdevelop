@@ -214,8 +214,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                             speedFactor = remainPixels;
                             break;
                         }
-                        else
-                            speedFactor = remainPixels * (int)elapsedPerMove.TotalMilliseconds / (int)((time - elapsedTime).TotalMilliseconds);
+
+                        speedFactor = remainPixels * (int)elapsedPerMove.TotalMilliseconds / (int)((time - elapsedTime).TotalMilliseconds);
                         if (speedFactor >= 1)
                             break;
                     }
@@ -581,7 +581,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 return Parent?.RectangleToClient(RectangleToScreen(rectAutoHideWindow)) ?? Rectangle.Empty;
             }
-            else return rectAutoHideWindow;
+
+            return rectAutoHideWindow;
         }
 
         internal void RefreshAutoHideStrip()

@@ -276,7 +276,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
                 if (color != Color.Empty) return color;
-                else return Color.FromArgb(204, 199, 186);
+                return Color.FromArgb(204, 199, 186);
             }
         }
 
@@ -295,7 +295,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ForeColor");
                 }
                 if (color != Color.Empty) return color;
-                else return DockPane.IsActivated ? ActiveTextColor : InactiveTextColor;
+                return DockPane.IsActivated ? ActiveTextColor : InactiveTextColor;
             }
         }
 
@@ -307,7 +307,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (DockPane.IsActivated) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ActiveImageColor");
                 else color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.ImageColor");
                 if (color != Color.Empty) return color;
-                else return TextColor;
+                return TextColor;
             }
         }
 
@@ -321,8 +321,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 if (RightToLeft == RightToLeft.No)
                     return _textFormat;
-                else
-                    return _textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
+                return _textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
             }
         }
 
@@ -426,7 +425,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int height = rectCaption.Height - ButtonGapTop - ButtonGapBottom;
             if (buttonHeight < height)
             {
-                buttonWidth = buttonWidth * (height / buttonHeight);
+                buttonWidth *= (height / buttonHeight);
                 buttonHeight = height;
             }
             Size buttonSize = new Size(buttonWidth, buttonHeight);

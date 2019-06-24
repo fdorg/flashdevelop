@@ -71,12 +71,10 @@ namespace PluginCore.Controls
 
                 return true;
             }
-            else
-            {
-                ctxMenuPtr = IntPtr.Zero;
-                _oContextMenu = null;
-                return false;
-            }
+
+            ctxMenuPtr = IntPtr.Zero;
+            _oContextMenu = null;
+            return false;
         }
         #endregion
 
@@ -1561,8 +1559,7 @@ namespace PluginCore.Controls
         {
             if (((uint)ptr & 0x80000000) == 0x80000000)
                 return ((uint)ptr >> 16);
-            else
-                return ((uint)ptr >> 16) & 0xffff;
+            return ((uint)ptr >> 16) & 0xffff;
         }
 
         /// <summary>

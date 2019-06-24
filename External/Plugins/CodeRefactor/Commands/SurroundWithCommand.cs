@@ -95,12 +95,13 @@ namespace CodeRefactor.Commands
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else if (File.Exists(global))
+
+            if (File.Exists(global))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else return null;
+            return null;
         }
 
     }

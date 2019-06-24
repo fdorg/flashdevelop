@@ -15,11 +15,11 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void OpenOldTabDocument()
         {
-            for (int i = 0; i < OldTabs.Count; i++)
+            foreach (var tab in OldTabs)
             {
-                if (DocumentManager.FindDocument(OldTabs[i]) == null)
+                if (DocumentManager.FindDocument(tab) == null)
                 {
-                    Globals.MainForm.OpenEditableDocument(OldTabs[i]);
+                    Globals.MainForm.OpenEditableDocument(tab);
                     break;
                 }
             }

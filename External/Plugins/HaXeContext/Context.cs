@@ -1488,10 +1488,6 @@ namespace HaXeContext
                 }
             }
             // not found
-            else
-            {
-                //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-            }
 
             topLevel.Members.Add(new MemberModel(features.ThisKey, "", FlagType.Variable, Visibility.Public));
             topLevel.Members.Add(new MemberModel(features.BaseKey, "", FlagType.Variable, Visibility.Public));

@@ -411,7 +411,7 @@ namespace PluginCore.FRService
             returnAllMatches = false;
             List<SearchMatch> res = SearchSource(input, startIndex, startLine);
             if (res.Count > 0) return res[0];
-            else return null;
+            return null;
         }
 
         /// <summary>

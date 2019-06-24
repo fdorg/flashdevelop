@@ -642,7 +642,7 @@ namespace TaskListPanel
         private int FindImageIndex(string p)
         {
             if (this.groups.Contains(p)) return this.groups.IndexOf(p);
-            else return -1;
+            return -1;
         }
 
         /// <summary>

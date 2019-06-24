@@ -132,8 +132,7 @@ namespace WeifenLuo.WinFormsUI
                 {
                     if (ImageList == null || ImageIndexEnabled == -1)
                         return null;
-                    else
-                        return ImageList.Images[m_imageIndexEnabled];
+                    return ImageList.Images[m_imageIndexEnabled];
                 }
                 catch
                 {
@@ -167,8 +166,7 @@ namespace WeifenLuo.WinFormsUI
                 {
                     if (ImageList == null || ImageIndexDisabled == -1)
                         return null;
-                    else
-                        return ImageList.Images[m_imageIndexDisabled];
+                    return ImageList.Images[m_imageIndexDisabled];
                 }
                 catch
                 {

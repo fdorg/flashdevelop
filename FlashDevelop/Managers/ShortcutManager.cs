@@ -61,8 +61,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ShortcutItem GetRegisteredItem(string id)
         {
-            ShortcutItem item;
-            return RegisteredItems.TryGetValue(id, out item) ? item : null;
+            return RegisteredItems.TryGetValue(id, out var item) ? item : null;
         }
 
         /// <summary>
@@ -143,7 +142,7 @@ namespace FlashDevelop.Managers
             bool view = Globals.Settings.ViewShortcuts;
             if (item?.Tag != null)
             {
-                string id = string.Empty;
+                string id;
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');
                 if (ids.Length == 2)
                 {
@@ -153,9 +152,8 @@ namespace FlashDevelop.Managers
                 Keys keys = Globals.MainForm.GetShortcutItemKeys(id);
                 if (keys != Keys.None)
                 {
-                    if (item is ToolStripMenuItem)
+                    if (item is ToolStripMenuItem casted)
                     {
-                        var casted = item as ToolStripMenuItem;
                         if (casted.ShortcutKeys == Keys.None)
                         {
                             string keytext = DataConverter.KeysToString(keys);
@@ -167,7 +165,7 @@ namespace FlashDevelop.Managers
                         int end = item.ToolTipText.IndexOfOrdinal(" (");
                         string keytext = view ? " (" + DataConverter.KeysToString(keys) + ")" : "";
                         if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
-                        else item.ToolTipText = item.ToolTipText + keytext;
+                        else item.ToolTipText += keytext;
                     }
                 }
             }

@@ -62,7 +62,8 @@ namespace FlashDebugger.Controls.DataTree
 
                     return typeStr;
                 }
-                else if (type == VariableType_.NUMBER)
+
+                if (type == VariableType_.NUMBER)
                 {
                     double number = ((Double)m_Value.getValueAsObject()).doubleValue();
                     if (!double.IsNaN(number) && (double)(long)number == number)
@@ -73,7 +74,8 @@ namespace FlashDebugger.Controls.DataTree
                             {
                                 return number + " [0x" + ((int)number).ToString("x") + "]";
                             }
-                            else if (number < 0 || number > 9)
+
+                            if (number < 0 || number > 9)
                             {
                                 return number + " [0x" + ((long)number).ToString("x") + "]";
                             }
@@ -134,26 +136,28 @@ namespace FlashDebugger.Controls.DataTree
                     return typeStr;
 
                 }
-                else if (type == VariableType_.NUMBER)
+
+                if (type == VariableType_.NUMBER)
                 {
                     return "Number";
                 }
-                else if (type == VariableType_.BOOLEAN)
+                if (type == VariableType_.BOOLEAN)
                 {
                     return "Boolean";
                 }
-                else if (type == VariableType_.STRING)
+                if (type == VariableType_.STRING)
                 {
                     return "String";
                 }
-                else if (type == VariableType_.NULL)
+                if (type == VariableType_.NULL)
                 {
                     return "null";
                 }
-                else if (type == VariableType_.FUNCTION)
+                if (type == VariableType_.FUNCTION)
                 {
                     return "Function";
                 }
+
                 return null;
             }
         }
@@ -172,7 +176,8 @@ namespace FlashDebugger.Controls.DataTree
                     {
                         return m_Value.getTypeName().replaceAll("::", ".").replaceAll("@", " - ").ToString();
                     }
-                    else if (type == VariableType_.FUNCTION)
+
+                    if (type == VariableType_.FUNCTION)
                     {
                         return "Function - " + m_Value;
                     }

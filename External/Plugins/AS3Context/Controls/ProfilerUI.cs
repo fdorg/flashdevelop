@@ -366,8 +366,7 @@ namespace AS3Context.Controls
         {
             if (PluginBase.CurrentProject != null)
                 return PathHelper.ResolvePath(path, Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath));
-            else
-                return PathHelper.ResolvePath(path);
+            return PathHelper.ResolvePath(path);
         }
 
         private FlashConnect.Settings GetFlashConnectSettings()

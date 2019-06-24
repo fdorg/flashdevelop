@@ -238,8 +238,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     TextFormatFlags.VerticalCenter;
                 if (RightToLeft == RightToLeft.Yes)
                     return textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
-                else
-                    return textFormat;
+                return textFormat;
             }
         }
 
@@ -257,8 +256,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     TextFormatFlags.HorizontalCenter;
                  if (RightToLeft == RightToLeft.Yes)
                      return textFormat | TextFormatFlags.RightToLeft;
-                 else
-                     return textFormat;
+                 return textFormat;
             }
         }
 
@@ -279,7 +277,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 string tabSize = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabSize");
                 if (tabSize == "Large") return ScaleHelper.Scale(_DocumentTabGapTop - 2);
-                else return ScaleHelper.Scale(_DocumentTabGapTop);
+                return ScaleHelper.Scale(_DocumentTabGapTop);
             }
         }
 
@@ -296,7 +294,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 string tabStyle = PluginCore.PluginBase.MainForm.GetThemeValue("VS2005DockPaneStrip.TabStyle");
                 if (tabStyle == "Rect") return ScaleHelper.Scale(_DocumentIconGapLeft - 4);
-                else return ScaleHelper.Scale(_DocumentIconGapLeft); 
+                return ScaleHelper.Scale(_DocumentIconGapLeft);
             }
         }
 
@@ -314,7 +312,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBorderColor");
                 if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
+                return SystemPens.ControlDark;
             }
         }
 
@@ -324,7 +322,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolBorderColor");
                 if (color != Color.Empty) return new Pen(color);
-                else return Pens.Transparent;
+                return Pens.Transparent;
             }
         }
 
@@ -335,7 +333,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveBorder");
                 if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
+                return SystemPens.ControlDark;
             }
         }
 
@@ -346,7 +344,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabInactiveBorder");
                 if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark;
+                return SystemPens.ControlDark;
             }
         }
 
@@ -357,11 +355,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveBackColor");
                 if (color != Color.Empty) return new SolidBrush(color);
-                else if (PluginCore.PluginBase.Settings.UseSystemColors)
+                if (PluginCore.PluginBase.Settings.UseSystemColors)
                 {
                     return SystemBrushes.Control;
                 }
-                else return Brushes.White; 
+                return Brushes.White;
             }
         }
 
@@ -372,11 +370,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocActiveBackColor");
                 if (color != Color.Empty) return new SolidBrush(color);
-                else if (PluginCore.PluginBase.Settings.UseSystemColors)
+                if (PluginCore.PluginBase.Settings.UseSystemColors)
                 {
                     return SystemBrushes.ControlLightLight;
                 }
-                else return Brushes.White;  
+                return Brushes.White;
             }
         }
 
@@ -389,7 +387,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ToolActiveForeColor");
                 if (color == Color.Empty) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText; 
+                return SystemColors.ControlText;
             }
         }
 
@@ -400,7 +398,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.DocTabActiveForeColor");
                 if (color == Color.Empty) color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText; 
+                return SystemColors.ControlText;
             }
         }
 
@@ -410,7 +408,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlDarkDark; 
+                return SystemColors.ControlDarkDark;
             }
         }
 
@@ -420,7 +418,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.TabForeColor");
                 if (color != Color.Empty) return color;
-                else return SystemColors.ControlText; 
+                return SystemColors.ControlText;
             }
         }
 
@@ -430,7 +428,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005DockPaneStrip.ImageColor");
                 if (color != Color.Empty) return color;
-                else return ColorDocumentActiveText;
+                return ColorDocumentActiveText;
             }
         }
 
@@ -521,8 +519,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return MeasureHeight_ToolWindow();
-            else
-                return MeasureHeight_Document();
+            return MeasureHeight_Document();
         }
 
         private int MeasureHeight_ToolWindow()
@@ -592,8 +589,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (Appearance == DockPane.AppearanceStyle.Document)
                 return GetOutline_Document(index);
-            else
-                return GetOutline_ToolWindow(index);
+            return GetOutline_ToolWindow(index);
 
         }
 
@@ -842,8 +838,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetMaxTabWidth_ToolWindow(index);
-            else
-                return GetMaxTabWidth_Document(index);
+            return GetMaxTabWidth_Document(index);
         }
 
         private int GetMaxTabWidth_ToolWindow(int index)
@@ -864,8 +859,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (DockPane.DockPanel.ShowDocumentIcon)
                 return sizeText.Width + DocumentIconWidth + DocumentIconGapLeft + DocumentIconGapRight + DocumentTextGapRight;
-            else
-                return sizeText.Width + DocumentIconGapLeft + DocumentTextGapRight;
+            return sizeText.Width + DocumentIconGapLeft + DocumentTextGapRight;
         }
 
         private void DrawTabStrip(Graphics g)
@@ -928,8 +922,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetTabRectangle_ToolWindow(index);
-            else
-                return GetTabRectangle_Document(index);
+            return GetTabRectangle_Document(index);
         }
 
         private Rectangle GetTabRectangle_ToolWindow(int index)
@@ -960,8 +953,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetTabOutline_ToolWindow(tab, rtlTransform, toScreen);
-            else
-                return GetTabOutline_Document(tab, rtlTransform, toScreen, false);
+            return GetTabOutline_Document(tab, rtlTransform, toScreen, false);
         }
 
         private GraphicsPath GetTabOutline_ToolWindow(Tab tab, bool rtlTransform, bool toScreen)
@@ -1244,8 +1236,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 if (Appearance == DockPane.AppearanceStyle.Document)
                     return TabStripRectangle_Document;
-                else
-                    return TabStripRectangle_ToolWindow;
+                return TabStripRectangle_ToolWindow;
             }
         }
 
@@ -1344,7 +1335,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             var lastItem = ts.Items[ts.Items.Count - 1];
             if (lastItem.Bounds.Bottom < ts.Height && firstItem.Bounds.Top > 0)
                 return;
-            delta = delta / -4;
+            delta /= -4;
             if (delta < 0 && firstItem.Bounds.Top - delta > scrollButtonHeight)
             {
                 delta = firstItem.Bounds.Top - scrollButtonHeight;
@@ -1407,7 +1398,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int height = rectTabStrip.Height - DocumentButtonGapTop - DocumentButtonGapBottom;
             if (buttonHeight < height)
             {
-                buttonWidth = buttonWidth * (height / buttonHeight);
+                buttonWidth *= (height / buttonHeight);
                 buttonHeight = height;
             }
             Size buttonSize = new Size(buttonWidth, buttonHeight);

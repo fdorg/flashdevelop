@@ -108,46 +108,43 @@ namespace FlashDebugger.Controls
                     // Cursor Top Left
                     return Win32.HitTest.HTTOPLEFT;
                 }
-                else if (Y > (Height - cornerHeight))
+
+                if (Y > (Height - cornerHeight))
                 {
                     // Cursor Bottom Left
                     return Win32.HitTest.HTBOTTOMLEFT;
                 }
-                else
-                {
-                    // Cursor Left
-                    return Win32.HitTest.HTLEFT;
-                }
+// Cursor Left
+                return Win32.HitTest.HTLEFT;
             }
-            else if (X > (Width - cornerWidth))
+
+            if (X > (Width - cornerWidth))
             {
                 if (Y < cornerHeight)
                 {
                     // Cursor Top Right
                     return Win32.HitTest.HTTOPRIGHT;
                 }
-                else if (Y > (Height - cornerHeight))
+
+                if (Y > (Height - cornerHeight))
                 {
                     // Cursor Bottom Right
                     return Win32.HitTest.HTBOTTOMRIGHT;
                 }
-                else
-                {
-                    // Cursor Right
-                    return Win32.HitTest.HTRIGHT;
-                }
+// Cursor Right
+                return Win32.HitTest.HTRIGHT;
             }
-            else if (Y < cornerHeight)
+            if (Y < cornerHeight)
             {
                 // Cursor Top
                 return Win32.HitTest.HTTOP;
             }
-            else if (Y > (Height - cornerHeight))
+            if (Y > (Height - cornerHeight))
             {
                 // Cursor Bottom
                 return Win32.HitTest.HTBOTTOM;
             }
-            else return Win32.HitTest.HTCLIENT;
+            return Win32.HitTest.HTCLIENT;
         }
 
         private void DoResize()

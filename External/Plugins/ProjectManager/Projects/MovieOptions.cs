@@ -121,7 +121,7 @@ namespace ProjectManager.Projects
                 foreach (string target in debugger)
                 {
                     if (target == "*") return true;
-                    else if (targetBuild.StartsWith(target, StringComparison.Ordinal)) return true;
+                    if (targetBuild.StartsWith(target, StringComparison.Ordinal)) return true;
                 }
             }
             return false;

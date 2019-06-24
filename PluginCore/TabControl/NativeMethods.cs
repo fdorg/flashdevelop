@@ -106,11 +106,11 @@ namespace System.Windows.Forms
             return dWord.ToInt32() & 0xffff;
         }
 
-        public static int HiWord(IntPtr dWord){
+        public static int HiWord(IntPtr dWord)
+        {
             if ((dWord.ToInt32() & 0x80000000) == 0x80000000)
                 return (dWord.ToInt32() >> 16);
-            else
-                return (dWord.ToInt32() >> 16) & 0xffff;
+            return (dWord.ToInt32() >> 16) & 0xffff;
         }
  
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts")]

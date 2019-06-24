@@ -421,9 +421,10 @@ namespace AirProperties
             if (item != null)
             {
                 if (item == TextHelper.GetString("Locale.Default")) return string.Empty;
-                else return item;
+                return item;
             }
-            else return string.Empty;
+
+            return string.Empty;
         }
 
         private bool GetSelectedLocaleIsDefault()
@@ -2369,14 +2370,14 @@ namespace AirProperties
                 List<string> selectedValues = null;
                 foreach (ListItem item in IPhoneBGModesCombo.CheckedItems)
                 {
-                    selectedValues = selectedValues ?? new List<string>();
+                    selectedValues ??= new List<string>();
                     selectedValues.Add(item.Value);
                 }
                 iPhoneAdditions["UIBackgroundModes"] = selectedValues;
                 selectedValues = null;
                 foreach (ListItem item in IPhoneDeviceCombo.CheckedItems)
                 {
-                    selectedValues = selectedValues ?? new List<string>();
+                    selectedValues ??= new List<string>();
                     selectedValues.Add(item.Value);
                 }
                 iPhoneAdditions["UIDeviceFamily"] = selectedValues;

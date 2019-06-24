@@ -390,13 +390,13 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public int ExternalFileAttributes 
         {
-            get {
+            get
+            {
                 if ((known & Known.ExternalAttributes) == 0) {
                     return -1;
-                } 
-                else {
-                    return externalFileAttributes;
                 }
+
+                return externalFileAttributes;
             }
             
             set {
@@ -523,29 +523,28 @@ namespace ICSharpCode.SharpZipLib.Zip
                 // Return recorded version if known.
                 if (versionToExtract != 0) {
                     return versionToExtract;
-                } 
-                else {
-                    int result = 10;
-                    if (AESKeySize > 0) {
-                        result = ZipConstants.VERSION_AES;          // Ver 5.1 = AES
-                    }
-                    else if (CentralHeaderRequiresZip64) {
-                        result = ZipConstants.VersionZip64; 
-                    }
-                    else if (CompressionMethod.Deflated == method) {
-                        result = 20;
-                    } 
-                    else if (IsDirectory) {
-                        result = 20;
-                    } 
-                    else if (IsCrypted) {
-                        result = 20;
-                    } 
-                    else if (HasDosAttributes(0x08) ) {
-                        result = 11;
-                    }
-                    return result;
                 }
+
+                int result = 10;
+                if (AESKeySize > 0) {
+                    result = ZipConstants.VERSION_AES;          // Ver 5.1 = AES
+                }
+                else if (CentralHeaderRequiresZip64) {
+                    result = ZipConstants.VersionZip64; 
+                }
+                else if (CompressionMethod.Deflated == method) {
+                    result = 20;
+                } 
+                else if (IsDirectory) {
+                    result = 20;
+                } 
+                else if (IsCrypted) {
+                    result = 20;
+                } 
+                else if (HasDosAttributes(0x08) ) {
+                    result = 11;
+                }
+                return result;
             }
         }
 
@@ -621,13 +620,13 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </remarks>
         public long DosTime 
         {
-            get {
+            get
+            {
                 if ((known & Known.Time) == 0) {
                     return 0;
-                } 
-                else {
-                    return dosTime;
                 }
+
+                return dosTime;
             }
             
             set {
@@ -923,10 +922,9 @@ namespace ICSharpCode.SharpZipLib.Zip
                         }
                         break;
                     }
-                    else {
-                        // An unknown NTFS tag so simply skip it.
-                        extraData.Skip(ntfsLength);
-                    }
+
+                    // An unknown NTFS tag so simply skip it.
+                    extraData.Skip(ntfsLength);
                 }
             }
             else if ( extraData.Find(0x5455) ) {
@@ -956,7 +954,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 // Set version and flag for Zipfile.CreateAndInitDecryptionStream
                 versionToExtract = ZipConstants.VERSION_AES;            // Ver 5.1 = AES see "Version" getter
                 // Set StrongEncryption flag for ZipFile.CreateAndInitDecryptionStream
-                Flags = Flags | (int)GeneralBitFlags.StrongEncryption;
+                Flags |= (int)GeneralBitFlags.StrongEncryption;
                 //
                 // Unpack AES extra data field see http://www.winzip.com/aes_info.htm
                 int length = extraData.ValueLength;         // Data size currently 7

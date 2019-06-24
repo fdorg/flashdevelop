@@ -19,10 +19,10 @@ namespace ProjectManager.Projects.AS3
         
         public override string Name 
         { 
-            get 
+            get
             {
                 if (FileInspector.IsFlexBuilderProject(ProjectPath)) return Path.GetFileName(Path.GetDirectoryName(ProjectPath));
-                else return Path.GetFileNameWithoutExtension(ProjectPath); 
+                return Path.GetFileNameWithoutExtension(ProjectPath);
             } 
         }
 
@@ -123,14 +123,14 @@ namespace ProjectManager.Projects.AS3
         public override bool IsLibraryAsset(string path)
         {
             if (!FileInspector.IsSwc(path) && !IsDirectory(path)) return base.IsLibraryAsset(path);
-            else return SwcLibraries.Contains(path) || SwcLibraries.Contains(GetRelativePath(path));
+            return SwcLibraries.Contains(path) || SwcLibraries.Contains(GetRelativePath(path));
         }
 
         public override LibraryAsset GetAsset(string path)
         {
             if (!FileInspector.IsSwc(path) && !IsDirectory(path)) return base.GetAsset(path);
-            else if (SwcLibraries.Contains(path)) return SwcLibraries[path];
-            else return SwcLibraries[GetRelativePath(path)];
+            if (SwcLibraries.Contains(path)) return SwcLibraries[path];
+            return SwcLibraries[GetRelativePath(path)];
         }
 
         public override void ChangeAssetPath(string fromPath, string toPath)

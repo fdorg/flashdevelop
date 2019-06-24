@@ -597,8 +597,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (DockPanel != null && dockState == DockState.Document && DockPanel.DocumentStyle == DocumentStyle.SystemMdi)
                 return false;
-            else
-                return DockHelper.IsDockStateValid(dockState, DockAreas);
+            return DockHelper.IsDockStateValid(dockState, DockAreas);
         }
 
         private ContextMenu m_tabPageContextMenu = null;
@@ -628,7 +627,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     Form.Activate();
                     return;
                 }
-                else if (DockHelper.IsDockStateAutoHide(DockState)) DockPanel.ActiveAutoHideContent = Content;
+
+                if (DockHelper.IsDockStateAutoHide(DockState)) DockPanel.ActiveAutoHideContent = Content;
 
                 if (!Form.ContainsFocus)
                 {

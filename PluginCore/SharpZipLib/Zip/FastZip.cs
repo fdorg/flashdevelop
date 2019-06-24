@@ -474,9 +474,6 @@ namespace ICSharpCode.SharpZipLib.Zip
                             ExtractEntry(entry);
                         }
                     }
-                    else {
-                        // Do nothing for volume labels etc...
-                    }
                 }
             }
         }

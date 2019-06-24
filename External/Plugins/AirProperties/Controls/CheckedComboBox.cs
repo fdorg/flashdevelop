@@ -136,10 +136,8 @@ namespace AirProperties.Controls
                     {
                         return (oldStrValue.CompareTo(newStrValue) != 0);
                     }
-                    else
-                    {
-                        return (oldStrValue.Length != newStrValue.Length);
-                    }
+
+                    return (oldStrValue.Length != newStrValue.Length);
                 }
             }
 
@@ -437,10 +435,8 @@ namespace AirProperties.Controls
             {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
             }
-            else
-            {
-                return dropdown.List.GetItemChecked(index);
-            }
+
+            return dropdown.List.GetItemChecked(index);
         }
 
         public void SetItemChecked(int index, bool isChecked)
@@ -449,12 +445,10 @@ namespace AirProperties.Controls
             {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
             }
-            else
-            {
-                dropdown.List.SetItemChecked(index, isChecked);
-                // Need to update the Text.
-                SetText(dropdown.GetCheckedItemsStringValue());
-            }
+
+            dropdown.List.SetItemChecked(index, isChecked);
+            // Need to update the Text.
+            SetText(dropdown.GetCheckedItemsStringValue());
         }
 
         public CheckState GetItemCheckState(int index)
@@ -463,10 +457,8 @@ namespace AirProperties.Controls
             {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
             }
-            else
-            {
-                return dropdown.List.GetItemCheckState(index);
-            }
+
+            return dropdown.List.GetItemCheckState(index);
         }
 
         public void SetItemCheckState(int index, CheckState state)
@@ -475,12 +467,10 @@ namespace AirProperties.Controls
             {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
             }
-            else
-            {
-                dropdown.List.SetItemCheckState(index, state);
-                // Need to update the Text.
-                SetText(dropdown.GetCheckedItemsStringValue());
-            }
+
+            dropdown.List.SetItemCheckState(index, state);
+            // Need to update the Text.
+            SetText(dropdown.GetCheckedItemsStringValue());
         }
 
         /*protected override void OnDrawItem(DrawItemEventArgs e)

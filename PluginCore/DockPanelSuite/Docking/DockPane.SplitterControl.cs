@@ -109,7 +109,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 double proportion = status.Proportion;
                 if (status.LogicalBounds.Width <= 0 || status.LogicalBounds.Height <= 0)
                     return;
-                else if (status.DisplayingAlignment == DockAlignment.Left)
+                if (status.DisplayingAlignment == DockAlignment.Left)
                     proportion += ((double)offset) / (double)status.LogicalBounds.Width;
                 else if (status.DisplayingAlignment == DockAlignment.Right)
                     proportion -= ((double)offset) / (double)status.LogicalBounds.Width;

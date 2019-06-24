@@ -30,7 +30,7 @@ namespace SourceControl.Sources.Mercurial
         {
             StatusNode snode = FindNode(path, rootPath);
             if (snode != null) return snode.Status;
-            else return VCItemStatus.Unknown;
+            return VCItemStatus.Unknown;
         }
 
         private StatusNode FindNode(string path, string rootPath)

@@ -123,7 +123,9 @@ namespace Ude.Core
                     bestGuess = i;
                     state = ProbingState.FoundIt;
                     break;
-                } else if (st == ProbingState.NotMe) {
+                }
+
+                if (st == ProbingState.NotMe) {
                     isActive[i] = false;
                     activeNum--;
                     if (activeNum <= 0) {
@@ -142,19 +144,21 @@ namespace Ude.Core
             
             if (state == ProbingState.FoundIt) {
                 return 0.99f;
-            } else if (state == ProbingState.NotMe) {
+            }
+
+            if (state == ProbingState.NotMe) {
                 return 0.01f;
-            } else {
-                for (int i = 0; i < PROBERS_NUM; i++) {
-                    if (!isActive[i])
-                        continue;
-                    cf = probers[i].GetConfidence();
-                    if (bestConf < cf) {
-                        bestConf = cf;
-                        bestGuess = i;
-                    }
+            }
+            for (int i = 0; i < PROBERS_NUM; i++) {
+                if (!isActive[i])
+                    continue;
+                cf = probers[i].GetConfidence();
+                if (bestConf < cf) {
+                    bestConf = cf;
+                    bestGuess = i;
                 }
             }
+
             return bestConf;
         }
 

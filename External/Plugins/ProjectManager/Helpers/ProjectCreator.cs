@@ -83,7 +83,8 @@ namespace ProjectManager.Helpers
                     return null;
                 }
             }
-            else return null;
+
+            return null;
         }
 
         public static string FindProjectTemplate(string templateDirectory)
@@ -219,7 +220,8 @@ namespace ProjectManager.Helpers
             {
                 return cbdata.GetData("System.String", true).ToString();
             }
-            else return string.Empty;
+
+            return string.Empty;
         }
 
         private bool ShouldSkip(string path, bool isProjectRoot)

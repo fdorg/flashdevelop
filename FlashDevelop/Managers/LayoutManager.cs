@@ -73,9 +73,8 @@ namespace FlashDevelop.Managers
             {
                 return null;
             }
-            for (int i = 0; i < dynamicContentTemplates.Count; i++)
+            foreach (var template in dynamicContentTemplates)
             {
-                var template = dynamicContentTemplates[i];
                 if (template.GetPersistString() == persistString)
                 {
                     // Choose the first template content layout

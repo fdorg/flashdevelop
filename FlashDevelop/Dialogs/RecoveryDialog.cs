@@ -175,7 +175,7 @@ namespace FlashDevelop.Dialogs
         public static bool ShouldShowDialog()
         {
             if (!SingleInstanceApp.AlreadyExists && GetRecoveryFiles().Length > 0) return true;
-            else return false;
+            return false;
         }
 
         /// <summary>

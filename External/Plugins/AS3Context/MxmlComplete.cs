@@ -413,7 +413,8 @@ namespace AS3Context
                                 }
                                 return GetAutoCompletionValuesFromInspectable(mtype, metas);
                             }
-                            else if ((member.Flags & FlagType.Getter) > 0)
+
+                            if ((member.Flags & FlagType.Getter) > 0)
                             {
                                 if (!hasGetterSetter)
                                 {
@@ -596,10 +597,11 @@ namespace AS3Context
                     new HtmlAttributeItem("false")
                 };
             }
-            else if (type == "Class")
+
+            if (type == "Class")
             {
                 ASComplete.HandleAllClassesCompletion(PluginBase.MainForm.CurrentDocument.SciControl, tokenContext,
-                                                      true, false);
+                    true, false);
             }
             else if (type == "Function")
             {

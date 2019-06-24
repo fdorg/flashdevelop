@@ -175,13 +175,11 @@ namespace ASCompletion.Context
                     cLine = -1;
                     return;
                 }
-                else
-                {
-                    // first use
-                    if (!started) BuildClassPath();
-                    // parse file
-                    GetCurrentFileModel(value);
-                }
+
+                // first use
+                if (!started) BuildClassPath();
+                // parse file
+                GetCurrentFileModel(value);
                 // require context
                 Context = this;
             }
@@ -603,7 +601,8 @@ namespace ASCompletion.Context
                 explorer.Run();
                 return true;
             }
-            else if (path.WasExplored && path.IsVirtual)
+
+            if (path.WasExplored && path.IsVirtual)
             {
                 // restore metadatas
                 ExploreVirtualPath(path);
@@ -1470,8 +1469,7 @@ namespace ASCompletion.Context
         {
             if (MainForm.StatusStrip.Items[0].Text.Length > 2)
                 return MainForm.StatusStrip.Items[0].Text.Substring(2);
-            else
-                return "";
+            return "";
         }
 
         public static string NormalizeFilename(string path)

@@ -12,7 +12,7 @@ namespace PluginCore.Helpers
             string name = type.Name;
             name = name.EndsWithOrdinal("Ex") ? name.Remove(name.Length - 2) : name;
             if (name == "CheckedListBox") return "ListBox";
-            else return name;
+            return name;
         }
     }
 }

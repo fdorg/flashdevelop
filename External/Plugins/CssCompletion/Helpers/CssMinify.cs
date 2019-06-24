@@ -128,10 +128,11 @@ namespace CssCompletion
                     // Enforce a whitespace afterwards
                     return CssState.Token;
                 }
-                else
-                    return CssState.StringD;
+
+                return CssState.StringD;
             }
-            else if (theCurState == CssState.StringS)
+
+            if (theCurState == CssState.StringS)
             {
                 if(theCss[i] == '\'')
                 {
@@ -143,8 +144,8 @@ namespace CssCompletion
                     // Enforce a whitespace afterwards
                     return CssState.Token;
                 }
-                else
-                    return CssState.StringS;
+
+                return CssState.StringS;
             }
 
 
@@ -183,14 +184,11 @@ namespace CssCompletion
             if (IsTokenChar(c))
                 return CssState.Token;
 
-            else if (c == '\"')
+            if (c == '\"')
                 return CssState.StringD;
-
-            else if (c == '\'')
+            if (c == '\'')
                 return CssState.StringS;
-
-            else
-                return CssState.Punctuation;
+            return CssState.Punctuation;
         }
 
         private static bool IsWhitespaceChar(char p)

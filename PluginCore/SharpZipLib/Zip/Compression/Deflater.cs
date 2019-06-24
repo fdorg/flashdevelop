@@ -421,11 +421,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                     break;
                 }
                 
-                if (!engine.Deflate((state & IS_FLUSHING) != 0, (state & IS_FINISHING) != 0)) {
+                if (!engine.Deflate((state & IS_FLUSHING) != 0, (state & IS_FINISHING) != 0))
+                {
                     if (state == BUSY_STATE) {
                         // We need more input now
                         return origLength - length;
-                    } else if (state == FLUSHING_STATE) {
+                    }
+
+                    if (state == FLUSHING_STATE) {
                         if (level != NO_COMPRESSION) {
                             /* We have to supply some lookahead.  8 bit lookahead
                              * is needed by the zlib inflater, and we must fill

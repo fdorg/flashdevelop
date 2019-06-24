@@ -630,7 +630,7 @@ namespace PluginCore.Controls
                 if (label.StartsWith(word, StringComparison.OrdinalIgnoreCase))
                 {
                     if (label.StartsWithOrdinal(word)) return 1;
-                    else return 5;
+                    return 5;
                 }
                 return 0;
             }
@@ -658,17 +658,19 @@ namespace PluginCore.Controls
                             if (p3 == label.LastIndexOf('.'))
                             {
                                 if (label.EndsWithOrdinal("." + word)) return 1;
-                                else return 3;
+                                return 3;
                             }
-                            else return 4;
+
+                            return 4;
                         }
                     }
                     if (p2 == 0)
                     {
                         if (word == label) return 1;
-                        else return 2;
+                        return 2;
                     }
-                    else if (p2 > 0) return 4;
+
+                    if (p2 > 0) return 4;
                 }
 
                 p2 = label.LastIndexOf("." + word, StringComparison.OrdinalIgnoreCase); // in qualified type name
@@ -677,25 +679,25 @@ namespace PluginCore.Controls
                     if (p2 == label.LastIndexOf('.'))
                     {
                         if (label.EndsWith("." + word, StringComparison.OrdinalIgnoreCase)) return 2;
-                        else return 4;
+                        return 4;
                     }
-                    else return 5;
+
+                    return 5;
                 }
                 if (p == 0)
                 {
                     if (label.Equals(word, StringComparison.OrdinalIgnoreCase))
                     {
                         if (label.Equals(word)) return 1;
-                        else return 2;
+                        return 2;
                     }
-                    else return 3;
+
+                    return 3;
                 }
-                else
-                {
-                    int p4 = label.IndexOf(':');
-                    if (p4 > 0) return SmartMatch(label.Substring(p4 + 1), word, len);
-                    return 5;
-                }
+
+                int p4 = label.IndexOf(':');
+                if (p4 > 0) return SmartMatch(label.Substring(p4 + 1), word, len);
+                return 5;
             }
 
             // loose
@@ -757,7 +759,8 @@ namespace PluginCore.Controls
                 if (label == word || label.EndsWithOrdinal("." + word)) return 1;
                 return score;
             }
-            else return score + 2;
+
+            return score + 2;
         }
 
         /// <summary>

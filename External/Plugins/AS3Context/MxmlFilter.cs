@@ -206,7 +206,8 @@ namespace AS3Context
                                 i += 3;
                                 continue;
                             }
-                            else if (src[i + 2] == '[' && src.Substring(i + 2, 7) == "[CDATA[")
+
+                            if (src[i + 2] == '[' && src.Substring(i + 2, 7) == "[CDATA[")
                             {
                                 i += 8;
                                 skip = false;
@@ -333,9 +334,10 @@ namespace AS3Context
                 if (c == '=')
                 {
                     if (!skip) return name;
-                    else break;
+                    break;
                 }
-                else if (!skip && c > 32) name += c;
+
+                if (!skip && c > 32) name += c;
             }
             i = oldPos;
             return null;
@@ -358,7 +360,7 @@ namespace AS3Context
                 if (c == '"')
                 {
                     if (!skip) return value;
-                    else skip = false;
+                    skip = false;
                 }
                 else if (!skip) value += c;
             }
@@ -387,7 +389,7 @@ namespace AS3Context
             string tag = sb.ToString();
             Match mTag = tagName.Match(tag + " ");
             if (mTag.Success) return mTag.Groups["name"].Value;
-            else return null;
+            return null;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace FlashDevelop.Managers
     class FilePollManager
     {
         private static Timer FilePollTimer;
-        private static bool YesToAll = false;
+        private static bool YesToAll;
 
         /// <summary>
         /// Initialize the file change polling
@@ -37,8 +37,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static void CheckFileChange(ITabbedDocument document)
         {
-            TabbedDocument casted = document as TabbedDocument;
-            if (casted != null && casted.IsEditable && casted.CheckFileChange())
+            if (document is TabbedDocument casted && casted.IsEditable && casted.CheckFileChange())
             {
                 if (Globals.Settings.AutoReloadModifiedFiles)
                 {

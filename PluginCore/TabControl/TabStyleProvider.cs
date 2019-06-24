@@ -399,13 +399,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColorSelected
 		{
-			get {
-				if (this._BorderColorSelected.IsEmpty){
+			get
+            {
+                if (this._BorderColorSelected.IsEmpty){
 					return ThemedColors.ToolBorder;
-				} else {
-					return this._BorderColorSelected;
 				}
-			}
+
+                return this._BorderColorSelected;
+            }
 			set {
 				if (value.Equals(ThemedColors.ToolBorder)){
 					this._BorderColorSelected = Color.Empty;
@@ -419,13 +420,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColorHot
 		{
-			get {
-				if (this._BorderColorHot.IsEmpty){
+			get
+            {
+                if (this._BorderColorHot.IsEmpty){
 					return SystemColors.ControlDark;
-				} else {
-					return this._BorderColorHot;
 				}
-			}
+
+                return this._BorderColorHot;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlDark)){
 					this._BorderColorHot = Color.Empty;
@@ -439,13 +441,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color BorderColor
 		{
-			get {
-				if (this._BorderColor.IsEmpty){
+			get
+            {
+                if (this._BorderColor.IsEmpty){
 					return SystemColors.ControlDark;
-				} else {
-					return this._BorderColor;
 				}
-			}
+
+                return this._BorderColor;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlDark)){
 					this._BorderColor = Color.Empty;
@@ -459,13 +462,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColor
 		{
-			get {
-				if (this._TextColor.IsEmpty){
+			get
+            {
+                if (this._TextColor.IsEmpty){
 					return SystemColors.ControlText;
-				} else {
-					return this._TextColor;
 				}
-			}
+
+                return this._TextColor;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlText)){
 					this._TextColor = Color.Empty;
@@ -479,13 +483,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColorSelected
 		{
-			get {
-				if (this._TextColorSelected.IsEmpty){
+			get
+            {
+                if (this._TextColorSelected.IsEmpty){
 					return SystemColors.ControlText;
-				} else {
-					return this._TextColorSelected;
 				}
-			}
+
+                return this._TextColorSelected;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlText)){
 					this._TextColorSelected = Color.Empty;
@@ -499,13 +504,14 @@ namespace System.Windows.Forms
 		[Category("Appearance"), DefaultValue(typeof(Color), "")]
 		public Color TextColorDisabled
 		{
-			get {
-				if (this._TextColor.IsEmpty){
+			get
+            {
+                if (this._TextColor.IsEmpty){
 					return SystemColors.ControlDark;
-				} else {
-					return this._TextColorDisabled;
 				}
-			}
+
+                return this._TextColorDisabled;
+            }
 			set {
 				if (value.Equals(SystemColors.ControlDark)){
 					this._TextColorDisabled = Color.Empty;

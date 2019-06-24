@@ -518,9 +518,9 @@ namespace ProjectManager.Controls.TreeView
         {
             string ext = Path.GetExtension(path).ToLower();
             if (FileInspector.IsAS2Project(path, ext)) return true;
-            else if (FileInspector.IsAS3Project(path, ext)) return true;
-            else if (FileInspector.IsHaxeProject(path, ext)) return true;
-            else return false;
+            if (FileInspector.IsAS3Project(path, ext)) return true;
+            if (FileInspector.IsHaxeProject(path, ext)) return true;
+            return false;
         }
 
         private bool IsExternalSwc(string file)

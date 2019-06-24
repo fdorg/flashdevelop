@@ -140,7 +140,7 @@ namespace System.Windows.Forms
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
             if (e.ToolStrip is StatusStrip) return;
-            else if (e.ToolStrip is ToolStripDropDownMenu)
+            if (e.ToolStrip is ToolStripDropDownMenu)
             {
                 Color back2 = GetThemeColor("ToolStripMenu.BackColor");
                 if (back2 != Color.Empty)

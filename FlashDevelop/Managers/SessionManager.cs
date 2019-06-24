@@ -91,13 +91,11 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                DockPane prevPane;
-                for (int i = 0; i < session.Nested.Count; i++)
+                foreach (var nestedDock in session.Nested)
                 {
-                    NestedDock nestedDock = session.Nested[i];
-                    DockContent dockContent = DocumentManager.FindDocument(nestedDock.FileName) as DockContent;
-                    if (dockContent != null && nestedDock.NestIndex > -1)
+                    if (DocumentManager.FindDocument(nestedDock.FileName) is DockContent dockContent && nestedDock.NestIndex > -1)
                     {
+                        DockPane prevPane;
                         if (dockContent.DockPanel.Panes.Count > nestedDock.PaneIndex)
                         {
                             prevPane = dockContent.DockPanel.Panes[nestedDock.PaneIndex];
@@ -186,23 +184,23 @@ namespace FlashDevelop.Managers
         }
         public int Index
         {
-            get => this.index;
-            set => this.index = value;
+            get => index;
+            set => index = value;
         }
         public SessionType Type
         {
-            get => this.type;
-            set => this.type = value;
+            get => type;
+            set => type = value;
         }
         public List<string> Files
         {
-            get => this.files;
-            set => this.files = value;
+            get => files;
+            set => files = value;
         }
         public List<NestedDock> Nested
         {
-            get => this.nested;
-            set => this.nested = value;
+            get => nested;
+            set => nested = value;
         }
 
     }
@@ -227,28 +225,28 @@ namespace FlashDevelop.Managers
         }
         public string FileName
         {
-            get => this.file;
-            set => this.file = value;
+            get => file;
+            set => file = value;
         }
         public int PaneIndex
         {
-            get => this.index;
-            set => this.index = value;
+            get => index;
+            set => index = value;
         }
         public int NestIndex
         {
-            get => this.nest;
-            set => this.nest = value;
+            get => nest;
+            set => nest = value;
         }
         public DockAlignment Alignment
         {
-            get => this.align;
-            set => this.align = value;
+            get => align;
+            set => align = value;
         }
         public double Proportion
         {
-            get => this.prop;
-            set => this.prop = value;
+            get => prop;
+            set => prop = value;
         }
 
     }

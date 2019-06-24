@@ -29,12 +29,13 @@ namespace FlashDevelop.Managers
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else if (File.Exists(global))
+
+            if (File.Exists(global))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else return null;
+            return null;
         }
 
         /// <summary>
@@ -56,9 +57,7 @@ namespace FlashDevelop.Managers
                 snippet = GetSnippet(word, sci.ConfigurationLanguage, sci.Encoding);
             }
             // let plugins handle the snippet
-            Hashtable data = new Hashtable();
-            data["word"] = word;
-            data["snippet"] = snippet;
+            Hashtable data = new Hashtable {["word"] = word, ["snippet"] = snippet};
             DataEvent de = new DataEvent(EventType.Command, "SnippetManager.Expand", data);
             EventManager.DispatchEvent(Globals.MainForm, de);
             if (de.Handled) return true;
@@ -87,7 +86,8 @@ namespace FlashDevelop.Managers
                 SnippetHelper.InsertSnippetText(sci, endPos, snippet);
                 return true;
             }
-            else if (canShowList)
+
+            if (canShowList)
             {
                 ICompletionListItem item;
                 List<ICompletionListItem> items = new List<ICompletionListItem>();
@@ -115,8 +115,7 @@ namespace FlashDevelop.Managers
                     if (!string.IsNullOrEmpty(sci.SelText)) word = sci.SelText;
                     else
                     {
-                        word = sci.GetWordFromPosition(sci.CurrentPos);
-                        if (word == null) word = string.Empty;
+                        word = sci.GetWordFromPosition(sci.CurrentPos) ?? string.Empty;
                     }
                     CompletionList.OnInsert += HandleListInsert;
                     CompletionList.OnCancel += HandleListInsert;
@@ -141,21 +140,20 @@ namespace FlashDevelop.Managers
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        private readonly string word;
         private string snippet;
         private readonly string fileName;
         private Bitmap icon;
 
         public SnippetItem(string word, string fileName)
         {
-            this.word = word;
+            Label = word;
             this.fileName = fileName;
         }
 
         /// <summary>
         /// Label of the snippet item
         /// </summary>
-        public string Label => this.word;
+        public string Label { get; }
 
         /// <summary>
         /// Description of the snippet item
@@ -165,15 +163,15 @@ namespace FlashDevelop.Managers
             get
             {
                 string desc = TextHelper.GetString("Info.SnippetItemDesc");
-                if (this.snippet == null)
+                if (snippet == null)
                 {
-                    this.snippet = FileHelper.ReadFile(this.fileName);
-                    this.snippet = ArgsProcessor.ProcessCodeStyleLineBreaks(this.snippet);
-                    this.snippet = this.snippet.Replace(SnippetHelper.ENTRYPOINT, "|");
-                    this.snippet = this.snippet.Replace(SnippetHelper.EXITPOINT, "|");
+                    snippet = FileHelper.ReadFile(fileName);
+                    snippet = ArgsProcessor.ProcessCodeStyleLineBreaks(snippet);
+                    snippet = snippet.Replace(SnippetHelper.ENTRYPOINT, "|");
+                    snippet = snippet.Replace(SnippetHelper.EXITPOINT, "|");
                 }
-                if (this.snippet.Length > 40) return desc + ": " + this.snippet.Substring(0, 40) + "...";
-                else return desc + ": " + this.snippet;
+                if (snippet.Length > 40) return desc + ": " + snippet.Substring(0, 40) + "...";
+                return desc + ": " + snippet;
             }
         }
 
@@ -184,7 +182,7 @@ namespace FlashDevelop.Managers
         {
             get
             {
-                SnippetManager.InsertTextByWord(this.word, false);
+                SnippetManager.InsertTextByWord(Label, false);
                 return null;
             }
         }
@@ -194,15 +192,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public Bitmap Icon
         {
-            get 
-            {
-                if (icon == null)
-                {
-                    this.icon = (Bitmap)Globals.MainForm.FindImage("341");
-                }
-                return icon;
-            }
-            set => this.icon = value;
+            get => icon ??= (Bitmap) Globals.MainForm.FindImage("341");
+            set => icon = value;
         }
 
         /// <summary>
@@ -210,12 +201,9 @@ namespace FlashDevelop.Managers
         /// </summary> 
         int IComparable.CompareTo(object obj)
         {
-            if (obj as ICompletionListItem != null) return string.Compare(Label, (obj as ICompletionListItem).Label, true);
-            else
-            {
-                string message = TextHelper.GetString("Info.CompareError");
-                throw new Exception(message);
-            }
+            if (obj is ICompletionListItem item) return string.Compare(Label, item.Label, true);
+            string message = TextHelper.GetString("Info.CompareError");
+            throw new Exception(message);
         }
 
         /// <summary>

@@ -118,13 +118,11 @@ namespace PluginCore.Helpers
             if (control is Form)
             {
                 if (adjustedItems.Contains(control)) return true;
-                else
-                {
-                    adjustedItems.Add(control);
-                    return false;
-                }
+                adjustedItems.Add(control);
+                return false;
             }
-            else return false;
+
+            return false;
         }
 
     }

@@ -43,34 +43,22 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the FlashDevelop root directory
         /// </summary>
-        public static string GetAppDir()
-        {
-            return PathHelper.AppDir;
-        }
+        public static string GetAppDir() => PathHelper.AppDir;
 
         /// <summary>
         /// Gets the user's FlashDevelop directory
         /// </summary>
-        public static string GetUserAppDir()
-        {
-            return PathHelper.UserAppDir;
-        }
+        public static string GetUserAppDir() => PathHelper.UserAppDir;
 
         /// <summary>
         /// Gets the data file directory
         /// </summary>
-        public static string GetBaseDir()
-        {
-            return PathHelper.BaseDir;
-        }
+        public static string GetBaseDir() => PathHelper.BaseDir;
 
         /// <summary>
         /// Gets the template file directory
         /// </summary>
-        public static string GetTemplateDir()
-        {
-            return PathHelper.TemplateDir;
-        }
+        public static string GetTemplateDir() => PathHelper.TemplateDir;
 
         /// <summary>
         /// Gets the selected text
@@ -79,8 +67,8 @@ namespace FlashDevelop.Utilities
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
             if (Globals.SciControl.SelText.Length > 0) return Globals.SciControl.SelText;
-            else if (PrevSelText.Length > 0) return PrevSelText;
-            else return string.Empty;
+            if (PrevSelText.Length > 0) return PrevSelText;
+            return string.Empty;
         }
 
         /// <summary>
@@ -91,8 +79,8 @@ namespace FlashDevelop.Utilities
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
             string curWord = Globals.SciControl.GetWordFromPosition(Globals.SciControl.CurrentPos);
             if (!string.IsNullOrEmpty(curWord)) return curWord;
-            else if (PrevSelWord.Length > 0) return PrevSelWord;
-            else return string.Empty;
+            if (PrevSelWord.Length > 0) return PrevSelWord;
+            return string.Empty;
         }
 
         /// <summary>
@@ -101,7 +89,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurFile()
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            else return Globals.CurrentDocument.FileName;
+            return Globals.CurrentDocument.FileName;
         }
 
         /// <summary>
@@ -110,7 +98,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurDir()
         {
             if (!Globals.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
-            else return Path.GetDirectoryName(GetCurFile());
+            return Path.GetDirectoryName(GetCurFile());
         }
         
         /// <summary>
@@ -119,7 +107,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurFilename()
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            else return Path.GetFileName(GetCurFile());
+            return Path.GetFileName(GetCurFile());
         }
 
         /// <summary>
@@ -128,17 +116,14 @@ namespace FlashDevelop.Utilities
         public static string GetCurFilenameNoExt()
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            else return Path.GetFileNameWithoutExtension(GetCurFile());
+            return Path.GetFileNameWithoutExtension(GetCurFile());
         }
 
         /// <summary>
         /// Gets the timestamp
         /// </summary>
-        public static string GetTimestamp()
-        {
-            return DateTime.Now.ToString("g");
-        }
-        
+        public static string GetTimestamp() => DateTime.Now.ToString("g");
+
         /// <summary>
         /// Gets the desktop path
         /// </summary>
@@ -184,13 +169,11 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenFile()
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.InitialDirectory = GetCurDir();
-                ofd.Multiselect = false;
-                if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
-                else return string.Empty;
-            }
+            using OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = GetCurDir();
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
+            return string.Empty;
         }
         
         /// <summary>
@@ -198,12 +181,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetSaveFile()
         {
-            using (SaveFileDialog sfd = new SaveFileDialog())
-            {
-                sfd.InitialDirectory = GetCurDir();
-                if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
-                else return string.Empty;
-            }
+            using var sfd = new SaveFileDialog {InitialDirectory = GetCurDir()};
+            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
+            return string.Empty;
         }
         
         /// <summary>
@@ -211,12 +191,9 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string GetOpenDir()
         {
-            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
-            {
-                fbd.RootFolder = Environment.SpecialFolder.MyComputer;
-                if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
-                else return string.Empty;
-            }
+            using var fbd = new VistaFolderBrowserDialog {RootFolder = Environment.SpecialFolder.MyComputer};
+            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
+            return string.Empty;
         }
         
         /// <summary>
@@ -229,7 +206,7 @@ namespace FlashDevelop.Utilities
             {
                 return cbdata.GetData("System.String", true).ToString();
             }
-            else return string.Empty;
+            return string.Empty;
         }
 
         /// <summary>
@@ -239,17 +216,13 @@ namespace FlashDevelop.Utilities
         {
             CommentBlockStyle cbs = Globals.Settings.CommentBlockStyle;
             if (cbs == CommentBlockStyle.Indented) return " ";
-            else return "";
+            return "";
         }
 
         /// <summary>
         /// Gets the space or tab character based on settings
         /// </summary>
-        public static string GetSTC()
-        {
-            if (Globals.Settings.UseTabs) return "\t";
-            else return " ";
-        }
+        public static string GetSTC() => Globals.Settings.UseTabs ? "\t" : " ";
 
         /// <summary>
         /// Gets the current syntax based on project or current file.
@@ -261,12 +234,13 @@ namespace FlashDevelop.Utilities
                 string syntax = PluginBase.CurrentProject.Language;
                 return syntax.ToLower();
             }
-            else if (Globals.CurrentDocument.IsEditable)
+
+            if (Globals.CurrentDocument.IsEditable)
             {
                 ScintillaControl sci = Globals.SciControl;
                 return sci.ConfigurationLanguage.ToLower();
             }
-            else return string.Empty;
+            return string.Empty;
         }
 
         /// <summary>
@@ -317,10 +291,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the current locale
         /// </summary>
-        private static string GetLocale()
-        {
-            return Globals.Settings.LocaleVersion.ToString();
-        }
+        private static string GetLocale() => Globals.Settings.LocaleVersion.ToString();
 
         /// <summary>
         /// Processes the argument String variables
@@ -400,7 +371,8 @@ namespace FlashDevelop.Utilities
                 }
                 return "$(" + name + ")";
             }
-            else return match.Value;
+
+            return match.Value;
         }
         
         /// <summary>
@@ -419,15 +391,13 @@ namespace FlashDevelop.Utilities
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
-                using (ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs))
+                using ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs);
+                userArgs = rvd.Dictionary; // Save dictionary temporarily...
+                if (rvd.ShowDialog() == DialogResult.OK)
                 {
-                    userArgs = rvd.Dictionary; // Save dictionary temporarily...
-                    if (rvd.ShowDialog() == DialogResult.OK)
-                    {
-                        args = reUserArgs.Replace(args, ReplaceUserArgs);
-                    }
-                    else args = reUserArgs.Replace(args, ReplaceWithEmpty);
+                    args = reUserArgs.Replace(args, ReplaceUserArgs);
                 }
+                else args = reUserArgs.Replace(args, ReplaceWithEmpty);
             }
             return args;
         }
@@ -435,10 +405,7 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Match evaluator for to clear args
         /// </summary>
-        public static string ReplaceWithEmpty(Match match)
-        {
-            return string.Empty;
-        }
+        public static string ReplaceWithEmpty(Match match) => string.Empty;
 
         /// <summary>
         /// Match evaluator for User Arguments
@@ -446,7 +413,7 @@ namespace FlashDevelop.Utilities
         public static string ReplaceUserArgs(Match match)
         {
             if (match.Groups.Count > 0) return userArgs[match.Groups[1].Value];
-            else return match.Value;
+            return match.Value;
         }
 
         /// <summary>
@@ -455,7 +422,7 @@ namespace FlashDevelop.Utilities
         public static string ReplaceEnvArgs(Match match)
         {
             if (match.Groups.Count > 0) return Environment.GetEnvironmentVariable(match.Groups[1].Value);
-            else return match.Value;
+            return match.Value;
         }
 
         /// <summary>

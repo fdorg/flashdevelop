@@ -387,7 +387,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 header.Mode     = 1003; // Magic number for security access for a UNIX filesystem
                 header.TypeFlag = TarHeader.LF_DIR;
                 if ( (header.Name.Length == 0) || header.Name[header.Name.Length - 1] != '/') {
-                    header.Name = header.Name + "/";
+                    header.Name += "/";
                 }
                 
                 header.Size     = 0;

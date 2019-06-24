@@ -412,17 +412,18 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="InvalidOperationException">Thrown if no entry is currently available.</exception>
         public override long Length
         {
-            get {
-                if ( entry != null ) {
+            get
+            {
+                if ( entry != null )
+                {
                     if ( entry.Size >= 0 ) {
                         return entry.Size;
-                    } else {
-                        throw new ZipException("Length not available for the current entry");
                     }
+
+                    throw new ZipException("Length not available for the current entry");
                 }
-                else {
-                    throw new InvalidOperationException("No current entry");
-                }
+
+                throw new InvalidOperationException("No current entry");
             }
                 
         }
@@ -519,10 +520,9 @@ namespace ICSharpCode.SharpZipLib.Zip
                 internalReader = BodyRead;
                 return BodyRead(destination, offset, count);
             }
-            else {
-                internalReader = ReadingNotAvailable;
-                return 0;
-            }
+
+            internalReader = ReadingNotAvailable;
+            return 0;
         }
         
         /// <summary>

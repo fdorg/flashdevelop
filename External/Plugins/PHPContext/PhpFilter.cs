@@ -43,11 +43,9 @@ namespace PHPContext
                             rangeStart = i;
                             continue;
                         }
-                        else
-                        {
-                            nodeStart = i + 1;
-                            nodeEnd = -1;
-                        }
+
+                        nodeStart = i + 1;
+                        nodeEnd = -1;
                     }
                     else if (nodeEnd < 0)
                     {

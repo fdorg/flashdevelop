@@ -800,7 +800,7 @@ namespace CodeFormatter.Handlers
                                         int offset = token.Line - 1;
                                         if (t != null)
                                         {
-                                            t.Line = t.Line + offset;
+                                            t.Line += offset;
                                         }
                                         rex.Line += offset;
                                     }
@@ -1760,7 +1760,8 @@ namespace CodeFormatter.Handlers
                                 //do nothing
                                 continue;
                             }
-                            else if (attr.mName == NewLineFlag)
+
+                            if (attr.mName == NewLineFlag)
                             {
                                 //do nothing
                                 continue;
@@ -2041,7 +2042,8 @@ namespace CodeFormatter.Handlers
                             endPos = k;
                             break;
                         }
-                        else if (newC == '\\')
+
+                        if (newC == '\\')
                         {
                             k++; //skip over next char
                         }

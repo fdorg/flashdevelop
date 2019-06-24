@@ -43,10 +43,9 @@ namespace ProjectManager.Controls.TreeView
 
             if (FileInspector.IsSwf(filePath, ext) || FileInspector.IsSwc(filePath, ext))
                 return new SwfFileNode(filePath);
-            else if (FileAssociations.ContainsKey(ext)) // custom nodes building
+            if (FileAssociations.ContainsKey(ext)) // custom nodes building
                 return FileAssociations[ext](filePath);
-            else
-                return new FileNode(filePath);
+            return new FileNode(filePath);
         }
 
         public override void Refresh(bool recursive)

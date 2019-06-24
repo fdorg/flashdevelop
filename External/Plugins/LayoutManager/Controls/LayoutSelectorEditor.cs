@@ -32,12 +32,9 @@ namespace LayoutManager.Controls
         {
             string userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
-            else
-            {
-                string path = Path.Combine(this.GetDataDir(), "Layouts");
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                return path;
-            }
+            string path = Path.Combine(this.GetDataDir(), "Layouts");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            return path;
         }
 
         /// <summary>

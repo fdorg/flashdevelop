@@ -431,28 +431,27 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             if (baseInputStream.CanSeek) {
                 baseInputStream.Seek(count, SeekOrigin.Current);
                 return count;
-            } 
-            else {
-                int length = 2048;
-                if (count < length) {
-                    length = (int) count;
-                }
-
-                byte[] tmp = new byte[length];
-                int readCount = 1;
-                long toSkip = count;
-
-                while ((toSkip > 0) && (readCount > 0) ) {
-                    if (toSkip < length) {
-                        length = (int)toSkip;
-                    }
-
-                    readCount = baseInputStream.Read(tmp, 0, length);
-                    toSkip -= readCount;
-                }
-
-                return count - toSkip;
             }
+
+            int length = 2048;
+            if (count < length) {
+                length = (int) count;
+            }
+
+            byte[] tmp = new byte[length];
+            int readCount = 1;
+            long toSkip = count;
+
+            while ((toSkip > 0) && (readCount > 0) ) {
+                if (toSkip < length) {
+                    length = (int)toSkip;
+                }
+
+                readCount = baseInputStream.Read(tmp, 0, length);
+                toSkip -= readCount;
+            }
+
+            return count - toSkip;
         }
         
         /// <summary>

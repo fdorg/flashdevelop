@@ -31,16 +31,14 @@ namespace TaskListPanel
                 int yVal = int.Parse(listviewY.SubItems[1].Text);
                 compareResult = xVal.CompareTo(yVal);
                 if (this.OrderOfSort == SortOrder.Ascending) return compareResult;
-                else if (this.OrderOfSort == SortOrder.Descending) return (-compareResult);
-                else return 0;
+                if (this.OrderOfSort == SortOrder.Descending) return (-compareResult);
+                return 0;
             }
-            else
-            {
-                compareResult = Comparer.Compare(listviewX.SubItems[this.ColumnToSort].Text, listviewY.SubItems[this.ColumnToSort].Text);
-                if (this.OrderOfSort == SortOrder.Ascending) return compareResult;
-                else if (this.OrderOfSort == SortOrder.Descending) return (-compareResult);
-                else return 0;
-            }
+
+            compareResult = Comparer.Compare(listviewX.SubItems[this.ColumnToSort].Text, listviewY.SubItems[this.ColumnToSort].Text);
+            if (this.OrderOfSort == SortOrder.Ascending) return compareResult;
+            if (this.OrderOfSort == SortOrder.Descending) return (-compareResult);
+            return 0;
         }
 
         /// <summary>
