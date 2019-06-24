@@ -39,11 +39,13 @@ namespace PluginCore.Utilities
         {
             //get rid of special cases
             if ((s1 == null) && (s2 == null)) return 0;
-            else if (s1 == null) return -1;
-            else if (s2 == null) return 1;
+            if (s1 == null) return -1;
+            if (s2 == null) return 1;
+
             if (s1.Length == 0 && s2.Length == 0) return 0;
-            else if (s1.Length == 0) return -1;
-            else if (s2.Length == 0) return 1;
+            if (s1.Length == 0) return -1;
+            if (s2.Length == 0) return 1;
+
             //special case
             bool sp1 = char.IsLetterOrDigit(s1[0]);
             bool sp2 = char.IsLetterOrDigit(s2[0]);
@@ -102,11 +104,12 @@ namespace PluginCore.Utilities
                 {
                     return 0;
                 }
-                else if (i1 >= s1.Length)
+
+                if (i1 >= s1.Length)
                 {
                     return -1;
                 }
-                else if (i2 >= s2.Length)
+                if (i2 >= s2.Length)
                 {
                     return 1;
                 }
@@ -134,7 +137,7 @@ namespace PluginCore.Utilities
             int nzLength1 = end1 - nzStart1;
             int nzLength2 = end2 - nzStart2;
             if (nzLength1 < nzLength2) return -1;
-            else if (nzLength1 > nzLength2) return 1;
+            if (nzLength1 > nzLength2) return 1;
             for (int j1 = nzStart1, j2 = nzStart2; j1 <= i1; j1++, j2++)
             {
                 int r = s1[j1].CompareTo(s2[j2]);

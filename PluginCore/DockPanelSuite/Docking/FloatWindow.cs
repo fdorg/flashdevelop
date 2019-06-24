@@ -164,7 +164,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 return;
             }
-            else if (m.Msg == (int)Win32.Msgs.WM_NCRBUTTONDOWN)
+
+            if (m.Msg == (int)Win32.Msgs.WM_NCRBUTTONDOWN)
             {
                 uint result = !NativeMethods.ShouldUseWin32() ? 0 : NativeMethods.SendMessage(this.Handle, (int)Win32.Msgs.WM_NCHITTEST, 0, (uint)m.LParam);
                 if (result == 2)    // HITTEST_CAPTION
@@ -180,7 +181,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 base.WndProc(ref m);
                 return;
             }
-            else if (m.Msg == (int)Win32.Msgs.WM_CLOSE)
+            if (m.Msg == (int)Win32.Msgs.WM_CLOSE)
             {
                 if (NestedPanes.Count == 0)
                 {
@@ -209,7 +210,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 return;
             }
-            else if (m.Msg == (int)Win32.Msgs.WM_NCLBUTTONDBLCLK)
+            if (m.Msg == (int)Win32.Msgs.WM_NCLBUTTONDBLCLK)
             {
                 uint result = !DoubleClickTitleBarToDock || !NativeMethods.ShouldUseWin32() ? 0 : NativeMethods.SendMessage(this.Handle, (int)Win32.Msgs.WM_NCHITTEST, 0, (uint)m.LParam);
                 if (result != 2)    // HITTEST_CAPTION

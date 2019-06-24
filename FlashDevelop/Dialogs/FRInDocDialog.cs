@@ -666,7 +666,8 @@ namespace FlashDevelop.Dialogs
                 this.findComboBox.Focus();
                 return true;
             }
-            else if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
+
+            if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
                 this.FindNext(false, false);
                 return true;

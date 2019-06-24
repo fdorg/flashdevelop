@@ -19,7 +19,8 @@ namespace LintingHelper.BatchProcess
                 {
                     return LintingManager.HasLanguage(PluginBase.CurrentProject.Language);
                 }
-                else return false;
+
+                return false;
             }
         }
 

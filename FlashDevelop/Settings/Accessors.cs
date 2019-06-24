@@ -1000,7 +1000,7 @@ namespace FlashDevelop.Settings
             {
                 string value = Globals.MainForm.GetThemeValue("Global.UiRenderMode", "Professional");
                 if (value == "System") return UiRenderMode.System;
-                else return UiRenderMode.Professional; 
+                return UiRenderMode.Professional;
             }
             set {}
         }

@@ -271,7 +271,7 @@ namespace FlashDevelop.Managers
             try
             {
                 if (!key.StartsWithOrdinal("Label.")) return key;
-                else return TextHelper.GetString(key);
+                return TextHelper.GetString(key);
             }
             catch (Exception ex)
             {
@@ -290,7 +290,8 @@ namespace FlashDevelop.Managers
                 ToolStripItem parent = menu.OwnerItem;
                 return GetMenuItemId(parent) + "." + GetStrippedString(menu.Name, true);
             }
-            else return GetStrippedString(menu.Name, true);
+
+            return GetStrippedString(menu.Name, true);
         }
 
         /// <summary>

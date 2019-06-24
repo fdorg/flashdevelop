@@ -269,13 +269,11 @@ namespace ASCompletion.Completion
                         || RegexCheck(beforeChars, charAfter, notBeforeChars)
                         || ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
                 }
-                else /*if (logic == Logic.And)*/
-                {
-                    return RegexCheck(afterChars, charBefore, notAfterChars)
-                        && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
-                        && RegexCheck(beforeChars, charAfter, notBeforeChars)
-                        && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
-                }
+
+                return RegexCheck(afterChars, charBefore, notAfterChars)
+                       && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
+                       && RegexCheck(beforeChars, charAfter, notBeforeChars)
+                       && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
             }
         }
 

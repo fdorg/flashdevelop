@@ -28,8 +28,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 if (DockPane == null)
                     return Items[index];
-                else
-                    return GetVisibleContent(index);
+                return GetVisibleContent(index);
             }
         }
 
@@ -67,8 +66,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (DockPane == null)
                 return Items.Contains(content);
-            else
-                return (GetIndexOfVisibleContents(content) != -1);
+            return (GetIndexOfVisibleContents(content) != -1);
         }
 
         public new int Count
@@ -77,8 +75,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 if (DockPane == null)
                     return base.Count;
-                else
-                    return CountOfVisibleContents;
+                return CountOfVisibleContents;
             }
         }
 
@@ -88,11 +85,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 if (!Contains(content))
                     return -1;
-                else
-                    return Items.IndexOf(content);
+                return Items.IndexOf(content);
             }
-            else
-                return GetIndexOfVisibleContents(content);
+
+            return GetIndexOfVisibleContents(content);
         }
 
         internal void Remove(IDockContent content)

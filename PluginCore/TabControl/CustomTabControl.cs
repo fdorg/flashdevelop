@@ -178,36 +178,36 @@ namespace System.Windows.Forms
 				//	Special processing to hide tabs
 				if (this._Style == TabStyle.None) {
 					return new Rectangle(0, 0, Width, Height);
-				} else {
-					int tabStripHeight = 0;
-					int itemHeight = 0;
-					
-					if (this.Alignment <= TabAlignment.Bottom) {
-						itemHeight = this.ItemSize.Height;
-					} else {
-						itemHeight = this.ItemSize.Width;
-					}
-					
-					tabStripHeight = 5 + (itemHeight * this.RowCount);
-					
-					Rectangle rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
-					switch (this.Alignment) {
-						case TabAlignment.Top:
-							rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
-							break;
-						case TabAlignment.Bottom:
-							rect = new Rectangle(4, 4, Width - 8, Height - tabStripHeight - 4);
-							break;
-						case TabAlignment.Left:
-							rect = new Rectangle(tabStripHeight, 4, Width - tabStripHeight - 4, Height - 8);
-							break;
-						case TabAlignment.Right:
-							rect = new Rectangle(4, 4, Width - tabStripHeight - 4, Height - 8);
-							break;
-					}
-					return rect;
 				}
-			}
+
+                int tabStripHeight = 0;
+                int itemHeight = 0;
+					
+                if (this.Alignment <= TabAlignment.Bottom) {
+                    itemHeight = this.ItemSize.Height;
+                } else {
+                    itemHeight = this.ItemSize.Width;
+                }
+					
+                tabStripHeight = 5 + (itemHeight * this.RowCount);
+					
+                Rectangle rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
+                switch (this.Alignment) {
+                    case TabAlignment.Top:
+                        rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
+                        break;
+                    case TabAlignment.Bottom:
+                        rect = new Rectangle(4, 4, Width - 8, Height - tabStripHeight - 4);
+                        break;
+                    case TabAlignment.Left:
+                        rect = new Rectangle(tabStripHeight, 4, Width - tabStripHeight - 4, Height - 8);
+                        break;
+                    case TabAlignment.Right:
+                        rect = new Rectangle(4, 4, Width - tabStripHeight - 4, Height - 8);
+                        break;
+                }
+                return rect;
+            }
 		}
 
 		[Browsable(false)]
@@ -217,14 +217,14 @@ namespace System.Windows.Forms
 				int index = NativeMethods.SendMessage(this.Handle, NativeMethods.TCM_HITTEST, IntPtr.Zero, NativeMethods.ToIntPtr(hitTestInfo)).ToInt32();
 				if (index == -1){
 					return -1;
-				} else {
-					if (this.TabPages[index].Enabled){
-						return index;
-					} else {
-						return -1;
-					}
 				}
-			}
+
+                if (this.TabPages[index].Enabled){
+                    return index;
+                }
+
+                return -1;
+            }
 		}
 		
 		[Browsable(false)]
@@ -233,10 +233,10 @@ namespace System.Windows.Forms
 				int activeIndex = this.ActiveIndex;
 				if (activeIndex > -1){
 					return this.TabPages[activeIndex];
-				} else {
-					return null;
 				}
-			}
+
+                return null;
+            }
 		}
 		
 		#endregion

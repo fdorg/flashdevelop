@@ -324,7 +324,7 @@ namespace XMLCompletion
                                         {
                                             if (tmpTag.Closed) 
                                                 continue;
-                                            else if (tmpTag.Closing)
+                                            if (tmpTag.Closing)
                                             {
                                                 tmpTags.Push(tmpTag);
                                             }
@@ -380,7 +380,8 @@ namespace XMLCompletion
                             finally { sci.EndUndoAction(); }
                             return;
                         }
-                        else if (!text.EndsWith('>'))
+
+                        if (!text.EndsWith('>'))
                         {
                             ctag = GetXMLContextTag(sci, sci.CurrentPos);
                             if (ctag.Tag == null || ctag.Name == null) return;
@@ -785,7 +786,8 @@ namespace XMLCompletion
                     xtag.Position = position + 1;
                     return xtag;
                 }
-                else if (c == '{' && sci.BaseStyleAt(position) != 6 /*XML attribute value*/)
+
+                if (c == '{' && sci.BaseStyleAt(position) != 6 /*XML attribute value*/)
                 {
                     // code probably not inside a tag: most likely style or script tag without CDATA or comment
                     return xtag;

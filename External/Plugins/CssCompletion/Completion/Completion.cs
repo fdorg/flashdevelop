@@ -95,7 +95,7 @@ namespace CssCompletion
             var mode = CompleteMode.None;
 
             if (context.InComments) return;
-            else if (context.InBlock)
+            if (context.InBlock)
             {
                 if (context.Word == "-") mode = CompleteMode.Prefix;
                 else if (context.Word.Length >= 2 || (char)value == '-')
@@ -680,20 +680,18 @@ namespace CssCompletion
                 }
                 return;
             }
-            else
+
+            while (line < count - 1)
             {
-                while (line < count - 1)
+                txt = Sci.GetLine(line).TrimEnd();
+                if (txt.Length != 0)
                 {
-                    txt = Sci.GetLine(line).TrimEnd();
-                    if (txt.Length != 0)
-                    {
-                        indent = Sci.GetLineIndentation(line);
-                        if (indent <= startIndent) break;
-                        lastLine = line;
-                    }
-                    else break;
-                    line++;
+                    indent = Sci.GetLineIndentation(line);
+                    if (indent <= startIndent) break;
+                    lastLine = line;
                 }
+                else break;
+                line++;
             }
             if (line >= count - 1) lastLine = start;
 

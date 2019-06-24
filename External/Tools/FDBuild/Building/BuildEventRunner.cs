@@ -59,12 +59,12 @@ namespace ProjectManager.Building
                 if (line.StartsWith("DEBUG:", StringComparison.Ordinal))
                 {
                     if (noTrace) continue;
-                    else line = line.Substring("DEBUG:".Length).Trim();
+                    line = line.Substring("DEBUG:".Length).Trim();
                 }
                 if (line.StartsWith("RELEASE:", StringComparison.Ordinal))
                 {
                     if (!noTrace) continue;
-                    else line = line.Substring("RELEASE:".Length).Trim();
+                    line = line.Substring("RELEASE:".Length).Trim();
                 }
                 // expand variables
                 foreach (BuildEventInfo info in infos)

@@ -378,11 +378,9 @@ namespace ICSharpCode.SharpZipLib.Zip
                         }
                         break;
                     }
-                    else
-                    {
-                        // An unknown NTFS tag so simply skip it.
-                        helperStream.Seek(ntfsLength, SeekOrigin.Current);
-                    }
+
+                    // An unknown NTFS tag so simply skip it.
+                    helperStream.Seek(ntfsLength, SeekOrigin.Current);
                 }
             }
         }

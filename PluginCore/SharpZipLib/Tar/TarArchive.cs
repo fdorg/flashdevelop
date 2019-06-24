@@ -465,7 +465,9 @@ namespace ICSharpCode.SharpZipLib.Tar
                 
                 if (tarIn != null) {
                     return tarIn.RecordSize;
-                } else if (tarOut != null) {
+                }
+
+                if (tarOut != null) {
                     return tarOut.RecordSize;
                 }
                 return TarBuffer.DefaultRecordSize;

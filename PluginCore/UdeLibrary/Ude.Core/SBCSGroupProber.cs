@@ -97,7 +97,9 @@ namespace Ude.Core
                     bestGuess = i;
                     state = ProbingState.FoundIt;
                     break;
-                } else if (st == ProbingState.NotMe) {
+                }
+
+                if (st == ProbingState.NotMe) {
                     isActive[i] = false;
                     activeNum--;
                     if (activeNum <= 0) {

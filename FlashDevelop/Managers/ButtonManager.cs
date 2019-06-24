@@ -20,12 +20,12 @@ namespace FlashDevelop.Managers
             if (Globals.CurrentDocument == null) return;
             for (int i = 0; i < count; i++)
             {
-                ToolStripItem item = StripBarManager.Items[i];
-                string[] actions = ((ItemData)item.Tag).Flags.Split('+');
-                for (int j = 0; j < actions.Length; j++)
+                var item = StripBarManager.Items[i];
+                var actions = ((ItemData)item.Tag).Flags.Split('+');
+                foreach (var action in actions)
                 {
-                    bool value = ValidateFlagAction(item, actions[j]);
-                    ExecuteFlagAction(item, actions[j], value);
+                    bool value = ValidateFlagAction(item, action);
+                    ExecuteFlagAction(item, action, value);
                 }
             }
         }
@@ -247,16 +247,16 @@ namespace FlashDevelop.Managers
         {
             if (action.StartsWithOrdinal("Check:"))
             {
-                if (item is ToolStripMenuItem)
+                if (item is ToolStripMenuItem menuItem)
                 {
-                    ((ToolStripMenuItem)item).Checked = value;
+                    menuItem.Checked = value;
                 }
             }
             else if (action.StartsWithOrdinal("Uncheck:"))
             {
-                if (item is ToolStripMenuItem)
+                if (item is ToolStripMenuItem menuItem)
                 {
-                    ((ToolStripMenuItem)item).Checked = !value;
+                    menuItem.Checked = !value;
                 }
             }
             else if (action.StartsWithOrdinal("Enable:"))
@@ -355,29 +355,28 @@ namespace FlashDevelop.Managers
                         return name + " (" + info.Charset + ")";
                     }
                 }
-                else // Opened in different encoding...
+
+                bool hasBOM = document.SciControl.SaveBOM;
+                if (codepage == Encoding.UTF8.CodePage)
                 {
-                    bool hasBOM = document.SciControl.SaveBOM;
-                    if (codepage == Encoding.UTF8.CodePage)
-                    {
-                        return GetLabelAsPlainText("Label.UTF8", true, hasBOM);
-                    }
-                    else if (codepage == Encoding.UTF7.CodePage)
-                    {
-                        return GetLabelAsPlainText("Label.UTF7", true, hasBOM);
-                    }
-                    else if (codepage == Encoding.BigEndianUnicode.CodePage)
-                    {
-                        return GetLabelAsPlainText("Label.BigEndian", true, hasBOM);
-                    }
-                    else if (codepage == Encoding.Unicode.CodePage)
-                    {
-                        return GetLabelAsPlainText("Label.LittleEndian", true, hasBOM);
-                    }
-                    else return GetLabelAsPlainText("Label.8Bits", false, false);
+                    return GetLabelAsPlainText("Label.UTF8", true, hasBOM);
                 }
+                if (codepage == Encoding.UTF7.CodePage)
+                {
+                    return GetLabelAsPlainText("Label.UTF7", true, hasBOM);
+                }
+                if (codepage == Encoding.BigEndianUnicode.CodePage)
+                {
+                    return GetLabelAsPlainText("Label.BigEndian", true, hasBOM);
+                }
+                if (codepage == Encoding.Unicode.CodePage)
+                {
+                    return GetLabelAsPlainText("Label.LittleEndian", true, hasBOM);
+                }
+                return GetLabelAsPlainText("Label.8Bits", false, false);
             }
-            else return TextHelper.GetString("Info.Unknown");
+
+            return TextHelper.GetString("Info.Unknown");
         }
 
         /// <summary>

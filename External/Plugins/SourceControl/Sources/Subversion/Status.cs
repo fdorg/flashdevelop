@@ -131,7 +131,7 @@ namespace SourceControl.Sources.Subversion
             {
                 StatusNode child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }
@@ -144,7 +144,7 @@ namespace SourceControl.Sources.Subversion
         {
             int p = path.IndexOf(Path.DirectorySeparatorChar);
             if (p < 0) return AddChild(path, status, true);
-            else return AddChild(path.Substring(0, p), status, false)
+            return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 

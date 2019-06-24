@@ -420,7 +420,7 @@ namespace AS3Context
         {
             string docPackage = package == "" ? "__Global__" : package;
             if (Docs.ContainsKey(docPackage)) return Docs[docPackage];
-            else return null;
+            return null;
         }
 
         private static MemberList GetMembers(List<MemberInfo> abcMembers, FlagType baseFlags, QName instName)
@@ -441,7 +441,8 @@ namespace AS3Context
                     {
                         continue;
                     }
-                    else if (uri == protect)
+
+                    if (uri == protect)
                     {
                         member.Access = Visibility.Protected;
                         member.Namespace = "protected";

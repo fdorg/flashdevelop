@@ -26,7 +26,7 @@ namespace ASCompletion.Completion
         {
             string name = m.Groups["name"].Value;
             if (variables.ContainsKey(name)) return (string)variables[name];
-            else return m.Value;
+            return m.Value;
         }
     }
 }

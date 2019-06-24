@@ -24,7 +24,7 @@ namespace FlashDevelop.Managers
         {
             string result;
             if (valueMap.TryGetValue(id, out result)) return result;
-            else return null;
+            return null;
         }
 
         /// <summary>

@@ -326,15 +326,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                             if (symbol < 0) 
                             {
                                 return false;
-                            } 
-                            else 
-                            {
-                                // symbol == 256: end of block
-                                distTree = null;
-                                litlenTree = null;
-                                mode = DECODE_BLOCKS;
-                                return true;
                             }
+
+                            // symbol == 256: end of block
+                            distTree = null;
+                            litlenTree = null;
+                            mode = DECODE_BLOCKS;
+                            return true;
                         }
                         
                         try 
@@ -462,12 +460,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
                         if (noHeader) {
                             mode = FINISHED;
                             return false;
-                        } else {
-                            input.SkipToByteBoundary();
-                            neededBits = 32;
-                            mode = DECODE_CHKSUM;
-                            return true;
                         }
+
+                        input.SkipToByteBoundary();
+                        neededBits = 32;
+                        mode = DECODE_CHKSUM;
+                        return true;
                     }
                     
                     int type = input.PeekBits(3);

@@ -48,8 +48,7 @@ namespace ProjectManager.Projects.AS2
 
             if (FileInspector.IsActionScript(inFile, Path.GetExtension(inFile).ToLower()))
                 return ProjectPaths.GetRelativePath(Path.GetDirectoryName(ProjectPath), path).Replace('\\', '/');
-            else
-                return ProjectPaths.GetRelativePath(Path.GetDirectoryName(inFile), path).Replace('\\', '/');
+            return ProjectPaths.GetRelativePath(Path.GetDirectoryName(inFile), path).Replace('\\', '/');
         }
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)

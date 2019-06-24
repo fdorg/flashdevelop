@@ -79,8 +79,8 @@ namespace FlashDevelop.Utilities
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
             if (Globals.SciControl.SelText.Length > 0) return Globals.SciControl.SelText;
-            else if (PrevSelText.Length > 0) return PrevSelText;
-            else return string.Empty;
+            if (PrevSelText.Length > 0) return PrevSelText;
+            return string.Empty;
         }
 
         /// <summary>
@@ -91,8 +91,8 @@ namespace FlashDevelop.Utilities
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
             string curWord = Globals.SciControl.GetWordFromPosition(Globals.SciControl.CurrentPos);
             if (!string.IsNullOrEmpty(curWord)) return curWord;
-            else if (PrevSelWord.Length > 0) return PrevSelWord;
-            else return string.Empty;
+            if (PrevSelWord.Length > 0) return PrevSelWord;
+            return string.Empty;
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurFile()
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            else return Globals.CurrentDocument.FileName;
+            return Globals.CurrentDocument.FileName;
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurDir()
         {
             if (!Globals.CurrentDocument.IsEditable) return Globals.MainForm.WorkingDirectory;
-            else return Path.GetDirectoryName(GetCurFile());
+            return Path.GetDirectoryName(GetCurFile());
         }
         
         /// <summary>
@@ -119,7 +119,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurFilename()
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            else return Path.GetFileName(GetCurFile());
+            return Path.GetFileName(GetCurFile());
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace FlashDevelop.Utilities
         public static string GetCurFilenameNoExt()
         {
             if (!Globals.CurrentDocument.IsEditable) return string.Empty;
-            else return Path.GetFileNameWithoutExtension(GetCurFile());
+            return Path.GetFileNameWithoutExtension(GetCurFile());
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace FlashDevelop.Utilities
                 ofd.InitialDirectory = GetCurDir();
                 ofd.Multiselect = false;
                 if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
-                else return string.Empty;
+                return string.Empty;
             }
         }
         
@@ -202,7 +202,7 @@ namespace FlashDevelop.Utilities
             {
                 sfd.InitialDirectory = GetCurDir();
                 if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
-                else return string.Empty;
+                return string.Empty;
             }
         }
         
@@ -215,7 +215,7 @@ namespace FlashDevelop.Utilities
             {
                 fbd.RootFolder = Environment.SpecialFolder.MyComputer;
                 if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
-                else return string.Empty;
+                return string.Empty;
             }
         }
         
@@ -229,7 +229,8 @@ namespace FlashDevelop.Utilities
             {
                 return cbdata.GetData("System.String", true).ToString();
             }
-            else return string.Empty;
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -239,7 +240,7 @@ namespace FlashDevelop.Utilities
         {
             CommentBlockStyle cbs = Globals.Settings.CommentBlockStyle;
             if (cbs == CommentBlockStyle.Indented) return " ";
-            else return "";
+            return "";
         }
 
         /// <summary>
@@ -248,7 +249,7 @@ namespace FlashDevelop.Utilities
         public static string GetSTC()
         {
             if (Globals.Settings.UseTabs) return "\t";
-            else return " ";
+            return " ";
         }
 
         /// <summary>
@@ -261,12 +262,13 @@ namespace FlashDevelop.Utilities
                 string syntax = PluginBase.CurrentProject.Language;
                 return syntax.ToLower();
             }
-            else if (Globals.CurrentDocument.IsEditable)
+
+            if (Globals.CurrentDocument.IsEditable)
             {
                 ScintillaControl sci = Globals.SciControl;
                 return sci.ConfigurationLanguage.ToLower();
             }
-            else return string.Empty;
+            return string.Empty;
         }
 
         /// <summary>
@@ -400,7 +402,8 @@ namespace FlashDevelop.Utilities
                 }
                 return "$(" + name + ")";
             }
-            else return match.Value;
+
+            return match.Value;
         }
         
         /// <summary>
@@ -446,7 +449,7 @@ namespace FlashDevelop.Utilities
         public static string ReplaceUserArgs(Match match)
         {
             if (match.Groups.Count > 0) return userArgs[match.Groups[1].Value];
-            else return match.Value;
+            return match.Value;
         }
 
         /// <summary>
@@ -455,7 +458,7 @@ namespace FlashDevelop.Utilities
         public static string ReplaceEnvArgs(Match match)
         {
             if (match.Groups.Count > 0) return Environment.GetEnvironmentVariable(match.Groups[1].Value);
-            else return match.Value;
+            return match.Value;
         }
 
         /// <summary>

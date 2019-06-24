@@ -337,12 +337,13 @@ namespace OutputPanel
                     this.FindNextMatch(true);
                     return true;
                 }
-                else if (keys == (Keys.Shift | Keys.F3))
+
+                if (keys == (Keys.Shift | Keys.F3))
                 {
                     this.FindNextMatch(false);
                     return true;
                 }
-                else if (keys == Keys.Escape)
+                if (keys == Keys.Escape)
                 {
                     ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
                     if (doc != null && doc.IsEditable) doc.SciControl.Focus();

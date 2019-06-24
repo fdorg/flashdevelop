@@ -23,7 +23,8 @@ namespace PluginCore.Helpers
                 {
                     return Directory.GetFileSystemEntries(path).Length == 0;
                 }
-                else return false;
+
+                return false;
             }
             catch { return false; }
         }

@@ -60,7 +60,8 @@ namespace System.Windows.Forms
                 string name = ThemeHelper.GetFilteredTypeName(this.Tag.GetType());
                 return PluginBase.MainForm.GetThemeColor(name + ".BorderColor", SystemColors.ControlDark);
             }
-            else return SystemColors.ControlDark;
+
+            return SystemColors.ControlDark;
         }
 
         /// <summary>
@@ -927,7 +928,8 @@ namespace System.Windows.Forms
                 {
                     return defaultStatusStripMargin;
                 }
-                else return defaultMargin;
+
+                return defaultMargin;
             }
         }
     }

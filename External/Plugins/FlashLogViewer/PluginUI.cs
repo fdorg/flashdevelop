@@ -571,7 +571,7 @@ namespace FlashLogViewer
         private bool PassesFilter(string logLine)
         {
             if (reFilter == null) return true;
-            else return reFilter.IsMatch(logLine);
+            return reFilter.IsMatch(logLine);
         }
 
         #endregion

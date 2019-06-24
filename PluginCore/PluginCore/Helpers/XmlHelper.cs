@@ -12,7 +12,7 @@ namespace PluginCore.Helpers
         public static string GetValue(XmlNode node)
         {
             if (node?.FirstChild != null) return node.FirstChild.Value;
-            else return null;
+            return null;
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace PluginCore.Helpers
         public static string GetAttribute(XmlNode node, string attName)
         {
             if (node?.Attributes[attName] != null) return node.Attributes[attName].Value;
-            else return null;
+            return null;
         }
         
         /// <summary>

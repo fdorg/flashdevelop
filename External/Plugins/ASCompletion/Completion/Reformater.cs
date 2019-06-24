@@ -110,14 +110,16 @@ namespace ASCompletion.Completion
                     }
                     continue;
                 }
-                else if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
+
+                if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
                 {
                     if (txt[i] == '/')
                     {
                         sb.Append(txt.Substring(i - 1));
                         break;
                     }
-                    else if (txt[i] == '*')
+
+                    if (txt[i] == '*')
                     {
                         inComments = true;
                         sb.Append(c);
@@ -210,7 +212,8 @@ namespace ASCompletion.Completion
                             c2 = ' ';
                             continue;
                         }
-                        else needSpace = true;
+
+                        needSpace = true;
                     }
                     else if (i < n && (c == '+' || c == '-') && txt[i] == c) // unary operators
                     {
@@ -250,7 +253,8 @@ namespace ASCompletion.Completion
                             i++;
                             continue;
                         }
-                        else if (c2 == '.' && c == '=') // php concat operator
+
+                        if (c2 == '.' && c == '=') // php concat operator
                         {
                             needSpace = false;
                         }
@@ -389,7 +393,7 @@ namespace ASCompletion.Completion
                 if (inExpr)
                 {
                     if (c == '{') return false;
-                    else if (c != '}') continue;
+                    if (c != '}') continue;
                 }
                 // comments
                 if (inComments > 0)
@@ -401,14 +405,16 @@ namespace ASCompletion.Completion
                     }
                     continue;
                 }
-                else if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
+
+                if (i < n &&  c == '/' && (txt[i] == '*' || txt[i] == '/'))
                 {
                     if (txt[i] == '/')
                     {
                         inComments = 1;
                         break;
                     }
-                    else if (txt[i] == '*')
+
+                    if (txt[i] == '*')
                     {
                         inComments = 2;
                         continue;
@@ -466,7 +472,8 @@ namespace ASCompletion.Completion
                         inExpr = true;
                         continue;
                     }
-                    else return false;
+
+                    return false;
                 }
 
                 // new tag
@@ -479,7 +486,8 @@ namespace ASCompletion.Completion
                         c2 = '<';
                         continue;
                     }
-                    else return false;
+
+                    return false;
                 }
                 if (c == '>')
                 {
@@ -490,7 +498,8 @@ namespace ASCompletion.Completion
                         c2 = '>';
                         continue;
                     }
-                    else return false;
+
+                    return false;
                 }
 
                 // CDATA, HTML comments
@@ -502,7 +511,8 @@ namespace ASCompletion.Completion
                         inCData = true;
                         continue;
                     }
-                    else if (txt[i] == '-' && txt[i + 1] == '-')
+
+                    if (txt[i] == '-' && txt[i + 1] == '-')
                     {
                         i += 2;
                         inComment = true;
@@ -524,7 +534,8 @@ namespace ASCompletion.Completion
                 index = i;
                 return true;
             }
-            else return false;
+
+            return false;
         }
 
         public static bool lookupRegex(string txt, ref int index)

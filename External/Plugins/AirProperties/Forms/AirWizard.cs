@@ -421,9 +421,10 @@ namespace AirProperties
             if (item != null)
             {
                 if (item == TextHelper.GetString("Locale.Default")) return string.Empty;
-                else return item;
+                return item;
             }
-            else return string.Empty;
+
+            return string.Empty;
         }
 
         private bool GetSelectedLocaleIsDefault()

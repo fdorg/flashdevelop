@@ -85,7 +85,7 @@ namespace ASCompletion
                 TreeNode b = (TreeNode)y;
                 if (a.ImageIndex == b.ImageIndex)
                     return string.Compare(a.Text, b.Text);
-                else return a.ImageIndex - b.ImageIndex;
+                return a.ImageIndex - b.ImageIndex;
             }
         }
 
@@ -214,7 +214,7 @@ namespace ASCompletion
         private TreeNodeCollection FindPackage(string package)
         {
             if (package == "") return rootNodes;
-            else if (packages.ContainsKey(package)) return packages[package];
+            if (packages.ContainsKey(package)) return packages[package];
 
             int p = package.LastIndexOf('.');
             string newPackage = (p < 0) ? package : package.Substring(p+1);
@@ -401,7 +401,7 @@ namespace ASCompletion
             string[] info = (node.Tag as string).Split('@');
             int line;
             if (int.TryParse(info[1], out line)) return line;
-            else return 0;
+            return 0;
         }
 
         #endregion
@@ -486,22 +486,24 @@ namespace ASCompletion
                 FindNextMatch(filterTextBox.Text);
                 return true;
             }
-            else if (keys == (Keys.Shift | Keys.F3))
+
+            if (keys == (Keys.Shift | Keys.F3))
             {
                 FindPrevMatch(filterTextBox.Text);
                 return true;
             }
-            else if (keys == Keys.F5 || keys == (Keys.Control | Keys.J))
+            if (keys == Keys.F5 || keys == (Keys.Control | Keys.J))
             {
                 UpdateTree();
                 return true;
             }
-            else if (keys == Keys.Escape)
+            if (keys == Keys.Escape)
             {
                 if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
                 if (PluginBase.MainForm.CurrentDocument.IsEditable)
                     PluginBase.MainForm.CurrentDocument.SciControl.Focus();
             }
+
             return false;
         }
 

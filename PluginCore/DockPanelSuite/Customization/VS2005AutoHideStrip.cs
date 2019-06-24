@@ -126,7 +126,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005AutoHideStrip.BorderColor");
                 if (color != Color.Empty) return new Pen(color);
-                else return SystemPens.ControlDark; 
+                return SystemPens.ControlDark;
             }
         }
 
@@ -136,7 +136,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 Color color = PluginCore.PluginBase.MainForm.GetThemeColor("VS2005AutoHideStrip.ForeColor");
                 if (color != Color.Empty) return new SolidBrush(color);
-                else return SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark);    
+                return SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark);
             }
         }
         #endregion
@@ -427,8 +427,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (!transformed)
                 return new Rectangle(x, y, width, height);
-            else
-                return GetTransformedRectangle(dockState, new Rectangle(x, y, width, height));
+            return GetTransformedRectangle(dockState, new Rectangle(x, y, width, height));
         }
 
         private Rectangle GetTabRectangle(TabVS2005 tab)
@@ -453,8 +452,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (!transformed)
                 return new Rectangle(x, y, width, height);
-            else
-                return GetTransformedRectangle(dockState, new Rectangle(x, y, width, height));
+            return GetTransformedRectangle(dockState, new Rectangle(x, y, width, height));
         }
 
         private Rectangle GetTransformedRectangle(DockState dockState, Rectangle rect)

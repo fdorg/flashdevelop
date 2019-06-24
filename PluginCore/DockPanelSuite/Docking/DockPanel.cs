@@ -560,7 +560,8 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 return dockState == DockState.DockLeft ? dockLeftSize : dockRightSize;
             }
-            else if (dockState == DockState.DockTop || dockState == DockState.DockBottom)
+
+            if (dockState == DockState.DockTop || dockState == DockState.DockBottom)
             {
                 int height = ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom;
                 int dockTopSize = m_dockTopPortion >= 1 ? (int)m_dockTopPortion : (int)(height * m_dockTopPortion);
@@ -580,8 +581,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 return dockState == DockState.DockTop ? dockTopSize : dockBottomSize;
             }
-            else
-                return 0;
+            return 0;
         }
 
         protected override void OnLayout(LayoutEventArgs levent)
@@ -923,7 +923,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (clipRects == null && m_clipRects == null)
                 return false;
-            else if ((clipRects == null) != (m_clipRects == null))
+            if ((clipRects == null) != (m_clipRects == null))
                 return true;
 
             foreach (Rectangle rect in clipRects)

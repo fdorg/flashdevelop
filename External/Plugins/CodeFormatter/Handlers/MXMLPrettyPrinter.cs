@@ -1760,7 +1760,8 @@ namespace CodeFormatter.Handlers
                                 //do nothing
                                 continue;
                             }
-                            else if (attr.mName == NewLineFlag)
+
+                            if (attr.mName == NewLineFlag)
                             {
                                 //do nothing
                                 continue;
@@ -2041,7 +2042,8 @@ namespace CodeFormatter.Handlers
                             endPos = k;
                             break;
                         }
-                        else if (newC == '\\')
+
+                        if (newC == '\\')
                         {
                             k++; //skip over next char
                         }

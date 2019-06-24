@@ -229,11 +229,12 @@ namespace PluginCore.Collections
             {
                 throw new ArgumentNullException(nameof(array));
             }
-            else if (arrayIndex < 0 || arrayIndex > array.Length)
+
+            if (arrayIndex < 0 || arrayIndex > array.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(arrayIndex));
             }
-            else if (array.Length - arrayIndex < _size)
+            if (array.Length - arrayIndex < _size)
             {
                 throw new ArgumentException("The number of elements in the source " + nameof(FixedSizeQueue<T>) + " is greater than the available space from " + nameof(arrayIndex) + " to the end of the destination " + nameof(array));
             }

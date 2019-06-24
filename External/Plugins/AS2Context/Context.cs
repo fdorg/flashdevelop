@@ -982,10 +982,6 @@ namespace AS2Context
                 }
             }
             // not found
-            else
-            {
-                //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-            }
 
             if (!topLevel.Members.Contains("_root", 0, 0))
                 topLevel.Members.Add(new MemberModel("_root", docType, FlagType.Variable, Visibility.Public));
@@ -1087,7 +1083,8 @@ namespace AS2Context
                 pModel.Imports.Sort();
                 return pModel;
             }
-            else return null;
+
+            return null;
         }
 
         private void PopulateClassesEntries(string package, string path, MemberList memberList)

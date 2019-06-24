@@ -106,7 +106,7 @@ namespace PluginCore.BBCode
 
                     if (closerOutOfBounds)
                         break;
-                    else if (mCl != null)
+                    if (mCl != null)
                         closerStartAt = mCl.tagIndex + 1;
                 }
             }

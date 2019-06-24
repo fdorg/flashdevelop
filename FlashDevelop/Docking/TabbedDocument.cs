@@ -64,7 +64,7 @@ namespace FlashDevelop.Docking
             get
             {
                 if (this.IsEditable) return this.SciControl.FileName;
-                else return null;
+                return null;
             }
         }
 
@@ -96,7 +96,7 @@ namespace FlashDevelop.Docking
             get
             {
                 if (!this.IsEditable || this.splitContainer.Panel2Collapsed) return false;
-                else return true;
+                return true;
             }
             set
             {
@@ -140,18 +140,18 @@ namespace FlashDevelop.Docking
                 foreach (Control ctrl in this.Controls)
                 {
                     if (ctrl is ScintillaControl && !this.Disposing && !this.IsDisposed) return ctrl as ScintillaControl;
-                    else if (ctrl is SplitContainer && ctrl.Name == "fdSplitView" && !this.Disposing && !this.IsDisposed)
+                    if (ctrl is SplitContainer && ctrl.Name == "fdSplitView" && !this.Disposing && !this.IsDisposed)
                     {
                         SplitContainer casted = ctrl as SplitContainer;
                         ScintillaControl sci1 = casted.Panel1.Controls[0] as ScintillaControl;
                         ScintillaControl sci2 = casted.Panel2.Controls[0] as ScintillaControl;
                         if (sci2.IsFocus) return sci2;
-                        else if (sci1.IsFocus) return sci1;
-                        else if (this.lastEditor != null && this.lastEditor.Visible)
+                        if (sci1.IsFocus) return sci1;
+                        if (this.lastEditor != null && this.lastEditor.Visible)
                         {
                             return this.lastEditor;
                         }
-                        else return sci1;
+                        return sci1;
                     }
                 }
                 return null;
@@ -182,7 +182,7 @@ namespace FlashDevelop.Docking
             {
                 string untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
                 if (this.IsEditable) return this.FileName.StartsWithOrdinal(untitledFileStart);
-                else return false;
+                return false;
             }
         }
 

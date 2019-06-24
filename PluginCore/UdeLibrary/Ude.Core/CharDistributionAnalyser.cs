@@ -609,12 +609,11 @@ namespace Ude.Core
         /// no validation needed here. State machine has done that
         /// </summary>
         /// <returns></returns>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xB0 && buf[offset+1] >= 0xA1)  
                 return 94 * (buf[offset] - 0xb0) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
     
@@ -1038,12 +1037,11 @@ namespace Ude.Core
         ///  second byte range: 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xC4)  
                 return 94 * (buf[offset] - 0xC4) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
     
@@ -1632,12 +1630,11 @@ namespace Ude.Core
         ///  second byte range: 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xB0)  
                 return 94 * (buf[offset] - 0xB0) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
     
@@ -2558,16 +2555,16 @@ namespace Ude.Core
         ///  second byte range: 0x40 -- 0x7e , 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
-            if (buf[offset] >= 0xA4) {
+        public override int GetOrder(byte[] buf, int offset)
+        {
+            if (buf[offset] >= 0xA4)
+            {
                 if (buf[offset+1] >= 0xA1)
                     return 157 * (buf[offset] - 0xA4) + buf[offset+1] - 0xA1 + 63;
-                else
-                    return 157 * (buf[offset] - 0xA4) + buf[offset+1] - 0x40;
-            } else {
-                return -1;            
-            }  
+                return 157 * (buf[offset] - 0xA4) + buf[offset+1] - 0x40;
+            }
+
+            return -1;
         }
     }
 
@@ -3160,12 +3157,11 @@ namespace Ude.Core
         ///  second byte range: 0xa1 -- 0xfe
         /// no validation needed here. State machine has done that
         /// </summary>
-        public override int GetOrder(byte[] buf, int offset) 
-        { 
+        public override int GetOrder(byte[] buf, int offset)
+        {
             if (buf[offset] >= 0xA0)  
                 return 94 * (buf[offset] - 0xA1) + buf[offset+1] - 0xA1;
-            else
-                return -1;
+            return -1;
         }
     }
 

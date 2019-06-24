@@ -86,7 +86,7 @@ namespace PluginCore.Utilities
             this._ShFile.fFlags = this.fFlags.Flag;
             int returnValue = SHFileOperation(ref this._ShFile);
             if (returnValue == 0) return true;
-            else return false;
+            return false;
         }
 
         public class FILEOP_FLAGS

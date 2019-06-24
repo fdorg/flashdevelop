@@ -402,8 +402,7 @@ namespace ProjectManager.Controls
             {
                 if (createDirectoryBox.Checked)
                     return Path.Combine(locationTextBox.Text,ProjectName);
-                else
-                    return locationTextBox.Text;
+                return locationTextBox.Text;
             }
             set => locationTextBox.Text = value;
         }
@@ -414,8 +413,7 @@ namespace ProjectManager.Controls
             {
                 if (projectListView.SelectedItems.Count > 0)
                     return projectListView.SelectedItems[0].Tag as string;
-                else
-                    return null;
+                return null;
             }
         }
 
@@ -425,8 +423,7 @@ namespace ProjectManager.Controls
             {
                 if (projectListView.SelectedItems.Count > 0)
                     return projectListView.SelectedItems[0].Text;
-                else
-                    return null;
+                return null;
             }
         }
 

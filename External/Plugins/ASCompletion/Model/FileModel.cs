@@ -186,10 +186,8 @@ namespace ASCompletion.Model
             {
                 return path.Substring(0, path.Length - packPath.Length);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public void Check()

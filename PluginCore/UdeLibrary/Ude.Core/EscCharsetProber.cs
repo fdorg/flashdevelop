@@ -77,7 +77,9 @@ namespace Ude.Core
                         if (activeSM == 0) {
                             state = ProbingState.NotMe;
                             return state;
-                        } else if (j != activeSM) {
+                        }
+
+                        if (j != activeSM) {
                             CodingStateMachine t = codingSM[activeSM];
                             codingSM[activeSM] = codingSM[j];
                             codingSM[j] = t;

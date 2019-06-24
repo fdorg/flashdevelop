@@ -183,7 +183,8 @@ namespace ProjectManager.Controls.TreeView
                 Nodes.Clear(); // non-existent file can't be explored
                 return;
             }
-            else if (Nodes.Count == 0)
+
+            if (Nodes.Count == 0)
             {
                 Nodes.Add(new WorkingNode(BackingPath));
             }

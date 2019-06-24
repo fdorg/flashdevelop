@@ -414,8 +414,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (MdiClientExists)
                 return GetMdiClientController().MdiClient.RectangleToClient(rect);
-            else
-                return Rectangle.Empty;
+            return Rectangle.Empty;
         }
     }
 }

@@ -34,7 +34,8 @@ namespace FlashDevelop.Managers
             {
                 throw new ArgumentNullException(nameof(window));
             }
-            else if (history != null)
+
+            if (history != null)
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is already initialized.");
             }
@@ -80,7 +81,8 @@ namespace FlashDevelop.Managers
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
             }
-            else if (hwnd != IntPtr.Zero)
+
+            if (hwnd != IntPtr.Zero)
             {
                 if (!UnsafeNativeMethods.RemoveClipboardFormatListener(hwnd))
                 {

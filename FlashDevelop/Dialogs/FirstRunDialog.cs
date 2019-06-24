@@ -270,9 +270,10 @@ namespace FlashDevelop.Dialogs
             {
                 commands = (Commands)ObjectSerializer.Deserialize(filename, commands);
                 if (commands.LatestCommand > Globals.Settings.LatestCommand) return true;
-                else return false;
+                return false;
             }
-            else return false;
+
+            return false;
         }
 
         /// <summary>

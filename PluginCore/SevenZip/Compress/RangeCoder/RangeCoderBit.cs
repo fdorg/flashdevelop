@@ -98,18 +98,16 @@ namespace SevenZip.Compression.RangeCoder
                 }
                 return 0;
             }
-            else
+
+            rangeDecoder.Range -= newBound;
+            rangeDecoder.Code -= newBound;
+            Prob -= (Prob) >> kNumMoveBits;
+            if (rangeDecoder.Range < Decoder.kTopValue)
             {
-                rangeDecoder.Range -= newBound;
-                rangeDecoder.Code -= newBound;
-                Prob -= (Prob) >> kNumMoveBits;
-                if (rangeDecoder.Range < Decoder.kTopValue)
-                {
-                    rangeDecoder.Code = (rangeDecoder.Code << 8) | (byte)rangeDecoder.Stream.ReadByte();
-                    rangeDecoder.Range <<= 8;
-                }
-                return 1;
+                rangeDecoder.Code = (rangeDecoder.Code << 8) | (byte)rangeDecoder.Stream.ReadByte();
+                rangeDecoder.Range <<= 8;
             }
+            return 1;
         }
     }
 }

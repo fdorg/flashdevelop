@@ -582,15 +582,12 @@ namespace FlashDebugger
             {
                 // are we done yet?
                 if (MetaDataAvailable) break;
-                else
+                try
                 {
-                    try
-                    {
-                        attempts--;
-                        Thread.Sleep(period);
-                    }
-                    catch (ThreadInterruptedException){}
+                    attempts--;
+                    Thread.Sleep(period);
                 }
+                catch (ThreadInterruptedException){}
             }
             // throw exception if still not ready
             if (!MetaDataAvailable) throw new InProgressException();

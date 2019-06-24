@@ -30,23 +30,23 @@ namespace PluginCore.Controls
         public static IDisposable Attach(object obj, bool childrenToo)
         {
             if (!Win32.ShouldUseWin32() && !PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false)) return null;
-            else if (obj is Control && childrenToo)
+            if (obj is Control && childrenToo)
             {
                 Control parent = obj as Control;
                 foreach (Control ctrl in parent.Controls) ScrollBarEx.Attach(ctrl);
                 return null;
             }
-            else if (obj is ListBox) return new ListBoxScroller(obj as ListBox);
-            else if (obj is ListView) return new ListViewScroller(obj as ListView);
-            else if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
-            else if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
-            else if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
-            else if (obj is PropertyGrid) return new PropertyGridScroller(obj as PropertyGrid);
-            else if (obj is TextBox && (obj as TextBox).Multiline && (obj as TextBox).WordWrap)
+            if (obj is ListBox) return new ListBoxScroller(obj as ListBox);
+            if (obj is ListView) return new ListViewScroller(obj as ListView);
+            if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
+            if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
+            if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
+            if (obj is PropertyGrid) return new PropertyGridScroller(obj as PropertyGrid);
+            if (obj is TextBox && (obj as TextBox).Multiline && (obj as TextBox).WordWrap)
             {
                 return new TextBoxScroller(obj as TextBoxEx);
             }
-            else return null;
+            return null;
         }
 
         /// <summary>
@@ -1582,8 +1582,7 @@ namespace PluginCore.Controls
             // with checking if new value is in bounds (min/max)
             if (up)
                 return Math.Max(this.minimum, this.value - (smallIncrement ? this.smallChange : this.largeChange));
-            else
-                return Math.Min(this.maximum, this.value + (smallIncrement ? this.smallChange : this.largeChange));
+            return Math.Min(this.maximum, this.value + (smallIncrement ? this.smallChange : this.largeChange));
         }
 
         /// <summary>
@@ -1956,7 +1955,7 @@ namespace PluginCore.Controls
             {
                 bool enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
                 if (control.Parent == null) return;
-                else if (enabled)
+                if (enabled)
                 {
                     if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();
                     UpdateScrollBarTheme();

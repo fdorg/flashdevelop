@@ -69,16 +69,15 @@ namespace WeifenLuo.WinFormsUI.Docking
                         {
                             if (DockStyle == DockStyle.Left)
                                 return _imagePanelLeft;
-                            else if (DockStyle == DockStyle.Right)
+                            if (DockStyle == DockStyle.Right)
                                 return _imagePanelRight;
-                            else if (DockStyle == DockStyle.Top)
+                            if (DockStyle == DockStyle.Top)
                                 return _imagePanelTop;
-                            else if (DockStyle == DockStyle.Bottom)
+                            if (DockStyle == DockStyle.Bottom)
                                 return _imagePanelBottom;
-                            else if (DockStyle == DockStyle.Fill)
+                            if (DockStyle == DockStyle.Fill)
                                 return _imagePanelFill;
-                            else
-                                return null;
+                            return null;
                         }
                     }
 
@@ -88,16 +87,15 @@ namespace WeifenLuo.WinFormsUI.Docking
                         {
                             if (DockStyle == DockStyle.Left)
                                 return _imagePanelLeftActive;
-                            else if (DockStyle == DockStyle.Right)
+                            if (DockStyle == DockStyle.Right)
                                 return _imagePanelRightActive;
-                            else if (DockStyle == DockStyle.Top)
+                            if (DockStyle == DockStyle.Top)
                                 return _imagePanelTopActive;
-                            else if (DockStyle == DockStyle.Bottom)
+                            if (DockStyle == DockStyle.Bottom)
                                 return _imagePanelBottomActive;
-                            else if (DockStyle == DockStyle.Fill)
+                            if (DockStyle == DockStyle.Fill)
                                 return _imagePanelFillActive;
-                            else
-                                return null;
+                            return null;
                         }
                     }
 

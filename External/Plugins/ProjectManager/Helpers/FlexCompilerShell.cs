@@ -249,11 +249,11 @@ namespace ProjectManager.Helpers
                     line = process.StandardOutput.ReadLine();
 
                 if (line == null) return 0;
-                else m = Regex.Match(line, "Assigned ([0-9]+) as the compile target id");
+                m = Regex.Match(line, "Assigned ([0-9]+) as the compile target id");
             }
 
             if (m.Groups.Count == 2) return int.Parse(m.Groups[1].Value);
-            else throw new Exception("Couldn't find the compile ID assigned by fcsh!");
+            throw new Exception("Couldn't find the compile ID assigned by fcsh!");
         }
 
         /// <summary>

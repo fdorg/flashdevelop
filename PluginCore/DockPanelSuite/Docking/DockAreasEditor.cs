@@ -40,8 +40,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                     if (dockAreas == 0)
                         return m_oldDockAreas;
-                    else
-                        return dockAreas;
+                    return dockAreas;
                 }
             }
 

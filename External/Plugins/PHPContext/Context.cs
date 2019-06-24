@@ -219,8 +219,7 @@ namespace PHPContext
             if (withClass != null && inClass.InFile.Package == withClass.InFile.Package)
                 return Visibility.Public;
             // public only
-            else
-                return Visibility.Public;
+            return Visibility.Public;
         }
 
         /// <summary>
@@ -255,10 +254,6 @@ namespace PHPContext
                 }*/
             }
             // not found
-            else
-            {
-                //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-            }
 
             // special variables
             topLevel.Members.Add(new MemberModel("$this", "", FlagType.Variable, Visibility.Public));

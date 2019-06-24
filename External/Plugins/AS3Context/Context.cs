@@ -530,7 +530,8 @@ namespace AS3Context
                 nFile.HasFiltering = true;
                 return nFile;
             }
-            else return base.CreateFileModel(fileName);
+
+            return base.CreateFileModel(fileName);
         }
 
         private void GuessPackage(string fileName, FileModel nFile)

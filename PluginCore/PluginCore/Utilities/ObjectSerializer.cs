@@ -112,17 +112,15 @@ namespace PluginCore.Utilities
             {
                 return Activator.CreateInstance(type);
             }
-            else if (info.Length == 0)
+
+            if (info.Length == 0)
             {
                 info.Delete();
                 return Activator.CreateInstance(type);
             }
-            else
+            using (FileStream stream = info.Open(FileMode.Open, FileAccess.Read))
             {
-                using (FileStream stream = info.Open(FileMode.Open, FileAccess.Read))
-                {
-                    return formatter.Deserialize(stream);
-                }
+                return formatter.Deserialize(stream);
             }
         }
 

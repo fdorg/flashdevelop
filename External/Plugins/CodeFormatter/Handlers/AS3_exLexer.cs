@@ -219,7 +219,8 @@ public class AS3_exLexer : Lexer {
                 ){
                 success = false;
                 return success;
-            }else if(next == '\\'){
+            }
+            if(next == '\\'){
                 next=input.LA(index+1);
                 if(next == '\r' || next == '\n'){
                     success=false;

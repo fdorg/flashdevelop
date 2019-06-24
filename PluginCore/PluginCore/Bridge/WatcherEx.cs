@@ -46,7 +46,7 @@ namespace PluginCore.Bridge
         public void TraceError()
         {
             if (errorDone) return;
-            else errorDone = true;
+            errorDone = true;
             TraceManager.AddAsync("Unable to connect to FlashDevelop Bridge.");
         }
 
@@ -54,7 +54,7 @@ namespace PluginCore.Bridge
         public void TraceOk()
         {
             if (okDone) return;
-            else okDone = true;
+            okDone = true;
             TraceManager.AddAsync("Connected successfully to FlashDevelop Bridge.");
         }
 

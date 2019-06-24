@@ -29,12 +29,13 @@ namespace FlashDevelop.Managers
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else if (File.Exists(global))
+
+            if (File.Exists(global))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(global);
                 return DataConverter.ChangeEncoding(info.Contents, info.CodePage, current.CodePage);
             }
-            else return null;
+            return null;
         }
 
         /// <summary>
@@ -87,7 +88,8 @@ namespace FlashDevelop.Managers
                 SnippetHelper.InsertSnippetText(sci, endPos, snippet);
                 return true;
             }
-            else if (canShowList)
+
+            if (canShowList)
             {
                 ICompletionListItem item;
                 List<ICompletionListItem> items = new List<ICompletionListItem>();
@@ -173,7 +175,7 @@ namespace FlashDevelop.Managers
                     this.snippet = this.snippet.Replace(SnippetHelper.EXITPOINT, "|");
                 }
                 if (this.snippet.Length > 40) return desc + ": " + this.snippet.Substring(0, 40) + "...";
-                else return desc + ": " + this.snippet;
+                return desc + ": " + this.snippet;
             }
         }
 
@@ -211,11 +213,8 @@ namespace FlashDevelop.Managers
         int IComparable.CompareTo(object obj)
         {
             if (obj as ICompletionListItem != null) return string.Compare(Label, (obj as ICompletionListItem).Label, true);
-            else
-            {
-                string message = TextHelper.GetString("Info.CompareError");
-                throw new Exception(message);
-            }
+            string message = TextHelper.GetString("Info.CompareError");
+            throw new Exception(message);
         }
 
         /// <summary>

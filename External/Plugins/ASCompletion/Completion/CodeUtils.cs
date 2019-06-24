@@ -33,7 +33,7 @@
         public static bool IsSpaceAt(string line, int index)
         {
             if (index < 0 || index >= line.Length) return true;
-            else return line[index] <= 32;
+            return line[index] <= 32;
         }
     }
 }

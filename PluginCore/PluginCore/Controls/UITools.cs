@@ -262,11 +262,14 @@ namespace PluginCore.Controls
                         Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int)m.WParam, (int)m.LParam);
                         return true;
                     }
-                    else return false;
+
+                    return false;
                 }
-                else return false;
+
+                return false;
             }
-            else if (m.Msg == Win32.WM_KEYDOWN)
+
+            if (m.Msg == Win32.WM_KEYDOWN)
             {
                 if ((int)m.WParam == 17) // Ctrl
                 {

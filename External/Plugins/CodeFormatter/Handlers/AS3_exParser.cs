@@ -1030,7 +1030,9 @@ public class AS3_exParser : Parser
                 int channel=lt.Channel;
                 if (channel == CHANNEL_EOL || channel ==  CHANNEL_WHITESPACE){
                     return true;
-                } else if(channel == Token.DEFAULT_CHANNEL){
+                }
+
+                if(channel == Token.DEFAULT_CHANNEL){
                     break;
                 }
             }

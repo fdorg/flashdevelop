@@ -489,14 +489,16 @@ namespace FlashDevelop
                     SmartNew(null, null);
                     return null;
                 }
-                else return null;
+
+                return null;
             }
-            else if (file.EndsWithOrdinal(".delete.fdz"))
+
+            if (file.EndsWithOrdinal(".delete.fdz"))
             {
                 CallCommand("RemoveZip", file);
                 return null;
             }
-            else if (file.EndsWithOrdinal(".fdz"))
+            if (file.EndsWithOrdinal(".fdz"))
             {
                 CallCommand("ExtractZip", file);
                 if (file.IndexOf("theme", StringComparison.OrdinalIgnoreCase) != -1)
@@ -511,6 +513,7 @@ namespace FlashDevelop
                 }
                 return null;
             }
+
             try
             {
                 foreach (ITabbedDocument doc in Documents)
@@ -1476,7 +1479,8 @@ namespace FlashDevelop
                         Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
                         return true;
                     }
-                    else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
+
+                    if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
                     {
                         Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
                         return true;
@@ -1508,11 +1512,11 @@ namespace FlashDevelop
                 if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
                 {
                     if (keyData == (Keys.Control | Keys.C)) return false;
-                    else if (keyData == (Keys.Control | Keys.V)) return false;
-                    else if (keyData == (Keys.Control | Keys.X)) return false;
-                    else if (keyData == (Keys.Control | Keys.A)) return false;
-                    else if (keyData == (Keys.Control | Keys.Z)) return false;
-                    else if (keyData == (Keys.Control | Keys.Y)) return false;
+                    if (keyData == (Keys.Control | Keys.V)) return false;
+                    if (keyData == (Keys.Control | Keys.X)) return false;
+                    if (keyData == (Keys.Control | Keys.A)) return false;
+                    if (keyData == (Keys.Control | Keys.Z)) return false;
+                    if (keyData == (Keys.Control | Keys.Y)) return false;
                 }
                 /**
                 * Process special key combinations and allow "chaining" of 
@@ -1773,7 +1777,7 @@ namespace FlashDevelop
         {
             Color color = ThemeManager.GetThemeColor(id);
             if (color != Color.Empty) return color;
-            else return fallback;
+            return fallback;
         }
 
         /// <summary>
@@ -1791,7 +1795,7 @@ namespace FlashDevelop
         {
             string value = ThemeManager.GetThemeValue(id);
             if (!string.IsNullOrEmpty(value)) return value;
-            else return fallback;
+            return fallback;
         }
 
         /// <summary>
@@ -2155,11 +2159,12 @@ namespace FlashDevelop
             {
                 return Path.GetDirectoryName(document.FileName);
             }
-            else if (project != null && File.Exists(project.ProjectPath))
+
+            if (project != null && File.Exists(project.ProjectPath))
             {
                 return Path.GetDirectoryName(project.ProjectPath);
             }
-            else return PathHelper.AppDir;
+            return PathHelper.AppDir;
         }
 
         /// <summary>

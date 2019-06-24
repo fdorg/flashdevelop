@@ -165,8 +165,7 @@ namespace System.Windows.Forms
                 {
                     if (queue.Count > 0 && node.Nodes.Count > 0)
                         return FindClosestPath(node.Nodes,queue);
-                    else
-                        return node; // as close as we'll get
+                    return node; // as close as we'll get
                 }
             }
             return null;

@@ -152,7 +152,7 @@ namespace SourceControl.Sources.Git
             {
                 StatusNode child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }

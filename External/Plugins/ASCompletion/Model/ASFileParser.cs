@@ -423,10 +423,7 @@ namespace ASCompletion.Model
                 }
             }
             // this is a package
-            else
-            {
-                // ignore
-            }
+
             return fileModel;
         }
         #endregion
