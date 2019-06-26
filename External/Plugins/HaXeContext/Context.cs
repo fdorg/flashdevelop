@@ -499,7 +499,7 @@ namespace HaXeContext
                     {
                         var hide = new List<string>();
                         foreach (var dir in Directory.GetDirectories(haxeCP))
-                            if (Path.GetFileName(dir) is string dirName
+                            if (Path.GetFileName(dir) is { } dirName
                                 && dirName != "sys"
                                 && dirName != "haxe"
                                 && dirName != "libs")
@@ -926,7 +926,7 @@ namespace HaXeContext
                         }
                     // HX files correspond to a "module" which should appear in code completion
                     // (you don't import classes defined in modules but the module itself)
-                    if (needModule && aFile.FullPackage is string qmodule)
+                    if (needModule && aFile.FullPackage is { } qmodule)
                     {
                         item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
                         fullList.Add(item);
@@ -1574,7 +1574,7 @@ namespace HaXeContext
             result = type;
             var imports = Context.ResolveImports(inFile);
             if ((type.Flags & FlagType.Enum) != 0 && (type.Flags & FlagType.Abstract) == 0
-                && Context.ResolveType("haxe.EnumTools.EnumValueTools", null) is ClassModel @using && !@using.IsVoid())
+                && Context.ResolveType("haxe.EnumTools.EnumValueTools", null) is { } @using && !@using.IsVoid())
             {
                 @using = (ClassModel)@using.Clone();
                 @using.Flags |= FlagType.Using;
@@ -1585,7 +1585,7 @@ namespace HaXeContext
             for (var i = imports.Count - 1; i >= 0; i--)
             {
                 {
-                    if (imports[i] is MemberModel import && !(import is ClassModel) && (import.Flags & FlagType.Using) != 0)
+                    if (imports[i] is { } import && !(import is ClassModel) && (import.Flags & FlagType.Using) != 0)
                     {
                         imports[i] = Context.ResolveType(import.Type, Context.CurrentModel);
                         imports[i].Flags |= FlagType.Using;
@@ -1946,7 +1946,7 @@ namespace HaXeContext
 
         public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
-            if (expression.IsStatic && expression.Type is ClassModel type)
+            if (expression.IsStatic && expression.Type is { } type)
             {
                 // Attempt to add callback `new` into `result`
                 if (type.Flags == FlagType.Class)
@@ -1968,7 +1968,7 @@ namespace HaXeContext
                         result.Add(member);
                     }
                 }
-                if (type.InFile is FileModel file && file.Classes.Count > 1 && type == GetPublicClass(file))
+                if (type.InFile is { } file && file.Classes.Count > 1 && type == GetPublicClass(file))
                 {
                     // add sub-types
                     foreach (var it in file.Classes)
@@ -2217,9 +2217,26 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
+            var position = ASComplete.ExpressionEndPosition(sci, expression.Position);
+            if (position != expression.Position) expression = ASComplete.GetExpressionType(sci, position, false, true).Context;
+            if (classPath != null && expression.Value is { } fullPackage)
+            {
+                foreach (var pathModel in classPath)
+                {
+                    if (!pathModel.IsValid || pathModel.Updating) continue;
+                    var isFound = false;
+                    pathModel.ForeachFile(model =>
+                    {
+                        if (model.FullPackage != fullPackage) return true;
+                        PluginBase.MainForm.OpenEditableDocument(model.FileName);
+                        isFound = true;
+                        return false;
+                    });
+                    if (isFound) return true;
+                }
+            }
             if (haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion() < "3.2.0")
                 return false;
-
             var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
             hc.GetPosition(OnPositionResult);
             return true;
@@ -2229,15 +2246,12 @@ namespace HaXeContext
         {
             if (hc.Sci.InvokeRequired)
             {
-                hc.Sci.BeginInvoke((MethodInvoker)delegate
-                {
-                    HandlePositionResult(hc, result, status); 
-                });
+                hc.Sci.BeginInvoke((MethodInvoker)(() => HandlePositionResult(hc, result, status)));
             }
             else HandlePositionResult(hc, result, status); 
         }
 
-        private void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
+        static void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -2246,7 +2260,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
-                    if (result is null) return;
+                    if (result is null || string.IsNullOrEmpty(result.Path)) return;
 
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
