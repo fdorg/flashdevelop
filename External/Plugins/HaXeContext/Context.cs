@@ -39,15 +39,15 @@ namespace HaXeContext
 
         public static string FLASH_OLD = "flash";
         public static string FLASH_NEW = "flash9";
-        private static string currentEnv;
-        private static string currentSDK;
-        
-        private readonly HaXeSettings haxeSettings;
-        private readonly Func<string, InstalledSDK> getCustomSDK;
-        private Dictionary<string, List<string>> haxelibsCache;
-        private string haxeTarget;
-        private bool resolvingDot;
-        private bool resolvingFunction;
+        static string currentEnv;
+        static string currentSDK;
+
+        readonly HaXeSettings haxeSettings;
+        readonly Func<string, InstalledSDK> getCustomSDK;
+        Dictionary<string, List<string>> haxelibsCache;
+        string haxeTarget;
+        bool resolvingDot;
+        bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
 
         internal static readonly ClassModel StubFunctionClass = new ClassModel
@@ -216,7 +216,7 @@ namespace HaXeContext
 
         #region classpath management
 
-        private List<string> LookupLibrary(string lib)
+        List<string> LookupLibrary(string lib)
         {
             try
             {
@@ -228,7 +228,7 @@ namespace HaXeContext
             }
         }
 
-        private List<string> LookupHaxeLibLibrary(string lib)
+        List<string> LookupHaxeLibLibrary(string lib)
         {
             if (haxelibsCache.ContainsKey(lib))
                 return haxelibsCache[lib];
@@ -267,15 +267,12 @@ namespace HaXeContext
             p.WaitForExit();
             p.Close();
 
-            if (paths.Count > 0)
-            {
-                haxelibsCache.Add(lib, paths);
-                return paths;
-            }
-            return null;
+            if (paths.Count == 0) return null;
+            haxelibsCache.Add(lib, paths);
+            return paths;
         }
 
-        private List<string> LookupLixLibrary(string lib)
+        List<string> LookupLixLibrary(string lib)
         {
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (Directory.Exists(haxePath))
@@ -321,7 +318,7 @@ namespace HaXeContext
             return paths.Count > 0 ? paths : null;
         }
 
-        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
+        Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
             string hxPath = currentSDK;
             if (hxPath != null && Path.IsPathRooted(hxPath))
@@ -385,7 +382,7 @@ namespace HaXeContext
             UseGenericsShortNotationChange();
         }
 
-        private void UseGenericsShortNotationChange()
+        void UseGenericsShortNotationChange()
         {
             // We may want to create 2 different feature flags for this, but atm it's enough this way
             features.HasGenericsShortNotation = GetCurrentSDKVersion() >= "3" && haxeSettings.UseGenericsShortNotation;
@@ -616,7 +613,7 @@ namespace HaXeContext
                 OnCompletionModeChange();
         }
 
-        private string GetHaxeTarget(string platformName)
+        string GetHaxeTarget(string platformName)
         {
             if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
             var haxeLang = PlatformData.SupportedLanguages["haxe"];
@@ -626,7 +623,7 @@ namespace HaXeContext
             return null;
         }
 
-        private void AppendPath(ContextSetupInfos contextSetup, string path)
+        void AppendPath(ContextSetupInfos contextSetup, string path)
         {
             foreach(string cp in contextSetup.Classpath) 
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
@@ -860,7 +857,8 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => (context.Settings ?? settings).InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
+
+        InstalledSDK GetCurrentSDK() => (context.Settings ?? settings).InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
         public SemVer GetCurrentSDKVersion() => GetCurrentSDK() is { } sdk ? new SemVer(sdk.Version) : SemVer.Zero;
 
@@ -1071,7 +1069,7 @@ namespace HaXeContext
             return imports;
         }
 
-        private void ResolveImports(string package, MemberList result)
+        void ResolveImports(string package, MemberList result)
         {
             var matches = ResolvePackage(package, false);
             if (matches != null)
@@ -1095,7 +1093,7 @@ namespace HaXeContext
             }
         }
 
-        private void ResolveImport(MemberModel item, MemberList imports)
+        void ResolveImport(MemberModel item, MemberList imports)
         {
             if (settings.LazyClasspathExploration)
             {
@@ -1392,7 +1390,7 @@ namespace HaXeContext
         /// <summary>
         /// Retrieve/build typed copies of generic types
         /// </summary>
-        private ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
+        ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
         {
             ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
@@ -1516,7 +1514,7 @@ namespace HaXeContext
         /// </summary>
         /// <param name="package">Package path</param>
         /// <returns>Imported classes list (not null)</returns>
-        private MemberList ResolveDefaults(string package)
+        MemberList ResolveDefaults(string package)
         {
             var result = new MemberList();
             if (GetCurrentSDKVersion() < "3.3.0") return result;
@@ -1816,7 +1814,7 @@ namespace HaXeContext
         /// <summary>
         /// Checks completion mode changes to start/restart/stop the haXe completion server if needed.
         /// </summary>
-        private void OnCompletionModeChange()
+        void OnCompletionModeChange()
         {
             if (completionModeHandler != null)
             {
