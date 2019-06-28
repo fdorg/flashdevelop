@@ -484,12 +484,7 @@ namespace FlashDevelop
             EventManager.DispatchEvent(this, te);
             if (te.Handled)
             {
-                if (Documents.Length == 0)
-                {
-                    SmartNew(null, null);
-                    return null;
-                }
-
+                if (Documents.Length == 0) SmartNew(null, null);
                 return null;
             }
 
@@ -526,7 +521,7 @@ namespace FlashDevelop
                 }
             }
             catch {}
-            if (encoding == null)
+            if (encoding is null)
             {
                 info = FileHelper.GetEncodingFileInfo(file);
                 if (info.CodePage == -1) return null; // If the file is locked, stop.
@@ -985,7 +980,7 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormActivate(object sender, EventArgs e)
         {
-            if (CurrentDocument == null) return;
+            if (CurrentDocument is null) return;
             CurrentDocument.Activate(); // Activate the current document
             ButtonManager.UpdateFlaggedButtons();
         }
@@ -995,7 +990,7 @@ namespace FlashDevelop
         /// </summary>
         private void OnMainFormGotFocus(object sender, EventArgs e)
         {
-            if (CurrentDocument == null) return;
+            if (CurrentDocument is null) return;
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -1213,7 +1208,7 @@ namespace FlashDevelop
         {
             try
             {
-                if (CurrentDocument == null) return;
+                if (CurrentDocument is null) return;
                 OnScintillaControlUpdateControl(CurrentDocument.SciControl);
                 quickFind.CanSearch = CurrentDocument.IsEditable;
                 /**
@@ -1396,7 +1391,7 @@ namespace FlashDevelop
                 if (File.Exists(file))
                 {
                     DockContent doc = OpenEditableDocument(file);
-                    if (doc == null || ModifierKeys == Keys.Control) return;
+                    if (doc is null || ModifierKeys == Keys.Control) return;
                     DockContent drop = DocumentManager.FindDocument(sci) as DockContent;
                     if (drop?.Pane != null)
                     {
@@ -1509,7 +1504,7 @@ namespace FlashDevelop
                 /**
                 * Ignore basic control keys if sci doesn't have focus.
                 */ 
-                if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
+                if (Globals.SciControl is null || !Globals.SciControl.IsFocus)
                 {
                     if (keyData == (Keys.Control | Keys.C)) return false;
                     if (keyData == (Keys.Control | Keys.V)) return false;
@@ -1869,7 +1864,7 @@ namespace FlashDevelop
         public string GetShortcutItemId(Keys keys)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
-            return item == null ? string.Empty : item.Id;
+            return item is null ? string.Empty : item.Id;
         }
 
         /// <summary>
@@ -1946,7 +1941,7 @@ namespace FlashDevelop
         /// </summary>
         public void RefreshUI()
         {
-            if (CurrentDocument == null) return;
+            if (CurrentDocument is null) return;
             ScintillaControl sci = CurrentDocument.SciControl;
             OnScintillaControlUpdateControl(sci);
         }
@@ -2031,7 +2026,7 @@ namespace FlashDevelop
         /// </summary>        
         private void ApplyOpenParams(Match openParams, ScintillaControl sci)
         {
-            if (sci == null) return;
+            if (sci is null) return;
             int col = 0;
             int line = Math.Min(sci.LineCount - 1, Math.Max(0, int.Parse(openParams.Groups[1].Value) - 1));
             if (openParams.Groups.Count > 3 && openParams.Groups[3].Value.Length > 0)
@@ -3887,7 +3882,7 @@ namespace FlashDevelop
             sci.SelectionStart = indentPos;
             sci.SelectionEnd = lineEndPos;
             bool ? added = CommentSelection();
-            if (added == null) return;
+            if (added is null) return;
             int factor = (bool)added ? 1 : -1;
             string commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
             string commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
@@ -4011,7 +4006,7 @@ namespace FlashDevelop
             try
             {
                 var method = GetType().GetMethod(command);
-                if (method == null) throw new MethodAccessException();
+                if (method is null) throw new MethodAccessException();
                 var item = new ToolStripMenuItem();
                 item.Tag = new ItemData(null, args, null); // Tag is used for args
                 method.Invoke(this, new[] { item, null });
@@ -4059,8 +4054,7 @@ namespace FlashDevelop
                     }
                     else
                     {
-                        ProcessStartInfo psi = new ProcessStartInfo(args);
-                        psi.WorkingDirectory = WorkingDirectory;
+                        var psi = new ProcessStartInfo(args) {WorkingDirectory = WorkingDirectory};
                         ProcessHelper.StartAsync(psi);
                     }
                 }
@@ -4104,30 +4098,24 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the incoming info output
         /// </summary>
-        private void ProcessOutput(object sender, string line)
-        {
-            TraceManager.AddAsync(line, (int)TraceType.Info);
-        }
+        private void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.Info);
 
         /// <summary>
         /// Handles the incoming error output
         /// </summary> 
-        private void ProcessError(object sender, string line)
-        {
-            TraceManager.AddAsync(line, (int)TraceType.ProcessError);
-        }
+        private void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.ProcessError);
 
         /// <summary>
         /// Handles the ending of a process
         /// </summary>
         private void ProcessEnded(object sender, int exitCode)
         {
-            if (InvokeRequired) BeginInvoke((MethodInvoker)delegate { ProcessEnded(sender, exitCode); });
+            if (InvokeRequired) BeginInvoke((MethodInvoker)(() => ProcessEnded(sender, exitCode)));
             else
             {
-                string result = $"Done({exitCode})";
+                var result = $"Done({exitCode})";
                 TraceManager.Add(result, (int)TraceType.ProcessEnd);
-                TextEvent te = new TextEvent(EventType.ProcessEnd, result);
+                var te = new TextEvent(EventType.ProcessEnd, result);
                 EventManager.DispatchEvent(this, te);
                 ButtonManager.UpdateFlaggedButtons();
             }
@@ -4136,10 +4124,7 @@ namespace FlashDevelop
         /// <summary>
         /// Stop the currently running process
         /// </summary>
-        public void KillProcess(object sender, EventArgs e)
-        {
-            KillProcess();
-        }
+        public void KillProcess(object sender, EventArgs e) => KillProcess();
 
         /// <summary>
         /// Stop the currently running process
@@ -4159,29 +4144,27 @@ namespace FlashDevelop
         {
             try
             {
-                using SaveFileDialog sfd = new SaveFileDialog();
+                using var sfd = new SaveFileDialog();
                 sfd.AddExtension = true; sfd.DefaultExt = "fdz";
                 sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
-                string dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
-                if (sfd.ShowDialog(this) == DialogResult.OK)
+                var dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
+                if (sfd.ShowDialog(this) != DialogResult.OK) return;
+                var settingFiles = new List<string>();
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
+                var zipFile = ZipFile.Create(sfd.FileName);
+                zipFile.BeginUpdate();
+                foreach (string settingFile in settingFiles)
                 {
-                    List<string> settingFiles = new List<string>();
-                    ZipFile zipFile = ZipFile.Create(sfd.FileName);
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
-                    zipFile.BeginUpdate();
-                    foreach (string settingFile in settingFiles)
-                    {
-                        int index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
-                        zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
-                    }
-                    zipFile.CommitUpdate();
-                    zipFile.Close();
+                    int index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
+                    zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
                 }
+                zipFile.CommitUpdate();
+                zipFile.Close();
             }
             catch (Exception ex)
             {

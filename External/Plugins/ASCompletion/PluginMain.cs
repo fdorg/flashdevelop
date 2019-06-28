@@ -853,7 +853,7 @@ namespace ASCompletion
 
         void UpdateMarkersFromCache(ScintillaControl sci)
         {
-            var marginWidth = 16;
+            const int marginWidth = 16;
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarkerDeleteAll(MarkerUp);
@@ -903,7 +903,7 @@ namespace ASCompletion
                 for (var i = 0; i < sci.LineCount; ++i)
                 {
                     var mask = sci.MarkerGet(i);
-                    var searchMask = (1 << MarkerDown) | (1 << MarkerUp);
+                    const int searchMask = (1 << MarkerDown) | (1 << MarkerUp);
                     if ((mask & searchMask) == searchMask)
                     {
                         sci.MarkerDelete(i, MarkerUp);
@@ -975,10 +975,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Quick Build
         /// </summary>
-        public void QuickBuild(object sender, EventArgs e)
-        {
-            ASContext.Context.BuildCMD(false);
-        }
+        public void QuickBuild(object sender, EventArgs e) => ASContext.Context.BuildCMD(false);
 
         /// <summary>
         /// Menu item command: Convert To Intrinsic
@@ -994,7 +991,7 @@ namespace ASCompletion
         /// </summary>
         void PeekDefinition(object sender, EventArgs e)
         {
-            if (ASComplete.CurrentResolvedContext?.Result is ASResult result && !result.IsNull())
+            if (ASComplete.CurrentResolvedContext?.Result is { } result && !result.IsNull())
             {
                 var code = ASComplete.GetCodeTipCode(result);
                 if (code is null) return;
@@ -1158,11 +1155,11 @@ namespace ASCompletion
             var expr = ASComplete.GetExpressionType(sci, position, false, true);
             if (Control.ModifierKeys == Keys.Control)
             {
-                if (ASComplete.GetCodeTipCode(expr) is string text) UITools.CodeTip.Show(sci, position - expr.Path.Length, text);
+                if (ASComplete.GetCodeTipCode(expr) is { } text) UITools.CodeTip.Show(sci, position - expr.Path.Length, text);
             }
             else
             {
-                if (ASComplete.GetToolTipText(expr) is string text) UITools.Tip.ShowAtMouseLocation(text);
+                if (ASComplete.GetToolTipText(expr) is { } text) UITools.Tip.ShowAtMouseLocation(text);
             }
         }
 

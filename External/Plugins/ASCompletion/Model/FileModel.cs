@@ -51,18 +51,16 @@ namespace ASCompletion.Model
         {
             RawParams = raw;
             Params = new Dictionary<string, string>();
-            if (Enum.IsDefined(typeof(ASMetaKind), Name))
+            if (!Enum.IsDefined(typeof(ASMetaKind), Name)) return;
+            Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
+            var mParams = reNameTypeParams.Matches(raw);
+            if (mParams.Count > 0)
             {
-                Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
-                var mParams = reNameTypeParams.Matches(raw);
-                if (mParams.Count > 0)
-                {
-                    for (int i = 0, c = mParams.Count; i < c; i++)
-                        Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
-                }
-                else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
-                    Kind = ASMetaKind.Unknown;
+                for (int i = 0, c = mParams.Count; i < c; i++)
+                    Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
             }
+            else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
+                Kind = ASMetaKind.Unknown;
         }
 
         public int CompareTo(object obj)
@@ -146,19 +144,21 @@ namespace ASCompletion.Model
 
         public FileModel()
         {
-            init("");
+            Init("");
         }
 
         public FileModel(string fileName)
         {
-            init(fileName);
+            Init(fileName);
         }
+
         public FileModel(string fileName, DateTime cacheLastWriteTime)
         {
-            init(fileName);
+            Init(fileName);
             LastWriteTime = cacheLastWriteTime;
         }
-        private void init(string fileName)
+
+        private void Init(string fileName)
         {
             Package = "";
             Module = "";
@@ -193,27 +193,23 @@ namespace ASCompletion.Model
         public void Check()
         {
             if (this == Ignore) return;
-
-            if (OutOfDate)
+            if (!OutOfDate) return;
+            OutOfDate = false;
+            if (FileName == "" || !File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
+            try
+            {
+                if (Context != null) Context.GetCodeModel(this);
+                else ASFileParser.ParseFile(this);
+                OnFileUpdate?.Invoke(this);
+            }
+            catch
             {
                 OutOfDate = false;
-                if (FileName != "" && File.Exists(FileName) && LastWriteTime < File.GetLastWriteTime(FileName))
-                    try
-                    {
-                        if (Context != null) Context.GetCodeModel(this);
-                        else ASFileParser.ParseFile(this);
-                        OnFileUpdate?.Invoke(this);
-                    }
-                    catch
-                    {
-                        OutOfDate = false;
-                        Imports.Clear();
-                        Classes.Clear();
-                        Members.Clear();
-                        PrivateSectionIndex = 0;
-                        Package = "";
-                    }
-
+                Imports.Clear();
+                Classes.Clear();
+                Members.Clear();
+                PrivateSectionIndex = 0;
+                Package = "";
             }
         }
 
@@ -257,8 +253,7 @@ namespace ASCompletion.Model
         /// <returns></returns>
         internal MemberList GetSortedMembersList()
         {
-            MemberList items = new MemberList();
-            items.Add(Members);
+            var items = new MemberList {Members};
             items.Sort();
             return items;
         }
@@ -297,7 +292,6 @@ namespace ASCompletion.Model
             ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab);
 
             // members          
-            string decl;
             foreach (MemberModel member in Members)
             {
                 ASMetaData.GenerateIntrinsic(member.MetaDatas, sb, nl, tab);
@@ -308,7 +302,7 @@ namespace ASCompletion.Model
                 }
                 else if ((member.Flags & FlagType.Function) > 0)
                 {
-                    decl = ClassModel.MemberDeclaration(member);
+                    var decl = ClassModel.MemberDeclaration(member);
                     sb.Append(ClassModel.CommentDeclaration(member.Comments, tab));
                     sb.Append(tab).Append(decl).Append(semi).Append(nl);
                 }

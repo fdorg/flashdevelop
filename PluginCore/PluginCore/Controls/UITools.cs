@@ -18,17 +18,7 @@ namespace PluginCore.Controls
         #region Singleton Instance
         private static UITools manager;
 
-        public static UITools Manager
-        {
-            get
-            {
-                if (manager == null)
-                {
-                    manager = new UITools();
-                }
-                return manager; 
-            }
-        }
+        public static UITools Manager => manager ??= new UITools();
 
         public static CodeTip CodeTip => manager.codeTip;
 
@@ -40,7 +30,7 @@ namespace PluginCore.Controls
 
         public static void Init()
         {
-            if (manager == null)
+            if (manager is null)
             {
                 manager = new UITools();
             }
@@ -64,17 +54,9 @@ namespace PluginCore.Controls
         /// Default value is defined in the main settings.
         /// State is switched using F1 key when a tip is visible.
         /// </remarks>
-        public bool ShowDetails
-        {
-            get => showDetails;
-            set => showDetails = value;
-        }
+        public bool ShowDetails { get; set; }
 
-        private readonly EventType eventMask = 
-            EventType.Keys | 
-            EventType.FileSave | 
-            EventType.Command | 
-            EventType.FileSwitch;
+        const EventType eventMask = EventType.Keys | EventType.FileSave | EventType.Command | EventType.FileSwitch;
 
         private readonly CodeTip codeTip;
         private readonly RichToolTip simpleTip;
@@ -82,11 +64,10 @@ namespace PluginCore.Controls
         private readonly RichToolTip errorTip;
 
         private bool ignoreKeys;
-        private bool showDetails;
 
         private UITools()
         {
-            showDetails = PluginBase.Settings.ShowDetails;
+            ShowDetails = PluginBase.Settings.ShowDetails;
             //
             // CONTROLS
             //
@@ -180,14 +161,11 @@ namespace PluginCore.Controls
         /// <summary>
         /// Notify all listeners that document markers were changed
         /// </summary>
-        public void MarkerChanged(ScintillaControl sender, int line)
-        {
-            OnMarkerChanged?.Invoke(sender, line);
-        }
+        public void MarkerChanged(ScintillaControl sender, int line) => OnMarkerChanged?.Invoke(sender, line);
 
         private void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
         {
-            if (OnMouseHover == null || sci == null || DisableEvents) return;
+            if (OnMouseHover is null || sci is null || DisableEvents) return;
             try
             {
                 // check mouse over the editor
@@ -201,8 +179,8 @@ namespace PluginCore.Controls
                 if (!bounds.Contains(mousePos)) return;
 
                 // check no panel is over the editor
-                DockPanel panel = PluginBase.MainForm.DockPanel;
-                DockContentCollection panels = panel.Contents;
+                var panel = PluginBase.MainForm.DockPanel;
+                var panels = panel.Contents;
                 foreach (DockContent content in panels)
                 {
                     if (content.IsHidden || content.Bounds.Height == 0 || content.Bounds.Width == 0
@@ -398,7 +376,7 @@ namespace PluginCore.Controls
             // toggle "long-description" for the hover tooltip
             if (key == Keys.F1 && Tip.Visible && !CompletionList.Active)
             {
-                showDetails = !showDetails;
+                ShowDetails = !ShowDetails;
                 simpleTip.UpdateTip(PluginBase.MainForm.CurrentDocument.SciControl);
                 return true;
             }
@@ -407,7 +385,7 @@ namespace PluginCore.Controls
             if (!CompletionList.Active && !callTip.CallTipActive) return false;
             
             // hide if pressing Esc or Ctrl+Key combination
-            if (lockedSciControl == null || !lockedSciControl.IsAlive || key == Keys.Escape
+            if (lockedSciControl is null || !lockedSciControl.IsAlive || key == Keys.Escape
                 || ((Control.ModifierKeys & Keys.Control) != 0 && Control.ModifierKeys != (Keys.Control|Keys.Alt)) )
             {
                 if (key == (Keys.Control | Keys.C) || key == (Keys.Control | Keys.A))
@@ -418,18 +396,17 @@ namespace PluginCore.Controls
                 callTip.Hide();
                 return false;
             }
-            ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
             // chars
             string ks = key.ToString();
             if (ks.Length == 1 || (ks.EndsWithOrdinal(", Shift") && ks.IndexOf(',') == 1) || ks.StartsWithOrdinal("NumPad"))
             {
                 return false;
             }
-
+            var sci = (ScintillaControl)lockedSciControl.Target;
             // toggle "long-description"
             if (key == Keys.F1)
             {
-                showDetails = !showDetails;
+                ShowDetails = !ShowDetails;
                 if (callTip.CallTipActive) callTip.UpdateTip(sci);
                 else CompletionList.UpdateTip(null, null);
                 return true;
@@ -456,7 +433,7 @@ namespace PluginCore.Controls
         {
             if (sci is null) return 0;
             // evaluate the font size
-            var tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
+            using var tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
             var g = sci.CreateGraphics();
             var textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);

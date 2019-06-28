@@ -130,14 +130,12 @@ namespace ASCompletion.Model
 
             files = new Dictionary<string, FileModel>();
 
-            if (Owner != null)
-            {
-                if (Directory.Exists(Path)) IsValid = Path.Length > 3 /*no root drive*/;
-                else if (System.IO.Path.GetExtension(path).Length > 1) 
-                { 
-                    IsValid = File.Exists(Path); 
-                    IsVirtual = true; 
-                }
+            if (Owner is null) return;
+            if (Directory.Exists(Path)) IsValid = Path.Length > 3 /*no root drive*/;
+            else if (System.IO.Path.GetExtension(path).Length > 1) 
+            { 
+                IsValid = File.Exists(Path); 
+                IsVirtual = true; 
             }
         }
 
@@ -176,27 +174,22 @@ namespace ASCompletion.Model
             // watched path
             else if (IsValid)
             {
-                if (Owner != null)
+                if (Owner is null) return;
+                try
                 {
-                    try
-                    {
-                        basePath = Path;
-                        masks = Owner.GetExplorerMask();
-                        watcher = new WatcherEx(Path); //System.IO.Path.GetDirectoryName(Path));
-                        if (!IsTemporaryPath || !watcher.IsRemote)
-                        {
-                            watcher.Deleted += watcher_Deleted;
-                            watcher.Changed += watcher_Changed;
-                            watcher.Renamed += watcher_Renamed;
-                            watcher.EnableRaisingEvents = true;
-                        }
-                        
-                    }
-                    catch
-                    {
-                        watcher = null;
-                        IsValid = false;
-                    }
+                    basePath = Path;
+                    masks = Owner.GetExplorerMask();
+                    watcher = new WatcherEx(Path); //System.IO.Path.GetDirectoryName(Path));
+                    if (IsTemporaryPath && watcher.IsRemote) return;
+                    watcher.Deleted += watcher_Deleted;
+                    watcher.Changed += watcher_Changed;
+                    watcher.Renamed += watcher_Renamed;
+                    watcher.EnableRaisingEvents = true;
+                }
+                catch
+                {
+                    watcher = null;
+                    IsValid = false;
                 }
             }
         }
@@ -378,20 +371,17 @@ namespace ASCompletion.Model
         private void DoScheduledOperations()
         {
             // copy scheduled paths
-            string[] _toCheck;
-            string[] _toExplore;
             if (toExplore.Count == 0) return;
-            _toCheck = new string[toExplore.Count];
-            _toExplore = new string[toExplore.Count];
+            var _toCheck = new string[toExplore.Count];
+            var _toExplore = new string[toExplore.Count];
             for (int i = 0; i < _toExplore.Length; i++)
             {
                 _toCheck[i] = toExplore[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
                 _toExplore[i] = toExplore[i];
             }
             toExplore.Clear();
-            
-            List<string> _toRemove;
-            _toRemove = new List<string>(toRemove.Count);
+
+            var _toRemove = new List<string>(toRemove.Count);
             for (int i = 0; i < _toRemove.Count; i++)
                 _toRemove[i] = toRemove[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
             toRemove.Clear();
@@ -413,17 +403,16 @@ namespace ASCompletion.Model
                 FileModel model = files[file];
                 foreach (string checkPath in _toCheck)
                 {
-                    if (!File.Exists(model.FileName))
+                    if (File.Exists(model.FileName)) continue;
+                    var directoryName = System.IO.Path.GetDirectoryName(model.FileName);
+                    if (!Directory.Exists(directoryName))
                     {
-                        if (!Directory.Exists(System.IO.Path.GetDirectoryName(model.FileName)))
-                        {
-                            string newRemPath = System.IO.Path.GetDirectoryName(model.FileName).ToUpper() + System.IO.Path.DirectorySeparatorChar;
-                            _toRemove.Add(newRemPath);
-                        }
-                        //TraceManager.Add("drop2: " + files[file].FileName);
-                        drop = true;
-                        break;
+                        var newRemPath = directoryName.ToUpper() + System.IO.Path.DirectorySeparatorChar;
+                        _toRemove.Add(newRemPath);
                     }
+                    //TraceManager.Add("drop2: " + files[file].FileName);
+                    drop = true;
+                    break;
                 }
                 if (drop) continue;
                 newFiles[file] = model;
@@ -439,25 +428,21 @@ namespace ASCompletion.Model
 
         private void AddNewFilesIn(string path)
         {
-            if (Directory.Exists(path) && (File.GetAttributes(path) & FileAttributes.Hidden) == 0)
-            {
-                List<string> explored = new List<string>();
-                List<string> foundFiles = new List<string>();
-                ExploreFolder(path, masks, explored, foundFiles);
-                foreach (string fileName in foundFiles)
-                    if (!files.ContainsKey(fileName.ToUpper()))
-                    {
-                        //TraceManager.Add("add: " + fileName);
-                        FileModel newModel = new FileModel(fileName);
-                        newModel.Context = Owner;
-                        newModel.OutOfDate = true;
-                        if (Owner.IsModelValid(newModel, this))
-                            files[fileName.ToUpper()] = newModel;
-                    }
-            }
+            if (!Directory.Exists(path) || (File.GetAttributes(path) & FileAttributes.Hidden) != 0) return;
+            var explored = new List<string>();
+            var foundFiles = new List<string>();
+            ExploreFolder(path, masks, explored, foundFiles);
+            foreach (string fileName in foundFiles)
+                if (!files.ContainsKey(fileName.ToUpper()))
+                {
+                    //TraceManager.Add("add: " + fileName);
+                    var newModel = new FileModel(fileName) {Context = Owner, OutOfDate = true};
+                    if (Owner.IsModelValid(newModel, this))
+                        files[fileName.ToUpper()] = newModel;
+                }
         }
 
-        private void ExploreFolder(string path, string[] masks, List<string> explored, List<string> foundFiles)
+        private void ExploreFolder(string path, string[] masks, ICollection<string> explored, List<string> foundFiles)
         {
             if (!Directory.Exists(path)) return;
             explored.Add(path);
@@ -465,16 +450,14 @@ namespace ASCompletion.Model
             try
             {
                 // convert classes
-                foreach (string mask in masks)
+                foreach (var mask in masks)
                 {
-                    string[] files = Directory.GetFiles(path, mask);
-                    if (files != null)
-                        foreach (string file in files) foundFiles.Add(file);
+                    foundFiles.AddRange(Directory.GetFiles(path, mask));
                 }
 
                 // explore subfolders
-                string[] dirs = Directory.GetDirectories(path);
-                foreach (string dir in dirs)
+                var dirs = Directory.GetDirectories(path);
+                foreach (var dir in dirs)
                 {
                     if (!explored.Contains(dir) && (File.GetAttributes(dir) & FileAttributes.Hidden) == 0)
                         ExploreFolder(dir, masks, explored, foundFiles);
@@ -538,13 +521,7 @@ namespace ASCompletion.Model
 
         public FileModel GetFile(string fileName)
         {
-            if (!IsValid)
-            {
-                FileModel model = new FileModel(fileName);
-                model.Context = Owner;
-                model.OutOfDate = true;
-                return model;
-            }
+            if (!IsValid) return new FileModel(fileName) {Context = Owner, OutOfDate = true};
             lock (lockObject)
             {
                 return files[fileName.ToUpper()];
@@ -607,11 +584,9 @@ namespace ASCompletion.Model
             {
                 try
                 {
-                    using (Stream stream = File.Open(path, FileMode.Create))
-                    {
-                        BinaryFormatter bin = new BinaryFormatter();
-                        bin.Serialize(stream, files);
-                    }
+                    using Stream stream = File.Open(path, FileMode.Create);
+                    var bin = new BinaryFormatter();
+                    bin.Serialize(stream, files);
                 }
                 catch (Exception)
                 {
@@ -624,27 +599,21 @@ namespace ASCompletion.Model
         {
             try
             {
-                using (Stream stream = File.Open(path, FileMode.Open))
+                using Stream stream = File.Open(path, FileMode.Open);
+                var bin = new BinaryFormatter();
+                var newFiles = (Dictionary<string, FileModel>)bin.Deserialize(stream);
+                lock (lockObject)
                 {
-                    BinaryFormatter bin = new BinaryFormatter();
-                    var newFiles = (Dictionary<string, FileModel>)bin.Deserialize(stream);
-
-                    lock (lockObject)
+                    foreach (var key in newFiles.Keys)
                     {
-                        foreach (string key in newFiles.Keys)
-                        {
-                            var aFile = newFiles[key];
-                            if (File.Exists(aFile.FileName))
-                            {
-                                if (File.GetLastWriteTime(aFile.FileName) != aFile.LastWriteTime) aFile.OutOfDate = true;
-
-                                aFile.Context = Owner;
-                                files[key] = aFile;
-                            }
-                        }
+                        var aFile = newFiles[key];
+                        if (!File.Exists(aFile.FileName)) continue;
+                        if (File.GetLastWriteTime(aFile.FileName) != aFile.LastWriteTime) aFile.OutOfDate = true;
+                        aFile.Context = Owner;
+                        files[key] = aFile;
                     }
-                    return true;
                 }
+                return true;
             }
             catch (Exception)
             {

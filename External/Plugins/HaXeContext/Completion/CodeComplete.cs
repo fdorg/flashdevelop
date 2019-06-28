@@ -1221,41 +1221,44 @@ namespace HaXeContext.Completion
 
         protected override string GetToolTipTextEx(ASResult expr)
         {
-            if (expr.Type is { } leftExprType
-                && expr.Context.RightOperator is { } @operator
-                && ASContext.CurSciControl is { } sci
-                && expr.Context.Position is int position
-                && GetCharLeft(sci, true, ref position) is char c
-                && @operator.Contains(c))
+            if (expr.Context is { } context)
             {
-                if (leftExprType.Flags.HasFlag(FlagType.Abstract))
+                if (expr.Type is { } leftExprType
+                    && expr.Context.RightOperator is { } @operator
+                    && ASContext.CurSciControl is { } sci
+                    && expr.Context.Position is int position
+                    && GetCharLeft(sci, true, ref position) is char c
+                    && @operator.Contains(c))
                 {
-                    var endPosition = ExpressionEndPosition(sci, position + 1, true);
-                    var rightExpr = GetExpressionType(sci, endPosition, false, true);
-                    foreach (MemberModel member in leftExprType.Members)
+                    if (leftExprType.Flags.HasFlag(FlagType.Abstract))
                     {
-                        if ((rightExpr.Type is null || (member.Parameters?.Count >= 2 && member.Parameters[1].Type == rightExpr.Type.Name))
-                            && member.MetaDatas?.FirstOrDefault(it => it.Name == ":op") is { } meta
-                            && meta.Params.TryGetValue("Default", out var value)
-                            && Regex.IsMatch(value, $"\\w((\\s)|(?!\\s))+{Regex.Escape(@operator)}((\\s)|(?!\\s))+\\w"))
+                        var endPosition = ExpressionEndPosition(sci, position + 1, true);
+                        var rightExpr = GetExpressionType(sci, endPosition, false, true);
+                        foreach (MemberModel member in leftExprType.Members)
                         {
-                            expr.Member = member;
-                            break;
+                            if ((rightExpr.Type is null || (member.Parameters?.Count >= 2 && member.Parameters[1].Type == rightExpr.Type.Name))
+                                && member.MetaDatas?.FirstOrDefault(it => it.Name == ":op") is { } meta
+                                && meta.Params.TryGetValue("Default", out var value)
+                                && Regex.IsMatch(value, $"\\w((\\s)|(?!\\s))+{Regex.Escape(@operator)}((\\s)|(?!\\s))+\\w"))
+                            {
+                                expr.Member = member;
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            else if (expr.Member is null && expr.Context is { } context)
-            {
-                // for example: cast<cursor>(expr, Type);
-                if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
-                else if (context.Value is { } s)
+                else if (expr.Member is null)
                 {
-                    // for example: cast<cursor> expr;
-                    if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
-                    // for example: 'c'.code<complete> or "\n".code<complete>
-                    else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
-                        expr.Member = Context.StubStringCodeProperty;
+                    // for example: cast<cursor>(expr, Type);
+                    if (context.SubExpressions != null && context.WordBefore == "cast") expr.Member = Context.StubSafeCastFunction;
+                    else if (context.Value is { } s)
+                    {
+                        // for example: cast<cursor> expr;
+                        if (s == "cast") expr.Member = Context.StubUnsafeCastFunction;
+                        // for example: 'c'.code<complete> or "\n".code<complete>
+                        else if ((s.Length == 12 || (s.Length == 13 && s[1] == '\\')) && (s[0] == '\'' || s[0] == '"') && s.EndsWithOrdinal(".#0~.code"))
+                            expr.Member = Context.StubStringCodeProperty;
+                    }
                 }
             }
             return base.GetToolTipTextEx(expr);

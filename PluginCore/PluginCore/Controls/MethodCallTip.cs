@@ -33,9 +33,9 @@ namespace PluginCore.Controls
 
         public MethodCallTip(IMainForm mainForm): base(mainForm)
         {
-            Color color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
-            Color fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
+            var color = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedBack");
             if (color != Color.Empty) HLBgStyleBeg = "[BGCOLOR=" + DataConverter.ColorToHex(color).Replace("0x", "#") + "]";
+            var fore = PluginBase.MainForm.GetThemeColor("MethodCallTip.SelectedFore");
             if (fore != Color.Empty)
             {
                 HLTextStyleBeg = "[B][COLOR=" + DataConverter.ColorToHex(fore).Replace("0x", "#") + "]";
@@ -63,9 +63,7 @@ namespace PluginCore.Controls
 
         public bool CheckPosition(int position) => position == currentPos;
 
-        public void CallTipShow(ScintillaControl sci, int position, string text) => CallTipShow(sci, position, text, true);
-
-        public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
+        public void CallTipShow(ScintillaControl sci, int position, string text)
         {
             if (toolTip.Visible && position == memberPos && text == currentText) return;
 
