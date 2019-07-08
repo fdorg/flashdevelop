@@ -97,7 +97,7 @@ namespace FlashDevelop.Managers
                 {
                     var path = paths[j];
                     string part = path[i];
-                    if (part == null) continue;
+                    if (part is null) continue;
                     if (part != match) notMatch = true;
                     else hasMatch = true;
                 }
@@ -105,7 +105,7 @@ namespace FlashDevelop.Managers
                 {
                     foreach (var path in paths)
                     {
-                        if (path[i] == null) continue;
+                        if (path[i] is null) continue;
                         if (path.Diff.Length > 0)
                         {
                             path.Diff = Path.DirectorySeparatorChar + path.Diff;
@@ -129,7 +129,7 @@ namespace FlashDevelop.Managers
         public string Tab;
         public string Diff;
         public string[] Parts;
-        public static int Longer = 0;
+        public static int Longer;
         public int Length => Parts.Length;
 
         public ExplodePath(string tab)
@@ -142,10 +142,9 @@ namespace FlashDevelop.Managers
             Parts = parts;
             Diff = "";
         }
-        public static int LongerFirst(ExplodePath a, ExplodePath b)
-        {
-            return a.Length - b.Length;
-        }
+
+        public static int LongerFirst(ExplodePath a, ExplodePath b) => a.Length - b.Length;
+
         public string this[int i] => i < Parts.Length ? Parts[i] : null;
     }
 

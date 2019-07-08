@@ -39,11 +39,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static void AddEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
         {
-            if (handler is null)
-            {
-                throw new ArgumentNullException(nameof(handler));
-            }
-
+            if (handler is null) throw new ArgumentNullException(nameof(handler));
             lock (eventLock)
             {
                 snapshotInvalid = true;
@@ -132,20 +128,18 @@ namespace PluginCore.Managers
             for (var i = 0; i < length; i++)
             {
                 var obj = eventObjectsCopy[i];
-                if ((obj.Mask & e.Type) > 0)
+                if ((obj.Mask & e.Type) == 0) continue;
+                try
                 {
-                    try
-                    {
-                        obj.Handler.HandleEvent(sender, e, obj.Priority);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorManager.ShowError(ex);
-                    }
-                    if (e.Handled)
-                    {
-                        break;
-                    }
+                    obj.Handler.HandleEvent(sender, e, obj.Priority);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
+                if (e.Handled)
+                {
+                    break;
                 }
             }
         }

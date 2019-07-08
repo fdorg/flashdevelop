@@ -51,18 +51,16 @@ namespace ASCompletion.Model
         {
             RawParams = raw;
             Params = new Dictionary<string, string>();
-            if (Enum.IsDefined(typeof(ASMetaKind), Name))
+            if (!Enum.IsDefined(typeof(ASMetaKind), Name)) return;
+            Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
+            var mParams = reNameTypeParams.Matches(raw);
+            if (mParams.Count > 0)
             {
-                Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
-                var mParams = reNameTypeParams.Matches(raw);
-                if (mParams.Count > 0)
-                {
-                    for (int i = 0, c = mParams.Count; i < c; i++)
-                        Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
-                }
-                else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
-                    Kind = ASMetaKind.Unknown;
+                for (int i = 0, c = mParams.Count; i < c; i++)
+                    Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
             }
+            else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
+                Kind = ASMetaKind.Unknown;
         }
 
         public int CompareTo(object obj)
@@ -77,7 +75,7 @@ namespace ASCompletion.Model
 
         internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
         {
-            if (src == null) return;
+            if (src is null) return;
 
             foreach (var meta in src)
             {
@@ -192,28 +190,23 @@ namespace ASCompletion.Model
 
         public void Check()
         {
-            if (this == Ignore) return;
-
-            if (OutOfDate)
+            if (this == Ignore || !OutOfDate) return;
+            OutOfDate = false;
+            if (FileName == "" || !File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
+            try
+            {
+                if (Context != null) Context.GetCodeModel(this);
+                else ASFileParser.ParseFile(this);
+                OnFileUpdate?.Invoke(this);
+            }
+            catch
             {
                 OutOfDate = false;
-                if (FileName != "" && File.Exists(FileName) && LastWriteTime < File.GetLastWriteTime(FileName))
-                    try
-                    {
-                        if (Context != null) Context.GetCodeModel(this);
-                        else ASFileParser.ParseFile(this);
-                        OnFileUpdate?.Invoke(this);
-                    }
-                    catch
-                    {
-                        OutOfDate = false;
-                        Imports.Clear();
-                        Classes.Clear();
-                        Members.Clear();
-                        PrivateSectionIndex = 0;
-                        Package = "";
-                    }
-
+                Imports.Clear();
+                Classes.Clear();
+                Members.Clear();
+                PrivateSectionIndex = 0;
+                Package = "";
             }
         }
 
@@ -257,8 +250,7 @@ namespace ASCompletion.Model
         /// <returns></returns>
         internal MemberList GetSortedMembersList()
         {
-            MemberList items = new MemberList();
-            items.Add(Members);
+            var items = new MemberList {Members};
             items.Sort();
             return items;
         }

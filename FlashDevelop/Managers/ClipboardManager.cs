@@ -29,7 +29,7 @@ namespace FlashDevelop.Managers
         /// <exception cref="NotSupportedException"/>
         internal static void Initialize(MainForm window)
         {
-            if (window == null)
+            if (window is null)
             {
                 throw new ArgumentNullException(nameof(window));
             }
@@ -76,7 +76,7 @@ namespace FlashDevelop.Managers
         /// <exception cref="NotSupportedException"/>
         internal static void Dispose()
         {
-            if (History == null)
+            if (History is null)
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
             }
@@ -175,7 +175,7 @@ namespace FlashDevelop.Managers
         /// <exception cref="ArgumentException"/>
         public ClipboardTextData(IDataObject dataObject)
         {
-            if (dataObject == null)
+            if (dataObject is null)
             {
                 throw new ArgumentNullException(nameof(dataObject));
             }
@@ -203,10 +203,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static bool IsTextFormat(IDataObject dataObject)
         {
-            if (dataObject == null)
-            {
-                return false;
-            }
+            if (dataObject is null) return false;
             return dataObject.GetDataPresent(DataFormats.Text)/*
                 || dataObject.GetDataPresent(DataFormats.UnicodeText)
                 || dataObject.GetDataPresent(DataFormats.OemText)

@@ -345,15 +345,12 @@ namespace ASCompletion
                                 var context = ASContext.GetLanguageContext(cmdData);
                                 if (context is null) return;
                                 const string filter = "SDK";
-                                var name = "";
-                                switch (cmdData.ToUpper())
+                                var name = cmdData.ToUpper() switch
                                 {
-                                    case "AS2": name = "AS2Context"; break;
-                                    case "AS3": name = "AS3Context"; break;
-                                    default: 
-                                        name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
-                                        break;
-                                }
+                                    "AS2" => "AS2Context",
+                                    "AS3" => "AS3Context",
+                                    _ => cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context",
+                                };
                                 PluginBase.MainForm.ShowSettingsDialog(name, filter);
                             }
                             // Open types explorer dialog
@@ -604,7 +601,7 @@ namespace ASCompletion
             Description = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, nameof(ASCompletion));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            else if (PluginBase.MainForm.RefreshConfig) CleanData();
+            else if (PluginBase.MainForm.RefreshConfig) PathExplorer.ClearPersistentCache();
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
@@ -620,12 +617,7 @@ namespace ASCompletion
             }
         }
 
-        /// <summary>
-        /// FD has been updated, clean some app data
-        /// </summary>
-        private void CleanData() => PathExplorer.ClearPersistentCache();
-
-        private void SaveSettings() => ObjectSerializer.Serialize(settingsFile, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingsFile, settingObject);
 
         void LoadBitmaps()
         {
@@ -853,7 +845,7 @@ namespace ASCompletion
 
         void UpdateMarkersFromCache(ScintillaControl sci)
         {
-            var marginWidth = 16;
+            const int marginWidth = 16;
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarkerDeleteAll(MarkerUp);
@@ -994,7 +986,7 @@ namespace ASCompletion
         /// </summary>
         void PeekDefinition(object sender, EventArgs e)
         {
-            if (ASComplete.CurrentResolvedContext?.Result is ASResult result && !result.IsNull())
+            if (ASComplete.CurrentResolvedContext?.Result is { } result && !result.IsNull())
             {
                 var code = ASComplete.GetCodeTipCode(result);
                 if (code is null) return;
@@ -1158,11 +1150,11 @@ namespace ASCompletion
             var expr = ASComplete.GetExpressionType(sci, position, false, true);
             if (Control.ModifierKeys == Keys.Control)
             {
-                if (ASComplete.GetCodeTipCode(expr) is string text) UITools.CodeTip.Show(sci, position - expr.Path.Length, text);
+                if (ASComplete.GetCodeTipCode(expr) is { } text) UITools.CodeTip.Show(sci, position - expr.Path.Length, text);
             }
             else
             {
-                if (ASComplete.GetToolTipText(expr) is string text) UITools.Tip.ShowAtMouseLocation(text);
+                if (ASComplete.GetToolTipText(expr) is { } text) UITools.Tip.ShowAtMouseLocation(text);
             }
         }
 

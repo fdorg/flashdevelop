@@ -61,30 +61,28 @@ namespace PluginCore.Managers
                 /* We need to check for virtual models, another more generic option would be 
                  * Path.GetFileName(document.FileName).IndexOfAny(Path.GetInvalidFileNameChars()) == -1
                  * But this one is used in more places */
-                if (document.IsEditable && !document.Text.StartsWithOrdinal("[model] "))
+                if (!document.IsEditable || document.Text.StartsWithOrdinal("[model] ")) continue;
+                var filename = Path.GetFullPath(document.FileName);
+                if (filename.StartsWithOrdinal(oldPath))
                 {
-                    var filename = Path.GetFullPath(document.FileName);
-                    if (filename.StartsWithOrdinal(oldPath))
+                    var ce = new TextEvent(EventType.FileClose, document.FileName);
+                    EventManager.DispatchEvent(PluginBase.MainForm, ce);
+                    document.SciControl.FileName = filename.Replace(oldPath, newPath);
+                    var oe = new TextEvent(EventType.FileOpen, document.FileName);
+                    EventManager.DispatchEvent(PluginBase.MainForm, oe);
+                    if (current != document)
                     {
-                        var ce = new TextEvent(EventType.FileClose, document.FileName);
-                        EventManager.DispatchEvent(PluginBase.MainForm, ce);
-                        document.SciControl.FileName = filename.Replace(oldPath, newPath);
-                        var oe = new TextEvent(EventType.FileOpen, document.FileName);
-                        EventManager.DispatchEvent(PluginBase.MainForm, oe);
-                        if (current != document)
-                        {
-                            document.Activate();
-                            reactivate = true;
-                        }
-                        else
-                        {
-                            var se = new TextEvent(EventType.FileSwitch, document.FileName);
-                            EventManager.DispatchEvent(PluginBase.MainForm, se);
-                        }
+                        document.Activate();
+                        reactivate = true;
                     }
-                    PluginBase.MainForm.ClearTemporaryFiles(filename);
-                    document.RefreshTexts();
+                    else
+                    {
+                        var se = new TextEvent(EventType.FileSwitch, document.FileName);
+                        EventManager.DispatchEvent(PluginBase.MainForm, se);
+                    }
                 }
+                PluginBase.MainForm.ClearTemporaryFiles(filename);
+                document.RefreshTexts();
             }
             PluginBase.MainForm.RefreshUI();
             if (reactivate) current.Activate();

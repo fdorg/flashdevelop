@@ -32,10 +32,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Apply the modified settings.
         /// </summary>
-        public static void ApplySettings(int maxTraceLines)
-        {
-            maxQueue = maxTraceLines;
-        }
+        public static void ApplySettings(int maxTraceLines) => maxQueue = maxTraceLines;
 
         /// <summary>
         /// Adds a new entry to the log
@@ -247,34 +244,21 @@ namespace PluginCore.Managers
         /// <summary>
         /// Gets the state (<see cref="TraceType"/> enum).
         /// </summary>
-        public int State
-        {
-            get;
-        }
+        public int State { get; }
 
         /// <summary>
         /// Gets the logged trace message.
         /// </summary>
-        public string Message
-        {
-            get;
-        }
+        public string Message { get; }
 
         /// <summary>
         /// Gets the timestamp of the trace.
         /// </summary>
-        public DateTime Timestamp
-        {
-            get;
-        }
+        public DateTime Timestamp { get; }
 
         /// <summary>
         /// Gets the group data.
         /// </summary>
-        public string GroupData
-        {
-            get;
-        }
+        public string GroupData { get; }
     }
-
 }

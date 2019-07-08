@@ -505,18 +505,12 @@ namespace AS3Context
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged()
-        {
-            contextInstance?.BuildClassPath();
-        }
+        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(settingFilename, Settings);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
 
         /// <summary>
         /// Explore the possible locations for the Macromedia Flash IDE classpath
@@ -528,7 +522,7 @@ namespace AS3Context
                 flashPath = CallFlashIDE.FindFlashIDE(true);
                 if (flashPath is null) return null;
             }
-            string ext = Path.GetExtension(flashPath).ToLower();
+            var ext = Path.GetExtension(flashPath).ToLower();
             if (ext == ".exe" || ext == ".bat" || ext == ".cmd")
             {
                 flashPath = Path.GetDirectoryName(flashPath);
@@ -593,13 +587,13 @@ namespace AS3Context
                 return false;
             }
 
-            string descriptor = Path.Combine(path, "flex-sdk-description.xml");
+            var descriptor = Path.Combine(path, "flex-sdk-description.xml");
             if (!File.Exists(descriptor)) 
                 descriptor = Path.Combine(path, "air-sdk-description.xml");
 
             if (File.Exists(descriptor))
             {
-                string raw = File.ReadAllText(descriptor);
+                var raw = File.ReadAllText(descriptor);
                 var mName = Regex.Match(raw, "<name>([^<]+)</name>");
                 var mVer = Regex.Match(raw, "<version>([^<]+)</version>");
                 if (mName.Success && mVer.Success)

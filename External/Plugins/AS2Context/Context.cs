@@ -141,8 +141,8 @@ namespace AS2Context
         {
             ReleaseClasspath();
             started = true;
-            if (as2settings == null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup == null)
+            if (as2settings is null) throw new Exception("BuildClassPath() must be overridden");
+            if (contextSetup is null)
             {
                 contextSetup = new ContextSetupInfos();
                 contextSetup.Lang = settings.LanguageId;
@@ -252,10 +252,10 @@ namespace AS2Context
         /// </summary>
         public override void RemoveClassCompilerCache()
         {
-            if (as2settings == null) return;
+            if (as2settings is null) return;
 
             ClassModel pClass = cFile.GetPublicClass();
-            if (as2settings.MMClassPath == null || pClass.IsVoid())
+            if (as2settings.MMClassPath is null || pClass.IsVoid())
                 return;
             string package = (cFile.Package.Length > 0) ? cFile.Package + "." : "";
             string packagePath = dirSeparator + package.Replace('.', dirSeparatorChar);
@@ -278,7 +278,7 @@ namespace AS2Context
                 {
                     return ClassModel.VoidClass;
                 }
-                if (cClass == null)
+                if (cClass is null)
                 {
                     cClass = ClassModel.VoidClass;
                     cFile.OutOfDate = true;
@@ -306,7 +306,7 @@ namespace AS2Context
         /// <returns>Completion visibility</returns>
         public override Visibility TypesAffinity(ClassModel inClass, ClassModel withClass)
         {
-            if (inClass == null || withClass == null) return Visibility.Public;
+            if (inClass is null || withClass is null) return Visibility.Public;
             // inheritance affinity
             ClassModel tmp = inClass;
             while (!tmp.IsVoid())
@@ -399,7 +399,7 @@ namespace AS2Context
                 return completionCache.Imports;
 
             MemberList imports = new MemberList();
-            if (inFile == null) return imports;
+            if (inFile is null) return imports;
             bool filterImports = (inFile == cFile) && inFile.Classes.Count > 1;
             int lineMin = (filterImports && inPrivateSection) ? inFile.PrivateSectionIndex : 0;
             int lineMax = (filterImports && inPrivateSection) ? int.MaxValue : inFile.PrivateSectionIndex;
@@ -421,7 +421,7 @@ namespace AS2Context
                             string package = item.Type.Substring(0, p);
                             string token = item.Type.Substring(p+1);
                             FileModel pack = ResolvePackage(package, false);
-                            if (pack == null) continue;
+                            if (pack is null) continue;
                             MemberModel member = pack.Members.Search(token, 0, 0);
                             if (member != null) imports.Add(member);
                         }
@@ -475,7 +475,7 @@ namespace AS2Context
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // unknown type
-            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null) 
+            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath is null) 
                 return ClassModel.VoidClass;
 
             // typed array
@@ -525,7 +525,7 @@ namespace AS2Context
                             else
                             {
                                 FileModel pack = ResolvePackage(testPackage, false);
-                                if (pack == null) continue;
+                                if (pack is null) continue;
                                 MemberModel found = pack.Imports.Search(cname, 0, 0);
                                 if (found != null) return ResolveType(found.Type, null);
                             }
@@ -541,7 +541,7 @@ namespace AS2Context
                         else
                         {
                             FileModel pack = ResolvePackage(import.Type, false);
-                            if (pack == null) continue;
+                            if (pack is null) continue;
                             MemberModel found = pack.Imports.Search(cname, 0, 0);
                             if (found != null) return ResolveType(found.Type, null);
                         }
@@ -566,7 +566,7 @@ namespace AS2Context
                     // for example: --1, ++1
                     || (tokenLength > 2 && ((first == '-' && token[1] == '-') || (first == '+' && token[1] == '+')) && char.IsDigit(token, 2)))
                 {
-                    if (features.IntegerKey == null) return ResolveType(features.numberKey, inFile);
+                    if (features.IntegerKey is null) return ResolveType(features.numberKey, inFile);
                     if (token.Contains('.') || token.Contains('e')) return ResolveType(features.numberKey, inFile);
                     return ResolveType(features.IntegerKey, inFile);
                 }
@@ -1006,7 +1006,7 @@ namespace AS2Context
         /// <returns>Package folders and types</returns>
         public override FileModel ResolvePackage(string name, bool lazyMode)
         {
-            if (name == null) name = "";
+            if (name is null) name = "";
             else if (!re_package.IsMatch(name)) return null;
 
             FileModel pModel = new FileModel();
@@ -1095,8 +1095,8 @@ namespace AS2Context
                 fileEntries = Directory.GetFiles(path, "*" + settings.DefaultExtension);
             }
             catch { }
-            if (fileEntries == null) return;
-            FlagType flag = FlagType.Class | ((package == null) ? FlagType.Intrinsic : 0);
+            if (fileEntries is null) return;
+            FlagType flag = FlagType.Class | ((package is null) ? FlagType.Intrinsic : 0);
             foreach (string entry in fileEntries)
             {
                 var mname = GetLastStringToken(entry, dirSeparator);
@@ -1252,7 +1252,7 @@ namespace AS2Context
                 aPath.ForeachFile((aFile) =>
                 {
                     aClass = aFile.GetPublicClass();
-                    if (!aClass.IsVoid() && aClass.IndexType == null && aClass.Access == Visibility.Public)
+                    if (!aClass.IsVoid() && aClass.IndexType is null && aClass.Access == Visibility.Public)
                     {
                         item = aClass.ToMemberModel();
                         item.Name = item.Type;
@@ -1287,7 +1287,7 @@ namespace AS2Context
         /// </summary>
         public override void CheckSyntax()
         {
-            if (as2settings == null)
+            if (as2settings is null)
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.FeatureMissing"));
                 return;
@@ -1302,7 +1302,7 @@ namespace AS2Context
         /// <param name="append">Additional comiler switches</param>
         public override void RunCMD(string append)
         {
-            if (as2settings == null)
+            if (as2settings is null)
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.FeatureMissing"));
                 return;
@@ -1340,7 +1340,7 @@ namespace AS2Context
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-                if (append == null || !append.Contains("-swf-version"))
+                if (append is null || !append.Contains("-swf-version"))
                     command += " -version "+majorVersion;
                 // classpathes
                 foreach(PathModel aPath in classPath)
@@ -1368,7 +1368,7 @@ namespace AS2Context
         /// </summary>
         public override bool BuildCMD(bool failSilently)
         {
-            if (as2settings == null)
+            if (as2settings is null)
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.FeatureMissing"));
                 return false;
@@ -1382,7 +1382,7 @@ namespace AS2Context
             if (IsFileValid && cClass.Comments != null)
                 mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             
-            if (CurrentModel.Version != 2 || mCmd == null || !mCmd.Success) 
+            if (CurrentModel.Version != 2 || mCmd is null || !mCmd.Success) 
             {
                 if (!failSilently)
                 {
@@ -1418,7 +1418,7 @@ namespace AS2Context
                         var op = mPar[i].Groups["switch"].Value;
                         int start = mPar[i].Index + mPar[i].Length;
                         int end = (mPar.Count > i + 1) ? mPar[i + 1].Index : start;
-                        if ((op == "-swf") && (outputFile == null) && (mPlayIndex < 0))
+                        if ((op == "-swf") && (outputFile is null) && (mPlayIndex < 0))
                         {
                             if (end > start)
                                 outputFile = command.Substring(start, end - start).Trim();

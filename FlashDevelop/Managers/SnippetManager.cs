@@ -44,10 +44,10 @@ namespace FlashDevelop.Managers
         public static bool InsertTextByWord(string word, bool emptyUndoBuffer)
         {
             ScintillaControl sci = Globals.SciControl;
-            if (sci == null) return false;
+            if (sci is null) return false;
             bool canShowList = false; 
             string snippet = null;
-            if (word == null)
+            if (word is null)
             {
                 canShowList = true;
                 word = sci.GetWordFromPosition(sci.CurrentPos);
@@ -163,7 +163,7 @@ namespace FlashDevelop.Managers
             get
             {
                 string desc = TextHelper.GetString("Info.SnippetItemDesc");
-                if (snippet == null)
+                if (snippet is null)
                 {
                     snippet = FileHelper.ReadFile(fileName);
                     snippet = ArgsProcessor.ProcessCodeStyleLineBreaks(snippet);

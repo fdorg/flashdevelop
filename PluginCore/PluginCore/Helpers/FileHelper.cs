@@ -232,7 +232,7 @@ namespace PluginCore.Helpers
             string name = Path.GetFileName(path);
             if (Directory.Exists(path))
             {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string title = $" {TextHelper.GetString("FlashDevelop.Title.ConfirmDialog")}";
                 string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFolder");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
@@ -240,7 +240,7 @@ namespace PluginCore.Helpers
 
             if (File.Exists(path))
             {
-                string title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                string title = $" {TextHelper.GetString("FlashDevelop.Title.ConfirmDialog")}";
                 string message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, string.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;

@@ -138,8 +138,7 @@ namespace PluginCore.FRService
 
         public static void ExtractResultsLineText(List<SearchMatch> results, string src)
         {
-            if (results == null) 
-                return;
+            if (results is null) return;
             int len = src.Length;
             foreach (SearchMatch sm in results)
             {
@@ -241,7 +240,7 @@ namespace PluginCore.FRService
 
         string ReplaceOneMatch(string src, string replacement, List<SearchMatch> matches, int matchIndex)
         {
-            if (matches == null || matches.Count == 0) return src;
+            if (matches is null || matches.Count == 0) return src;
             SearchMatch match = matches[matchIndex];
 
             // replace text
@@ -256,7 +255,7 @@ namespace PluginCore.FRService
 
         string ReplaceAllMatches(string src, string replacement, List<SearchMatch> matches)
         {
-            if (matches == null || matches.Count == 0) return src;
+            if (matches is null || matches.Count == 0) return src;
             StringBuilder sb = new StringBuilder();
             string original = replacement;
             int lastIndex = 0;
@@ -340,7 +339,7 @@ namespace PluginCore.FRService
                 
                 sourceFile = value;
 
-                if (sourceFile == null)
+                if (sourceFile is null)
                 {
                     hasRegexLiterals = false;
                     isHaxeFile = false;
@@ -389,9 +388,8 @@ namespace PluginCore.FRService
         public SearchMatch Match(string input, int startIndex, int startLine)
         {
             returnAllMatches = false;
-            List<SearchMatch> res = SearchSource(input, startIndex, startLine);
-            if (res.Count > 0) return res[0];
-            return null;
+            var res = SearchSource(input, startIndex, startLine);
+            return res.Count > 0 ? res[0] : null;
         }
 
         /// <summary>
@@ -460,7 +458,7 @@ namespace PluginCore.FRService
 
             // raw search results
             if (needParsePattern) BuildRegex(pattern);
-            if (operation == null)
+            if (operation is null)
                 return results;
             MatchCollection matches = operation.Matches(src, startIndex);
             if (matches.Count == 0) 
@@ -569,7 +567,7 @@ namespace PluginCore.FRService
                     match = matches[matchIndex];
                     nextPos = match.Index;
                 }
-                if (match == null) 
+                if (match is null) 
                     break;
                 if (pos < nextPos) 
                     continue;

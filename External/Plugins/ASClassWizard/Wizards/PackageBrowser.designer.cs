@@ -1,6 +1,4 @@
-﻿using ASClassWizard.Resources;
-
-namespace ASClassWizard.Wizards
+﻿namespace ASClassWizard.Wizards
 {
     partial class PackageBrowser
     {

@@ -100,14 +100,11 @@ namespace PluginCore.Helpers
         /// </summary>
         private static bool IsAdjusted(Control control)
         {
-            if (control is Form)
-            {
-                if (adjustedItems.Contains(control)) return true;
-                adjustedItems.Add(control);
-                return false;
-            }
-
+            if (!(control is Form)) return false;
+            if (adjustedItems.Contains(control)) return true;
+            adjustedItems.Add(control);
             return false;
+
         }
 
     }

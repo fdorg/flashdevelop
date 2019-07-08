@@ -40,8 +40,8 @@ namespace CodeRefactor.Provider
             });
             DefaultFactory.RegisterValidator(typeof(OrganizeImports), expr => expr.InFile.Imports.Count > 0);
             DefaultFactory.RegisterValidator(typeof(DelegateMethods), expr => expr != null && !expr.IsNull() && expr.InFile != null && expr.InClass != null
-                                                                              && expr.Type is ClassModel type && !type.IsVoid()
-                                                                              && expr.Member is MemberModel member && member.Flags is FlagType flags
+                                                                              && expr.Type is { } type && !type.IsVoid()
+                                                                              && expr.Member is { } member && member.Flags is FlagType flags
                                                                               && flags.HasFlag(FlagType.Variable)
                                                                               && !flags.HasFlag(FlagType.LocalVar) && !flags.HasFlag(FlagType.ParameterVar)
                                                                               && expr.Type != ASContext.Context.CurrentClass);
@@ -57,7 +57,7 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactoryForCurrentDocument()
         {
-            return PluginBase.MainForm.CurrentDocument is ITabbedDocument document && document.IsEditable
+            return PluginBase.MainForm.CurrentDocument is { } document && document.IsEditable
                 ? GetFactory(document)
                 : null;
         }

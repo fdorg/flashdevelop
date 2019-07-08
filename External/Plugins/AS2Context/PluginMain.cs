@@ -129,8 +129,9 @@ namespace AS2Context
             if (settingObject.MMClassPath is null) settingObject.MMClassPath = FindMMClassPath();
             if (settingObject.UserClasspath is null)
             {
-                if (settingObject.MMClassPath != null) settingObject.UserClasspath = new[] { settingObject.MMClassPath };
-                else settingObject.UserClasspath = new string[] {};
+                settingObject.UserClasspath = settingObject.MMClassPath != null
+                                            ? new[] { settingObject.MMClassPath }
+                                            : new string[] {};
             }
         }
 

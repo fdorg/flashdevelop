@@ -173,10 +173,10 @@ namespace CodeRefactor
         static bool IsValidForRename(string oldPath, string newPath)
         {
             return PluginBase.CurrentProject != null
-                && Path.GetExtension(oldPath) is string oldExt && File.Exists(oldPath)
-                && Path.GetExtension(newPath) is string newExt && oldExt == newExt
+                && Path.GetExtension(oldPath) is { } oldExt && File.Exists(oldPath)
+                && Path.GetExtension(newPath) is { } newExt && oldExt == newExt
                 && IsValidFile(oldPath)
-                && Path.GetFileNameWithoutExtension(newPath) is string newPathWithoutExtension
+                && Path.GetFileNameWithoutExtension(newPath) is { } newPathWithoutExtension
                 && Regex.Match(newPathWithoutExtension, REG_IDENTIFIER, RegexOptions.Singleline).Success;
         }
 
@@ -197,7 +197,7 @@ namespace CodeRefactor
         static bool IsValidForMove(string oldPath, string newPath)
         {
             return IsValidForMove(oldPath)
-                && Path.GetFileNameWithoutExtension(newPath) is string newPathWithoutExtension
+                && Path.GetFileNameWithoutExtension(newPath) is { } newPathWithoutExtension
                 && Regex.Match(newPathWithoutExtension, REG_IDENTIFIER, RegexOptions.Singleline).Success;
         }
 
@@ -206,9 +206,9 @@ namespace CodeRefactor
         /// </summary>
         static bool IsValidFile(string file)
         {
-            return PluginBase.CurrentProject is IProject project
+            return PluginBase.CurrentProject is { } project
                 && RefactoringHelper.IsProjectRelatedFile(project, file)
-                && Path.GetFileNameWithoutExtension(file) is string fileNameWithoutExtension
+                && Path.GetFileNameWithoutExtension(file) is { } fileNameWithoutExtension
                 && Regex.Match(fileNameWithoutExtension, REG_IDENTIFIER, RegexOptions.Singleline).Success
                 && ((Directory.Exists(file) && !IsEmpty(file, project.DefaultSearchFilter)) || FileHelper.FileMatchesSearchFilter(file, project.DefaultSearchFilter));
             // Utils
@@ -264,21 +264,20 @@ namespace CodeRefactor
             refactorContextMenu.ExtractLocalVariableMenuItem.Click += ExtractLocalVariableClicked;
             refactorContextMenu.CodeGeneratorMenuItem.Click += CodeGeneratorMenuItemClicked;
             refactorContextMenu.BatchMenuItem.Click += BatchMenuItemClicked;
-            ContextMenuStrip editorMenu = PluginBase.MainForm.EditorMenu;
             surroundContextMenu = new SurroundMenu();
-            editorMenu.Items.Insert(3, refactorContextMenu);
-            editorMenu.Items.Insert(4, surroundContextMenu);
+            PluginBase.MainForm.EditorMenu.Items.Insert(3, refactorContextMenu);
+            PluginBase.MainForm.EditorMenu.Items.Insert(4, surroundContextMenu);
             PluginBase.MainForm.MenuStrip.Items.Insert(5, refactorMainMenu);
-            ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
             viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, FindAllReferencesClicked);
             editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, FindAllReferencesClicked);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.SurroundWith", refactorMainMenu.SurroundMenu);
             PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", viewReferencesItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.SurroundWith", surroundContextMenu);
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", editorReferencesItem);
+            var searchMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("SearchMenu");
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(viewReferencesItem);
-            editorMenu.Items.Insert(8, editorReferencesItem);
+            PluginBase.MainForm.EditorMenu.Items.Insert(8, editorReferencesItem);
         }
 
         /// <summary>

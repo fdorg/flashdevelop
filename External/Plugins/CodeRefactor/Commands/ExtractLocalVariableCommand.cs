@@ -89,7 +89,7 @@ namespace CodeRefactor.Commands
             var newName = "newVar";
             var label = TextHelper.GetString("Label.NewName");
             var title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-            var askName = new LineEntryDialog(title, label, newName);
+            using var askName = new LineEntryDialog(title, label, newName);
             var choice = askName.ShowDialog();
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (choice != DialogResult.OK)
@@ -246,7 +246,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public Bitmap Icon { get; private set; }
+        public Bitmap Icon { get; }
 
         /// <summary>
         /// Modify the highlight indicator alpha and select current word.

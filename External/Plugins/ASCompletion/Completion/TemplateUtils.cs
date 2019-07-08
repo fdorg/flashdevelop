@@ -176,10 +176,7 @@ namespace ASCompletion.Completion
                 var funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
-                    var latest = new MemberModel();
-                    latest.LineFrom = lineNum;
-                    latest.LineTo = lineNum + lineCount;
-                    return latest;
+                    return new MemberModel {LineFrom = lineNum, LineTo = lineNum + lineCount};
                 }
                 lineNum++;
             }
@@ -202,11 +199,9 @@ namespace ASCompletion.Completion
             string content;
             using (Stream src = File.OpenRead(path))
             {
-                using (var sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                using var sr = new StreamReader(src);
+                content = sr.ReadToEnd();
+                sr.Close();
             }
             return "$(Boundary)" + content.Replace("\r\n", "\n") + "$(Boundary)";
         }
@@ -219,11 +214,9 @@ namespace ASCompletion.Completion
             string content;
             using (Stream src = File.OpenRead(path))
             {
-                using (var sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                using var sr = new StreamReader(src);
+                content = sr.ReadToEnd();
+                sr.Close();
             }
             return content;
         }

@@ -36,14 +36,11 @@ namespace PluginCore.Helpers
         {
             try
             {
-                XmlDocument document = new XmlDocument();
-                document.PreserveWhitespace = false;
+                var document = new XmlDocument {PreserveWhitespace = false};
                 document.Load(file); 
                 try
                 {
-                    XmlNode declNode = document.FirstChild;
-                    XmlNode rootNode = declNode.NextSibling;
-                    return rootNode;
+                    return document.FirstChild.NextSibling;
                 }
                 catch (Exception ex1)
                 {

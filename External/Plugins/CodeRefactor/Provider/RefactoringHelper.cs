@@ -96,7 +96,7 @@ namespace CodeRefactor.Provider
         public static ASResult GetDefaultRefactorTarget()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (!ASContext.Context.IsFileValid || (sci is null)) return null;
+            if (!ASContext.Context.IsFileValid || sci is null) return null;
             var position = sci.WordEndPosition(sci.CurrentPos, true);
             return ASComplete.GetExpressionType(sci, position);
         }
@@ -105,7 +105,7 @@ namespace CodeRefactor.Provider
         {
             var type = target.Type;
             var member = target.Member;
-            if ((type.Flags.HasFlag(FlagType.Enum) && member is null) || (!type.IsVoid() && (member is null || (member.Flags & FlagType.Constructor) > 0)))
+            if (type.Flags.HasFlag(FlagType.Enum) && member is null || !type.IsVoid() && (member is null || (member.Flags & FlagType.Constructor) > 0))
                 return type;
             return member;
         }
@@ -163,83 +163,80 @@ namespace CodeRefactor.Provider
         /// <returns>True if the SearchMatch does point to the target source.</returns>
         public static ASResult DeclarationLookupResult(ScintillaControl sci, int position, DocumentHelper associatedDocumentHelper)
         {
-            if (!ASContext.Context.IsFileValid || (sci is null)) return null;
+            if (!ASContext.Context.IsFileValid || sci is null) return null;
             // get type at cursor position
             var result = ASComplete.GetExpressionType(sci, position);
             if (result.IsPackage) return result;
             // open source and show declaration
-            if (!result.IsNull())
+            if (result.IsNull()) return null;
+            if (result.Member != null && (result.Member.Flags & FlagType.AutomaticVar) > 0) return null;
+            var model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
+            if (model is null || model.FileName == "") return null;
+            var inClass = result.InClass ?? result.Type;
+            // for Back command
+            int lookupLine = sci.CurrentLine;
+            int lookupCol = sci.CurrentPos - sci.PositionFromLine(lookupLine);
+            ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
+            // open the file
+            if (model != ASContext.Context.CurrentModel)
             {
-                if (result.Member != null && (result.Member.Flags & FlagType.AutomaticVar) > 0) return null;
-                var model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
-                if (model is null || model.FileName == "") return null;
-                var inClass = result.InClass ?? result.Type;
-                // for Back command
-                int lookupLine = sci.CurrentLine;
-                int lookupCol = sci.CurrentPos - sci.PositionFromLine(lookupLine);
-                ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
-                // open the file
-                if (model != ASContext.Context.CurrentModel)
+                if (model.FileName.Length > 0 && File.Exists(model.FileName))
                 {
-                    if (model.FileName.Length > 0 && File.Exists(model.FileName))
+                    if (!associatedDocumentHelper.FilesOpenedDocumentReferences.ContainsKey(model.FileName)) associatedDocumentHelper.LoadDocument(model.FileName);
+                    sci = associatedDocumentHelper.FilesOpenedDocumentReferences[model.FileName].SciControl;
+                }
+                else
+                {
+                    ASComplete.OpenVirtualFile(model);
+                    result.InFile = ASContext.Context.CurrentModel;
+                    if (result.InFile is null) return null;
+                    if (inClass != null)
                     {
-                        if (!associatedDocumentHelper.FilesOpenedDocumentReferences.ContainsKey(model.FileName)) associatedDocumentHelper.LoadDocument(model.FileName);
-                        sci = associatedDocumentHelper.FilesOpenedDocumentReferences[model.FileName].SciControl;
+                        inClass = result.InFile.GetClassByName(inClass.Name);
+                        if (result.Member != null) result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
                     }
-                    else
+                    else if (result.Member != null)
                     {
-                        ASComplete.OpenVirtualFile(model);
-                        result.InFile = ASContext.Context.CurrentModel;
-                        if (result.InFile is null) return null;
-                        if (inClass != null)
-                        {
-                            inClass = result.InFile.GetClassByName(inClass.Name);
-                            if (result.Member != null) result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
-                        }
-                        else if (result.Member != null)
-                        {
-                            result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
-                        }
-                        sci = ASContext.CurSciControl;
+                        result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
                     }
+                    sci = ASContext.CurSciControl;
                 }
-                if (sci is null) return null;
-                if ((inClass is null || inClass.IsVoid()) && result.Member is null) return null;
-                var line = 0;
-                string name = null;
-                var isClass = false;
-                // member
-                if (result.Member != null && result.Member.LineFrom > 0)
-                {
-                    line = result.Member.LineFrom;
-                    name = result.Member.Name;
-                }
-                // class declaration
-                else if (inClass != null && inClass.LineFrom > 0)
-                {
-                    line = inClass.LineFrom;
-                    name = inClass.Name;
-                    isClass = true;
-                    // constructor
-                    foreach (MemberModel member in inClass.Members)
-                    {
-                        if ((member.Flags & FlagType.Constructor) > 0)
-                        {
-                            line = member.LineFrom;
-                            name = member.Name;
-                            isClass = false;
-                            break;
-                        }
-                    }
-                }
-                if (line > 0) // select
-                {
-                    if (isClass) ASComplete.LocateMember(sci, "(class|interface)", name, line);
-                    else ASComplete.LocateMember(sci, "(function|var|const|get|set|property|[,(])", name, line);
-                }
-                return result;
             }
-            return null;
+            if (sci is null) return null;
+            if ((inClass is null || inClass.IsVoid()) && result.Member is null) return null;
+            var line = 0;
+            string name = null;
+            var isClass = false;
+            // member
+            if (result.Member != null && result.Member.LineFrom > 0)
+            {
+                line = result.Member.LineFrom;
+                name = result.Member.Name;
+            }
+            // class declaration
+            else if (inClass != null && inClass.LineFrom > 0)
+            {
+                line = inClass.LineFrom;
+                name = inClass.Name;
+                isClass = true;
+                // constructor
+                foreach (MemberModel member in inClass.Members)
+                {
+                    if ((member.Flags & FlagType.Constructor) > 0)
+                    {
+                        line = member.LineFrom;
+                        name = member.Name;
+                        isClass = false;
+                        break;
+                    }
+                }
+            }
+            if (line > 0) // select
+            {
+                if (isClass) ASComplete.LocateMember(sci, "(class|interface)", name, line);
+                else ASComplete.LocateMember(sci, "(function|var|const|get|set|property|[,(])", name, line);
+            }
+            return result;
         }
 
         /// <summary>
@@ -256,7 +253,7 @@ namespace CodeRefactor.Provider
             var originalFile = sci.FileName;
             // get type at match position
             var declaration = DeclarationLookupResult(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
-            return (declaration.InFile != null && originalFile == declaration.InFile.FileName) && (sci.CurrentPos == (sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value)));
+            return declaration.InFile != null && originalFile == declaration.InFile.FileName && sci.CurrentPos == sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value);
         }
 
         /// <summary>
@@ -286,20 +283,14 @@ namespace CodeRefactor.Provider
                 associatedDocumentHelper?.RegisterLoadedDocument(PluginBase.MainForm.CurrentDocument);
             }
             // check if the result matches the target
-            if (result is null || (result.InFile is null && result.Type is null)) return false;
-            if (matchMember)
-            {
-                if (result.Member is null) return false;
-
-                var resultInFile = result.InClass != null ? result.InFile : result.Member.InFile;
-
-                return resultInFile.BasePath == targetInFile.BasePath
-                    && resultInFile.FileName == targetInFile.FileName
-                    && result.Member.LineFrom == target.Member.LineFrom
-                    && result.Member.Name == target.Member.Name;
-            }
-            // type
-            return result.Type != null && result.Type.QualifiedName == target.Type.QualifiedName;
+            if (result is null || result.InFile is null && result.Type is null) return false;
+            if (!matchMember) return result.Type != null && result.Type.QualifiedName == target.Type.QualifiedName;
+            if (result.Member is null) return false;
+            var resultInFile = result.InClass != null ? result.InFile : result.Member.InFile;
+            return resultInFile.BasePath == targetInFile.BasePath
+                   && resultInFile.FileName == targetInFile.FileName
+                   && result.Member.LineFrom == target.Member.LineFrom
+                   && result.Member.Name == target.Member.Name;
         }
 
         /// <summary>
@@ -404,12 +395,9 @@ namespace CodeRefactor.Provider
                 if (file.StartsWithOrdinal(absolute)) return true;
             }
             // If no source paths are defined, is it under the project?
-            if (project.SourcePaths.Length == 0)
-            {
-                var projRoot = Path.GetDirectoryName(project.ProjectPath);
-                if (file.StartsWithOrdinal(projRoot)) return true;
-            }
-            return false;
+            if (project.SourcePaths.Length != 0) return false;
+            var projRoot = Path.GetDirectoryName(project.ProjectPath);
+            return file.StartsWithOrdinal(projRoot);
         }
 
         /// <summary>
@@ -432,7 +420,7 @@ namespace CodeRefactor.Provider
                 foreach (var pathModel in context.Classpath)
                 {
                     var absolute = project.GetAbsolutePath(pathModel.Path);
-                    if (!Directory.Exists(absolute) || (ignoreSdkFiles && IsUnderSDKPath(absolute))) continue;
+                    if (!Directory.Exists(absolute) || ignoreSdkFiles && IsUnderSDKPath(absolute)) continue;
                     foreach (var filterMask in filters)
                     {
                         files.AddRange(Directory.GetFiles(absolute, filterMask, SearchOption.AllDirectories));
@@ -446,7 +434,7 @@ namespace CodeRefactor.Provider
                 lookupPaths = lookupPaths.Select(project.GetAbsolutePath).Distinct();
                 foreach (var path in lookupPaths)
                 {
-                    if (!Directory.Exists(path) || (ignoreSdkFiles && IsUnderSDKPath(path))) continue;
+                    if (!Directory.Exists(path) || ignoreSdkFiles && IsUnderSDKPath(path)) continue;
                     foreach (var filterMask in filters)
                     {
                         files.AddRange(Directory.GetFiles(path, filterMask, SearchOption.AllDirectories));
@@ -690,8 +678,7 @@ namespace CodeRefactor.Provider
             var member = target.Member;
             if (member != null)
             {
-                return (member.Access == Visibility.Private && !target.InFile.haXe)
-                    || ((member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0);
+                return member.Access == Visibility.Private && !target.InFile.haXe || (member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0;
             }
             var type = target.Type;
             return type != null && type.Access == Visibility.Private && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version) < "4.0.0");

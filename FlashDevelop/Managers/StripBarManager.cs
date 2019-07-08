@@ -36,7 +36,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static List<ToolStripItem> FindMenuItems(string name)
         {
-            List<ToolStripItem> found = new List<ToolStripItem>();
+            var found = new List<ToolStripItem>();
             foreach (var item in Items)
             {
                 if (item.Name == name) found.Add(item);
@@ -218,12 +218,9 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Gets a new tool strip separetor item
+        /// Gets a new tool strip separator item
         /// </summary>
-        public static ToolStripSeparator GetSeparator(XmlNode node)
-        {
-            return new ToolStripSeparator();
-        }
+        public static ToolStripSeparator GetSeparator(XmlNode node) => new ToolStripSeparator();
 
         /// <summary>
         /// Gets the dynamic syntax menu xml (easy integration :)

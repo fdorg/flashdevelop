@@ -17,9 +17,9 @@ namespace CodeRefactor.BatchProcessors
         {
             foreach (var file in files)
             {
-                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
                 var command = (OrganizeImports) CommandFactoryProvider.GetFactory(document)?.CreateOrganizeImportsCommand();
-                if (command == null) continue;
+                if (command is null) continue;
                 command.SciControl = document.SciControl;
                 command.TruncateImports = true;
                 command.Execute();

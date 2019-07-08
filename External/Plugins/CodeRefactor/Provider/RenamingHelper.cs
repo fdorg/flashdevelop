@@ -45,7 +45,7 @@ namespace CodeRefactor.Provider
             }
             else if (HasGetterSetter(target))
             {
-                if (target.Member.Parameters is List<MemberModel> list && list.Count is int count && count > 0)
+                if (target.Member.Parameters is { } list && list.Count is int count && count > 0)
                 {
                     if (count > 0 && list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + command.OldName, PrefixGetter + command.NewName, outputResults);
                     if (count > 1 && list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + command.OldName, PrefixSetter + command.NewName, outputResults);
@@ -85,7 +85,7 @@ namespace CodeRefactor.Provider
 
         private static Rename RenameMember(ASResult target, string name, string newName, bool outputResults)
         {
-            return FindGetterSetter(target, name) is ASResult result
+            return FindGetterSetter(target, name) is { } result
                 ? new Rename(result, outputResults, newName)
                 : null;
         }
@@ -112,10 +112,6 @@ namespace CodeRefactor.Provider
             currentCommand.OnRefactorComplete -= OnRefactorComplete;
             if (queue.Count == 0)
             {
-                //if (currentCommand.OutputResults)
-                //{
-                //    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
-                //}
                 if (startState != null) RestoreStartState();
                 currentCommand = null;
                 startState = null;
