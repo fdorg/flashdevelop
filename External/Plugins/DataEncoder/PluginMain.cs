@@ -109,12 +109,9 @@ namespace DataEncoder
 
                 case EventType.FileSaving:
                     var se = (TextEvent)e;
-                    if (IsFileOpen(se.Value))
+                    if (IsFileOpen(se.Value) && !IsXmlSaveable(se.Value))
                     {
-                        if (!IsXmlSaveable(se.Value))
-                        {
-                            se.Handled = true;
-                        }
+                        se.Handled = true;
                     }
                     oldFileName = string.Empty;
                     break;

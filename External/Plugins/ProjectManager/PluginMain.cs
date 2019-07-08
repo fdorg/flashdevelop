@@ -356,13 +356,13 @@ namespace ProjectManager
                 case EventType.UIStarted:
                     // for some reason we have to do this on the next message loop for the tree
                     // state to be restored properly.
-                    pluginUI.BeginInvoke((MethodInvoker)delegate 
-                    { 
-                        BroadcastMenuInfo(); 
-                        BroadcastToolBarInfo(); 
+                    pluginUI.BeginInvoke((MethodInvoker)(() =>
+                    {
+                        BroadcastMenuInfo();
+                        BroadcastToolBarInfo();
                         OpenLastProject();
                         if (firstRun) pluginPanel.Show();
-                    });
+                    }));
                     break;
 
                 case EventType.UIClosing:
@@ -525,18 +525,16 @@ namespace ProjectManager
                         }
                         else if (de.Action == ProjectManagerCommands.LineEntryDialog)
                         {
-                            Hashtable info = (Hashtable)de.Data;
-                            using (var askName = new LineEntryDialog((string)info["title"], (string)info["label"], (string)info["suggestion"]))
+                            var info = (Hashtable)de.Data;
+                            using var askName = new LineEntryDialog((string)info["title"], (string)info["label"], (string)info["suggestion"]);
+                            var choice = askName.ShowDialog();
+                            if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != (string)info["suggestion"])
                             {
-                                DialogResult choice = askName.ShowDialog();
-                                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != (string)info["suggestion"])
-                                {
-                                    info["suggestion"] = askName.Line.Trim();
-                                }
-                                if (choice == DialogResult.OK)
-                                {
-                                    e.Handled = true;
-                                }
+                                info["suggestion"] = askName.Line.Trim();
+                            }
+                            if (choice == DialogResult.OK)
+                            {
+                                e.Handled = true;
                             }
                         }
                     }
@@ -749,14 +747,11 @@ namespace ProjectManager
 
         void OpenGlobalClasspaths()
         {
-            using (ClasspathDialog dialog = new ClasspathDialog(Settings))
-            {
-                dialog.Language = "as2";
-                Project project = activeProject;
-                if (project != null && project.Language != "*")
-                    dialog.Language = project.Language;
-                dialog.ShowDialog(pluginUI);
-            }
+            using var dialog = new ClasspathDialog(Settings) {Language = "as2"};
+            var project = activeProject;
+            if (project != null && project.Language != "*")
+                dialog.Language = project.Language;
+            dialog.ShowDialog(pluginUI);
         }
 
         void OpenProjectProperties()
@@ -764,26 +759,24 @@ namespace ProjectManager
             var project = activeProject;
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenProjectProperties, project);
             EventManager.DispatchEvent(this, de);
-            using (var dialog = project.CreatePropertiesDialog())
+            using var dialog = project.CreatePropertiesDialog();
+            project.UpdateVars(false);
+            dialog.SetProject(project);
+            dialog.OpenGlobalClasspaths += (sender, args) => OpenGlobalClasspaths();
+            dialog.ShowDialog(pluginUI);
+
+            if (dialog.ClasspathsChanged || dialog.AssetsChanged)
+                Tree.RebuildTree();
+
+            if (dialog.PropertiesChanged)
             {
-                project.UpdateVars(false);
-                dialog.SetProject(project);
-                dialog.OpenGlobalClasspaths += delegate { OpenGlobalClasspaths(); };
-                dialog.ShowDialog(pluginUI);
-
-                if (dialog.ClasspathsChanged || dialog.AssetsChanged)
-                    Tree.RebuildTree();
-
-                if (dialog.PropertiesChanged)
-                {
-                    project.PropertiesChanged();
-                    project.UpdateVars(true);
-                    BroadcastProjectInfo(project);
-                    project.Save();
-                    menus.ProjectChanged(project);
-                }
-                else projectActions.UpdateASCompletion(MainForm, project);
+                project.PropertiesChanged();
+                project.UpdateVars(true);
+                BroadcastProjectInfo(project);
+                project.Save();
+                menus.ProjectChanged(project);
             }
+            else projectActions.UpdateASCompletion(MainForm, project);
         }
 
         public void OpenFile(string path)
@@ -1162,18 +1155,14 @@ namespace ProjectManager
             pluginUI.WatchParentOf(fromPath);
             pluginUI.WatchParentOf(toPath);
 
-            var data = new Hashtable();
-            data["fromPath"] = fromPath;
-            data["toPath"] = toPath;
+            var data = new Hashtable {["fromPath"] = fromPath, ["toPath"] = toPath};
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.FileMoved, data);
             EventManager.DispatchEvent(this, de);
         }
 
         private void FilePasted(string fromPath, string toPath)
         {
-            var data = new Hashtable();
-            data["fromPath"] = fromPath;
-            data["toPath"] = toPath;
+            var data = new Hashtable {["fromPath"] = fromPath, ["toPath"] = toPath};
             var de = new DataEvent(EventType.Command, ProjectManagerEvents.FilePasted, data);
             EventManager.DispatchEvent(this, de);
         }
@@ -1348,12 +1337,10 @@ namespace ProjectManager
         {
             var project = Tree.ProjectOf(Tree.SelectedNode);
             if (project is null) return;
-            using (var dialog = new LibraryAssetDialog( /*Tree.SelectedAsset*/project.GetAsset(Tree.SelectedPath), project))
-            {
-                if (dialog.ShowDialog(pluginUI) != DialogResult.OK) return;
-                Tree.SelectedNode.Refresh(false);
-                project.Save();
-            }
+            using var dialog = new LibraryAssetDialog( /*Tree.SelectedAsset*/project.GetAsset(Tree.SelectedPath), project);
+            if (dialog.ShowDialog(pluginUI) != DialogResult.OK) return;
+            Tree.SelectedNode.Refresh(false);
+            project.Save();
         }
 
         private void TreeAddFileFromTemplate(string templatePath, bool noName)
@@ -1586,27 +1573,25 @@ namespace ProjectManager
 
         private void TreeSyncToCurrentFile()
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            if (activeProject != null && doc != null && doc.IsEditable && !doc.IsUntitled)
+            var doc = PluginBase.MainForm.CurrentDocument;
+            if (activeProject is null || doc is null || !doc.IsEditable || doc.IsUntitled) return;
+            string path = doc.FileName;
+
+            if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
             {
-                string path = doc.FileName;
-
-                if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
-                {
-                    Tree.SelectedNode.EnsureVisible();
-                    Tree.PathToSelect = null;
-                    return;
-                }
-
-                Tree.Select(path);
-                if (Tree.SelectedNode.BackingPath == path)
-                {
-                    Tree.SelectedNode.EnsureVisible();
-                    Tree.PathToSelect = null;
-                }
-                else
-                    Tree.PathToSelect = path;
+                Tree.SelectedNode.EnsureVisible();
+                Tree.PathToSelect = null;
+                return;
             }
+
+            Tree.Select(path);
+            if (Tree.SelectedNode.BackingPath == path)
+            {
+                Tree.SelectedNode.EnsureVisible();
+                Tree.PathToSelect = null;
+            }
+            else
+                Tree.PathToSelect = path;
         }
 
         private void OpenResource()

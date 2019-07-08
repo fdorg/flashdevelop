@@ -23,10 +23,10 @@ namespace FlashConnect
             try
             {
                 IPAddress ipAddress = IPAddress.Parse(address);
-                this.server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                this.server.Bind(new IPEndPoint(ipAddress, port));
-                this.server.Listen(10);
-                this.server.BeginAccept(this.OnConnectRequest, this.server);
+                server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                server.Bind(new IPEndPoint(ipAddress, port));
+                server.Listen(10);
+                server.BeginAccept(OnConnectRequest, server);
             }
             catch (SocketException ex)
             {
@@ -47,9 +47,9 @@ namespace FlashConnect
             try
             {
                 Socket server = (Socket)result.AsyncState;
-                this.client = server.EndAccept(result);
-                this.SetupReceiveCallback(client);
-                server.BeginAccept(this.OnConnectRequest, server);
+                client = server.EndAccept(result);
+                SetupReceiveCallback(client);
+                server.BeginAccept(OnConnectRequest, server);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace FlashConnect
             StateObject so = new StateObject(client);
             try
             {
-                AsyncCallback receiveData = this.OnReceivedData;
+                AsyncCallback receiveData = OnReceivedData;
                 client.BeginReceive(so.Buffer, 0, so.Size, SocketFlags.None, receiveData, so);
             }
             catch (SocketException)
@@ -116,7 +116,7 @@ namespace FlashConnect
                         else if (msg.EndsWithOrdinal("</flashconnect>\0")) XmlReceived?.Invoke(this, new XmlReceivedEventArgs(msg, so.Client));
                         else ErrorManager.ShowWarning(INCORRECT_PKT + msg, null);
                     }
-                    this.SetupReceiveCallback(so.Client);
+                    SetupReceiveCallback(so.Client);
                 }
                 else
                 {
@@ -134,7 +134,5 @@ namespace FlashConnect
                 ErrorManager.ShowError(ex);
             }
         }
-        
     }
-    
 }

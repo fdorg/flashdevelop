@@ -191,10 +191,7 @@ namespace CssCompletion
             return CssState.Punctuation;
         }
 
-        private static bool IsWhitespaceChar(char p)
-        {
-            return p == '\t' || p == '\r' || p == '\n' || p == ' ';
-        }
+        private static bool IsWhitespaceChar(char p) => p == '\t' || p == '\r' || p == '\n' || p == ' ';
 
         private static bool IsTokenChar(char theChar)
         {
@@ -205,5 +202,4 @@ namespace CssCompletion
             return false;
         }
     }
-
 }

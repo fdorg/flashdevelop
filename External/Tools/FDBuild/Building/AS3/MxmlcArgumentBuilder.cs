@@ -80,14 +80,8 @@ namespace ProjectManager.Building.AS3
                 Add(options.Additional, releaseMode);
         }
 
-        void AddEq(string argument, string value)
-        {
-            Add(argument + "=" + value);
-        }
+        void AddEq(string argument, string value) => Add(argument + "=" + value);
 
-        void AddEq(string argument, bool value)
-        {
-            AddEq(argument, value ? "true" : "false");
-        }
+        void AddEq(string argument, bool value) => AddEq(argument, value ? "true" : "false");
     }
 }

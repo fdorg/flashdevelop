@@ -53,7 +53,7 @@ namespace ProjectManager.Building
         readonly TextReader reader;
         readonly TextWriter writer;
         readonly bool mergeErrors;
-        string unsplit = null;
+        string unsplit;
         public int Lines;
 
         public LineFilter(TextReader reader, TextWriter writer, bool mergeErrors)

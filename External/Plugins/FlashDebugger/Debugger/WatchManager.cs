@@ -99,10 +99,7 @@ namespace FlashDebugger.Debugger
             return true;
         }
 
-        public void Save()
-        {
-            Save(m_SaveFileFullPath);
-        }
+        public void Save() => Save(m_SaveFileFullPath);
 
         public void Save(string filePath)
         {
@@ -112,10 +109,7 @@ namespace FlashDebugger.Debugger
             }
         }
 
-        public void Load()
-        {
-            Load(m_SaveFileFullPath);
-        }
+        public void Load() => Load(m_SaveFileFullPath);
 
         public void Load(string filePath)
         {
@@ -145,15 +139,9 @@ namespace FlashDebugger.Debugger
             ExpressionReplaced?.Invoke(this, new WatchExpressionReplaceArgs(oldExpr, newExpr, index));
         }
 
-        protected void OnExpressionsCleared(EventArgs e)
-        {
-            ExpressionsCleared?.Invoke(this, e);
-        }
+        protected void OnExpressionsCleared(EventArgs e) => ExpressionsCleared?.Invoke(this, e);
 
-        protected void OnExpressionsLoaded(EventArgs e)
-        {
-            ExpressionsLoaded?.Invoke(this, e);
-        }
+        protected void OnExpressionsLoaded(EventArgs e) => ExpressionsLoaded?.Invoke(this, e);
     }
 
     public class WatchExpressionArgs : EventArgs

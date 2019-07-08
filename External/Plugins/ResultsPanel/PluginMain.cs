@@ -192,8 +192,8 @@ namespace ResultsPanel
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
-                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
+            const EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
+                                        | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
             EventManager.AddEventHandler(this, eventMask);
 
             UITools.Manager.OnMouseHover += Scintilla_OnMouseHover;
@@ -220,10 +220,7 @@ namespace ResultsPanel
             }
         }
 
-        private void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position)
-        {
-            UITools.ErrorTip.Hide();
-        }
+        private void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position) => UITools.ErrorTip.Hide();
 
         /// <summary>
         /// Creates a plugin panel for the plugin

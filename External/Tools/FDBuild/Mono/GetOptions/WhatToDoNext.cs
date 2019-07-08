@@ -6,4 +6,3 @@ namespace Mono.GetOptions
         GoAhead
     }
 }
-

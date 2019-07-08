@@ -130,21 +130,14 @@ namespace PluginCore
             return platform;
         }
 
-        private static bool GetBool(XmlNode node, string attribute)
-        {
-            return (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
-        }
+        private static bool GetBool(XmlNode node, string attribute) => (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
 
-        private static string GetAttribute(XmlNode node, string name)
-        {
-            var attr = node.Attributes[name];
-            return attr?.Value;
-        }
+        private static string GetAttribute(XmlNode node, string name) => node.Attributes?[name]?.Value;
 
         private static string[] GetList(XmlNode node, string attribute)
         {
             // build targets, ie. html5, flash, android for openfl
-            var attr = node.Attributes[attribute];
+            var attr = node.Attributes?[attribute];
             return attr?.Value.Split(',');
         }
 
@@ -255,4 +248,3 @@ namespace PluginCore
         public XmlNode RawData;
     }
 }
-

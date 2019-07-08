@@ -61,10 +61,7 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Gets the linters for a given <paramref name="language"/>.
         /// </summary>
-        public static List<ILintProvider> GetLinters(string language)
-        {
-            return linters.GetOrCreate(language);
-        }
+        public static List<ILintProvider> GetLinters(string language) => linters.GetOrCreate(language);
 
         /// <summary>
         /// Lint <paramref name="files"/> without trying to autodetect the language
@@ -137,10 +134,7 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Runs all applicable linters on the current document
         /// </summary>
-        public static void LintCurrentDocument()
-        {
-            LintDocument(PluginBase.MainForm.CurrentDocument);
-        }
+        public static void LintCurrentDocument() => LintDocument(PluginBase.MainForm.CurrentDocument);
 
         public static void UnLintFile(string file)
         {
@@ -159,7 +153,7 @@ namespace LintingHelper.Managers
         /// </summary>
         static void ApplyLint(List<LintingResult> results)
         {
-            if (results == null)
+            if (results is null)
                 return;
 
             Cache.AddResults(results);

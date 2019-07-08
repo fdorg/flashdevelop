@@ -65,7 +65,7 @@ namespace SourceControl.Actions
             scItem.DropDownItems.AddRange(items.ToArray());
         }
 
-        private static void AddSCMainItem(ProjectTreeView tree)
+        private static void AddSCMainItem(MultiSelectTreeView tree)
         {
             if (scItem == null)
             {

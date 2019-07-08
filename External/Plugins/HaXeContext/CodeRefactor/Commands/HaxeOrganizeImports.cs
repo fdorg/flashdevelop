@@ -16,7 +16,7 @@ namespace HaXeContext.CodeRefactor.Commands
             {
                 if (result.Contains(import.Type)) continue;
                 var inFile = import.InFile ?? ASContext.Context.ResolveType(import.Name, FileModel.Ignore).InFile;
-                if (inFile == null || inFile.Classes.Count == 1)
+                if (inFile is null || inFile.Classes.Count == 1)
                 {
                     if (MemberTypeImported(import.Name, searchInText, sourceFile)) result.Add(import.Type);
                 }

@@ -12,7 +12,7 @@ namespace ProjectManager.Projects
     {
         static readonly BinaryFormatter formatter = new BinaryFormatter();
 
-        object ICloneable.Clone() { return Clone(); }
+        object ICloneable.Clone() => Clone();
 
         public CompilerOptions Clone()
         {

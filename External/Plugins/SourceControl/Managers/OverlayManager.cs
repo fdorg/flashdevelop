@@ -105,11 +105,9 @@ namespace SourceControl.Managers
             if (!node.Meta.ContainsKey(META_VC))
                 LocateVC(node);
 
-            IVCManager currentVC = node.Meta[META_VC] as IVCManager;
-            string root = (string)node.Meta[META_ROOT];
-
-            if (currentVC != null && currentTree != null)
+            if (node.Meta[META_VC] is IVCManager currentVC && currentTree != null)
             {
+                string root = (string)node.Meta[META_ROOT];
                 VCItemStatus status = currentVC.GetOverlay(node.BackingPath, root);
                 node.Meta[META_STATUS] = status;
                 OverlayMap.SetOverlay(status, node, currentTree);

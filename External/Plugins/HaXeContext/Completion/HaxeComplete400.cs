@@ -11,12 +11,7 @@ namespace HaXeContext
         {
         }
 
-        protected override int GetDisplayPosition()
-        {
-            var result = base.GetDisplayPosition();
-            result = Sci.MBSafeCharPosition(result);
-            return result;
-        }
+        protected override int GetDisplayPosition() => Sci.MBSafeCharPosition(base.GetDisplayPosition());
 
         protected override HaxePositionResult ExtractPos(XmlReader reader)
         {

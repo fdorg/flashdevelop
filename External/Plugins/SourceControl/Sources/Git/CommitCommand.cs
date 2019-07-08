@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace SourceControl.Sources.Git
 {
@@ -24,7 +25,7 @@ namespace SourceControl.Sources.Git
             else Run(commitArgs, workingDir);
         }
 
-        public CommitCommand(string[] paths, string message) : this(null, message, Path.GetDirectoryName(SafeGet(paths, 0)))
+        public CommitCommand(IList<string> paths, string message) : this(null, message, Path.GetDirectoryName(SafeGet(paths, 0)))
         {
         }
 
@@ -39,9 +40,9 @@ namespace SourceControl.Sources.Git
             commitArgs = null;
         }
 
-        static T SafeGet<T>(T[] a, int i) where T : class
+        static T SafeGet<T>(IList<T> a, int i) where T : class
         {
-            return a != null && a.Length > i ? a[i] : null;
+            return a != null && a.Count > i ? a[i] : null;
         }
     }
 }

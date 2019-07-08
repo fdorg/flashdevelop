@@ -265,7 +265,7 @@ namespace HaXeContext.Completion
                     if (IsBool(bLabel)) return 1;
                     return 0;
                     // Utils
-                    bool IsBool(string s) => s == "true" || s == "false";
+                    static bool IsBool(string s) => s == "true" || s == "false";
                 });
             }
             // for example: function(v:Type = <complete>
@@ -306,7 +306,7 @@ namespace HaXeContext.Completion
                 return HandleDotCompletion(sci, autoHide, list, null);
             }
             // for example: v = <complete>, v != <complete>, v == <complete>
-            if ((c == ' ' || c == '!' || c == '='))
+            if (c == ' ' || c == '!' || c == '=')
             {
                 if (IsEnum(type))
                     return HandleDotCompletion(sci, autoHide, null, (a, b) =>
@@ -411,13 +411,13 @@ namespace HaXeContext.Completion
             }
             return false;
             // Utils
-            bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
+            static bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
                                          || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
 
-            bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
+            static bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
 
-            bool IsTypedef(ClassModel t, ref ClassModel realType)
+            static bool IsTypedef(ClassModel t, ref ClassModel realType)
             {
                 if (t.Flags.HasFlag(FlagType.TypeDef))
                 {
@@ -903,7 +903,7 @@ namespace HaXeContext.Completion
                         rvalueEnd = ExpressionEndPosition(sci, i, endPosition, true);
                     }
                     // Utils
-                    bool TryGetOperatorMaxLength(string[] operators, char firstChar, ref int result)
+                    static bool TryGetOperatorMaxLength(string[] operators, char firstChar, ref int result)
                     {
                         foreach (var it in operators)
                         {
@@ -1701,7 +1701,7 @@ namespace HaXeContext.Completion
                 }
                 return null;
                 // Utils
-                string CleanNullableType(string s)
+                static string CleanNullableType(string s)
                 {
                     var startIndex = s.IndexOfOrdinal("Null<");
                     if (startIndex == -1) return s;
@@ -1771,7 +1771,7 @@ namespace HaXeContext.Completion
                 sci.EndUndoAction();
             }
             // Utils
-            void GetMembers(ClassModel t, List<MemberModel> result)
+            static void GetMembers(ClassModel t, List<MemberModel> result)
             {
                 t.ResolveExtends();
                 while (!t.IsVoid())

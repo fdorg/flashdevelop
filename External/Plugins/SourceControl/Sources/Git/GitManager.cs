@@ -9,17 +9,12 @@ namespace SourceControl.Sources.Git
         public event VCManagerStatusChange OnChange;
 
         readonly Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        readonly IVCMenuItems menuItems = new MenuItems();
-        readonly IVCFileActions fileActions = new FileActions();
         readonly Regex reIgnore = new Regex("[/\\\\]\\.git([/\\\\]|$)");
-        bool ignoreDirty = false;
+        bool ignoreDirty;
 
-        public IVCMenuItems MenuItems => menuItems;
-        public IVCFileActions FileActions => fileActions;
+        public IVCMenuItems MenuItems { get; } = new MenuItems();
 
-        public GitManager()
-        {
-        }
+        public IVCFileActions FileActions { get; } = new FileActions();
 
         public bool IsPathUnderVC(string path)
         {
@@ -28,9 +23,8 @@ namespace SourceControl.Sources.Git
 
         public VCItemStatus GetOverlay(string path, string rootPath)
         {
-            StatusNode snode = FindNode(path, rootPath);
-            if (snode != null) return snode.Status;
-            return VCItemStatus.Ignored;
+            var snode = FindNode(path, rootPath);
+            return snode?.Status ?? VCItemStatus.Ignored;
         }
 
         private StatusNode FindNode(string path, string rootPath)
@@ -73,7 +67,7 @@ namespace SourceControl.Sources.Git
             return rootPath + S + path;
         }
 
-        private void GetChildren(StatusNode node, List<StatusNode> result)
+        private void GetChildren(StatusNode node, ICollection<StatusNode> result)
         {
             if (node.Children == null) return;
             foreach (StatusNode child in node.Children.Values)
@@ -105,13 +99,10 @@ namespace SourceControl.Sources.Git
 
         public bool SetPathDirty(string path, string rootPath)
         {
-            if (ignoreDirty) return false;
-            if (statusCache.ContainsKey(rootPath))
-            {
-                if (reIgnore.IsMatch(path)) return false;
-                return statusCache[rootPath].SetPathDirty(path);
-            }
-            return false;
+            return !ignoreDirty
+                   && !reIgnore.IsMatch(path)
+                   && statusCache.ContainsKey(rootPath)
+                   && statusCache[rootPath].SetPathDirty(path);
         }
 
         public void Commit(string[] files, string message)

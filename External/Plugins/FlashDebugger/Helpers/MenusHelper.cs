@@ -59,9 +59,8 @@ namespace FlashDebugger
             Image imgNext = PluginBase.MainForm.GetAutoAdjustedImage(Resource.Next);
             Image imgFinish = PluginBase.MainForm.GetAutoAdjustedImage(Resource.Finish);
 
-            ToolStripMenuItem tempItem;
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            tempItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewBreakpointsPanel"), pluginImage, OpenBreakPointPanel);
+            var tempItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewBreakpointsPanel"), pluginImage, OpenBreakPointPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowBreakpoints", tempItem);
             viewMenu.DropDownItems.Add(tempItem);
             tempItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewLocalVariablesPanel"), pluginImage, OpenLocalVariablesPanel);
@@ -224,10 +223,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate()
-                {
-                    UpdateMenuState(sender, state);
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => UpdateMenuState(sender, state)));
                 return;
             }
             bool hasChanged = CurrentState != state;

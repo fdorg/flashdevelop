@@ -124,7 +124,7 @@ namespace FlashDebugger.Helpers
             }
         }
 
-        private static bool IsWantedParent(DataNode parent)
+        private static bool IsWantedParent(Node parent)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace FlashDebugger.Helpers
                 {
                     if (parent is ValueNode pNode && pNode.ClassPath == "Array")
                     {
-                        DataNode child1 = (DataNode)parent.Nodes[0];
+                        var child1 = (DataNode)parent.Nodes[0];
                         if (child1.Text == "[static]" || child1.Text == "length")
                         {
                             return false;

@@ -79,9 +79,8 @@ namespace Mono.GetOptions
         {
             var list1 = new List<string>();
             var textArray1 = args;
-            for (int num1 = 0; num1 < textArray1.Length; num1++)
+            foreach (var text1 in textArray1)
             {
-                string text1 = textArray1[num1];
                 if (text1.StartsWith("@", StringComparison.Ordinal))
                 {
                     try
@@ -154,14 +153,10 @@ namespace Mono.GetOptions
 
         private void Initialize(Options optionBundle)
         {
-            if (optionBundle == null)
-            {
-                throw new ArgumentNullException(nameof(optionBundle));
-            }
             entry = Assembly.GetEntryAssembly();
             appExeName = entry.GetName().Name;
             appVersion = entry.GetName().Version.ToString();
-            this.optionBundle = optionBundle;
+            this.optionBundle = optionBundle ?? throw new ArgumentNullException(nameof(optionBundle));
             parsingMode = optionBundle.ParsingMode;
             breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
             endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
@@ -176,9 +171,8 @@ namespace Mono.GetOptions
                 appAuthors = new[] { "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly" } ;
             }
             MemberInfo[] infoArray1 = optionBundle.GetType().GetMembers();
-            for (int num1 = 0; num1 < infoArray1.Length; num1++)
+            foreach (var info1 in infoArray1)
             {
-                MemberInfo info1 = infoArray1[num1];
                 object[] objArray1 = info1.GetCustomAttributes(typeof(OptionAttribute), true);
                 if (objArray1.Length > 0)
                 {
@@ -207,9 +201,8 @@ namespace Mono.GetOptions
             var flag1 = true;
             var list1 = new List<string>();
             var textArray1 = ExpandResponseFiles(args);
-            for (int num2 = 0; num2 < textArray1.Length; num2++)
+            foreach (var text1 in textArray1)
             {
-                string text1 = textArray1[num2];
                 if (text1.Length > 0)
                 {
                     if (flag1)
@@ -254,9 +247,9 @@ namespace Mono.GetOptions
                     }
                 }
                 goto Label_0155;
-            Label_014D:
+                Label_014D:
                 list1.Add(text1);
-            Label_0155:;
+                Label_0155:;
             }
             return list1.ToArray();
         }
@@ -381,9 +374,8 @@ namespace Mono.GetOptions
             StringBuilder builder1 = new StringBuilder("Authors: ");
             bool flag1 = true;
             string[] textArray1 = appAuthors;
-            for (int num1 = 0; num1 < textArray1.Length; num1++)
+            foreach (var text1 in textArray1)
             {
-                string text1 = textArray1[num1];
                 if (flag1)
                 {
                     flag1 = false;
@@ -425,9 +417,8 @@ namespace Mono.GetOptions
                     {
                         string[] textArray1 = details1.ToString().Split('\n');
                         string[] textArray3 = textArray1;
-                        for (int num4 = 0; num4 < textArray3.Length; num4++)
+                        foreach (var text1 in textArray3)
                         {
-                            string text1 = textArray3[num4];
                             int num2 = text1.IndexOf('\t');
                             if (num2 > num1)
                             {

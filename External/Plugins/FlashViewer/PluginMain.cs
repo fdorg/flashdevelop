@@ -108,7 +108,7 @@ namespace FlashViewer
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             settingFilename = Path.Combine(path, "Settings.fdb");
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string resource = "FlashViewer.Resources.Player.ico";
+            const string resource = "FlashViewer.Resources.Player.ico";
             Stream stream = assembly.GetManifestResourceStream(resource);
             Description = TextHelper.GetString("Info.Description");
             playerIcon = new Icon(stream);
@@ -273,8 +273,7 @@ namespace FlashViewer
                             break;
 
                         case "FlashViewer.SetDisplayStyle":
-                            ViewStyle vs = (ViewStyle)Enum.Parse(typeof(ViewStyle), e.Data.ToString());
-                            settingObject.DisplayStyle = vs;
+                            settingObject.DisplayStyle = (ViewStyle)Enum.Parse(typeof(ViewStyle), e.Data.ToString());
                             break;
                     }
                     e.Handled = true;
@@ -346,7 +345,7 @@ namespace FlashViewer
             flashView.MoviePath = file;
             popup.Show();
             popup.FormClosing += PopupFormClosing;
-            popup.Disposed += delegate { NotifyDisposed(file); };
+            popup.Disposed += (sender, args) => NotifyDisposed(file);
             popups.Add(popup);
         }
 

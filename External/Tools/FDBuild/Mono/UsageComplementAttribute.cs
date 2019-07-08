@@ -11,14 +11,10 @@ namespace Mono
             Details = details;
         }
 
-        public override string ToString()
-        {
-            return Details;
-        }
+        public override string ToString() => Details;
 
 
         // Fields
         public string Details;
     }
 }
-

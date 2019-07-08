@@ -14,7 +14,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Enable Accessibility Features")]
         [LocalizedDescription("ProjectManager.Description.Accessible")]
         [DefaultValue(false)]
-        public bool Accessible { get => accessible;
+        public bool Accessible {
+            get => accessible;
             set => accessible = value;
         }
 
@@ -23,7 +24,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Allow Source Path Overlap")]
         [LocalizedDescription("ProjectManager.Description.AllowSourcePathOverlap")]
         [DefaultValue(false)]
-        public bool AllowSourcePathOverlap { get => allowSourcePathOverlap;
+        public bool AllowSourcePathOverlap {
+            get => allowSourcePathOverlap;
             set => allowSourcePathOverlap = value;
         }
 
@@ -32,7 +34,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Show Benchmark Results")]
         [LocalizedDescription("ProjectManager.Description.Benchmark")]
         [DefaultValue(false)]
-        public bool Benchmark { get => benchmark;
+        public bool Benchmark {
+            get => benchmark;
             set => benchmark = value;
         }
 
@@ -41,7 +44,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Use ECMAScript Object Model")]
         [LocalizedDescription("ProjectManager.Description.ES")]
         [DefaultValue(false)]
-        public bool ES { get => es;
+        public bool ES {
+            get => es;
             set => es = value;
         }
         
@@ -50,7 +54,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Load Configuration File")]
         [LocalizedDescription("ProjectManager.Description.LoadConfig")]
         [DefaultValue("")]
-        public string LoadConfig { get => loadConfig;
+        public string LoadConfig {
+            get => loadConfig;
             set => loadConfig = value;
         }
 
@@ -59,7 +64,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Language Locale")]
         [LocalizedDescription("ProjectManager.Description.Locale")]
         [DefaultValue("")]
-        public string Locale { get => locale;
+        public string Locale {
+            get => locale;
             set => locale = value;
         }
 
@@ -74,7 +80,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Optimize Bytecode")]
         [LocalizedDescription("ProjectManager.Description.Optimize")]
         [DefaultValue(false)]
-        public bool Optimize { get => optimize;
+        public bool Optimize {
+            get => optimize;
             set => optimize = value;
         }
 
@@ -83,7 +90,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Omit Trace Statements")]
         [LocalizedDescription("ProjectManager.Description.OmitTraces")]
         [DefaultValue(true)]
-        public bool OmitTraces { get => omitTraces;
+        public bool OmitTraces {
+            get => omitTraces;
             set => omitTraces = value;
         }
 
@@ -92,7 +100,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Show Binding Warnings")]
         [LocalizedDescription("ProjectManager.Description.ShowBindingWarnings")]
         [DefaultValue(true)]
-        public bool ShowBindingWarnings { get => showBindingWarnings;
+        public bool ShowBindingWarnings {
+            get => showBindingWarnings;
             set => showBindingWarnings = value;
         }
 
@@ -101,7 +110,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Show Invalid CSS Property Warnings")]
         [LocalizedDescription("ProjectManager.Description.ShowInvalidCSS")]
         [DefaultValue(true)]
-        public bool ShowInvalidCSS { get => showInvalidCSS;
+        public bool ShowInvalidCSS {
+            get => showInvalidCSS;
             set => showInvalidCSS = value;
         }
 
@@ -110,7 +120,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Show Actionscript Warnings")]
         [LocalizedDescription("ProjectManager.Description.ShowActionScriptWarnings")]
         [DefaultValue(true)]
-        public bool ShowActionScriptWarnings { get => showActionScriptWarnings;
+        public bool ShowActionScriptWarnings {
+            get => showActionScriptWarnings;
             set => showActionScriptWarnings = value;
         }
 
@@ -119,7 +130,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Show Deprecation Warnings")]
         [LocalizedDescription("ProjectManager.Description.ShowDeprecationWarnings")]
         [DefaultValue(true)]
-        public bool ShowDeprecationWarnings { get => showDeprecationWarnings;
+        public bool ShowDeprecationWarnings {
+            get => showDeprecationWarnings;
             set => showDeprecationWarnings = value;
         }
 
@@ -128,7 +140,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Show Unused Type Selector Warnings")]
         [LocalizedDescription("ProjectManager.Description.ShowUnusedTypeSelectorWarnings")]
         [DefaultValue(true)]
-        public bool ShowUnusedTypeSelectorWarnings { get => showUnusedTypeSelectorWarnings;
+        public bool ShowUnusedTypeSelectorWarnings {
+            get => showUnusedTypeSelectorWarnings;
             set => showUnusedTypeSelectorWarnings = value;
         }
 
@@ -137,7 +150,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Enable Strict Mode")]
         [LocalizedDescription("ProjectManager.Description.StrictAS3")]
         [DefaultValue(true)]
-        public bool Strict { get => strict;
+        public bool Strict {
+            get => strict;
             set => strict = value;
         }
 
@@ -146,7 +160,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Use Resource Bundle Metadata")]
         [LocalizedDescription("ProjectManager.Description.UseResourceBundleMetadata")]
         [DefaultValue(true)]
-        public bool UseResourceBundleMetadata { get => useResourceBundleMetadata;
+        public bool UseResourceBundleMetadata {
+            get => useResourceBundleMetadata;
             set => useResourceBundleMetadata = value;
         }
 
@@ -155,7 +170,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Verbose Stack Traces")]
         [LocalizedDescription("ProjectManager.Description.VerboseStackTraces")]
         [DefaultValue(false)]
-        public bool VerboseStackTraces { get => verboseStackTraces;
+        public bool VerboseStackTraces {
+            get => verboseStackTraces;
             set => verboseStackTraces = value;
         }
 
@@ -164,7 +180,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Enable All Warnings")]
         [LocalizedDescription("ProjectManager.Description.Warnings")]
         [DefaultValue(true)]
-        public bool Warnings { get => warnings;
+        public bool Warnings {
+            get => warnings;
             set => warnings = value;
         }
 
@@ -177,7 +194,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Additional Compiler Options")]
         [LocalizedDescription("ProjectManager.Description.Additional")]
         [DefaultValue(new string[] { })]
-        public string[] Additional { get => additional;
+        public string[] Additional {
+            get => additional;
             set => additional = value;
         }
 
@@ -186,7 +204,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Advanced Telemetry")]
         [LocalizedDescription("ProjectManager.Description.AdvancedTelemetry")]
         [DefaultValue(false)]
-        public bool AdvancedTelemetry { get => advancedTelemetry;
+        public bool AdvancedTelemetry {
+            get => advancedTelemetry;
             set => advancedTelemetry = value;
         }
 
@@ -195,7 +214,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Advanced Telemetry Password")]
         [LocalizedDescription("ProjectManager.Description.AdvancedTelemetryPassword")]
         [DefaultValue("")]
-        public string AdvancedTelemetryPassword { get => advancedTelemetryPassword;
+        public string AdvancedTelemetryPassword {
+            get => advancedTelemetryPassword;
             set => advancedTelemetryPassword = value;
         }
 
@@ -204,7 +224,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Inline Functions")]
         [LocalizedDescription("ProjectManager.Description.InlineFunctions")]
         [DefaultValue(false)]
-        public bool InlineFunctions { get => inlineFunctions;
+        public bool InlineFunctions {
+            get => inlineFunctions;
             set => inlineFunctions = value;
         }
 
@@ -213,7 +234,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Compiler Constants")]
         [LocalizedDescription("ProjectManager.Description.CompilerConstants")]
         [DefaultValue(new string[] { })]
-        public string[] CompilerConstants { get => compilerConstants;
+        public string[] CompilerConstants {
+            get => compilerConstants;
             set => compilerConstants = value;
         }
 
@@ -222,7 +244,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Player Minor Version")]
         [LocalizedDescription("ProjectManager.Description.MinorVersion")]
         [DefaultValue("")]
-        public string MinorVersion { get => minorVersion;
+        public string MinorVersion {
+            get => minorVersion;
             set => minorVersion = value;
         }
 
@@ -286,7 +309,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Use Network Services")]
         [LocalizedDescription("ProjectManager.Description.UseNetwork")]
         [DefaultValue(true)]
-        public bool UseNetwork { get => useNetwork;
+        public bool UseNetwork {
+            get => useNetwork;
             set => useNetwork = value;
         }
 
@@ -295,7 +319,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Link Report")]
         [LocalizedDescription("ProjectManager.Description.LinkReport")]
         [DefaultValue("")]
-        public string LinkReport { get => linkReport;
+        public string LinkReport {
+            get => linkReport;
             set => linkReport = value;
         }
 
@@ -304,7 +329,8 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Load Externs")]
         [LocalizedDescription("ProjectManager.Description.LoadExterns")]
         [DefaultValue("")]
-        public string LoadExterns { get => loadExterns;
+        public string LoadExterns {
+            get => loadExterns;
             set => loadExterns = value;
         }
 
@@ -313,11 +339,11 @@ namespace ProjectManager.Projects.AS3
         [DisplayName("Static Link RSL")]
         [LocalizedDescription("ProjectManager.Description.StaticLinkRSL")]
         [DefaultValue(true)]
-        public bool StaticLinkRSL { get => staticLinkRSL;
+        public bool StaticLinkRSL {
+            get => staticLinkRSL;
             set => staticLinkRSL = value;
         }
 
         #endregion
     }
-
 }

@@ -26,11 +26,9 @@ namespace Mono
             }
             return (Name + " (" + SubProject + ")");
         }
-
-
+        
         // Fields
         public string Name;
         public string SubProject;
     }
 }
-
