@@ -152,17 +152,17 @@ namespace CssCompletion
 
         private void HandleCompletion(CompleteMode mode, LocalContext context, bool autoInsert, bool autoHide)
         {
-            List<ICompletionListItem> items = null;
-            switch (mode)
+            var items = mode switch
             {
-                case CompleteMode.Selector: items = HandleSelectorCompletion(context); break;
-                case CompleteMode.Pseudo: items = HandlePseudoCompletion(context); break;
-                case CompleteMode.Prefix: items = HandlePrefixCompletion(context); break;
-                case CompleteMode.Attribute: items = HandlePropertyCompletion(context); break;
-                case CompleteMode.Variable: items = HandleVariableCompletion(context); break;
-                case CompleteMode.Value: items = HandleValueCompletion(context); break;
-            }
-            if (items == null) return;
+                CompleteMode.Selector => HandleSelectorCompletion(context),
+                CompleteMode.Pseudo => HandlePseudoCompletion(context),
+                CompleteMode.Prefix => HandlePrefixCompletion(context),
+                CompleteMode.Attribute => HandlePropertyCompletion(context),
+                CompleteMode.Variable => HandleVariableCompletion(context),
+                CompleteMode.Value => HandleValueCompletion(context),
+                _ => null,
+            };
+            if (items is null) return;
 
             if (autoInsert && !string.IsNullOrEmpty(context.Word))
             {
@@ -316,7 +316,7 @@ namespace CssCompletion
 
         private bool IsVarDecl(ScintillaControl sci, int i)
         {
-            if (features.Pattern == null) return false;
+            if (features.Pattern is null) return false;
             int line = sci.LineFromPosition(i);
             string text = sci.GetLine(line);
             return features.Pattern.IsMatch(text);
@@ -461,15 +461,9 @@ namespace CssCompletion
 
         #region completion
 
-        private List<ICompletionListItem> HandlePrefixCompletion(LocalContext context)
-        {
-            return prefixes;
-        }
+        private List<ICompletionListItem> HandlePrefixCompletion(LocalContext context) => prefixes;
 
-        private List<ICompletionListItem> HandlePseudoCompletion(LocalContext context)
-        {
-            return pseudos;
-        }
+        private List<ICompletionListItem> HandlePseudoCompletion(LocalContext context) => pseudos;
 
         private List<ICompletionListItem> HandleValueCompletion(LocalContext context)
         {
@@ -549,31 +543,23 @@ namespace CssCompletion
             return value.Trim();
         }
 
-        private List<ICompletionListItem> HandlePropertyCompletion(LocalContext context)
-        {
-            return blockLevel;
-        }
+        private List<ICompletionListItem> HandlePropertyCompletion(LocalContext context) => blockLevel;
 
-        private List<ICompletionListItem> HandleSelectorCompletion(LocalContext context)
-        {
-            return htmlTags;
-        }
+        private List<ICompletionListItem> HandleSelectorCompletion(LocalContext context) => htmlTags;
 
-        private void AddProperties(List<ICompletionListItem> items, string name)
+        private void AddProperties(ICollection<ICompletionListItem> items, string name)
         {
-            if (values.ContainsKey(name))
+            if (!values.ContainsKey(name)) return;
+            var vals = values[name];
+            foreach (string val in vals)
             {
-                var vals = values[name];
-                foreach (string val in vals)
+                if (val[0] == '<')
                 {
-                    if (val[0] == '<')
-                    {
-                        string inherit = val.Substring(1, val.Length - 2);
-                        if (inherit != name)
-                            AddProperties(items, inherit);
-                    }
-                    else items.Add(new CompletionItem(val, ItemKind.Value));
+                    string inherit = val.Substring(1, val.Length - 2);
+                    if (inherit != name)
+                        AddProperties(items, inherit);
                 }
+                else items.Add(new CompletionItem(val, ItemKind.Value));
             }
         }
 
@@ -604,7 +590,7 @@ namespace CssCompletion
             }
         }
 
-        private void InitLists(Dictionary<string, string> section)
+        private void InitLists(IDictionary<string, string> section)
         {
             tags = Regex.Split(section["tags"], "\\s+");
             htmlTags = new List<ICompletionListItem>();

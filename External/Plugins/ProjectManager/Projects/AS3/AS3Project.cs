@@ -36,15 +36,11 @@ namespace ProjectManager.Projects.AS3
 
         public new MxmlcOptions CompilerOptions => (MxmlcOptions)base.CompilerOptions;
 
-        public override PropertiesDialog CreatePropertiesDialog()
-        {
-            return new AS3PropertiesDialog();
-        }
+        public override PropertiesDialog CreatePropertiesDialog() => new AS3PropertiesDialog();
 
         public override void ValidateBuild(out string error)
         {
-            if (CompileTargets.Count == 0) error = "Description.MissingEntryPoint";
-            else error = null;
+            error = CompileTargets.Count == 0 ? "Description.MissingEntryPoint" : null;
         }
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)

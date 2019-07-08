@@ -195,8 +195,7 @@ namespace SourceControl.Sources.Git
             if (!HasChildren)
             {
                 HasChildren = true;
-                Children = new Dictionary<string, StatusNode>();
-                Children.Add(name, node);
+                Children = new Dictionary<string, StatusNode> {{name, node}};
             }
             else if (Children.ContainsKey(name))
             {

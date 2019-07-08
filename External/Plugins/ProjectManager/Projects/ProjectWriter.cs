@@ -7,16 +7,14 @@ namespace ProjectManager.Projects
 {
     public class ProjectWriter : XmlTextWriter
     {
-        readonly Project project;
-
         public ProjectWriter(Project project, string filename)
             : base(new FileStream(filename, File.Exists(filename) ? FileMode.Truncate : FileMode.CreateNew), Encoding.UTF8)
         {
-            this.project = project;
+            Project = project;
             Formatting = Formatting.Indented;
         }
 
-        protected Project Project => project;
+        protected Project Project { get; }
 
         public void WriteProject()
         {
@@ -50,17 +48,17 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Output SWF options ");
             WriteStartElement("output");
-            WriteOption("movie", "outputType", project.OutputType);
-            WriteOption("movie", "input", project.InputPath);
-            WriteOption("movie", "path", project.OutputPath);
-            WriteOption("movie", "fps", project.MovieOptions.Fps);
-            WriteOption("movie", "width", project.MovieOptions.Width);
-            WriteOption("movie", "height", project.MovieOptions.Height);
-            WriteOption("movie", "version", project.MovieOptions.MajorVersion);
-            WriteOption("movie", "minorVersion", project.MovieOptions.MinorVersion);
-            WriteOption("movie", "platform", project.MovieOptions.Platform);
-            WriteOption("movie", "background", project.MovieOptions.Background);
-            if (project.PreferredSDK != null) WriteOption("movie", "preferredSDK", project.PreferredSDK);
+            WriteOption("movie", "outputType", Project.OutputType);
+            WriteOption("movie", "input", Project.InputPath);
+            WriteOption("movie", "path", Project.OutputPath);
+            WriteOption("movie", "fps", Project.MovieOptions.Fps);
+            WriteOption("movie", "width", Project.MovieOptions.Width);
+            WriteOption("movie", "height", Project.MovieOptions.Height);
+            WriteOption("movie", "version", Project.MovieOptions.MajorVersion);
+            WriteOption("movie", "minorVersion", Project.MovieOptions.MinorVersion);
+            WriteOption("movie", "platform", Project.MovieOptions.Platform);
+            WriteOption("movie", "background", Project.MovieOptions.Background);
+            if (Project.PreferredSDK != null) WriteOption("movie", "preferredSDK", Project.PreferredSDK);
             WriteEndElement();
         }
 
@@ -68,7 +66,7 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Other classes to be compiled into your SWF ");
             WriteStartElement("classpaths");
-            WritePaths(project.Classpaths,"class");
+            WritePaths(Project.Classpaths,"class");
             WriteEndElement();
         }
 
@@ -76,7 +74,7 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Class files to compile (other referenced classes will automatically be included) ");
             WriteStartElement("compileTargets");
-            WritePaths(project.CompileTargets,"compile");
+            WritePaths(Project.CompileTargets,"compile");
             WriteEndElement();          
         }
 
@@ -84,7 +82,7 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Paths to exclude from the Project Explorer tree ");
             WriteStartElement("hiddenPaths");
-            WritePaths(project.HiddenPaths,"hidden");
+            WritePaths(Project.HiddenPaths,"hidden");
             WriteEndElement();          
         }
 
@@ -92,8 +90,8 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Executed before build ");
             WriteStartElement("preBuildCommand");
-            if (project.PreBuildEvent.Length > 0)
-                WriteString(project.PreBuildEvent);
+            if (Project.PreBuildEvent.Length > 0)
+                WriteString(Project.PreBuildEvent);
             WriteEndElement();
         }
 
@@ -101,9 +99,9 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Executed after build ");
             WriteStartElement("postBuildCommand");
-            WriteAttributeString("alwaysRun",project.AlwaysRunPostBuild.ToString());
-            if (project.PostBuildEvent.Length > 0)
-                WriteString(project.PostBuildEvent);
+            WriteAttributeString("alwaysRun",Project.AlwaysRunPostBuild.ToString());
+            if (Project.PostBuildEvent.Length > 0)
+                WriteString(Project.PostBuildEvent);
             WriteEndElement();
 
         }
@@ -112,12 +110,12 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Other project options ");
             WriteStartElement("options");
-            WriteOption("showHiddenPaths",project.ShowHiddenPaths);
-            WriteOption("testMovie",project.TestMovieBehavior);
-            WriteOption("testMovieCommand", project.TestMovieCommand ?? "");
-            if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
+            WriteOption("showHiddenPaths",Project.ShowHiddenPaths);
+            WriteOption("testMovie",Project.TestMovieBehavior);
+            WriteOption("testMovieCommand", Project.TestMovieCommand ?? "");
+            if (Project.MovieOptions.DefaultBuildTargets != null && Project.MovieOptions.DefaultBuildTargets.Length > 0)
             {
-                WriteOption("defaultBuildTargets", string.Join(",", project.MovieOptions.DefaultBuildTargets));
+                WriteOption("defaultBuildTargets", string.Join(",", Project.MovieOptions.DefaultBuildTargets));
             }
             WriteEndElement();
         }
@@ -126,9 +124,9 @@ namespace ProjectManager.Projects
         {
             WriteComment(" Plugin storage ");
             WriteStartElement("storage");
-            foreach (string key in project.storage.Keys)
+            foreach (string key in Project.storage.Keys)
             {
-                string value = project.storage[key];
+                string value = Project.storage[key];
                 if (value == null) continue;
                 WriteStartElement("entry");
                 WriteAttributeString("key", key);
@@ -138,10 +136,7 @@ namespace ProjectManager.Projects
             WriteEndElement();
         }
 
-        public void WriteOption(string optionName, object optionValue)
-        {
-            WriteOption("option",optionName,optionValue);
-        }
+        public void WriteOption(string optionName, object optionValue) => WriteOption("option",optionName,optionValue);
 
         public void WriteOption(string nodeName, string optionName, object optionValue)
         {

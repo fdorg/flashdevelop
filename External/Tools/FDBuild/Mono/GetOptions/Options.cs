@@ -11,28 +11,16 @@ namespace Mono.GetOptions
         }
 
         [Option("Display version and licensing information", 'V', "version")]
-        public virtual WhatToDoNext DoAbout()
-        {
-            return optionParser.DoAbout();
-        }
+        public virtual WhatToDoNext DoAbout() => optionParser.DoAbout();
 
         [Option("Show this help list", '?', "help")]
-        public virtual WhatToDoNext DoHelp()
-        {
-            return optionParser.DoHelp();
-        }
+        public virtual WhatToDoNext DoHelp() => optionParser.DoHelp();
 
         [Option("Show an additional help list", "help2")]
-        public virtual WhatToDoNext DoHelp2()
-        {
-            return optionParser.DoHelp2();
-        }
+        public virtual WhatToDoNext DoHelp2() => optionParser.DoHelp2();
 
         [Option("Show usage syntax and exit", "usage")]
-        public virtual WhatToDoNext DoUsage()
-        {
-            return optionParser.DoUsage();
-        }
+        public virtual WhatToDoNext DoUsage() => optionParser.DoUsage();
 
         public void ProcessArgs(string[] args)
         {
@@ -40,11 +28,7 @@ namespace Mono.GetOptions
             RemainingArguments = optionParser.ProcessArgs(args);
         }
 
-        public void ShowBanner()
-        {
-            optionParser.ShowBanner();
-        }
-
+        public void ShowBanner() => optionParser.ShowBanner();
 
         // Properties
         [Option("Show verbose parsing of options", "verbosegetoptions", SecondLevelHelp=true)]
@@ -52,8 +36,7 @@ namespace Mono.GetOptions
         {
             set => OptionDetails.Verbose = value;
         }
-
-
+        
         // Fields
         public bool BreakSingleDashManyLettersIntoManyOptions;
         public bool EndOptionProcessingWithDoubleDash;
@@ -62,4 +45,3 @@ namespace Mono.GetOptions
         public string[] RemainingArguments;
     }
 }
-

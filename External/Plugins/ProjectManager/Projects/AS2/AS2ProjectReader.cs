@@ -13,10 +13,7 @@ namespace ProjectManager.Projects.AS2
             project = Project as AS2Project;
         }
 
-        public new AS2Project ReadProject()
-        {
-            return base.ReadProject() as AS2Project;
-        }
+        public new AS2Project ReadProject() => base.ReadProject() as AS2Project;
 
         // process AS2-specific stuff
         protected override void ProcessNode(string name)

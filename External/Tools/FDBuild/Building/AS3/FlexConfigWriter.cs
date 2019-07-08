@@ -197,7 +197,7 @@ namespace FDBuild.Building.AS3
 
         private void AddNamespaces(MxmlcOptions options)
         {
-            if (options.Namespaces == null || options.Namespaces.Length == 0) return;
+            if (options.Namespaces is null || options.Namespaces.Length == 0) return;
 
             WriteStartElement("namespaces");
 

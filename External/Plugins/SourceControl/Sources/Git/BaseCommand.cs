@@ -43,8 +43,7 @@ namespace SourceControl.Sources.Git
 
         protected virtual string GetGitCmd()
         {
-            string cmd = PluginMain.SCSettings.GITPath;
-            if (cmd == null) cmd = "git";
+            string cmd = PluginMain.SCSettings.GITPath ?? "git";
             string resolve = PathHelper.ResolvePath(cmd);
             return resolve ?? ResolveGitPath(cmd);
         }
@@ -82,10 +81,8 @@ namespace SourceControl.Sources.Git
         {
             if (errors.Count > 0)
             {
-                (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
-                {
-                    ErrorManager.ShowInfo(string.Join("\n", errors.ToArray()));
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() =>
+                    ErrorManager.ShowInfo(string.Join("\n", errors.ToArray()))));
             }
         }
 

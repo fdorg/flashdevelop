@@ -15,10 +15,7 @@ namespace ProjectManager.Projects.AS3
             project = Project as AS3Project;
         }
 
-        public new AS3Project ReadProject()
-        {
-            return base.ReadProject() as AS3Project;
-        }
+        public new AS3Project ReadProject() => base.ReadProject() as AS3Project;
 
         protected override void PostProcess()
         {
@@ -52,17 +49,17 @@ namespace ProjectManager.Projects.AS3
         protected override void ProcessNode(string name)
         {
             if (NodeType == XmlNodeType.Element)
-            switch (name)
-            {
-                case "build": ReadBuildOptions(); break;
-                case "library": ReadLibraryAssets(); break;
-                case "includeLibraries": ReadIncludeLibraries(); break;
-                case "libraryPaths": ReadLibrayPath(); break;
-                case "externalLibraryPaths": ReadExternalLibraryPaths(); break;
-                case "rslPaths": ReadRSLPaths(); break;
-                case "intrinsics": ReadIntrinsicPaths(); break;
-                default: base.ProcessNode(name); break;
-            }
+                switch (name)
+                {
+                    case "build": ReadBuildOptions(); break;
+                    case "library": ReadLibraryAssets(); break;
+                    case "includeLibraries": ReadIncludeLibraries(); break;
+                    case "libraryPaths": ReadLibrayPath(); break;
+                    case "externalLibraryPaths": ReadExternalLibraryPaths(); break;
+                    case "rslPaths": ReadRSLPaths(); break;
+                    case "intrinsics": ReadIntrinsicPaths(); break;
+                    default: base.ProcessNode(name); break;
+                }
         }
 
         private void ReadIntrinsicPaths()

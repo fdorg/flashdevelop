@@ -239,7 +239,7 @@ namespace FileExplorer
         /// </summary> 
         public void AddEventHandlers()
         {
-            var eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
+            const EventType eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
             EventManager.AddEventHandler(this, eventMask, HandlingPriority.Low);
         }
 

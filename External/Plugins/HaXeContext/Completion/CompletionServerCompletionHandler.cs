@@ -24,36 +24,26 @@ namespace HaXeContext
 
         public CompletionServerCompletionHandler(ProcessStartInfo haxeProcessStartInfo, int port)
         {
-            this.haxeProcess = new Process {StartInfo = haxeProcessStartInfo, EnableRaisingEvents = true};
+            haxeProcess = new Process {StartInfo = haxeProcessStartInfo, EnableRaisingEvents = true};
             this.port = port;
             Environment.SetEnvironmentVariable("HAXE_SERVER_PORT", "" + port);
         }
 
-        public bool IsRunning()
-        {
-            return isRunning;
-        }
+        public bool IsRunning() => isRunning;
 
-        ~CompletionServerCompletionHandler()
-        {
-            Stop();
-        }
+        ~CompletionServerCompletionHandler() => Stop();
 
-        public string GetCompletion(string[] args)
-        {
-            return GetCompletion(args, null);
-        }
+        public string GetCompletion(string[] args) => GetCompletion(args, null);
 
         public string GetCompletion(string[] args, string fileContent)
         {
-            if (args == null || haxeProcess == null)
-                return string.Empty;
+            if (args is null || haxeProcess is null) return string.Empty;
             if (!isRunning) StartServer();
             try
             {
                 var client = new TcpClient("127.0.0.1", port);
                 var writer = new StreamWriter(client.GetStream());
-                writer.WriteLine("--cwd " + (PluginBase.CurrentProject as HaxeProject).Directory);
+                writer.WriteLine("--cwd " + ((HaxeProject) PluginBase.CurrentProject).Directory);
                 foreach (var arg in args)
                     writer.WriteLine(arg);
                 if (fileContent != null)
@@ -80,31 +70,26 @@ namespace HaXeContext
 
         public void StartServer()
         {
-            if (!isRunning)
+            if (isRunning) return;
+            lock (lockObj)
             {
-                lock (lockObj)
-                {
-                    if (isRunning) return;
-                    if (!(isRunning = haxeProcess.Start())) return;
-                    if (listening) return;
-                    listening = true;
-                    haxeProcess.BeginOutputReadLine();
-                    haxeProcess.BeginErrorReadLine();
-                    haxeProcess.OutputDataReceived += HaxeProcess_OutputDataReceived;
-                    haxeProcess.ErrorDataReceived += HaxeProcess_ErrorDataReceived;
-                    haxeProcess.Exited += HaxeProcess_Exited;
-                }
+                if (isRunning) return;
+                if (!(isRunning = haxeProcess.Start())) return;
+                if (listening) return;
+                listening = true;
+                haxeProcess.BeginOutputReadLine();
+                haxeProcess.BeginErrorReadLine();
+                haxeProcess.OutputDataReceived += OnOutputDataReceived;
+                haxeProcess.ErrorDataReceived += OnErrorDataReceived;
+                haxeProcess.Exited += HaxeProcess_Exited;
             }
         }
 
-        private void HaxeProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            TraceManager.AddAsync(e.Data, 2);
-        }
+        private void OnOutputDataReceived(object sender, DataReceivedEventArgs e) => TraceManager.AddAsync(e.Data, 2);
 
-        private void HaxeProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (e.Data == null) return;
+            if (e.Data is null) return;
             TraceManager.AddAsync(e.Data, 2);
             if (Regex.IsMatch(e.Data, "Error.*--wait"))
             {
@@ -114,18 +99,13 @@ namespace HaXeContext
             }
         }
 
-        private void HaxeProcess_Exited(object sender, EventArgs e)
-        {
-            isRunning = false;
-        }
+        private void HaxeProcess_Exited(object sender, EventArgs e) => isRunning = false;
 
         public void Stop()
         {
-            if (isRunning)
-            {
-                haxeProcess.Kill();
-                isRunning = false;
-            }
+            if (!isRunning) return;
+            haxeProcess.Kill();
+            isRunning = false;
         }
     }
 }

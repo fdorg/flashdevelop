@@ -26,10 +26,7 @@ namespace ProjectManager.Projects.AS2
 
         public new MtascOptions CompilerOptions => (MtascOptions)base.CompilerOptions;
 
-        public override PropertiesDialog CreatePropertiesDialog()
-        {
-            return new AS2PropertiesDialog();
-        }
+        public override PropertiesDialog CreatePropertiesDialog() => new AS2PropertiesDialog();
 
         public override void ValidateBuild(out string error)
         {
@@ -100,10 +97,7 @@ namespace ProjectManager.Projects.AS2
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {

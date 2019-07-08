@@ -35,7 +35,6 @@ namespace FlashDebugger
 
         internal Project currentProject;
         private BackgroundWorker bgWorker;
-        private readonly FlashInterface m_FlashInterface;
         private Location m_CurrentLocation;
         private readonly Dictionary<string, string> m_PathMap = new Dictionary<string, string>();
         private int m_CurrentFrame;
@@ -43,19 +42,19 @@ namespace FlashDebugger
 
         public DebuggerManager()
         {
-            m_FlashInterface = new FlashInterface();
-            m_FlashInterface.m_BreakPointManager = PluginMain.breakPointManager;
-            m_FlashInterface.StartedEvent += flashInterface_StartedEvent;
-            m_FlashInterface.DisconnectedEvent += flashInterface_DisconnectedEvent;
-            m_FlashInterface.BreakpointEvent += flashInterface_BreakpointEvent;
-            m_FlashInterface.FaultEvent += flashInterface_FaultEvent;
-            m_FlashInterface.PauseEvent += flashInterface_PauseEvent;
-            m_FlashInterface.StepEvent += flashInterface_StepEvent;
-            m_FlashInterface.ScriptLoadedEvent += flashInterface_ScriptLoadedEvent;
-            m_FlashInterface.WatchpointEvent += flashInterface_WatchpointEvent;
-            m_FlashInterface.UnknownHaltEvent += flashInterface_UnknownHaltEvent;
-            m_FlashInterface.ProgressEvent += flashInterface_ProgressEvent;
-            m_FlashInterface.ThreadsEvent += m_FlashInterface_ThreadsEvent;
+            FlashInterface = new FlashInterface();
+            FlashInterface.m_BreakPointManager = PluginMain.breakPointManager;
+            FlashInterface.StartedEvent += flashInterface_StartedEvent;
+            FlashInterface.DisconnectedEvent += flashInterface_DisconnectedEvent;
+            FlashInterface.BreakpointEvent += flashInterface_BreakpointEvent;
+            FlashInterface.FaultEvent += flashInterface_FaultEvent;
+            FlashInterface.PauseEvent += flashInterface_PauseEvent;
+            FlashInterface.StepEvent += flashInterface_StepEvent;
+            FlashInterface.ScriptLoadedEvent += flashInterface_ScriptLoadedEvent;
+            FlashInterface.WatchpointEvent += flashInterface_WatchpointEvent;
+            FlashInterface.UnknownHaltEvent += flashInterface_UnknownHaltEvent;
+            FlashInterface.ProgressEvent += flashInterface_ProgressEvent;
+            FlashInterface.ThreadsEvent += m_FlashInterface_ThreadsEvent;
         }
 
         #region Startup
@@ -105,7 +104,7 @@ namespace FlashDebugger
                 try
                 {
                     var bridgeSetup = new BridgeSetup(false);
-                    if (PluginMain.settingObject.JavaHome is string path && Directory.Exists(path)
+                    if (PluginMain.settingObject.JavaHome is { } path && Directory.Exists(path)
                         && File.Exists(Path.Combine(path, "bin", "java.exe")))
                     {
                         bridgeSetup.JavaHome = path;
@@ -157,7 +156,7 @@ namespace FlashDebugger
         {
             try
             {
-                m_FlashInterface.Start();
+                FlashInterface.Start();
             }
             catch (Exception ex)
             {
@@ -173,7 +172,7 @@ namespace FlashDebugger
 
         #region Properties
 
-        public FlashInterface FlashInterface => m_FlashInterface;
+        public FlashInterface FlashInterface { get; }
 
         public int CurrentFrame
         {
@@ -298,7 +297,7 @@ namespace FlashDebugger
         public void Cleanup()
         {
             m_PathMap.Clear();
-            m_FlashInterface.Cleanup();
+            FlashInterface.Cleanup();
         }
 
         /// <summary>
@@ -317,10 +316,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate()
-                {
-                    flashInterface_StartedEvent(sender);
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => flashInterface_StartedEvent(sender)));
                 return;
             }
             UpdateMenuState(DebuggerState.Running);
@@ -351,10 +347,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate()
-                {
-                    flashInterface_DisconnectedEvent(sender);
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => flashInterface_DisconnectedEvent(sender)));
                 return;
             }
             CurrentLocation = null;
@@ -405,7 +398,7 @@ namespace FlashDebugger
             // force all breakpoints update after new as code loaded into debug movie 
             //PluginMain.breakPointManager.ForceBreakPointUpdates();
             //m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.GetBreakPointUpdates());
-            m_FlashInterface.Continue();
+            FlashInterface.Continue();
         }
 
         /// <summary>
@@ -448,10 +441,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate()
-                {
-                    UpdateUI(state);
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => UpdateUI(state)));
                 return;
             }
             try
@@ -475,7 +465,7 @@ namespace FlashDebugger
         private void UpdateStackUI()
         {
             m_CurrentFrame = 0;
-            var frames = m_FlashInterface.GetFrames();
+            var frames = FlashInterface.GetFrames();
             PanelsHelper.stackframeUI.AddFrames(frames);
         }
 
@@ -489,12 +479,12 @@ namespace FlashDebugger
                 ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)UpdateLocalsUI);
                 return;
             }
-            var frames = m_FlashInterface.GetFrames();
+            var frames = FlashInterface.GetFrames();
             if (frames != null && m_CurrentFrame < frames.Length)
             {
-                var thisValue = m_FlashInterface.GetThis(m_CurrentFrame);
-                var args = m_FlashInterface.GetArgs(m_CurrentFrame);
-                var locals = m_FlashInterface.GetLocals(m_CurrentFrame);
+                var thisValue = FlashInterface.GetThis(m_CurrentFrame);
+                var args = FlashInterface.GetArgs(m_CurrentFrame);
+                var locals = FlashInterface.GetLocals(m_CurrentFrame);
                 if (PanelsHelper.localsUI.TreeControl.Nodes.Count > 0) PanelsHelper.localsUI.TreeControl.SaveState();
                 PanelsHelper.localsUI.Clear();
                 if (thisValue != null)
@@ -523,7 +513,7 @@ namespace FlashDebugger
                 ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)UpdateThreadsUI);
                 return;
             }
-            PanelsHelper.threadsUI.SetThreads(m_FlashInterface.IsolateSessions);
+            PanelsHelper.threadsUI.SetThreads(FlashInterface.IsolateSessions);
         }
 
         /// <summary>
@@ -574,10 +564,7 @@ namespace FlashDebugger
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)delegate()
-                {
-                    flashInterface_ProgressEvent(sender, current, total);
-                });
+                ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() => flashInterface_ProgressEvent(sender, current, total)));
                 return;
             }
             PluginBase.MainForm.ProgressBar.Maximum = total;
@@ -595,7 +582,7 @@ namespace FlashDebugger
         {
             PluginMain.liveDataTip.Hide();
             CurrentLocation = null;
-            m_FlashInterface.Stop();
+            FlashInterface.Stop();
         }
 
         /// <summary>
@@ -603,7 +590,7 @@ namespace FlashDebugger
         /// </summary>
         internal void Current_Click(object sender, EventArgs e)
         {
-            if (m_FlashInterface.isDebuggerStarted && m_FlashInterface.isDebuggerSuspended)
+            if (FlashInterface.isDebuggerStarted && FlashInterface.isDebuggerSuspended)
             {
                 GotoCurrentLocation(false);
             }
@@ -615,7 +602,7 @@ namespace FlashDebugger
         internal void Next_Click(object sender, EventArgs e)
         {
             CurrentLocation = null;
-            m_FlashInterface.Next();
+            FlashInterface.Next();
             UpdateMenuState(DebuggerState.Running);
         }
 
@@ -625,7 +612,7 @@ namespace FlashDebugger
         internal void Step_Click(object sender, EventArgs e)
         {
             CurrentLocation = null;
-            m_FlashInterface.Step();
+            FlashInterface.Step();
             UpdateMenuState(DebuggerState.Running);
         }
 
@@ -639,7 +626,7 @@ namespace FlashDebugger
                 CurrentLocation = null;
                 // this should not be needed, as we update breakpoints right away
                 //m_FlashInterface.UpdateBreakpoints(PluginMain.breakPointManager.BreakPoints);
-                m_FlashInterface.Continue();
+                FlashInterface.Continue();
                 UpdateMenuState(DebuggerState.Running);
                 UpdateThreadsUI();
             }
@@ -655,7 +642,7 @@ namespace FlashDebugger
         internal void Pause_Click(object sender, EventArgs e)
         {
             CurrentLocation = null;
-            m_FlashInterface.Pause();
+            FlashInterface.Pause();
         }
 
         /// <summary>
@@ -664,12 +651,11 @@ namespace FlashDebugger
         internal void Finish_Click(object sender, EventArgs e)
         {
             CurrentLocation = null;
-            m_FlashInterface.Finish();
+            FlashInterface.Finish();
             UpdateMenuState(DebuggerState.Running);
         }
 
         #endregion
 
     }
-
 }

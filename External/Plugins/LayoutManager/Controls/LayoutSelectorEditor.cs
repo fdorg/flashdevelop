@@ -15,12 +15,11 @@ namespace LayoutManager.Controls
         {
             base.FillTreeWithData(selector, context, provider);
             selector.Nodes.Add(new SelectorNode("<None>", null));
-            string[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
-            for (int i = 0; i < layouts.Length; i++)
+            var layouts = Directory.GetFiles(GetLayoutsDir(), "*.fdl");
+            foreach (var layout in layouts)
             {
-                string label = Path.GetFileNameWithoutExtension(layouts[i]);
-                SelectorNode item = new SelectorNode(label, layouts[i]);
-                selector.Nodes.Add(item);
+                var label = Path.GetFileNameWithoutExtension(layout);
+                selector.Nodes.Add(new SelectorNode(label, layout));
             }
 
         }
@@ -32,7 +31,7 @@ namespace LayoutManager.Controls
         {
             string userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
-            string path = Path.Combine(this.GetDataDir(), "Layouts");
+            string path = Path.Combine(GetDataDir(), "Layouts");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }
@@ -40,13 +39,6 @@ namespace LayoutManager.Controls
         /// <summary>
         /// Gets the plugin data directory
         /// </summary>
-        private string GetDataDir()
-        {
-            return Path.Combine(PathHelper.DataDir, "LayoutManager");
-        }
-
-
+        private string GetDataDir() => Path.Combine(PathHelper.DataDir, "LayoutManager");
     }
-
 }
-

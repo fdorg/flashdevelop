@@ -6,7 +6,7 @@ namespace SourceControl.Sources.Git
     {
         public AddCommand(string path)
         {
-            string args = $"add \"{Path.GetFileName(path)}\"";
+            var args = $"add \"{Path.GetFileName(path)}\"";
             Run(args, Path.GetDirectoryName(path));
         }
     }

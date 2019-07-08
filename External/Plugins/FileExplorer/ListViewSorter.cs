@@ -8,15 +8,13 @@ namespace FileExplorer
 {
     public class ListViewSorter : IComparer
     {
-        private int columnToSort;
         private readonly GenericComparer comparer;
-        private SortOrder orderOfSort;
 
         public ListViewSorter()
         {
-            this.columnToSort = 0;
-            this.comparer = new GenericComparer();
-            this.orderOfSort = SortOrder.None;
+            SortColumn = 0;
+            comparer = new GenericComparer();
+            Order = SortOrder.None;
         }
     
         /// <summary>
@@ -27,28 +25,27 @@ namespace FileExplorer
             int compareResult = 0;
             ListViewItem listviewX = (ListViewItem)x;
             ListViewItem listviewY = (ListViewItem)y;
-            if (this.columnToSort == 0)
+            if (SortColumn == 0)
             {
                 compareResult = comparer.CompareFiles(listviewX, listviewY);
             } 
-            else if (this.columnToSort == 1)
+            else if (SortColumn == 1)
             {
                 compareResult = comparer.CompareSize(listviewX, listviewY);
             } 
-            else if (this.columnToSort == 2)
+            else if (SortColumn == 2)
             {
                 compareResult = comparer.CompareType(listviewX, listviewY);
             }
-            else if (this.columnToSort == 3)
+            else if (SortColumn == 3)
             {
                 compareResult = comparer.CompareModified(listviewX, listviewY);
             }
-            if (this.orderOfSort == SortOrder.Ascending)
+            if (Order == SortOrder.Ascending)
             {
                 return compareResult;
             }
-
-            if (this.orderOfSort == SortOrder.Descending)
+            if (Order == SortOrder.Descending)
             {
                 return (-compareResult);
             }
@@ -58,21 +55,12 @@ namespace FileExplorer
         /// <summary>
         /// Gets or sets the number of the column.
         /// </summary>
-        public int SortColumn
-        {
-            set => this.columnToSort = value;
-            get => this.columnToSort;
-        }
-        
+        public int SortColumn { set; get; }
+
         /// <summary>
         /// Gets or sets the order of sorting to apply.
         /// </summary>      
-        public SortOrder Order
-        {
-            set => this.orderOfSort = value;
-            get => this.orderOfSort;
-        }
-        
+        public SortOrder Order { set; get; }
     }
     
     public class GenericComparer
@@ -80,20 +68,13 @@ namespace FileExplorer
         /// <summary>
         /// Checks if the item is a browser (button).
         /// </summary>
-        public bool ItemIsBrowser(ListViewItem item)
-        {
-            return (item.SubItems[0].Text == "[..]");
-        }
-        
+        public bool ItemIsBrowser(ListViewItem item) => (item.SubItems[0].Text == "[..]");
+
         /// <summary>
         /// Checks if the item is a folder. 
         /// </summary>
-        public bool ItemIsFolder(ListViewItem item)
-        {
-            string path = item.Tag.ToString();
-            return Directory.Exists(path);
-        }
-        
+        public bool ItemIsFolder(ListViewItem item) => Directory.Exists(item.Tag.ToString());
+
         /// <summary>
         /// Compares two supplied ListViewItems. 
         /// </summary>
@@ -101,19 +82,19 @@ namespace FileExplorer
         {
             string xVal = x.SubItems[0].Text;
             string yVal = y.SubItems[0].Text;
-            if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
+            if (ItemIsBrowser(x) || ItemIsBrowser(y))
             {
                 return 0;
             }
-            if (this.ItemIsFolder(x) && this.ItemIsFolder(y)) 
+            if (ItemIsFolder(x) && ItemIsFolder(y)) 
             {
                 return string.Compare(xVal, yVal);
             }
-            if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
+            if (ItemIsFolder(x) && !ItemIsFolder(y)) 
             {
                 return -1;
             }
-            if (!this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (!ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return 1;
             }
@@ -128,19 +109,19 @@ namespace FileExplorer
             string info = TextHelper.GetString("Info.Kilobytes");
             string xVal = x.SubItems[1].Text.Replace(info, "").Trim();
             string yVal = y.SubItems[1].Text.Replace(info, "").Trim();
-            if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
+            if (ItemIsBrowser(x) || ItemIsBrowser(y))
             {
                 return 0;
             }
-            if (this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return string.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
             }
-            if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
+            if (ItemIsFolder(x) && !ItemIsFolder(y)) 
             {
                 return -1;
             }
-            if (!this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (!ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return 1;
             }
@@ -158,19 +139,19 @@ namespace FileExplorer
         {
             string xVal = x.SubItems[3].Text;
             string yVal = y.SubItems[3].Text;
-            if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
+            if (ItemIsBrowser(x) || ItemIsBrowser(y))
             {
                 return 0;
             }
-            if (this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return string.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
             }
-            if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
+            if (ItemIsFolder(x) && !ItemIsFolder(y)) 
             {
                 return -1;
             }
-            if (!this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (!ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return 1;
             }
@@ -184,19 +165,19 @@ namespace FileExplorer
         {
             string xVal = x.SubItems[2].Text;
             string yVal = y.SubItems[2].Text;
-            if (this.ItemIsBrowser(x) || this.ItemIsBrowser(y))
+            if (ItemIsBrowser(x) || ItemIsBrowser(y))
             {
                 return 0;
             }
-            if (this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return string.Compare(x.SubItems[0].Text, y.SubItems[0].Text);
             }
-            if (this.ItemIsFolder(x) && !this.ItemIsFolder(y)) 
+            if (ItemIsFolder(x) && !ItemIsFolder(y)) 
             {
                 return -1;
             }
-            if (!this.ItemIsFolder(x) && this.ItemIsFolder(y))
+            if (!ItemIsFolder(x) && ItemIsFolder(y))
             {
                 return 1;
             }

@@ -42,10 +42,6 @@ namespace ProjectManager.Building
                 if (!string.IsNullOrEmpty(value)) args.Add(value);
         }
 
-        public override string ToString()
-        {
-            var line = string.Join(" ", args);
-            return line;
-        }
+        public override string ToString() => string.Join(" ", args);
     }
 }

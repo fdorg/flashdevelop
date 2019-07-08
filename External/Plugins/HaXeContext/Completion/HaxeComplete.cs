@@ -62,25 +62,16 @@ namespace HaXeContext
 
         /* EXECUTION */
 
-        public void GetList(HaxeCompleteResultHandler<HaxeCompleteResult> callback)
-        {
-            StartThread(callback, () => result);
-        }
+        public void GetList(HaxeCompleteResultHandler<HaxeCompleteResult> callback) => StartThread(callback, () => result);
 
         public void GetPosition(HaxeCompleteResultHandler<HaxePositionResult> callback)
         {
             StartThread(callback, () => positionResults != null && positionResults.Count > 0 ? positionResults[0] : null);
         }
 
-        public void GetUsages(HaxeCompleteResultHandler<List<HaxePositionResult>> callback)
-        {
-            StartThread(callback, () => positionResults);
-        }
+        public void GetUsages(HaxeCompleteResultHandler<List<HaxePositionResult>> callback) => StartThread(callback, () => positionResults);
 
-        public void GetDiagnostics(HaxeCompleteResultHandler<List<HaxeDiagnosticsResult>> callback)
-        {
-            StartThread(callback, () => diagnosticsResults);
-        }
+        public void GetDiagnostics(HaxeCompleteResultHandler<List<HaxeDiagnosticsResult>> callback) => StartThread(callback, () => diagnosticsResults);
 
         private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
@@ -135,30 +126,19 @@ namespace HaXeContext
 
         private string GetMode()
         {
-            switch (CompilerService)
+            return CompilerService switch
             {
-                case HaxeCompilerService.POSITION:
-                    return "@position";
-
-                case HaxeCompilerService.USAGE:
-                    return "@usage";
-
-                case HaxeCompilerService.TOP_LEVEL:
-                    return "@toplevel";
-
-                case HaxeCompilerService.DIAGNOSTICS:
-                    return "@diagnostics";
-
-                //case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
-                //    return "diagnostics";
-            }
-
-            return "";
+                HaxeCompilerService.POSITION => "@position",
+                HaxeCompilerService.USAGE => "@usage",
+                HaxeCompilerService.TOP_LEVEL => "@toplevel",
+                HaxeCompilerService.DIAGNOSTICS => "@diagnostics",
+                _ => string.Empty,
+            };
         }
 
         private void RemoveComments(IList<string> hxmlArgs)
         {
-            for (int i = 0; i < hxmlArgs.Count; i++)
+            for (var i = 0; i < hxmlArgs.Count; i++)
             {
                 var arg = hxmlArgs[i];
                 if (string.IsNullOrEmpty(arg)) continue;
@@ -169,7 +149,7 @@ namespace HaXeContext
 
         private void EscapeMacros(IList<string> hxmlArgs)
         {
-            for (int i = 0; i < hxmlArgs.Count; i++)
+            for (var i = 0; i < hxmlArgs.Count; i++)
             {
                 var arg = hxmlArgs[i];
                 if (string.IsNullOrEmpty(arg)) continue;
@@ -181,7 +161,7 @@ namespace HaXeContext
 
         void QuotePath(IList<string> hxmlArgs)
         {
-            for (int i = 0; i < hxmlArgs.Count; i++)
+            for (var i = 0; i < hxmlArgs.Count; i++)
             {
                 var arg = hxmlArgs[i];
                 if (string.IsNullOrEmpty(arg)) continue;
@@ -246,13 +226,9 @@ namespace HaXeContext
                             return HaxeCompleteStatus.ERROR;
                         }
 
-                        using (TextReader stream = new StringReader(lines))
-                        {
-                            using (var reader = new XmlTextReader(stream))
-                            {
-                                return ProcessResponse(reader);
-                            }
-                        }
+                        using TextReader stream = new StringReader(lines);
+                        using var reader = new XmlTextReader(stream);
+                        return ProcessResponse(reader);
                     }
                     catch (Exception ex)
                     {
@@ -310,7 +286,7 @@ namespace HaXeContext
 
         HaxePositionResult ParseRange(JsonData range, string path)
         {
-            if (range == null) return null;
+            if (range is null) return null;
 
             var start = range["start"];
             var end = range["end"];
@@ -404,12 +380,12 @@ namespace HaXeContext
                         break;
 
                     case "d":
-                        if (member == null) continue;
+                        if (member is null) continue;
                         member.Comments = ReadValue(reader);
                         break;
 
                     case "t":
-                        if (member == null) continue;
+                        if (member is null) continue;
                         ExtractType(reader, member);
                         if (!IsOverload(result.Members, member))
                             result.Members.Add(member);
@@ -472,10 +448,8 @@ namespace HaXeContext
             else
                 result.RangeType = HaxePositionCompleteRangeType.CHARACTERS;
 
-            int start = 0;
-            int end = 0;
-            int.TryParse(match.Groups["start"].Value, out start);
-            int.TryParse(match.Groups["end"].Value, out end);
+            int.TryParse(match.Groups["start"].Value, out var start);
+            int.TryParse(match.Groups["end"].Value, out var end);
 
             if (result.RangeType == HaxePositionCompleteRangeType.LINES)
             {
@@ -499,7 +473,7 @@ namespace HaXeContext
         MemberModel ExtractMember(XmlReader reader)
         {
             var name = reader.GetAttribute("n");
-            if (name == null) return null;
+            if (name is null) return null;
 
             var member = new MemberModel();
             member.Name = name;

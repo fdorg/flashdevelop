@@ -49,10 +49,7 @@ namespace ProjectManager.Projects.Generic
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {
@@ -71,8 +68,5 @@ namespace ProjectManager.Projects.Generic
         }
 
         #endregion
-    
     }
-
 }
-

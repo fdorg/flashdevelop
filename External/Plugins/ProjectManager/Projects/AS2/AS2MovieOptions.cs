@@ -10,12 +10,8 @@
         }
 
         public override OutputType[] OutputTypes =>
-            new[] { 
-                OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application };
+            new[] { OutputType.OtherIDE, OutputType.CustomBuild, OutputType.Application };
 
-        public override OutputType DefaultOutput(string platform)
-        {
-            return OutputType.Application;
-        }
+        public override OutputType DefaultOutput(string platform) => OutputType.Application;
     }
 }
