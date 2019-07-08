@@ -13,10 +13,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the mask of the marker
         /// </summary>
-        public static int GetMarkerMask(int marker)
-        {
-            return 1 << marker;
-        }
+        public static int GetMarkerMask(int marker) => 1 << marker;
 
         /// <summary>
         /// Adds or removes a marker

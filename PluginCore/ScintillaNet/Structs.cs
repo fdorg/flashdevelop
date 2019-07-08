@@ -8,7 +8,7 @@ namespace ScintillaNet
         public IntPtr hwndFrom;
         public IntPtr idFrom;
         public uint code;
-    };
+    }
 
     public struct SCNotification
     {
@@ -30,28 +30,28 @@ namespace ScintillaNet
         public int listType;
         public int x;
         public int y;
-    };
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct CharacterRange
     {
         public int cpMin;
         public int cpMax;
-    };
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct TextRange
     {
         public CharacterRange chrg;
         public IntPtr lpstrText;
-    };
+    }
 
     public struct TextToFind
     {
         public CharacterRange chrg;
         public IntPtr lpstrText;
         public CharacterRange chrgText;
-    };
+    }
 
     public struct RangeToFormat
     {
@@ -60,7 +60,7 @@ namespace ScintillaNet
         public Rect rc;
         public Rect rcPage;
         public CharacterRange chrg;
-    };
+    }
     
     public struct Rect
     {
@@ -68,6 +68,6 @@ namespace ScintillaNet
         public int Top;
         public int Right;
         public int Bottom;
-    };
+    }
     
 }

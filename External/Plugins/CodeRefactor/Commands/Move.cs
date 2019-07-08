@@ -164,7 +164,7 @@ namespace CodeRefactor.Commands
             targets = new List<MoveTargetHelper>();
             filesToReopen = new List<string>();
             var project = PluginBase.CurrentProject;
-            if (project == null) return;
+            if (project is null) return;
             var filterMask = project.DefaultSearchFilter;
             foreach (var item in OldPathToNewPath)
             {
@@ -173,9 +173,7 @@ namespace CodeRefactor.Commands
                 if (File.Exists(oldPath))
                 {
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
-
-                    ITabbedDocument doc;
-                    if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldPath, out doc))
+                    if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldPath, out var doc))
                     {
                         doc.Save();
                         doc.Close();
@@ -198,7 +196,7 @@ namespace CodeRefactor.Commands
                     if (FileHelper.FileMatchesSearchFilter(oldPath, filterMask))
                     {
                         var target = GetMoveTarget(oldPath, newPath, null);
-                        if (target == null) continue;
+                        if (target is null) continue;
                         targets.Add(target);
                     }
                 }
@@ -213,8 +211,8 @@ namespace CodeRefactor.Commands
                         foreach (string oldFilePath in Directory.GetFiles(oldPath, mask, SearchOption.AllDirectories))
                         {
                             var target = GetMoveTarget(oldFilePath, oldFilePath.Replace(oldPath, newPath), oldPath);
-                            // If target == null there's no chance of the others being valid, actually, neither on the outer loop
-                            if (target == null) break;
+                            // If target is null there's no chance of the others being valid, actually, neither on the outer loop
+                            if (target is null) break;
                             targets.Add(target);
                         }
                 }
@@ -446,7 +444,7 @@ namespace CodeRefactor.Commands
             {
                 File.Delete(target.OldFilePath);
 
-                if (target.OwnerPath == null)
+                if (target.OwnerPath is null)
                     OldPathToNewPath.Remove(target.OldFilePath);
 
                 // Casing changes, we cannot move directly here, there may be conflicts, better leave it to the next step

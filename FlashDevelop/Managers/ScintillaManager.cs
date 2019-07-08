@@ -324,8 +324,7 @@ namespace FlashDevelop.Managers
                 * Adjust the print margin
                 */
                 sci.EdgeColumn = settings.PrintMarginColumn;
-                if (sci.EdgeColumn > 0) sci.EdgeMode = 1;
-                else sci.EdgeMode = 0;
+                sci.EdgeMode = sci.EdgeColumn > 0 ? 1 : 0;
                 /**
                 * Add missing ignored keys
                 */

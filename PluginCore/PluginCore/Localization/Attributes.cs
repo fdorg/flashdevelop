@@ -42,17 +42,15 @@ namespace PluginCore.Localization
     [AttributeUsage(AttributeTargets.All)]
     public class StringValueAttribute : Attribute
     {
-        private readonly string value;
-
         public StringValueAttribute(string value)
         {
-            this.value = value;
+            Value = value;
         }
 
         /// <summary>
         /// Gets the string value of the class
         /// </summary>
-        public string Value => this.value;
+        public string Value { get; }
     }
 
     [AttributeUsage(AttributeTargets.Property)]

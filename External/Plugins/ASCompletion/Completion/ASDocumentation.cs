@@ -114,14 +114,14 @@ namespace ASCompletion.Completion
             {
                 string tag = match.Groups[2].Value;
                 bool open = match.Groups[1].Length == 0;
-                switch (tag)
+                return tag switch
                 {
-                    case "small": return open ? "[size=-2]" : "[/size]";
-                    case "code": return open ? "[font=Courier New]" : "[/font]";
-                    case "strong": return open ? "[b]" : "[/b]";
-                    case "em": return open ? "[i]" : "[/i]";
-                }
-                return "";
+                    "small" => open ? "[size=-2]" : "[/size]",
+                    "code" => open ? "[font=Courier New]" : "[/font]",
+                    "strong" => open ? "[b]" : "[/b]",
+                    "em" => open ? "[i]" : "[/i]",
+                    _ => "",
+                };
             });
             comment = reStripTags.Replace(comment, "");
             string[] lines = reNewLine.Split(comment);
@@ -318,11 +318,11 @@ namespace ASCompletion.Completion
             {
                 bool hasUsage = false;
                 for(int i=0; i<cb.TagName.Count; i++)
-                if (cb.TagName[i] == "usage") 
-                {
-                    hasUsage = true;
-                    details += "\n    "+cb.TagDesc[i];
-                }
+                    if (cb.TagName[i] == "usage") 
+                    {
+                        hasUsage = true;
+                        details += "\n    "+cb.TagDesc[i];
+                    }
                 if (hasUsage) details += "\n";
             }
             
@@ -347,9 +347,9 @@ namespace ASCompletion.Completion
             // @return
             if (cb.Return != null)
             {
-                details += "\n\nReturn:\n    "+cb.Return;
+                details += "\n\nReturn:\n    " + cb.Return;
             }
-            return "\n\n"+details.Trim();
+            return "\n\n" + details.Trim();
         }
         #endregion
     }

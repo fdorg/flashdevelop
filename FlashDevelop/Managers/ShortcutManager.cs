@@ -180,7 +180,7 @@ namespace FlashDevelop.Managers
             string file = FileNameHelper.ShortcutData;
             if (File.Exists(file))
             {
-                List<Argument> shortcuts = new List<Argument>();
+                var shortcuts = new List<Argument>();
                 shortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, shortcuts, false);
                 foreach (Argument arg in shortcuts)
                 {
@@ -251,7 +251,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                List<Argument> shortcuts = new List<Argument>();
+                var shortcuts = new List<Argument>();
                 foreach (IShortcutItem item in items)
                 {
                     if (item.IsModified) shortcuts.Add(new Argument(item.Id, item.Custom.ToString()));
@@ -277,21 +277,18 @@ namespace FlashDevelop.Managers
 
         public ShortcutItem(string id, Keys keys)
         {
-            this.Id = id;
-            this.Default = this.Custom = keys;
+            Id = id;
+            Default = Custom = keys;
         }
 
         public ShortcutItem(string id, ToolStripMenuItem item)
         {
-            this.Id = id;
-            this.Item = item;
-            this.Default = this.Custom = item.ShortcutKeys;
+            Id = id;
+            Item = item;
+            Default = Custom = item.ShortcutKeys;
         }
 
-        public override string ToString()
-        {
-            return Id;
-        }
+        public override string ToString() => Id;
     }
 
     public interface IShortcutItem

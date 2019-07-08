@@ -68,7 +68,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception " + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception {ex.Message}\n{ex.StackTrace}");
                 return null;
             }
         }
@@ -87,12 +87,12 @@ namespace PluginCore.FRService
                 var files = configuration.GetFiles();
                 var search = configuration.GetSearch();
                 var replacement = configuration.Replacement;
-                if (replacement == null) return results;
+                if (replacement is null) return results;
                 foreach (var file in files)
                 {
                     var src = configuration.GetSource(file);
                     search.SourceFile = file;
-                    var matches = search.Matches(src);;
+                    var matches = search.Matches(src);
                     results[file] = matches;
                     foreach (var match in matches)
                     {
@@ -104,7 +104,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception " + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception {ex.Message}\n{ex.StackTrace}");
                 return null;
             }
         }
@@ -116,7 +116,7 @@ namespace PluginCore.FRService
         /// <param name="configuration">Search operation parameters</param>
         public void SearchAsync(FRConfiguration configuration)
         {
-            if (backgroundWorker == null) CreateWorker();
+            if (backgroundWorker is null) CreateWorker();
             configuration.Replacement = null;
             backgroundWorker.RunWorkerAsync(configuration);
         }
@@ -128,7 +128,7 @@ namespace PluginCore.FRService
         /// <param name="configuration">Replace operation parameters</param>
         public void ReplaceAsync(FRConfiguration configuration)
         {
-            if (backgroundWorker == null) CreateWorker();
+            if (backgroundWorker is null) CreateWorker();
             backgroundWorker.RunWorkerAsync(configuration);
         }
 
@@ -166,7 +166,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception while reporting end of background operation:\n" + ex + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception while reporting end of background operation:\n{ex}\n{ex.StackTrace}");
             }
         }
 
@@ -181,7 +181,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception while reporting progress of background operation:\n" + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception while reporting progress of background operation:\n{ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -197,25 +197,24 @@ namespace PluginCore.FRService
                     e.Result = null;
                     return;
                 }
-                // get files
-                int count = 0;
-                List<string> files = configuration.GetFiles();
-                if (files == null || files.Count == 0)
+                var files = configuration.GetFiles();
+                if (files is null || files.Count == 0)
                 {
                     e.Result = new FRResults(); // empty results
                     return;
                 }
 
-                FRResults results = new FRResults();
-                FRSearch search = configuration.GetSearch();
-                string replacement = configuration.Replacement;
+                var results = new FRResults();
 
                 if (backgroundWorker.CancellationPending) e.Cancel = true;
                 else
                 {
+                    var count = 0;
+                    var search = configuration.GetSearch();
+                    var replacement = configuration.Replacement;
                     // do search
-                    int total = files.Count;
-                    int lastPercent = 0;
+                    var total = files.Count;
+                    var lastPercent = 0;
                     foreach (string file in files)
                     {
                         if (backgroundWorker.CancellationPending) e.Cancel = true;
@@ -253,7 +252,7 @@ namespace PluginCore.FRService
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Exception during background operation:\n" + ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show($"Exception during background operation:\n{ex.Message}\n{ex.StackTrace}");
                 e.Result = null;
             }
         }

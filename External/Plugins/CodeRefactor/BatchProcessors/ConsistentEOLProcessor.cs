@@ -15,7 +15,7 @@ namespace CodeRefactor.BatchProcessors
         {
             foreach (var file in files)
             {
-                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
                 document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
             }
         }

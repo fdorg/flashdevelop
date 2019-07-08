@@ -811,9 +811,6 @@ namespace CodeRefactor.Commands
                 case "Scintilla.ZoomIn":
                 case "Scintilla.ZoomOut":
                     return false;
-                default:
-                    //string.Format("Shortcut \"{0}\" cannot be used during renaming", shortcut.Key)
-                    break;
             }
 
             return true;

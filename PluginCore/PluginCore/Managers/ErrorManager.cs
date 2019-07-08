@@ -20,11 +20,11 @@ namespace PluginCore.Managers
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                AddToLog("Unsafe ShowInfo: " + info, null);
+                AddToLog($"Unsafe ShowInfo: {info}", null);
                 return;
             }
             var title = TextHelper.GetString("FlashDevelop.Title.InfoDialog");
-            MessageBox.Show(PluginBase.MainForm, info, " " + title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(PluginBase.MainForm, info, $" {title}", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
@@ -34,11 +34,11 @@ namespace PluginCore.Managers
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                AddToLog("Unsafe ShowWarning: " + info, exception);
+                AddToLog($"Unsafe ShowWarning: {info}", exception);
                 return;
             }
             var title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
-            MessageBox.Show(PluginBase.MainForm, info, " " + title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            MessageBox.Show(PluginBase.MainForm, info, $" {title}", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             if (OutputIsEnabled && exception != null) AddToLog(info, exception);
         }
 
@@ -49,11 +49,11 @@ namespace PluginCore.Managers
         {
             if (((Form) PluginBase.MainForm).InvokeRequired)
             {
-                AddToLog("Unsafe ShowError: " + info, exception);
+                AddToLog($"Unsafe ShowError: {info}", exception);
                 return;
             }
             var title = TextHelper.GetString("FlashDevelop.Title.ErrorDialog");
-            MessageBox.Show(PluginBase.MainForm, info, " " + title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(PluginBase.MainForm, info, $" {title}", MessageBoxButtons.OK, MessageBoxIcon.Error);
             if (OutputIsEnabled) AddToLog(info, exception);
         }
 

@@ -17,10 +17,7 @@ namespace ASCompletion.Completion
 
         private Hashtable variables;
 
-        private string Run(string text)
-        {
-            return re_Argument.Replace(text, Lookup);
-        }
+        private string Run(string text) => re_Argument.Replace(text, Lookup);
 
         private string Lookup(Match m)
         {

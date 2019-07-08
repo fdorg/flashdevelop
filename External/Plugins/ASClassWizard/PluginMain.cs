@@ -160,64 +160,60 @@ namespace ASClassWizard
         void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
             var project = (Project) PluginBase.CurrentProject;
-            using (var dialog = new AS3ClassWizard())
+            using var dialog = new AS3ClassWizard();
+            if (ProcessWizard(inDirectory, className, project, dialog, out var path, out var newFilePath)) return;
+            lastFileFromTemplate = newFilePath;
+            this.constructorArgs = constructorArgs;
+            this.constructorArgTypes = constructorArgTypes;
+            lastFileOptions = new AS3ClassOptions(
+                language: project.Language,
+                package: dialog.GetPackage(),
+                super_class: dialog.GetExtends(),
+                Interfaces: dialog.hasInterfaces() ? dialog.getInterfaces() : null,
+                is_public: dialog.isPublic(),
+                is_dynamic: dialog.isDynamic(),
+                is_final: dialog.isFinal(),
+                create_inherited: dialog.getGenerateInheritedMethods(),
+                create_constructor: dialog.getGenerateConstructor()
+            );
+            try
             {
-                if (ProcessWizard(inDirectory, className, project, dialog, out var path, out var newFilePath)) return;
-                lastFileFromTemplate = newFilePath;
-                this.constructorArgs = constructorArgs;
-                this.constructorArgTypes = constructorArgTypes;
-                lastFileOptions = new AS3ClassOptions(
-                    language: project.Language,
-                    package: dialog.GetPackage(),
-                    super_class: dialog.GetExtends(),
-                    Interfaces: dialog.hasInterfaces() ? dialog.getInterfaces() : null,
-                    is_public: dialog.isPublic(),
-                    is_dynamic: dialog.isDynamic(),
-                    is_final: dialog.isFinal(),
-                    create_inherited: dialog.getGenerateInheritedMethods(),
-                    create_constructor: dialog.getGenerateConstructor()
-                );
-                try
-                {
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowError(ex);
-                }
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
             }
         }
 
         void DisplayInterfaceWizard(string inDirectory, string templateFile, string name)
         {
             var project = (Project) PluginBase.CurrentProject;
-            using (var dialog = new AS3InterfaceWizard())
+            using var dialog = new AS3InterfaceWizard();
+            if (ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
+            lastFileFromTemplate = newFilePath;
+            constructorArgs = null;
+            constructorArgTypes = null;
+            lastFileOptions = new AS3ClassOptions(
+                language: project.Language,
+                package: dialog.GetPackage(),
+                super_class: dialog.GetExtends(),
+                Interfaces: null,
+                is_public: true,
+                is_dynamic: false,
+                is_final: false,
+                create_inherited: false,
+                create_constructor: false
+            );
+            try
             {
-                if (ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
-                lastFileFromTemplate = newFilePath;
-                constructorArgs = null;
-                constructorArgTypes = null;
-                lastFileOptions = new AS3ClassOptions(
-                    language: project.Language,
-                    package: dialog.GetPackage(),
-                    super_class: dialog.GetExtends(),
-                    Interfaces: null,
-                    is_public: true,
-                    is_dynamic: false,
-                    is_final: false,
-                    create_inherited: false,
-                    create_constructor: false
-                );
-                try
-                {
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                    PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowError(ex);
-                }
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
             }
         }
 

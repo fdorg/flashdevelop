@@ -22,7 +22,7 @@ namespace CodeRefactor.Provider
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
         {
             queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming, updatePackages));
-            if (currentCommand == null) ExecuteFirst();
+            if (currentCommand is null) ExecuteFirst();
         }
 
         private static void ExecuteFirst()

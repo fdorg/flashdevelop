@@ -116,7 +116,7 @@ namespace PluginCore.FRService
         {
             if (cacheDocuments)
             {
-                if (openDocuments == null) CacheOpenDocuments();
+                if (openDocuments is null) CacheOpenDocuments();
                 if (openDocuments.ContainsKey(file)) return openDocuments[file].SciControl.Text;
             }
             return FileHelper.ReadFile(file);
@@ -164,9 +164,8 @@ namespace PluginCore.FRService
                         // make this method thread safe
                         if (((Form) PluginBase.MainForm).InvokeRequired)
                         {
-                            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) delegate {
-                                openDocuments[file].SciControl.Text = src;
-                            });
+                            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) (() =>
+                                openDocuments[file].SciControl.Text = src));
                         }
                         else openDocuments[file].SciControl.Text = src;
                     }
@@ -191,9 +190,9 @@ namespace PluginCore.FRService
                     return files ??= new List<string> {path};
 
                 case OperationType.FindInPath:
-                    if (files == null)
+                    if (files is null)
                     {
-                        PathWalker walker = new PathWalker(path, mask, recursive);
+                        var walker = new PathWalker(path, mask, recursive);
                         files = walker.GetFiles();
                     }
                     return files;

@@ -181,10 +181,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies the theme colors to the control.
         /// </summary>
-        public static void ThemeControl(object obj)
-        {
-            ThemeControl(obj, obj.GetType());
-        }
+        public static void ThemeControl(object obj) => ThemeControl(obj, obj.GetType());
 
         /// <summary>
         /// Applies theme colors to the control based on type.

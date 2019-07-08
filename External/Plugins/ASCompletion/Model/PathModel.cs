@@ -62,7 +62,7 @@ namespace ASCompletion.Model
         /// <returns></returns>
         public static PathModel GetModel(string path, IASContext context)
         {
-            if (context?.Settings == null) return null;
+            if (context?.Settings is null) return null;
 
             string modelName = context.Settings.LanguageId + "|" + path.ToUpper();
             PathModel aPath;
@@ -266,7 +266,7 @@ namespace ASCompletion.Model
                     {
                         string path = e.OldFullPath;
                         // add to known removed paths
-                        List<string> newSchedule = new List<string>();
+                        var newSchedule = new List<string>();
                         foreach (string scheduled in toRemove)
                             if (path.StartsWithOrdinal(scheduled)) return;
                             else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
@@ -303,7 +303,7 @@ namespace ASCompletion.Model
                 {
                     string path = e.FullPath;
                     // add path for exploration if not already scheduled
-                    List<string> newSchedule = new List<string>();
+                    var newSchedule = new List<string>();
                     foreach (string scheduled in toExplore)
                         if (path.StartsWithOrdinal(scheduled)) return;
                         else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
@@ -343,7 +343,7 @@ namespace ASCompletion.Model
                 {
                     string path = e.FullPath;
                     // add to known removed paths
-                    List<string> newSchedule = new List<string>();
+                    var newSchedule = new List<string>();
                     foreach (string scheduled in toRemove)
                         if (path.StartsWithOrdinal(scheduled)) return;
                         else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
@@ -366,37 +366,31 @@ namespace ASCompletion.Model
 
         private void ParseNewFile(string fileName)
         {
-            if (Owner != null && !Owner.Settings.LazyClasspathExploration && File.Exists(fileName))
-            {
-                FileModel newModel = Owner.CreateFileModel(fileName);
-                newModel.OutOfDate = true;
-                files[fileName.ToUpper()] = newModel;
-                SetTimer();
-            }
+            if (Owner is null || Owner.Settings.LazyClasspathExploration || !File.Exists(fileName)) return;
+            var newModel = Owner.CreateFileModel(fileName);
+            newModel.OutOfDate = true;
+            files[fileName.ToUpper()] = newModel;
+            SetTimer();
         }
 
         private void DoScheduledOperations()
         {
-            // copy scheduled paths
-            string[] _toCheck;
-            string[] _toExplore;
             if (toExplore.Count == 0) return;
-            _toCheck = new string[toExplore.Count];
-            _toExplore = new string[toExplore.Count];
+            var _toCheck = new string[toExplore.Count];
+            var _toExplore = new string[toExplore.Count];
             for (int i = 0; i < _toExplore.Length; i++)
             {
                 _toCheck[i] = toExplore[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
                 _toExplore[i] = toExplore[i];
             }
             toExplore.Clear();
-            
-            List<string> _toRemove;
-            _toRemove = new List<string>(toRemove.Count);
+
+            var _toRemove = new List<string>(toRemove.Count);
             for (int i = 0; i < _toRemove.Count; i++)
                 _toRemove[i] = toRemove[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
             toRemove.Clear();
 
-            Dictionary<string, FileModel> newFiles = new Dictionary<string, FileModel>();
+            var newFiles = new Dictionary<string, FileModel>();
             // cleanup files
             foreach (string file in files.Keys)
             {
@@ -413,17 +407,16 @@ namespace ASCompletion.Model
                 FileModel model = files[file];
                 foreach (string checkPath in _toCheck)
                 {
-                    if (!File.Exists(model.FileName))
+                    if (File.Exists(model.FileName)) continue;
+                    var directoryName = System.IO.Path.GetDirectoryName(model.FileName);
+                    if (!Directory.Exists(directoryName))
                     {
-                        if (!Directory.Exists(System.IO.Path.GetDirectoryName(model.FileName)))
-                        {
-                            string newRemPath = System.IO.Path.GetDirectoryName(model.FileName).ToUpper() + System.IO.Path.DirectorySeparatorChar;
-                            _toRemove.Add(newRemPath);
-                        }
-                        //TraceManager.Add("drop2: " + files[file].FileName);
-                        drop = true;
-                        break;
+                        string newRemPath = directoryName.ToUpper() + System.IO.Path.DirectorySeparatorChar;
+                        _toRemove.Add(newRemPath);
                     }
+                    //TraceManager.Add("drop2: " + files[file].FileName);
+                    drop = true;
+                    break;
                 }
                 if (drop) continue;
                 newFiles[file] = model;
@@ -439,22 +432,20 @@ namespace ASCompletion.Model
 
         private void AddNewFilesIn(string path)
         {
-            if (Directory.Exists(path) && (File.GetAttributes(path) & FileAttributes.Hidden) == 0)
-            {
-                List<string> explored = new List<string>();
-                List<string> foundFiles = new List<string>();
-                ExploreFolder(path, masks, explored, foundFiles);
-                foreach (string fileName in foundFiles)
-                    if (!files.ContainsKey(fileName.ToUpper()))
-                    {
-                        //TraceManager.Add("add: " + fileName);
-                        FileModel newModel = new FileModel(fileName);
-                        newModel.Context = Owner;
-                        newModel.OutOfDate = true;
-                        if (Owner.IsModelValid(newModel, this))
-                            files[fileName.ToUpper()] = newModel;
-                    }
-            }
+            if (!Directory.Exists(path) || (File.GetAttributes(path) & FileAttributes.Hidden) != 0) return;
+            var explored = new List<string>();
+            var foundFiles = new List<string>();
+            ExploreFolder(path, masks, explored, foundFiles);
+            foreach (string fileName in foundFiles)
+                if (!files.ContainsKey(fileName.ToUpper()))
+                {
+                    //TraceManager.Add("add: " + fileName);
+                    FileModel newModel = new FileModel(fileName);
+                    newModel.Context = Owner;
+                    newModel.OutOfDate = true;
+                    if (Owner.IsModelValid(newModel, this))
+                        files[fileName.ToUpper()] = newModel;
+                }
         }
 
         private void ExploreFolder(string path, string[] masks, List<string> explored, List<string> foundFiles)
@@ -467,9 +458,7 @@ namespace ASCompletion.Model
                 // convert classes
                 foreach (string mask in masks)
                 {
-                    string[] files = Directory.GetFiles(path, mask);
-                    if (files != null)
-                        foreach (string file in files) foundFiles.Add(file);
+                    foundFiles.AddRange(Directory.GetFiles(path, mask));
                 }
 
                 // explore subfolders
@@ -540,10 +529,7 @@ namespace ASCompletion.Model
         {
             if (!IsValid)
             {
-                FileModel model = new FileModel(fileName);
-                model.Context = Owner;
-                model.OutOfDate = true;
-                return model;
+                return new FileModel(fileName) {Context = Owner, OutOfDate = true};
             }
             lock (lockObject)
             {
@@ -607,15 +593,13 @@ namespace ASCompletion.Model
             {
                 try
                 {
-                    using (Stream stream = File.Open(path, FileMode.Create))
-                    {
-                        BinaryFormatter bin = new BinaryFormatter();
-                        bin.Serialize(stream, files);
-                    }
+                    using Stream stream = File.Open(path, FileMode.Create);
+                    var bin = new BinaryFormatter();
+                    bin.Serialize(stream, files);
                 }
                 catch (Exception)
                 {
-                    TraceManager.AddAsync("Failed to serialize: " + path);
+                    TraceManager.AddAsync($"Failed to serialize: {path}");
                 }
             }
         }
@@ -624,31 +608,27 @@ namespace ASCompletion.Model
         {
             try
             {
-                using (Stream stream = File.Open(path, FileMode.Open))
+                using Stream stream = File.Open(path, FileMode.Open);
+                var bin = new BinaryFormatter();
+                var newFiles = (Dictionary<string, FileModel>)bin.Deserialize(stream);
+
+                lock (lockObject)
                 {
-                    BinaryFormatter bin = new BinaryFormatter();
-                    var newFiles = (Dictionary<string, FileModel>)bin.Deserialize(stream);
-
-                    lock (lockObject)
+                    foreach (string key in newFiles.Keys)
                     {
-                        foreach (string key in newFiles.Keys)
-                        {
-                            var aFile = newFiles[key];
-                            if (File.Exists(aFile.FileName))
-                            {
-                                if (File.GetLastWriteTime(aFile.FileName) != aFile.LastWriteTime) aFile.OutOfDate = true;
+                        var aFile = newFiles[key];
+                        if (!File.Exists(aFile.FileName)) continue;
+                        if (File.GetLastWriteTime(aFile.FileName) != aFile.LastWriteTime) aFile.OutOfDate = true;
 
-                                aFile.Context = Owner;
-                                files[key] = aFile;
-                            }
-                        }
+                        aFile.Context = Owner;
+                        files[key] = aFile;
                     }
-                    return true;
                 }
+                return true;
             }
             catch (Exception)
             {
-                TraceManager.AddAsync("Failed to deserialize: " + path);
+                TraceManager.AddAsync($"Failed to deserialize: {path}");
                 return false;
             }
         }

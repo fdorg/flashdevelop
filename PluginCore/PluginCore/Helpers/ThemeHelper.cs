@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace PluginCore.Helpers
 {
@@ -11,8 +12,7 @@ namespace PluginCore.Helpers
         {
             string name = type.Name;
             name = name.EndsWithOrdinal("Ex") ? name.Remove(name.Length - 2) : name;
-            if (name == "CheckedListBox") return "ListBox";
-            return name;
+            return name == nameof(CheckedListBox) ? nameof(ListBox) : name;
         }
     }
 }

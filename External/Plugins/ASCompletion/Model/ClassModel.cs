@@ -153,13 +153,11 @@ namespace ASCompletion.Model
                 {
                     foreach(ClassModel model in extensionList)
                     {
-                        if (model.QualifiedName == extends.QualifiedName)
-                        {
-                            var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                            MessageBar.ShowWarning(info);
-                            resolvedExtend = null;
-                            return VoidClass;
-                        }
+                        if (model.QualifiedName != extends.QualifiedName) continue;
+                        var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                        MessageBar.ShowWarning(info);
+                        resolvedExtend = null;
+                        return VoidClass;
                     }
                 }
                 extensionList.Add(extends);
@@ -271,11 +269,7 @@ namespace ASCompletion.Model
 
         public void Sort() => Members.Sort();
 
-        public override bool Equals(object obj)
-        {
-            if (!(obj is ClassModel)) return false;
-            return Name.Equals(((ClassModel)obj).Name);
-        }
+        public override bool Equals(object obj) => obj is ClassModel model && Name.Equals(model.Name);
 
         public override int GetHashCode() => Name.GetHashCode();
 
@@ -292,7 +286,7 @@ namespace ASCompletion.Model
             char semi = ';';
             string tab0 = (!caching && InFile.Version == 3) ? "\t" : "";
             string tab = (caching) ? "" : ((InFile.Version == 3) ? "\t\t" : "\t");
-            bool preventVis = (this.Flags & FlagType.Interface) > 0;
+            bool preventVis = (Flags & FlagType.Interface) > 0;
 
             // SPECIAL DELEGATE
             /*if ((Flags & FlagType.Delegate) > 0)
@@ -314,7 +308,7 @@ namespace ASCompletion.Model
             
             // CLASS
             sb.Append(CommentDeclaration(Comments, tab0)).Append(tab0);
-            if (!caching && InFile.Version != 3 && (this.Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)
+            if (!caching && InFile.Version != 3 && (Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)
             {
                 sb.Append((InFile.haXe) ? "extern " : "intrinsic ");
             }
@@ -322,7 +316,7 @@ namespace ASCompletion.Model
 
             if (ExtendsType != null)
             {
-                if ((this.Flags & FlagType.Abstract) > 0) sb.Append(" from ").Append(ExtendsType);
+                if ((Flags & FlagType.Abstract) > 0) sb.Append(" from ").Append(ExtendsType);
                 else sb.Append(" extends ").Append(ExtendsType);
             }
             if (Implements != null)
@@ -563,14 +557,10 @@ namespace ASCompletion.Model
             string outComment = "";
 
             int j0 = 0;
-            int j1 = 0;
             int i, l = mc.Count;
             for (i = 0; i <= l; i++)
             {
-                if (i < l)
-                    j1 = mc[i].Index;
-                else
-                    j1 = comment.Length;
+                var j1 = i < l ? mc[i].Index : comment.Length;
 
                 var s = comment.Substring(j0, j1 - j0);
 

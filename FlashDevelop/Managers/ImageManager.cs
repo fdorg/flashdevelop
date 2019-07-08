@@ -144,7 +144,7 @@ namespace FlashDevelop.Managers
                 {
                     return imagePair.Adjusted ?? (imagePair.Adjusted = SetImageAdjustment(imagePair.Original));
                 }
-                if (imagePair.Adjusted == null)
+                if (imagePair.Adjusted is null)
                 {
                     AutoAdjusted.RemoveAt(i--);
                     length--;
@@ -163,7 +163,7 @@ namespace FlashDevelop.Managers
             {
                 var imagePair = AutoAdjusted[i];
                 var adjusted = imagePair.Adjusted;
-                if (adjusted == null)
+                if (adjusted is null)
                 {
                     AutoAdjusted.RemoveAt(i--);
                     length--;
@@ -217,10 +217,7 @@ namespace FlashDevelop.Managers
             /// <summary>
             /// Parses an image data string with default size.
             /// </summary>
-            public static Components Parse(string value)
-            {
-                return Parse(value, ImageManager.Size);
-            }
+            public static Components Parse(string value) => Parse(value, ImageManager.Size);
 
             /// <summary>
             /// Parses an image data string with the specified size.
@@ -273,7 +270,7 @@ namespace FlashDevelop.Managers
             /// <param name="adjusted"><see cref="Adjusted"/></param>
             public ImagePair(Image original, Image adjusted)
             {
-                this.Original = original;
+                Original = original;
                 this.adjusted = new WeakReference(adjusted);
             }
 
