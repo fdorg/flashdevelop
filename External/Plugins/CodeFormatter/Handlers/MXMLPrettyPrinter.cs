@@ -565,13 +565,13 @@ namespace CodeFormatter.Handlers
                 }
             }
 
-            if (mOutputRange != null && mOutputRange.Y < 0 && mReplaceRange != null)
+            if (mOutputRange != Point.Empty && mOutputRange.Y < 0 && mReplaceRange != Point.Empty)
             {
                 mOutputRange.Y = buffer.Length;
                 mReplaceRange.Y = mSource.Length;
             }
 
-            if (mOutputRange != null)
+            if (mOutputRange != Point.Empty)
             {
                 //set the output range to start at the previous line start
                 string bufferString = buffer.ToString();
@@ -711,7 +711,7 @@ namespace CodeFormatter.Handlers
                         lineCount = countLines(text);
                         int startLine = token.Line;
                         int endLine = startLine + lineCount - 1; //lines.length-1;
-                        if (mOutputRange == null)
+                        if (mOutputRange == Point.Empty)
                         {
                             //if the selected lines start inside the script block
                             if (mSelectedRange.X >= startLine && mSelectedRange.X <= endLine)
