@@ -5180,10 +5180,7 @@ namespace ScintillaNet
         /// <summary>
         /// Returns the base style (without indicators) byte at the position.
         /// </summary>
-        public int BaseStyleAt(int pos)
-        {
-            return (SPerform(2010, pos, 0) & ((1 << StyleBits) - 1));
-        }
+        public int BaseStyleAt(int pos) => (SPerform(2010, pos, 0) & ((1 << StyleBits) - 1));
 
         /// <summary>
         /// Adds the specified highlight to the control
@@ -5749,7 +5746,5 @@ namespace ScintillaNet
         }
 
         #endregion
-
     }
-
 }

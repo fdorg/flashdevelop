@@ -102,19 +102,19 @@ namespace AS3Context
             bool isContainer = AddParentAttributes(mix, excludes); // current tag attributes
 
             if (isContainer) // container children tag
-            foreach (string ns in mxmlContext.namespaces.Keys)
-            {
-                string uri = mxmlContext.namespaces[ns];
-                if (ns != "*") mix.Add(new NamespaceItem(ns, uri));
-
-                if (!allTags.ContainsKey(ns)) 
-                    continue;
-                foreach (string tag in allTags[ns])
+                foreach (string ns in mxmlContext.namespaces.Keys)
                 {
-                    if (ns == "*") mix.Add(new HtmlTagItem(tag, tag));
-                    else mix.Add(new HtmlTagItem(tag, ns + ":" + tag, uri));
+                    string uri = mxmlContext.namespaces[ns];
+                    if (ns != "*") mix.Add(new NamespaceItem(ns, uri));
+
+                    if (!allTags.ContainsKey(ns)) 
+                        continue;
+                    foreach (string tag in allTags[ns])
+                    {
+                        if (ns == "*") mix.Add(new HtmlTagItem(tag, tag));
+                        else mix.Add(new HtmlTagItem(tag, ns + ":" + tag, uri));
+                    }
                 }
-            }
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());

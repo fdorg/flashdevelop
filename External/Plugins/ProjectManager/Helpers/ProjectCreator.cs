@@ -35,17 +35,16 @@ namespace ProjectManager.Helpers
 
         private static readonly Hashtable projectTypes = new Hashtable();
         private static readonly List<string> projectExt = new List<string>();
-        private static bool projectTypesSet = false;
+        private static bool projectTypesSet;
 
-        private static bool isRunning;
-        public static bool IsRunning => isRunning;
+        public static bool IsRunning { get; private set; }
 
         /// <summary>
         /// Creates a new project based on the specified template directory.
         /// </summary>
         public Project CreateProject(string templateDirectory, string projectLocation, string projectName, string packageName)
         {
-            isRunning = true;
+            IsRunning = true;
             if (!projectTypesSet) SetInitialProjectHash();
             SetContext(projectName, packageName);
             string projectTemplate = FindProjectTemplate(templateDirectory);
@@ -67,7 +66,7 @@ namespace ProjectManager.Helpers
                 CopyFile(projectTemplate, projectPath);
                 CopyProjectFiles(templateDirectory, projectLocation, true);
             }
-            isRunning = false;
+            IsRunning = false;
             if (File.Exists(projectPath))
             {
                 projectPath = PathHelper.GetPhysicalPathName(projectPath);
@@ -89,11 +88,10 @@ namespace ProjectManager.Helpers
 
         public static string FindProjectTemplate(string templateDirectory)
         {
-            string path = "";
             if (!projectTypesSet) SetInitialProjectHash();
             foreach (string key in projectTypes.Keys)
             {
-                path = Path.Combine(templateDirectory, key);
+                var path = Path.Combine(templateDirectory, key);
                 if (File.Exists(path)) return path;
             }
             return null;
@@ -290,7 +288,7 @@ namespace ProjectManager.Helpers
         /// </summary>
         public static string ProcessCodeStyleLineBreaks(string text)
         {
-            string CSLB = "$(CSLB)";
+            const string CSLB = "$(CSLB)";
             int nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
             CodingStyle cs = PluginBase.Settings.CodingStyle;

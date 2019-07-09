@@ -1,5 +1,4 @@
-﻿using System;
-using Aga.Controls.Tree;
+﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore;
 using PluginCore.Helpers;

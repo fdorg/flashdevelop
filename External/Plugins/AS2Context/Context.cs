@@ -11,7 +11,6 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ScintillaNet;
 
 namespace AS2Context
 {

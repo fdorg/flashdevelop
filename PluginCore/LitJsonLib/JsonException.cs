@@ -14,7 +14,7 @@ namespace LitJson
 {
     public class JsonException : ApplicationException
     {
-        public JsonException () : base ()
+        public JsonException ()
         {
         }
 

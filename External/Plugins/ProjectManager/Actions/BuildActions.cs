@@ -29,12 +29,11 @@ namespace ProjectManager.Actions
         readonly IMainForm mainForm;
         readonly PluginMain pluginMain;
         readonly FDProcessRunner fdProcess;
-        readonly string ipcName;
 
         public event BuildCompleteHandler BuildComplete;
         public event BuildCompleteHandler BuildFailed;
 
-        public string IPCName => ipcName;
+        public string IPCName { get; }
 
         public BuildActions(IMainForm mainForm, PluginMain pluginMain)
         {
@@ -45,13 +44,13 @@ namespace ProjectManager.Actions
             this.fdProcess = new FDProcessRunner(mainForm);
 
             // setup remoting service so FDBuild can use our in-memory services like FlexCompilerShell
-            this.ipcName = Guid.NewGuid().ToString();
+            this.IPCName = Guid.NewGuid().ToString();
             SetupRemotingServer();
         }
 
         private void SetupRemotingServer()
         {
-            IpcChannel channel = new IpcChannel(ipcName);
+            IpcChannel channel = new IpcChannel(IPCName);
             ChannelServices.RegisterChannel(channel, false);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(FlexCompilerShell), "FlexCompilerShell", WellKnownObjectMode.Singleton);
         }
@@ -73,9 +72,7 @@ namespace ProjectManager.Actions
             if (project.OutputType == OutputType.OtherIDE)
             {
                 // compile using associated IDE
-                string error;
-                string command = project.GetOtherIDE(runOutput, releaseMode, out error);
-
+                var command = project.GetOtherIDE(runOutput, releaseMode, out var error);
                 if (error != null) ErrorManager.ShowInfo(TextHelper.GetString(error));
                 else
                 {
@@ -107,9 +104,7 @@ namespace ProjectManager.Actions
             else if (project.IsCompilable)
             {
                 // ask the project to validate itself
-                string error;
-                project.ValidateBuild(out error);
-
+                project.ValidateBuild(out var error);
                 if (error != null)
                 {
                     ErrorManager.ShowInfo(TextHelper.GetString(error));
@@ -172,7 +167,7 @@ namespace ProjectManager.Actions
 
             string fdBuildPath = Path.Combine(PathHelper.ToolDir, "fdbuild", "fdbuild.exe");
 
-            string arguments = " -ipc " + ipcName;
+            string arguments = " -ipc " + IPCName;
             if (sdk != null)
             {
                 if (!string.IsNullOrEmpty(sdk.Version))
@@ -260,10 +255,7 @@ namespace ProjectManager.Actions
             return MatchSDK(sdks, project);
         }
 
-        public static string GetCompilerPath(Project project)
-        {
-            return GetCompilerPath(project, GetProjectSDK(project));
-        }
+        public static string GetCompilerPath(Project project) => GetCompilerPath(project, GetProjectSDK(project));
 
         public static string GetCompilerPath(Project project, InstalledSDK sdk)
         {
@@ -273,10 +265,7 @@ namespace ProjectManager.Actions
             return project.CurrentSDK;
         }
 
-        public static InstalledSDK MatchSDK(InstalledSDK[] sdks, IProject project)
-        {
-            return MatchSDK(sdks, project.PreferredSDK);
-        }
+        public static InstalledSDK MatchSDK(InstalledSDK[] sdks, IProject project) => MatchSDK(sdks, project.PreferredSDK);
 
         public static InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
         {
@@ -372,20 +361,15 @@ namespace ProjectManager.Actions
             return score;
         }
 
-        public static InstalledSDK[] GetInstalledSDKs(IProject project)
-        {
-            return GetInstalledSDKs(project.Language);
-        }
+        public static InstalledSDK[] GetInstalledSDKs(IProject project) => GetInstalledSDKs(project.Language);
 
         public static InstalledSDK[] GetInstalledSDKs(string language)
         {
-            Hashtable infos = new Hashtable();
-            infos["language"] = language;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.InstalledSDKs", infos);
+            var infos = new Hashtable {["language"] = language};
+            var de = new DataEvent(EventType.Command, "ASCompletion.InstalledSDKs", infos);
             EventManager.DispatchEvent(null, de);
             if (infos.ContainsKey("sdks") && infos["sdks"] != null) return (InstalledSDK[])infos["sdks"];
             return null;
         }
     }
-
 }

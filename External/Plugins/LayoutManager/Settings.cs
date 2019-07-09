@@ -34,10 +34,8 @@ namespace LayoutManager
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string CustomLayoutPath
         {
-            get => this.customLayoutPath;
-            set => this.customLayoutPath = value;
+            get => customLayoutPath;
+            set => customLayoutPath = value;
         }
-
     }
-
 }

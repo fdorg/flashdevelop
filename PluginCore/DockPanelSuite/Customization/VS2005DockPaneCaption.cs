@@ -15,7 +15,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             private readonly Bitmap m_image;
             private readonly Bitmap m_imageAutoHide;
 
-            public InertButton(VS2005DockPaneCaption dockPaneCaption, Bitmap image, Bitmap imageAutoHide) : base()
+            public InertButton(VS2005DockPaneCaption dockPaneCaption, Bitmap image, Bitmap imageAutoHide)
             {
                 DockPaneCaption = dockPaneCaption;
                 m_image = image;

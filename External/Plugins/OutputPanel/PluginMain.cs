@@ -165,7 +165,7 @@ namespace OutputPanel
         /// </summary>
         public void AddEventHandlers()
         {
-            var eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted | EventType.Command;
+            const EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted | EventType.Command;
             EventManager.AddEventHandler(this, eventMask);
         }
 

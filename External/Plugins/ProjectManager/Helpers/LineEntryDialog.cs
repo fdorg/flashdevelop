@@ -178,11 +178,6 @@ namespace ProjectManager.Helpers
             }
         }
 
-        public void SelectRange(int start, int length)
-        {
-            lineBox.Select(start, length);
-        }
-
+        public void SelectRange(int start, int length) => lineBox.Select(start, length);
     }
-
 }

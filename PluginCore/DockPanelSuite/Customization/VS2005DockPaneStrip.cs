@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.DockPanelSuite;
 using PluginCore.Helpers;
-using static WeifenLuo.WinFormsUI.Docking.VS2005DockPaneStrip;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -36,7 +35,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             private readonly Bitmap m_image1;
 
             public InertButton(Bitmap image0, Bitmap image1)
-                : base()
             {
                 m_image0 = image0;
                 m_image1 = image1;

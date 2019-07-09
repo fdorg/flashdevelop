@@ -215,10 +215,7 @@ namespace OutputPanel
         /// <summary>
         /// Handle the internal key down event
         /// </summary>
-        private void PluginUIKeyDown(object sender, KeyEventArgs e)
-        {
-            this.OnShortcut(e.KeyData);
-        }
+        private void PluginUIKeyDown(object sender, KeyEventArgs e) => OnShortcut(e.KeyData);
 
         /// <summary>
         /// Changes the wrapping in the control
@@ -269,10 +266,7 @@ namespace OutputPanel
         /// <summary>
         /// Clears the output
         /// </summary>
-        public void ClearOutput(object sender, EventArgs e)
-        {
-            this.textLog.Clear();
-        }
+        public void ClearOutput(object sender, EventArgs e) => textLog.Clear();
 
         /// <summary>
         /// Flashes the panel to the user
@@ -289,16 +283,12 @@ namespace OutputPanel
         private void AutoShowPanel(object sender, EventArgs e)
         {
             this.autoShow.Stop();
-            if (this.textLog.TextLength > 0)
-            {
-                DockContent panel = this.Parent as DockContent;
-                DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
-                {
-                    panel.Show();
-                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
-                }
-            }
+            if (this.textLog.TextLength <= 0) return;
+            var panel = (DockContent) this.Parent;
+            var ds = panel.VisibleState;
+            if (panel.Visible && !ds.ToString().EndsWithOrdinal("AutoHide")) return;
+            panel.Show();
+            if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
         }
 
         protected override void OnResize(EventArgs e)
@@ -306,23 +296,19 @@ namespace OutputPanel
             base.OnResize(e);
 
             // We use custom resizing because when the owner DockPanel hides, textLog.Height = 0, and ScrollToCaret() fails
-            if (this.Height != 0)
-            {
-                var bounds = Rectangle.FromLTRB(Padding.Left, toolStrip.Bottom, ClientSize.Width - Padding.Right, ClientSize.Height - Padding.Bottom);
-                textLog.SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+            if (this.Height == 0) return;
+            var bounds = Rectangle.FromLTRB(Padding.Left, toolStrip.Bottom, ClientSize.Width - Padding.Right, ClientSize.Height - Padding.Bottom);
+            textLog.SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
                 
-                // Recreate handle and restore scrollbars position, built-in behavior is flawed (eg.: go to bottom of scroll and resize)
-                if (Win32.ShouldUseWin32())
-                {
-                    int vPos = Win32.GetScrollPos(textLog.Handle, Win32.SB_VERT);
-                    int hPos = Win32.GetScrollPos(textLog.Handle, Win32.SB_HORZ);
-                    textLog.Recreate();
-                    int wParam = Win32.SB_THUMBPOSITION | vPos << 16;
-                    Win32.SendMessage(textLog.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
-                    wParam = Win32.SB_THUMBPOSITION | hPos << 16;
-                    Win32.SendMessage(textLog.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
-                }
-            }
+            // Recreate handle and restore scrollbars position, built-in behavior is flawed (eg.: go to bottom of scroll and resize)
+            if (!Win32.ShouldUseWin32()) return;
+            int vPos = Win32.GetScrollPos(textLog.Handle, Win32.SB_VERT);
+            int hPos = Win32.GetScrollPos(textLog.Handle, Win32.SB_HORZ);
+            textLog.Recreate();
+            int wParam = Win32.SB_THUMBPOSITION | vPos << 16;
+            Win32.SendMessage(textLog.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+            wParam = Win32.SB_THUMBPOSITION | hPos << 16;
+            Win32.SendMessage(textLog.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
         }
 
         /// <summary>
@@ -375,9 +361,6 @@ namespace OutputPanel
                 this.logCount = newCount;
                 return;
             }
-            int state;
-            string message;
-            TraceItem entry;
             Color newColor = Color.Red;
             Color currentColor = Color.Red;
             int oldSelectionStart = this.textLog.SelectionStart;
@@ -387,10 +370,9 @@ namespace OutputPanel
             StringBuilder newText = new StringBuilder();
             for (int i = this.logCount; i < newCount; i++)
             {
-                entry = log[i];
-                state = entry.State;
-                if (entry.Message is null) message = "";
-                else message = entry.Message;
+                var entry = log[i];
+                var state = entry.State;
+                var message = entry.Message ?? "";
                 if (!fastMode)
                 {
                     // Automatic state from message, legacy format, ie. "2:message" -> state = 2
@@ -495,17 +477,15 @@ namespace OutputPanel
         {
             this.textLog.Select(0, this.textLog.TextLength);
             this.textLog.SelectionBackColor = this.textLog.BackColor;
-            if (findText.Trim() != "")
+            if (findText.Trim() == "") return;
+            findText = Regex.Escape(findText);
+            MatchCollection results = Regex.Matches(this.textLog.Text, findText, RegexOptions.IgnoreCase);
+            for (int i = 0; i < results.Count; i++)
             {
-                findText = Regex.Escape(findText);
-                MatchCollection results = Regex.Matches(this.textLog.Text, findText, RegexOptions.IgnoreCase);
-                for (int i = 0; i < results.Count; i++)
-                {
-                    Match match = results[i];
-                    this.textLog.SelectionStart = match.Index;
-                    this.textLog.SelectionLength = match.Length;
-                    this.textLog.SelectionBackColor = PluginBase.MainForm.GetThemeColor("OutputPanel.HighlightColor", SystemColors.Highlight);
-                }
+                Match match = results[i];
+                this.textLog.SelectionStart = match.Index;
+                this.textLog.SelectionLength = match.Length;
+                this.textLog.SelectionBackColor = PluginBase.MainForm.GetThemeColor("OutputPanel.HighlightColor", SystemColors.Highlight);
             }
         }
 
@@ -540,11 +520,9 @@ namespace OutputPanel
         /// </summary>
         private void FindTextBoxEnter(object sender, EventArgs e)
         {
-            if (this.findTextBox.Text == searchInvitation)
-            {
-                this.findTextBox.Text = "";
-                this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
-            }
+            if (this.findTextBox.Text != searchInvitation) return;
+            this.findTextBox.Text = "";
+            this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
         }
 
         /// <summary>
@@ -552,12 +530,10 @@ namespace OutputPanel
         /// </summary>
         private void FindTextBoxLeave(object sender, EventArgs e)
         {
-            if (this.findTextBox.Text == "")
-            {
-                this.clearButton.Enabled = false;
-                this.findTextBox.Text = searchInvitation;
-                this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
-            }
+            if (this.findTextBox.Text != "") return;
+            this.clearButton.Enabled = false;
+            this.findTextBox.Text = searchInvitation;
+            this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
         }
 
         /// <summary>
@@ -657,10 +633,7 @@ namespace OutputPanel
         /// <summary>
         /// Handle the muting of the traces
         /// </summary>
-        private void TextLogMouseDown(object sender, MouseEventArgs e)
-        {
-            this.muted = true;
-        }
+        private void TextLogMouseDown(object sender, MouseEventArgs e) => muted = true;
 
         /// <summary>
         /// Handle the muting of the traces
@@ -672,7 +645,5 @@ namespace OutputPanel
         }
 
         #endregion
-
     }
-
 }

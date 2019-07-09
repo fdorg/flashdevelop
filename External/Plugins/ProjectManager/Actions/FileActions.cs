@@ -36,7 +36,6 @@ namespace ProjectManager.Actions
         readonly IMainForm mainForm;
         string storedDirectory;
         string lastFileFromTemplate;
-        FlashDevelopActions fdActions;
 
         public event FileNameHandler FileCreated;
         public event ProjectModifiedHandler ProjectModified;
@@ -48,7 +47,6 @@ namespace ProjectManager.Actions
         public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
         {
             this.mainForm = mainForm;
-            this.fdActions = fdActions;
         }
 
         private void PushCurrentDirectory()
@@ -70,7 +68,7 @@ namespace ProjectManager.Actions
             try
             {
                 // the template could be named something like "MXML.fdt", or maybe "Class.as.fdt"
-                string extension = "";
+                string extension;
                 string fileName = Path.GetFileNameWithoutExtension(templatePath);
                 string caption = TextHelper.GetString("Label.AddNew") + " ";
 
@@ -98,33 +96,28 @@ namespace ProjectManager.Actions
                 }
 
                 // let plugins handle the file creation
-                Hashtable info = new Hashtable();
-                info["templatePath"] = templatePath;
-                info["inDirectory"] = inDirectory;
-                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
+                var info = new Hashtable {["templatePath"] = templatePath, ["inDirectory"] = inDirectory};
+                var de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
                 EventManager.DispatchEvent(this, de);
                 if (de.Handled) return;
 
-                using (LineEntryDialog dialog = new LineEntryDialog(caption, TextHelper.GetString("Label.FileName"),
-                        fileName + extension))
+                using var dialog = new LineEntryDialog(caption, TextHelper.GetString("Label.FileName"), fileName + extension);
+                dialog.SelectRange(0, fileName.Length);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    dialog.SelectRange(0, fileName.Length);
+                    FlashDevelopActions.CheckAuthorName();
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        FlashDevelopActions.CheckAuthorName();
+                    string newFilePath = Path.Combine(inDirectory, dialog.Line);
+                    if (!Path.HasExtension(newFilePath) && extension != ".ext")
+                        newFilePath = Path.ChangeExtension(newFilePath, extension);
 
-                        string newFilePath = Path.Combine(inDirectory, dialog.Line);
-                        if (!Path.HasExtension(newFilePath) && extension != ".ext")
-                            newFilePath = Path.ChangeExtension(newFilePath, extension);
+                    if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
 
-                        if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
+                    // save this so when we are asked to process args, we know what file it's talking about
+                    lastFileFromTemplate = newFilePath;
 
-                        // save this so when we are asked to process args, we know what file it's talking about
-                        lastFileFromTemplate = newFilePath;
-
-                        mainForm.FileFromTemplate(templatePath, newFilePath);
-                    }
+                    mainForm.FileFromTemplate(templatePath, newFilePath);
                 }
             }
             catch (UserCancelException) { }
@@ -183,55 +176,51 @@ namespace ProjectManager.Actions
 
         public void AddLibraryAsset(Project project, string inDirectory)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using var dialog = new OpenFileDialog();
+            dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+            dialog.Multiselect = false;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-                dialog.Multiselect = false;
+                string filePath = CopyFile(dialog.FileName, inDirectory);
 
-                if (dialog.ShowDialog() == DialogResult.OK)
+                // null means the user cancelled
+                if (filePath is null) return;
+
+                // add as an asset
+                project.SetLibraryAsset(filePath, true);
+
+                if (!FileInspector.IsSwc(filePath))
                 {
-                    string filePath = CopyFile(dialog.FileName, inDirectory);
+                    // ask if you want to keep this file updated
+                    string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    string message = TextHelper.GetString("Info.ConfirmFileUpdate");
 
-                    // null means the user cancelled
-                    if (filePath is null) return;
+                    DialogResult result = MessageBox.Show(mainForm, message, caption,
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                    // add as an asset
-                    project.SetLibraryAsset(filePath, true);
-
-                    if (!FileInspector.IsSwc(filePath))
+                    if (result == DialogResult.Yes)
                     {
-                        // ask if you want to keep this file updated
-                        string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                        string message = TextHelper.GetString("Info.ConfirmFileUpdate");
-
-                        DialogResult result = MessageBox.Show(mainForm, message, caption,
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                        if (result == DialogResult.Yes)
-                        {
-                            LibraryAsset asset = project.GetAsset(filePath);
-                            asset.UpdatePath = project.GetRelativePath(dialog.FileName);
-                        }
+                        LibraryAsset asset = project.GetAsset(filePath);
+                        asset.UpdatePath = project.GetRelativePath(dialog.FileName);
                     }
-
-                    project.Save();
-                    OnProjectModified(new[] { filePath });
                 }
+
+                project.Save();
+                OnProjectModified(new[] { filePath });
             }
         }
 
         public void AddExistingFile(string inDirectory)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
-            {
-                dialog.Title = TextHelper.GetString("Label.AddExistingFile");
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-                dialog.Multiselect = false;
+            using var dialog = new OpenFileDialog();
+            dialog.Title = TextHelper.GetString("Label.AddExistingFile");
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+            dialog.Multiselect = false;
 
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    CopyFile(dialog.FileName, inDirectory);
-            }
+            if (dialog.ShowDialog() == DialogResult.OK)
+                CopyFile(dialog.FileName, inDirectory);
         }
 
         public void AddFolder(string inDirectory)
@@ -297,7 +286,7 @@ namespace ProjectManager.Actions
             if (File.Exists(toPath)) 
                 toPath = Path.GetDirectoryName(toPath);
 
-            DataObject o = Clipboard.GetDataObject() as DataObject;
+            var o = (DataObject) Clipboard.GetDataObject();
             if (o.GetDataPresent(DataFormats.FileDrop))
             {
                 // the data is in the form of an array of paths

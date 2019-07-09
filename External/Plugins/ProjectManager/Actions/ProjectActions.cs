@@ -269,43 +269,41 @@ namespace ProjectManager.Actions
             {
                 if (zFile.GetEntry(".actionscriptProperties") != null)
                 {
-                    using (VistaFolderBrowserDialog saveDialog = new VistaFolderBrowserDialog())
+                    using var saveDialog = new VistaFolderBrowserDialog();
+                    saveDialog.ShowNewFolderButton = true;
+                    saveDialog.UseDescriptionForTitle = true;
+                    saveDialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
+
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
                     {
-                        saveDialog.ShowNewFolderButton = true;
-                        saveDialog.UseDescriptionForTitle = true;
-                        saveDialog.Description = TextHelper.GetString("Title.ImportPackagedProject");
-
-                        if (saveDialog.ShowDialog() == DialogResult.OK)
+                        foreach (ZipEntry entry in zFile)
                         {
-                            foreach (ZipEntry entry in zFile)
-                            {
-                                byte[] data = new byte[4095];
-                                string newPath = Path.Combine(saveDialog.SelectedPath, entry.Name.Replace('/', '\\'));
+                            byte[] data = new byte[4095];
+                            string newPath = Path.Combine(saveDialog.SelectedPath, entry.Name.Replace('/', '\\'));
 
-                                if (entry.IsFile)
+                            if (entry.IsFile)
+                            {
+                                Stream zip = zFile.GetInputStream(entry);
+                                string dirPath = Path.GetDirectoryName(newPath);
+                                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                                FileStream extracted = new FileStream(newPath, FileMode.Create);
+                                while (true)
                                 {
-                                    Stream zip = zFile.GetInputStream(entry);
-                                    string dirPath = Path.GetDirectoryName(newPath);
-                                    if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-                                    FileStream extracted = new FileStream(newPath, FileMode.Create);
-                                    while (true)
-                                    {
-                                        var size = zip.Read(data, 0, data.Length);
-                                        if (size > 0) extracted.Write(data, 0, size);
-                                        else break;
-                                    }
-                                    extracted.Close();
-                                    extracted.Dispose();
+                                    var size = zip.Read(data, 0, data.Length);
+                                    if (size > 0) extracted.Write(data, 0, size);
+                                    else break;
                                 }
-                                else
-                                {
-                                    Directory.CreateDirectory(newPath);
-                                }
+                                extracted.Close();
+                                extracted.Dispose();
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(newPath);
                             }
                         }
-
-                        return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
                     }
+
+                    return Path.Combine(saveDialog.SelectedPath, ".actionScriptProperties");
                 }
             }
 

@@ -53,7 +53,8 @@ namespace ASCompletion
 
         class ExploreTreeNode : TreeNode
         {
-            public ExploreTreeNode() : base() { }
+            public ExploreTreeNode()
+            { }
         }
 
         class PackageTreeNode : TreeNode

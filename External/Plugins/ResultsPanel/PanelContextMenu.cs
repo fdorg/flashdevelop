@@ -8,7 +8,7 @@ using ResultsPanel.Helpers;
 
 namespace ResultsPanel
 {
-    internal partial class PanelContextMenu : ContextMenuStrip
+    class PanelContextMenu : ContextMenuStrip
     {
         internal const Keys CopyEntryKeys = Keys.Control | Keys.C;
         internal const Keys IgnoreEntryKeys = Keys.Delete;
@@ -60,34 +60,16 @@ namespace ResultsPanel
             base.OnOpening(e);
         }
         
-        private void ClearEntries_Click(object sender, EventArgs e)
-        {
-            ResultsPanelHelper.ActiveUI.ClearOutput();
-        }
+        private void ClearEntries_Click(object sender, EventArgs e) => ResultsPanelHelper.ActiveUI.ClearOutput();
 
-        private void CopyEntry_Click(object sender, EventArgs e)
-        {
-            ResultsPanelHelper.ActiveUI.CopyText();
-        }
+        private void CopyEntry_Click(object sender, EventArgs e) => ResultsPanelHelper.ActiveUI.CopyText();
 
-        private void IgnoreEntry_Click(object sender, EventArgs e)
-        {
-            ResultsPanelHelper.ActiveUI.IgnoreEntry();
-        }
+        private void IgnoreEntry_Click(object sender, EventArgs e) => ResultsPanelHelper.ActiveUI.IgnoreEntry();
 
-        private void ClearIgnoredEntries_Click(object sender, EventArgs e)
-        {
-            ResultsPanelHelper.ActiveUI.ClearIgnoredEntries();
-        }
+        private void ClearIgnoredEntries_Click(object sender, EventArgs e) => ResultsPanelHelper.ActiveUI.ClearIgnoredEntries();
 
-        private void NextEntry_Click(object sender, EventArgs e)
-        {
-            ResultsPanelHelper.ActiveUI.NextEntry();
-        }
+        private void NextEntry_Click(object sender, EventArgs e) => ResultsPanelHelper.ActiveUI.NextEntry();
 
-        private void PreviousEntry_Click(object sender, EventArgs e)
-        {
-            ResultsPanelHelper.ActiveUI.PreviousEntry();
-        }
+        private void PreviousEntry_Click(object sender, EventArgs e) => ResultsPanelHelper.ActiveUI.PreviousEntry();
     }
 }

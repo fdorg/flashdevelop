@@ -10,6 +10,7 @@ using PluginCore.Managers;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Linq;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace AS3Context.Controls
@@ -231,8 +232,7 @@ namespace AS3Context.Controls
             var swfs = PluginMain.Settings.CustomProfilers;
             if (swfs.IsNullOrEmpty()) return;
 
-            string check = "";
-            foreach(string swf in swfs) check += swf;
+            var check = swfs.Aggregate("", (current1, swf) => current1 + swf);
             if (check == profilerItemsCheck) return;
             profilerItemsCheck = check; 
 

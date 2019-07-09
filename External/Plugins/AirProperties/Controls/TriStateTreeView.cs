@@ -48,7 +48,6 @@ namespace AirProperties.Controls
         // Constructor.  Create and populate an image list
         // </summary>
         public TriStateTreeView()
-            : base()
         {
             StateImageList = new System.Windows.Forms.ImageList();
 

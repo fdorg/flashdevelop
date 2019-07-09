@@ -24,7 +24,6 @@ namespace ResultsPanel.Helpers
             MainUI = pluginUI;
             pluginUIs = new List<PluginUI>();
             ActiveUI = MainUI;
-
             MainUI.ParentPanel.Tag = MainUI;
             MainUI.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
         }
@@ -51,9 +50,7 @@ namespace ResultsPanel.Helpers
                     return;
                 }
             }
-
-            var newUI = AddResultsPanel(groupData, groupId, args);
-            //newUI.ClearOutput();
+            AddResultsPanel(groupData, groupId, args);
         }
 
         /// <summary>

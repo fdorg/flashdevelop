@@ -1,6 +1,5 @@
 using PluginCore.Helpers;
 using PluginCore.Utilities;
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
