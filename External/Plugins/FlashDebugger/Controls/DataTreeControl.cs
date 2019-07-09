@@ -140,10 +140,9 @@ namespace FlashDebugger.Controls
             SaveState();
             foreach (var node in _model.Root.Nodes)
             {
-                var valueNode = node as ValueNode;
-                if (valueNode != null)
+                if (node is ValueNode valueNode)
                 {
-                    if (node.Nodes != null && node.Nodes.Count > 0)
+                    if (!node.Nodes.IsNullOrEmpty())
                     {
                         // Needed because of static and inherited members.
                         // If we add a different event or check against a previous value we could avoid removing and reevaluating members.
@@ -528,7 +527,7 @@ namespace FlashDebugger.Controls
             {
                 e.Handled = true;
                 _tree.BeginUpdate();
-                (node.Parent as ValueNode).ChildrenShowLimit += 500;
+                ((ValueNode) node.Parent).ChildrenShowLimit += 500;
                 TreeNodeAdv parent = e.Node.Parent;
                 int ind = e.Node.Index;
                 parent.Collapse(true);
@@ -544,11 +543,11 @@ namespace FlashDebugger.Controls
             if (state is null) state = new DataTreeState();
             state.Selected = _tree.SelectedNode is null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
-            if (Nodes != null && Nodes.Count > 0) SaveExpanded(Nodes);
+            if (!Nodes.IsNullOrEmpty()) SaveExpanded(Nodes);
             SaveScrollState();
         }
 
-        private void SaveExpanded(Collection<Node> nodes)
+        private void SaveExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -576,12 +575,12 @@ namespace FlashDebugger.Controls
         public void RestoreState()
         {
             if (state is null) return;
-            if (state.Expanded != null && state.Expanded.Count > 0) RestoreExpanded(Nodes);
+            if (!state.Expanded.IsNullOrEmpty()) RestoreExpanded(Nodes);
             if (state.Selected != null) _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
             RestoreScrollState();
         }
 
-        private void RestoreExpanded(Collection<Node> nodes)
+        private void RestoreExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {

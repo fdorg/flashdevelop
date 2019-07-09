@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
+using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
@@ -458,7 +459,7 @@ namespace FlashDevelop.Dialogs
             if (Globals.SciControl is null) return;
             var sci = Globals.SciControl;
             var matches = this.GetResults(sci, simple);
-            if (matches != null && matches.Count != 0)
+            if (!matches.IsNullOrEmpty())
             {
                 FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
                 var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, fixedPosition);
@@ -511,7 +512,7 @@ namespace FlashDevelop.Dialogs
                 int start = sci.MBSafeCharPosition(sci.SelectionStart);
                 matches = FRDialogGenerics.FilterMatches(matches, start, end);
             }
-            if (matches != null && matches.Count != 0)
+            if (!matches.IsNullOrEmpty())
             {
                 FRDialogGenerics.BookmarkMatches(sci, matches);
                 string message = TextHelper.GetString("Info.MatchesBookmarked");

@@ -354,9 +354,7 @@ namespace AS3Context
 
                         if ((member.Flags & FlagType.Setter) > 0)
                         {
-                            if (member.Parameters != null && member.Parameters.Count > 0)
-                                mtype = member.Parameters[0].Type;
-                            else mtype = null;
+                            mtype = !member.Parameters.IsNullOrEmpty() ? member.Parameters[0].Type : null;
                         }
                         mix.Add(new HtmlAttributeItem(member.Name, mtype, className, ns));
                     }
@@ -400,10 +398,7 @@ namespace AS3Context
                             
                             if ((member.Flags & FlagType.Setter) > 0)
                             {
-                                if (member.Parameters != null && member.Parameters.Count > 0)
-                                    mtype = member.Parameters[0].Type;
-                                else mtype = null;
-
+                                mtype = !member.Parameters.IsNullOrEmpty() ? member.Parameters[0].Type : null;
                                 if (!hasGetterSetter)
                                 {
                                     hasGetterSetter = true;
@@ -537,7 +532,7 @@ namespace AS3Context
             while (!tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
-                    if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && member.Parameters != null && member.Parameters.Count > 0)
+                    if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && !member.Parameters.IsNullOrEmpty())
                     {
                         bool validFunction = true;
                         var argType = member.Parameters[0].Type;

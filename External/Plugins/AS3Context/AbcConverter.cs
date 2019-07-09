@@ -151,11 +151,11 @@ namespace AS3Context
                         if (model.Package.Length == 0) docPath = type.Name;
                     }
 
-                    if (instance.baseName.uri == model.Package)
-                        type.ExtendsType = ImportType(instance.baseName.localName);
-                    else type.ExtendsType = ImportType(instance.baseName);
+                    type.ExtendsType = instance.baseName.uri == model.Package
+                        ? ImportType(instance.baseName.localName)
+                        : ImportType(instance.baseName);
 
-                    if (instance.interfaces != null && instance.interfaces.Length > 0)
+                    if (!instance.interfaces.IsNullOrEmpty())
                     {
                         type.Implements = new List<string>();
                         foreach (QName name in instance.interfaces)
@@ -207,7 +207,7 @@ namespace AS3Context
                     {
                         // TODO properly support interface multiple inheritance
                         type.ExtendsType = null;
-                        if (type.Implements != null && type.Implements.Count > 0)
+                        if (!type.Implements.IsNullOrEmpty())
                         {
                             type.ExtendsType = type.Implements[0];
                             type.Implements.RemoveAt(0);
@@ -378,7 +378,7 @@ namespace AS3Context
                     ClassModel mathModel = models[mathPath].GetPublicClass();
                     foreach (MemberModel member in mathModel.Members)
                     {
-                        if (member.Parameters != null && member.Parameters.Count > 0 && member.Parameters[0].Name == "x")
+                        if (!member.Parameters.IsNullOrEmpty() && member.Parameters[0].Name == "x")
                         {
                             string n = member.Name;
                             if (member.Parameters.Count > 1)
@@ -493,7 +493,7 @@ namespace AS3Context
             member.Access = Visibility.Public;
             member.Namespace = "public";
 
-            if (info.metadata != null && info.metadata.Count > 0)
+            if (!info.metadata.IsNullOrEmpty())
             {
                 var metadatas = member.MetaDatas;
                 foreach (var metaInfo in info.metadata)

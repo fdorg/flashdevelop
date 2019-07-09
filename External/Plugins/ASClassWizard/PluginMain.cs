@@ -259,7 +259,7 @@ namespace ASClassWizard
             try
             {
                 var package = GetPackage(classpath, inDirectory);
-                if (string.IsNullOrEmpty(package) && project.AdditionalPaths != null && project.AdditionalPaths.Length > 0)
+                if (string.IsNullOrEmpty(package) && !project.AdditionalPaths.IsNullOrEmpty())
                 {
                     var closest = "";
                     foreach (var it in project.AdditionalPaths)
@@ -333,7 +333,7 @@ namespace ASClassWizard
             string superConstructor = "";
             int index;
             // resolve imports
-            if (lastFileOptions.interfaces != null && lastFileOptions.interfaces.Count > 0)
+            if (!lastFileOptions.interfaces.IsNullOrEmpty())
             {
                 string implementContinuation;
                 implements = " implements ";

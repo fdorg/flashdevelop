@@ -1044,7 +1044,7 @@ namespace FlashDevelop
             /**
             * Open document[s] in startup 
             */
-            if (Arguments != null && Arguments.Length != 0)
+            if (!Arguments.IsNullOrEmpty())
             {
                 ProcessParameters(Arguments);
                 Arguments = null;
@@ -1894,7 +1894,7 @@ namespace FlashDevelop
             }
             Activate();
             Focus();
-            if (args != null && args.Length != 0)
+            if (!args.IsNullOrEmpty())
             {
                 Silent = args.Contains("-silent");
                 foreach (var arg in args)

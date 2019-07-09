@@ -96,7 +96,7 @@ namespace AS3Context.Completion
                 else if (expression.Contains(".<")) expression = expression.Replace(".<", "<");
                 // for example: /pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);
-                else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
+                else if (!context.SubExpressions.IsNullOrEmpty())
                 {
                     var expr = context.SubExpressions.Last();
                     // for example: (v as T).<complete>, (v is Complete).<complete>, ...

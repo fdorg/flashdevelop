@@ -201,7 +201,7 @@ namespace HaXeContext.Generators
             switch (expr.WordBefore)
             {
                 // for example: cast(value, Type)|
-                case "cast" when expr.SubExpressions != null && expr.SubExpressions.Count > 0 && expr.Value[0] == '#':
+                case "cast" when !expr.SubExpressions.IsNullOrEmpty() && expr.Value[0] == '#':
                     type = ctx.ResolveToken("cast" + expr.SubExpressions.Last(), inClass.InFile);
                     break;
                 case "cast": // for example: cast value|

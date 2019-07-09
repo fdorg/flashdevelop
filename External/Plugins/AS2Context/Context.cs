@@ -226,7 +226,7 @@ namespace AS2Context
             // add library
             AddPath(Path.Combine(PathHelper.LibraryDir, "AS2/classes"));
             // add user pathes from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach(string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }

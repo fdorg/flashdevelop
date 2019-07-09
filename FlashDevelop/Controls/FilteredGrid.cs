@@ -157,7 +157,7 @@ namespace FlashDevelop.Controls
             // Clear the list of properties to be displayed.
             m_PropertyDescriptors.Clear();
             // Check whether the list is filtered 
-            if (m_BrowsableAttributes != null && m_BrowsableAttributes.Count > 0) 
+            if (!m_BrowsableAttributes.IsNullOrEmpty())
             {
                 // Add to the list the attributes that need to be displayed.
                 foreach(Attribute attribute in m_BrowsableAttributes) ShowAttribute(attribute);
@@ -173,10 +173,10 @@ namespace FlashDevelop.Controls
             // Get all the properties of the SelectedObject
             PropertyDescriptorCollection allproperties = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
             // Hide if necessary, some properties
-            if (m_HiddenProperties != null && m_HiddenProperties.Length > 0) 
+            if (!m_HiddenProperties.IsNullOrEmpty()) 
             {
                 // Remove from the list the properties that mustn't be displayed.
-                foreach(string propertyname in m_HiddenProperties) 
+                foreach(string propertyname in m_HiddenProperties)
                 {
                     try 
                     {
@@ -190,7 +190,7 @@ namespace FlashDevelop.Controls
                     }
                 }
             }
-            if (m_BrowsableProperties != null && m_BrowsableProperties.Length > 0) 
+            if (!m_BrowsableProperties.IsNullOrEmpty())
             {
                 // Clear properties to filter the list from scratch BY IAP
                 m_PropertyDescriptors.Clear();

@@ -136,12 +136,12 @@ namespace ProjectManager.Controls
         public void ProjectChanged(Project project)
         {
             TargetBuildSelector.Items.Clear();
-            if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
+            if (!project.MovieOptions.DefaultBuildTargets.IsNullOrEmpty())
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.DefaultBuildTargets);
                 TargetBuildSelector.Text = project.MovieOptions.DefaultBuildTargets[0];
             }
-            else if (project.MovieOptions.TargetBuildTypes != null && project.MovieOptions.TargetBuildTypes.Length > 0)
+            else if (!project.MovieOptions.TargetBuildTypes.IsNullOrEmpty())
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.TargetBuildTypes);
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];

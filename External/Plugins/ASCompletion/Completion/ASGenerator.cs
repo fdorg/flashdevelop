@@ -282,7 +282,7 @@ namespace ASCompletion.Completion
 
                 // "Generate fields from parameters" suggestion
                 if ((found.Member.Flags & FlagType.Function) > 0
-                    && found.Member.Parameters != null && (found.Member.Parameters.Count > 0)
+                    && !found.Member.Parameters.IsNullOrEmpty()
                     && resolve.Member != null && (resolve.Member.Flags & FlagType.ParameterVar) > 0)
                 {
                     contextMember = resolve.Member;
@@ -817,7 +817,7 @@ namespace ASCompletion.Completion
                 var parameter = parameters[1];
                 if (parameter != null)
                 {
-                    if (parameter.Parameters != null && parameter.Parameters.Count > 0) return parameter.Parameters[0].Type;
+                    if (!parameter.Parameters.IsNullOrEmpty()) return parameter.Parameters[0].Type;
                     if (parameter.Type is { } type && type != "Function") return type;
                 }
             }
@@ -1998,11 +1998,12 @@ namespace ASCompletion.Completion
             string type = null;
             if ((member.Flags & FlagType.Setter) != 0)
             {
-                if (member.Parameters != null && member.Parameters.Count > 0)
+                if (!member.Parameters.IsNullOrEmpty())
                 {
                     var parameter = member.Parameters[0];
-                    if ((parameter.Flags & FlagType.Function) != 0) type = ctx.CodeComplete.ToFunctionDeclarationString(parameter);
-                    else type = parameter.Type;
+                    type = (parameter.Flags & FlagType.Function) != 0
+                        ? ctx.CodeComplete.ToFunctionDeclarationString(parameter)
+                        : parameter.Type;
                 }
                 if (type is null) type = member.Type;
                 if (type == ctx.Features.voidKey) type = ctx.Features.dynamicKey;
@@ -2017,7 +2018,7 @@ namespace ASCompletion.Completion
             {
                 var imports = new List<string>();
                 var parameters = member.Parameters;
-                if (parameters != null && parameters.Count > 0) imports.AddRange(from t in parameters where t.Type != null select t.Type);
+                if (!parameters.IsNullOrEmpty()) imports.AddRange(from t in parameters where t.Type != null select t.Type);
                 if (member.Type != null) imports.Add(member.Type);
                 if (imports.Count > 0)
                 {
@@ -2872,9 +2873,9 @@ namespace ASCompletion.Completion
                 callerExpr = ASComplete.GetExpressionType(sci, pos);
                 if (callerExpr != null) caller = callerExpr.Member;
             }
-            if (caller?.Parameters != null && caller.Parameters.Count > 0)
+            if (caller != null && !caller.Parameters.IsNullOrEmpty())
             {
-                string CleanType(string s) => s.StartsWith('(') && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
+                static string CleanType(string s) => s.StartsWith('(') && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
                 var param = caller.Parameters[parameterIndex];
                 var parameterType = param.Type;
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
@@ -3358,7 +3359,7 @@ namespace ASCompletion.Completion
                     else if ((method.Flags & FlagType.Setter) > 0)
                     {
                         // for example: function get set(v:Function/*(v:*):int*/):void
-                        if (method.Parameters != null && method.Parameters.Count > 0)
+                        if (!method.Parameters.IsNullOrEmpty())
                         {
                             var parameter = method.Parameters[0];
                             if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
@@ -3392,7 +3393,7 @@ namespace ASCompletion.Completion
                     sb.Append(decl);
                     canGenerate = true;
                     if (method.Type != features.voidKey) typesUsed.Add(method.Type);
-                    if (method.Parameters != null && method.Parameters.Count > 0)
+                    if (!method.Parameters.IsNullOrEmpty())
                         foreach (var param in method.Parameters)
                             typesUsed.Add(param.Type);
                 }
@@ -3972,7 +3973,7 @@ namespace ASCompletion.Completion
                     if ((member.Flags & FlagType.Dynamic) == 0
                         || (member.Access & access) == 0
                         || ((member.Flags & FlagType.Function) == 0 && (member.Flags & mask) == 0)) continue;
-                    if (member.Parameters != null && member.Parameters.Count > 0)
+                    if (!member.Parameters.IsNullOrEmpty())
                     {
                         foreach (var it in member.Parameters)
                         {
@@ -4163,7 +4164,7 @@ namespace ASCompletion.Completion
 
                         // check for varargs
                         var isVararg = false;
-                        if (m.Parameters != null && m.Parameters.Count > 0)
+                        if (!m.Parameters.IsNullOrEmpty())
                         {
                             var mm = m.Parameters[m.Parameters.Count - 1];
                             if (mm.Name.StartsWithOrdinal("..."))

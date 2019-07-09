@@ -123,9 +123,8 @@ namespace Mono.GetOptions
             int num1 = 0;
             string[] textArray1 = new string[objArray1.Length];
             object[] objArray2 = objArray1;
-            for (int num2 = 0; num2 < objArray2.Length; num2++)
+            foreach (var obj1 in objArray2)
             {
-                object obj1 = objArray2[num2];
                 textArray1[num1++] = obj1.ToString();
             }
             return textArray1;
@@ -134,7 +133,7 @@ namespace Mono.GetOptions
         private void GetAssemblyAttributeValue(Type type, ref string var)
         {
             object[] objArray1 = GetAssemblyAttributes(type);
-            if ((objArray1 != null) && (objArray1.Length > 0))
+            if (objArray1 != null && objArray1.Length > 0)
             {
                 var = objArray1[0].ToString();
             }
@@ -143,13 +142,13 @@ namespace Mono.GetOptions
         private void GetAssemblyAttributeValue(Type type, string propertyName, ref string var)
         {
             object[] objArray1 = GetAssemblyAttributes(type);
-            if ((objArray1 != null) && (objArray1.Length > 0))
+            if (objArray1 != null && objArray1.Length > 0)
             {
                 var = (string) type.InvokeMember(propertyName, BindingFlags.GetProperty | (BindingFlags.GetField | (BindingFlags.Public | BindingFlags.Instance)), null, objArray1[0], new object[0]);
             }
         }
 
-        private static int IndexOfAny(string where, params char[] what) => @where.IndexOfAny(what);
+        private static int IndexOfAny(string where, params char[] what) => where.IndexOfAny(what);
 
         private void Initialize(Options optionBundle)
         {

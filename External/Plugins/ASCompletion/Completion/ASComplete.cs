@@ -4518,8 +4518,7 @@ namespace ASCompletion.Completion
                 if (ASContext.Context.Features.hasGenerics)
                 {
                     var typeParams = GetVisibleTypeParameters();
-
-                    if (typeParams != null && typeParams.Items.Count > 0)
+                    if (!typeParams.IsNullOrEmpty())
                     {
                         typeParams.Sort();
                         typeParams.Merge(known);
@@ -4551,8 +4550,7 @@ namespace ASCompletion.Completion
             if (ASContext.Context.Features.hasGenerics && !ASContext.Context.CurrentClass.IsVoid())
             {
                 var typeParams = GetVisibleTypeParameters();
-
-                if (typeParams != null && typeParams.Count > 0)
+                if (!typeParams.IsNullOrEmpty())
                 {
                     typeParams.Sort();
                     typeParams.Merge(known);

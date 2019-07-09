@@ -66,7 +66,7 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle fuseStyleHierarchy(List<BBCodeStyle> parentToChildHierarchy)
         {
-            if (parentToChildHierarchy is null || parentToChildHierarchy.Count < 1)
+            if (parentToChildHierarchy.IsNullOrEmpty())
                 return null;
 
             if (parentToChildHierarchy.Count == 1)

@@ -223,7 +223,7 @@ namespace ASCompletion.Completion
         static bool IsFunctionWithArguments(MemberModel member)
         {
             return member != null && (member.Flags & FlagType.Function) > 0
-                && member.Parameters != null && member.Parameters.Count > 0;
+                && !member.Parameters.IsNullOrEmpty();
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace ASCompletion.Completion
             }
             
             // @param
-            if (cb.ParamName != null && cb.ParamName.Count > 0)
+            if (!cb.ParamName.IsNullOrEmpty())
             {
                 details += "\nParam:";
                 for(int i=0; i<cb.ParamName.Count; i++)

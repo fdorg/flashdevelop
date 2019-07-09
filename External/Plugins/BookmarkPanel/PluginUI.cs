@@ -346,7 +346,7 @@ namespace BookmarkPanel
             {
                 ScintillaControl sci = document.SciControl;
                 List<SearchMatch> matches = this.GetResults(sci);
-                if (matches != null && matches.Count != 0)
+                if (!matches.IsNullOrEmpty())
                 {
                     this.BookmarkMatches(sci, matches);
                     UITools.Manager.MarkerChanged(sci, -1);

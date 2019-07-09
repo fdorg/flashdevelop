@@ -434,8 +434,8 @@ namespace TaskListPanel
                     else this.extensions.Add(ext);
                 }
             }
-            string[] addExt = ASContext.Context.GetExplorerMask();
-            if (addExt != null && addExt.Length > 0) extensions.AddRange(addExt);
+            var addExt = ASContext.Context.GetExplorerMask();
+            if (!addExt.IsNullOrEmpty()) extensions.AddRange(addExt);
         }
 
         /// <summary>
@@ -469,13 +469,9 @@ namespace TaskListPanel
         /// </summary>
         private void ParseNextFile()
         {
-            string path;
-            int status;
-            ExplorationContext context;
-            if (this.parseTimer.Tag is ExplorationContext)
+            if (this.parseTimer.Tag is ExplorationContext context)
             {
-                context = (ExplorationContext)this.parseTimer.Tag;
-                status = context.Status;
+                var status = context.Status;
                 if (status == 0)
                 {
                     context.Status = 1;
@@ -483,11 +479,11 @@ namespace TaskListPanel
                 }
                 else if (status == 1)
                 {
-                    List<string> files = context.Files;
-                    if (files != null && files.Count > 0)
+                    var files = context.Files;
+                    if (!files.IsNullOrEmpty())
                     {
                         bool parseFile = false;
-                        path = files[0];
+                        var path = files[0];
                         DateTime lastWriteTime = new FileInfo(path).LastWriteTime;
                         if (!this.filesCache.ContainsKey(path))
                         {

@@ -100,7 +100,7 @@ namespace ASCompletion.Model
             {
                 if ((Flags & FlagType.Setter) > 0)
                 {
-                    if (Parameters != null && Parameters.Count > 0 && !string.IsNullOrEmpty(Parameters[0].Type))
+                    if (!Parameters.IsNullOrEmpty() && !string.IsNullOrEmpty(Parameters[0].Type))
                         return result + " : " + FormatType(Parameters[0].Type);
                 }
             }
@@ -125,7 +125,7 @@ namespace ASCompletion.Model
                         res += "()";
 
                     type = "Function";
-                    if (Parameters != null && Parameters.Count > 0)
+                    if (!Parameters.IsNullOrEmpty())
                     {
                         comment = "/*(" + ParametersString(true) + ")";
                         if (!string.IsNullOrEmpty(Type))
@@ -158,7 +158,7 @@ namespace ASCompletion.Model
         public string ParametersString(bool formatted)
         {
             var res = "";
-            if (Parameters != null && Parameters.Count > 0)
+            if (!Parameters.IsNullOrEmpty())
             {
                 var addSep = false;
                 foreach (MemberModel param in Parameters)

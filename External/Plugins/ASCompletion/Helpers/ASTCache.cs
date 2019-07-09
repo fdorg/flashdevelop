@@ -318,7 +318,7 @@ namespace ASCompletion.Helpers
                     if ((member.Flags & (FlagType.Function | FlagType.Override)) > 0)
                     {
                         var overridden = GetOverriddenClasses(cls, member);
-                        if (overridden is null || overridden.Count <= 0) continue;
+                        if (overridden.IsNullOrEmpty()) continue;
 
                         cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
                         //now that we know member is overriding the classes in overridden, we can add cls as overrider for them
