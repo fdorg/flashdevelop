@@ -384,7 +384,7 @@ namespace BasicCompletion
             var curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
             if (curWord is null || curWord.Length < 3) return;
             var items = GetCompletionListItems(lang, sci.FileName);
-            if (items is null || items.Count == 0) return;
+            if (items.IsNullOrEmpty()) return;
             items.Sort();
             CompletionList.Show(items, true, curWord);
             var insert = settingObject.AutoInsertType;

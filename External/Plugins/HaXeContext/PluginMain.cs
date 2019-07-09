@@ -239,7 +239,7 @@ namespace HaXeContext
         /// </summary>
         private void ValidateSettings()
         {
-            if (settingObject.InstalledSDKs is null || settingObject.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
+            if (settingObject.InstalledSDKs.IsNullOrEmpty() || PluginBase.MainForm.RefreshConfig)
             {
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
                 var externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");

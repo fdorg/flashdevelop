@@ -186,7 +186,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Templates are stored in the plugin's Data folder
         /// </summary>
-        public static string GetTemplate(string name, string altName) => GetTemplate(name) is string tmp && tmp != "" ? tmp : GetTemplate(altName);
+        public static string GetTemplate(string name, string altName) => GetTemplate(name) is { } tmp && tmp != "" ? tmp : GetTemplate(altName);
 
         /// <summary>
         /// Templates are stored in the plugin's Data folder

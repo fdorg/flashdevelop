@@ -1018,14 +1018,14 @@ namespace AS3Context
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
             if (type == features.dynamicKey) return "undefined";
-            switch (type)
+            return type switch
             {
-                case "int":
-                case "uint": return "0";
-                case "Number": return "NaN";
-                case "Boolean": return "false";
-                default: return "null";
-            }
+                "int" => "0",
+                "uint" => "0",
+                "Number" => "NaN",
+                "Boolean" => "false",
+                _ => "null",
+            };
         }
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)

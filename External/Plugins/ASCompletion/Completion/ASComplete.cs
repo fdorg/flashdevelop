@@ -2109,7 +2109,7 @@ namespace ASCompletion.Completion
 
             // explore members
             exprType.ResolveExtends();
-            if (exprType.ExtendsType is string extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != features.objectKey
+            if (exprType.ExtendsType is { } extendsType && !string.IsNullOrEmpty(extendsType) && extendsType != features.objectKey
                 && exprType.Extends.IsVoid() && !string.IsNullOrEmpty(exprType.Template) && !string.IsNullOrEmpty(exprType.IndexType))
             {
                 /**
@@ -3427,7 +3427,7 @@ namespace ASCompletion.Completion
             if (sci.FileName != ctx.CurrentFile)
             {
                 var model = ctx.GetFileModel(sci.FileName);
-                if (FindMember(currentLine, model.Classes) is ClassModel contextClass)
+                if (FindMember(currentLine, model.Classes) is { } contextClass)
                     contextMember = FindMember(currentLine, contextClass.Members.Items);
                 if (contextMember is null) contextMember = FindMember(currentLine, model.Members.Items);
             }
@@ -5314,7 +5314,7 @@ namespace ASCompletion.Completion
 
         public virtual string Description => Label;
 
-        public Bitmap Icon => icon ?? (icon = (Bitmap) PluginBase.MainForm.FindImage("197"));
+        public Bitmap Icon => icon ??= (Bitmap) PluginBase.MainForm.FindImage("197");
 
         public string Value
         {

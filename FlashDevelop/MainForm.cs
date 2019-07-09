@@ -232,7 +232,7 @@ namespace FlashDevelop
         {
             get
             {
-                List<ITabbedDocument> documents = new List<ITabbedDocument>();
+                var documents = new List<ITabbedDocument>();
                 foreach (DockPane pane in DockPanel.Panes)
                 {
                     if (pane.DockState == DockState.Document)
@@ -2820,21 +2820,14 @@ namespace FlashDevelop
                 foreach (DockPane pane in DockPanel.Panes)
                 {
                     fullScreenDocks[pane] = pane.DockState;
-                    switch (pane.DockState)
+                    pane.DockState = pane.DockState switch
                     {
-                        case DockState.DockLeft:
-                            pane.DockState = DockState.DockLeftAutoHide;
-                            break;
-                        case DockState.DockRight:
-                            pane.DockState = DockState.DockRightAutoHide;
-                            break;
-                        case DockState.DockBottom:
-                            pane.DockState = DockState.DockBottomAutoHide;
-                            break;
-                        case DockState.DockTop:
-                            pane.DockState = DockState.DockTopAutoHide;
-                            break;
-                    }
+                        DockState.DockLeft => DockState.DockLeftAutoHide,
+                        DockState.DockRight => DockState.DockRightAutoHide,
+                        DockState.DockBottom => DockState.DockBottomAutoHide,
+                        DockState.DockTop => DockState.DockTopAutoHide,
+                        _ => pane.DockState,
+                    };
                 }
                 IsFullScreen = true;
             }

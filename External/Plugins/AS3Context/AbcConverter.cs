@@ -530,13 +530,12 @@ namespace AS3Context
             }
             else if (info is MethodInfo method)
             {
-                switch (method.kind)
+                member.Flags |= method.kind switch
                 {
-                    case TraitMember.Setter: member.Flags |= FlagType.Setter; break;
-                    case TraitMember.Getter: member.Flags |= FlagType.Getter; break;
-                    default: member.Flags |= FlagType.Function; break;
-                }
-
+                    TraitMember.Setter => FlagType.Setter,
+                    TraitMember.Getter => FlagType.Getter,
+                    _ => FlagType.Function,
+                };
                 QName type = method.returnType;
                 member.Type = ImportType(type);
 
@@ -611,11 +610,14 @@ namespace AS3Context
 
         private static void SetDefaultValue(MemberModel member, object value)
         {
-            if (value == null) member.Value = "null";
-            else if (value is string && value.ToString() != "undefined") member.Value = '"' + value.ToString() + '"';
-            else if (value is bool) member.Value = value.ToString().ToLower();
-            else if (value is double d) member.Value = d.ToString(CultureInfo.InvariantCulture.NumberFormat);
-            else member.Value = value.ToString();
+            member.Value = value switch
+            {
+                null => "null",
+                string _ when value.ToString() != "undefined" => '"' + value.ToString() + '"',
+                bool _ => value.ToString().ToLower(),
+                double d => d.ToString(CultureInfo.InvariantCulture.NumberFormat),
+                _ => value.ToString(),
+            };
         }
     }
 

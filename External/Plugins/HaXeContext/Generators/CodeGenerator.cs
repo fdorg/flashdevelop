@@ -308,7 +308,7 @@ namespace HaXeContext.Generators
         public override FoundDeclaration GetDeclarationAtLine(int line)
         {
             var result = base.GetDeclarationAtLine(line);
-            if (result.Member is MemberModel member
+            if (result.Member is { } member
                 && string.IsNullOrEmpty(member.Type)
                 && (member.Flags.HasFlag(FlagType.Variable)
                     || member.Flags.HasFlag(FlagType.Getter)
@@ -353,13 +353,13 @@ namespace HaXeContext.Generators
 
         protected override string CheckEventType(MemberModel handler, string eventName)
         {
-            if (handler?.Parameters is List<MemberModel> parameters && parameters.Count > 1 && parameters[1]?.Type is string type)
+            if (handler?.Parameters is { } parameters && parameters.Count > 1 && parameters[1]?.Type is { } type)
             {
                 if (type == "haxe.Constraints.Function") return string.Empty;
                 if (FileParser.IsFunctionType(type))
                 {
                     var member = FileParser.FunctionTypeToMemberModel<MemberModel>(type, ASContext.Context.Features);
-                    if (member.Parameters.Count > 0 && member.Parameters[0].Type is string result)
+                    if (member.Parameters.Count > 0 && member.Parameters[0].Type is { } result)
                     {
                         if (result.Equals(ASContext.Context.Features.voidKey)) return string.Empty;
                         return result;
@@ -374,7 +374,7 @@ namespace HaXeContext.Generators
             if ((member.Flags & (FlagType.Getter | FlagType.Setter)) != 0)
             {
                 var template = TemplateUtils.GetTemplate("IGetterSetter");
-                if (member.Parameters is List<MemberModel> parameters)
+                if (member.Parameters is { } parameters)
                 {
                     if (parameters.Count > 0) template = template.Replace("get", parameters[0].Name);
                     if (parameters.Count > 1) template = template.Replace("set", parameters[1].Name);
@@ -509,14 +509,14 @@ namespace HaXeContext.Generators
 
         protected override string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            if (parameters is null || parameters.Count == 0 || parameters.First().Name != "get"
+            if (parameters.IsNullOrEmpty() || parameters.First().Name != "get"
                 || ASContext.Context.CurrentClass.Members.Contains($"get_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideGetterTemplate(ofClass, parameters, newMember);
         }
 
         protected override string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            if (parameters is null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
+            if (parameters.IsNullOrEmpty() || parameters.Count > 2 || parameters.Last().Name  != "set"
                 || ASContext.Context.CurrentClass.Members.Contains($"set_{newMember.Name}", FlagType.Function, 0)) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
@@ -562,7 +562,7 @@ namespace HaXeContext.Generators
 
         static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, int position, ASResult expr)
         {
-            return expr.Member is MemberModel member
+            return expr.Member is { } member
                    && member.Parameters?.Count > 0
                    && (member.LineFrom != sci.CurrentLine || !expr.Context.BeforeBody)
                    && member.Flags.HasFlag(FlagType.Static | FlagType.Function);
@@ -643,7 +643,7 @@ namespace HaXeContext.Generators
         static int InsertUsing(MemberModel member)
         {
             var statement = string.Empty;
-            if (member.InFile is FileModel inFile && member.Name != inFile.Module)
+            if (member.InFile is { } inFile && member.Name != inFile.Module)
             {
                 if (!string.IsNullOrEmpty(inFile.Package)) statement = inFile.Package + ".";
                 statement += inFile.Module + "." + member.Name;

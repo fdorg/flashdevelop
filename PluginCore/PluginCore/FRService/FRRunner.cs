@@ -198,7 +198,7 @@ namespace PluginCore.FRService
                     return;
                 }
                 var files = configuration.GetFiles();
-                if (files is null || files.Count == 0)
+                if (files.IsNullOrEmpty())
                 {
                     e.Result = new FRResults(); // empty results
                     return;

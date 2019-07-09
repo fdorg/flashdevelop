@@ -180,13 +180,12 @@ namespace ProjectManager.Controls.TreeView
                 excludedFiles = PluginMain.Settings.ExcludedFileTypes.Clone() as string[];
             }
             // new folder name edition
-            if (Tree.PathToSelect != null && Tree.SelectedNode is DirectoryNode && (Tree.SelectedNode as DirectoryNode).BackingPath == Tree.PathToSelect)
+            if (Tree.PathToSelect != null && Tree.SelectedNode is DirectoryNode node && node.BackingPath == Tree.PathToSelect)
             {
-                DirectoryNode node = Tree.SelectedNode as DirectoryNode;
                 Tree.PathToSelect = null;
                 node.EnsureVisible();
                 // if you created a new folder, then label edit it!
-                string label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
+                var label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
                 if (node.Text.StartsWithOrdinal(label))
                 {
                     node.BeginEdit();

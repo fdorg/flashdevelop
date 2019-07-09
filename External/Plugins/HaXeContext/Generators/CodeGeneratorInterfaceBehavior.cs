@@ -11,7 +11,9 @@ namespace HaXeContext.Generators
     {
         protected override bool CanShowNewInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return sci.GetWordFromPosition(position) is string token && !string.IsNullOrEmpty(token) && char.IsUpper(token[0])
+            return sci.GetWordFromPosition(position) is { } token
+                   && !string.IsNullOrEmpty(token)
+                   && char.IsUpper(token[0])
                    && base.CanShowNewInterfaceList(sci, position, expr, found);
         }
 

@@ -134,10 +134,13 @@ namespace FlashDebugger
                 }
                 var ctx = new ExpressionContext(PluginMain.debugManager.FlashInterface.Session, frame);
                 var val = bpInfo.ParsedExpression.evaluate(ctx);
-                if (val is Boolean boolean) return boolean.booleanValue();
-                if (val is Value value) return ECMA.toBoolean(value);
-                if (val is Variable variable) return ECMA.toBoolean(variable.getValue());
-                throw new NotImplementedException(val.toString());
+                return val switch
+                {
+                    Boolean boolean => boolean.booleanValue(),
+                    Value value => ECMA.toBoolean(value),
+                    Variable variable => ECMA.toBoolean(variable.getValue()),
+                    _ => throw new NotImplementedException(val.toString()),
+                };
             }
             catch (/*Expression*/Exception e)
             {

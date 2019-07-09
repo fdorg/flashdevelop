@@ -27,7 +27,7 @@ namespace HaXeContext.Linters
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
 
-            if (context == null || !(PluginBase.CurrentProject is ProjectManager.Projects.Haxe.HaxeProject) || !CanContinue(context)) return;
+            if (context is null || !(PluginBase.CurrentProject is ProjectManager.Projects.Haxe.HaxeProject) || !CanContinue(context)) return;
             
             var total = files.Count();
             var list = new List<LintingResult>();
@@ -100,7 +100,7 @@ namespace HaXeContext.Linters
             ConfigurationLanguage = "haxe"
         };
 
-        void AddDiagnosticsResults(List<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
+        void AddDiagnosticsResults(ICollection<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
         {
             if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
             {

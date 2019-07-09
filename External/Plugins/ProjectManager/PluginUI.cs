@@ -179,8 +179,8 @@ namespace ProjectManager
         private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string action = e.Link.LinkData as string;
-            if (action == "create" && NewProject is EventHandler newProject) newProject(sender, e);
-            else if (action == "open" && OpenProject is EventHandler openProject) openProject(sender, e);
+            if (action == "create" && NewProject is { } newProject) newProject(sender, e);
+            else if (action == "open" && OpenProject is { } openProject) openProject(sender, e);
             else if (action != null && action.StartsWith("import|")) ImportProject?.Invoke(sender, e);
         }
 

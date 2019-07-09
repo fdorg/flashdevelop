@@ -477,7 +477,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static void ReplaceMatches(List<SearchMatch> matches, ScintillaControl sci, string replacement)
         {
-            if (sci is null || matches is null || matches.Count == 0) return;
+            if (sci is null || matches.IsNullOrEmpty()) return;
             sci.BeginUndoAction();
             try
             {
@@ -625,30 +625,26 @@ namespace CodeRefactor.Provider
 
         public static bool IsCommentStyle(int style)
         {
-            switch (style)
+            return style switch
             {
-                case 1: //COMMENT
-                case 2: //COMMENTLINE
-                case 3: //COMMENTDOC
-                case 15: //COMMENTLINEDOC
-                    return true;
-                default:
-                    return false;
-            }
+                1 => true, //COMMENT
+                2 => true, //COMMENTLINE
+                3 => true, //COMMENTDOC
+                15 => true,//COMMENTLINEDOC
+                _ => false,
+            };
         }
 
         public static bool IsStringStyle(int style)
         {
-            switch (style)
+            return style switch
             {
-                case 6: //STRING
-                case 7: //CHARACTER
-                case 13: //VERBATIM
-                case 14: //REGEX
-                    return true;
-                default:
-                    return false;
-            }
+                6 => true, //STRING
+                7 => true, //CHARACTER
+                13 => true,//VERBATIM
+                14 => true,//REGEX
+                _ => false,
+            };
         }
 
         internal static void RaiseMoveEvent(string fromPath, string toPath)

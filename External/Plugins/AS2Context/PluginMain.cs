@@ -140,7 +140,7 @@ namespace AS2Context
         /// </summary>
         private void ValidateSettings()
         {
-            if (settingObject.InstalledSDKs is null || settingObject.InstalledSDKs.Length == 0)
+            if (settingObject.InstalledSDKs.IsNullOrEmpty())
             {
                 var allSdks = new List<InstalledSDK>();
                 var includedSDK = "Tools\\mtasc";

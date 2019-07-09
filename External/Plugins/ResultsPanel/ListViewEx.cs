@@ -103,17 +103,12 @@ namespace ResultsPanel
                 base.OnDrawColumnHeader(sender, e);
                 if (isSorted)
                 {
-                    Image arrow = null;
-                    switch (SortOrder)
+                    var arrow = SortOrder switch
                     {
-                        case SortOrder.Ascending:
-                            arrow = SmallImageList.Images[upArrowIndex];
-                            break;
-                        case SortOrder.Descending:
-                            arrow = SmallImageList.Images[downArrowIndex];
-                            break;
-                    }
-
+                        SortOrder.Ascending => SmallImageList.Images[upArrowIndex],
+                        SortOrder.Descending => SmallImageList.Images[downArrowIndex],
+                        _ => null,
+                    };
                     int x = e.Bounds.Location.X + (e.Bounds.Width - 16) / 2;
                     e.Graphics.DrawImage(arrow, x, e.Bounds.Y - 5);
                 }
@@ -152,18 +147,13 @@ namespace ResultsPanel
                 SortedColumn.ImageIndex = -1;
             }
 
-            switch (order)
+            column.ImageIndex = order switch
             {
-                case SortOrder.None:
-                    column.ImageIndex = -1;
-                    break;
-                case SortOrder.Ascending:
-                    column.ImageIndex = upArrowIndex;
-                    break;
-                case SortOrder.Descending:
-                    column.ImageIndex = downArrowIndex;
-                    break;
-            }
+                SortOrder.None => -1,
+                SortOrder.Ascending => upArrowIndex,
+                SortOrder.Descending => downArrowIndex,
+                _ => column.ImageIndex,
+            };
         }
     }
 }

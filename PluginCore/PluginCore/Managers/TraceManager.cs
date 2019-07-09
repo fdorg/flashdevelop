@@ -127,7 +127,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupData(string groupId, params string[] args)
         {
-            if (args is null || args.Length == 0) return groupId;
+            if (args.IsNullOrEmpty()) return groupId;
             return groupId + ":" + string.Join(",", args);
         }
 
@@ -138,7 +138,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupDataUnique(string groupId, params string[] args)
         {
-            if (args is null || args.Length == 0)
+            if (args.IsNullOrEmpty())
             {
                 return CreateGroupData(groupId, uniqueToken++.ToString());
             }
@@ -170,17 +170,15 @@ namespace PluginCore.Managers
             lock (asyncQueue)
             {
                 if (PluginBase.MainForm.ClosingEntirely) return;
-                if (!synchronizing)
+                if (synchronizing) return;
+                synchronizing = true;
+                try
                 {
-                    synchronizing = true;
-                    try
-                    {
-                        ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
-                    }
-                    catch (Exception)
-                    {
-                        synchronizing = false;
-                    }
+                    ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
+                }
+                catch (Exception)
+                {
+                    synchronizing = false;
                 }
             }
         }

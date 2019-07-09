@@ -282,8 +282,8 @@ namespace ProjectManager.Controls.TreeView
             if (node is ProjectNode) AddProjectItems(menu);
             else if (node is ClasspathNode) AddClasspathItems(menu, path);
             else if (node is DirectoryNode) AddFolderItems(menu, path);
-            else if (node is ProjectOutputNode) AddProjectOutputItems(menu, node as ProjectOutputNode);
-            else if (node is ExportNode) AddExportItems(menu, node as ExportNode);
+            else if (node is ProjectOutputNode outputNode) AddProjectOutputItems(menu, outputNode);
+            else if (node is ExportNode exportNode) AddExportItems(menu, exportNode);
             else if (node is FileNode)
             {
                 string ext = Path.GetExtension(path).ToLower();
@@ -359,7 +359,7 @@ namespace ProjectManager.Controls.TreeView
 
             if (projectTree.SelectedPaths.Length == 1 && project.IsCompilable)
             {
-                DirectoryNode node = projectTree.SelectedNode as DirectoryNode;
+                var node = (DirectoryNode) projectTree.SelectedNode;
                 if (node.InsideClasspath == node) menu.Add(RemoveSourcePath, 2, true);
                 else if (node.InsideClasspath == null || node.InsideClasspath is ProjectNode)
                 {

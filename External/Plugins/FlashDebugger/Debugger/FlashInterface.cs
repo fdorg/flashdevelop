@@ -259,7 +259,7 @@ namespace FlashDebugger
                         {
                             case 1://SuspendReason_.Breakpoint:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (BreakpointEvent is DebuggerEventHandler breakpointEvent)
+                                if (BreakpointEvent is { } breakpointEvent)
                                 {
                                     m_RequestPause = true;
                                     // trigger only for main worker here (if we are main worker, or if we are not and are not suspended)
@@ -295,7 +295,7 @@ namespace FlashDebugger
 
                             case 3://SuspendReason_.Fault:
                                 m_CurrentState = DebuggerState.ExceptionHalt;
-                                if (FaultEvent is DebuggerEventHandler faultEvent)
+                                if (FaultEvent is { } faultEvent)
                                 {
                                     faultEvent(this);
                                 }
@@ -317,7 +317,7 @@ namespace FlashDebugger
                                 clearBreakpoints();
                                 UpdateBreakpoints(m_BreakPointManager.BreakPoints);
 
-                                if (ScriptLoadedEvent is DebuggerEventHandler scriptLoadedEvent)
+                                if (ScriptLoadedEvent is { } scriptLoadedEvent)
                                 {
                                     scriptLoadedEvent(this);
                                 }
@@ -329,7 +329,7 @@ namespace FlashDebugger
 
                             case 5://SuspendReason_.Step:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (StepEvent is DebuggerEventHandler stepEvent)
+                                if (StepEvent is { } stepEvent)
                                 {
                                     stepEvent(this);
                                 }
@@ -341,7 +341,7 @@ namespace FlashDebugger
 
                             case 4://SuspendReason_.StopRequest:
                                 m_CurrentState = DebuggerState.PauseHalt;
-                                if (PauseEvent is DebuggerEventHandler pauseEvent)
+                                if (PauseEvent is { } pauseEvent)
                                 {
                                     pauseEvent(this);
                                 }
@@ -353,7 +353,7 @@ namespace FlashDebugger
 
                             case 2://SuspendReason_.Watch:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (WatchpointEvent is DebuggerEventHandler watchPointEvent)
+                                if (WatchpointEvent is { } watchPointEvent)
                                 {
                                     watchPointEvent(this);
                                 }
@@ -369,7 +369,7 @@ namespace FlashDebugger
 
                             default:
                                 m_CurrentState = DebuggerState.BreakHalt;
-                                if (UnknownHaltEvent is DebuggerEventHandler unknownHaltEvent)
+                                if (UnknownHaltEvent is { } unknownHaltEvent)
                                 {
                                     unknownHaltEvent(this);
                                 }
