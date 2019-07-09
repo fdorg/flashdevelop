@@ -245,7 +245,7 @@ namespace Interop.ShockwaveFlashObjects
     void CheckDisconnect()
     {
       ConnectionCount--;
-      if (ConnectionCount <= 0)
+      if (ConnectionCount == 0)
         Disconnect();
     }
 

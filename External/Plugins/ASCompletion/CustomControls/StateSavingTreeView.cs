@@ -119,7 +119,7 @@ namespace System.Windows.Forms
 
         public void SaveScrollState()
         {
-            if (base.Nodes.Count < 1) return;
+            if (base.Nodes.Count == 0) return;
 
             // store what nodes were at the top and bottom so we can try and preserve scroll
             // use the tag instead of node reference because you're most likely rebuilding
@@ -135,7 +135,7 @@ namespace System.Windows.Forms
 
         public void RestoreScrollState()
         {
-            if (base.Nodes.Count < 1) return;
+            if (base.Nodes.Count == 0) return;
 
             TreeNode bottomNode = FindClosestPath(State.BottomPath);
             TreeNode topNode = FindClosestPath(State.TopPath);

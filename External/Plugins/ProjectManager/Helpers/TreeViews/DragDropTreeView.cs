@@ -132,7 +132,7 @@ namespace System.Windows.Forms
                     return;
 
             // we didn't make it :(
-            if (nodes.Count < 1) return;
+            if (nodes.Count == 0) return;
 
             // ok it's time to move it move it
             foreach (TreeNode node in nodes)

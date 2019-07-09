@@ -580,7 +580,7 @@ namespace CodeRefactor
                 }
                 var dialog = new DelegateMethodsDialog();
                 dialog.FillData(members, result.Type);
-                if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count <= 0) return;
+                if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count == 0) return;
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
                 command.Execute();
             }

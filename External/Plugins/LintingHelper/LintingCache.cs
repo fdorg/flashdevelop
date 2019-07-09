@@ -40,7 +40,7 @@ namespace LintingHelper
                 }
                 var end = start + len;
                     
-                if (start <= position && (end >= position || result.Length < 0 && result.Line == line + 1))
+                if (start <= position && (end >= position || result.Length == -1 && result.Line == line + 1))
                 {
                     //suitable result
                     localResults.Add(result);

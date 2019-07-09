@@ -42,9 +42,7 @@ namespace ProjectManager.Building
         public void Run(string buildEvents, bool noTrace)
         {
             string[] events = buildEvents.Split('\n');
-            if (events.Length == 0)
-                return;
-
+            if (events.Length == 0) return;
             BuildEventInfo[] infos = vars.GetVars();
             foreach (string buildEvent in events)
             {
@@ -52,7 +50,7 @@ namespace ProjectManager.Building
 
                 string line = buildEvent.Trim();
 
-                if (line.Length <= 0)
+                if (line.Length == 0)
                     continue; // nothing to do
 
                 // conditional execution

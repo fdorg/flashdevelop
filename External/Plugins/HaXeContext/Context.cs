@@ -1056,7 +1056,7 @@ namespace HaXeContext
                         if (p2 != -1) lpart = import.Substring(p2 + 1);
                         if (char.IsLower(lpart[0])) continue;
                         var type = ResolveType(lpart, Context.CurrentModel);
-                        if (type.IsVoid() || type.Members.Count <= 0) continue;
+                        if (type.IsVoid() || type.Members.Count == 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
                         if (member is null) continue;
@@ -1616,7 +1616,7 @@ namespace HaXeContext
                     }
                 }
             }
-            if (extensions.Count <= 0) return false;
+            if (extensions.Count == 0) return false;
             result = (ClassModel) type.Clone();
             result.Members.Merge(extensions);
             return true;

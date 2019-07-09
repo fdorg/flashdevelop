@@ -644,7 +644,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ResultsViewDoubleClick(object sender, System.EventArgs e)
         {
-            if (this.resultsView.SelectedItems.Count < 1) return;
+            if (this.resultsView.SelectedItems.Count == 0) return;
             var item = this.resultsView.SelectedItems[0];
             var data = (KeyValuePair<string, SearchMatch>)item.Tag;
             if (!File.Exists(data.Key)) return;

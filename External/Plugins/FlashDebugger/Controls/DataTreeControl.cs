@@ -561,7 +561,7 @@ namespace FlashDebugger.Controls
 
         private void SaveScrollState()
         {
-            if (Nodes.Count < 1)
+            if (Nodes.Count == 0)
             {
                 state.TopPath = state.BottomPath = null;
                 return;
@@ -594,7 +594,7 @@ namespace FlashDebugger.Controls
 
         private void RestoreScrollState()
         {
-            if (Nodes.Count < 1) return;
+            if (Nodes.Count == 0) return;
 
             if (state.BottomPath != null)
             {
