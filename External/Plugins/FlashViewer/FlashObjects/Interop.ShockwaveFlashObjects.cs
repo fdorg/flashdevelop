@@ -195,7 +195,7 @@ namespace Interop.ShockwaveFlashObjects
     int ConnectionCount;
 
     // Constructor: remember ConnectionPointContainer
-    _IShockwaveFlashEvents_EventProvider(object CPContainer) : base()
+    _IShockwaveFlashEvents_EventProvider(object CPContainer)
     {
       ConnectionPointContainer = (IConnectionPointContainer)CPContainer;
     }

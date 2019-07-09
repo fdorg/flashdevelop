@@ -899,7 +899,7 @@ namespace System.Windows.Forms
         private static readonly Padding defaultMargin = new Padding(1, 2, 1, 1);
         private static readonly Padding defaultStatusStripMargin = new Padding(1, 5, 1, 4);
 
-        public ToolStripProgressBarEx() : base()
+        public ToolStripProgressBarEx()
         {
             this.OverrideControl();
             this.Font = PluginBase.Settings.DefaultFont;

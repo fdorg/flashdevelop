@@ -103,8 +103,7 @@ namespace AS3Context
                 foreach (Traits trait in abc.classes)
                 {
                     Traits instance = trait.itraits;
-                    if (instance is null)
-                        continue;
+                    if (instance is null) continue;
                     imports.Clear();
                     conflicts.Clear();
 
@@ -117,8 +116,7 @@ namespace AS3Context
                     model.Version = 3;
 
                     ClassModel type = new ClassModel();
-                    model.Classes = new List<ClassModel>();
-                    model.Classes.Add(type);
+                    model.Classes = new List<ClassModel> {type};
 
                     type.InFile = model;
                     type.Type = instance.name.ToTypeString();

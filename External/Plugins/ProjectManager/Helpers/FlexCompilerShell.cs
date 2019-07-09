@@ -12,8 +12,6 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class FlexCompilerShell : MarshalByRefObject
     {
-        public static string FcshPath;
-
         //C:\...\Main.as(17): col: 15 Warning: variable 'yc' has no type declaration.
         private static readonly Regex reWarning
             = new Regex("\\([0-9]+\\): col: [0-9]+ Warning:", RegexOptions.Compiled);
@@ -73,7 +71,6 @@ namespace ProjectManager.Helpers
         }
 
         void process_Exited(object sender, EventArgs e) => throw new Exception("Process Exited");
-
 
         public void Compile(string projectPath,
                             bool configChanged,
@@ -257,10 +254,7 @@ namespace ProjectManager.Helpers
         /// Read until fcsh is in idle state, displaying its (fcsh) prompt
         /// </summary>
         /// <returns></returns>
-        private string ReadUntilPrompt()
-        {
-            return ReadUntilToken("(fcsh)");
-        }
+        private string ReadUntilPrompt() => ReadUntilToken("(fcsh)");
 
         private string ReadUntilToken(string token)
         {

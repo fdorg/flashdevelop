@@ -8,9 +8,6 @@ namespace LayoutManager.Controls
 {
     public class LayoutSelectorEditor : ObjectSelectorEditor
     {
-        /// <summary>
-        /// 
-        /// </summary>
         protected override void FillTreeWithData(Selector selector, ITypeDescriptorContext context, IServiceProvider provider)
         {
             base.FillTreeWithData(selector, context, provider);
@@ -21,7 +18,6 @@ namespace LayoutManager.Controls
                 var label = Path.GetFileNameWithoutExtension(layout);
                 selector.Nodes.Add(new SelectorNode(label, layout));
             }
-
         }
 
         /// <summary>
@@ -29,16 +25,11 @@ namespace LayoutManager.Controls
         /// </summary>
         private string GetLayoutsDir()
         {
-            string userPath = Settings.Instance.CustomLayoutPath;
+            var userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
-            string path = Path.Combine(GetDataDir(), "Layouts");
+            var path = Path.Combine(Path.Combine(PathHelper.DataDir, nameof(LayoutManager)), "Layouts");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }
-
-        /// <summary>
-        /// Gets the plugin data directory
-        /// </summary>
-        private string GetDataDir() => Path.Combine(PathHelper.DataDir, "LayoutManager");
     }
 }

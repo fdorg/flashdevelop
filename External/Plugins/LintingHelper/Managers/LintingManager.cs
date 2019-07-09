@@ -176,14 +176,9 @@ namespace LintingHelper.Managers
                 else
                 {
                     var sci = DocumentManager.FindDocument(result.File)?.SciControl;
-                    if (sci != null)
-                    {
-                        chars = $"chars {result.FirstChar}-{sci.LineLength(result.Line - 1)}";
-                    }
-                    else
-                    {
-                        chars = $"char {result.FirstChar}";
-                    }
+                    chars = sci != null
+                        ? $"chars {result.FirstChar}-{sci.LineLength(result.Line - 1)}"
+                        : $"char {result.FirstChar}";
                 }
                 string message = $"{result.File}:{result.Line}: {chars} : {result.Severity}: {result.Description}";
                 int state;

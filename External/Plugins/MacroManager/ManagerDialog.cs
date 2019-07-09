@@ -218,8 +218,7 @@ namespace MacroManager
         /// </summary>
         private void ContextMenuOpening(object sender, CancelEventArgs e)
         {
-            if (this.listView.SelectedItems.Count == 0) this.exportItem.Visible = false;
-            else this.exportItem.Visible = true;
+            exportItem.Visible = listView.SelectedItems.Count != 0;
         }
 
         /// <summary>
@@ -318,8 +317,7 @@ namespace MacroManager
                 this.propertyGrid.SelectedObject = item.Tag;
             }
             else this.propertyGrid.SelectedObject = null;
-            if (this.listView.SelectedItems.Count == 0) this.deleteButton.Enabled = false;
-            else this.deleteButton.Enabled = true;
+            deleteButton.Enabled = listView.SelectedItems.Count != 0;
         }
 
         /// <summary>
@@ -337,30 +335,23 @@ namespace MacroManager
         /// <summary>
         /// Closes the macro editoe dialog
         /// </summary>
-        private void CloseButtonClick(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void CloseButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Exports the current macro list into a file
         /// </summary>
         private void ExportMacros(object sender, EventArgs e)
         {
-            using (SaveFileDialog sfd = new SaveFileDialog())
+            using var sfd = new SaveFileDialog();
+            sfd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
+            sfd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+            var macros = new List<Macro>();
+            foreach (ListViewItem item in this.listView.SelectedItems)
             {
-                sfd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
-                sfd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-                if (sfd.ShowDialog() == DialogResult.OK)
-                {
-                    List<Macro> macros = new List<Macro>();
-                    foreach (ListViewItem item in this.listView.SelectedItems)
-                    {
-                        macros.Add((Macro)item.Tag);
-                    }
-                    ObjectSerializer.Serialize(sfd.FileName, macros);
-                }
+                macros.Add((Macro)item.Tag);
             }
+            ObjectSerializer.Serialize(sfd.FileName, macros);
         }
 
         /// <summary>
@@ -368,29 +359,21 @@ namespace MacroManager
         /// </summary>
         private void ImportMacros(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
-                ofd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    this.SaveUserMacros();
-                    List<Macro> macros = new List<Macro>();
-                    object macrosObject = ObjectSerializer.Deserialize(ofd.FileName, macros, false);
-                    macros = (List<Macro>)macrosObject;
-                    this.pluginMain.AppSettings.UserMacros.AddRange(macros);
-                    this.PopulateMacroList(this.pluginMain.AppSettings.UserMacros);
-                }
-            }
+            using var ofd = new OpenFileDialog();
+            ofd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
+            ofd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            this.SaveUserMacros();
+            var macros = new List<Macro>();
+            macros = (List<Macro>)ObjectSerializer.Deserialize(ofd.FileName, macros, false);
+            this.pluginMain.AppSettings.UserMacros.AddRange(macros);
+            this.PopulateMacroList(this.pluginMain.AppSettings.UserMacros);
         }
 
         /// <summary>
         /// Loads the macros from the settings
         /// </summary>
-        private void DialogLoad(object sender, EventArgs e)
-        {
-            this.LoadUserMacros();
-        }
+        private void DialogLoad(object sender, EventArgs e) => LoadUserMacros();
 
         /// <summary>
         /// Saves the macros when the dialog is closed
@@ -407,12 +390,10 @@ namespace MacroManager
         /// </summary>
         public static void Show(PluginMain pluginMain)
         {
-            using (ManagerDialog managerDialog = new ManagerDialog(pluginMain))
-                managerDialog.ShowDialog();
+            using var managerDialog = new ManagerDialog(pluginMain);
+            managerDialog.ShowDialog();
         }
 
         #endregion
-
     }
-
 }

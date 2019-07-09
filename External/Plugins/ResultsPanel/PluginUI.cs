@@ -51,7 +51,6 @@ namespace ResultsPanel
 
         public PluginUI(PluginMain pluginMain) : this(pluginMain, null, null, true, false)
         {
-
         }
 
         internal PluginUI(PluginMain pluginMain, string groupData, string groupId, bool showFilterButtons, bool allowMultiplePanels)
@@ -351,10 +350,7 @@ namespace ResultsPanel
         /// <summary>
         /// Initializes the context menu for entriesView
         /// </summary>
-        private void InitializeContextMenu()
-        {
-            this.EntriesView.ContextMenuStrip = this.pluginMain.contextMenuStrip;
-        }
+        private void InitializeContextMenu() => EntriesView.ContextMenuStrip = pluginMain.contextMenuStrip;
 
         /// <summary>
         /// Initializes the image list for entriesView
@@ -739,10 +735,7 @@ namespace ResultsPanel
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButton_Click(object sender, EventArgs e)
-        {
-            this.toolStripTextBoxFilter.Text = "";
-        }
+        private void ClearFilterButton_Click(object sender, EventArgs e) => toolStripTextBoxFilter.Text = "";
 
         /// <summary>
         /// If the user presses Enter, dispatch double click
@@ -791,10 +784,7 @@ namespace ResultsPanel
         /// <summary>
         /// Update the buttons when the panel resizes
         /// </summary>
-        private void PluginUI_Resize(object sender, EventArgs e)
-        {
-            this.UpdateButtons();
-        }
+        private void PluginUI_Resize(object sender, EventArgs e) => UpdateButtons();
 
         /// <summary>
         /// Opens the file and goes to the match

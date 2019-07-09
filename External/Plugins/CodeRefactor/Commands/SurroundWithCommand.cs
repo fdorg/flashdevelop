@@ -3,7 +3,6 @@ using System.Text;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Utilities;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {

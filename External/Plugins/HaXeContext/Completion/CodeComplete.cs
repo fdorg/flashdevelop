@@ -412,7 +412,7 @@ namespace HaXeContext.Completion
             return false;
             // Utils
             static bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
-                                         || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
+                                         || (t.Flags.HasFlag(FlagType.Abstract) && !t.Members.IsNullOrEmpty()
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
 
             static bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);

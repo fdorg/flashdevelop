@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -50,7 +49,6 @@ namespace StartPage.ProjectInfo
         public string Created = "Error getting file information.";
         public string Modified = "Error getting file information.";
 
-        public RecentProject() {}
         public RecentProject(string path)
         {
             FileInfo fileInfo = new FileInfo(path);

@@ -26,11 +26,11 @@ namespace TaskListPanel
         private readonly PluginMain pluginMain;
         private string currentFileName;
         private List<string> extensions;
-        private Regex todoParser = null;
-        private bool isEnabled = false;
-        private bool refreshEnabled = false;
+        private Regex todoParser;
+        private bool isEnabled;
+        private bool refreshEnabled;
         private readonly System.Windows.Forms.Timer parseTimer;
-        private bool firstExecutionCompleted = false;
+        private bool firstExecutionCompleted;
         private readonly Dictionary<string, DateTime> filesCache;
         private ContextMenuStrip contextMenu;
         private ToolStripMenuItem refreshButton;
@@ -389,37 +389,35 @@ namespace TaskListPanel
         {
             this.currentPos = -1;
             this.currentFileName = null;
-            if (this.isEnabled && PluginBase.CurrentProject != null)
+            if (!this.isEnabled || PluginBase.CurrentProject is null) return;
+            this.RefreshEnabled = false;
+            // Stop current exploration
+            if (this.parseTimer.Enabled) this.parseTimer.Stop();
+            this.parseTimer.Tag = null;
+            if (bgWork != null && bgWork.IsBusy) bgWork.CancelAsync();
+            IProject project = PluginBase.CurrentProject;
+            ExplorationContext context = new ExplorationContext();
+            Settings settings = (Settings)this.pluginMain.Settings;
+            context.ExcludedPaths = (string[])settings.ExcludedPaths.Clone();
+            context.Directories = (string[])project.SourcePaths.Clone();
+            for (int i = 0; i < context.Directories.Length; i++)
             {
-                this.RefreshEnabled = false;
-                // Stop current exploration
-                if (this.parseTimer.Enabled) this.parseTimer.Stop();
-                this.parseTimer.Tag = null;
-                if (bgWork != null && bgWork.IsBusy) bgWork.CancelAsync();
-                IProject project = PluginBase.CurrentProject;
-                ExplorationContext context = new ExplorationContext();
-                Settings settings = (Settings)this.pluginMain.Settings;
-                context.ExcludedPaths = (string[])settings.ExcludedPaths.Clone();
-                context.Directories = (string[])project.SourcePaths.Clone();
-                for (int i = 0; i < context.Directories.Length; i++)
-                {
-                    context.Directories[i] = project.GetAbsolutePath(context.Directories[i]);
-                }
-                context.HiddenPaths = project.GetHiddenPaths();
-                for (int i = 0; i < context.HiddenPaths.Length; i++)
-                {
-                    context.HiddenPaths[i] = project.GetAbsolutePath(context.HiddenPaths[i]);
-                }
-                GetExtensions();
-                bgWork = new BackgroundWorker();
-                context.Worker = bgWork;
-                bgWork.WorkerSupportsCancellation = true;
-                bgWork.DoWork += bgWork_DoWork;
-                bgWork.RunWorkerCompleted += bgWork_RunWorkerCompleted;
-                bgWork.RunWorkerAsync(context);
-                string message = TextHelper.GetString("Info.Refreshing");
-                this.toolStripLabel.Text = message;
+                context.Directories[i] = project.GetAbsolutePath(context.Directories[i]);
             }
+            context.HiddenPaths = project.GetHiddenPaths();
+            for (int i = 0; i < context.HiddenPaths.Length; i++)
+            {
+                context.HiddenPaths[i] = project.GetAbsolutePath(context.HiddenPaths[i]);
+            }
+            GetExtensions();
+            bgWork = new BackgroundWorker();
+            context.Worker = bgWork;
+            bgWork.WorkerSupportsCancellation = true;
+            bgWork.DoWork += bgWork_DoWork;
+            bgWork.RunWorkerCompleted += bgWork_RunWorkerCompleted;
+            bgWork.RunWorkerAsync(context);
+            string message = TextHelper.GetString("Info.Refreshing");
+            this.toolStripLabel.Text = message;
         }
 
         private void GetExtensions()
@@ -444,7 +442,7 @@ namespace TaskListPanel
         private void bgWork_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled) return;
-            ExplorationContext context = e.Result as ExplorationContext;
+            var context = (ExplorationContext) e.Result;
             this.parseTimer.Tag = context;
             this.parseTimer.Interval = 2000;
             this.parseTimer.Enabled = true;
@@ -458,7 +456,7 @@ namespace TaskListPanel
         /// </summary>
         private void bgWork_DoWork(object sender, DoWorkEventArgs e)
         {
-            ExplorationContext context = e.Argument as ExplorationContext;
+            var context = (ExplorationContext) e.Argument;
             context.Files = this.GetFiles(context);
             if (context.Worker.CancellationPending) e.Cancel = true;
             else e.Result = context;
@@ -530,75 +528,64 @@ namespace TaskListPanel
         private void ParseFile(string path)
         {
             if (!File.Exists(path)) return;
-            Hashtable itemTag; 
-            ListViewItem item;
             EncodingFileInfo info = FileHelper.GetEncodingFileInfo(path);
             if (info.CodePage == -1) return; // If the file is locked, stop.
             MatchCollection matches = this.todoParser.Matches(info.Contents);
             this.RemoveItemsByPath(path);
-            if (matches.Count > 0)
+            if (matches.Count == 0) return;
+            foreach (Match match in matches)
             {
-                foreach (Match match in matches)
-                {
-                    itemTag = new Hashtable();
-                    itemTag["FullPath"] = path;
-                    itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
-                    itemTag["Position"] = match.Groups[2].Index;
-                    item = new ListViewItem(new[] {
-                        "",
-                        match.Groups[2].Index.ToString(),
-                        match.Groups[2].Value,
-                        CleanMatch(match.Groups[3].Value), 
-                        Path.GetFileName(path),
-                        Path.GetDirectoryName(path)
-                    }, FindImageIndex(match.Groups[2].Value));
-                    item.Tag = itemTag;
-                    item.Name = path;
-                    item.ToolTipText = match.Groups[2].Value;
-                    this.listView.Items.Add(item);
-                    this.AddToGroup(item, path);
-                }
+                var itemTag = new Hashtable();
+                itemTag["FullPath"] = path;
+                itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
+                itemTag["Position"] = match.Groups[2].Index;
+                var item = new ListViewItem(new[] {
+                    "",
+                    match.Groups[2].Index.ToString(),
+                    match.Groups[2].Value,
+                    CleanMatch(match.Groups[3].Value), 
+                    Path.GetFileName(path),
+                    Path.GetDirectoryName(path)
+                }, FindImageIndex(match.Groups[2].Value));
+                item.Tag = itemTag;
+                item.Name = path;
+                item.ToolTipText = match.Groups[2].Value;
+                this.listView.Items.Add(item);
+                this.AddToGroup(item, path);
             }
         }
 
         /// <summary>
         /// Clean match from dirt
         /// </summary>
-        private string CleanMatch(string value)
-        {
-            return reClean.Replace(value, "").Trim();
-        }
+        private string CleanMatch(string value) => reClean.Replace(value, "").Trim();
 
         /// <summary>
         /// Parse a string
         /// </summary>
         private void ParseFile(string text, string path)
         {
-            ListViewItem item;
-            Hashtable itemTag;
             MatchCollection matches = this.todoParser.Matches(text);
             this.RemoveItemsByPath(path);
-            if (matches.Count > 0)
+            if (matches.Count == 0) return;
+            foreach (Match match in matches)
             {
-                foreach (Match match in matches)
-                {
-                    itemTag = new Hashtable();
-                    itemTag["FullPath"] = path;
-                    itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
-                    itemTag["Position"] = match.Groups[2].Index;
-                    item = new ListViewItem(new[] {
-                        "",
-                        match.Groups[2].Index.ToString(),
-                        match.Groups[2].Value,
-                        match.Groups[3].Value.Trim(), 
-                        Path.GetFileName(path),
-                        Path.GetDirectoryName(path)
-                    }, FindImageIndex(match.Groups[2].Value));
-                    item.Tag = itemTag;
-                    item.Name = path;
-                    this.listView.Items.Add(item);
-                    this.AddToGroup(item, path);
-                }
+                var itemTag = new Hashtable();
+                itemTag["FullPath"] = path;
+                itemTag["LastWriteTime"] = new FileInfo(path).LastWriteTime;
+                itemTag["Position"] = match.Groups[2].Index;
+                var item = new ListViewItem(new[] {
+                    "",
+                    match.Groups[2].Index.ToString(),
+                    match.Groups[2].Value,
+                    match.Groups[3].Value.Trim(),
+                    Path.GetFileName(path),
+                    Path.GetDirectoryName(path)
+                }, FindImageIndex(match.Groups[2].Value));
+                item.Tag = itemTag;
+                item.Name = path;
+                this.listView.Items.Add(item);
+                this.AddToGroup(item, path);
             }
         }
 
@@ -607,11 +594,11 @@ namespace TaskListPanel
         /// </summary>
         private void AddToGroup(ListViewItem item, string path)
         {
-            string gpname;
             bool found = false;
             ListViewGroup gp = null;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("FlashDevelop.Group.Other");
+            var gpname = File.Exists(path)
+                ? Path.GetFileName(path)
+                : TextHelper.GetString("FlashDevelop.Group.Other");
             foreach (ListViewGroup lvg in this.listView.Groups)
             {
                 if (lvg.Tag.ToString() == path)
@@ -655,12 +642,10 @@ namespace TaskListPanel
         private void ImageList_Populate(object sender, EventArgs e)
         {
             Settings settings = (Settings) this.pluginMain.Settings;
-            if (settings?.ImageIndexes != null)
+            if (settings?.ImageIndexes is null) return;
+            foreach (int index in settings.ImageIndexes)
             {
-                foreach (int index in settings.ImageIndexes)
-                {
-                    imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust(index.ToString()));
-                }
+                imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust(index.ToString()));
             }
         }
 
@@ -752,34 +737,32 @@ namespace TaskListPanel
         private void ListViewDoubleClick(object sender, EventArgs e)
         {
             if (!this.isEnabled) return;
-            ListView.SelectedListViewItemCollection selected = this.listView.SelectedItems;
+            var selected = this.listView.SelectedItems;
             this.currentFileName = null; this.currentPos = -1;
-            if (selected.Count > 0)
+            if (selected.Count == 0) return;
+            ListViewItem firstSelected = selected[0];
+            string path = firstSelected.Name;
+            this.currentFileName = path;
+            this.currentPos = (int)((Hashtable)firstSelected.Tag)["Position"];
+            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+            if (document.IsEditable)
             {
-                ListViewItem firstSelected = selected[0];
-                string path = firstSelected.Name;
-                this.currentFileName = path;
-                this.currentPos = (int)((Hashtable)firstSelected.Tag)["Position"];
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
-                if (document.IsEditable)
+                if (document.FileName.ToUpper() == path.ToUpper())
                 {
-                    if (document.FileName.ToUpper() == path.ToUpper())
-                    {
-                        MoveToPosition(document.SciControl, currentPos);
-                        currentFileName = null;
-                        currentPos = -1;
-                        return;
-                    }
+                    MoveToPosition(document.SciControl, currentPos);
+                    currentFileName = null;
+                    currentPos = -1;
+                    return;
                 }
-                if (!File.Exists(path))
-                {
-                    string message = TextHelper.GetString("Info.InvalidFile");
-                    ErrorManager.ShowInfo(message);
-                    this.RemoveInvalidItems();
-                    this.RefreshProject();
-                }
-                else PluginBase.MainForm.OpenEditableDocument(path, false);
             }
+            if (!File.Exists(path))
+            {
+                string message = TextHelper.GetString("Info.InvalidFile");
+                ErrorManager.ShowInfo(message);
+                this.RemoveInvalidItems();
+                this.RefreshProject();
+            }
+            else PluginBase.MainForm.OpenEditableDocument(path, false);
         }
 
         /// <summary>
@@ -812,7 +795,7 @@ namespace TaskListPanel
                     if (document.IsEditable) RefreshCurrentFile(document.SciControl);
                     break;
                 case EventType.Keys:
-                    Keys keys = (e as KeyEvent).Value;
+                    Keys keys = ((KeyEvent) e).Value;
                     if (this.ContainsFocus && keys == Keys.Escape)
                     {
                         ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
@@ -869,7 +852,7 @@ namespace TaskListPanel
     /// </summary>
     class ExplorationContext
     {
-        public int Status = 0;
+        public int Status;
         public List<string> Files;
         public BackgroundWorker Worker;
         public string[] Directories;

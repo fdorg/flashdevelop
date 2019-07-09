@@ -38,7 +38,6 @@ namespace AirProperties.Controls
                 public EventArgs EventArgs { get; set; }
 
                 public CCBoxEventArgs(EventArgs e, bool assignValues)
-                    : base()
                 {
                     EventArgs = e;
                     AssignValues = assignValues;
@@ -55,7 +54,6 @@ namespace AirProperties.Controls
                 private int curSelIndex = -1;
 
                 public CustomCheckedListBox()
-                    : base()
                 {
                     SelectionMode = SelectionMode.One;
                     HorizontalScrollbar = true;
@@ -342,7 +340,6 @@ namespace AirProperties.Controls
         // ******************************** Construction ********************************
 
         public CheckedComboBox()
-            : base()
         {
             // We want to do the drawing of the dropdown.
             DrawMode = DrawMode.Normal;

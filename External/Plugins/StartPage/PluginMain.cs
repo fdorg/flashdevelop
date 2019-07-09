@@ -159,9 +159,7 @@ namespace StartPage
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventManager.AddEventHandler(this, EventType.Command);
-            EventManager.AddEventHandler(this, EventType.FileEmpty);
-            EventManager.AddEventHandler(this, EventType.RestoreSession);
+            EventManager.AddEventHandler(this, EventType.Command | EventType.FileEmpty | EventType.RestoreSession);
         }
 
         /// <summary>

@@ -10,17 +10,9 @@ namespace ResultsPanel
         private int upArrowIndex;
         private int downArrowIndex;
 
-        internal ColumnHeader SortedColumn
-        {
-            get;
-            private set;
-        }
+        internal ColumnHeader SortedColumn { get; private set; }
 
-        internal SortOrder SortOrder
-        {
-            get;
-            private set;
-        }
+        internal SortOrder SortOrder { get; private set; }
 
         internal ListViewEx()
         {

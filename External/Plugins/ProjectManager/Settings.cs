@@ -235,8 +235,8 @@ namespace ProjectManager
         [Browsable(false)]
         public List<string> GlobalClasspaths
         {
-            get => this.GetGlobalClasspaths(Language);
-            set => this.SetGlobalClasspaths(Language, value);
+            get => GetGlobalClasspaths(Language);
+            set => SetGlobalClasspaths(Language, value);
         }
 
         public void SetGlobalClasspaths(string lang, List<string> classpaths)
@@ -288,10 +288,7 @@ namespace ProjectManager
                     projectPrefList.RemoveAt(i--); // search this index again
         }
 
-        private void FireChanged(string setting)
-        {
-            Changed?.Invoke(setting);
-        }
+        private void FireChanged(string setting) => Changed?.Invoke(setting);
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -317,11 +314,11 @@ namespace ProjectManager
 
         public ProjectPreferences()
         {
-            this.ExpandedPaths = new List<string>();
+            ExpandedPaths = new List<string>();
         }
         public ProjectPreferences(string projectPath) : this()
         {
-            this.ProjectPath = projectPath;
+            ProjectPath = projectPath;
         }
     }
 }

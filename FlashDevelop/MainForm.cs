@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -62,10 +61,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes some extra error logging
         /// </summary>
-        private void InitializeErrorLog()
-        {
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-        }
+        private void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
         /// <summary>
         /// Handles the catched unhandled exception and logs it
@@ -216,14 +212,7 @@ namespace FlashDevelop
         /// <summary>
         /// Is FlashDevelop in standalone mode?
         /// </summary>
-        public bool StandaloneMode
-        {
-            get 
-            {
-                string file = Path.Combine(PathHelper.AppDir, ".local");
-                return File.Exists(file); 
-            }
-        }
+        public bool StandaloneMode => File.Exists(Path.Combine(PathHelper.AppDir, ".local"));
 
         /// <summary>
         /// Gets the all available documents
@@ -319,11 +308,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets whether the application requires a restart to apply changes.
         /// </summary>
-        public bool RequiresRestart
-        {
-            get;
-            private set;
-        }
+        public bool RequiresRestart { get; private set; }
 
         /// <summary>
         /// Gets or sets the RefreshConfig
@@ -1148,21 +1133,16 @@ namespace FlashDevelop
         /// </summary>
         public void OnMainFormClosed(object sender, FormClosedEventArgs e)
         {
-            if (RestartRequested)
-            {
-                RestartRequested = false;
-                Process.Start(Application.ExecutablePath);
-                Process.GetCurrentProcess().Kill();
-            }
+            if (!RestartRequested) return;
+            RestartRequested = false;
+            Process.Start(Application.ExecutablePath);
+            Process.GetCurrentProcess().Kill();
         }
 
         /// <summary>
         /// When dock changes, applies the padding to documents
         /// </summary>
-        private void OnActivePaneChanged(object sender, EventArgs e)
-        {
-            quickFind.ApplyFixedDocumentPadding();
-        }
+        private void OnActivePaneChanged(object sender, EventArgs e) => quickFind.ApplyFixedDocumentPadding();
 
         /// <summary>
         /// When document is removed update tab texts
@@ -1174,18 +1154,16 @@ namespace FlashDevelop
         /// </summary>
         private void OnActiveContentChanged(object sender, EventArgs e)
         {
-            if (DockPanel.ActiveContent != null)
+            if (DockPanel.ActiveContent is null) return;
+            if (DockPanel.ActiveContent.GetType() == typeof(TabbedDocument))
             {
-                if (DockPanel.ActiveContent.GetType() == typeof(TabbedDocument))
-                {
-                    PanelIsActive = false;
-                    TabbedDocument document = (TabbedDocument)DockPanel.ActiveContent;
-                    document.Activate();
-                }
-                else PanelIsActive = true;
-                NotifyEvent ne = new NotifyEvent(EventType.UIRefresh);
-                EventManager.DispatchEvent(this, ne);
+                PanelIsActive = false;
+                TabbedDocument document = (TabbedDocument)DockPanel.ActiveContent;
+                document.Activate();
             }
+            else PanelIsActive = true;
+            NotifyEvent ne = new NotifyEvent(EventType.UIRefresh);
+            EventManager.DispatchEvent(this, ne);
         }
 
         /// <summary>
@@ -1315,7 +1293,7 @@ namespace FlashDevelop
         /// </summary>
         public void OnDocumentClosed(object sender, EventArgs e)
         {
-            ITabbedDocument document = sender as ITabbedDocument;
+            ITabbedDocument document = (ITabbedDocument) sender;
             TabbingManager.TabHistory.Remove(document);
             TextEvent ne = new TextEvent(EventType.FileClose, document.FileName);
             EventManager.DispatchEvent(this, ne);
@@ -1540,10 +1518,8 @@ namespace FlashDevelop
         /// </summary>
         public void OnUpdateMainFormDialogTitle()
         {
-            IProject project = PluginBase.CurrentProject;
-            ITabbedDocument document = CurrentDocument;
-            if (project != null) Text = project.Name + " - " + DistroConfig.DISTRIBUTION_NAME;
-            else if (document != null && document.IsEditable)
+            if (PluginBase.CurrentProject is {} project) Text = project.Name + " - " + DistroConfig.DISTRIBUTION_NAME;
+            else if (CurrentDocument is { } document && document.IsEditable)
             {
                 string file = Path.GetFileName(document.FileName);
                 Text = file + " - " + DistroConfig.DISTRIBUTION_NAME;
@@ -1568,12 +1544,10 @@ namespace FlashDevelop
         /// </summary>
         public void OnDocumentModify(ITabbedDocument document)
         {
-            if (document.IsEditable && !document.IsModified && !ReloadingDocument && !ProcessingContents)
-            {
-                document.IsModified = true;
-                TextEvent te = new TextEvent(EventType.FileModify, document.FileName);
-                EventManager.DispatchEvent(this, te);
-            }
+            if (!document.IsEditable || document.IsModified || ReloadingDocument || ProcessingContents) return;
+            document.IsModified = true;
+            TextEvent te = new TextEvent(EventType.FileModify, document.FileName);
+            EventManager.DispatchEvent(this, te);
         }
 
         /// <summary>
@@ -1722,9 +1696,7 @@ namespace FlashDevelop
         /// </summary>
         public Color GetThemeColor(string id, Color fallback)
         {
-            Color color = ThemeManager.GetThemeColor(id);
-            if (color != Color.Empty) return color;
-            return fallback;
+            return ThemeManager.GetThemeColor(id) is {} color && color != Color.Empty ? color : fallback;
         }
 
         /// <summary>
@@ -1737,9 +1709,8 @@ namespace FlashDevelop
         /// </summary>
         public string GetThemeValue(string id, string fallback)
         {
-            string value = ThemeManager.GetThemeValue(id);
-            if (!string.IsNullOrEmpty(value)) return value;
-            return fallback;
+            var value = ThemeManager.GetThemeValue(id);
+            return !string.IsNullOrEmpty(value) ? value : fallback;
         }
 
         /// <summary>
@@ -1794,11 +1765,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        public string GetShortcutItemId(Keys keys)
-        {
-            ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
-            return item is null ? string.Empty : item.Id;
-        }
+        public string GetShortcutItemId(Keys keys) => ShortcutManager.GetRegisteredItem(keys)?.Id ?? string.Empty;
 
         /// <summary>
         /// Registers a new menu item with the shortcut manager
@@ -3050,11 +3017,9 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleSplitView(object sender, EventArgs e)
         {
-            if (CurrentDocument.IsEditable)
-            {
-                CurrentDocument.IsSplitted = !CurrentDocument.IsSplitted;
-                ButtonManager.UpdateFlaggedButtons();
-            }
+            if (!CurrentDocument.IsEditable) return;
+            CurrentDocument.IsSplitted = !CurrentDocument.IsSplitted;
+            ButtonManager.UpdateFlaggedButtons();
         }
 
         /// <summary>
@@ -3081,8 +3046,7 @@ namespace FlashDevelop
         /// </summary>
         public void ToggleBookmark(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
-            MarkerManager.ToggleMarker(sci, 0, sci.CurrentLine);
+            MarkerManager.ToggleMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
         }
 
         /// <summary>
@@ -3090,8 +3054,7 @@ namespace FlashDevelop
         /// </summary>
         public void NextBookmark(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
-            MarkerManager.NextMarker(sci, 0, sci.CurrentLine);
+            MarkerManager.NextMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
         }
 
         /// <summary>
@@ -3099,8 +3062,7 @@ namespace FlashDevelop
         /// </summary>
         public void PrevBookmark(object sender, EventArgs e)
         {
-            var sci = CurrentDocument.SciControl;
-            MarkerManager.PreviousMarker(sci, 0, sci.CurrentLine);
+            MarkerManager.PreviousMarker(CurrentDocument.SciControl, 0, CurrentDocument.SciControl.CurrentLine);
         }
 
         /// <summary>
@@ -3108,8 +3070,9 @@ namespace FlashDevelop
         /// </summary>
         public void ClearBookmarks(object sender, EventArgs e)
         {
-            CurrentDocument.SciControl.MarkerDeleteAll(0);
-            UITools.Manager.MarkerChanged(CurrentDocument.SciControl, -1);
+            var sci = CurrentDocument.SciControl;
+            sci.MarkerDeleteAll(0);
+            UITools.Manager.MarkerChanged(sci, -1);
             ButtonManager.UpdateFlaggedButtons();
         }
 
@@ -3206,11 +3169,11 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                ScintillaControl sci = CurrentDocument.SciControl;
-                int encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
-                int curMode = sci.Encoding.CodePage; // From current..
-                string converted = DataConverter.ChangeEncoding(sci.Text, curMode, encMode);
+                var button = (ToolStripItem)sender;
+                var encMode = Convert.ToInt32(((ItemData)button.Tag).Tag);
+                var sci = CurrentDocument.SciControl;
+                var curMode = sci.Encoding.CodePage; // From current..
+                var converted = DataConverter.ChangeEncoding(sci.Text, curMode, encMode);
                 sci.Encoding = Encoding.GetEncoding(encMode);
                 sci.Text = converted; // Set after codepage change
                 OnScintillaControlUpdateControl(sci);
@@ -3693,11 +3656,7 @@ namespace FlashDevelop
             int startLine = sci.LineFromPosition(sci.SelectionStart);
             int line = startLine;
             int endLine = sci.LineFromPosition(sci.SelectionEnd);
-            if (endLine > line && curLine == endLine && startPosInLine == 0)
-            {
-                curLine--;
-                endLine--;
-            }
+            if (endLine > line && curLine == endLine && startPosInLine == 0) endLine--;
             bool containsCodeLine = false;
             while (line <= endLine)
             {
@@ -3721,7 +3680,7 @@ namespace FlashDevelop
             bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
             sci.SelectionStart = indentPos;
             sci.SelectionEnd = lineEndPos;
-            bool ? added = CommentSelection();
+            bool? added = CommentSelection();
             if (added is null) return;
             int factor = (bool)added ? 1 : -1;
             string commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
@@ -3804,10 +3763,10 @@ namespace FlashDevelop
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string command = ((ItemData)button.Tag).Tag;
-                Type mfType = CurrentDocument.SciControl.GetType();
-                MethodInfo method = mfType.GetMethod(command, new Type[0]);
+                var button = (ToolStripItem)sender;
+                var command = ((ItemData)button.Tag).Tag;
+                var mfType = CurrentDocument.SciControl.GetType();
+                var method = mfType.GetMethod(command, new Type[0]);
                 method.Invoke(CurrentDocument.SciControl, null);
             }
             catch (Exception ex)
@@ -3824,9 +3783,9 @@ namespace FlashDevelop
             try
             {
                 var item = (ToolStripItem) sender;
-                string[] args = ((ItemData) item.Tag).Tag.Split(new[] { ';' }, 2);
-                string action = args[0]; // Action of the command
-                string data = args.Length > 1 ? args[1] : null;
+                var args = ((ItemData) item.Tag).Tag.Split(new[] { ';' }, 2);
+                var action = args[0]; // Action of the command
+                var data = args.Length > 1 ? args[1] : null;
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, action, data));
             }
             catch (Exception ex)
@@ -3984,30 +3943,28 @@ namespace FlashDevelop
         {
             try
             {
-                using SaveFileDialog sfd = new SaveFileDialog();
+                using var sfd = new SaveFileDialog();
                 sfd.AddExtension = true;
                 sfd.DefaultExt = "fdz";
                 sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
-                string dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
-                if (sfd.ShowDialog(this) == DialogResult.OK)
+                var dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
+                if (sfd.ShowDialog(this) != DialogResult.OK) return;
+                var settingFiles = new List<string>();
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
+                settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
+                var zipFile = ZipFile.Create(sfd.FileName);
+                zipFile.BeginUpdate();
+                foreach (string settingFile in settingFiles)
                 {
-                    List<string> settingFiles = new List<string>();
-                    ZipFile zipFile = ZipFile.Create(sfd.FileName);
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
-                    zipFile.BeginUpdate();
-                    foreach (string settingFile in settingFiles)
-                    {
-                        int index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
-                        zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
-                    }
-                    zipFile.CommitUpdate();
-                    zipFile.Close();
+                    int index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
+                    zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
                 }
+                zipFile.CommitUpdate();
+                zipFile.Close();
             }
             catch (Exception ex)
             {
@@ -4043,7 +4000,7 @@ namespace FlashDevelop
         /// </summary>
         public void TestControls(object sender, EventArgs e)
         {
-            ControlDialog cd = new ControlDialog();
+            using ControlDialog cd = new ControlDialog();
             cd.Show(this);
         }
 
