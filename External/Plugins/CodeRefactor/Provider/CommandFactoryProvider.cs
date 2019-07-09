@@ -26,6 +26,7 @@ namespace CodeRefactor.Provider
         {
             DefaultFactory.RegisterValidator(typeof(Rename), expr =>
             {
+                if (!PluginBase.MainForm.CurrentDocument.SciControl.SelText.IsNullOrEmpty()) return false;
                 if (expr is null || expr.IsNull()) return false;
                 var c = expr.Context.Value[0];
                 if (char.IsDigit(c)) return false;
