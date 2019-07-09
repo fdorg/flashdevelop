@@ -525,7 +525,7 @@ namespace CodeFormatter.Handlers
                             if (newEndLines>oldEndLines)
                             {
                                 resultText=resultText.Substring(0, resultText.Length-(newEndLines-oldEndLines));
-                                if (mOutputRange!=null && mOutputRange.Y>resultText.Length)
+                                if (mOutputRange != Point.Empty && mOutputRange.Y>resultText.Length)
                                 {
                                     mOutputRange.Y = resultText.Length;
                                 }
@@ -533,7 +533,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if we are trying to capture the output range but haven't captured it yet
-                        if (mOutputRange != null && mOutputRange.Y < 0)
+                        if (mOutputRange != Point.Empty && mOutputRange.Y < 0)
                         {
                             mOutputRange.Y = resultText.Length;
                             mReplaceRange.Y = mWorkingSource.Length;
@@ -548,7 +548,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if multiple passes are allowed and we would benefit from one and this is not a partial format
-                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange == null)
+                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange == Point.Empty)
                         {
                             mSourceData=resultText;
                             continue;
@@ -994,9 +994,9 @@ namespace CodeFormatter.Handlers
             }
         
             //handle user selection range
-            if (mSelectedRange!=null && !mBindableMode)
+            if (mSelectedRange!= Point.Empty && !mBindableMode)
             {
-                if (mOutputRange == null)
+                if (mOutputRange == Point.Empty)
                 {
                     if (tok.Line>=mSelectedRange.X)
                     {
@@ -4268,10 +4268,7 @@ namespace CodeFormatter.Handlers
     
         public void popDeclEqualsBlock()
         {
-            if (mCurrentDeclEqualContext!=null)
-            {
-                mCurrentDeclEqualContext=mCurrentDeclEqualContext.getParent();
-            }
+            mCurrentDeclEqualContext=mCurrentDeclEqualContext?.getParent();
         }
 
         public void captureDeclEqualPosition()
