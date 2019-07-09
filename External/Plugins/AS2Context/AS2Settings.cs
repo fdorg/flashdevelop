@@ -125,9 +125,7 @@ namespace AS2Context
 
         public InstalledSDK GetDefaultSDK()
         {
-            if (installedSDKs == null || installedSDKs.Length == 0)
-                return InstalledSDK.INVALID_SDK;
-
+            if (installedSDKs.IsNullOrEmpty()) return InstalledSDK.INVALID_SDK;
             foreach (InstalledSDK sdk in installedSDKs)
                 if (sdk.IsValid) return sdk;
             return InstalledSDK.INVALID_SDK;

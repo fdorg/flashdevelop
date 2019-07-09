@@ -52,8 +52,7 @@ namespace ASCompletion.Completion
 
         private static bool HandleDocTagCompletion(ScintillaControl sci)
         {
-            if (ASContext.CommonSettings.JavadocTags == null || ASContext.CommonSettings.JavadocTags.Length == 0)
-                return false;
+            if (ASContext.CommonSettings.JavadocTags.IsNullOrEmpty()) return false;
 
             string txt = sci.GetLine(sci.CurrentLine).TrimStart();
             if (!Regex.IsMatch(txt, "^\\*[\\s]*\\@"))

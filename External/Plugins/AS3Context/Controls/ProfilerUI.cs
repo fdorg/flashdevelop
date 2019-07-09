@@ -228,8 +228,8 @@ namespace AS3Context.Controls
 
         void profilerChooser_DropDownOpening(object sender, EventArgs e)
         {
-            string[] swfs = PluginMain.Settings.CustomProfilers;
-            if (swfs == null || swfs.Length == 0) return;
+            var swfs = PluginMain.Settings.CustomProfilers;
+            if (swfs.IsNullOrEmpty()) return;
 
             string check = "";
             foreach(string swf in swfs) check += swf;

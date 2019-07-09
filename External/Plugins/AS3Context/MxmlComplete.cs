@@ -298,9 +298,8 @@ namespace AS3Context
 
             var currentAttribute = caBuilder.ToString();
 
-            List<ICompletionListItem> mix = GetTagAttributeValues(tagClass, null, currentAttribute);
-
-            if (mix == null || mix.Count == 0) return true;
+            var mix = GetTagAttributeValues(tagClass, null, currentAttribute);
+            if (mix.IsNullOrEmpty()) return true;
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());
@@ -449,9 +448,7 @@ namespace AS3Context
 
         private static List<ICompletionListItem> GetAutoCompletionValuesFromInspectable(string type, List<ASMetaData> metas)
         {
-            if (metas == null || metas.Count == 0)
-                return GetAutoCompletionValuesFromType(type);
-
+            if (metas.IsNullOrEmpty()) return GetAutoCompletionValuesFromType(type);
             foreach (var meta in metas)
             {
                 if (meta.Name != "Inspectable") continue;

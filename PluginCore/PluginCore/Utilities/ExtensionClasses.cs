@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PluginCore
 {
@@ -131,5 +132,11 @@ namespace PluginCore
             using var enumerator = value.GetEnumerator();
             return !enumerator.MoveNext();
         }
+
+        /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>
+        /// <param name="value">The collection to test.</param>
+        /// <returns>
+        /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
+        public static bool IsNullOrEmpty(this PropertyDescriptorCollection value) => value is null || value.Count == 0;
     }
 }

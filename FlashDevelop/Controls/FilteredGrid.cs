@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PluginCore;
 
 namespace FlashDevelop.Controls
 {
@@ -225,7 +226,7 @@ namespace FlashDevelop.Controls
         private void HideAttribute(Attribute attribute) 
         {
             PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new[] { attribute });
-            if(filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            if(filteredoriginalpropertydescriptors.IsNullOrEmpty()) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) HideProperty(propertydescriptor);
         }
 
@@ -235,7 +236,7 @@ namespace FlashDevelop.Controls
         private void ShowAttribute(Attribute attribute) 
         {
             PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new[] { attribute });
-            if (filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            if (filteredoriginalpropertydescriptors.IsNullOrEmpty()) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) ShowProperty(propertydescriptor);
         }
 
