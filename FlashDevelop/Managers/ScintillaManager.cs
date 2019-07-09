@@ -356,7 +356,7 @@ namespace FlashDevelop.Managers
         {
             int value = ScaleHelper.Scale(size);
             Language lang = SciConfig.GetLanguage(sci.ConfigurationLanguage);
-            if (lang?.usestyles != null && lang.usestyles.Length > 0)
+            if (lang != null && !lang.usestyles.IsNullOrEmpty())
             {
                 // Only larger fonts need scaling...
                 if (lang.usestyles[0].FontSize < 11) return value;

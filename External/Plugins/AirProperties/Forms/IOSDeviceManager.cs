@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AirProperties.Controls;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace AirProperties.Forms
@@ -109,7 +110,7 @@ namespace AirProperties.Forms
                 // We could make SelectedNodes a read/write property, and find the nodes by key after in the setter, but it just came out this way
                 if (selected != null && selected.Contains(device.HardwareId)) selectedNodes.Add(newNode);
 
-                if (device.SubClassifications != null && device.SubClassifications.Length > 0)
+                if (!device.SubClassifications.IsNullOrEmpty())
                     FillTree(device.SubClassifications, selected, newNode);
             }
 

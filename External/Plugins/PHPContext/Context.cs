@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace PHPContext
@@ -125,7 +126,7 @@ namespace PHPContext
             // add library
             AddPath(Path.Combine(PathHelper.LibraryDir, settings.LanguageId + "/classes"));
             // add user pathes from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }

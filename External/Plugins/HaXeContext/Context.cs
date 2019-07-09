@@ -587,7 +587,7 @@ namespace HaXeContext
             }
 
             // add user pathes from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
@@ -1932,7 +1932,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.MEMBERS:
-                    if (result.Members != null && result.Members.Count > 0)
+                    if (!result.Members.IsNullOrEmpty())
                         ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
                     break;
 
@@ -2023,7 +2023,7 @@ namespace HaXeContext
         public override void ResolveTopLevelElement(string token, ASResult result)
         {
             var list = GetTopLevelElements();
-            if (list != null && list.Count > 0)
+            if (!list.IsNullOrEmpty())
             {
                 var items = list.MultipleSearch(token, 0, 0);
                 if (items.Count == 1)

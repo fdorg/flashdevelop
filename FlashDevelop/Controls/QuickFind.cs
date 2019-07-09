@@ -327,7 +327,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void UpdateFindText()
         {
-            ScintillaControl sci = Globals.SciControl;
+            var sci = Globals.SciControl;
             if (sci != null && sci.SelText.Length > 0)
             {
                 this.findTextBox.Text = sci.SelText;

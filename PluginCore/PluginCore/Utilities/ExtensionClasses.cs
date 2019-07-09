@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -131,6 +132,20 @@ namespace PluginCore
             if (value is IList<TSource> list) return list.Count == 0;
             using var enumerator = value.GetEnumerator();
             return !enumerator.MoveNext();
+        }
+
+        /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>
+        /// <param name="value">The collection to test.</param>
+        /// <returns>
+        /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
+        public static bool IsNullOrEmpty(this IEnumerable value)
+        {
+            return value switch
+            {
+                null => true,
+                IList list => list.Count == 0,
+                _ => !value.GetEnumerator().MoveNext(),
+            };
         }
 
         /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>

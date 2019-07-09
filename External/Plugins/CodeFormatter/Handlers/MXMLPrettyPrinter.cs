@@ -1452,7 +1452,7 @@ namespace CodeFormatter.Handlers
                                             //in this case, we want to find items in the tag and keep
                                             //them in that order
                                             List<string> groupAttrSet = mHashedGroupAttrs[group.getName()];
-                                            if (groupAttrSet != null && groupAttrSet.Count > 0)
+                                            if (!groupAttrSet.IsNullOrEmpty())
                                             {
                                                 for (int k = attrs.Count - 1; k >= 0; k--)
                                                 {
@@ -1530,20 +1530,20 @@ namespace CodeFormatter.Handlers
                                 string attrSpec2 = AntlrUtilities.asTrim(attrSpec);
                                 if (attrSpec2.Length == 0)
                                     continue;
-                                if (!(attrSpec2 == NewLineFlag))
+                                if (attrSpec2 != NewLineFlag)
                                 {
                                     bool found = false;
                                     string groupName = isGroupAttr(attrSpec);
                                     if (groupName != null)
                                     {
-                                        List<AttrMapping> cachedAttrs = groupMap[groupName];
-                                        if (cachedAttrs != null && cachedAttrs.Count > 0) //AttrMapping.hasAttr(cachedAttrs, attrSpec))
+                                        var cachedAttrs = groupMap[groupName];
+                                        if (!cachedAttrs.IsNullOrEmpty()) //AttrMapping.hasAttr(cachedAttrs, attrSpec))
                                             found = true;
                                     }
                                     else
                                     {
-                                        List<AttrMapping> cachedAttrs = literalMap[attrSpec];
-                                        found = (cachedAttrs != null && cachedAttrs.Count > 0);
+                                        var cachedAttrs = literalMap[attrSpec];
+                                        found = !cachedAttrs.IsNullOrEmpty();
                                     }
 
                                     if (!found)

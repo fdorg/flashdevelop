@@ -2,6 +2,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using PluginCore;
 
 namespace ProjectManager.Projects
 {

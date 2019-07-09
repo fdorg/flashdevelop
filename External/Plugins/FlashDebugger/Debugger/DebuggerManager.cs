@@ -487,18 +487,9 @@ namespace FlashDebugger
                 var locals = FlashInterface.GetLocals(m_CurrentFrame);
                 if (PanelsHelper.localsUI.TreeControl.Nodes.Count > 0) PanelsHelper.localsUI.TreeControl.SaveState();
                 PanelsHelper.localsUI.Clear();
-                if (thisValue != null)
-                {
-                    PanelsHelper.localsUI.SetData(new[] { thisValue });
-                }
-                if (args != null && args.Length > 0)
-                {
-                    PanelsHelper.localsUI.SetData(args);
-                }
-                if (locals != null && locals.Length > 0)
-                {
-                    PanelsHelper.localsUI.SetData(locals);
-                }
+                if (thisValue != null) PanelsHelper.localsUI.SetData(new[] {thisValue});
+                if (!args.IsNullOrEmpty()) PanelsHelper.localsUI.SetData(args);
+                if (!locals.IsNullOrEmpty()) PanelsHelper.localsUI.SetData(locals);
                 PanelsHelper.localsUI.TreeControl.RestoreState();
                 CurrentLocation = frames[m_CurrentFrame].getLocation();
                 PanelsHelper.watchUI.UpdateElements();

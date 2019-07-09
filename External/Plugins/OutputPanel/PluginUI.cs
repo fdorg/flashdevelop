@@ -402,7 +402,7 @@ namespace OutputPanel
                         }
                     }
                     // Automatic state from message: New format with customizable markers
-                    if (state == 1 && markers != null && markers.Count > 0)
+                    if (state == 1 && !markers.IsNullOrEmpty())
                     {
                         foreach (HighlightMarker marker in markers)
                         {

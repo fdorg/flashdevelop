@@ -974,7 +974,7 @@ namespace ProjectManager.Controls
 
             // retrieve SDK list
             InstalledSDK[] sdks = BuildActions.GetInstalledSDKs(BaseProject);
-            if (sdks != null && sdks.Length > 0)
+            if (!sdks.IsNullOrEmpty())
             {
                 sdkComboBox.Items.Add(TextHelper.GetString("Label.SDKComboDefault") + " (" + sdks[0].Name + ")");
                 sdkComboBox.Items.AddRange(sdks);

@@ -104,7 +104,7 @@ namespace BasicCompletion
                     {
                         var lang = document.SciControl.ConfigurationLanguage;
                         var items = GetCompletionListItems(lang, document.FileName);
-                        if (items != null && items.Count > 0)
+                        if (!items.IsNullOrEmpty())
                         {
                             items.Sort();
                             int curPos = document.SciControl.CurrentPos - 1;

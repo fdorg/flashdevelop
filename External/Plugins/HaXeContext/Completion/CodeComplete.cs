@@ -1179,7 +1179,7 @@ namespace HaXeContext.Completion
                 }
                 // for example: ~/pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
-                else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
+                else if (!context.SubExpressions.IsNullOrEmpty())
                 {
                     var lastIndex = context.SubExpressions.Count - 1;
                     var pattern = "#" + lastIndex + "~";
@@ -1350,7 +1350,7 @@ namespace HaXeContext.Completion
             base.FindMemberEx(token, inFile, result, mask, access);
             if (result.Type != null && !result.Type.IsVoid()) return;
             var list = ASContext.Context.GetTopLevelElements();
-            if (list is null || list.Count == 0) return;
+            if (list.IsNullOrEmpty()) return;
             foreach (MemberModel it in list)
             {
                 if (it.Name != token || !it.Flags.HasFlag(FlagType.Enum)) continue;

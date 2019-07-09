@@ -84,7 +84,7 @@ namespace ASCompletion.Completion
         public static string ParametersString(MemberModel member, bool formatted)
         {
             var result = "";
-            if (member.Parameters != null && member.Parameters.Count > 0)
+            if (!member.Parameters.IsNullOrEmpty())
             {
                 var template = GetTemplate("FunctionParameter");
                 for (int i = 0, count = member.Parameters.Count; i < count; i++)
@@ -107,7 +107,7 @@ namespace ASCompletion.Completion
         public static string CallParametersString(MemberModel member)
         {
             var result = "";
-            if (member.Parameters != null && member.Parameters.Count > 0)
+            if (!member.Parameters.IsNullOrEmpty())
             {
                 var template = GetTemplate("FunctionParameter");
                 for (int i = 0, count = member.Parameters.Count; i < count; i++)
