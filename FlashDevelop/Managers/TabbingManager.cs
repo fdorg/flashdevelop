@@ -82,7 +82,7 @@ namespace FlashDevelop.Managers
         public static void NavigateTabHistory(int direction)
         {
             int currentIndex = 0;
-            if (TabHistory.Count < 1) return;
+            if (TabHistory.Count == 0) return;
             if (direction != 0)
             {
                 currentIndex = TabHistory.IndexOf(Globals.MainForm.CurrentDocument);

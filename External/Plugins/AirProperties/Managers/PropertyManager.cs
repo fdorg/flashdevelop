@@ -687,7 +687,7 @@ namespace AirProperties
                 fileTypesNode = _descriptorFile.CreateNode(XmlNodeType.Element, "fileTypes", _namespaceManager.LookupNamespace("air"));
             }
             else _rootNode.RemoveChild(fileTypesNode);
-            if (fileTypes.Count <= 0) return;
+            if (fileTypes.Count == 0) return;
             // Clear contents
             fileTypesNode.InnerText = "";
             // Loop through collection of AirFileType 
@@ -749,7 +749,7 @@ namespace AirProperties
                 extensionsNode = _descriptorFile.CreateNode(XmlNodeType.Element, "extensions", _namespaceManager.LookupNamespace("air"));
             }
             else _rootNode.RemoveChild(extensionsNode);
-            if (extensions.Count <= 0) return;
+            if (extensions.Count == 0) return;
             // Clear contents
             extensionsNode.InnerText = "";
             // Loop through collection of AirExtension 

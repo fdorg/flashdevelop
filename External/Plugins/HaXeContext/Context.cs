@@ -376,8 +376,9 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
-            else features.SpecialPostfixOperators = new char[0];
+            features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
+                ? new[] {'!'}
+                : new char[0];
 
             UseGenericsShortNotationChange();
         }
@@ -1056,7 +1057,7 @@ namespace HaXeContext
                         if (p2 != -1) lpart = import.Substring(p2 + 1);
                         if (char.IsLower(lpart[0])) continue;
                         var type = ResolveType(lpart, Context.CurrentModel);
-                        if (type.IsVoid() || type.Members.Count <= 0) continue;
+                        if (type.IsVoid() || type.Members.Count == 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
                         if (member is null) continue;
@@ -1616,7 +1617,7 @@ namespace HaXeContext
                     }
                 }
             }
-            if (extensions.Count <= 0) return false;
+            if (extensions.Count == 0) return false;
             result = (ClassModel) type.Clone();
             result.Members.Merge(extensions);
             return true;
@@ -2376,7 +2377,7 @@ namespace HaXeContext
             if (IsFileValid)
             {
                 if (cFile.Comments != null) mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
-                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is ClassModel cClass && cClass.Comments != null)
+                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is { } cClass && cClass.Comments != null)
                     mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             }
 
