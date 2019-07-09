@@ -491,7 +491,7 @@ namespace ASCompletion.Completion
             // for example: return expr<generator>
             if (expr.Context.WordBefore == "return") return false;
             if (expr.Member is null) return expr.Type != ClassModel.VoidClass;
-            return expr.Member.Type is string type && type != ASContext.Context.Features.voidKey;
+            return expr.Member.Type is { } type && type != ASContext.Context.Features.voidKey;
         }
 
         /// <summary>
@@ -812,13 +812,13 @@ namespace ASCompletion.Completion
 
         protected virtual string CheckEventType(MemberModel handler, string eventName)
         {
-            if (handler?.Parameters is List<MemberModel> parameters && parameters.Count > 1)
+            if (handler?.Parameters is { } parameters && parameters.Count > 1)
             {
                 var parameter = parameters[1];
                 if (parameter != null)
                 {
                     if (parameter.Parameters != null && parameter.Parameters.Count > 0) return parameter.Parameters[0].Type;
-                    if (parameter.Type is string type && type != "Function") return type;
+                    if (parameter.Type is { } type && type != "Function") return type;
                 }
             }
             return CheckEventType(eventName);

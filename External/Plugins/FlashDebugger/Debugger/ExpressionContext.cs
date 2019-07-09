@@ -45,11 +45,13 @@ namespace FlashDebugger
 
         public Context createContext(Object par0)
         {
-            Value val;
-            if (par0 is Variable variable) val = variable.getValue();
-            else if (par0 is Value value) val = value;
-            else if (par0 is String) val = DValue.forPrimitive(par0, getIsolateId());
-            else throw new NotImplementedException();
+            var val = par0 switch
+            {
+                Variable variable => variable.getValue(),
+                Value value => value,
+                String _ => DValue.forPrimitive(par0, getIsolateId()),
+                _ => throw new NotImplementedException(),
+            };
             return new ExpressionContext(session, frame, val);
         }
 
@@ -173,10 +175,12 @@ namespace FlashDebugger
 
         public Value toValue(Object par0)
         {
-            if (par0 is Value value) return value;
-            if (par0 is Variable variable) return variable.getValue();
-            var val = DValue.forPrimitive(par0, getIsolateId());
-            return val;
+            return par0 switch
+            {
+                Value value => value,
+                Variable variable => variable.getValue(),
+                _ => DValue.forPrimitive(par0, getIsolateId()),
+            };
         }
 
         public Value toValue() => contextVal;

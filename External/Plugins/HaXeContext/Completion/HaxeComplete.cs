@@ -478,13 +478,12 @@ namespace HaXeContext
             var member = new MemberModel();
             member.Name = name;
             member.Access = Visibility.Public;
-
-            var k = reader.GetAttribute("k");
-            switch (k)
+            member.Flags = reader.GetAttribute("k") switch
             {
-                case "var": member.Flags = FlagType.Variable; break;
-                case "method": member.Flags = FlagType.Function; break;
-            }
+                "var" => FlagType.Variable,
+                "method" => FlagType.Function,
+                _ => (FlagType) 0,
+            };
             return member;
         }
 

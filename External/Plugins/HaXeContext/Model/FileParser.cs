@@ -1604,7 +1604,7 @@ namespace HaXeContext.Model
                         member.MetaDatas.Add(new ASMetaData(":optional"));
                     }
                 }
-                if (@class.MetaDatas is null || @class.Members.Count == 0) continue;
+                if (@class.MetaDatas.IsNullOrEmpty()) continue;
                 for (var j = @class.MetaDatas.Count - 1; j >= 0; j--)
                 {
                     if (@class.MetaDatas[j].Name != ":publicFields") continue;

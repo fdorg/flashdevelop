@@ -71,7 +71,7 @@ namespace FlashDebugger
         public static void SciControl_MarkerChanged(ScintillaControl sender, int line)
         {
             if (line < 0) return;
-            ITabbedDocument document = DocumentManager.FindDocument(sender);
+            var document = DocumentManager.FindDocument(sender);
             if (document is null || !document.IsEditable) return;
             ApplyHighlights(document.SplitSci1, line, true);
             ApplyHighlights(document.SplitSci2, line, false);

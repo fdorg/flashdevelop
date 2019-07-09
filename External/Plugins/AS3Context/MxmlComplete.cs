@@ -479,20 +479,17 @@ namespace AS3Context
             {
                 foreach (ASMetaData meta in model.MetaDatas)
                 {
-                    string name = null;
-                    if (!meta.Params.TryGetValue("name", out name) || name != attribute) continue;
+                    if (!meta.Params.TryGetValue("name", out var name) || name != attribute) continue;
 
                     string type = null;
                     switch (meta.Kind)
                     {
                         case ASMetaKind.Event:
-                            string eventType;
-                            if (!meta.Params.TryGetValue("type", out eventType)) eventType = "flash.events.Event";
+                            if (!meta.Params.TryGetValue("type", out var eventType)) eventType = "flash.events.Event";
                             result = GetAutoCompletionValuesFromEventType(eventType);
                             return true;
                         case ASMetaKind.Style:
-                            string inherit;
-                            if (meta.Params.TryGetValue("inherit", out inherit) && inherit == "no" && tagClass != tmpClass)
+                            if (meta.Params.TryGetValue("inherit", out var inherit) && inherit == "no" && tagClass != tmpClass)
                                 continue;
                             meta.Params.TryGetValue("type", out type);
                             break;
@@ -642,8 +639,7 @@ namespace AS3Context
                 {
                     case ASMetaKind.Event: add = ":e"; break;
                     case ASMetaKind.Style:
-                        string inherit;
-                        if (meta.Params == null || !meta.Params.TryGetValue("inherit", out inherit) || inherit != "no" || isCurrentModel)
+                        if (meta.Params == null || !meta.Params.TryGetValue("inherit", out var inherit) || inherit != "no" || isCurrentModel)
                         {
                             add = ":s";
                             if (meta.Params == null || !meta.Params.TryGetValue("type", out type)) type = "Object";
@@ -871,16 +867,16 @@ namespace AS3Context
                 if (a is HtmlAttributeItem && b is HtmlTagItem) return 1;
                 if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
             }
-            if (a is IHtmlCompletionListItem)
+            if (a is IHtmlCompletionListItem aItem)
             {
-                a1 = ((IHtmlCompletionListItem)a).Name;
-                if (a.Value.StartsWithOrdinal("mx:")) a1 += "z"; // push down mx: tags
+                a1 = aItem.Name;
+                if (aItem.Value.StartsWithOrdinal("mx:")) a1 += "z"; // push down mx: tags
             }
             else a1 = a.Label;
-            if (b is IHtmlCompletionListItem)
+            if (b is IHtmlCompletionListItem bItem)
             {
-                b1 = ((IHtmlCompletionListItem)b).Name;
-                if (b.Value.StartsWithOrdinal("mx:")) b1 += "z"; // push down mx: tags
+                b1 = bItem.Name;
+                if (bItem.Value.StartsWithOrdinal("mx:")) b1 += "z"; // push down mx: tags
             }
             else b1 = b.Label;
             return string.Compare(a1, b1);

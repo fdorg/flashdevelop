@@ -143,7 +143,7 @@ namespace PluginCore.Localization
         {
             if (storedLocale == LocaleVersion.Invalid)
             {
-                if (PluginBase.MainForm is null || PluginBase.MainForm.Settings is null) return false;
+                if (PluginBase.MainForm?.Settings is null) return false;
                 storedLocale = PluginBase.MainForm.Settings.LocaleVersion;
                 string path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());

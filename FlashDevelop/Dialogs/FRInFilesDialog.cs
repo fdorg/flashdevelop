@@ -623,22 +623,19 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BrowseButtonClick(object sender, EventArgs e)
         {
-            using (var fbd = new VistaFolderBrowserDialog())
+            using var fbd = new VistaFolderBrowserDialog {Multiselect = true};
+            var curDir = folderComboBox.Text.Trim();
+            if (curDir == "<Project>")
             {
-                fbd.Multiselect = true;
-                var curDir = folderComboBox.Text.Trim();
-                if (curDir == "<Project>")
-                {
-                    curDir = PluginBase.CurrentProject is null
-                        ? Globals.MainForm.WorkingDirectory
-                        : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                }
-                if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
-                if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
-                {
-                    folderComboBox.Text = string.Join(";", fbd.SelectedPaths);
-                    folderComboBox.SelectionStart = folderComboBox.Text.Length;
-                }
+                curDir = PluginBase.CurrentProject is null
+                    ? Globals.MainForm.WorkingDirectory
+                    : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            }
+            if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
+            if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
+            {
+                folderComboBox.Text = string.Join(";", fbd.SelectedPaths);
+                folderComboBox.SelectionStart = folderComboBox.Text.Length;
             }
         }
 
@@ -648,16 +645,14 @@ namespace FlashDevelop.Dialogs
         private void ResultsViewDoubleClick(object sender, System.EventArgs e)
         {
             if (this.resultsView.SelectedItems.Count < 1) return;
-            ListViewItem item = this.resultsView.SelectedItems[0];
+            var item = this.resultsView.SelectedItems[0];
             var data = (KeyValuePair<string, SearchMatch>)item.Tag;
-            if (File.Exists(data.Key))
+            if (!File.Exists(data.Key)) return;
+            Globals.MainForm.Activate();
+            var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
+            if (doc != null && doc.IsEditable && this.resultsView.Columns.Count == 4)
             {
-                Globals.MainForm.Activate();
-                var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
-                if (doc != null && doc.IsEditable && this.resultsView.Columns.Count == 4)
-                {
-                    FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
-                }
+                FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
             }
         }
 

@@ -401,7 +401,7 @@ namespace AS3Context
         /// </summary>
         private void ValidateSettings()
         {
-            if (Settings.InstalledSDKs is null || Settings.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
+            if (Settings.InstalledSDKs.IsNullOrEmpty() || PluginBase.MainForm.RefreshConfig)
             {
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
                 var includedSDK = "Tools\\flexsdk";

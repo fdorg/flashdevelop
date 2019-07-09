@@ -1601,7 +1601,7 @@ namespace HaXeContext
                             {
                                 if ((member.Access & access) == 0
                                     || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
-                                    || member.Parameters is null || member.Parameters.Count == 0
+                                    || member.Parameters.IsNullOrEmpty()
                                     || extensions.Contains(member.Name, 0, 0)
                                     || !CanBeExtended(extends, member, access)) continue;
                                 // transform `extensionMethod(target:Type, ...params)` to `extensionMethod(...params)`
@@ -1696,14 +1696,14 @@ namespace HaXeContext
         public override string GetDefaultValue(string type)
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
-            switch (type)
+            return type switch
             {
-                case "Int":
-                case "UInt": return "0";
-                case "Float": return "Math.NaN";
-                case "Bool": return "false";
-                default: return "null";
-            }
+                "Int" => "0",
+                "UInt" => "0",
+                "Float" => "Math.NaN",
+                "Bool" => "false",
+                _ => "null",
+            };
         }
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
@@ -2121,7 +2121,7 @@ namespace HaXeContext
                 completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is ScintillaControl sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
                 {
                     try
                     {

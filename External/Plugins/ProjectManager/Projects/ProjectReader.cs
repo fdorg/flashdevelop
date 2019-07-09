@@ -178,7 +178,7 @@ namespace ProjectManager.Projects
 
                     case "testMovie":
                         // Be tolerant of unknown strings (older .fdp projects might have these)
-                        List<string> acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
+                        var acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
                         if (acceptableValues.Contains(Value)) Project.TestMovieBehavior = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
                         else Project.TestMovieBehavior = TestMovieBehavior.NewTab;
                         break;

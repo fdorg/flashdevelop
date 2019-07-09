@@ -101,7 +101,7 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileDelete(string[] paths, bool confirm)
         {
-            if (paths is null || paths.Length == 0) return false;
+            if (paths.IsNullOrEmpty()) return false;
             WatcherVCResult result = fsWatchers.ResolveVC(Path.GetDirectoryName(paths[0]));
             if (result is null) return false;
 

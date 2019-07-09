@@ -240,7 +240,7 @@ namespace PluginCore.FRService
 
         string ReplaceOneMatch(string src, string replacement, List<SearchMatch> matches, int matchIndex)
         {
-            if (matches is null || matches.Count == 0) return src;
+            if (matches.IsNullOrEmpty()) return src;
             SearchMatch match = matches[matchIndex];
 
             // replace text
@@ -253,9 +253,9 @@ namespace PluginCore.FRService
             return src;
         }
 
-        string ReplaceAllMatches(string src, string replacement, List<SearchMatch> matches)
+        string ReplaceAllMatches(string src, string replacement, ICollection<SearchMatch> matches)
         {
-            if (matches is null || matches.Count == 0) return src;
+            if (matches.IsNullOrEmpty()) return src;
             StringBuilder sb = new StringBuilder();
             string original = replacement;
             int lastIndex = 0;

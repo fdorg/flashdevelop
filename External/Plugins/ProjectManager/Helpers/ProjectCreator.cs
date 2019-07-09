@@ -183,9 +183,7 @@ namespace ProjectManager.Helpers
                     case "PACKAGESLASHALT": return packageSlash.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     case "DOLLAR": return "$";
                     case "FLEXSDK":
-                        if (defaultFlexSDK == null)
-                            defaultFlexSDK = PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
-                        return defaultFlexSDK;
+                        return defaultFlexSDK ??= PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
                     case "APPDIR": return PathHelper.AppDir;
                     default:
                         if (arguments == null) arguments = PluginBase.MainForm.CustomArguments.ToArray();

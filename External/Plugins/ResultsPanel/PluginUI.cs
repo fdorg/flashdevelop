@@ -770,18 +770,13 @@ namespace ResultsPanel
 
                 if (this.lastColumn == e.Column)
                 {
-                    switch (this.sortOrder)
+                    sortOrder = sortOrder switch
                     {
-                        case SortOrder.None:
-                            this.sortOrder = SortOrder.Ascending;
-                            break;
-                        case SortOrder.Ascending:
-                            this.sortOrder = SortOrder.Descending;
-                            break;
-                        case SortOrder.Descending:
-                            this.sortOrder = SortOrder.None;
-                            break;
-                    }
+                        SortOrder.None => SortOrder.Ascending,
+                        SortOrder.Ascending => SortOrder.Descending,
+                        SortOrder.Descending => SortOrder.None,
+                        _ => sortOrder,
+                    };
                 }
                 else
                 {

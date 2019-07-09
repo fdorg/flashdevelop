@@ -1247,7 +1247,7 @@ namespace ASCompletion.Context
             else if (node.Tag is string tag)
             {
                 string[] info = tag.Split('@');
-                if (info.Length == 2 && int.TryParse(info[1], out int line))
+                if (info.Length == 2 && int.TryParse(info[1], out var line))
                 {
                     ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
                 }

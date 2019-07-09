@@ -308,10 +308,10 @@ namespace ASCompletion
                 return;
             TreeNode node = outlineTreeView.SelectedNode;
             TypeTreeNode tnode;
-            if (node is TypeTreeNode)
+            if (node is TypeTreeNode treeNode)
             {
-                tnode = node as TypeTreeNode;
-                string filename = (tnode.Tag as string).Split('@')[0];
+                tnode = treeNode;
+                string filename = ((string) tnode.Tag).Split('@')[0];
 
                 FileModel model = OpenFile(filename);
                 if (model != null)
@@ -320,26 +320,26 @@ namespace ASCompletion
                     if (!theClass.IsVoid())
                     {
                         int line = theClass.LineFrom;
-                        ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                        var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                         if (sci != null && !theClass.IsVoid() && line > 0 && line < sci.LineCount)
                             sci.GotoLineIndent(line);
                     }
                 }
             }
-            else if (node is MemberTreeNode && node.Parent is TypeTreeNode)
+            else if (node is MemberTreeNode && node.Parent is TypeTreeNode parent)
             {
-                tnode = node.Parent as TypeTreeNode;
-                string filename = (tnode.Tag as string).Split('@')[0];
+                tnode = parent;
+                string filename = ((string) tnode.Tag).Split('@')[0];
 
                 FileModel model = OpenFile(filename);
                 if (model != null)
                 {
                     ClassModel theClass = model.GetClassByName(tnode.Text);
-                    string memberName = (node.Tag as string).Split('@')[0];
+                    string memberName = ((string) node.Tag).Split('@')[0];
                     MemberModel member = theClass.Members.Search(memberName, 0, 0);
                     if (member == null) return;
-                    int line = member.LineFrom;
-                    ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    var line = member.LineFrom;
+                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     if (sci != null && line > 0 && line < sci.LineCount)
                         sci.GotoLineIndent(line);
                 }
@@ -389,7 +389,7 @@ namespace ASCompletion
             ResolvedPath resolved = ResolvePath(node);
             if (resolved.model == null) return ClassModel.VoidClass;
 
-            string[] info = (node.Tag as string).Split('@');
+            string[] info = ((string) node.Tag).Split('@');
             FileModel model = resolved.model.GetFile(info[0]);
             return model.GetClassByName(info[1]);
         }
@@ -398,10 +398,8 @@ namespace ASCompletion
         {
             if (!(node is MemberTreeNode) || node.Tag == null)
                 return 0;
-            string[] info = (node.Tag as string).Split('@');
-            int line;
-            if (int.TryParse(info[1], out line)) return line;
-            return 0;
+            var info = ((string) node.Tag).Split('@');
+            return int.TryParse(info[1], out var line) ? line : 0;
         }
 
         #endregion

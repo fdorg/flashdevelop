@@ -835,17 +835,11 @@ namespace AS2Context
                 var fullpath = Path.GetDirectoryName(cFile.FileName);
                 if (package.Length == 0 || !fullpath.EndsWithOrdinal(pathname))
                 {
-                    if (settings.FixPackageAutomatically && CurSciControl is ScintillaControl sci)
+                    if (settings.FixPackageAutomatically && CurSciControl is { } sci)
                     {
-                        Regex packagePattern = null;
-                        if (cFile.Context.Settings.LanguageId == "AS2")
-                        {
-                            packagePattern = new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')');
-                        }
-                        else
-                        {
-                            packagePattern = new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
-                        }
+                        var packagePattern = cFile.Context.Settings.LanguageId == "AS2"
+                            ? new Regex("class\\s+(" + cFile.Package.Replace(".", "\\.") + "\\." + pClass.Name + ')')
+                            : new Regex("package\\s+(" + cFile.Package.Replace(".", "\\.") + ')');
 
                         var regexPackageLine = "";
                         var pos = -1;
@@ -1220,7 +1214,7 @@ namespace AS2Context
                 completionCache = new CompletionCache(this, elements);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is ScintillaControl sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
                 {
                     try
                     {

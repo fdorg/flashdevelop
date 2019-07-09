@@ -30,21 +30,20 @@ namespace PluginCore.Controls
         public static IDisposable Attach(object obj, bool childrenToo)
         {
             if (!Win32.ShouldUseWin32() && !PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false)) return null;
-            if (obj is Control && childrenToo)
+            if (obj is Control parent && childrenToo)
             {
-                Control parent = obj as Control;
-                foreach (Control ctrl in parent.Controls) ScrollBarEx.Attach(ctrl);
+                foreach (Control ctrl in parent.Controls) Attach(ctrl);
                 return null;
             }
-            if (obj is ListBox) return new ListBoxScroller(obj as ListBox);
-            if (obj is ListView) return new ListViewScroller(obj as ListView);
-            if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
-            if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
-            if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
-            if (obj is PropertyGrid) return new PropertyGridScroller(obj as PropertyGrid);
-            if (obj is TextBox && (obj as TextBox).Multiline && (obj as TextBox).WordWrap)
+            if (obj is ListBox listBox) return new ListBoxScroller(listBox);
+            if (obj is ListView listView) return new ListViewScroller(listView);
+            if (obj is TreeView treeView) return new TreeViewScroller(treeView);
+            if (obj is RichTextBox richTextBox) return new RichTextBoxScroller(richTextBox);
+            if (obj is DataGridView dataGridView) return new DataGridViewScroller(dataGridView);
+            if (obj is PropertyGrid propertyGrid) return new PropertyGridScroller(propertyGrid);
+            if (obj is TextBox textBox && textBox.Multiline && textBox.WordWrap)
             {
-                return new TextBoxScroller(obj as TextBoxEx);
+                return new TextBoxScroller(textBox as TextBoxEx);
             }
             return null;
         }
@@ -124,21 +123,12 @@ namespace PluginCore.Controls
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
                 return;
-
-            Color color;
-            switch (state)
+            var color = state switch
             {
-                case ScrollBarState.Hot:
-                    color = foreColorHot;
-                    break;
-                case ScrollBarState.Pressed:
-                    color = foreColorPressed;
-                    break;
-                default:
-                    color = foreColor;
-                    break;
-            }
-
+                ScrollBarState.Hot => foreColorHot,
+                ScrollBarState.Pressed => foreColorPressed,
+                _ => foreColor,
+            };
             switch (orientation)
             {
                 case ScrollBarOrientation.Vertical:
@@ -165,23 +155,14 @@ namespace PluginCore.Controls
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
 
-            Color color;
-
-            switch (state)
+            var color = state switch
             {
-                case ScrollBarArrowButtonState.UpHot:
-                case ScrollBarArrowButtonState.DownHot:
-                    color = arrowColorHot;
-                    break;
-                case ScrollBarArrowButtonState.UpPressed:
-                case ScrollBarArrowButtonState.DownPressed:
-                    color = arrowColorPressed;
-                    break;
-                default:
-                    color = arrowColor;
-                    break;
-            }
-
+                ScrollBarArrowButtonState.UpHot => arrowColorHot,
+                ScrollBarArrowButtonState.DownHot => arrowColorHot,
+                ScrollBarArrowButtonState.UpPressed => arrowColorPressed,
+                ScrollBarArrowButtonState.DownPressed => arrowColorPressed,
+                _ => arrowColor,
+            };
             switch (orientation)
             {
                 case ScrollBarOrientation.Vertical:

@@ -100,9 +100,8 @@ namespace System.Windows.Forms
                     item.Padding = new Padding(2, 2, 2, 2);
                 }
             }
-            else if (item is ToolStripComboBoxEx)
+            else if (item is ToolStripComboBoxEx comboBox)
             {
-                ToolStripComboBoxEx comboBox = item as ToolStripComboBoxEx;
                 comboBox.Margin = new Padding(2, 0, 2, 0);
                 comboBox.FlatCombo.UseTheme = useTheme;
             }
@@ -113,9 +112,8 @@ namespace System.Windows.Forms
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
-                if (item is ToolStripTextBox)
+                if (item is ToolStripTextBox textBox)
                 {
-                    ToolStripTextBox textBox = item as ToolStripTextBox;
                     if (tborder != Color.Empty)
                     {
                         Size size = textBox.TextBox.Size;
@@ -125,7 +123,7 @@ namespace System.Windows.Forms
                             textBox.Margin = new Padding(2, 1, 2, 1);
                             textBox.BorderStyle = BorderStyle.None;
                         }
-                        e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                        e.Graphics.FillRectangle(new SolidBrush(textBox.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                         e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                     }
                     else if (textBox.BorderStyle != BorderStyle.Fixed3D) // Reset
