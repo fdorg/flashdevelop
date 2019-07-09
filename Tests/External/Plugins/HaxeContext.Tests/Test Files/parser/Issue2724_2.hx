@@ -246,7 +246,7 @@ class HeaderField extends NamedWith<HeaderName, HeaderValue> {
   
   public function toString() 
     return 
-      if (value is null) name 
+      if (value == null) name 
       else '$name: $value';//urlencode?
     
   static public function ofString(s:String)
@@ -264,13 +264,13 @@ class HeaderField extends NamedWith<HeaderName, HeaderValue> {
    */  
   static public function setCookie(key:String, value:String, ?options: { ?expires: Date, ?domain: String, ?path: String, ?secure: Bool, ?scriptable: Bool}) {
     
-    if (options is null) 
+    if (options == null) 
       options = { };
       
     var buf = new StringBuf();
     
     inline function addPair(name, value) {
-      if(value is null) return;
+      if(value == null) return;
       buf.add("; ");
       buf.add(name);
       buf.add(value);
@@ -350,12 +350,12 @@ class HeaderParser<T> extends BytewiseParser<T> {
     return
       switch line {
         case '':
-          if (header is null)
+          if (header == null)
             Progressed;
           else
             Done(header);
         default:
-          if (header is null)
+          if (header == null)
             switch makeHeader(line, fields = []) {
               case Success(null):
                 Done(this.header = null);

@@ -127,7 +127,7 @@ class Issue2525_1 extends Editor {
 					out += "#define " + item.name + "\n";
 					var itemCode = FileWrap.readTextFileSync(item.path);
 					var itemSubs = GmlMultifile.split(itemCode, item.name);
-					if (itemSubs is null) {
+					if (itemSubs == null) {
 						errors += "Can't open " + item.name
 							+ " for editing: " + GmlMultifile.errorText + "\n";
 					} else switch (itemSubs.length) {
@@ -158,7 +158,7 @@ class Issue2525_1 extends Editor {
 				} else setError(GmxObject.errorText);
 			};
 			case YyObjectEvents: {
-				if (data is null) data = Json.parse(src);
+				if (data == null) data = Json.parse(src);
 				var obj:YyObject = data;
 				NativeArray.clear(file.extraFiles);
 				file.code = obj.getCode(file.path, file.extraFiles);
@@ -172,7 +172,7 @@ class Issue2525_1 extends Editor {
 				} else setError(GmxObject.errorText);
 			};
 			case YyTimelineMoments: {
-				if (data is null) data = Json.parse(src);
+				if (data == null) data = Json.parse(src);
 				var tl:YyTimeline = data;
 				NativeArray.clear(file.extraFiles);
 				file.code = tl.getCode(file.path, file.extraFiles);
@@ -187,7 +187,7 @@ class Issue2525_1 extends Editor {
 			};
 			//
 			case YySpriteView: {
-				if (data is null) data = Json.parse(src);
+				if (data == null) data = Json.parse(src);
 			};
 		}
 		file.syncTime();
@@ -203,7 +203,7 @@ class Issue2525_1 extends Editor {
 		var val_preImport = val;
 		var path = file.path;
 		val = GmlExtImport.post(val, path);
-		if (val is null) {
+		if (val == null) {
 			Main.window.alert(GmlExtImport.errorText);
 			return null;
 		}
@@ -242,7 +242,7 @@ class Issue2525_1 extends Editor {
 		}
 		//
 		out = GmlExtArgs.post(out);
-		if (out is null) return error("Can't process #args:\n" + GmlExtArgs.errorText);
+		if (out == null) return error("Can't process #args:\n" + GmlExtArgs.errorText);
 		//
 		if (file.kind != ExtGML && Preferences.current.argsFormat != "") {
 			if (GmlExtArgsDoc.proc(file)) {
@@ -256,7 +256,7 @@ class Issue2525_1 extends Editor {
 		//
 		if (file.kind != ExtGML) {
 			out = GmlExtCoroutines.post(out);
-			if (out is null) return error(GmlExtCoroutines.errorText);
+			if (out == null) return error(GmlExtCoroutines.errorText);
 		}
 		//
 		return out;
@@ -274,12 +274,12 @@ class Issue2525_1 extends Editor {
 		//
 		if (canImport(file)) {
 			val = postpImport(val);
-			if (val is null) return false;
+			if (val == null) return false;
 		}
 		//
 		if (canLambda(file)) {
 			val = GmlExtLambda.post(this, val);
-			if (val is null) return error("Can't process #lambda:\n" + GmlExtLambda.errorText);
+			if (val == null) return error("Can't process #lambda:\n" + GmlExtLambda.errorText);
 		}
 		//
 		var out:String, src:String, gmx:SfGmx;
@@ -289,12 +289,12 @@ class Issue2525_1 extends Editor {
 			case Plain, GLSL, HLSL, JavaScript: out = val;
 			case Normal, ExtGML: {
 				out = postpNormal(val);
-				if (out is null) return false;
+				if (out == null) return false;
 			};
 			case Multifile: {
 				out = val;
 				/*out = GmlExtArgs.post(out);
-				if (out is null) {
+				if (out == null) {
 					return error("Can't process macro:\n" + GmlExtArgs.errorText);
 				}*/
 				//
@@ -314,7 +314,7 @@ class Issue2525_1 extends Editor {
 				if (errors != "") error(errors);
 			};
 			case SearchResults: {
-				if (file.searchData is null) return false;
+				if (file.searchData == null) return false;
 				if (!file.searchData.save(file)) return false;
 				file.markClean();
 				writeFile = false;
@@ -381,7 +381,7 @@ class Issue2525_1 extends Editor {
 		var path = file.path;
 		if (file.kind == Snippets) return;
 		if (file.kind != Multifile) {
-			if (path is null || !haxe.io.Path.isAbsolute(path)) return;
+			if (path == null || !haxe.io.Path.isAbsolute(path)) return;
 			if (!FileSystem.existsSync(path)) {
 				switch (Dialog.showMessageBox({
 					title: "File missing: " + file.name,
