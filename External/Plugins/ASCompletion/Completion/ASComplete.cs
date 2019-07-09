@@ -4275,12 +4275,12 @@ namespace ASCompletion.Completion
 
         public virtual bool IsRegexStyle(ScintillaControl sci, int position) => sci.BaseStyleAt(position) == 14;
 
+        public static string GetWordLeft(ScintillaControl sci, int position) => GetWordLeft(sci, ref position);
+
         public static string GetWordLeft(ScintillaControl sci, ref int position)
         {
-            // get the word characters from the syntax definition
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var word = "";
-            //string exclude = "(){};,+*/\\=:.%\"<>";
+            var word = new StringBuilder();
             var skipWS = true;
             while (position >= 0)
             {
@@ -4295,13 +4295,43 @@ namespace ASCompletion.Completion
                     else if (!characterClass.Contains(c)) break;
                     else if (style != 6)
                     {
-                        word = c + word;
+                        word.Insert(0, c);
                         skipWS = false;
                     }
                 }
                 position--;
             }
-            return word;
+            return word.ToString();
+        }
+
+        public static string GetWordRight(ScintillaControl sci, int position) => GetWordRight(sci, ref position);
+
+        public static string GetWordRight(ScintillaControl sci, ref int position)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var word = new StringBuilder();
+            var skipWS = true;
+            var length = sci.Length;
+            while (position < length)
+            {
+                var style = sci.BaseStyleAt(position);
+                if (IsTextStyleEx(style))
+                {
+                    var c = (char)sci.CharAt(position);
+                    if (c <= ' ')
+                    {
+                        if (!skipWS) break;
+                    }
+                    else if (!characterClass.Contains(c)) break;
+                    else if (style != 6)
+                    {
+                        word.Append(c);
+                        skipWS = false;
+                    }
+                }
+                position++;
+            }
+            return word.ToString();
         }
 
         protected static void GetOperatorLeft(ScintillaControl sci, int position, ASExpr expression)
