@@ -351,7 +351,7 @@ namespace AS3Context
 
         private static void applyTypeComment(ASDocItem doc, MemberModel model)
         {
-            if (doc is null || model ==null)
+            if (doc is null || model  is null)
                 return;
 
             ASFileParserUtils.ParseTypeDefinitionInto(doc.ApiType, model, true, true);

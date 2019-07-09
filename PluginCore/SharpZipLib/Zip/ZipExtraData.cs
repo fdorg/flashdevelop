@@ -100,7 +100,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="count">The number of bytes available.</param>
         public void SetData(byte[] data, int offset, int count)
         {
-            if( data==null )
+            if( data is null )
             {
                 throw new ArgumentNullException(nameof(data));
             }
