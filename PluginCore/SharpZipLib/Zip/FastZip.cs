@@ -523,11 +523,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void AddFileContents(string name, Stream stream)
         {
-            if( stream==null ) {
+            if( streamis null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            if( buffer_==null ) {
+            if( buffer_is null ) {
                 buffer_=new byte[4096];
             }
 
