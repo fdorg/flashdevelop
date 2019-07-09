@@ -131,7 +131,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 node = node.Parent as GenericNode;
             }
-            if (node == null) return;
+            if (node is null) return;
             // if you refresh a SwfFileNode this way (by asking for it), you get
             // special feedback
 
@@ -378,7 +378,7 @@ namespace ProjectManager.Controls.TreeView
             try
             {
                 BeginUpdate();
-                if (paths == null)
+                if (paths is null)
                 {
                     // full recursive refresh
                     foreach (GenericNode node in Nodes)

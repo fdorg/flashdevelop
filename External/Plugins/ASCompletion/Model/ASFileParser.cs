@@ -693,14 +693,14 @@ namespace ASCompletion.Model
                                     string inc = src.Substring(tokPos, i - tokPos);
                                     ASMetaData meta = new ASMetaData("Include");
                                     meta.ParseParams(inc);
-                                    if (curClass == null)
+                                    if (curClass is null)
                                     {
-                                        if (carriedMetaData == null) carriedMetaData = new List<ASMetaData>();
+                                        if (carriedMetaData is null) carriedMetaData = new List<ASMetaData>();
                                         carriedMetaData.Add(meta);
                                     }
                                     else
                                     {
-                                        if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                        if (curClass.MetaDatas is null) curClass.MetaDatas = new List<ASMetaData>();
                                         curClass.MetaDatas.Add(meta);
                                     }
                                 }
@@ -1050,7 +1050,7 @@ namespace ASCompletion.Model
                         if (p > 0) param = param.Substring(0, p).TrimEnd();
                     }
 
-                    if (curMember == null)
+                    if (curMember is null)
                     {
                         if (inType)
                         {
@@ -1173,7 +1173,7 @@ namespace ASCompletion.Model
                                         && (char.IsLetter(src[i]))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                     {
-                                        if (curMember == null)
+                                        if (curMember is null)
                                         {
                                             evalToken = 0;
                                             if (inGeneric) paramTempCount++;
@@ -1285,7 +1285,7 @@ namespace ASCompletion.Model
                         // member type declaration
                         else if (c1 == ':' && !inValue && !inGeneric)
                         {
-                            foundColon = curMember != null && curMember.Type == null;
+                            foundColon = curMember != null && curMember.Type is null;
                             // recognize compiler config block
                             if (!foundColon && braceCount == 0 
                                 && i < len - 2 && src[i] == ':' && char.IsLetter(src[i + 1]))
@@ -1320,7 +1320,7 @@ namespace ASCompletion.Model
                                 context = FlagType.Variable;
                                 inParams = true;
                                 inGeneric = false;
-                                if (valueMember != null && curMember == null)
+                                if (valueMember != null && curMember is null)
                                 {
                                     valueLength = 0;
                                     //valueMember.Flags -= FlagType.Variable; ???
@@ -1328,7 +1328,7 @@ namespace ASCompletion.Model
                                     curMethod = curMember = valueMember;
                                     valueMember = null;
                                 }
-                                else if (curMember == null)
+                                else if (curMember is null)
                                 {
                                     context = FlagType.Function;
                                     if ((curModifiers & FlagType.Getter) > 0)
@@ -1356,7 +1356,7 @@ namespace ASCompletion.Model
                                     curMethod = curMember;
                                 }
                             }
-                            else if (curMember == null && curToken.Text != "catch")
+                            else if (curMember is null && curToken.Text != "catch")
                             {
                                 context = 0;
                                 inGeneric = false;
@@ -1944,7 +1944,7 @@ namespace ASCompletion.Model
                         {
                             if (curClass != null)
                             {
-                                if (curClass.Implements == null) curClass.Implements = new List<string>();
+                                if (curClass.Implements is null) curClass.Implements = new List<string>();
                                 curClass.Implements.Add(token);
                             }
                         }
@@ -1992,7 +1992,7 @@ namespace ASCompletion.Model
                         }
                         if (carriedMetaData != null)
                         {
-                            if (curClass.MetaDatas == null)
+                            if (curClass.MetaDatas is null)
                                 curClass.MetaDatas = carriedMetaData;
                             else curClass.MetaDatas.AddRange(carriedMetaData);
 
@@ -2015,7 +2015,7 @@ namespace ASCompletion.Model
                         if (inParams && curMethod != null)
                         {
                             member.Flags = FlagType.Variable | FlagType.ParameterVar;
-                            if (curMethod.Parameters == null) curMethod.Parameters = new List<MemberModel>();
+                            if (curMethod.Parameters is null) curMethod.Parameters = new List<MemberModel>();
                             member.Access = 0;
                             if (member.Name.Length > 0)
                                 curMethod.Parameters.Add(member);
@@ -2043,7 +2043,7 @@ namespace ASCompletion.Model
 
                         if (carriedMetaData != null)
                         {
-                            if (member.MetaDatas == null)
+                            if (member.MetaDatas is null)
                                 member.MetaDatas = carriedMetaData;
                             else member.MetaDatas.AddRange(carriedMetaData);
                             carriedMetaData = null;
@@ -2105,7 +2105,7 @@ namespace ASCompletion.Model
                         curMember = member;
                         if (carriedMetaData != null)
                         {
-                            if (member.MetaDatas == null)
+                            if (member.MetaDatas is null)
                                 member.MetaDatas = carriedMetaData;
                             else member.MetaDatas.AddRange(carriedMetaData);
 

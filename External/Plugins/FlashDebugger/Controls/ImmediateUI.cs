@@ -119,7 +119,7 @@ namespace FlashDebugger.Controls
 
                 foreach (SwfInfo info in PluginMain.debugManager.FlashInterface.Session.getSwfs())
                 {
-                    if (info == null) continue;
+                    if (info is null) continue;
                     ret.Append(info.getPath()).Append("\tswfsize ").Append(info.getSwfSize()).Append("\tprocesscomplete ").Append(info.isProcessingComplete())
                         .Append("\tunloaded ").Append(info.isUnloaded()).Append("\turl ").Append(info.getUrl()).Append("\tsourcecount ")
                         .Append(info.getSourceCount(PluginMain.debugManager.FlashInterface.Session)).AppendLine();

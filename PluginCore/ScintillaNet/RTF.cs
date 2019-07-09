@@ -108,7 +108,7 @@ namespace ScintillaNet
                 {
                     var style = useStyles[styleByte];
 
-                    if (style == null)
+                    if (style is null)
                     {
                         // there shouldn't be any style that's not defined but present in the editor
                         // something is wrong if the code reaches here... throw an exception?

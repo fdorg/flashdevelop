@@ -29,7 +29,7 @@ namespace FlashDevelop.Controls
                 RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
                 {
                     object value = emu.GetValue(valueName);
-                    if (value == null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
+                    if (value is null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
                 }
             }
             catch { } // No errors please...

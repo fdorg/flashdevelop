@@ -34,7 +34,7 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void ClearResults(string groupData)
         {
-            if (groupData == null)
+            if (groupData is null)
             {
                 MainUI.ClearOutput();
                 return;
@@ -61,7 +61,7 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void ShowResults(string groupData)
         {
-            if (groupData == null)
+            if (groupData is null)
             {
                 MainUI.AddLogEntries();
                 MainUI.DisplayOutput();

@@ -39,7 +39,7 @@ namespace SourceControl.Sources.Subversion
 
         public bool SetPathDirty(string path)
         {
-            if (path == null) return false;
+            if (path is null) return false;
             if (string.IsNullOrEmpty(dirty))
             {
                 dirty = path;

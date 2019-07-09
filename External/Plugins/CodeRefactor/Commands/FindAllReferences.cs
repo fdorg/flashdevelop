@@ -189,7 +189,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            var groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
+            var groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member is null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
             PluginBase.MainForm.CallCommand("PluginCommand", $"ResultsPanel.ClearResults;{groupData}");
             foreach (var entry in Results)
             {

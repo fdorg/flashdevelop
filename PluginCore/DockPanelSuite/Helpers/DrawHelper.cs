@@ -23,7 +23,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public static GraphicsPath GetRoundedCornerTab(GraphicsPath graphicsPath, Rectangle rect, bool upCorner)
         {
-            if (graphicsPath == null)
+            if (graphicsPath is null)
                 graphicsPath = new GraphicsPath();
             else
                 graphicsPath.Reset();

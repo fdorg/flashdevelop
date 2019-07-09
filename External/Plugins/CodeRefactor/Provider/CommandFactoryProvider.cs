@@ -26,7 +26,7 @@ namespace CodeRefactor.Provider
         {
             DefaultFactory.RegisterValidator(typeof(Rename), expr =>
             {
-                if (expr == null || expr.IsNull()) return false;
+                if (expr is null || expr.IsNull()) return false;
                 var c = expr.Context.Value[0];
                 if (char.IsDigit(c)) return false;
                 var file = expr.InFile ?? expr.Type.InFile;

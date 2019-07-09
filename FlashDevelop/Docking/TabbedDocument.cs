@@ -302,7 +302,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         public bool CheckFileChange()
         {
-            if (fileInfo == null)
+            if (fileInfo is null)
             {
                 fileInfo = new FileInfo(FileName);
             }

@@ -147,7 +147,7 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for input.</returns>
         public static TarBuffer CreateInputTarBuffer(Stream inputStream)
         {
-            if ( inputStream == null )
+            if ( inputStream is null )
             {
                 throw new ArgumentNullException(nameof(inputStream));
             }
@@ -163,7 +163,7 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for input.</returns>
         public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockFactor)
         {
-            if ( inputStream == null )
+            if ( inputStream is null )
             {
                 throw new ArgumentNullException(nameof(inputStream));
             }
@@ -192,7 +192,7 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for output.</returns>
         public static TarBuffer CreateOutputTarBuffer(Stream outputStream)
         {
-            if ( outputStream == null )
+            if ( outputStream is null )
             {
                 throw new ArgumentNullException(nameof(outputStream));
             }
@@ -208,7 +208,7 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for output.</returns>
         public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockFactor)
         {
-            if ( outputStream == null )
+            if ( outputStream is null )
             {
                 throw new ArgumentNullException(nameof(outputStream));
             }
@@ -261,7 +261,7 @@ or which contains garbage records after a zero block.
         [Obsolete("Use IsEndOfArchiveBlock instead")]
         public bool IsEOFBlock(byte[] block)
         {
-            if ( block == null ) {
+            if ( block is null ) {
                 throw new ArgumentNullException(nameof(block));
             }
 
@@ -291,7 +291,7 @@ or which contains garbage records after a zero block.
         /// <returns>Returns true if the block is an EOF block; false otherwise.</returns>
         public static bool IsEndOfArchiveBlock(byte[] block)
         {
-            if ( block == null ) {
+            if ( block is null ) {
                 throw new ArgumentNullException(nameof(block));
             }
 
@@ -313,7 +313,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         public void SkipBlock()
         {
-            if (inputStream == null) {
+            if (inputStream is null) {
                 throw new TarException("no input stream defined");
             }
             
@@ -334,7 +334,7 @@ or which contains garbage records after a zero block.
         /// </returns>
         public byte[] ReadBlock()
         {
-            if (inputStream == null) {
+            if (inputStream is null) {
                 throw new TarException("TarBuffer.ReadBlock - no input stream defined");
             }
             
@@ -359,7 +359,7 @@ or which contains garbage records after a zero block.
         /// </returns>
         bool ReadRecord()
         {
-            if (inputStream == null) {
+            if (inputStream is null) {
                 throw new TarException("no input stream stream defined");
             }
                         
@@ -456,11 +456,11 @@ or which contains garbage records after a zero block.
         /// </param>
         public void WriteBlock(byte[] block)
         {
-            if ( block == null ) {
+            if ( block is null ) {
                 throw new ArgumentNullException(nameof(block));
             }
 
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteBlock - no output stream defined");
             }
                         
@@ -491,11 +491,11 @@ or which contains garbage records after a zero block.
         /// </param>
         public void WriteBlock(byte[] buffer, int offset)
         {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteBlock - no output stream stream defined");
             }
                         
@@ -524,7 +524,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         void WriteRecord()
         {
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteRecord no output stream defined");
             }
             
@@ -542,7 +542,7 @@ or which contains garbage records after a zero block.
         /// for the end of a tar stream.</remarks>
         void WriteFinalRecord()
         {
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteFinalRecord no output stream defined");
             }
             

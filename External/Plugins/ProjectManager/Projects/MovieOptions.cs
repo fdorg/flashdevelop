@@ -113,7 +113,7 @@ namespace ProjectManager.Projects
             if (HasPlatformSupport)
             {
                 var debugger = PlatformSupport.DebuggerSupported;
-                if (debugger == null) return false;
+                if (debugger is null) return false;
                 
                 if (string.IsNullOrEmpty(targetBuild)) 
                     return debugger.Length > 0 && debugger[0] == "*";

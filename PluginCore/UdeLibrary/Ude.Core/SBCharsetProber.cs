@@ -163,7 +163,7 @@ namespace Ude.Core
         
         public override string GetCharsetName() 
         {
-            return (nameProber == null) ? model.CharsetName
+            return (nameProber is null) ? model.CharsetName
                                         : nameProber.GetCharsetName();
         }
         

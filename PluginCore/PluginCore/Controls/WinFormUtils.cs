@@ -16,11 +16,11 @@ namespace PluginCore.Controls
         {
             Size outSize = new Size();
 
-            if (richTextBox == null)
+            if (richTextBox is null)
                 return outSize;
 
             string rtf = richTextBox.Rtf;
-            if (rtf == null)
+            if (rtf is null)
                 return outSize;
 
             int lastIdx = rtf.LastIndexOf('}');

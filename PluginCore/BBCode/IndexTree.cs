@@ -11,7 +11,7 @@ namespace PluginCore.BBCode
 
         public static IndexTree getRootNode( IndexTree tree )
         {
-            if( tree == null )
+            if( tree is null )
                 return null;
                 
             IndexTree r = tree;
@@ -23,7 +23,7 @@ namespace PluginCore.BBCode
         
         public static bool insertLeaf( IndexTree tree, IndexTree leaf )
         {
-            if( tree == null || leaf == null )
+            if( tree is null || leaf is null )
                 return false;
             
             if( leaf.indexA < tree.indexA && 
@@ -55,7 +55,7 @@ namespace PluginCore.BBCode
                 return false;
             }
             
-            if( tree.nodes == null )
+            if( tree.nodes is null )
                 tree.nodes = new List<IndexTree>();
             
             // find where in subnodes it can be placed;
@@ -160,7 +160,7 @@ namespace PluginCore.BBCode
 
         public static List<IndexTree> flattenTree( IndexTree tree )
         {
-            if( tree == null )
+            if( tree is null )
                 return null;
             
             IndexTree t;
@@ -173,7 +173,7 @@ namespace PluginCore.BBCode
             {
                 t = tree.nodes[i];
                 
-                if( t == null )
+                if( t is null )
                     continue;
 
                 IndexTree fTree = new IndexTree(prevIdxB, t.indexA, offsetA, 0, tree.data, tree.parentNode);
@@ -197,7 +197,7 @@ namespace PluginCore.BBCode
         
         private static int _normalizeTree( IndexTree tree, int offset )
         {
-            if( tree == null )
+            if( tree is null )
                 return offset;
             
             tree.indexA -= offset;
@@ -223,7 +223,7 @@ namespace PluginCore.BBCode
 
         public static IndexTree cloneTree( IndexTree tree )
         {
-            if( tree == null )
+            if( tree is null )
                 return null;
             
             IndexTree clone = new IndexTree( tree.indexA,
@@ -256,7 +256,7 @@ namespace PluginCore.BBCode
         }
         public static string treeToString( IndexTree tree, string space, bool noEolAndEnd )
         {
-            if( tree == null )
+            if( tree is null )
                 return null;
             
             string s = "";
@@ -270,8 +270,8 @@ namespace PluginCore.BBCode
                        + " offsetA=" + tree.offsetA
                        + " offsetB=" + tree.offsetB
                        + " nodes=" + tree.nodes.Count
-                       + " data='" + (tree.data == null ? "null" : tree.data.ToString()) + "'"
-                       + " root='" + (getRootNode(tree).data == null ? "null" : getRootNode(tree).data.ToString()) + "'"
+                       + " data='" + (tree.data is null ? "null" : tree.data.ToString()) + "'"
+                       + " root='" + (getRootNode(tree).data is null ? "null" : getRootNode(tree).data.ToString()) + "'"
                        + ">";
                        
             int i = -1;

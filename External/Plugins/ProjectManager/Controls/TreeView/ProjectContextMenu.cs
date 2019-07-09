@@ -361,7 +361,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 var node = (DirectoryNode) projectTree.SelectedNode;
                 if (node.InsideClasspath == node) menu.Add(RemoveSourcePath, 2, true);
-                else if (node.InsideClasspath == null || node.InsideClasspath is ProjectNode)
+                else if (node.InsideClasspath is null || node.InsideClasspath is ProjectNode)
                 {
                     menu.Add(AddSourcePath, 2, false);
                 }

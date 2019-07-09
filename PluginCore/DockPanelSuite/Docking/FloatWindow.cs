@@ -24,7 +24,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private void InternalConstruct(DockPanel dockPanel, DockPane pane, bool boundsSpecified, Rectangle bounds)
         {
-            if (dockPanel == null)
+            if (dockPanel is null)
                 throw(new ArgumentNullException(Strings.FloatWindow_Constructor_NullDockPanel));
 
             m_nestedPanes = new NestedPaneCollection(this);
@@ -124,9 +124,9 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             DockPane theOnlyPane = (VisibleNestedPanes.Count == 1) ? VisibleNestedPanes[0] : null;
 
-            if (theOnlyPane == null)
+            if (theOnlyPane is null)
                 Text = " "; // use " " instead of string.Empty because the whole title bar will disappear when ControlBox is set to false.
-            else if (theOnlyPane.ActiveContent == null)
+            else if (theOnlyPane.ActiveContent is null)
                 Text = " ";
             else
                 Text = theOnlyPane.ActiveContent.DockHandler.TabText;

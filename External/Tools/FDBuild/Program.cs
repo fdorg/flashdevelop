@@ -34,7 +34,7 @@ namespace FDBuild
 
             // try and automagically figure out flashdevelop's library path
             // it should be at ..\..\Library
-            if (options.LibraryDir == null)
+            if (options.LibraryDir is null)
                 try
                 {
                     string libraryDir = Path.Combine(firstRunDir, "Library");

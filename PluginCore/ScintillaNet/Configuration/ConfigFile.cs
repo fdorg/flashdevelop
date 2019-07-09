@@ -33,7 +33,7 @@ namespace ScintillaNet.Configuration
         {
             includedFiles = new ConfigFile[0];
             base.init(utility, theParent);
-            if (includes == null) includes = new include[0];
+            if (includes is null) includes = new include[0];
             foreach (var include in includes) include.init(utility, _parent);
             foreach (var include in includes)
             {
@@ -51,13 +51,13 @@ namespace ScintillaNet.Configuration
                 list = new List<ConfigItem>();
                 ChildScintilla?.CollectScintillaNodes(list);
             }
-            else if (list == null) return;
+            else if (list is null) return;
 
             if (includedFiles != null)
             {
                 foreach (var cf in includedFiles)
                 {
-                    if (cf == null) continue;
+                    if (cf is null) continue;
                     if (cf.ChildScintilla != null) list.Add(cf.ChildScintilla);
                     cf.ChildScintilla?.CollectScintillaNodes(list);
                     if( cf.includedFiles != null && cf.includedFiles.Length > 0) cf.CollectScintillaNodes(list);

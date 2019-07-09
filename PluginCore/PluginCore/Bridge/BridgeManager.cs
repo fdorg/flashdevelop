@@ -40,7 +40,7 @@ namespace PluginCore.Bridge
         /// </summary>
         public static void RemoteOpen(string shared)
         {
-            if (remoteClient == null || !remoteClient.Connected)
+            if (remoteClient is null || !remoteClient.Connected)
                 remoteClient = new BridgeClient();
             if (remoteClient.Connected)
             {
@@ -55,7 +55,7 @@ namespace PluginCore.Bridge
         /// </summary>
         /*static public void RemoteConsole(string shared)
         {
-            if (remoteClient == null || !remoteClient.Connected)
+            if (remoteClient is null || !remoteClient.Connected)
                 remoteClient = new BridgeClient();
             if (remoteClient != null && remoteClient.Connected)
             {

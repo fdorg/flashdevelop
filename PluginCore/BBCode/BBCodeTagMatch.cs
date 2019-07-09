@@ -93,7 +93,7 @@ namespace PluginCore.BBCode
                    + " tagParam='" + tagParam + "'"
                    + " numOpenBraceSlashes='" + numOpenBraceSlashes + "'"
                    + " numCloseBraceSlashes='" + numCloseBraceSlashes + "'"
-                   + " bbCodeStyle='" + (_bbCodeStyle == null ? "null" : _bbCodeStyle.ToString()) + "'"
+                   + " bbCodeStyle='" + (_bbCodeStyle is null ? "null" : _bbCodeStyle.ToString()) + "'"
                    + "]";
         }
 

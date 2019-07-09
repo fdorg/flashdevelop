@@ -96,14 +96,14 @@ namespace AirProperties
 
         private void SetUsesSdk()
         {
-            if (usesSdkNode == null && UsesSdk != null)
+            if (usesSdkNode is null && UsesSdk != null)
             {
                 usesSdkNode = backDoc.CreateElement("uses-sdk");
                 backDoc.FirstChild.PrependChild(usesSdkNode);
             }
             if (usesSdkNode != null)
             {
-                if (UsesSdk == null)
+                if (UsesSdk is null)
                 {
                     backDoc.FirstChild.RemoveChild(usesSdkNode);
                     usesSdkNode = null;
@@ -117,7 +117,7 @@ namespace AirProperties
 
                 if (UsesSdk.MaxSdkVersion > 0)
                 {
-                    if (maxSdkAttribute == null)
+                    if (maxSdkAttribute is null)
                     {
                         maxSdkAttribute = backDoc.CreateAttribute("maxSdkVersion", AndroidNamespace);
                         usesSdkNode.Attributes.Append((XmlAttribute)maxSdkAttribute);
@@ -129,7 +129,7 @@ namespace AirProperties
 
                 if (UsesSdk.MinSdkVersion > 0)
                 {
-                    if (minSdkAttribute == null)
+                    if (minSdkAttribute is null)
                     {
                         minSdkAttribute = backDoc.CreateAttribute("minSdkVersion", AndroidNamespace);
                         usesSdkNode.Attributes.Append((XmlAttribute)minSdkAttribute);
@@ -141,7 +141,7 @@ namespace AirProperties
 
                 if (UsesSdk.TargetSdkVersion > 0)
                 {
-                    if (targetSdkAttribute == null)
+                    if (targetSdkAttribute is null)
                     {
                         targetSdkAttribute = backDoc.CreateAttribute("targetSdkVersion", AndroidNamespace);
                         usesSdkNode.Attributes.Append((XmlAttribute)targetSdkAttribute);
@@ -207,7 +207,7 @@ namespace AirProperties
                     var sdkAttribute = node.GetAttributeNode("maxSdkVersion", AndroidNamespace);
                     if (item.MaxSdkVersion > 0)
                     {
-                        if (sdkAttribute == null)
+                        if (sdkAttribute is null)
                         {
                             sdkAttribute = owner.backDoc.CreateAttribute("maxSdkVersion", AndroidNamespace);
                             node.Attributes.Append(sdkAttribute);

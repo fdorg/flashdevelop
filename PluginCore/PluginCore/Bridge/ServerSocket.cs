@@ -20,7 +20,7 @@ namespace PluginCore.Bridge
         
         public ServerSocket(string address, int port)
         {
-            if (address == null || address == "invalid")
+            if (address is null || address == "invalid")
             {
                 isInvalid = true;
                 return;

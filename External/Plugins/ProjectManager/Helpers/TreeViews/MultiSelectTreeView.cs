@@ -90,7 +90,7 @@ namespace System.Windows.Forms
             }
             set
             {
-                if (value == null)
+                if (value is null)
                 {
                     SelectedNode = null;
                     UnselectAllExcept(null);

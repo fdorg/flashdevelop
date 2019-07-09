@@ -128,7 +128,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider sp, object value)
         {
-            if (m_ui == null)
+            if (m_ui is null)
                 m_ui = new DockAreasEditor.DockAreasEditorControl();
 
             m_ui.SetStates((DockAreas)value);

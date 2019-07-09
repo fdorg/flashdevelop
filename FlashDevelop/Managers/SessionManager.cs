@@ -40,7 +40,7 @@ namespace FlashDevelop.Managers
             {
                 Session session = new Session();
                 session = (Session)ObjectSerializer.Deserialize(file, session);
-                if (session.Files == null) session.Files = new List<string>();
+                if (session.Files is null) session.Files = new List<string>();
                 session.Type = type; // set the type here...
                 RestoreSession(file, session);
             }

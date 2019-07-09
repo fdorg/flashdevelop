@@ -164,7 +164,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     ContentActivating = content;
                     return;
                 }
-                if (content == null) return;
+                if (content is null) return;
                 DockContentHandler handler = content.DockHandler;
                 if (handler.Form.IsDisposed) return; // Should not reach here, but better than throwing an exception
                 if (ContentContains(content, handler.ActiveWindowHandle)) NativeMethods.SetFocus(handler.ActiveWindowHandle);
@@ -205,7 +205,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             private bool IsInActiveList(IDockContent content)
             {
-                return !(content.DockHandler.NextActive == null && LastActiveContent != content);
+                return !(content.DockHandler.NextActive is null && LastActiveContent != content);
             }
 
             private void AddLastToActiveList(IDockContent content)
@@ -309,7 +309,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     IntPtr wParam = Marshal.ReadIntPtr(e.lParam, IntPtr.Size * 2);
                     DockPane pane = GetPaneFromHandle(wParam);
-                    if (pane == null)
+                    if (pane is null)
                         RefreshActiveWindow();
                 }
                 else if (msg == Win32.Msgs.WM_SETFOCUS)
@@ -416,9 +416,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (ActivePane != null && ActivePane.DockState == DockState.Document)
                     value = ActivePane;
 
-                if (value == null && DockPanel.DockWindows != null)
+                if (value is null && DockPanel.DockWindows != null)
                 {
-                    if (ActiveDocumentPane == null)
+                    if (ActiveDocumentPane is null)
                         value = DockPanel.DockWindows[DockState.Document].DefaultPane;
                     else if (ActiveDocumentPane.DockPanel != DockPanel || ActiveDocumentPane.DockState != DockState.Document)
                         value = DockPanel.DockWindows[DockState.Document].DefaultPane;

@@ -218,7 +218,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         internal ZipEntry(string name, int versionRequiredToExtract, int madeByInfo,
             CompressionMethod method)
         {
-            if (name == null) {
+            if (name is null) {
                 throw new ArgumentNullException(nameof(name));
             }
 
@@ -246,7 +246,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         [Obsolete("Use Clone instead")]
         public ZipEntry(ZipEntry entry)
         {
-            if ( entry == null ) {
+            if ( entry is null ) {
                 throw new ArgumentNullException(nameof(entry));
             }
 
@@ -794,7 +794,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             get => extra;
 
             set {
-                if (value == null) {
+                if (value is null) {
                     extra = null;
                 }
                 else {
@@ -1108,7 +1108,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </remarks>
         public static string CleanName(string name)
         {
-            if (name == null) {
+            if (name is null) {
                 return string.Empty;
             }
             

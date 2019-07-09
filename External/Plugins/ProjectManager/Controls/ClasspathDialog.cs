@@ -151,7 +151,7 @@ namespace ProjectManager.Controls
         {
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 string label = TextHelper.GetString("Title.GlobalClasspathsBox");
                 groupBox1.Text = string.Format(label, value.ToUpper());
                 classpathControl.Language = value;

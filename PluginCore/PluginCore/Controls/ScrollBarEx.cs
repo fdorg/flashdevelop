@@ -94,7 +94,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
@@ -119,7 +119,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
                 return;
@@ -150,7 +150,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
@@ -1935,7 +1935,7 @@ namespace PluginCore.Controls
             if (e.Type == EventType.ApplyTheme)
             {
                 bool enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
-                if (control.Parent == null) return;
+                if (control.Parent is null) return;
                 if (enabled)
                 {
                     if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();

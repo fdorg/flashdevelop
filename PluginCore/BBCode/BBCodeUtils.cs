@@ -15,7 +15,7 @@ namespace PluginCore.BBCode
     {
         public static string assembleOutput(string input, IndexTree tree)
         {
-            if (string.IsNullOrEmpty(input) || tree == null)
+            if (string.IsNullOrEmpty(input) || tree is null)
                 return null;
 
             string outStr = "";
@@ -46,7 +46,7 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle getCascadedNodeStyle(IndexTree tree)
         {
-            if (tree == null)
+            if (tree is null)
                 return null;
 
             List<BBCodeStyle> styleHierarchy = new List<BBCodeStyle>();
@@ -63,7 +63,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleToTextbox(BBCodeStyle style, RichTextBox tf, int selStart, int selEnd)
         {
-            if (style == null || tf == null || selEnd <= selStart || selEnd < 0)
+            if (style is null || tf is null || selEnd <= selStart || selEnd < 0)
                 return;
 
             tf.Select(selStart, selEnd);
@@ -116,7 +116,7 @@ namespace PluginCore.BBCode
 
         public static void applyStyleTreeToTextbox(RichTextBox tf, string input, IndexTree bbCodeTree)
         {
-            if (tf == null || bbCodeTree == null || string.IsNullOrEmpty(input))
+            if (tf is null || bbCodeTree is null || string.IsNullOrEmpty(input))
                 return;
 
             tf.Text = "";
@@ -181,13 +181,13 @@ namespace PluginCore.BBCode
 
         private static void _init()
         {
-            if (bbCodeParser == null)
+            if (bbCodeParser is null)
             {
                 bbCodeParser = new BottomUpParser();
                 bbCodeParser.pairTagHandler = new BBCodeTagHandler();
                 bbCodeParser.pairTagMatcher = new BBCodeTagMatcher();
             }
-            if (tempRTB == null)
+            if (tempRTB is null)
             {
                 tempRTB = new RichTextBox();
                 tempRTB.Text = "";

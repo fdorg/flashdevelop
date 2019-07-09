@@ -24,7 +24,7 @@ namespace HaXeContext
         protected override List<string> BuildHxmlArgs()
         {
             var result = base.BuildHxmlArgs();
-            if (result == null) return null;
+            if (result is null) return null;
             if ((ASContext.GetLanguageContext("haxe") as Context)?.Settings is HaXeSettings settings
                 && (settings.EnabledFeatures & CompletionFeatures.DisplayStdIn) != 0
                 && settings.CompletionMode == HaxeCompletionModeEnum.CompletionServer)

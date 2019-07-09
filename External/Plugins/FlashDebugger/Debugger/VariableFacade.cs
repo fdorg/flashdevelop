@@ -47,7 +47,7 @@ namespace FlashDebugger
         }
         
         /// <summary> The variable interface </summary>
-        public virtual java.lang.String getName() => (m_var == null)?m_name:(string)m_var.getName();
+        public virtual java.lang.String getName() => (m_var is null)?m_name:(string)m_var.getName();
 
         public virtual java.lang.String getDefiningClass() => m_var.getDefiningClass();
 
@@ -61,7 +61,7 @@ namespace FlashDebugger
 
         public virtual FaultEvent setValue(Session session, int type, java.lang.String value) => m_var.setValue(session, type, value);
 
-        public override string ToString() => m_var == null ? m_name : m_var.ToString();
+        public override string ToString() => m_var is null ? m_name : m_var.ToString();
 
         public virtual bool needsToInvokeGetter() => m_var.needsToInvokeGetter();
 

@@ -43,7 +43,7 @@ namespace AS3Context.Controls
         {
             Socket client = sender as Socket;
 
-            if (instance == null || data == null || !instance.running)
+            if (instance is null || data is null || !instance.running)
             {
                 if (client.Connected) client.Send(RESULT_IGNORED);
                 return;
@@ -263,7 +263,7 @@ namespace AS3Context.Controls
         void changeProfiler_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem item = sender as ToolStripMenuItem;
-            if (item == null || item.Checked) return;
+            if (item is null || item.Checked) return;
 
             foreach (ToolStripMenuItem it in profilerItems)
                 it.Checked = false;
@@ -357,7 +357,7 @@ namespace AS3Context.Controls
         private string AddCustomProfiler()
         {
             string swfPath = ResolvePath(profilerSWF);
-            if (swfPath == null) return null;
+            if (swfPath is null) return null;
             ASCompletion.Commands.CreateTrustFile.Run("FDProfiler.cfg", Path.GetDirectoryName(swfPath));
             return "\r\nPreloadSwf=" + swfPath + "\r\n";
         }

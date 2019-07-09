@@ -266,7 +266,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             private void SetTimerMouseTrack()
             {
-                if (ActivePane == null || ActivePane.IsActivated || FlagDragging)
+                if (ActivePane is null || ActivePane.IsActivated || FlagDragging)
                 {
                     m_timerMouseTrack.Enabled = false;
                     return;
@@ -342,7 +342,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 foreach (Control c in Controls)
                 {
                     DockPane pane = c as DockPane;
-                    if (pane == null) continue;
+                    if (pane is null) continue;
                     if (pane == ActivePane) pane.Bounds = rectDisplaying;
                     else pane.Bounds = rectHidden;
                 }
@@ -387,7 +387,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public void RefreshActiveContent()
             {
-                if (ActiveContent == null)
+                if (ActiveContent is null)
                     return;
 
                 if (!DockHelper.IsDockStateAutoHide(ActiveContent.DockHandler.DockState))
@@ -406,7 +406,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             private void TimerMouseTrack_Tick(object sender, EventArgs e)
             {
                 if (IsDisposed) return;
-                if (ActivePane == null || ActivePane.IsActivated)
+                if (ActivePane is null || ActivePane.IsActivated)
                 {
                     m_timerMouseTrack.Enabled = false;
                     return;
@@ -518,10 +518,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 DockState state = AutoHideWindow.DockState;
                 Rectangle rectDockArea = DockArea;
-                if (ActiveAutoHideContent == null)
+                if (ActiveAutoHideContent is null)
                     return Rectangle.Empty;
 
-                if (Parent == null)
+                if (Parent is null)
                     return Rectangle.Empty;
 
                 Rectangle rect = Rectangle.Empty;

@@ -76,7 +76,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 get
                 {
                     IDockContent content = DockPane.DisplayingContents[index];
-                    if (content == null)
+                    if (content is null)
                         throw (new ArgumentOutOfRangeException(nameof(index)));
                     return content.DockHandler.GetTab(DockPane.TabStripControl);
                 }
@@ -94,7 +94,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public int IndexOf(Tab tab)
             {
-                if (tab == null)
+                if (tab is null)
                     return -1;
 
                 return DockPane.DisplayingContents.IndexOf(tab.Content);
@@ -125,7 +125,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_tabs == null)
+                if (m_tabs is null)
                     m_tabs = new TabCollection(DockPane);
 
                 return m_tabs;

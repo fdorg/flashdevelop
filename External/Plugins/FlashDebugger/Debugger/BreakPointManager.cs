@@ -124,7 +124,7 @@ namespace FlashDebugger
             int index = GetBreakPointIndex(localPath, line - 1);
             if (index < 0) return true;
             BreakPointInfo bpInfo = BreakPoints[index];
-            if (bpInfo.ParsedExpression == null) return true;
+            if (bpInfo.ParsedExpression is null) return true;
             try
             {
                 if (frame is null)
@@ -197,7 +197,7 @@ namespace FlashDebugger
 
         public void ClearTemporaryBreakPoint()
         {
-            if (m_TemporaryBreakPointInfo == null) return;
+            if (m_TemporaryBreakPointInfo is null) return;
             m_TemporaryBreakPointInfo.IsDeleted = true;
             var bpList = new List<BreakPointInfo>(new[] { m_TemporaryBreakPointInfo });
             PluginMain.debugManager.FlashInterface.UpdateBreakpoints(bpList);
@@ -262,7 +262,7 @@ namespace FlashDebugger
 
         public void Save(string filePath)
         {
-            if (m_Project == null) return;
+            if (m_Project is null) return;
             var bpSaveList = new List<BreakPointInfo>();
             foreach (BreakPointInfo info in BreakPoints)
             {

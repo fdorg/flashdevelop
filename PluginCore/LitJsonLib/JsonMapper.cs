@@ -34,7 +34,7 @@ namespace LitJson
 
         public Type ElementType {
             get {
-                if (element_type == null)
+                if (element_type is null)
                     return typeof (JsonData);
 
                 return element_type;
@@ -65,7 +65,7 @@ namespace LitJson
 
         public Type ElementType {
             get {
-                if (element_type == null)
+                if (element_type is null)
                     return typeof (JsonData);
 
                 return element_type;
@@ -666,7 +666,7 @@ namespace LitJson
                 throw new JsonException (
                     "Max allowed object depth reached while " + $"trying to export from type {obj.GetType()}");
 
-            if (obj == null) {
+            if (obj is null) {
                 writer.Write (null);
                 return;
             }

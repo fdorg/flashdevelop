@@ -285,7 +285,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                 cryptoTransform = value;
                 if ( cryptoTransform != null ) {
                     if ( rawData == clearText ) {
-                        if ( internalClearText == null ) {
+                        if ( internalClearText is null ) {
                             internalClearText = new byte[rawData.Length];
                         }
                         clearText = internalClearText;
@@ -375,11 +375,11 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </param>
         public InflaterInputStream(Stream baseInputStream, Inflater inflater, int bufferSize)
         {
-            if (baseInputStream == null) {
+            if (baseInputStream is null) {
                 throw new ArgumentNullException(nameof(baseInputStream));
             }
             
-            if (inflater == null) {
+            if (inflater is null) {
                 throw new ArgumentNullException(nameof(inflater));
             }
             

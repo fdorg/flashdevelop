@@ -78,7 +78,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonClose == null)
+                if (_imageButtonClose is null)
                     _imageButtonClose = ScaleHelper.Scale(Resources.DockPane_Close);
 
                 return _imageButtonClose;
@@ -90,7 +90,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_buttonClose == null)
+                if (m_buttonClose is null)
                 {
                     m_buttonClose = new InertButton(this, ImageButtonClose, ImageButtonClose);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
@@ -107,7 +107,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonAutoHide == null)
+                if (_imageButtonAutoHide is null)
                     _imageButtonAutoHide = ScaleHelper.Scale(Resources.DockPane_AutoHide);
 
                 return _imageButtonAutoHide;
@@ -119,7 +119,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonDock == null)
+                if (_imageButtonDock is null)
                     _imageButtonDock = ScaleHelper.Scale(Resources.DockPane_Dock);
 
                 return _imageButtonDock;
@@ -131,7 +131,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_buttonAutoHide == null)
+                if (m_buttonAutoHide is null)
                 {
                     m_buttonAutoHide = new InertButton(this, ImageButtonDock, ImageButtonAutoHide);
                     m_toolTip.SetToolTip(m_buttonAutoHide, ToolTipAutoHide);
@@ -148,7 +148,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonOptions == null)
+                if (_imageButtonOptions is null)
                     _imageButtonOptions = Resources.DockPane_Option;
 
                 return _imageButtonOptions;
@@ -160,7 +160,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_buttonOptions == null)
+                if (m_buttonOptions is null)
                 {
                     m_buttonOptions = new InertButton(this, ImageButtonOptions, ImageButtonOptions);
                     m_toolTip.SetToolTip(m_buttonOptions, ToolTipOptions);
@@ -203,7 +203,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                if (_toolTipClose == null)
+                if (_toolTipClose is null)
                     // HACK: _toolTipClose = Strings.DockPaneCaption_ToolTipClose;
                     _toolTipClose = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipClose");
                 return _toolTipClose;
@@ -215,7 +215,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_toolTipOptions == null)
+                if (_toolTipOptions is null)
                     // HACK: _toolTipOptions = Strings.DockPaneCaption_ToolTipOptions;
                     _toolTipOptions = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipOptions");
                 return _toolTipOptions;
@@ -227,7 +227,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                if (_toolTipAutoHide == null)
+                if (_toolTipAutoHide is null)
                     // HACK: _toolTipAutoHide = Strings.DockPaneCaption_ToolTipAutoHide;
                     _toolTipAutoHide = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipAutoHide");
                 return _toolTipAutoHide;
@@ -239,7 +239,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_activeBackColorGradientBlend == null)
+                if (_activeBackColorGradientBlend is null)
                 {
                     Blend blend = new Blend(2);
 

@@ -103,7 +103,7 @@ namespace AS3Context
                 foreach (Traits trait in abc.classes)
                 {
                     Traits instance = trait.itraits;
-                    if (instance == null)
+                    if (instance is null)
                         continue;
                     imports.Clear();
                     conflicts.Clear();
@@ -253,7 +253,7 @@ namespace AS3Context
                 }
 
                 // packages
-                if (abc.scripts == null)
+                if (abc.scripts is null)
                     continue;
                 foreach (Traits trait in abc.scripts)
                 {
@@ -264,9 +264,9 @@ namespace AS3Context
                             continue;
 
                         MemberModel member = GetMember(info, 0);
-                        if (member == null) continue;
+                        if (member is null) continue;
 
-                        if (model == null || model.Package != info.name.uri)
+                        if (model is null || model.Package != info.name.uri)
                         {
                             AddImports(model, imports);
 
@@ -351,7 +351,7 @@ namespace AS3Context
 
         private static void applyTypeComment(ASDocItem doc, MemberModel model)
         {
-            if (doc == null || model ==null)
+            if (doc is null || model ==null)
                 return;
 
             ASFileParserUtils.ParseTypeDefinitionInto(doc.ApiType, model, true, true);
@@ -359,7 +359,7 @@ namespace AS3Context
 
         private static void applyTypeCommentToParams(ASDocItem doc, MemberModel model)
         {
-            if (doc == null || model?.Parameters == null)
+            if (doc is null || model?.Parameters is null)
                 return;
 
             foreach (MemberModel param in model.Parameters)
@@ -432,7 +432,7 @@ namespace AS3Context
             foreach (MemberInfo info in abcMembers)
             {
                 MemberModel member = GetMember(info, baseFlags);
-                if (member == null) continue;
+                if (member is null) continue;
 
                 string uri = info.name.uri ?? "";
                 if (uri.Length > 0)
@@ -511,7 +511,7 @@ namespace AS3Context
                     }
                     meta.RawParams = rawParams.ToString();
 
-                    if (metadatas == null) metadatas = new List<ASMetaData>(info.metadata.Count);
+                    if (metadatas is null) metadatas = new List<ASMetaData>(info.metadata.Count);
                     metadatas.Add(meta);
                 }
                 member.MetaDatas = metadatas;
@@ -584,12 +584,12 @@ namespace AS3Context
 
         private static string ImportType(QName type)
         {
-            return type == null ? "*" : ImportType(type.ToTypeString());
+            return type is null ? "*" : ImportType(type.ToTypeString());
         }
 
         private static string ImportType(string qname)
         {
-            if (qname == null) return "*";
+            if (qname is null) return "*";
             int p = qname.LastIndexOf('.');
             int q = qname.LastIndexOf('<');
             if (q > 0)
@@ -682,7 +682,7 @@ namespace AS3Context
             if (IsEmptyElement)
                 return;
 
-            if (ExcludedASDocs == null)
+            if (ExcludedASDocs is null)
                 ExcludedASDocs = new List<string>();
 
             ASDocItem doc = new ASDocItem();
@@ -715,10 +715,10 @@ namespace AS3Context
                 if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('\"'))
                     doc.Value = "\"" + doc.Value + "\"";
 
-                if (doc.LongDesc == null)
+                if (doc.LongDesc is null)
                     doc.LongDesc = "";
 
-                if (doc.ShortDesc == null)
+                if (doc.ShortDesc is null)
                     doc.ShortDesc = doc.LongDesc;
                 else
                     doc.LongDesc = doc.LongDesc.Trim();
@@ -1057,7 +1057,7 @@ namespace AS3Context
 
             meta.RawParams = $"\"{defValue}\"";
 
-            if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
+            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
             doc.Meta.Add(meta);
         }
 
@@ -1226,7 +1226,7 @@ namespace AS3Context
             string sKind = GetAttribute("kind");
             string sName = GetAttribute("name");
 
-            if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
+            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
             meta.Params = new Dictionary<string, string>();
             meta.Params["kind"] = sKind;
             meta.Params["name"] = sName;
@@ -1262,7 +1262,7 @@ namespace AS3Context
                 Read();
             }
 
-            if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
+            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
             if (sDefault != null) meta.Comments = meta.Comments.Trim() + "\n@default\t" + sDefault;
             meta.Params = new Dictionary<string, string>();
             meta.Params["name"] = sName;
@@ -1308,7 +1308,7 @@ namespace AS3Context
                 Read();
             }
 
-            if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
+            if (doc.Meta is null) doc.Meta = new List<ASMetaData>();
             meta.Params = new Dictionary<string, string>();
             meta.Params["name"] = eName;
             meta.Params["type"] = eType;

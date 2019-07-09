@@ -133,7 +133,7 @@ namespace CodeFormatter
         /// </summary>
         private void UpdateMenuItems()
         {
-            if (mainMenuItem == null || contextMenuItem == null) return;
+            if (mainMenuItem is null || contextMenuItem is null) return;
             var doc = PluginBase.MainForm.CurrentDocument;
             var isValid = doc != null && doc.IsEditable && DocumentType != TYPE_UNKNOWN;
             mainMenuItem.Enabled = contextMenuItem.Enabled = isValid;
@@ -215,7 +215,7 @@ namespace CodeFormatter
                             ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
                             FormatUtility.configureASPrinter(asPrinter, settingObject);
                             string asResultData = asPrinter.print(0);
-                            if (asResultData == null)
+                            if (asResultData is null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
                                 PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -232,7 +232,7 @@ namespace CodeFormatter
                             MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
                             FormatUtility.configureMXMLPrinter(mxmlPrinter, settingObject);
                             string mxmlResultData = mxmlPrinter.print(0);
-                            if (mxmlResultData == null)
+                            if (mxmlResultData is null)
                             {
                                 TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
                                 PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");

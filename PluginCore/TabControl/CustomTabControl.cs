@@ -89,7 +89,7 @@ namespace System.Windows.Forms
 		[Category("Appearance"),  DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public TabStyleProvider DisplayStyleProvider {
 			get {
-				if (this._StyleProvider == null){
+				if (this._StyleProvider is null){
 					this.DisplayStyle = TabStyle.Default;
 				}
 				
@@ -320,7 +320,7 @@ namespace System.Windows.Forms
 		}
 
 		private void BackupTabPages(){
-			if (this._TabPages == null){
+			if (this._TabPages is null){
 				this._TabPages = new List<TabPage>();
 				foreach (TabPage page in this.TabPages){
 					this._TabPages.Add(page);
@@ -682,7 +682,7 @@ namespace System.Windows.Forms
 			//	Buffer code from Gil. Schmidt http://www.codeproject.com/KB/graphics/DoubleBuffering.aspx
 			
 			if (this.Width > 0 && this.Height > 0){
-				if (this._BackImage == null){
+				if (this._BackImage is null){
 					//	Cached Background Image
 					this._BackImage = new Bitmap(this.Width, this.Height);
 					Graphics backGraphics = Graphics.FromImage(this._BackImage);

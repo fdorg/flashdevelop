@@ -66,11 +66,11 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <exception cref="EndOfStreamException">End of stream is encountered before all the data has been read.</exception>
         public static void ReadFully(Stream stream, byte[] buffer, int offset, int count)
         {
-            if ( stream == null ) {
+            if ( stream is null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -101,15 +101,15 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <param name="buffer">The buffer to use during copying.</param>
         public static void Copy(Stream source, Stream destination, byte[] buffer)
         {
-            if (source == null) {
+            if (source is null) {
                 throw new ArgumentNullException(nameof(source));
             }
 
-            if (destination == null) {
+            if (destination is null) {
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            if (buffer == null) {
+            if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -167,15 +167,15 @@ namespace ICSharpCode.SharpZipLib.Core
             ProgressHandler progressHandler, TimeSpan updateInterval, 
             object sender, string name, long fixedTarget)
         {
-            if (source == null) {
+            if (source is null) {
                 throw new ArgumentNullException(nameof(source));
             }
 
-            if (destination == null) {
+            if (destination is null) {
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            if (buffer == null) {
+            if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -184,7 +184,7 @@ namespace ICSharpCode.SharpZipLib.Core
                 throw new ArgumentException("Buffer is too small", nameof(buffer));
             }
 
-            if (progressHandler == null) {
+            if (progressHandler is null) {
                 throw new ArgumentNullException(nameof(progressHandler));
             }
 

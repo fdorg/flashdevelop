@@ -48,14 +48,14 @@ namespace XMLCompletion
                 cFile = value;
                 cType = XMLType.Invalid;
 
-                if (cFile == null) return;
+                if (cFile is null) return;
 
                 string lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage;
                 string ext = Path.GetExtension(value);
                 if (ext.Length == 0) return;
                 ext = ext.Substring(1);
                 if (lang == "html") ext = "html";
-                if (languageTags == null) languageTags = new Dictionary<string, LanguageDef>();
+                if (languageTags is null) languageTags = new Dictionary<string, LanguageDef>();
                 if (!languageTags.ContainsKey(ext)) TryLoadDeclaration(ext);
                 if (languageTags[ext] != null)
                 {
@@ -162,7 +162,7 @@ namespace XMLCompletion
                     defs = language.ChildNodes[index];
                     if (defs.Name != "tags") 
                         return;
-                    if (defs.Attributes["defaultNS"] == null) defaultNS = null;
+                    if (defs.Attributes["defaultNS"] is null) defaultNS = null;
                     else defaultNS = defs.Attributes["defaultNS"].Value;
 
                     foreach(XmlNode tag in defs.ChildNodes)
@@ -222,7 +222,7 @@ namespace XMLCompletion
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
-                if (src == null) return false;
+                if (src is null) return false;
 
                 string content;
                 using (StreamReader sr = new StreamReader(src))
@@ -270,7 +270,7 @@ namespace XMLCompletion
                     if (Control.ModifierKeys == Keys.Shift)
                     {
                         ctag = GetXMLContextTag(sci, position);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
+                        if (ctag.Tag is null || ctag.Tag.EndsWith('>'))
                         {
                             int start = sci.PositionFromLine(line)-((sci.EOLMode == 0)? 2:1);
                             sci.SetSel(start, position);
@@ -384,7 +384,7 @@ namespace XMLCompletion
                         if (!text.EndsWith('>'))
                         {
                             ctag = GetXMLContextTag(sci, sci.CurrentPos);
-                            if (ctag.Tag == null || ctag.Name == null) return;
+                            if (ctag.Tag is null || ctag.Name is null) return;
                             // We're inside a tag. Visual Studio indents with regards to the first line, other IDEs indent using the indentation of the last line with text.
                             int indent;
                             string tag = (ctag.Tag.IndexOf('\r') > 0 || ctag.Tag.IndexOf('\n') > 0) ? ctag.Tag.Substring(0, ctag.Tag.IndexOfAny(new[] {'\r', '\n'})).TrimEnd() : ctag.Tag.TrimEnd();
@@ -453,7 +453,7 @@ namespace XMLCompletion
 
                 case ':':
                     ctag = GetXMLContextTag(sci, position);
-                    if (ctag.NameSpace == null || position - ctag.Position > ctag.Name.Length + 2) return;
+                    if (ctag.NameSpace is null || position - ctag.Position > ctag.Name.Length + 2) return;
                     // Allow another plugin to handle this
                     de = new DataEvent(EventType.Command, "XMLCompletion.Namespace", ctag);
                     EventManager.DispatchEvent(PluginBase.MainForm, de);
@@ -610,7 +610,7 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
+                        if (ctag.Tag is null || ctag.Tag.EndsWith('>'))
                         {
                             if ((char)sci.CharAt(position-2) == '<')
                             {
@@ -625,7 +625,7 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
+                        if (ctag.Tag is null || ctag.Tag.EndsWith('>'))
                         {
                             if ((char)sci.CharAt(position-2) == '<')
                             {
@@ -650,7 +650,7 @@ namespace XMLCompletion
                 ScintillaControl sci = document.SciControl;
                 XMLContextTag ctag = GetXMLContextTag(sci, sci.CurrentPos);
                 // Starting tag
-                if (ctag.Tag == null)
+                if (ctag.Tag is null)
                 {
                     if (sci.CurrentPos > 0 && (char)sci.CharAt(sci.CurrentPos - 1) == '<')
                     {
@@ -754,7 +754,7 @@ namespace XMLCompletion
         public static XMLContextTag GetXMLContextTag(ScintillaControl sci, int position)
         {
             XMLContextTag xtag = new XMLContextTag();
-            if ((position == 0) || (sci == null)) return xtag;
+            if ((position == 0) || (sci is null)) return xtag;
             string tag = "";
             //Char c = (Char)sci.CharAt(position);
             //tag += c;
@@ -865,7 +865,7 @@ namespace XMLCompletion
         /// </summary> 
         private static bool InQuotes(string tag)
         {
-            if (tag == null) return false;
+            if (tag is null) return false;
             int n = tag.Length;
             bool inQuotes = false;
             for (int i = 0; i < n; i++)

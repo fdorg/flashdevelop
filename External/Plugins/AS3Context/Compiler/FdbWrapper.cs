@@ -30,7 +30,7 @@ namespace AS3Context.Compiler
 
             Dictionary<string, string> jvmConfig = JvmConfigHelper.ReadConfig(flexSDKPath);
 
-            if (process == null || process.HasExited)
+            if (process is null || process.HasExited)
                 Initialize(flexSDKPath, jvmConfig, projectPath);
         }
 
@@ -204,7 +204,7 @@ namespace AS3Context.Compiler
             bool keepProcessing = true;
             while (keepProcessing && keepAlive)
             {
-                if (process == null || process.HasExited)
+                if (process is null || process.HasExited)
                     keepProcessing = false;
                 else
                 {

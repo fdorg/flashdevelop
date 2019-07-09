@@ -493,7 +493,7 @@ namespace FlashDevelop.Dialogs
             {
                 var item = this.shortcutListItems[i];
                 if (item.Custom != keys || item == target) continue;
-                if (conflicts == null) conflicts = new List<ShortcutListItem> { target };
+                if (conflicts is null) conflicts = new List<ShortcutListItem> { target };
                 conflicts.Add(item);
                 item.Conflicts = conflicts;
             }

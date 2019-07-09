@@ -67,7 +67,7 @@ namespace SourceControl.Helpers
         {
             string title = Path.Combine(Path.GetDirectoryName(fileName), "[Annotated] " + Path.GetFileName(fileName));
             var doc = PluginBase.MainForm.CreateEditableDocument(title, string.Empty, Encoding.UTF8.CodePage) as ITabbedDocument;
-            return doc == null ? null : new AnnotatedDocument(command, fileName, doc);
+            return doc is null ? null : new AnnotatedDocument(command, fileName, doc);
         }
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace Mono
 
         public override string ToString()
         {
-            if (SubProject == null)
+            if (SubProject is null)
             {
                 return Name;
             }

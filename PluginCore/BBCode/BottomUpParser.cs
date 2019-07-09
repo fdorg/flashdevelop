@@ -21,7 +21,7 @@ namespace PluginCore.BBCode
         {
             lastTree = null;
 
-            if (pairTagMatcher == null || string.IsNullOrEmpty(this.input))
+            if (pairTagMatcher is null || string.IsNullOrEmpty(this.input))
                 return null;
 
             lastTree = _parse();
@@ -48,7 +48,7 @@ namespace PluginCore.BBCode
             {
                 m = pairTagMatcher.searchOpener((uint)(prevI + prevL));
 
-                if (m == null)
+                if (m is null)
                     break;
 
                 prevI = m.tagIndex;
@@ -83,7 +83,7 @@ namespace PluginCore.BBCode
                 while (true)
                 {
                     mCl = pairTagMatcher.searchCloserFor(mOp, (uint)closerStartAt);
-                    if (mCl == null)
+                    if (mCl is null)
                     {
                         mCl = new VoidCloserTagMatch((int)inputL);
                         closerOutOfBounds = true;

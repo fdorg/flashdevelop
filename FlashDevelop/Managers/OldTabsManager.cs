@@ -17,7 +17,7 @@ namespace FlashDevelop.Managers
         {
             foreach (var tab in OldTabs)
             {
-                if (DocumentManager.FindDocument(tab) == null)
+                if (DocumentManager.FindDocument(tab) is null)
                 {
                     Globals.MainForm.OpenEditableDocument(tab);
                     break;

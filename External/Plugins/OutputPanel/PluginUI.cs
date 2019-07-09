@@ -235,7 +235,7 @@ namespace OutputPanel
         /// </summary>
         public void ApplyWrapText()
         {
-            if (this.pluginMain.PluginPanel == null) return;
+            if (this.pluginMain.PluginPanel is null) return;
             if (this.pluginMain.PluginPanel.InvokeRequired)
             {
                 this.pluginMain.PluginPanel.BeginInvoke((MethodInvoker)this.ApplyWrapText);
@@ -389,7 +389,7 @@ namespace OutputPanel
             {
                 entry = log[i];
                 state = entry.State;
-                if (entry.Message == null) message = "";
+                if (entry.Message is null) message = "";
                 else message = entry.Message;
                 if (!fastMode)
                 {

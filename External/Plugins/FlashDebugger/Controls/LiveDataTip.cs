@@ -72,7 +72,7 @@ namespace FlashDebugger
 
         private void Manager_OnMouseHover(ScintillaControl sci, int position)
         {
-            if (m_ToolTip == null)
+            if (m_ToolTip is null)
                 Initialize();
 
             DebuggerManager debugManager = PluginMain.debugManager;
@@ -82,7 +82,7 @@ namespace FlashDebugger
                 if (debugManager.CurrentLocation?.getFile() != null)
                 {
                     string localPath = debugManager.GetLocalPath(debugManager.CurrentLocation.getFile());
-                    if (localPath == null || localPath != PluginBase.MainForm.CurrentDocument.FileName)
+                    if (localPath is null || localPath != PluginBase.MainForm.CurrentDocument.FileName)
                     {
                         return;
                     }

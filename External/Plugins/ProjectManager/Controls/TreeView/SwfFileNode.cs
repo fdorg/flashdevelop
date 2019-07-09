@@ -241,12 +241,12 @@ namespace ProjectManager.Controls.TreeView
             TreeView.BeginUpdate();
             try
             {
-                if (parser == null)
+                if (parser is null)
                     return;
                 if (parser.Errors.Count > 0)
                 {
                     WorkingNode wnode = Nodes[0] as WorkingNode;
-                    if (wnode == null)
+                    if (wnode is null)
                     {
                         Nodes.Clear();
                         wnode = new WorkingNode(BackingPath);

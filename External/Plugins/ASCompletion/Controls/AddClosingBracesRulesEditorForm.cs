@@ -493,7 +493,7 @@ namespace ASCompletion.Controls
             cbxAddSpace.CheckedChanged -= CbxAddSpace_CheckedChanged;
             cbxIgnoreWhitespace.CheckedChanged -= CbxIgnoreWhitespace_CheckedChanged;
 
-            if (inEdit == null)
+            if (inEdit is null)
             {
                 txtName.Text = "";
                 txtOpenChar.Text = "";

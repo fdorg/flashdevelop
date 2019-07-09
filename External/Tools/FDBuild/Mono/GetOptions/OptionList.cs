@@ -44,7 +44,7 @@ namespace Mono.GetOptions
                 throw new NotSupportedException("Argument processor method must return 'void'");
             }
             ParameterInfo[] infoArray1 = ((MethodInfo) memberInfo).GetParameters();
-            if (((infoArray1 == null) || (infoArray1.Length != 1)) || (infoArray1[0].ParameterType.FullName != typeof(string).FullName))
+            if (((infoArray1 is null) || (infoArray1.Length != 1)) || (infoArray1[0].ParameterType.FullName != typeof(string).FullName))
             {
                 throw new NotSupportedException("Argument processor method must have a string parameter");
             }
@@ -116,7 +116,7 @@ namespace Mono.GetOptions
         private string[] GetAssemblyAttributeStrings(Type type)
         {
             object[] objArray1 = GetAssemblyAttributes(type);
-            if ((objArray1 == null) || (objArray1.Length == 0))
+            if ((objArray1 is null) || (objArray1.Length == 0))
             {
                 return new string[0];
             }
@@ -356,7 +356,7 @@ namespace Mono.GetOptions
             {
                 Console.WriteLine("argument [" + argument + "]");
             }
-            if (argumentProcessor == null)
+            if (argumentProcessor is null)
             {
                 arguments.Add(argument);
             }

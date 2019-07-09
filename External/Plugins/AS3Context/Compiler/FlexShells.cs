@@ -82,7 +82,7 @@ namespace AS3Context.Compiler
         public static FlexShells Instance 
         {
             get {
-                if (instance == null) instance = new FlexShells();
+                if (instance is null) instance = new FlexShells();
                 return instance;
             }
         }
@@ -130,17 +130,17 @@ namespace AS3Context.Compiler
             if (flexPath != null && Directory.Exists(Path.Combine(flexPath, "lib")))
                 ascPath = Path.Combine(flexPath, "lib\\asc.jar");
             // included asc.jar
-            if (ascPath == null || !File.Exists(ascPath)) 
+            if (ascPath is null || !File.Exists(ascPath)) 
                 ascPath = PathHelper.ResolvePath(Path.Combine(PathHelper.ToolDir, "flexlibs/lib/asc.jar"));
 
-            if (ascPath == null)
+            if (ascPath is null)
             {
                 if (src != null) return; // silent checking
                 DialogResult result = MessageBox.Show(TextHelper.GetString("Info.SetFlex2OrCS3Path"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.YesNoCancel);
                 if (result == DialogResult.Yes)
                 {
                     IASContext context = ASContext.GetLanguageContext("as3");
-                    if (context == null) return;
+                    if (context is null) return;
                     PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
                 }
                 else if (result == DialogResult.No)
@@ -163,12 +163,12 @@ namespace AS3Context.Compiler
             try
             {
                 running = true;
-                if (src == null) EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-                if (ascRunner == null || !ascRunner.IsRunning || currentSDK != flexPath)
+                if (src is null) EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
+                if (ascRunner is null || !ascRunner.IsRunning || currentSDK != flexPath)
                     StartAscRunner(flexPath);
 
                 notificationSent = false;
-                if (src == null)
+                if (src is null)
                 {
                     silentChecking = false;
                     //TraceManager.Add("Checking: " + filename, -1);
@@ -202,13 +202,13 @@ namespace AS3Context.Compiler
             {
                 mxmlcPath = Path.Combine(flexPath, "lib", "mxmlc.jar");
             }
-            if (mxmlcPath == null || !File.Exists(mxmlcPath)) 
+            if (mxmlcPath is null || !File.Exists(mxmlcPath)) 
             {
                 DialogResult result = MessageBox.Show(TextHelper.GetString("Info.OpenCompilerSettings"), TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OKCancel);
                 if (result == DialogResult.OK)
                 {
                     IASContext context = ASContext.GetLanguageContext("as3");
-                    if (context == null) return;
+                    if (context is null) return;
                     PluginBase.MainForm.ShowSettingsDialog("AS3Context", "SDK");
                 }
                 return;
@@ -228,7 +228,7 @@ namespace AS3Context.Compiler
                 running = true;
                 EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
 
-                if (mxmlcRunner == null || !mxmlcRunner.IsRunning || currentSDK != flexPath) 
+                if (mxmlcRunner is null || !mxmlcRunner.IsRunning || currentSDK != flexPath) 
                     StartMxmlcRunner(flexPath);
                 
                 //cmd = mainForm.ProcessArgString(cmd);
@@ -506,7 +506,7 @@ namespace AS3Context.Compiler
         
         private void ascRunner_OutputError(object sender, string line)
         {
-            if (line == null) return;
+            if (line is null) return;
             PluginBase.RunAsync(delegate
             {
                 if (line.StartsWithOrdinal("Exception "))
@@ -583,7 +583,7 @@ namespace AS3Context.Compiler
         
         private void RunAfterBuild()
         {
-            if (builtSWF == null || !File.Exists(builtSWF))
+            if (builtSWF is null || !File.Exists(builtSWF))
             {
                 debugMode = false;
                 return;

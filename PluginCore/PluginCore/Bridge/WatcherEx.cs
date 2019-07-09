@@ -87,7 +87,7 @@ namespace PluginCore.Bridge
                     {
                         if (Directory.Exists(path) && !path.EndsWith('\\')) path += "\\";
                         bridge.DataReceived += bridge_DataReceived;
-                        if (filter == null) bridge.Send("watch:" + path);
+                        if (filter is null) bridge.Send("watch:" + path);
                         else bridge.Send("watch:" + Path.Combine(path, filter));
                         TraceOk();
                     }

@@ -165,7 +165,7 @@ namespace ProjectManager.Actions
 
         private void PatchFbProject(AS3Project project)
         {
-            if (project == null || !project.MovieOptions.Platform.StartsWithOrdinal("AIR")) return;
+            if (project is null || !project.MovieOptions.Platform.StartsWithOrdinal("AIR")) return;
 
             // We do this because the batch files cannot automatically detect the path changes caused by debug/release differences
             bool trace = project.TraceEnabled;
@@ -208,7 +208,7 @@ namespace ProjectManager.Actions
                 excludedFiles.AddRange(new[] { "application.xml.template", "Project.as3proj", "Project.png", "Project.txt", "bin", "src" });
             }
 
-            if (projectPath == null || !Directory.Exists(projectPath = Path.Combine(PathHelper.ProjectsDir, projectPath)))
+            if (projectPath is null || !Directory.Exists(projectPath = Path.Combine(PathHelper.ProjectsDir, projectPath)))
             {
                 string info = TextHelper.GetString("Info.TemplateDirNotFound");
                 ErrorManager.ShowWarning(info, null);
@@ -257,7 +257,7 @@ namespace ProjectManager.Actions
 
         private void PatchProject(Project project)
         {
-            if (project == null) return;
+            if (project is null) return;
             if (!project.HiddenPaths.IsHidden("obj"))
                 project.HiddenPaths.Add("obj");
         }
@@ -347,13 +347,13 @@ namespace ProjectManager.Actions
                     foreach (string relPath in options.IntrinsicPaths)
                     {
                         absPath = PathHelper.ResolvePath(relPath) ?? project.GetAbsolutePath(relPath);
-                        if (absPath == null) continue;
+                        if (absPath is null) continue;
                         if (Directory.Exists(absPath)) classPaths.Add(absPath);
                     }
                     foreach (string relPath in options.LibraryPaths)
                     {
                         absPath = project.GetAbsolutePath(relPath);
-                        if (absPath == null) continue;
+                        if (absPath is null) continue;
                         if (File.Exists(absPath)) classPaths.Add(absPath);
                         else if (Directory.Exists(absPath))
                         {
@@ -364,13 +364,13 @@ namespace ProjectManager.Actions
                     foreach (string relPath in options.IncludeLibraries)
                     {
                         absPath = project.GetAbsolutePath(relPath);
-                        if (absPath == null) continue;
+                        if (absPath is null) continue;
                         if (Directory.Exists(absPath) || File.Exists(absPath)) classPaths.Add(absPath);
                     }
                     foreach (string relPath in options.ExternalLibraryPaths)
                     {
                         absPath = project.GetAbsolutePath(relPath);
-                        if (absPath == null) continue;
+                        if (absPath is null) continue;
                         if (Directory.Exists(absPath) || File.Exists(absPath)) classPaths.Add(absPath);
                     }
                     foreach (string relPath in options.RSLPaths)
@@ -378,7 +378,7 @@ namespace ProjectManager.Actions
                         string[] parts = relPath.Split(',');
                         if (parts.Length < 2) continue;
                         absPath = project.GetAbsolutePath(relPath);
-                        if (absPath == null) continue;
+                        if (absPath is null) continue;
                         if (File.Exists(absPath)) classPaths.Add(absPath);
                     }
                 }
@@ -406,7 +406,7 @@ namespace ProjectManager.Actions
             DataEvent de;
             Hashtable info = new Hashtable();
             // release old classpath            
-            if (currentLang != null && project == null)
+            if (currentLang != null && project is null)
             {
                 info["lang"] = currentLang;
                 info["platform"] = "";
@@ -476,7 +476,7 @@ namespace ProjectManager.Actions
             var nodeType = node?.GetType().ToString();
             var export = (node is ExportNode exportNode) ? exportNode.Export : null;
             var textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
-            if (textToInsert == null) return;
+            if (textToInsert is null) return;
             mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
             mainForm.CurrentDocument.Activate();
         }

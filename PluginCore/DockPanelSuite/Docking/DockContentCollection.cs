@@ -26,7 +26,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (DockPane == null)
+                if (DockPane is null)
                     return Items[index];
                 return GetVisibleContent(index);
             }
@@ -64,7 +64,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public new bool Contains(IDockContent content)
         {
-            if (DockPane == null)
+            if (DockPane is null)
                 return Items.Contains(content);
             return (GetIndexOfVisibleContents(content) != -1);
         }
@@ -73,7 +73,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (DockPane == null)
+                if (DockPane is null)
                     return base.Count;
                 return CountOfVisibleContents;
             }
@@ -81,7 +81,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public new int IndexOf(IDockContent content)
         {
-            if (DockPane == null)
+            if (DockPane is null)
             {
                 if (!Contains(content))
                     return -1;
@@ -107,7 +107,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
 #if DEBUG
-                if (DockPane == null)
+                if (DockPane is null)
                     throw new InvalidOperationException();
 #endif
 
@@ -124,7 +124,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private IDockContent GetVisibleContent(int index)
         {
 #if DEBUG
-            if (DockPane == null)
+            if (DockPane is null)
                 throw new InvalidOperationException();
 #endif
 
@@ -143,11 +143,11 @@ namespace WeifenLuo.WinFormsUI.Docking
         private int GetIndexOfVisibleContents(IDockContent content)
         {
 #if DEBUG
-            if (DockPane == null)
+            if (DockPane is null)
                 throw new InvalidOperationException();
 #endif
 
-            if (content == null)
+            if (content is null)
                 return -1;
 
             int index = -1;

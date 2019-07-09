@@ -116,7 +116,7 @@ namespace FlashDevelop.Controls
             {
                 if (value != null)
                 {
-                    if (m_Wrapper == null) 
+                    if (m_Wrapper is null) 
                     {
                         m_Wrapper = new ObjectWrapper(value);
                         RefreshProperties();
@@ -145,7 +145,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void OnBrowsablePropertiesChanged() 
         {
-            if(m_Wrapper == null) return;
+            if(m_Wrapper is null) return;
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void RefreshProperties() 
         {
-            if (m_Wrapper == null) return;
+            if (m_Wrapper is null) return;
             // Clear the list of properties to be displayed.
             m_PropertyDescriptors.Clear();
             // Check whether the list is filtered 
@@ -214,8 +214,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private static int CompareDescriptors(PropertyDescriptor a, PropertyDescriptor b)
         {
-            if (a == null) return b == null ? 0 : -1;
-            if (b == null) return 1;
+            if (a is null) return b is null ? 0 : -1;
+            if (b is null) return 1;
             int value = string.Compare(a.Category, b.Category);
             return value == 0 ? string.Compare(a.DisplayName, b.DisplayName) : value;
         }

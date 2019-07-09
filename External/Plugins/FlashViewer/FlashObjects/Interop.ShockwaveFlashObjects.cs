@@ -218,7 +218,7 @@ namespace Interop.ShockwaveFlashObjects
     // Connect to ActiveX event source
     void Connect()
     {
-      if (ConnectionPoint == null)
+      if (ConnectionPoint is null)
       {
         ConnectionCount = 0;
         Guid g = new Guid("D27CDB6D-AE6D-11CF-96B8-444553540000");

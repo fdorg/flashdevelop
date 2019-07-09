@@ -120,7 +120,7 @@ namespace ASClassWizard
                     if (PluginBase.MainForm.CurrentDocument.FileName == processOnSwitch)
                     {
                         processOnSwitch = null;
-                        if (lastFileOptions?.interfaces == null) return;
+                        if (lastFileOptions?.interfaces is null) return;
                         foreach (string cname in lastFileOptions.interfaces)
                         {
                             ASContext.Context.CurrentModel.Check();
@@ -313,7 +313,7 @@ namespace ASClassWizard
                     if (lastFileOptions != null)
                     {
                         args = ProcessFileTemplate(args);
-                        if (processOnSwitch == null) lastFileOptions = null;
+                        if (processOnSwitch is null) lastFileOptions = null;
                     }
                 }
                 lastFileFromTemplate = null;
@@ -369,7 +369,7 @@ namespace ASClassWizard
                 var fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
                 extends = fileName == superClassShortName ? $" extends {superClassFullName}" : $" extends {superClassShortName}";
                 processContext = ASContext.GetLanguageContext(lastFileOptions.Language);
-                if (lastFileOptions.createConstructor && processContext != null && constructorArgs == null)
+                if (lastFileOptions.createConstructor && processContext != null && constructorArgs is null)
                 {
                     var lastDotIndex = superClassFullName.LastIndexOf('.');
                     var cmodel = processContext.GetModel(lastDotIndex < 0 ? "" : superClassFullName.Substring(0, lastDotIndex), superClassShortName, "");
@@ -470,7 +470,7 @@ namespace ASClassWizard
         private void AddImports(ICollection<string> imports, MemberModel member, ClassModel inClass)
         {
             AddImport(imports, member.Type, inClass);
-            if (member.Parameters == null) return;
+            if (member.Parameters is null) return;
             foreach (var item in member.Parameters)
             {
                 var types = ASContext.Context.DecomposeTypes(new[] {item.Type});

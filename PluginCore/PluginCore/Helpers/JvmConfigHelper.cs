@@ -14,7 +14,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Dictionary<string, string> ReadConfig(string configPath)
         {
-            if (configPath == null) configPath = "";
+            if (configPath is null) configPath = "";
             string hash = configPath;
             if (Cache.ContainsKey(hash)) return Cache[hash];
             if (Directory.Exists(configPath))

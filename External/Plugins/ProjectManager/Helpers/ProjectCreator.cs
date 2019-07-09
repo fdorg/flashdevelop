@@ -186,7 +186,7 @@ namespace ProjectManager.Helpers
                         return defaultFlexSDK ??= PathHelper.ResolvePath(PluginBase.MainForm.ProcessArgString("$(FlexSDK)")) ?? "C:\\flex_sdk";
                     case "APPDIR": return PathHelper.AppDir;
                     default:
-                        if (arguments == null) arguments = PluginBase.MainForm.CustomArguments.ToArray();
+                        if (arguments is null) arguments = PluginBase.MainForm.CustomArguments.ToArray();
                         foreach (Argument arg in arguments)
                             if (arg.Key.ToUpper() == name) return arg.Value;
                         break;

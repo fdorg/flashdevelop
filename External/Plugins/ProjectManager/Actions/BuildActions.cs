@@ -123,7 +123,7 @@ namespace ProjectManager.Actions
                     return false;
                 }
 
-                if (compiler == null || (!Directory.Exists(compiler) && !File.Exists(compiler)))
+                if (compiler is null || (!Directory.Exists(compiler) && !File.Exists(compiler)))
                 {
                     string info = TextHelper.GetString("Info.CheckSDKSettings");
                     MessageBox.Show(info, TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OK);
@@ -154,7 +154,7 @@ namespace ProjectManager.Actions
 
             cmd = Path.Combine("Tools", "flashide", cmd);
             cmd = PathHelper.ResolvePath(cmd, null);
-            if (cmd == null || !File.Exists(cmd))
+            if (cmd is null || !File.Exists(cmd))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.JsflNotFound"));
                 return false;
@@ -255,7 +255,7 @@ namespace ProjectManager.Actions
 
         public static InstalledSDK GetProjectSDK(Project project)
         {
-            if (project == null) return null;
+            if (project is null) return null;
             InstalledSDK[] sdks = GetInstalledSDKs(project);
             return MatchSDK(sdks, project);
         }
@@ -267,7 +267,7 @@ namespace ProjectManager.Actions
 
         public static string GetCompilerPath(Project project, InstalledSDK sdk)
         {
-            if (project == null) return null;
+            if (project is null) return null;
             project.CurrentSDK = PathHelper.ResolvePath(sdk.Path, project.Directory);
             if (project == PluginBase.CurrentProject) PluginBase.CurrentSDK = sdk;
             return project.CurrentSDK;
@@ -280,7 +280,7 @@ namespace ProjectManager.Actions
 
         public static InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
         {
-            if (sdks == null) sdks = new InstalledSDK[] { };
+            if (sdks is null) sdks = new InstalledSDK[] { };
 
             // default sdk
             if (string.IsNullOrEmpty(preferredSDK))

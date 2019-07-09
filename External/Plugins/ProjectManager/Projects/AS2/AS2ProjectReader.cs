@@ -71,7 +71,7 @@ namespace ProjectManager.Projects.AS2
                 string path = OSPath(GetAttribute("path"));
                 string mode = GetAttribute("mode");
 
-                if (path == null)
+                if (path is null)
                     throw new Exception("All library assets must have a 'path' attribute.");
 
                 LibraryAsset asset = new LibraryAsset(project, path);

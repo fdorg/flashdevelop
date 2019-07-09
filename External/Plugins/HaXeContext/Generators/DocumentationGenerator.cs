@@ -14,7 +14,7 @@ namespace HaXeContext.Generators
         protected override void GenerateDocumentation(string context)
         {
             var sci = ASContext.CurSciControl;
-            if (sci == null) return;
+            if (sci is null) return;
             var position = sci.CurrentPos;
             var line = sci.LineFromPosition(position);
             var indent = sci.LineIndentPosition(line) - sci.PositionFromLine(line);
@@ -30,7 +30,7 @@ namespace HaXeContext.Generators
             if (!PluginBase.MainForm.Settings.UseTabs) parInd = " ";
 
             // empty box
-            if (context == null)
+            if (context is null)
             {
                 sci.ReplaceSel(newline + tab + headerStar + " " + newline + tab + headerStar + "/");
                 position += newline.Length + tab.Length + 1 + headerStar.Length;
@@ -67,7 +67,7 @@ namespace HaXeContext.Generators
         private static IEnumerable<MemberModel> ParseMethodParameters(string parameters)
         {
             var list = new List<MemberModel>();
-            if (parameters == null) return list;
+            if (parameters is null) return list;
             var p = parameters.IndexOf('(');
             if (p >= 0) parameters = parameters.Substring(p + 1, parameters.IndexOf(')') - p - 1);
             parameters = parameters.Trim();

@@ -21,8 +21,8 @@ namespace PluginCore.BBCode
         public override string ToString()
         {
             return "[pairTag"
-                   + " openerMatch='" + (_openerMatch == null ? "null" : _openerMatch.ToString()) + "'"
-                   + " closerMatch='" + (_closerMatch == null ? "null" : _closerMatch.ToString()) + "'"
+                   + " openerMatch='" + (_openerMatch is null ? "null" : _openerMatch.ToString()) + "'"
+                   + " closerMatch='" + (_closerMatch is null ? "null" : _closerMatch.ToString()) + "'"
                    + "]";
         }
     }

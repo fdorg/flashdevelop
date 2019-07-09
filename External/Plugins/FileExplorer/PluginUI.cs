@@ -625,7 +625,7 @@ namespace FileExplorer
             {
                 Point cp = this.fileView.PointToClient(new Point(e.X, e.Y));
                 ListViewItem whereToMove = this.fileView.GetItemAt(cp.X, cp.Y);
-                if (whereToMove == null) return; // Item is dropped on nothing
+                if (whereToMove is null) return; // Item is dropped on nothing
                 string targetDirectory = whereToMove.Tag.ToString();
                 if (whereToMove.Text.StartsWith('[') || Directory.Exists(targetDirectory))
                 {

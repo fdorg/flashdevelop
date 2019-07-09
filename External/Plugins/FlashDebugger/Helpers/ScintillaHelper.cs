@@ -131,7 +131,7 @@ namespace FlashDebugger
         public static void RemoveSciEvent(string value)
         {
             var document = DocumentManager.FindDocument(Path.GetFileName(value));
-            if (document == null || !document.IsEditable) return;
+            if (document is null || !document.IsEditable) return;
             document.SplitSci1.ModEventMask |= (int)ModificationFlags.ChangeMarker;
             document.SplitSci1.MarkerChanged -= SciControl_MarkerChanged;
             document.SplitSci2.ModEventMask |= (int)ModificationFlags.ChangeMarker;

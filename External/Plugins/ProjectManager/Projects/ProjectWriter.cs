@@ -127,7 +127,7 @@ namespace ProjectManager.Projects
             foreach (string key in Project.storage.Keys)
             {
                 string value = Project.storage[key];
-                if (value == null) continue;
+                if (value is null) continue;
                 WriteStartElement("entry");
                 WriteAttributeString("key", key);
                 WriteCData(value);

@@ -29,7 +29,7 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value == null)
+                if (m_Value is null)
                 {
                     return string.Empty;
                 }
@@ -120,7 +120,7 @@ namespace FlashDebugger.Controls.DataTree
             get
             {
 
-                if (m_Value == null)
+                if (m_Value is null)
                 {
                     return null;
                 }
@@ -193,7 +193,7 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value == null)
+                if (m_Value is null)
                 {
                     return false;
                 }
@@ -219,7 +219,7 @@ namespace FlashDebugger.Controls.DataTree
         {
             get
             {
-                if (m_Value == null)
+                if (m_Value is null)
                 {
                     return (this.Nodes.Count == 0);
                 }

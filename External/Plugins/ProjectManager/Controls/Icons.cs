@@ -345,7 +345,7 @@ namespace ProjectManager.Controls
                 // Add external icons...
                 for (var i = 0; i < temp.Length; i++)
                 {
-                    if (temp[i] == null) temp[i] = Images[i];
+                    if (temp[i] is null) temp[i] = Images[i];
                 }
                 Images.Clear();
                 Images.AddRange(temp);
