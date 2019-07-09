@@ -454,7 +454,7 @@ namespace CodeFormatter.Handlers
                         });
                         */
 
-                        if (mReplaceMapis null)
+                        if (mReplaceMap==null)
                             mReplaceMap=new Dictionary<Int32, ReplacementRange>();
 
                         int addedChars=0;
@@ -548,7 +548,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if multiple passes are allowed and we would benefit from one and this is not a partial format
-                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRangeis null)
+                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange==null)
                         {
                             mSourceData=resultText;
                             continue;
@@ -671,7 +671,7 @@ namespace CodeFormatter.Handlers
         //          throw new IllegalStateException("Bad tree type");
         //      
         //      Token t=((CommonTree)tree).getToken();
-        //      if (tis null)
+        //      if (t==null)
         //          throw new IllegalStateException("null token");
         //      
         //      if ((t instanceof CommonToken))
@@ -906,7 +906,7 @@ namespace CodeFormatter.Handlers
         {
             //This (the token having no text) might occur with an empty semicolon token (semic).  I think nothing needs to be done here and
             //no state needs to be saved.
-            if (tok.Textis null)
+            if (tok.Text==null)
                 return;
         
             //look at hidden tokens to see if the tag to turn off formatting is seen.  If so, then just emit all the hidden tokens and
@@ -996,7 +996,7 @@ namespace CodeFormatter.Handlers
             //handle user selection range
             if (mSelectedRange!=null && !mBindableMode)
             {
-                if (mOutputRangeis null)
+                if (mOutputRange==null)
                 {
                     if (tok.Line>=mSelectedRange.X)
                     {
@@ -1171,7 +1171,7 @@ namespace CodeFormatter.Handlers
                                     mOutputBuffer.Append(generateIndent(commentIndent));
                                     int replaceOffset=((CommonToken)t).StartIndex+line.mOriginalStartOffset;
                                     ReplacementRange range=new ReplacementRange(new Point(mOutputBuffer.Length, mOutputBuffer.Length+2), new Point(replaceOffset, replaceOffset));
-                                    if (mReplaceMapis null)
+                                    if (mReplaceMap==null)
                                         mReplaceMap=new Dictionary<Int32, ReplacementRange>();
                                     range.setChangedText("//", "");
                                     mReplaceMap[mOutputBuffer.Length] = range;
@@ -1335,7 +1335,7 @@ namespace CodeFormatter.Handlers
                             replaceRange.setChangedText(mOutputBuffer.ToString().Substring(replaceArea.X), t.Text);
                             if (!ASFormatter.validateNonWhitespaceIdentical(replaceRange.getAddedText(), replaceRange.getDeletedText()))
                             {
-                                if (mReplaceMapis null)
+                                if (mReplaceMap==null)
                                     mReplaceMap=new Dictionary<Int32, ReplacementRange>();
                                 mReplaceMap[replaceArea.X] = replaceRange;
                             }
@@ -4017,7 +4017,7 @@ namespace CodeFormatter.Handlers
     //  {
     //      if (getFormatMode()!=FORMAT_INDENT && isAddBraces(braceCode) && (nextToken instanceof CommonToken))
     //      {
-    //          if (mReplaceMapis null)
+    //          if (mReplaceMap==null)
     //              mReplaceMap=new Dictionary<Int32, ReplacementRange>();
     //          CommonToken token=(CommonToken)nextToken;
     //          //for the replacement point, I want the next non-whitespace location in the original document.  This might

@@ -93,7 +93,7 @@ namespace CodeFormatter.InfoCollector
 
         public static int getLastTreePosition(ParserRuleReturnScope tree)
         {
-            if (tree.Treeis null)
+            if (tree.Tree==null)
             {
                 if (tree.Stop is CommonToken)
                 {
@@ -122,10 +122,10 @@ namespace CodeFormatter.InfoCollector
 
         private static string getCommonTreeText(CommonTree tree)
         {
-            if (treeis null)
+            if (tree==null)
                 return "";
             IList children=tree.Children;
-            if (childrenis null)
+            if (children==null)
             {
                 return tree.Token.Text;
             }
@@ -236,7 +236,7 @@ namespace CodeFormatter.InfoCollector
 
         public static List<IToken> getPostHiddenTokens(ParserRuleReturnScope tree, CommonTokenStream rawTokens)
         {
-            if (tree.Treeis null)
+            if (tree.Tree==null)
             {
                 //I think this only happens with implied semicolons
                 if (tree.Start is CommonToken)

@@ -139,7 +139,7 @@ namespace CodeFormatter.Preferences
             int sortMode=MXMLPrettyPrinter.MXML_Sort_AscByCase;
             int wrapMode=MXMLPrettyPrinter.MXML_ATTR_WRAP_DEFAULT;
             string name=getValue(data, Tag_name);
-            if (nameis null) return null;
+            if (name==null) return null;
             string num=getValue(data, Tag_sort);
             if (num!=null)
             {

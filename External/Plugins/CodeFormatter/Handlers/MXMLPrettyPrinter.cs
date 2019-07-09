@@ -171,7 +171,7 @@ namespace CodeFormatter.Handlers
                 while (true)
                 {
                     String line=br.readLine();
-                    if (lineis null)
+                    if (line==null)
                         break;
                     buffer += line);
                     buffer += '\n');
@@ -829,7 +829,7 @@ namespace CodeFormatter.Handlers
                             //                  Map<Integer, ReplacementRange> asRanges=mASPrinter.getReplaceMap();
                             //                  if (asRanges!=null)
                             //                  {
-                            //                      if (mReplaceMapis null)
+                            //                      if (mReplaceMap==null)
                             //                          mReplaceMap=new HashMap<Integer, ReplacementRange>();
                             //                      CommonToken ct=(CommonToken)token;
                             //                      for (Map.Entry<Integer, ReplacementRange> entry : asRanges.entrySet()) {
@@ -1984,7 +1984,7 @@ namespace CodeFormatter.Handlers
         //      mainLoop: for (Attr attr : codeAttrs) {
         //          for (String groupName : hashedGroupAttrs.keySet()) {
         //              AttrGroup group=mAttrGroups.get(groupName);
-        //              if (groupis null)
+        //              if (group==null)
         //                  continue;
         //              for (String groupAttrSpec : group.getAttrs()) {
         //                  bool isRegex=AttrGroup.isRegexString(groupAttrSpec);
