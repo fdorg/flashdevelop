@@ -1022,19 +1022,20 @@ namespace HaXeContext.Completion
                         if (!string.IsNullOrEmpty(wordBefore)) expr.WordBeforePosition = p;
                     }
                     var isUntyped = wordBefore == "untyped";
-                    if (isUntyped || wordBefore == "new")
-                    {
-                        var p = expr.WordBeforePosition - 1;
-                        wordBefore = GetWordLeft(sci, ref p);
-                    }
-                    else if (wordBefore != "return")
-                    {
-                        var p = expr.PositionExpression;
-                        wordBefore = GetWordLeft(sci, ref p);
-                    }
+                    if (isUntyped || wordBefore == "new") wordBefore = GetWordLeft(sci, expr.WordBeforePosition - 1);
+                    else if (wordBefore != "return") wordBefore = GetWordLeft(sci, expr.PositionExpression);
                     if (wordBefore == "return")
                     {
                         if (isUntyped) member.Type = ASContext.Context.Features.dynamicKey;
+                        /**
+                         * for example:
+                         * function foo() {
+                         *     ...
+                         *     return foo();
+                         * }
+                         */
+                        else if (GetWordRight(sci, expr.PositionExpression) == member.Name)
+                            member.Type = ASContext.Context.Features.dynamicKey;
                         else
                         {
                             var expressionType = GetExpressionType(sci, i, false, true);

@@ -1752,6 +1752,8 @@
     <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2804_3.hx" />
     <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2804_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2830_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2825_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2825_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
