@@ -376,8 +376,9 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
-            else features.SpecialPostfixOperators = new char[0];
+            features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
+                ? new[] {'!'}
+                : new char[0];
 
             UseGenericsShortNotationChange();
         }
@@ -2376,7 +2377,7 @@ namespace HaXeContext
             if (IsFileValid)
             {
                 if (cFile.Comments != null) mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
-                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is ClassModel cClass && cClass.Comments != null)
+                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is { } cClass && cClass.Comments != null)
                     mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             }
 
