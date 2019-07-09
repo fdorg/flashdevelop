@@ -44,7 +44,7 @@ namespace SourceControl.Sources.Mercurial
         protected virtual string GetHGCmd()
         {
             string cmd = PluginMain.SCSettings.HGPath;
-            if (cmd == null) cmd = "hg";
+            if (cmd is null) cmd = "hg";
             string resolve = PathHelper.ResolvePath(cmd);
             return resolve ?? ResolveHGPath(cmd);
         }

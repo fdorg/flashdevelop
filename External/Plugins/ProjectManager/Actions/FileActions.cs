@@ -151,7 +151,7 @@ namespace ProjectManager.Actions
                     string classpath = project.AbsoluteClasspaths.GetClosestParent(path);
 
                     // Can't find parent, look in global classpaths
-                    if (classpath == null)
+                    if (classpath is null)
                     {
                         PathCollection globalPaths = new PathCollection();
                         foreach (string cp in PluginMain.Settings.GlobalClasspaths)
@@ -194,7 +194,7 @@ namespace ProjectManager.Actions
                     string filePath = CopyFile(dialog.FileName, inDirectory);
 
                     // null means the user cancelled
-                    if (filePath == null) return;
+                    if (filePath is null) return;
 
                     // add as an asset
                     project.SetLibraryAsset(filePath, true);

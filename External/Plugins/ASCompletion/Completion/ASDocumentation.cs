@@ -59,7 +59,7 @@ namespace ASCompletion.Completion
                 return false;
             
             // build tag list
-            if (docVariables == null)
+            if (docVariables is null)
             {
                 docVariables = new List<ICompletionListItem>();
                 foreach (string tag in ASContext.CommonSettings.JavadocTags)
@@ -165,7 +165,7 @@ namespace ASCompletion.Completion
                     if (mParam.Success)
                     {
                         Group mVar = mParam.Groups["var"];
-                        if (cb.ParamName == null) {
+                        if (cb.ParamName is null) {
                             cb.ParamName = new List<string>();
                             cb.ParamDesc = new List<string>();
                         }
@@ -214,7 +214,7 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         public static string GetTipShortDetails(MemberModel member, string highlightParam)
         {
-            if (member?.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
+            if (member?.Comments is null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
@@ -290,7 +290,7 @@ namespace ASCompletion.Completion
         /// <returns>Formatted comments</returns>
         public static string GetTipFullDetails(MemberModel member, string highlightParam)
         {
-            if (member?.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
+            if (member?.Comments is null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return GetTipFullDetails(cb, highlightParam);

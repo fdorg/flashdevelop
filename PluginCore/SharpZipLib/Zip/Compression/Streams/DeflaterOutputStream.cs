@@ -106,7 +106,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </exception>
         public DeflaterOutputStream(Stream baseOutputStream, Deflater deflater, int bufferSize)
         {
-            if ( baseOutputStream == null ) {
+            if ( baseOutputStream is null ) {
                 throw new ArgumentNullException(nameof(baseOutputStream));
             }
 
@@ -114,7 +114,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                 throw new ArgumentException("Must support writing", nameof(baseOutputStream));
             }
 
-            if (deflater == null) {
+            if (deflater is null) {
                 throw new ArgumentNullException(nameof(deflater));
             }
             
@@ -284,7 +284,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                                             out byte[] salt, out byte[] pwdVerifier) {
             salt = new byte[entry.AESSaltLen];
             // Salt needs to be cryptographically random, and unique per file
-            if (_aesRnd == null)
+            if (_aesRnd is null)
                 _aesRnd = new RNGCryptoServiceProvider();
             _aesRnd.GetBytes(salt);
             int blockSize = entry.AESKeySize / 8;   // bits to bytes

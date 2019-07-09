@@ -202,7 +202,7 @@ namespace AirProperties
         private XmlNode SerializeValue(object value)
         {
             XmlNode retVal;
-            if (value == null || value is string)
+            if (value is null || value is string)
             {
                 retVal = backDoc.CreateElement("string");
                 if (value != null) retVal.InnerText = value as string;

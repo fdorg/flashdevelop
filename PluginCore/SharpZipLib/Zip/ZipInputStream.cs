@@ -183,7 +183,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public ZipEntry GetNextEntry()
         {
-            if (crc == null) {
+            if (crc is null) {
                 throw new InvalidOperationException("Closed.");
             }
             
@@ -357,11 +357,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public void CloseEntry()
         {
-            if (crc == null) {
+            if (crc is null) {
                 throw new InvalidOperationException("Closed");
             }
             
-            if (entry == null) {
+            if (entry is null) {
                 return;
             }
             
@@ -482,7 +482,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #if NETCF_1_0
                 throw new ZipException("Encryption not supported for Compact Framework 1.0");
 #else
-                if (password == null) {
+                if (password is null) {
                     throw new ZipException("No password set.");
                 }
                 
@@ -535,7 +535,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>Zero bytes read means end of stream.</remarks>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -579,11 +579,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         int BodyRead(byte[] buffer, int offset, int count)
         {
-            if ( crc == null ) {
+            if ( crc is null ) {
                 throw new InvalidOperationException("Closed");
             }
             
-            if ( (entry == null) || (count <= 0) ) {
+            if ( (entry is null) || (count <= 0) ) {
                 return 0;
             }
 

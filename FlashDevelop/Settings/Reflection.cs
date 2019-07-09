@@ -56,7 +56,7 @@ namespace FlashDevelop.Settings
                 foreach (PropertyInfo property in properties)
                 {
                     object current = settings.GetValue(property.Name);
-                    if (current == null || (current is Color && (Color)current == Color.Empty))
+                    if (current is null || (current is Color && (Color)current == Color.Empty))
                     {
                         object value = defaults.GetValue(property.Name);
                         settings.SetValue(property.Name, value);

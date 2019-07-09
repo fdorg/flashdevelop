@@ -63,7 +63,7 @@ namespace ProjectManager.Controls.TreeView
                 ImageIndex = Icons.MxmlFileCompile.Index;
             else if (FileInspector.IsCss(path, ext) && project.IsCompileTarget(path))
                 ImageIndex = Icons.ActionScriptCompile.Index;
-            else if (FileInspector.IsSwc(path) && Parent == null) // external SWC library
+            else if (FileInspector.IsSwc(path) && Parent is null) // external SWC library
                 ImageIndex = Icons.Classpath.Index;
             else
                 ImageIndex = Icons.GetImageForFile(path).Index;

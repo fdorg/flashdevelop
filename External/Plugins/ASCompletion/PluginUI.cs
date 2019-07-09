@@ -410,7 +410,7 @@ namespace ASCompletion
                 return;
             }
             if (PluginBase.MainForm.ClosingEntirely) return;
-            if (state == null)
+            if (state is null)
             {
                 if (PluginBase.MainForm.ProgressLabel != null) PluginBase.MainForm.ProgressLabel.Visible = false;
                 if (PluginBase.MainForm.ProgressBar != null) PluginBase.MainForm.ProgressBar.Visible = false;
@@ -687,7 +687,7 @@ namespace ASCompletion
             finally
             {
                 // outline state will be restored/saved from the model data
-                if (aFile.OutlineState == null)
+                if (aFile.OutlineState is null)
                     aFile.OutlineState = new TreeState();
                 // restore collapsing state
                 OutlineTree.EndStatefulUpdate(aFile.OutlineState);
@@ -949,7 +949,7 @@ namespace ASCompletion
         private void SortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             ToolStripMenuItem item = e.ClickedItem as ToolStripMenuItem;
-            if (item == null || item.Checked) return;
+            if (item is null || item.Checked) return;
             if (item == noneItem) settings.SortingMode = OutlineSorting.None;
             else if (item == sortedItem) settings.SortingMode = OutlineSorting.Sorted;
             else if (item == sortedByKindItem) settings.SortingMode = OutlineSorting.SortedByKind;
@@ -966,7 +966,7 @@ namespace ASCompletion
         /// </summary>
         private void ClassTreeSelect(object sender, TreeNode node)
         {
-            if (tempoClick == null)
+            if (tempoClick is null)
             {
                 tempoClick = new System.Timers.Timer();
                 tempoClick.Interval = 50;
@@ -980,7 +980,7 @@ namespace ASCompletion
         private void DelayedClassTreeSelect(object sender, System.Timers.ElapsedEventArgs e)
         {
             TreeNode node = OutlineTree.SelectedNode;
-            if (node == null)
+            if (node is null)
                 return;
             ASContext.Context.OnSelectOutlineNode(node);
         }
@@ -997,7 +997,7 @@ namespace ASCompletion
         public void SetLastLookupPosition(string file, int line, int column)
         {
             // store location
-            if (lookupLocations == null) lookupLocations = new Stack<LookupLocation>();
+            if (lookupLocations is null) lookupLocations = new Stack<LookupLocation>();
             lookupLocations.Push(new LookupLocation(file, line, column));
             if (lookupLocations.Count > 100) lookupLocations.TrimExcess();
             // menu item
@@ -1050,7 +1050,7 @@ namespace ASCompletion
 
         private bool IsMatch(string inputText, string searchText)
         {
-            if (inputText == null || searchText == "")
+            if (inputText is null || searchText == "")
             {
                 return false;
             }

@@ -67,7 +67,7 @@ namespace System.Windows.Forms
 			//	This Method replaces the User32 method SendMessage, but will only work for sending
 			//	messages to Managed controls.
 			Control control = Control.FromHandle(hWnd);
-			if (control == null){
+			if (control is null){
 				return IntPtr.Zero;
 			}
 			

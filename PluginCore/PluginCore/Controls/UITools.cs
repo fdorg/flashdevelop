@@ -22,7 +22,7 @@ namespace PluginCore.Controls
         {
             get
             {
-                if (manager == null)
+                if (manager is null)
                 {
                     manager = new UITools();
                 }
@@ -40,7 +40,7 @@ namespace PluginCore.Controls
 
         public static void Init()
         {
-            if (manager == null)
+            if (manager is null)
             {
                 manager = new UITools();
             }
@@ -187,7 +187,7 @@ namespace PluginCore.Controls
 
         private void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
         {
-            if (OnMouseHover == null || sci == null || DisableEvents) return;
+            if (OnMouseHover is null || sci is null || DisableEvents) return;
             try
             {
                 // check mouse over the editor
@@ -407,7 +407,7 @@ namespace PluginCore.Controls
             if (!CompletionList.Active && !callTip.CallTipActive) return false;
             
             // hide if pressing Esc or Ctrl+Key combination
-            if (lockedSciControl == null || !lockedSciControl.IsAlive || key == Keys.Escape
+            if (lockedSciControl is null || !lockedSciControl.IsAlive || key == Keys.Escape
                 || ((Control.ModifierKeys & Keys.Control) != 0 && Control.ModifierKeys != (Keys.Control|Keys.Alt)) )
             {
                 if (key == (Keys.Control | Keys.C) || key == (Keys.Control | Keys.A))

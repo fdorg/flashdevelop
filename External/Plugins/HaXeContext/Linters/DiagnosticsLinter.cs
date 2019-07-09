@@ -67,7 +67,7 @@ namespace HaXeContext.Linters
         public void LintProjectAsync(IProject project, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
-            if (context == null || !CanContinue(context)) return;
+            if (context is null || !CanContinue(context)) return;
 
             var list = new List<LintingResult>();
             var sci = GetStubSci();

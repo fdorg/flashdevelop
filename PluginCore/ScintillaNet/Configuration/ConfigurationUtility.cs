@@ -35,7 +35,7 @@ namespace ScintillaNet.Configuration
             filename = filename.Replace("$(BaseDir)", PathHelper.BaseDir);
             if (File.Exists(filename)) res = new FileStream(filename, FileMode.Open, FileAccess.Read);
             else res = _assembly.GetManifestResourceStream($"{_assembly.GetName().Name}.{filename.Replace("\\", ".")}");
-            if (res == null && parent?.filename != null)
+            if (res is null && parent?.filename != null)
             {
                 int p = parent.filename.LastIndexOf('\\');
                 if (p > 0) return OpenFile($"{parent.filename.Substring(0, p)}\\{filename}", null);

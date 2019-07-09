@@ -570,7 +570,7 @@ namespace FlashLogViewer
         /// </summary>
         private bool PassesFilter(string logLine)
         {
-            if (reFilter == null) return true;
+            if (reFilter is null) return true;
             return reFilter.IsMatch(logLine);
         }
 

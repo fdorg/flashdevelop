@@ -190,7 +190,7 @@ namespace FlashDebugger.Controls
         {
             NodeTextBox box = sender as NodeTextBox;
             var node = box.Parent.CurrentNode.Tag as Node;
-            if (box.Parent.CurrentNode.NextNode == null)
+            if (box.Parent.CurrentNode.NextNode is null)
             {
                 addingNewExpression = true;
                 node.Text = "";
@@ -206,7 +206,7 @@ namespace FlashDebugger.Controls
         void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
-            if (box.Parent.CurrentNode == null) return;
+            if (box.Parent.CurrentNode is null) return;
             DataNode node = box.Parent.CurrentNode.Tag as DataNode;
             if (e.NewLabel.Trim() == "" || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
             {
@@ -214,7 +214,7 @@ namespace FlashDebugger.Controls
                 return;
             }
             bool newExp;
-            if (node.NextNode == null) newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
+            if (node.NextNode is null) newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
             else newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
             if (!newExp) node.Text = e.OldLabel;
         }
@@ -233,7 +233,7 @@ namespace FlashDebugger.Controls
 
         void Tree_NameNodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand && (Tree.SelectedNode == null || Tree.SelectedNode == e.Node))
+            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand && (Tree.SelectedNode is null || Tree.SelectedNode == e.Node))
             {
                 NameNodeTextBox.BeginEdit();
                 e.Handled = true;
@@ -243,7 +243,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
-            if (box.Parent.CurrentNode == null) return;
+            if (box.Parent.CurrentNode is null) return;
             VariableNode node = box.Parent.CurrentNode.Tag as VariableNode;
             node.IsEditing = false;
             try
@@ -280,7 +280,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
             VariableNode node = e.Node.Tag as VariableNode;
-            if (node?.Variable == null)
+            if (node?.Variable is null)
             {
                 e.Value = false;
                 return;
@@ -344,7 +344,7 @@ namespace FlashDebugger.Controls
         }
         private void ViewerItemClick(object sender, EventArgs e)
         {
-            if (viewerForm == null)
+            if (viewerForm is null)
             {
                 viewerForm = new ViewerForm();
                 viewerForm.StartPosition = FormStartPosition.Manual;
@@ -541,8 +541,8 @@ namespace FlashDebugger.Controls
 
         public void SaveState()
         {
-            if (state == null) state = new DataTreeState();
-            state.Selected = _tree.SelectedNode == null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
+            if (state is null) state = new DataTreeState();
+            state.Selected = _tree.SelectedNode is null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
             if (Nodes != null && Nodes.Count > 0) SaveExpanded(Nodes);
             SaveScrollState();
@@ -575,7 +575,7 @@ namespace FlashDebugger.Controls
 
         public void RestoreState()
         {
-            if (state == null) return;
+            if (state is null) return;
             if (state.Expanded != null && state.Expanded.Count > 0) RestoreExpanded(Nodes);
             if (state.Selected != null) _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
             RestoreScrollState();

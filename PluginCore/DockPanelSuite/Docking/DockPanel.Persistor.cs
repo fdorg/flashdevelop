@@ -589,7 +589,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 for (int i = 0; i < contents.Length; i++)
                 {
                     IDockContent content = deserializeContent(contents[i].PersistString);
-                    if (content == null)
+                    if (content is null)
                         content = new DummyContent();
                     content.DockHandler.DockPanel = dockPanel;
                     content.DockHandler.AutoHidePortion = contents[i].AutoHidePortion;
@@ -668,9 +668,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                         for (int j = i + 1; j < contents.Length; j++)
                         {
                             DockPane pane1 = dockPanel.Contents[sortedContents[i]].DockHandler.Pane;
-                            int ZOrderIndex1 = pane1 == null ? 0 : panes[dockPanel.Panes.IndexOf(pane1)].ZOrderIndex;
+                            int ZOrderIndex1 = pane1 is null ? 0 : panes[dockPanel.Panes.IndexOf(pane1)].ZOrderIndex;
                             DockPane pane2 = dockPanel.Contents[sortedContents[j]].DockHandler.Pane;
-                            int ZOrderIndex2 = pane2 == null ? 0 : panes[dockPanel.Panes.IndexOf(pane2)].ZOrderIndex;
+                            int ZOrderIndex2 = pane2 is null ? 0 : panes[dockPanel.Panes.IndexOf(pane2)].ZOrderIndex;
                             if (ZOrderIndex1 > ZOrderIndex2)
                             {
                                 int temp = sortedContents[i];

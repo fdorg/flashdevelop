@@ -286,9 +286,9 @@ namespace AS3Context
             while (i < len)
             {
                 string name = GetAttributeName(src, ref i);
-                if (name == null) break;
+                if (name is null) break;
                 string value = GetAttributeValue(src, ref i);
-                if (value == null) break;
+                if (value is null) break;
                 if (name.StartsWithOrdinal("xmlns"))
                 {
                     string[] qname = name.Split(':');
@@ -396,7 +396,7 @@ namespace AS3Context
             model.InlinedIn = "xml";
             model.InlinedRanges = ctx.as3ranges;
 
-            if (model.MetaDatas == null) model.MetaDatas = new List<ASMetaData>();
+            if (model.MetaDatas is null) model.MetaDatas = new List<ASMetaData>();
             foreach (string key in ctx.namespaces.Keys)
             {
                 ASMetaData meta = new ASMetaData("Namespace");
@@ -447,7 +447,7 @@ namespace AS3Context
         {
             FileName = fileName;
             XmlReader reader;
-            if (rawData == null) reader = new XmlTextReader(fileName);
+            if (rawData is null) reader = new XmlTextReader(fileName);
             else reader = new XmlTextReader(new MemoryStream(rawData));
 
             MxmlCatalog cat = null;
@@ -462,7 +462,7 @@ namespace AS3Context
                     string uri = reader.GetAttribute("uri") ?? defaultURI;
                     if (uri == MxmlFilter.BETA_MX || uri == MxmlFilter.OLD_MX) uri = MxmlFilter.NEW_MX;
 
-                    if (cat == null || cat.URI != uri)
+                    if (cat is null || cat.URI != uri)
                     {
                         if (ContainsKey(uri)) cat = this[uri];
                         else {

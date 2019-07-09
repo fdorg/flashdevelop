@@ -117,7 +117,7 @@ namespace ProjectManager.Projects.AS3
             {
                 string path = OSPath(GetAttribute("path"));
 
-                if (path == null)
+                if (path is null)
                     throw new Exception("All library assets must have a 'path' attribute.");
 
                 LibraryAsset asset = new LibraryAsset(project, path);

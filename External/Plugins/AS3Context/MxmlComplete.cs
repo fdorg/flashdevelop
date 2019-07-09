@@ -27,7 +27,7 @@ namespace AS3Context
         public static bool GotoDeclaration()
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci == null) return false;
+            if (sci is null) return false;
             if (sci.ConfigurationLanguage != "xml") return false;
 
             int pos = sci.CurrentPos;
@@ -39,7 +39,7 @@ namespace AS3Context
                 pos ++;
             }
             XMLContextTag ctag = XMLComplete.GetXMLContextTag(sci, pos);
-            if (ctag.Name == null) return true;
+            if (ctag.Name is null) return true;
             string word = sci.GetWordFromPosition(sci.CurrentPos);
 
             string type = ResolveType(mxmlContext, ctag.Name);
@@ -566,7 +566,7 @@ namespace AS3Context
 
                         if (!validFunction) continue;
 
-                        if (result == null) result = new List<ICompletionListItem>();
+                        if (result is null) result = new List<ICompletionListItem>();
                         result.Add(new MxmlEventHandlerItem(member));
                     }
 
@@ -608,7 +608,7 @@ namespace AS3Context
                     foreach (MemberModel member in tmpClass.Members)
                         if ((member.Flags & FlagType.Function) > 0 && (member.Access & access) > 0)
                         {
-                            if (result == null) result = new List<ICompletionListItem>();
+                            if (result is null) result = new List<ICompletionListItem>();
                             result.Add(new MemberItem(member));
                         }
 
@@ -626,7 +626,7 @@ namespace AS3Context
 
         private static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
-            if (model?.MetaDatas == null) return;
+            if (model?.MetaDatas is null) return;
             string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;
             foreach (ASMetaData meta in model.MetaDatas)
             {
@@ -636,10 +636,10 @@ namespace AS3Context
                 {
                     case ASMetaKind.Event: add = ":e"; break;
                     case ASMetaKind.Style:
-                        if (meta.Params == null || !meta.Params.TryGetValue("inherit", out var inherit) || inherit != "no" || isCurrentModel)
+                        if (meta.Params is null || !meta.Params.TryGetValue("inherit", out var inherit) || inherit != "no" || isCurrentModel)
                         {
                             add = ":s";
-                            if (meta.Params == null || !meta.Params.TryGetValue("type", out type)) type = "Object";
+                            if (meta.Params is null || !meta.Params.TryGetValue("type", out type)) type = "Object";
                         }
                         break;
                     case ASMetaKind.Effect: 
@@ -699,10 +699,10 @@ namespace AS3Context
         #region context detection
         private static bool GetContext(object data)
         {
-            if (mxmlContext?.model == null) return false;
+            if (mxmlContext?.model is null) return false;
 
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci == null) return false;
+            if (sci is null) return false;
 
             // XmlComplete context
             try
@@ -784,7 +784,7 @@ namespace AS3Context
 
         public static string ResolveType(MxmlFilterContext ctx, string tag)
         {
-            if (tag == null || ctx == null) return "void";
+            if (tag is null || ctx is null) return "void";
             int p = tag.IndexOf(':');
             if (p < 0) return ResolveType(ctx, "*", tag);
             return ResolveType(ctx, tag.Substring(0, p), tag.Substring(p + 1));

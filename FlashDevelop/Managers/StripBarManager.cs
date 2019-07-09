@@ -109,7 +109,7 @@ namespace FlashDevelop.Managers
                     ToolStripMenuItem menu = GetMenuItem(node);
                     items.Add(menu); // Add menu first to get the id correct
                     string id = GetMenuItemId(menu);
-                    if (id.Contains('.') && ShortcutManager.GetRegisteredItem(id) == null)
+                    if (id.Contains('.') && ShortcutManager.GetRegisteredItem(id) is null)
                     {
                         ShortcutManager.RegisterItem(id, menu);
                     }

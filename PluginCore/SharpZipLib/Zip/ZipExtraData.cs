@@ -100,7 +100,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="count">The number of bytes available.</param>
         public void SetData(byte[] data, int offset, int count)
         {
-            if( data==null )
+            if( data is null )
             {
                 throw new ArgumentNullException(nameof(data));
             }
@@ -524,7 +524,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="data">The extra data.</param>
         public ZipExtraData(byte[] data)
         {
-            if ( data == null )
+            if ( data is null )
             {
                 _data = new byte[0];
             }
@@ -553,7 +553,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public void Clear()
         {
-            if ( (_data == null) || (_data.Length != 0) ) {
+            if ( (_data is null) || (_data.Length != 0) ) {
                 _data = new byte[0];
             }
         }
@@ -681,7 +681,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="taggedData">The <see cref="ITaggedData"/> value to add.</param>
         public void AddEntry(ITaggedData taggedData)
         {
-            if (taggedData == null)
+            if (taggedData is null)
             {
                 throw new ArgumentNullException(nameof(taggedData));
             }
@@ -700,7 +700,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 throw new ArgumentOutOfRangeException(nameof(headerID));
             }
 
-            int addLength = (fieldData == null) ? 0 : fieldData.Length;
+            int addLength = (fieldData is null) ? 0 : fieldData.Length;
 
             if ( addLength > ushort.MaxValue ) {
 #if NETCF_1_0
@@ -772,7 +772,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="StartNewEntry"/>
         public void AddData(byte[] data)
         {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException(nameof(data));
             }
 

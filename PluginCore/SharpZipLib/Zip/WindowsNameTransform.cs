@@ -52,7 +52,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="baseDirectory"></param>
         public WindowsNameTransform(string baseDirectory)
         {
-            if ( baseDirectory == null ) {
+            if ( baseDirectory is null ) {
                 throw new ArgumentNullException(nameof(baseDirectory), "Directory name is invalid");
             }
 
@@ -74,7 +74,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             get => _baseDirectory;
             set {
-                if ( value == null ) {
+                if ( value is null ) {
                     throw new ArgumentNullException(nameof(value));
                 }
 
@@ -182,7 +182,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>Returns a valid name</returns>
         public static string MakeValidName(string name, char replacement)
         {
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException(nameof(name));
             }
             

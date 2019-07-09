@@ -50,7 +50,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_stringFormatTabHorizontal == null)
+                if (_stringFormatTabHorizontal is null)
                 {
                     _stringFormatTabHorizontal = new StringFormat();
                     _stringFormatTabHorizontal.Alignment = StringAlignment.Near;
@@ -72,7 +72,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                if (_stringFormatTabVertical == null)
+                if (_stringFormatTabVertical is null)
                 {
                     _stringFormatTabVertical = new StringFormat();
                     _stringFormatTabVertical.Alignment = StringAlignment.Near;
@@ -149,7 +149,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_dockStates == null)
+                if (_dockStates is null)
                 {
                     _dockStates = new DockState[4];
                     _dockStates[0] = DockState.DockLeftAutoHide;
@@ -166,7 +166,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_graphicsPath == null)
+                if (_graphicsPath is null)
                     _graphicsPath = new GraphicsPath();
 
                 return _graphicsPath;

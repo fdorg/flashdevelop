@@ -125,7 +125,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_dockPaneFactory == null)
+                if (m_dockPaneFactory is null)
                     m_dockPaneFactory = new DefaultDockPaneFactory();
 
                 return m_dockPaneFactory;
@@ -144,7 +144,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_floatWindowFactory == null)
+                if (m_floatWindowFactory is null)
                     m_floatWindowFactory = new DefaultFloatWindowFactory();
 
                 return m_floatWindowFactory;
@@ -163,7 +163,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {   
             get
             {
-                if (m_dockPaneCaptionFactory == null)
+                if (m_dockPaneCaptionFactory is null)
                     m_dockPaneCaptionFactory = new DefaultDockPaneCaptionFactory();
 
                 return m_dockPaneCaptionFactory;
@@ -182,7 +182,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_dockPaneStripFactory == null)
+                if (m_dockPaneStripFactory is null)
                     m_dockPaneStripFactory = new DefaultDockPaneStripFactory();
 
                 return m_dockPaneStripFactory;
@@ -201,7 +201,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {   
             get
             {
-                if (m_autoHideStripFactory == null)
+                if (m_autoHideStripFactory is null)
                     m_autoHideStripFactory = new DefaultAutoHideStripFactory();
 
                 return m_autoHideStripFactory;

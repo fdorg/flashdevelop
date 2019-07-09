@@ -124,7 +124,7 @@ namespace ASCompletion
         private void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             TreeNode node = outlineTreeView.GetNodeAt(outlineTreeView.PointToClient(Control.MousePosition));
-            if (node == null) e.Cancel = true;
+            if (node is null) e.Cancel = true;
             else
             {
                 outlineTreeView.SelectedNode = node;
@@ -240,7 +240,7 @@ namespace ASCompletion
                 PluginUI.AddMembers(nodes, model.Members);
 
             if (model.Classes != null)
-                foreach (ClassModel aClass in model.Classes) if (aClass.IndexType == null)
+                foreach (ClassModel aClass in model.Classes) if (aClass.IndexType is null)
                 {
                     TypeTreeNode node = new TypeTreeNode(aClass);
                     AddExplore(node);
@@ -304,7 +304,7 @@ namespace ASCompletion
 
         private void outlineTreeView_Click(object sender, EventArgs e)
         {
-            if (outlineTreeView.SelectedNode == null)
+            if (outlineTreeView.SelectedNode is null)
                 return;
             TreeNode node = outlineTreeView.SelectedNode;
             TypeTreeNode tnode;
@@ -337,7 +337,7 @@ namespace ASCompletion
                     ClassModel theClass = model.GetClassByName(tnode.Text);
                     string memberName = ((string) node.Tag).Split('@')[0];
                     MemberModel member = theClass.Members.Search(memberName, 0, 0);
-                    if (member == null) return;
+                    if (member is null) return;
                     var line = member.LineFrom;
                     var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     if (sci != null && line > 0 && line < sci.LineCount)
@@ -351,7 +351,7 @@ namespace ASCompletion
         /// </summary>
         public FileModel OpenFile(string filename)
         {
-            if (current == null) DetectContext();
+            if (current is null) DetectContext();
             return OpenFile(filename, current);
         }
 
@@ -360,7 +360,7 @@ namespace ASCompletion
         /// </summary>
         public FileModel OpenFile(string filename, IASContext context)
         {
-            if (context?.Classpath == null)
+            if (context?.Classpath is null)
                 return null;
             FileModel model = null;
             foreach (PathModel aPath in context.Classpath)
@@ -383,11 +383,11 @@ namespace ASCompletion
 
         private ClassModel ResolveClass(TreeNode node)
         {
-            if (!(node is TypeTreeNode) || node.Tag == null)
+            if (!(node is TypeTreeNode) || node.Tag is null)
                 return ClassModel.VoidClass;
 
             ResolvedPath resolved = ResolvePath(node);
-            if (resolved.model == null) return ClassModel.VoidClass;
+            if (resolved.model is null) return ClassModel.VoidClass;
 
             string[] info = ((string) node.Tag).Split('@');
             FileModel model = resolved.model.GetFile(info[0]);
@@ -396,7 +396,7 @@ namespace ASCompletion
 
         private int ResolveMemberLine(TreeNode node)
         {
-            if (!(node is MemberTreeNode) || node.Tag == null)
+            if (!(node is MemberTreeNode) || node.Tag is null)
                 return 0;
             var info = ((string) node.Tag).Split('@');
             return int.TryParse(info[1], out var line) ? line : 0;
@@ -551,7 +551,7 @@ namespace ASCompletion
         private void ExploreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null) return;
+            if (node is null) return;
 
             string path = GetPathFromNode(node);
             if (path != null)
@@ -561,26 +561,26 @@ namespace ASCompletion
         private void EditToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null) return;
+            if (node is null) return;
             outlineTreeView_Click(null, null);
         }
 
         private void ConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null || current?.Classpath == null) return;
+            if (node is null || current?.Classpath is null) return;
 
             ResolvedPath resolved = ResolvePath(node);
             string package = resolved.package;
             PathModel thePath = resolved.model;
-            if (thePath == null) 
+            if (thePath is null) 
                 return;
 
             if (node is TypeTreeNode)
             {
                 string filename = (node.Tag as string).Split('@')[0];
                 FileModel theModel = thePath.GetFile(filename);
-                if (theModel == null)
+                if (theModel is null)
                     return;
 
                 saveFileDialog.Title = TextHelper.GetString("Title.SaveIntrinsicAs");
@@ -644,7 +644,7 @@ namespace ASCompletion
                 cp = cp.Parent;
             }
             result.package = package;
-            if (cp == null) return result;
+            if (cp is null) return result;
 
             string path = (cp as ClasspathTreeNode).Path;
             foreach (PathModel aPath in current.Classpath)

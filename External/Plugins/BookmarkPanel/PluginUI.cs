@@ -431,7 +431,7 @@ namespace BookmarkPanel
         private void ManagerOnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             ListViewGroup group = this.FindGroup(sender.FileName);
-            if (group == null) return;
+            if (group is null) return;
             group.Tag = null; // bookmarks list may be dirty
             updateTimer.Stop();
             updateTimer.Start();
@@ -443,7 +443,7 @@ namespace BookmarkPanel
         private void ManagerOnMarkerChanged(ScintillaControl sender, int line)
         {
             ListViewGroup group = this.FindGroup(sender.FileName);
-            if (group == null) return;
+            if (group is null) return;
             group.Tag = null; // bookmarks list may be dirty
             updateTimer.Stop();
             updateTimer.Start();
@@ -458,7 +458,7 @@ namespace BookmarkPanel
             List<ListViewGroup> groups = new List<ListViewGroup>();
             foreach (ListViewGroup group in this.listView.Groups)
             {
-                if (group.Tag == null) groups.Add(group);
+                if (group.Tag is null) groups.Add(group);
             }
             foreach (ListViewGroup group in groups)
             {
@@ -472,10 +472,10 @@ namespace BookmarkPanel
         private void UpdateMarkers(string filename)
         {
             ITabbedDocument document = DocumentManager.FindDocument(filename);
-            if (document == null || !document.IsEditable) return;
+            if (document is null || !document.IsEditable) return;
             ScintillaControl sci = document.SciControl;
             ListViewGroup group = this.FindGroup(document.FileName);
-            if (group == null) return;
+            if (group is null) return;
             List<int> markers = this.GetMarkers(document.SciControl);
             if (this.NeedRefresh(document.SciControl, markers, group.Items))
             {

@@ -32,7 +32,7 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(-525)]
         public virtual int ReadyState {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ReadyState", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.ReadyState;
@@ -43,7 +43,7 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(124)]
         public virtual int TotalFrames {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TotalFrames", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.TotalFrames;
@@ -54,13 +54,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(125)]
         public virtual bool Playing {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Playing", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Playing;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Playing", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Playing = value;
@@ -71,13 +71,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(105)]
         public virtual int Quality {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Quality", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Quality;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Quality", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Quality = value;
@@ -88,13 +88,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(120)]
         public virtual int ScaleMode {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ScaleMode", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.ScaleMode;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ScaleMode", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.ScaleMode = value;
@@ -105,13 +105,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(121)]
         public virtual int AlignMode {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AlignMode", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.AlignMode;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AlignMode", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.AlignMode = value;
@@ -122,13 +122,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(123)]
         public virtual int BackgroundColor {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("BackgroundColor", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.BackgroundColor;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("BackgroundColor", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.BackgroundColor = value;
@@ -139,13 +139,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(106)]
         public virtual bool Loop {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Loop", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Loop;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Loop", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Loop = value;
@@ -156,13 +156,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(102)]
         public virtual string Movie {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Movie", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Movie;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Movie", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Movie = value;
@@ -173,13 +173,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(107)]
         public virtual int FrameNum {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("FrameNum", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.FrameNum;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("FrameNum", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.FrameNum = value;
@@ -190,13 +190,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(133)]
         public virtual string WMode {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("WMode", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.WMode;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("WMode", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.WMode = value;
@@ -207,13 +207,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(134)]
         public virtual string SAlign {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SAlign", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.SAlign;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SAlign", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.SAlign = value;
@@ -224,13 +224,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(135)]
         public virtual bool Menu {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Menu", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Menu;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Menu", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Menu = value;
@@ -241,13 +241,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(136)]
         public virtual string Base {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Base", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Base;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Base", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Base = value;
@@ -258,13 +258,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(137)]
         public virtual string CtlScale {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("CtlScale", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Scale;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("CtlScale", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Scale = value;
@@ -275,13 +275,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(138)]
         public virtual bool DeviceFont {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("DeviceFont", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.DeviceFont;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("DeviceFont", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.DeviceFont = value;
@@ -292,13 +292,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(139)]
         public virtual bool EmbedMovie {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("EmbedMovie", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.EmbedMovie;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("EmbedMovie", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.EmbedMovie = value;
@@ -309,13 +309,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(140)]
         public virtual string BGColor {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("BGColor", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.BGColor;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("BGColor", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.BGColor = value;
@@ -326,13 +326,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(141)]
         public virtual string Quality2 {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Quality2", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Quality2;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Quality2", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Quality2 = value;
@@ -343,13 +343,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(159)]
         public virtual string SWRemote {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SWRemote", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.SWRemote;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SWRemote", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.SWRemote = value;
@@ -360,13 +360,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(170)]
         public virtual string FlashVars {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("FlashVars", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.FlashVars;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("FlashVars", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.FlashVars = value;
@@ -377,13 +377,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(171)]
         public virtual string AllowScriptAccess {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AllowScriptAccess", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.AllowScriptAccess;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AllowScriptAccess", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.AllowScriptAccess = value;
@@ -394,13 +394,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(190)]
         public virtual string MovieData {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("MovieData", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.MovieData;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("MovieData", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.MovieData = value;
@@ -411,13 +411,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(191)]
         public virtual object InlineData {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("InlineData", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.InlineData;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("InlineData", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.InlineData = value;
@@ -428,13 +428,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(192)]
         public virtual bool SeamlessTabbing {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SeamlessTabbing", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.SeamlessTabbing;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SeamlessTabbing", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.SeamlessTabbing = value;
@@ -445,13 +445,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(194)]
         public virtual bool Profile {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Profile", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.Profile;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Profile", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.Profile = value;
@@ -462,13 +462,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(195)]
         public virtual string ProfileAddress {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ProfileAddress", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.ProfileAddress;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ProfileAddress", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.ProfileAddress = value;
@@ -479,13 +479,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(196)]
         public virtual int ProfilePort {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ProfilePort", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.ProfilePort;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("ProfilePort", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.ProfilePort = value;
@@ -496,13 +496,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(201)]
         public virtual string AllowNetworking {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AllowNetworking", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.AllowNetworking;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AllowNetworking", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.AllowNetworking = value;
@@ -513,13 +513,13 @@ namespace AxShockwaveFlashObjects {
         [System.Runtime.InteropServices.DispIdAttribute(202)]
         public virtual string AllowFullScreen {
             get {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AllowFullScreen", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertyGet);
                 }
                 return this.ocx.AllowFullScreen;
             }
             set {
-                if ((this.ocx == null)) {
+                if ((this.ocx is null)) {
                     throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("AllowFullScreen", System.Windows.Forms.AxHost.ActiveXInvokeKind.PropertySet);
                 }
                 this.ocx.AllowFullScreen = value;
@@ -535,21 +535,21 @@ namespace AxShockwaveFlashObjects {
         public event _IShockwaveFlashEvents_FlashCallEventHandler FlashCall;
         
         public virtual void TCallLabel(string target, string label) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TCallLabel", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TCallLabel(target, label);
         }
         
         public virtual void TSetPropertyNum(string target, int property, double value) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TSetPropertyNum", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TSetPropertyNum(target, property, value);
         }
         
         public virtual double TGetPropertyNum(string target, int property) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TGetPropertyNum", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             double returnValue = ((double)(this.ocx.TGetPropertyNum(target, property)));
@@ -557,7 +557,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual double TGetPropertyAsNumber(string target, int property) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TGetPropertyAsNumber", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             double returnValue = ((double)(this.ocx.TGetPropertyAsNumber(target, property)));
@@ -565,14 +565,14 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual void EnforceLocalSecurity() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("EnforceLocalSecurity", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.EnforceLocalSecurity();
         }
         
         public virtual string CallFunction(string request) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("CallFunction", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             string returnValue = ((string)(this.ocx.CallFunction(request)));
@@ -580,91 +580,91 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual void SetReturnValue(string returnValue) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SetReturnValue", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.SetReturnValue(returnValue);
         }
         
         public virtual void DisableLocalSecurity() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("DisableLocalSecurity", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.DisableLocalSecurity();
         }
         
         public virtual void SetZoomRect(int left, int top, int right, int bottom) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SetZoomRect", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.SetZoomRect(left, top, right, bottom);
         }
         
         public virtual void Zoom(int factor) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Zoom", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Zoom(factor);
         }
         
         public virtual void Pan(int x, int y, int mode) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Pan", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Pan(x, y, mode);
         }
         
         public virtual void Play() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Play", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Play();
         }
         
         public virtual void Stop() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Stop", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Stop();
         }
         
         public virtual void Back() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Back", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Back();
         }
         
         public virtual void Forward() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Forward", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Forward();
         }
         
         public virtual void Rewind() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("Rewind", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.Rewind();
         }
         
         public virtual void StopPlay() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("StopPlay", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.StopPlay();
         }
         
         public virtual void GotoFrame(int frameNum) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("GotoFrame", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.GotoFrame(frameNum);
         }
         
         public virtual int CurrentFrame() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("CurrentFrame", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             int returnValue = ((int)(this.ocx.CurrentFrame()));
@@ -672,7 +672,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual bool IsPlaying() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("IsPlaying", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             bool returnValue = ((bool)(this.ocx.IsPlaying()));
@@ -680,7 +680,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual int PercentLoaded() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("PercentLoaded", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             int returnValue = ((int)(this.ocx.PercentLoaded()));
@@ -688,7 +688,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual bool FrameLoaded(int frameNum) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("FrameLoaded", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             bool returnValue = ((bool)(this.ocx.FrameLoaded(frameNum)));
@@ -696,7 +696,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual int FlashVersion() {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("FlashVersion", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             int returnValue = ((int)(this.ocx.FlashVersion()));
@@ -704,28 +704,28 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual void LoadMovie(int layer, string url) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("LoadMovie", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.LoadMovie(layer, url);
         }
         
         public virtual void TGotoFrame(string target, int frameNum) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TGotoFrame", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TGotoFrame(target, frameNum);
         }
         
         public virtual void TGotoLabel(string target, string label) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TGotoLabel", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TGotoLabel(target, label);
         }
         
         public virtual int TCurrentFrame(string target) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TCurrentFrame", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             int returnValue = ((int)(this.ocx.TCurrentFrame(target)));
@@ -733,7 +733,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual string TCurrentLabel(string target) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TCurrentLabel", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             string returnValue = ((string)(this.ocx.TCurrentLabel(target)));
@@ -741,28 +741,28 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual void TPlay(string target) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TPlay", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TPlay(target);
         }
         
         public virtual void TStopPlay(string target) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TStopPlay", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TStopPlay(target);
         }
         
         public virtual void SetVariable(string name, string value) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("SetVariable", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.SetVariable(name, value);
         }
         
         public virtual string GetVariable(string name) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("GetVariable", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             string returnValue = ((string)(this.ocx.GetVariable(name)));
@@ -770,14 +770,14 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual void TSetProperty(string target, int property, string value) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TSetProperty", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TSetProperty(target, property, value);
         }
         
         public virtual string TGetProperty(string target, int property) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TGetProperty", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             string returnValue = ((string)(this.ocx.TGetProperty(target, property)));
@@ -785,7 +785,7 @@ namespace AxShockwaveFlashObjects {
         }
         
         public virtual void TCallFrame(string target, int frameNum) {
-            if ((this.ocx == null)) {
+            if ((this.ocx is null)) {
                 throw new System.Windows.Forms.AxHost.InvalidActiveXStateException("TCallFrame", System.Windows.Forms.AxHost.ActiveXInvokeKind.MethodInvoke);
             }
             this.ocx.TCallFrame(target, frameNum);

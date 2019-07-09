@@ -81,7 +81,7 @@ namespace AS3Context.Completion
                 {
                     var type = ResolveType(features.stringKey, inFile);
                     // for example: ""|, ''|
-                    if (context.SubExpressions == null) expression = type.Name + ".#.";
+                    if (context.SubExpressions is null) expression = type.Name + ".#.";
                     // for example: "".<complete>, ''.<complete>
                     else
                     {

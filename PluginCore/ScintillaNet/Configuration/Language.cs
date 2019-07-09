@@ -69,8 +69,8 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (usekeywords == null) usekeywords = new UseKeyword[0];
-            if (usestyles == null) usestyles = new UseStyle[0];
+            if (usekeywords is null) usekeywords = new UseKeyword[0];
+            if (usestyles is null) usestyles = new UseStyle[0];
             for (int j = 0; j<usekeywords.Length; j++)
             {
                 usekeywords[j].init(utility, _parent);
@@ -82,7 +82,7 @@ namespace ScintillaNet.Configuration
             }
 
             lexer?.init(utility, _parent);
-            if (characterclass == null) characterclass = new CharacterClass();
+            if (characterclass is null) characterclass = new CharacterClass();
             characterclass.init(utility, _parent);
             editorstyle?.init(utility, _parent);
         }

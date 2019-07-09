@@ -321,7 +321,7 @@ namespace ASCompletion.Model
 
                 var aFile = GetFileModel(filename);
 
-                if (aFile == null || pathModel.HasFile(filename)) continue;
+                if (aFile is null || pathModel.HasFile(filename)) continue;
                 // store model
                 if (aFile.Context.IsModelValid(aFile, pathModel))
                     pathModel.AddFile(aFile);

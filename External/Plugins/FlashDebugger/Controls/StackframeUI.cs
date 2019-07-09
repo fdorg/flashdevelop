@@ -385,9 +385,9 @@ namespace FlashDebugger
         private void GotoSourceClick(object sender, EventArgs e)
         {
             var frame = ((ListItemData)lv.SelectedItems[0].Tag).Frame;
-            if (frame == null) return;
+            if (frame is null) return;
             string file = PluginMain.debugManager.GetLocalPath(frame.getLocation().getFile());
-            if (file == null) return;
+            if (file is null) return;
             ScintillaHelper.ActivateDocument(file, frame.getLocation().getLine() - 1, false);
         }
 

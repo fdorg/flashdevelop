@@ -188,9 +188,9 @@ namespace PluginCore.Collections
 
                 for (int i = Count; i > 0; i--)
                 {
-                    if (item == null)
+                    if (item is null)
                     {
-                        if (_array[index] == null)
+                        if (_array[index] is null)
                         {
                             return true;
                         }
@@ -224,7 +224,7 @@ namespace PluginCore.Collections
         /// <exception cref="ArgumentException"/>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null)
+            if (array is null)
             {
                 throw new ArgumentNullException(nameof(array));
             }
@@ -379,7 +379,7 @@ namespace PluginCore.Collections
 
                 for (int i = _tail - 1; i >= 0; i--)
                 {
-                    if (item == null ? _array[i] == null : _array[i] != null && equalityComparer.Equals(_array[i], item))
+                    if (item is null ? _array[i] is null : _array[i] != null && equalityComparer.Equals(_array[i], item))
                     {
                         Array.Copy(_array, i + 1, _array, i, (_tail - 1) - i);
                         _array[_tail - 1] = default;
@@ -398,7 +398,7 @@ namespace PluginCore.Collections
 
                 for (int i = _capacity - 1; i >= _head; i--)
                 {
-                    if (item == null ? _array[i] == null : _array[i] != null && equalityComparer.Equals(_array[i], item))
+                    if (item is null ? _array[i] is null : _array[i] != null && equalityComparer.Equals(_array[i], item))
                     {
                         Array.Copy(_array, _head, _array, _head + 1, (i - 1) - _head);
                         _array[_head] = default;

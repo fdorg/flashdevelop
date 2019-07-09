@@ -1146,7 +1146,7 @@ namespace ASCompletion.Completion
         {
             SetSrc(sci, ReadAllText(fileName));
             var ofClass = ASContext.Context.CurrentModel.Classes.Find(model => model.Name == ofClassName);
-            if (ofClass == null)
+            if (ofClass is null)
             {
                 foreach (var classpath in ASContext.Context.Classpath)
                 {

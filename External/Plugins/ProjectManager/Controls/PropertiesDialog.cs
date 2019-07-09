@@ -999,7 +999,7 @@ namespace ProjectManager.Controls
             }
 
             sdkComboBox.SelectedIndex = select;
-            if (sdk != InstalledSDK.INVALID_SDK && (sdks == null || !sdks.Contains(sdk)))
+            if (sdk != InstalledSDK.INVALID_SDK && (sdks is null || !sdks.Contains(sdk)))
                 customTextBox.Text = sdk.Path;
             sdkChanged = false;
         }
@@ -1418,7 +1418,7 @@ namespace ProjectManager.Controls
             SelectItem(testMovieCombo, TestMovieBehavior.Custom);
             BaseProject.TestMovieCommand = "";
 
-            if (langPlatform.DefaultProjectFile == null) return;
+            if (langPlatform.DefaultProjectFile is null) return;
 
             foreach (string fileName in langPlatform.DefaultProjectFile)
                 if (File.Exists(BaseProject.GetAbsolutePath(fileName)))

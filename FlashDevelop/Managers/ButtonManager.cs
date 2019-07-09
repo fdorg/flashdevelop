@@ -17,7 +17,7 @@ namespace FlashDevelop.Managers
         public static void UpdateFlaggedButtons()
         {
             int count = StripBarManager.Items.Count;
-            if (Globals.CurrentDocument == null) return;
+            if (Globals.CurrentDocument is null) return;
             for (int i = 0; i < count; i++)
             {
                 var item = StripBarManager.Items[i];

@@ -57,7 +57,7 @@ namespace ProjectManager.Controls.TreeView
 
         public override void Refresh(bool recursive)
         {
-            if (watcher == null) setWatcher();
+            if (watcher is null) setWatcher();
             base.Refresh(recursive);
         }
         

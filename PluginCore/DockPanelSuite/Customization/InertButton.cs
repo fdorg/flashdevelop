@@ -130,7 +130,7 @@ namespace WeifenLuo.WinFormsUI
 
                 try
                 {
-                    if (ImageList == null || ImageIndexEnabled == -1)
+                    if (ImageList is null || ImageIndexEnabled == -1)
                         return null;
                     return ImageList.Images[m_imageIndexEnabled];
                 }
@@ -164,7 +164,7 @@ namespace WeifenLuo.WinFormsUI
 
                 try
                 {
-                    if (ImageList == null || ImageIndexDisabled == -1)
+                    if (ImageList is null || ImageIndexDisabled == -1)
                         return null;
                     return ImageList.Images[m_imageIndexDisabled];
                 }
@@ -275,7 +275,7 @@ namespace WeifenLuo.WinFormsUI
             {
                 if (m_toolTipText != value)
                 {
-                    if (m_toolTip == null)
+                    if (m_toolTip is null)
                         m_toolTip = new ToolTip(this.components);
                     m_toolTipText = value;
                     m_toolTip.SetToolTip(this, value);
@@ -459,7 +459,7 @@ namespace WeifenLuo.WinFormsUI
                 pts[2].X = pts[0].X;
                 pts[2].Y = pts[1].Y + ClientRectangle.Height;
 
-                if (imageAttr == null)
+                if (imageAttr is null)
                     g.DrawImage(image, pts, rect, GraphicsUnit.Pixel);
                 else
                     g.DrawImage(image, pts, rect, GraphicsUnit.Pixel, imageAttr);

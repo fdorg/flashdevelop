@@ -18,7 +18,7 @@ namespace ASCompletion.Commands
         /// <returns>Operation successful</returns>
         public static bool Run(string name, string path)
         {
-            if (name == null || path == null) return false;
+            if (name is null || path is null) return false;
             try
             {
                 path += " ";

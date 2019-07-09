@@ -26,7 +26,7 @@ namespace ProjectManager.Controls
         /// </summary>
         public static void UpdateTabColors(ProjectManagerSettings settings)
         {
-            if (PluginBase.CurrentProject == null)
+            if (PluginBase.CurrentProject is null)
             {
                 foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 {

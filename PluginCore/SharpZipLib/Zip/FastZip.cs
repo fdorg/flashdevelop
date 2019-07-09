@@ -265,7 +265,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             get => entryFactory_;
             set {
-                if ( value == null ) {
+                if ( value is null ) {
                     entryFactory_ = new ZipEntryFactory();
                 }
                 else {
@@ -438,7 +438,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                        string fileFilter, string directoryFilter, bool restoreDateTime,
                        bool isStreamOwner)
         {
-            if ((overwrite == Overwrite.Prompt) && (confirmDelegate == null)) {
+            if ((overwrite == Overwrite.Prompt) && (confirmDelegate is null)) {
                 throw new ArgumentNullException(nameof(confirmDelegate));
             }
 
@@ -523,11 +523,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void AddFileContents(string name, Stream stream)
         {
-            if( stream==null ) {
+            if( stream is null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            if( buffer_==null ) {
+            if( buffer_ is null ) {
                 buffer_=new byte[4096];
             }
 
@@ -566,7 +566,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if ( continueRunning_ ) {
                     try {
                         using ( FileStream outputStream = File.Create(targetName) ) {
-                            if ( buffer_ == null ) {
+                            if ( buffer_ is null ) {
                                 buffer_ = new byte[4096];
                             }
                             if (events_?.Progress != null)

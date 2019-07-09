@@ -1334,7 +1334,7 @@ namespace AirProperties
 
         private void FillAndroidManifestFields()
         {
-            MinimumAndroidOsField.Text = androidManifest.UsesSdk == null || androidManifest.UsesSdk.MinSdkVersion <= 0
+            MinimumAndroidOsField.Text = androidManifest.UsesSdk is null || androidManifest.UsesSdk.MinSdkVersion <= 0
                                              ? string.Empty : androidManifest.UsesSdk.MinSdkVersion.ToString();
 
             for (int i = 0, count = AndroidUserPermissionsList.Items.Count; i < count; i++)
@@ -1708,7 +1708,7 @@ namespace AirProperties
                     }
                     var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
 
-                    if (entry == null)
+                    if (entry is null)
                     {
                         string msg = TextHelper.GetString("Info.ANEDescFileNotFound");
                         ErrorManager.ShowWarning(msg, null);
@@ -1737,7 +1737,7 @@ namespace AirProperties
                         }
                     }
 
-                    if (extensionId == null)
+                    if (extensionId is null)
                     {
                         string msg = TextHelper.GetString("Info.ExtensionIDNotFound");
                         ErrorManager.ShowWarning(msg, null);
@@ -1753,7 +1753,7 @@ namespace AirProperties
                         if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
                         break;
                     }
-                    if (extension == null)
+                    if (extension is null)
                     {
                         extension = new PropertyManager.AirExtension() { ExtensionId = extensionId, IsValid = true };
                         _extensions.Add(extension);
@@ -1768,7 +1768,7 @@ namespace AirProperties
 
         private void RenderModeField_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (DepthStencilField.Parent == null) return;
+            if (DepthStencilField.Parent is null) return;
 
             DepthStencilField.Enabled = ((ListItem)RenderModeField.SelectedItem).Value == "direct";
         }
@@ -1800,7 +1800,7 @@ namespace AirProperties
                                 }
                                 var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
 
-                                if (entry == null)
+                                if (entry is null)
                                 {
                                     continue;
                                 }
@@ -2319,7 +2319,7 @@ namespace AirProperties
 
         private void IPhoneEntitlementsField_Validating(object sender, CancelEventArgs e)
         {
-            bool fillUi = iPhoneEntitlements == null;
+            bool fillUi = iPhoneEntitlements is null;
             if (IPhoneAdvancedSettingsPanel.Visible || fillUi)
             {
                 try
@@ -2347,7 +2347,7 @@ namespace AirProperties
 
         private void IPhoneInfoAdditionsField_Validating(object sender, CancelEventArgs e)
         {
-            bool fillUi = iPhoneAdditions == null;
+            bool fillUi = iPhoneAdditions is null;
             if (IPhoneAdvancedSettingsPanel.Visible || fillUi)
             {
                 try
@@ -2392,7 +2392,7 @@ namespace AirProperties
 
         private void AndroidManifestAdditionsField_Validating(object sender, CancelEventArgs e)
         {
-            bool fillUi = androidManifest == null;
+            bool fillUi = androidManifest is null;
             if (AndroidAdvancedSettingsPanel.Visible || fillUi)
             {
                 try

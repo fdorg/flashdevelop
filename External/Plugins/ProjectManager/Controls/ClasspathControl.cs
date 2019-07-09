@@ -185,7 +185,7 @@ namespace ProjectManager.Controls
             get => this.language;
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 for(int i=0; i<langComboBox.Items.Count; i++)
                     if (value.Equals(langComboBox.Items[i] as string, StringComparison.OrdinalIgnoreCase))
                     {
@@ -290,7 +290,7 @@ namespace ProjectManager.Controls
         private void listBox_DoubleClick(object sender, System.EventArgs e)
         {
             ClasspathEntry entry = listBox.SelectedItem as ClasspathEntry;
-            if (entry == null) return; // you could have double-clicked on whitespace
+            if (entry is null) return; // you could have double-clicked on whitespace
             using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
             {
                 dialog.RootFolder = Environment.SpecialFolder.Desktop;

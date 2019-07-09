@@ -80,7 +80,7 @@ namespace System.Windows.Forms
         {
             base.InitializeItem(item);
             // Set default blank image to look ok in high dpi
-            if (item.Image == null && item.IsOnDropDown)
+            if (item.Image is null && item.IsOnDropDown)
             {
                 item.Image = PluginBase.MainForm.FindImage("-1", false);
             }

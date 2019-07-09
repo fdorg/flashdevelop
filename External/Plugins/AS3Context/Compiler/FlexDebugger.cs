@@ -51,7 +51,7 @@ namespace AS3Context.Compiler
 
         static void debugger_OnStarted(string line)
         {
-            if (startMessage == null) return;
+            if (startMessage is null) return;
             PluginBase.RunAsync(delegate
             {
                 // send message again

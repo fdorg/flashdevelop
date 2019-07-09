@@ -55,7 +55,7 @@ namespace ProjectManager.Actions
         {
             var ToolsWebserver = Path.Combine(PathHelper.ToolDir, "webserver");
             var config = GetServerConfig(Path.Combine(ToolsWebserver, "server.ini"));
-            if (config == null) return;
+            if (config is null) return;
 
             var server = Path.Combine(ToolsWebserver, config["executable"]);
             var arguments = config["arguments"].Replace("{doc}", pathServed).Replace("{port}", portServed.ToString());

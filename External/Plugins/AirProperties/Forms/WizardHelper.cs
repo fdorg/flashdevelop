@@ -9,7 +9,7 @@ namespace AirProperties.Forms
 
         public static void SetControlValue(string value, TextBox field)
         {
-            if (value == null)
+            if (value is null)
                 field.Text = string.Empty;
             else
                 field.Text = value;
@@ -28,7 +28,7 @@ namespace AirProperties.Forms
 
         public static void SetControlValue(bool? value, CheckBox field)
         {
-            if (value == null)
+            if (value is null)
                 field.CheckState = CheckState.Indeterminate;
             else
                 field.Checked = value.Value;
@@ -64,7 +64,7 @@ namespace AirProperties.Forms
                     foreach (object item in value)
                     {
                         string val = item as string;
-                        if (val == null) continue;
+                        if (val is null) continue;
 
                         if (val.Trim() == listItem.Value)
                         {

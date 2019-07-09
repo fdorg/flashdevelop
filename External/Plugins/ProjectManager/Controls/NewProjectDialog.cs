@@ -316,7 +316,7 @@ namespace ProjectManager.Controls
 
                 if (parts[0].Length > 0)
                 {
-                    if (group == null || group.Header != parts[0])
+                    if (group is null || group.Header != parts[0])
                     {
                         group = new ListViewGroup(parts[0]);
                         projectListView.Groups.Add(group);

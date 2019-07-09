@@ -66,7 +66,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                     m_borderStyle = value;
 
-                    if (MdiClient == null)
+                    if (MdiClient is null)
                         return;
 
                     // This property can actually be visible in design-mode,
@@ -137,7 +137,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                     m_parentForm = value;
 
-                    if (m_parentForm == null)
+                    if (m_parentForm is null)
                         return;
 
                     // If the parent form has not been created yet,
@@ -161,7 +161,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     m_site = value;
 
-                    if (m_site == null)
+                    if (m_site is null)
                         return;
 
                     // If the component is dropped onto a form during design-time,
@@ -272,7 +272,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     MdiClient.Layout -= MdiClientLayout;
                 }
 
-                if (ParentForm == null)
+                if (ParentForm is null)
                     return;
 
                 // Get the MdiClient from the parent form.
@@ -282,7 +282,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     // just as it would any other control.
 
                     m_mdiClient = control as MdiClient;
-                    if (m_mdiClient == null)
+                    if (m_mdiClient is null)
                         continue;
 
                     // Assign the MdiClient Handle to the NativeWindow.
@@ -327,7 +327,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private MdiClientController m_mdiClientController = null;
         private MdiClientController GetMdiClientController()
         {
-            if (m_mdiClientController == null)
+            if (m_mdiClientController is null)
             {
                 m_mdiClientController = new MdiClientController();
                 m_mdiClientController.HandleAssigned += MdiClientHandleAssigned;
@@ -340,11 +340,11 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private void ParentFormMdiChildActivate(object sender, EventArgs e)
         {
-            if (GetMdiClientController().ParentForm == null)
+            if (GetMdiClientController().ParentForm is null)
                 return;
 
             IDockContent content = GetMdiClientController().ParentForm.ActiveMdiChild as IDockContent;
-            if (content == null)
+            if (content is null)
                 return;
 
             if (content.DockHandler.DockPanel == this && content.DockHandler.Pane != null)

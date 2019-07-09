@@ -679,7 +679,7 @@ namespace FlashDevelop.Dialogs
         {
             this.SetupResultsView(true);
             this.resultsView.Items.Clear();
-            if (results == null)
+            if (results is null)
             {
                 string message = TextHelper.GetString("Info.FindLookupCanceled");
                 this.infoLabel.Text = message;
@@ -743,7 +743,7 @@ namespace FlashDevelop.Dialogs
         {
             this.SetupResultsView(false);
             this.resultsView.Items.Clear();
-            if (results == null)
+            if (results is null)
             {
                 string message = TextHelper.GetString("Info.ReplaceLookupCanceled");
                 this.infoLabel.Text = message;
@@ -960,7 +960,7 @@ namespace FlashDevelop.Dialogs
         private FRConfiguration GetFRConfig(string path, string mask, bool recursive)
         {
             if (path.Trim() != "<Project>") return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
-            if (PluginBase.CurrentProject == null) return null;
+            if (PluginBase.CurrentProject is null) return null;
             var allFiles = new List<string>();
             var project = PluginBase.CurrentProject;
             var projPath = Path.GetDirectoryName(project.ProjectPath);

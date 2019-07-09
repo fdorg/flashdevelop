@@ -666,7 +666,7 @@ namespace LitJson
 
         private JsonData ToJsonData (object obj)
         {
-            if (obj == null)
+            if (obj is null)
                 return null;
 
             if (obj is JsonData)
@@ -750,7 +750,7 @@ namespace LitJson
 
         public bool Equals (JsonData x)
         {
-            if (x == null) return false;
+            if (x is null) return false;
             if (x.type != this.type) return false;
             return this.type switch
             {

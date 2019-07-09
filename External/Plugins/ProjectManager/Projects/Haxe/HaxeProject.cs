@@ -130,7 +130,7 @@ namespace ProjectManager.Projects.Haxe
             {
                 if (!string.IsNullOrEmpty(OutputPath) && File.Exists(GetAbsolutePath(OutputPath)))
                 {
-                    if (MovieOptions.HasPlatformSupport && MovieOptions.PlatformSupport.ExternalToolchain == null)
+                    if (MovieOptions.HasPlatformSupport && MovieOptions.PlatformSupport.ExternalToolchain is null)
                         File.Delete(GetAbsolutePath(OutputPath));
                 }
                 return true;
@@ -252,7 +252,7 @@ namespace ProjectManager.Projects.Haxe
             if (!release)
             {
                 pr.Insert(0, "-debug");
-                if (CurrentSDK == null || !CurrentSDK.Contains("Motion-Twin")) // Haxe 3+
+                if (CurrentSDK is null || !CurrentSDK.Contains("Motion-Twin")) // Haxe 3+
                     pr.Insert(1, "--each");
                 if (isFlash && EnableInteractiveDebugger && CompilerOptions.EnableDebug)
                 {
@@ -374,7 +374,7 @@ namespace ProjectManager.Projects.Haxe
             var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
             {
-                if (line == null) break;
+                if (line is null) break;
                 var trimmedLine = line.Trim();
                 var m = reHxOp.Match(trimmedLine);
                 if (m.Success)

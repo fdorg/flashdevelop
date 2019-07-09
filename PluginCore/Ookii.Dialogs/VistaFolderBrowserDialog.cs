@@ -154,7 +154,7 @@ namespace Ookii.Dialogs
             }
             set
             {
-                if (_downlevelDialog == null)
+                if (_downlevelDialog is null)
                     _multiselect = value;
             }
         }
@@ -208,7 +208,7 @@ namespace Ookii.Dialogs
         {
             private get
             {
-                if (_selectedPaths == null)
+                if (_selectedPaths is null)
                 {
                     return new string[0];
                 }
@@ -319,7 +319,7 @@ namespace Ookii.Dialogs
             if( !string.IsNullOrEmpty(_selectedPaths[0]) )
             {
                 string parent = Path.GetDirectoryName(_selectedPaths[0]);
-                if( parent == null || !Directory.Exists(parent) )
+                if( parent is null || !Directory.Exists(parent) )
                 {
                     dialog.SetFileName(_selectedPaths[0]);
                 }

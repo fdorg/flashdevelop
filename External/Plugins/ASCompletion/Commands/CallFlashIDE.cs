@@ -79,7 +79,7 @@ namespace ASCompletion.Commands
                     if (!File.Exists(exe)) exe = Path.Combine(pathToIDE, "Flash.exe");
                     pathToIDE = exe;
                 }
-                if (pathToIDE == null || !File.Exists(pathToIDE))
+                if (pathToIDE is null || !File.Exists(pathToIDE))
                 {
                     string msg = TextHelper.GetString("Info.ConfigureFlashPath");
                     string title = TextHelper.GetString("Info.ConfigurationRequired");

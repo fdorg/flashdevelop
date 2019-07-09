@@ -75,7 +75,7 @@ namespace AirProperties
         {
             get
             {
-                if (_rootNode == null) return "0.0";
+                if (_rootNode is null) return "0.0";
                 return _rootNode.NamespaceURI.Replace(_BaseAirNamespace, string.Empty);
             }
         }
@@ -619,7 +619,7 @@ namespace AirProperties
             if (index == -1) return _rootNode;
             var parentName = property.Substring(0, index);
             var parentNode = _rootNode.SelectSingleNode("air:" + parentName, _namespaceManager);
-            if (parentNode == null)
+            if (parentNode is null)
             {
                 parentNode = _descriptorFile.CreateNode(XmlNodeType.Element, parentName, _namespaceManager.LookupNamespace("air"));
                 _rootNode.AppendChild(parentNode);
@@ -682,7 +682,7 @@ namespace AirProperties
         {
             // Get fileTypes node
             var fileTypesNode = _rootNode.SelectSingleNode("air:fileTypes", _namespaceManager);
-            if (fileTypesNode == null)
+            if (fileTypesNode is null)
             {
                 fileTypesNode = _descriptorFile.CreateNode(XmlNodeType.Element, "fileTypes", _namespaceManager.LookupNamespace("air"));
             }
@@ -744,7 +744,7 @@ namespace AirProperties
         {
             // Get fileTypes node
             var extensionsNode = _rootNode.SelectSingleNode("air:extensions", _namespaceManager);
-            if (extensionsNode == null)
+            if (extensionsNode is null)
             {
                 extensionsNode = _descriptorFile.CreateNode(XmlNodeType.Element, "extensions", _namespaceManager.LookupNamespace("air"));
             }
@@ -775,7 +775,7 @@ namespace AirProperties
                 //create a sub parent element if required
                 var subParentName = childNodeName.Substring(0, index);
                 subParentNode = parentNode.SelectSingleNode("air:" + subParentName, _namespaceManager);
-                if (subParentNode == null)
+                if (subParentNode is null)
                 {
                     subParentNode = _descriptorFile.CreateNode(XmlNodeType.Element, subParentName, _namespaceManager.LookupNamespace("air"));
                     parentNode.AppendChild(subParentNode);

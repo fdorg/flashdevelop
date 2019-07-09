@@ -729,7 +729,7 @@ public class AS3_exParser : Parser
 
     public void reportError(RecognitionException e)
     {
-        if (mParseErrors==null)
+        if (mParseErrors is null)
             mParseErrors=new List<Exception>();
         mParseErrors.Add(e);
         //base.reportError(e);
@@ -11145,7 +11145,7 @@ public class AS3_exParser : Parser
 
                             if (conditionalToken!=null)
                                 mCodeBlockStack.Add(ASPrettyPrinter.BraceContext_Conditional_code);
-                            leftCurlyNewlineHandler(conditionalToken==null); //if we have a conditional setting, then we want to have the option of keeping the brace on the same line
+                            leftCurlyNewlineHandler(conditionalToken is null); //if we have a conditional setting, then we want to have the option of keeping the brace on the same line
                             emit(L);
                 }
                 if ( state.backtracking == 0 ) 
@@ -14697,7 +14697,7 @@ public class AS3_exParser : Parser
 
                              tok=mPrinter.getLastToken(); 
                              //if the previous token was not an else, then insert a CR.  Also if it is an 'else' but the setting says to put the 'if' on a new line
-                             if (!mPrinter.isKeepElseIfOnSameLine() || (tok==null) || tok.Text != "else")
+                             if (!mPrinter.isKeepElseIfOnSameLine() || (tok is null) || tok.Text != "else")
                              {
                                     insertStatementCR();
                              }
@@ -14809,7 +14809,7 @@ public class AS3_exParser : Parser
                             {
 
                                           IToken tempTok=mPrinter.getLastToken();
-                                          if (mPrinter.isCRBeforeElse() || !wasBlock)//tempTok==null || tempTok.Text != "}") 
+                                          if (mPrinter.isCRBeforeElse() || !wasBlock)//tempTok is null || tempTok.Text != "}") 
                                               insertCR(false);
                                          
                             }

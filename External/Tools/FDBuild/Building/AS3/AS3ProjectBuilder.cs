@@ -48,7 +48,7 @@ namespace ProjectManager.Building.AS3
             if (project.OutputType == OutputType.Application || project.OutputType == OutputType.Library)
             {
                 if (fcsh != null && !fcshExists && !ascshExists) throw new Exception("Could not locate lib\\fcsh.jar or lib\\ascsh.jar in Flex SDK.");
-                if (fcsh == null && !mxmlcExists && !asc2Mode) 
+                if (fcsh is null && !mxmlcExists && !asc2Mode) 
                     throw new Exception("Could not locate lib\\mxmlc.jar or lib\\mxmlc-cli.jar in Flex SDK.");
             }
         }

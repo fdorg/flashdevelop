@@ -361,7 +361,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeGraphics()
         {
-            if (imageList == null)
+            if (imageList is null)
             {
                 imageList = new ImageListManager();
                 imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -592,7 +592,7 @@ namespace ResultsPanel
                         if (project != null && filename[0] != '/' && filename[1] != ':') // relative to project root
                         {
                             filename = PathHelper.ResolvePath(filename, projectDir);
-                            if (filename == null) continue;
+                            if (filename is null) continue;
                         }
                         else if (!File.Exists(filename)) continue;
                         var fileInfo = new FileInfo(filename);
@@ -1109,7 +1109,7 @@ namespace ResultsPanel
         private void AddSquiggle(ListViewItem item)
         {
             var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
-            if (sci == null)
+            if (sci is null)
             {
                 return;
             }
@@ -1304,7 +1304,7 @@ namespace ResultsPanel
         {
             if (this.EntriesView.SelectedItems.Count == 0) return;
             var item = this.EntriesView.SelectedItems[0];
-            if (item == null) return;
+            if (item is null) return;
             string file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
             file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             file = PathHelper.GetLongPathName(file);

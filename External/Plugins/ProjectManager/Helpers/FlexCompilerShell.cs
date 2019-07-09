@@ -37,7 +37,7 @@ namespace ProjectManager.Helpers
             errorList = new List<string>();
             warningList = new List<string>();
 
-            if (jvmarg == null)
+            if (jvmarg is null)
             {
                 process = null;
                 return "Failed, no compiler configured";
@@ -102,7 +102,7 @@ namespace ProjectManager.Helpers
                 Cleanup();
 
             // start up fcsh if necessary
-            if (process == null || process.HasExited)
+            if (process is null || process.HasExited)
             {
                 o.AppendLine("Starting java as: " + javaExe + " " + jvmarg);
                 o.AppendLine("INITIALIZING: " + Initialize(jvmarg, projectPath, javaExe));
@@ -114,7 +114,7 @@ namespace ProjectManager.Helpers
             }
 
             // success?
-            if (process == null)
+            if (process is null)
             {
                 output = o.ToString();
                 errorList.Add("Could not compile because the fcsh process could not be started.");
@@ -235,7 +235,7 @@ namespace ProjectManager.Helpers
             lock (typeof(FlexCompilerShell))
                 line = process.StandardOutput.ReadLine();
 
-            if (line == null)
+            if (line is null)
                 return 0;
 
             // loop through all lines, regex matching phrase
@@ -245,7 +245,7 @@ namespace ProjectManager.Helpers
                 lock (typeof(FlexCompilerShell))
                     line = process.StandardOutput.ReadLine();
 
-                if (line == null) return 0;
+                if (line is null) return 0;
                 m = Regex.Match(line, "Assigned ([0-9]+) as the compile target id");
             }
 

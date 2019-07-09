@@ -63,7 +63,7 @@ namespace LintingHelper
         private void AddResult(string document, LintingResult result)
         {
             var list = results.GetOrCreate(document);
-            if (list.Find(result.Equals) == null)
+            if (list.Find(result.Equals) is null)
                 list.Add(result);
         }
 

@@ -163,8 +163,8 @@ namespace AS3Context
         {
             ReleaseClasspath();
             started = true;
-            if (as3settings == null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup == null)
+            if (as3settings is null) throw new Exception("BuildClassPath() must be overridden");
+            if (contextSetup is null)
             {
                 contextSetup = new ContextSetupInfos();
                 contextSetup.Lang = settings.LanguageId;
@@ -200,7 +200,7 @@ namespace AS3Context
                 : as3settings.GetDefaultSDK().Path;
 
             char S = Path.DirectorySeparatorChar;
-            if (compiler == null) 
+            if (compiler is null) 
                 compiler = Path.Combine(PathHelper.ToolDir, "flexlibs");
             string frameworks = compiler + S + "frameworks";
             string sdkLibs = frameworks + S + "libs";
@@ -231,8 +231,8 @@ namespace AS3Context
                         string playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, sdkLibs);
                         if (playerglobal != null) swcPresent = true;
                         else playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, fallbackLibs);
-                        if (playerglobal == null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs);
-                        if (playerglobal == null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, sdkLibs);
+                        if (playerglobal is null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs);
+                        if (playerglobal is null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, sdkLibs);
                         if (playerglobal != null)
                         {
                             // add missing SWC in new SDKs
@@ -406,7 +406,7 @@ namespace AS3Context
             if (Directory.Exists(libPlayer + S + majorVersion))
                 playerglobal = "player" + S + majorVersion + S + "playerglobal.swc";
 
-            if (playerglobal == null && majorVersion > 9)
+            if (playerglobal is null && majorVersion > 9)
             {
                 int tempMajor = majorVersion - 1;
                 int tempMinor = 9;
@@ -619,7 +619,7 @@ namespace AS3Context
             if (!IsFileValid) return;
 
             var sci = CurSciControl;
-            if (sci == null) return;
+            if (sci is null) return;
             ClearSquiggles(sci);
 
             var sdk = PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3"
@@ -630,7 +630,7 @@ namespace AS3Context
 
         private void AddSquiggles(ScintillaControl sci, int line, int start, int end)
         {
-            if (sci == null) return;
+            if (sci is null) return;
             fileWithSquiggles = CurrentFile;
             int position = sci.PositionFromLine(line) + start;
             sci.AddHighlight(2, (int)IndicatorStyle.Squiggle, 0x000000ff, position, end - start);
@@ -638,7 +638,7 @@ namespace AS3Context
 
         private void ClearSquiggles(ScintillaControl sci)
         {
-            if (sci == null) return;
+            if (sci is null) return;
             try
             {
                 sci.RemoveHighlights(2);
@@ -653,7 +653,7 @@ namespace AS3Context
         {
             if (!IsFileValid) return;
             var document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return;
+            if (document is null || !document.IsEditable) return;
             var m = re_syntaxError.Match(error);
             if (!m.Success) return;
 
@@ -695,7 +695,7 @@ namespace AS3Context
         /// <returns>Completion visibility</returns>
         public override Visibility TypesAffinity(ClassModel inClass, ClassModel withClass)
         {
-            if (inClass == null || withClass == null) return Visibility.Public;
+            if (inClass is null || withClass is null) return Visibility.Public;
             // same file
             if (inClass.InFile == withClass.InFile)
                 return Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
@@ -741,7 +741,7 @@ namespace AS3Context
                         return true; // skip
 
                     aClass = aFile.GetPublicClass();
-                    if (!aClass.IsVoid() && aClass.IndexType == null)
+                    if (!aClass.IsVoid() && aClass.IndexType is null)
                     {
                         if (aClass.Access == Visibility.Public
                             || (aClass.Access == Visibility.Internal && aFile.Package == package))
@@ -797,7 +797,7 @@ namespace AS3Context
                         if (m.Success) insert = $".<{m.Value}>";
                     }
                 }
-                if (insert == null)
+                if (insert is null)
                 {
                     if (trigger == '.' || trigger == '(') return true;
                     insert = ".<>";
@@ -835,7 +835,7 @@ namespace AS3Context
             if (member == ClassModel.VoidClass) return false;
             // same package is auto-imported
             var package = member.InFile?.Package;
-            if (package == null) {
+            if (package is null) {
                 package = member.Type.Length > member.Name.Length
                         ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
                         : string.Empty;

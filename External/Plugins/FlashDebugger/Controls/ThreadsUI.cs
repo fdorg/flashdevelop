@@ -70,7 +70,7 @@ namespace FlashDebugger
         public void SetThreads(Dictionary<int, FlashInterface.IsolateInfo> isolates)
         {
             lv.Items.Clear();
-            if (PluginMain.debugManager.FlashInterface.Session == null)
+            if (PluginMain.debugManager.FlashInterface.Session is null)
             {
                 return;
             }

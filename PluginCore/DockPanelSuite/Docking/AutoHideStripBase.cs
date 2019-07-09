@@ -72,9 +72,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 get
                 {
                     IDockContent content = DockPane.DisplayingContents[index];
-                    if (content == null)
+                    if (content is null)
                         throw (new ArgumentOutOfRangeException(nameof(index)));
-                    if (content.DockHandler.AutoHideTab == null)
+                    if (content.DockHandler.AutoHideTab is null)
                         content.DockHandler.AutoHideTab = (DockPanel.AutoHideStripControl.CreateTab(content));
                     return content.DockHandler.AutoHideTab as Tab;
                 }
@@ -92,7 +92,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public int IndexOf(Tab tab)
             {
-                if (tab == null)
+                if (tab is null)
                     return -1;
 
                 return IndexOf(tab.Content);
@@ -125,7 +125,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 get
                 {
-                    if (DockPane.AutoHideTabs == null)
+                    if (DockPane.AutoHideTabs is null)
                         DockPane.AutoHideTabs = new TabCollection(DockPane);
                     return DockPane.AutoHideTabs as TabCollection;
                 }
@@ -248,7 +248,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                         if (count == index)
                         {
-                            if (pane.AutoHidePane == null)
+                            if (pane.AutoHidePane is null)
                                 pane.AutoHidePane = DockPanel.AutoHideStripControl.CreatePane(pane);
                             return pane.AutoHidePane as Pane;
                         }
@@ -266,7 +266,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             public int IndexOf(Pane pane)
             {
-                if (pane == null)
+                if (pane is null)
                     return -1;
 
                 int index = 0;
@@ -400,7 +400,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_displayingArea == null)
+                if (m_displayingArea is null)
                     m_displayingArea = new GraphicsPath();
 
                 return m_displayingArea;
@@ -429,7 +429,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 return;
 
             IDockContent content = HitTest();
-            if (content == null)
+            if (content is null)
                 return;
 
             SetActiveAutoHideContent(content);

@@ -50,7 +50,7 @@ namespace CodeRefactor.Commands
         {
             get
             {
-                if (associatedDocumentHelper == null)
+                if (associatedDocumentHelper is null)
                 {
                     RegisterNewDocumentHelper();
                 }

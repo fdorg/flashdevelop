@@ -65,7 +65,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="blockFactor">blocking factor</param>
         public TarOutputStream(Stream outputStream, int blockFactor)
         {
-            if ( outputStream == null )
+            if ( outputStream is null )
             {
                 throw new ArgumentNullException(nameof(outputStream));
             }
@@ -234,7 +234,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public void PutNextEntry(TarEntry entry)
         {
-            if ( entry == null ) {
+            if ( entry is null ) {
                 throw new ArgumentNullException(nameof(entry));
             }
 
@@ -329,7 +329,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
             

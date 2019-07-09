@@ -107,7 +107,7 @@ namespace SourceControl.Sources.Subversion
 
         void Diff_Click(object sender, EventArgs e)
         {
-            if (currentNodes == null || currentNodes.Length != 2)
+            if (currentNodes is null || currentNodes.Length != 2)
                 return;
             string path1 = (currentNodes[0] as GenericNode).BackingPath;
             string path2 = (currentNodes[1] as GenericNode).BackingPath;

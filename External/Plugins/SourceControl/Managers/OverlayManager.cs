@@ -99,7 +99,7 @@ namespace SourceControl.Managers
 
         bool UpdateNodeStatus(GenericNode node)
         {
-            if (node.Meta == null)
+            if (node.Meta is null)
                 node.Meta = new Dictionary<string, object>();
 
             if (!node.Meta.ContainsKey(META_VC))
@@ -233,7 +233,7 @@ namespace SourceControl.Managers
 
         public ProjectSelectionState(MultiSelectTreeView tree)
         {
-            if (tree == null || tree.SelectedNodes.Count == 0)
+            if (tree is null || tree.SelectedNodes.Count == 0)
                 return;
 
             foreach (TreeNode node in tree.SelectedNodes)
@@ -243,11 +243,11 @@ namespace SourceControl.Managers
                 else return; // unknown node in selection - no action
 
                 GenericNode gnode = (GenericNode)node;
-                if (gnode.Meta == null || !gnode.Meta.ContainsKey(OverlayManager.META_STATUS)
+                if (gnode.Meta is null || !gnode.Meta.ContainsKey(OverlayManager.META_STATUS)
                     || !gnode.Meta.ContainsKey(OverlayManager.META_VC))
                     return; // incomplete status
 
-                if (Manager == null) Manager = gnode.Meta[OverlayManager.META_VC] as IVCManager;
+                if (Manager is null) Manager = gnode.Meta[OverlayManager.META_VC] as IVCManager;
                 else if (gnode.Meta[OverlayManager.META_VC] != Manager)
                     return; // several managers...
 

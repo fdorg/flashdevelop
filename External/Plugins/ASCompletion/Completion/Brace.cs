@@ -209,7 +209,7 @@ namespace ASCompletion.Completion
 
             private static string FromRegex(Regex value)
             {
-                if (value == null)
+                if (value is null)
                 {
                     return string.Empty;
                 }
@@ -229,7 +229,7 @@ namespace ASCompletion.Completion
 
             private static bool RegexCheck(Regex regex, char c, bool exclude)
             {
-                if (regex == null)
+                if (regex is null)
                 {
                     return exclude;
                 }
@@ -238,7 +238,7 @@ namespace ASCompletion.Completion
 
             private static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
-                if (array == null)
+                if (array is null)
                 {
                     return exclude;
                 }

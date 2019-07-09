@@ -10,7 +10,7 @@ namespace SourceControl.Sources.Git
 
         public CommitCommand(string[] files, string message, string workingDir)
         {
-            if (workingDir == null) return;
+            if (workingDir is null) return;
             workingDirectory = workingDir;
 
             //add the files first to make sure untracked files can be committed
@@ -33,7 +33,7 @@ namespace SourceControl.Sources.Git
         {
             base.Runner_ProcessEnded(sender, exitCode);
 
-            if (commitArgs == null) return;
+            if (commitArgs is null) return;
 
             //now do the commit
             Run(commitArgs, workingDirectory);

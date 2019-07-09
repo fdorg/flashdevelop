@@ -154,7 +154,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// <param name="buffer">The buffer containing data to update the crc with.</param>
         public void Update(byte[] buffer)
         {
-            if (buffer == null) {
+            if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
             
@@ -169,7 +169,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// <param name="count">number of bytes to use</param>
         public void Update(byte[] buffer, int offset, int count)
         {
-            if (buffer == null) {
+            if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
             

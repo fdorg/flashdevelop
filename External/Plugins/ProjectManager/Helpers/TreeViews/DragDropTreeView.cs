@@ -90,7 +90,7 @@ namespace System.Windows.Forms
                 TreeNode targetNode = base.GetNodeAt(PointToClient(new Point(e.X,e.Y)));
                 targetNode = ChangeDropTarget(targetNode);
 
-                if (targetNode == null) return;
+                if (targetNode is null) return;
                 
                 // the data is in the form of an array of paths
                 Array aFiledrop = (Array)e.Data.GetData(DataFormats.FileDrop);

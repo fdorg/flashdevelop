@@ -168,7 +168,7 @@ namespace PluginCore
         private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
         {
             // custom display/build/run/clean commands, ie. for openfl
-            var commands = defaultCommands == null 
+            var commands = defaultCommands is null 
                 ? new Dictionary<string, PlatformCommand>()
                 : new Dictionary<string, PlatformCommand>(defaultCommands);
 

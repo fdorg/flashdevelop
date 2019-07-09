@@ -96,7 +96,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="header">Header details for entry</param>
         public TarEntry(TarHeader header)
         {
-            if ( header == null )
+            if ( header is null )
             {
                 throw new ArgumentNullException(nameof(header));
             }
@@ -187,7 +187,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public bool IsDescendent(TarEntry toTest)
         {
-            if ( toTest == null ) {
+            if ( toTest is null ) {
                 throw new ArgumentNullException(nameof(toTest));
             }
 
@@ -333,11 +333,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public void GetFileTarHeader(TarHeader header, string file)
         {
-            if ( header == null ) {
+            if ( header is null ) {
                 throw new ArgumentNullException(nameof(header));
             }
 
-            if ( file == null ) {
+            if ( file is null ) {
                 throw new ArgumentNullException(nameof(file));
             }
 
@@ -411,7 +411,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public TarEntry[] GetDirectoryEntries()
         {
-            if ( (file == null) || !Directory.Exists(file)) {
+            if ( (file is null) || !Directory.Exists(file)) {
                 return new TarEntry[0];
             }
             
@@ -462,11 +462,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public static void NameTarHeader(TarHeader header, string name)
         {
-            if ( header == null ) {
+            if ( header is null ) {
                 throw new ArgumentNullException(nameof(header));
             }
 
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException(nameof(name));
             }
 

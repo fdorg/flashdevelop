@@ -135,7 +135,7 @@ namespace ProjectManager
             tree.Project = project;
             tree_AfterSelect(tree, null);
 
-            help.Visible = (project == null);
+            help.Visible = (project is null);
 
             if (project != null)
             {
