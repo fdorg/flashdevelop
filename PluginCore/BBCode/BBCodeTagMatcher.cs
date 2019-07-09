@@ -45,16 +45,12 @@ namespace PluginCore.BBCode
         public IPairTagMatch searchOpenerAs(IPairTagMatch opener, uint startAt)
         {
             BBCodeTagMatch tm = opener as BBCodeTagMatch;
-            if (tm == null || string.IsNullOrEmpty(tm.tagName))
-                return null;
-
+            if (string.IsNullOrEmpty(tm?.tagName)) return null;
             return searchOpenerByName(tm.tagName, startAt);
         }
 
-        public IPairTagMatch searchOpenerByName(string tagName)
-        {
-            return searchOpenerByName(tagName, 0);
-        }
+        public IPairTagMatch searchOpenerByName(string tagName) => searchOpenerByName(tagName, 0);
+
         public IPairTagMatch searchOpenerByName(string tagName, uint startAt)
         {
             if (string.IsNullOrEmpty(tagName))
@@ -63,23 +59,19 @@ namespace PluginCore.BBCode
             return _searchMatch(_buildReOpenerFor(tagName), true, startAt);
         }
 
-        public IPairTagMatch searchCloserFor(IPairTagMatch opener)
-        {
-            return searchCloserFor(opener, 0);
-        }
+        public IPairTagMatch searchCloserFor(IPairTagMatch opener) => searchCloserFor(opener, 0);
+
         public IPairTagMatch searchCloserFor(IPairTagMatch opener, uint startAt)
         {
             BBCodeTagMatch tm = opener as BBCodeTagMatch;
-            if (tm == null || string.IsNullOrEmpty(tm.tagName))
-                return null;
+            if (string.IsNullOrEmpty(tm?.tagName)) return null;
 
             IPairTagMatch successMatch = null;
-            IPairTagMatch m;
             int j = 0xFFFFFF;
             int i = tm.tagCloserInfos.Count;
             while (i-- > 0)
             {
-                m = searchCloserByName(tm.tagCloserInfos[i].tagName, tm.tagCloserInfos[i].isTagOpener, startAt);
+                var m = searchCloserByName(tm.tagCloserInfos[i].tagName, tm.tagCloserInfos[i].isTagOpener, startAt);
                 if (m != null && m.tagIndex < j)
                 {
                     j = m.tagIndex;
@@ -89,14 +81,10 @@ namespace PluginCore.BBCode
             return successMatch;
         }
 
-        public IPairTagMatch searchCloserByName(string tagName)
-        {
-            return searchCloserByName(tagName, false);
-        }
-        public IPairTagMatch searchCloserByName(string tagName, bool isOpener)
-        {
-            return searchCloserByName(tagName, isOpener, 0);
-        }
+        public IPairTagMatch searchCloserByName(string tagName) => searchCloserByName(tagName, false);
+
+        public IPairTagMatch searchCloserByName(string tagName, bool isOpener) => searchCloserByName(tagName, isOpener, 0);
+
         public IPairTagMatch searchCloserByName(string tagName, bool isOpener, uint startAt)
         {
             if (string.IsNullOrEmpty(tagName))
@@ -106,14 +94,10 @@ namespace PluginCore.BBCode
         }
 
 
-        protected Regex _buildReOpenerFor()
-        {
-            return _buildReOpenerFor("");
-        }
-        protected Regex _buildReOpenerFor(string tagName)
-        {
-            return _buildReOpenerFor(tagName, RegexOptions.IgnoreCase);
-        }
+        protected Regex _buildReOpenerFor() => _buildReOpenerFor("");
+
+        protected Regex _buildReOpenerFor(string tagName) => _buildReOpenerFor(tagName, RegexOptions.IgnoreCase);
+
         protected Regex _buildReOpenerFor(string tagName, RegexOptions reFlags)
         {
             return new Regex(_retplOpenerA + tagName + _retplOpenerB, reFlags);
@@ -145,13 +129,12 @@ namespace PluginCore.BBCode
             if (idx < 0)
                 idx = 0;
 
-            Match m;
             BBCodeTagMatch tm;
 
             while (true)
             {
-                m = regex.Match(_input, idx);
-                if (m == null || !m.Success || m.Index < 0)
+                var m = regex.Match(_input, idx);
+                if (!m.Success || m.Index < 0)
                     return null;
 
                 idx = m.Index + m.Length;

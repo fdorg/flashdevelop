@@ -2065,7 +2065,7 @@ namespace CodeFormatter.Handlers
                                 mASPrinter.setDoFormat(mDoFormat);
                                 mASPrinter.setData(data);
                                 string newValue = mASPrinter.print(0);
-                                if ((mASPrinter.getParseErrors() == null || mASPrinter.getParseErrors().Count == 0) && newValue != null && newValue.Length > 0 && !newValue.Contains('\n')) //I don't really want to add carriage returns
+                                if ((mASPrinter.getParseErrors() == null || mASPrinter.getParseErrors().Count == 0) && !string.IsNullOrEmpty(newValue) && !newValue.Contains('\n')) //I don't really want to add carriage returns
                                 {
                                     data = AntlrUtilities.asTrim(newValue); //we don't want to keep any whitespace on the ends; only internal whitespace
                                 }

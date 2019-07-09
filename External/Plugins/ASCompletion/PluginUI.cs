@@ -766,7 +766,7 @@ namespace ASCompletion
 
         private void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
         {
-            if (implementsTypes == null || implementsTypes.Count == 0) return;
+            if (implementsTypes.IsNullOrEmpty()) return;
             var folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
             foreach (var implements in implementsTypes)
             {
@@ -1005,7 +1005,7 @@ namespace ASCompletion
         }
         public bool RestoreLastLookupPosition()
         {
-            if (!ASContext.Context.IsFileValid || lookupLocations == null || lookupLocations.Count == 0)
+            if (!ASContext.Context.IsFileValid || lookupLocations.IsNullOrEmpty())
                 return false;
 
             LookupLocation location = lookupLocations.Pop();

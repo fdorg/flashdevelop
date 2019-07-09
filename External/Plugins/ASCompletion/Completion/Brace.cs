@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PluginCore;
 
 namespace ASCompletion.Completion
 {
@@ -164,7 +165,7 @@ namespace ASCompletion.Completion
             public Style[] AfterStyles
             {
                 get => afterStyles ?? new Style[0];
-                set => afterStyles = value == null || value.Length == 0 ? null : value;
+                set => afterStyles = value.IsNullOrEmpty() ? null : value;
             }
             
             public bool NotBeforeChars
@@ -188,7 +189,7 @@ namespace ASCompletion.Completion
             public Style[] BeforeStyles
             {
                 get => beforeStyles ?? new Style[0];
-                set => beforeStyles = value == null || value.Length == 0 ? null : value;
+                set => beforeStyles = value.IsNullOrEmpty() ? null : value;
             }
 
             public Logic Logic

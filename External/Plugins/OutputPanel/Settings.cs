@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace OutputPanel
@@ -68,7 +69,7 @@ namespace OutputPanel
         {
             get
             {
-                if (highlightMarkers == null || highlightMarkers.Count == 0)
+                if (highlightMarkers.IsNullOrEmpty())
                 {
                     this.highlightMarkers = new List<HighlightMarker>();
                     this.highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));

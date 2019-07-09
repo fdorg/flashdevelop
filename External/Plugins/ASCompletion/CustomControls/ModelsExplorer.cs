@@ -183,7 +183,7 @@ namespace ASCompletion
                 outlineTreeView.ImageList = ASContext.Panel.TreeIcons;
 
                 allTypes = new List<TreeNode>();
-                if (current?.Classpath == null || current.Classpath.Count == 0) return;
+                if (current is null || current.Classpath.IsNullOrEmpty()) return;
 
                 foreach (PathModel path in current.Classpath)
                 {
