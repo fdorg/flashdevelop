@@ -800,6 +800,7 @@ namespace HaXeContext.Model
                         {
                             if (inAnonType && valueLength >= valueBuffer.Length) Array.Resize(ref valueBuffer, valueBuffer.Length + VALUE_BUFFER);
                             valueBuffer[valueLength++] = c1;
+                            continue;
                         }
                     }
                     if (char.IsDigit(c1))
