@@ -2225,9 +2225,7 @@ namespace HaXeContext.Model.Haxe3
         public void ParseFile_NotGeneric()
         {
             var model = ASContext.Context.GetCodeModel(ReadAllText("NotGenericTest"), true);
-
             Assert.AreEqual(3, model.Members.Count); // First member = function itself
-
             var funcMember = model.Members[0];
             Assert.AreEqual("init", funcMember.Name);
             Assert.AreEqual(FlagType.Function, funcMember.Flags & FlagType.Function);
@@ -2473,10 +2471,7 @@ namespace HaXeContext.Model.Haxe3
             }
         }
 
-        [
-            Test,
-            TestCaseSource(nameof(ParseClassTestCases_issue1814)),
-        ]
+        [Test, TestCaseSource(nameof(ParseClassTestCases_issue1814))]
         public int ParseFile_Issue1814(string fileName)
         {
             return ASContext.Context.GetCodeModel(ReadAllText(fileName)).Classes[0].LineTo;
@@ -2533,13 +2528,30 @@ namespace HaXeContext.Model.Haxe3
             }
         }
 
-        [
-            Test,
-            TestCaseSource(nameof(ParseClassTestCases_issue2724)),
-        ]
+        [Test, TestCaseSource(nameof(ParseClassTestCases_issue2724))]
         public int ParseFile_Issue2724(string fileName, int classIndex, int memberIndex)
         {
             return ASContext.Context.GetCodeModel(ReadAllText(fileName)).Classes[classIndex].Members.Items[memberIndex].LineTo;
+        }
+
+        static IEnumerable<TestCaseData> ParseClassTestCases_issue2833
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2833_1")
+                    .Returns("1100101")
+                    .SetName("Issue2833. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2833");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseClassTestCases_issue2833))]
+        public string ParseFile_Issue2833(string fileName)
+        {
+            return ASContext.Context.GetCodeModel(ReadAllText(fileName))
+                .Classes.First()
+                .Members.Items.First()
+                .Parameters.First().Value;
         }
     }
 }

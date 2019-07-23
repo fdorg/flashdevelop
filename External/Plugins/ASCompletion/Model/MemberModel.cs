@@ -161,19 +161,11 @@ namespace ASCompletion.Model
             if (!Parameters.IsNullOrEmpty())
             {
                 var addSep = false;
-                foreach (MemberModel param in Parameters)
+                foreach (var param in Parameters)
                 {
                     if (addSep) res += ", ";
                     else addSep = true;
-
                     res += param.ToDeclarationString(false, true);
-                    /*
-                    res += param.Name;
-                    if (param.Type != null && param.Type.Length > 0)
-                        res += ":" + (formated ? FormatType(param.Type) : param.Type);
-                    if (param.Value != null)
-                        res += " = " + param.Value.Trim();
-                    */
                 }
             }
             return res;
@@ -303,7 +295,7 @@ namespace ASCompletion.Model
         {
             var result = new MemberList();
             foreach (var m in items)
-                if (((m.Flags & mask) == mask)
+                if ((m.Flags & mask) == mask
                     && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) result.Add(m);
             return result;
@@ -449,9 +441,9 @@ namespace ASCompletion.Model
 
     public class ByKindMemberComparer : IComparer<MemberModel>
     {
-        public int Compare(MemberModel a, MemberModel b) => getPriority(a.Flags).CompareTo(getPriority(b.Flags));
+        public int Compare(MemberModel a, MemberModel b) => GetPriority(a.Flags).CompareTo(GetPriority(b.Flags));
 
-        private uint getPriority(FlagType flag)
+        static uint GetPriority(FlagType flag)
         {
             if ((flag & FlagType.Constant) > 0) return 4;
             if ((flag & FlagType.Variable) > 0) return 3;
@@ -464,11 +456,11 @@ namespace ASCompletion.Model
     {
         public int Compare(MemberModel a, MemberModel b)
         {
-            int cmp = GetPriority(a).CompareTo(GetPriority(b));
+            var cmp = GetPriority(a).CompareTo(GetPriority(b));
             return cmp != 0 ? cmp : StringComparer.Ordinal.Compare(a.Name,b.Name);
         }
 
-        private uint GetPriority(MemberModel m)
+        static uint GetPriority(MemberModel m)
         {
             uint visibility_pri;
             if ((m.Access & Visibility.Public) > 0) visibility_pri = 1;
