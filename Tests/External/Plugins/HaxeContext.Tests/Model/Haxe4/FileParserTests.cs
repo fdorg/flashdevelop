@@ -39,7 +39,38 @@ namespace HaXeContext.Model.Haxe4
             }
         }
 
-        [Test, TestCaseSource(nameof(Issue2801TestCases))]
+        static IEnumerable<TestCaseData> Issue2836TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2836_1")
+                    .Returns("6")
+                    .SetName("Haxe4. Abstract default value. Issue 2836. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2836");
+                yield return new TestCaseData("Issue2836_2")
+                    .Returns("0")
+                    .SetName("Haxe4. Abstract default value. Issue 2836. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2836");
+                yield return new TestCaseData("Issue2836_3")
+                    .Returns("1")
+                    .SetName("Haxe4. Abstract default value. Issue 2836. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2836");
+                yield return new TestCaseData("Issue2836_4")
+                    .Returns("2")
+                    .SetName("Haxe4. Abstract default value. Issue 2836. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2836");
+                yield return new TestCaseData("Issue2836_5")
+                    .Returns("2")
+                    .SetName("Haxe4. Abstract default value. Issue 2836. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2836");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(Issue2801TestCases)),
+            TestCaseSource(nameof(Issue2836TestCases)),
+        ]
         public string ParseFile_Issue2801(string fileName)
         {
             var sourceText = Haxe3.FileParserTests.ReadAllText(fileName);
