@@ -794,9 +794,16 @@ namespace HaXeContext
                                              *     var D = 6;
                                              * }
                                              */
-                                            member.Value = index == 0
-                                                ? "0"
-                                                : (int.Parse(@class.Members[index - 1].Value) + 1).ToString();
+                                            var prevIndex = index;
+                                            while (--prevIndex >= 0)
+                                            {
+                                                var prevMember = @class.Members[prevIndex];
+                                                if (!prevMember.Flags.HasFlag(FlagType.Variable)) continue;
+                                                if (int.TryParse(prevMember.Value, out var value))
+                                                    member.Value = (value + 1).ToString();
+                                                break;
+                                            }
+                                            if (member.Value is null) member.Value = "0";
                                             extends = ClassModel.VoidClass;
                                             break;
                                     }
