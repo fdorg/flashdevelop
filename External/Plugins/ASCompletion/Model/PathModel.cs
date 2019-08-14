@@ -376,11 +376,9 @@ namespace ASCompletion.Model
         private void DoScheduledOperations()
         {
             if (toExplore.Count == 0) return;
-            var _toCheck = new string[toExplore.Count];
             var _toExplore = new string[toExplore.Count];
             for (int i = 0; i < _toExplore.Length; i++)
             {
-                _toCheck[i] = toExplore[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
                 _toExplore[i] = toExplore[i];
             }
             toExplore.Clear();
@@ -405,9 +403,8 @@ namespace ASCompletion.Model
                 if (drop) continue;
 
                 FileModel model = files[file];
-                foreach (string checkPath in _toCheck)
+                if (!File.Exists(model.FileName))
                 {
-                    if (File.Exists(model.FileName)) continue;
                     var directoryName = System.IO.Path.GetDirectoryName(model.FileName);
                     if (!Directory.Exists(directoryName))
                     {
@@ -416,7 +413,6 @@ namespace ASCompletion.Model
                     }
                     //TraceManager.Add("drop2: " + files[file].FileName);
                     drop = true;
-                    break;
                 }
                 if (drop) continue;
                 newFiles[file] = model;
