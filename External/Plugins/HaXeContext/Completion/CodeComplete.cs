@@ -1593,7 +1593,7 @@ namespace HaXeContext.Completion
             return result;
         }
 
-        protected override string ToFunctionDeclarationString(MemberModel member)
+        public override string ToFunctionDeclarationString(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
             var dynamicTypeName = ResolveType(ASContext.Context.Features.dynamicKey, null).Name;

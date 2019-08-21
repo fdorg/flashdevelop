@@ -7,6 +7,7 @@ using ASCompletion.Context;
 using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -264,9 +265,12 @@ namespace HaXeContext.Generators
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    if (job == GeneratorJobType.Setter) latest = FindMember("get_" + member.Name, inClass);
-                    else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + member.Name, inClass);
-                    if (latest is null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                    latest = job switch
+                    {
+                        GeneratorJobType.Setter => FindMember("get_" + member.Name, inClass),
+                        GeneratorJobType.Getter => FindMember("set_" + member.Name, inClass),
+                        _ => null
+                    } ?? FindLatest(FlagType.Function, 0, inClass, false, false);
                 }
                 else latest = member;
             }
@@ -276,10 +280,13 @@ namespace HaXeContext.Generators
             try
             {
                 var name = member.Name;
-                var args = "(default, default)";
-                if (job == GeneratorJobType.GetterSetter) args = "(get, set)";
-                else if (job == GeneratorJobType.Getter) args = "(get, null)";
-                else if (job == GeneratorJobType.Setter) args = "(default, set)";
+                var args = job switch
+                {
+                    GeneratorJobType.GetterSetter => "(get, set)",
+                    GeneratorJobType.Getter => "(get, null)",
+                    GeneratorJobType.Setter => "(default, set)",
+                    _ => "(default, default)"
+                };
                 MakeProperty(sci, member, args);
                 var startsWithNewLine = true;
                 var endsWithNewLine = false;
@@ -293,8 +300,14 @@ namespace HaXeContext.Generators
                     endsWithNewLine = true;
                 }
                 else atLine = latest.LineTo + 1;
-                var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
+                var position = sci.PositionFromLine(atLine) - (sci.EOLMode == 0 ? 2 : 1);
                 sci.SetSel(position, position);
+                // for example: var foo<generator>:TParam1->TReturn;
+                if ((member.Flags & FlagType.Function) != 0)
+                {
+                    member = (MemberModel) member.Clone();
+                    member.Type = ASContext.Context.CodeComplete.ToFunctionDeclarationString(member);
+                }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
                 else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
                 else if (job == GeneratorJobType.Getter) GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);

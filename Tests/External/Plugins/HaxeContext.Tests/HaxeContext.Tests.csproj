@@ -1760,6 +1760,8 @@
     <EmbeddedResource Include="Test Files\parser\Issue2836_3.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2836_4.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue2836_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2838_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2838_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

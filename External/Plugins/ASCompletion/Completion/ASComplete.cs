@@ -5288,7 +5288,7 @@ namespace ASCompletion.Completion
 
         #endregion
 
-        protected internal virtual string ToFunctionDeclarationString(MemberModel member) => member != null ? $"Function/*({member.ParametersString()}):{member.Type}*/" : "Function";
+        public virtual string ToFunctionDeclarationString(MemberModel member) => member != null ? $"Function/*({member.ParametersString()}):{member.Type}*/" : "Function";
     }
 
     #region completion list
