@@ -1875,6 +1875,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateGetterSetter2838TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2838_1", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2838_1"))
+                    .SetName("Generate getter and setter. Issue 2838. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2838");
+            }
+        }
+
         static IEnumerable<TestCaseData> NewClassIssue2585TestCases
         {
             get
@@ -2074,6 +2085,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateGetterSetterTestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInferVar2456TestCases)),
+            TestCaseSource(nameof(GenerateGetterSetter2838TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
             TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),
