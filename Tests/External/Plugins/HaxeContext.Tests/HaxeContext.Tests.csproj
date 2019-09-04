@@ -1762,6 +1762,10 @@
     <EmbeddedResource Include="Test Files\parser\Issue2836_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2838_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2838_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2845_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue2845_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2845_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue2845_2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
