@@ -110,6 +110,7 @@
     <Compile Include="Helpers\FlashErrorsWatcher.cs" />
     <Compile Include="Helpers\ModifierOrderEditor.cs" />
     <Compile Include="Model\ASFileParser.cs" />
+    <Compile Include="Model\ClassModelExtensions.cs" />
     <Compile Include="Model\MemberModel.cs" />
     <Compile Include="Model\ClassModel.cs" />
     <Compile Include="Model\Enums.cs" />

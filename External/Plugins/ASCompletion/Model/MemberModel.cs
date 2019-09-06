@@ -300,6 +300,20 @@ namespace ASCompletion.Model
                     && m.Name == name) result.Add(m);
             return result;
         }
+
+        /// <summary>
+        /// Return all MemberModel instance matches in the MemberList
+        /// </summary>
+        /// <param name="mask">Flags mask</param>
+        /// <returns>All matches</returns>
+        public MemberList MultipleSearch(FlagType mask) 
+        {
+            var result = new MemberList();
+            foreach (var m in items)
+                if ((m.Flags & mask) == mask)
+                    result.Add(m);
+            return result;
+        }
         
         public void Sort() => Sort(null);
 

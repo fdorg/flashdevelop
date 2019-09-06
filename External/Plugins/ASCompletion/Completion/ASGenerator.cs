@@ -2734,12 +2734,22 @@ namespace ASCompletion.Completion
 
         static void GenerateConstructorJob(ScintillaControl sci, ClassModel inClass)
         {
+            const FlagType flags = FlagType.Constructor | FlagType.Function;
             var position = sci.WordEndPosition(sci.CurrentPos, true);
             var parameters = ParseFunctionParameters(sci, position);
-            var member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public)
+            var member = new MemberModel(inClass.Name, inClass.QualifiedName, flags, Visibility.Public)
             {
-                Parameters = parameters.Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
+                Parameters = parameters
+                    .Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
             };
+            //var member = new MemberModel(inClass.Name, inClass.QualifiedName, flags, Visibility.Public)
+            //{
+            //    Parameters = inClass.GetMembers(flags, true)?.Items
+            //                 // for example: new Ty<generator>pe(value);
+            //                 ?? ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true))
+            //                     .Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0))
+            //                     .ToList()
+            //};
             var currentClass = ASContext.Context.CurrentClass;
             if (currentClass != inClass)
             {
