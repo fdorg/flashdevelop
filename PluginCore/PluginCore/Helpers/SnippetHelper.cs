@@ -18,7 +18,7 @@ namespace PluginCore.Helpers
             var delta = 0;
             while (sci.SelectText(BOUNDARY, 0) != -1)
             {
-                sci.ReplaceSel(string.Empty);
+                sci.ReplaceSel("");
                 delta -= BOUNDARY.Length;
             }
             if (!TryProcessEntryExitPoints(sci, 0, ref delta))

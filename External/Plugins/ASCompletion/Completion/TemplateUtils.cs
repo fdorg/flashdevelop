@@ -32,7 +32,7 @@ namespace ASCompletion.Completion
             if ((access & Visibility.Public) > 0) return "public ";
             if ((access & Visibility.Protected) > 0) return "protected ";
             if ((access & Visibility.Internal) > 0) return "internal ";
-            return string.Empty;
+            return "";
         }
 
         public static string ToDeclarationWithModifiersString(MemberModel member, string template)
@@ -83,7 +83,7 @@ namespace ASCompletion.Completion
 
         public static string ParametersString(MemberModel member, bool formatted)
         {
-            var result = string.Empty;
+            var result = "";
             if (!member.Parameters.IsNullOrEmpty())
             {
                 var template = GetTemplate("FunctionParameter");
@@ -91,12 +91,13 @@ namespace ASCompletion.Completion
                 {
                     var param = member.Parameters[i];
                     var one = template;
-                    one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
+                    if (i + 1 < count) one = ReplaceTemplateVariable(one, "PComma", ",");
+                    else one = ReplaceTemplateVariable(one, "PComma", null);
                     one = ReplaceTemplateVariable(one, "PName", param.Name);
-                    one = string.IsNullOrEmpty(param.Type)
-                        ? ReplaceTemplateVariable(one, "PType", null)
-                        : ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
-                    one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value?.Trim());
+                    if (string.IsNullOrEmpty(param.Type)) one = ReplaceTemplateVariable(one, "PType", null);
+                    else one = ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
+                    if (param.Value is null) one = ReplaceTemplateVariable(one, "PDefaultValue", null);
+                    else one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value.Trim());
                     result += one;
                 }
             }
@@ -125,8 +126,8 @@ namespace ASCompletion.Completion
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
         {
-            var mc = Regex.Matches(template, string.Format(template_variable, var));
-            var mcCount = mc.Count;
+            MatchCollection mc = Regex.Matches(template, string.Format(template_variable, var));
+            int mcCount = mc.Count;
             if (mcCount > 0)
             {
                 var sb = new System.Text.StringBuilder();
@@ -185,7 +186,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Templates are stored in the plugin's Data folder
         /// </summary>
-        public static string GetTemplate(string name, string altName) => GetTemplate(name) is { } tmp && tmp.Length > 0 ? tmp : GetTemplate(altName);
+        public static string GetTemplate(string name, string altName) => GetTemplate(name) is { } tmp && tmp != "" ? tmp : GetTemplate(altName);
 
         /// <summary>
         /// Templates are stored in the plugin's Data folder
@@ -195,10 +196,13 @@ namespace ASCompletion.Completion
             var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
             var path = Path.Combine(PathHelper.SnippetDir, lang, generators_folder, name + ".fds");
             if (!File.Exists(path)) return "";
-            using var src = File.OpenRead(path);
-            using var sr = new StreamReader(src);
-            var content = sr.ReadToEnd();
-            sr.Close();
+            string content;
+            using (Stream src = File.OpenRead(path))
+            {
+                using var sr = new StreamReader(src);
+                content = sr.ReadToEnd();
+                sr.Close();
+            }
             return "$(Boundary)" + content.Replace("\r\n", "\n") + "$(Boundary)";
         }
 
@@ -207,13 +211,16 @@ namespace ASCompletion.Completion
             var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
             var path = Path.Combine(PathHelper.SnippetDir, lang, boundaries_folder, name + ".fds");
             if (!File.Exists(path)) return "";
-            using var src = File.OpenRead(path);
-            using var sr = new StreamReader(src);
-            var content = sr.ReadToEnd();
-            sr.Close();
+            string content;
+            using (Stream src = File.OpenRead(path))
+            {
+                using var sr = new StreamReader(src);
+                content = sr.ReadToEnd();
+                sr.Close();
+            }
             return content;
         }
 
-        public static string GetParamName(MemberModel param) => (param.Name ?? "").Replace("?", string.Empty);
+        public static string GetParamName(MemberModel param) => (param.Name ?? "").Replace("?", "");
     }
 }

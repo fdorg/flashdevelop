@@ -90,9 +90,9 @@ namespace FlashDevelop.Managers
             if (canShowList)
             {
                 ICompletionListItem item;
-                var items = new List<ICompletionListItem>();
-                var walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
-                var files = walker.GetFiles();
+                List<ICompletionListItem> items = new List<ICompletionListItem>();
+                PathWalker walker = new PathWalker(PathHelper.SnippetDir, "*.fds", false);
+                List<string> files = walker.GetFiles();
                 foreach (string file in files)
                 {
                     item = new SnippetItem(Path.GetFileNameWithoutExtension(file), file);
@@ -129,7 +129,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// On completion list insert or cancel, reset the previous selection
         /// </summary>
-        static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
+        private static void HandleListInsert(ScintillaControl sender, int position, string text, char trigger, ICompletionListItem item)
         {
             CompletionList.OnInsert -= HandleListInsert;
             CompletionList.OnCancel -= HandleListInsert;
@@ -140,9 +140,9 @@ namespace FlashDevelop.Managers
 
     public class SnippetItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        string snippet;
-        readonly string fileName;
-        Bitmap icon;
+        private string snippet;
+        private readonly string fileName;
+        private Bitmap icon;
 
         public SnippetItem(string word, string fileName)
         {
@@ -162,7 +162,7 @@ namespace FlashDevelop.Managers
         {
             get
             {
-                var desc = TextHelper.GetString("Info.SnippetItemDesc");
+                string desc = TextHelper.GetString("Info.SnippetItemDesc");
                 if (snippet is null)
                 {
                     snippet = FileHelper.ReadFile(fileName);
