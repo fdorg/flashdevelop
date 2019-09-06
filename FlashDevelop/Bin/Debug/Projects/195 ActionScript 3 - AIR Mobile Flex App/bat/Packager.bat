@@ -14,6 +14,19 @@ set SIGNING_OPTIONS=%AND_SIGNING_OPTIONS%
 set ICONS=%AND_ICONS%
 set DIST_EXT=apk
 set TYPE=apk
+:: which architecture?
+echo.
+echo Please select your target architecture for Android:
+echo.
+echo [1] armv7 ^(32-bit ARM devices^)
+echo [2] x86 ^(Intel products^)
+echo [3] armv8 ^(64-bit ARM devices^)
+echo.
+set /P ARCH=[Choice:]
+echo.
+if "%ARCH%"=="1" set OPTIONS=%OPTIONS% -arch armv7
+if "%ARCH%"=="2" set OPTIONS=%OPTIONS% -arch x86
+if "%ARCH%"=="3" set OPTIONS=%OPTIONS% -arch armv8
 goto start
 
 :ios-config
