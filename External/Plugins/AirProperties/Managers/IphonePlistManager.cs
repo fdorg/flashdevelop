@@ -11,13 +11,12 @@ namespace AirProperties
     /// <remarks>Not thread safe.</remarks>
     class IphonePlistManager : IDictionary<string, object>
     {
+        readonly Dictionary<string, object> backData = new Dictionary<string, object>();
 
-        private readonly Dictionary<string, object> backData = new Dictionary<string, object>();
-
-        private readonly Dictionary<string, XmlNode> nodeMapping = new Dictionary<string, XmlNode>();
+        readonly Dictionary<string, XmlNode> nodeMapping = new Dictionary<string, XmlNode>();
         // I don't think it's worth to, slightly, raise complexity by adding this mapping to backData
 
-        private readonly XmlDocument backDoc;
+        readonly XmlDocument backDoc = new XmlDocument();
 
         public bool RemoveOnNullValue { get; set; }
 
@@ -63,30 +62,25 @@ namespace AirProperties
 
         public IphonePlistManager(string plist)
         {
-            backDoc = new XmlDocument();
-            if (!string.IsNullOrEmpty(plist))
+            if (string.IsNullOrEmpty(plist)) return;
+            backDoc.LoadXml(plist);
+            var contentNode = backDoc.FirstChild;
+
+            for (int i = 0, count = contentNode.ChildNodes.Count; i < count; i++)
             {
-                backDoc.LoadXml(plist);
-                var contentNode = backDoc.FirstChild;
+                var keyNode = contentNode.ChildNodes[i];
+                //AFAIK actual plist files do not keep comments, but we're doing it since we're not the actual thing.
+                if (keyNode.NodeType != XmlNodeType.Element) continue;
 
-                for (int i = 0, count = contentNode.ChildNodes.Count; i < count; i++)
-                {
-                    XmlNode keyNode = contentNode.ChildNodes[i];
-                    //AFAIK actual plist files do not keep comments, but we're doing it since we're not the actual thing.
-                    if (keyNode.NodeType != XmlNodeType.Element) continue;
+                if (keyNode.Name != "key")
+                    throw new Exception("Unexpected node");
 
-                    if (keyNode.Name != "key")
-                        throw new Exception("Unexpected node");
-
-                    i++;
-                    if (i >= count)
-                        throw new Exception("Malformed plist");
-                    XmlNode valueNode = contentNode.ChildNodes[i];
-
-                    string key = keyNode.InnerText;
-                    backData[key] = GetValue(valueNode);
-                    nodeMapping[key] = valueNode;
-                }
+                i++;
+                if (i >= count) throw new Exception("Malformed plist");
+                var valueNode = contentNode.ChildNodes[i];
+                var key = keyNode.InnerText;
+                backData[key] = GetValue(valueNode);
+                nodeMapping[key] = valueNode;
             }
         }
 
@@ -106,35 +100,21 @@ namespace AirProperties
             }
         }
 
-        public bool ContainsKey(string key)
-        {
-            return backData.ContainsKey(key);
-        }
+        public bool ContainsKey(string key) => backData.ContainsKey(key);
 
         public bool Remove(string key)
         {
-            if (backData.Remove(key))
-            {
-                XmlNode node = nodeMapping[key];
-                backDoc.FirstChild.RemoveChild(node.PreviousSibling);
-                backDoc.FirstChild.RemoveChild(node);
-                nodeMapping.Remove(key);
-
-                return true;
-            }
-
-            return false;
+            if (!backData.Remove(key)) return false;
+            var node = nodeMapping[key];
+            backDoc.FirstChild.RemoveChild(node.PreviousSibling);
+            backDoc.FirstChild.RemoveChild(node);
+            nodeMapping.Remove(key);
+            return true;
         }
 
-        public bool TryGetValue(string key, out object value)
-        {
-            return backData.TryGetValue(key, out value);
-        }
+        public bool TryGetValue(string key, out object value) => backData.TryGetValue(key, out value);
 
-        public void Add(KeyValuePair<string, object> item)
-        {
-            Add(item.Key, item.Value);
-        }
+        public void Add(KeyValuePair<string, object> item) => Add(item.Key, item.Value);
 
         public void Clear()
         {
@@ -155,40 +135,27 @@ namespace AirProperties
 
         bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
         {
-            object value = null;
-
-            if (backData.TryGetValue(item.Key, out value) && value == item.Value) return Remove(item.Key);
-            return false;
+            return backData.TryGetValue(item.Key, out var value) && value == item.Value && Remove(item.Key);
         }
 
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-        {
-            return backData.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => backData.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)backData).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)backData).GetEnumerator();
 
-        private object GetValue(XmlNode valueNode)
+        object GetValue(XmlNode valueNode)
         {
-            switch (valueNode.Name)
+            return valueNode.Name switch
             {
-                case "string":
-                    return valueNode.InnerText;
-                case "true":
-                    return true;
-                case "false":
-                    return false;
-                case "array":
-                    return FillArray(valueNode);
-                default: // Some unneeded type right now
-                    return null;
-            }
+                "string" => (object) valueNode.InnerText,
+                "true" => true,
+                "false" => false,
+                "array" => FillArray(valueNode),
+                // Some unneeded type right now
+                _ => null
+            };
         }
 
-        private List<object> FillArray(XmlNode arrayNode)
+        List<object> FillArray(XmlNode arrayNode)
         {
             var arr = new List<object>(arrayNode.ChildNodes.Count);
             foreach (XmlNode childNode in arrayNode.ChildNodes)
@@ -199,7 +166,7 @@ namespace AirProperties
             return arr;
         }
 
-        private XmlNode SerializeValue(object value)
+        XmlNode SerializeValue(object value)
         {
             XmlNode retVal;
             if (value is null || value is string)
@@ -229,52 +196,46 @@ namespace AirProperties
 
         public object ValueOrNull(string key)
         {
-            object retVal = null;
-
-            TryGetValue(key, out retVal);
-
-            return retVal;
+            TryGetValue(key, out var result);
+            return result;
         }
 
         public string GetPlistXml()
         {
-            string xml = backDoc.FirstChild.InnerXml;
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-            MemoryStream ms = new MemoryStream();
+            var xml = backDoc.FirstChild.InnerXml;
+            var readerSettings = new XmlReaderSettings {ConformanceLevel = ConformanceLevel.Fragment};
+            var ms = new MemoryStream();
             // Create a XMLTextWriter that will send its output to a memory stream (file)
-            using (XmlTextWriter xtw = new XmlTextWriter(ms, Encoding.Unicode))
+            using var xtw = new XmlTextWriter(ms, Encoding.Unicode);
+            var parserContext = new XmlParserContext(null, null, xtw.XmlLang, xtw.XmlSpace);
+            try
             {
-                XmlParserContext parserContext = new XmlParserContext(null, null, xtw.XmlLang, xtw.XmlSpace);
-                try
-                {
-                    // Load the unformatted XML text string into an XPath Document
-                    XPathDocument doc = new XPathDocument(XmlReader.Create(new StringReader(xml), readerSettings, parserContext));
-                    // Set the formatting property of the XML Text Writer to indented
-                    // the text writer is where the indenting will be performed
-                    xtw.Formatting = Formatting.Indented;
-                    xtw.IndentChar = '\x09'; //tab
-                    xtw.Indentation = 1;
-                    // write doc xml to the xmltextwriter
-                    doc.CreateNavigator().WriteSubtree(xtw);
-                    // Flush the contents of the text writer
-                    // to the memory stream, which is simply a memory file
-                    xtw.Flush();
-                    // set to start of the memory stream (file)
-                    ms.Seek(0, SeekOrigin.Begin);
-                    // create a reader to read the contents of
-                    // the memory stream (file)
-                    StreamReader sr = new StreamReader(ms);
-                    // return the formatted string to caller (without the namespace declaration)
-                    return sr.ReadToEnd();
-                }
-                catch (Exception)
-                {
-                    //debug purposes only
-                    //MessageBox.Show(ex.ToString());
-                    //return original xml
-                    return xml;
-                }
+                // Load the unformatted XML text string into an XPath Document
+                var doc = new XPathDocument(XmlReader.Create(new StringReader(xml), readerSettings, parserContext));
+                // Set the formatting property of the XML Text Writer to indented
+                // the text writer is where the indenting will be performed
+                xtw.Formatting = Formatting.Indented;
+                xtw.IndentChar = '\x09'; //tab
+                xtw.Indentation = 1;
+                // write doc xml to the xmltextwriter
+                doc.CreateNavigator().WriteSubtree(xtw);
+                // Flush the contents of the text writer
+                // to the memory stream, which is simply a memory file
+                xtw.Flush();
+                // set to start of the memory stream (file)
+                ms.Seek(0, SeekOrigin.Begin);
+                // create a reader to read the contents of
+                // the memory stream (file)
+                var sr = new StreamReader(ms);
+                // return the formatted string to caller (without the namespace declaration)
+                return sr.ReadToEnd();
+            }
+            catch (Exception)
+            {
+                //debug purposes only
+                //MessageBox.Show(ex.ToString());
+                //return original xml
+                return xml;
             }
         }
     }
