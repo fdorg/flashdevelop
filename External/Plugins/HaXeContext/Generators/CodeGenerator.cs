@@ -570,7 +570,7 @@ namespace HaXeContext.Generators
             var type = ctx.ResolveType(member.Type, expr.InFile);
             return (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
                    || (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum")
-                       && type.Members.Items.Any(it => it.Flags.HasFlag(FlagType.Variable)));
+                       && type.Members.Any(it => it.Flags.HasFlag(FlagType.Variable)));
         }
 
         static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, int position, ASResult expr)

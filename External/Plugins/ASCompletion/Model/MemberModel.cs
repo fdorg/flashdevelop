@@ -202,11 +202,13 @@ namespace ASCompletion.Model
     /// Strong-typed MemberModel list with special merging/searching methods
     /// </summary>
     [Serializable]
-    public class MemberList: IEnumerable
+    public class MemberList: IEnumerable<MemberModel>
     {
-        private bool sorted;
-        
-        public IEnumerator GetEnumerator() => items.GetEnumerator();
+        bool sorted;
+
+        public IEnumerator<MemberModel> GetEnumerator() => items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
 
         readonly List<MemberModel> items = new List<MemberModel>();
 
@@ -243,7 +245,7 @@ namespace ASCompletion.Model
         public int Add(MemberList list)
         {
             sorted = false;
-            items.AddRange(list.Items);
+            items.AddRange(list);
             return items.Count;
         }
 
@@ -322,15 +324,6 @@ namespace ASCompletion.Model
         public void Merge(MemberModel item)
         {
             if (item != null) Merge(new MemberList {item});
-        }
-        
-        /// <summary>
-        /// Merge SORTED lists without duplicate values
-        /// </summary>
-        /// <param name="list">Items to merge</param>
-        public void Merge(MemberList list)
-        {
-            if (list != null) Merge(list.Items);
         }
         
         /// <summary>

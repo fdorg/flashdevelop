@@ -16,17 +16,15 @@ namespace ASCompletion.Model
     {
         public static readonly ClassModel VoidClass;
 
-        private static readonly Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         
         static ClassModel()
         {
-            VoidClass = new ClassModel();
-            VoidClass.Name = "void";
-            VoidClass.InFile = new FileModel("");
+            VoidClass = new ClassModel {Name = "void", InFile = new FileModel("")};
         }
 
         public string Constructor;
@@ -44,8 +42,7 @@ namespace ASCompletion.Model
 
         public string IndexType;
         public List<string> Implements;
-        [NonSerialized]
-        private WeakReference resolvedExtend;
+        [NonSerialized] WeakReference resolvedExtend;
 
         public string QualifiedName
         {
@@ -115,7 +112,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private ClassModel ResolveExtendedType(IList<ClassModel> extensionList)
+        ClassModel ResolveExtendedType(IList<ClassModel> extensionList)
         {
             if (InFile.Context is null)
             {
@@ -339,7 +336,7 @@ namespace ASCompletion.Model
                 {
                     ASMetaData.GenerateIntrinsic(var.MetaDatas, sb, nl, tab);
                     var comment = CommentDeclaration(var.Comments, tab);
-                    if (count == 0 || comment != "") sb.Append(nl);
+                    if (count == 0 || comment.Length != 0) sb.Append(nl);
                     sb.Append(comment);
                     sb.Append(tab).Append(MemberDeclaration(var, preventVis)).Append(semi).Append(nl);
                     count++;
@@ -582,7 +579,7 @@ namespace ASCompletion.Model
             return outComment;
         }
 
-        private static bool MoreLines(string text, int count)
+        static bool MoreLines(string text, int count)
         {
             int p = text.IndexOf('\n');
             while (p > 0 && count >= 0)

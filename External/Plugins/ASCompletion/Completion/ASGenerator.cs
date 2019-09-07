@@ -4258,7 +4258,7 @@ namespace ASCompletion.Completion
                 var importName = type.Substring(startIndex + 1);
                 var imports = ASContext.Context.ResolveImports(ASContext.Context.CurrentModel);
                 if (imports.Count == 0) imports = ASContext.Context.CurrentModel.Imports;
-                if (!imports.Items.Any(it => it.Name == importName && it.Type != type))
+                if (!imports.Any(it => it.Name == importName && it.Type != type))
                     type = reShortType.Replace(type, string.Empty);
             }
             else type = reShortType.Replace(type, string.Empty);

@@ -32,7 +32,7 @@ namespace CodeRefactor.Commands
                 FireOnRefactorComplete();
                 return;
             }
-            var imports = context.CurrentModel.Imports.Items.ToList();
+            var imports = context.CurrentModel.Imports.ToList();
             var sci = SciControl ?? PluginBase.MainForm.CurrentDocument.SciControl;
             var pos = sci.CurrentPos;
             var cppPpStyle = (int)CPP.PREPROCESSOR;

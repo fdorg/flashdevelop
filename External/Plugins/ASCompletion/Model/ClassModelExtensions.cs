@@ -23,10 +23,7 @@ namespace ASCompletion.Model
         /// </summary>
         /// <param name="mask">Flags mask</param>
         /// <returns>All matches</returns>
-        static MemberList GetMembers(this ClassModel @this, FlagType mask)
-        {
-            return new MemberList(@this.Members.Items.Where(it => (it.Flags & mask) == mask));
-        }
+        static MemberList GetMembers(this ClassModel @this, FlagType mask) => new MemberList(@this.Members.Where(it => (it.Flags & mask) == mask));
 
         public static bool HasMember(this ClassModel @this, FlagType flags, bool recursive)
         {
@@ -42,9 +39,6 @@ namespace ASCompletion.Model
         }
 
 
-        static bool HasMember(this ClassModel @this, FlagType mask)
-        {
-            return @this.Members.Items.Any(it => (it.Flags & mask) == mask);
-        }
+        static bool HasMember(this ClassModel @this, FlagType mask) => @this.Members.Any(it => (it.Flags & mask) == mask);
     }
 }

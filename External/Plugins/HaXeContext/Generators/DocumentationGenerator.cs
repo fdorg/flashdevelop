@@ -64,7 +64,7 @@ namespace HaXeContext.Generators
         /// </summary>
         /// <param name="parameters">Method parameters</param>
         /// <returns>Member list</returns>
-        private static IEnumerable<MemberModel> ParseMethodParameters(string parameters)
+        static IEnumerable<MemberModel> ParseMethodParameters(string parameters)
         {
             var list = new List<MemberModel>();
             if (parameters is null) return list;

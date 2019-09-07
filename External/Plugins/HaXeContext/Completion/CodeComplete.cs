@@ -203,7 +203,7 @@ namespace HaXeContext.Completion
                         .Select(it => it.Trim()).ToArray();
                     if (names.Length != 0) list.Items.RemoveAll(it => names.Contains(it.Name));
                 }
-                if (list.Count > 0) CompletionList.Show(list.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
+                if (list.Count > 0) CompletionList.Show(list.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
                 return true;
             }
             return false;
@@ -326,7 +326,7 @@ namespace HaXeContext.Completion
                         return 0;
 
                         // Utils
-                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                        static bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
                     });
                 var orders = new Dictionary<string, int>
                 {
@@ -1054,7 +1054,7 @@ namespace HaXeContext.Completion
         {
             var extends = new HashSet<string>();
             var list = new List<ICompletionListItem>();
-            foreach (var it in ASContext.Context.GetAllProjectClasses().Items.Distinct())
+            foreach (var it in ASContext.Context.GetAllProjectClasses().Distinct())
             {
                 extends.Clear();
                 var type = it as ClassModel ?? ClassModel.VoidClass;
@@ -1679,11 +1679,11 @@ namespace HaXeContext.Completion
                     if (type.Members.Count == 0) return null;
                     if ((type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(tag => tag.Name == ":enum")))
                     {
-                        return type.Members.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>();
+                        return type.Members.Select(it => new MemberItem(it)).ToList<ICompletionListItem>();
                     }
                     if (type.Flags.HasFlag(FlagType.Enum))
                     {
-                        return type.Members.Items.Select(it =>
+                        return type.Members.Select(it =>
                         {
                             var pattern = it.Name;
                             if (it.Parameters != null)
@@ -1777,7 +1777,7 @@ namespace HaXeContext.Completion
                 t.ResolveExtends();
                 while (!t.IsVoid())
                 {
-                    result.AddRange(t.Members.Items);
+                    result.AddRange(t.Members);
                     if (t.ExtendsTypes != null)
                     {
                         for (int i = 0, count = t.ExtendsTypes.Count; i < count; i++)

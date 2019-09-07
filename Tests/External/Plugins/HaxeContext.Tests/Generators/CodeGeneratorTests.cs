@@ -2575,7 +2575,7 @@ namespace HaXeContext.Generators
             SetCurrentFileName(GetFullPath(fileName));
             SetSrc(sci, ReadAllText(fileName));
             var type = ASContext.Context.ResolveType(ASContext.Context.CurrentMember.Type, ASContext.Context.CurrentModel);
-            var selectedMembers = type.Members.Items.ToDictionary(it => it, it => ASContext.Context.ResolveType(it.Type, it.InFile));
+            var selectedMembers = type.Members.ToDictionary(it => it, it => ASContext.Context.ResolveType(it.Type, it.InFile));
             ASGenerator.GenerateDelegateMethods(sci, ASContext.Context.CurrentMember, selectedMembers, type, ASContext.Context.CurrentClass);
             return sci.Text;
         }
