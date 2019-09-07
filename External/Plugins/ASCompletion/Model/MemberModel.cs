@@ -217,6 +217,11 @@ namespace ASCompletion.Model
         public MemberList()
         {
         }
+
+        public MemberList(IEnumerable<MemberModel> list)
+        {
+            Items.AddRange(list);
+        }
         
         public MemberModel this[int index]
         {

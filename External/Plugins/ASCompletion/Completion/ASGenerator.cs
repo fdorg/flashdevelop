@@ -2734,11 +2734,14 @@ namespace ASCompletion.Completion
 
         static void GenerateConstructorJob(ScintillaControl sci, ClassModel inClass)
         {
-            var position = sci.WordEndPosition(sci.CurrentPos, true);
-            var parameters = ParseFunctionParameters(sci, position);
-            var member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public)
+            const FlagType flags = FlagType.Constructor | FlagType.Function;
+            var member = new MemberModel(inClass.Name, inClass.QualifiedName, flags, Visibility.Public)
             {
-                Parameters = parameters.Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
+                Parameters = inClass.GetMembers(flags, true)?[0].Parameters
+                             // for example: new Ty<generator>pe(value);
+                             ?? ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true))
+                                 .Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0))
+                                 .ToList()
             };
             var currentClass = ASContext.Context.CurrentClass;
             if (currentClass != inClass)
@@ -2748,7 +2751,7 @@ namespace ASCompletion.Completion
                 if (currentClass.InFile != inClass.InFile) sci = ((ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(inClass.InFile.FileName, false)).SciControl;
                 ASContext.Context.UpdateContext(inClass.LineFrom);
             }
-            position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
+            var position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
             sci.SetSel(position, position);
             ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, member, position, inClass, false);
         }
@@ -2923,6 +2926,20 @@ namespace ASCompletion.Completion
             {
                 template = TemplateUtils.GetTemplate("Constructor");
                 template = ((ASGenerator) ASContext.Context.CodeGenerator).ToDeclarationWithModifiersString(member, template);
+                string super = null;
+                if (inClass.HasMember(FlagType.Function | FlagType.Constructor, true))
+                {
+                    var value = new StringBuilder();
+                    foreach (var parameter in member.Parameters)
+                    {
+                        if (value.Length != 0) value.Append(", ");
+                        value.Append(parameter.Name);
+                    }
+                    value.Insert(0, "super(");
+                    value.Append(");");
+                    super = value.ToString();
+                }
+                template = TemplateUtils.ReplaceTemplateVariable(template, "Super", super);
                 var line = sci.LineFromPosition(position);
                 if (GetDeclarationAtLine(line).Member != null) template += $"{NewLine}{NewLine}{NewLine}";
                 else if (GetDeclarationAtLine(line + 1).Member != null) template += $"{NewLine}{NewLine}";
