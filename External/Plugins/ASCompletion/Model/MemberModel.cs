@@ -217,6 +217,11 @@ namespace ASCompletion.Model
         public MemberList()
         {
         }
+
+        public MemberList(IEnumerable<MemberModel> list)
+        {
+            Items.AddRange(list);
+        }
         
         public MemberModel this[int index]
         {
@@ -298,20 +303,6 @@ namespace ASCompletion.Model
                 if ((m.Flags & mask) == mask
                     && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) result.Add(m);
-            return result;
-        }
-
-        /// <summary>
-        /// Return all MemberModel instance matches in the MemberList
-        /// </summary>
-        /// <param name="mask">Flags mask</param>
-        /// <returns>All matches</returns>
-        public MemberList MultipleSearch(FlagType mask) 
-        {
-            var result = new MemberList();
-            foreach (var m in items)
-                if ((m.Flags & mask) == mask)
-                    result.Add(m);
             return result;
         }
         

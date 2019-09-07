@@ -143,7 +143,7 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2305");
                 yield return new TestCaseData("BeforeGenerateConstructor_issue1738_2", GeneratorJobType.Constructor, true)
                     .Returns(ReadAllText("AfterGenerateConstructor_issue1738_2"))
-                    .SetName("Generate constructor with parameters. Issue 1738. Case 1")
+                    .SetName("Generate constructor with parameters. Issue 1738. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
                 yield return new TestCaseData("BeforeGenerateConstructor_issue1738_3", GeneratorJobType.ChangeConstructorDecl, true)
                     .Returns(ReadAllText("AfterGenerateConstructor_issue1738_3"))

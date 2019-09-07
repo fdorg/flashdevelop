@@ -126,27 +126,27 @@ namespace ASCompletion.Completion
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
         {
-            MatchCollection mc = Regex.Matches(template, string.Format(template_variable, var));
-            int mcCount = mc.Count;
+            var mc = Regex.Matches(template, string.Format(template_variable, var));
+            var mcCount = mc.Count;
             if (mcCount > 0)
             {
                 var sb = new System.Text.StringBuilder();
-                int pos = 0;
-                for (int i = 0; i < mcCount; i++)
+                var pos = 0;
+                for (var i = 0; i < mcCount; i++)
                 {
-                    Match m = mc[i];
-                    int endIndex = m.Index + m.Length;
+                    var m = mc[i];
+                    var endIndex = m.Index + m.Length;
                     sb.Append(template.Substring(pos, m.Index - pos));
                     if (replace != null)
                     {
-                        string val = m.Value;
+                        var val = m.Value;
                         val = val.Substring(2, val.Length - 4);
                         sb.Append(val);
                     }
                     if (i == mcCount - 1) sb.Append(template.Substring(endIndex));
                     else
                     {
-                        int next = mc[i + 1].Index;
+                        var next = mc[i + 1].Index;
                         sb.Append(template.Substring(endIndex, next - endIndex));
                         pos += next;
                     }
@@ -221,6 +221,11 @@ namespace ASCompletion.Completion
             return content;
         }
 
-        public static string GetParamName(MemberModel param) => (param.Name ?? "").Replace("?", "");
+        public static string GetParamName(MemberModel parameter)
+        {
+            return string.IsNullOrEmpty(parameter.Name)
+                ? string.Empty
+                : parameter.Name.Replace("?", "");
+        }
     }
 }
