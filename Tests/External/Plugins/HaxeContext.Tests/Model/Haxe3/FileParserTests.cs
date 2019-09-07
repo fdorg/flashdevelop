@@ -43,7 +43,7 @@ namespace HaXeContext.Model.Haxe3
         public int ParseFile_Issue2320(string fileName)
         {
             var model = ASContext.Context.GetCodeModel(ReadAllText(fileName));
-            return model.Classes.First().Members.Items.First().Parameters.Count;
+            return model.Classes.First().Members.First().Parameters.Count;
         }
 
         static IEnumerable<TestCaseData> Issue2359TestCases
@@ -576,7 +576,7 @@ namespace HaXeContext.Model.Haxe3
         public void ParseFileIssue2654()
         {
             var model = ASContext.Context.GetCodeModel(ReadAllText("Issue2654_1"));
-            Assert.AreEqual(":optional", model.Classes.First().Members.Items.First().MetaDatas.First().Name);
+            Assert.AreEqual(":optional", model.Classes.First().Members.First().MetaDatas.First().Name);
         }
 
         [Test]
@@ -1645,7 +1645,7 @@ namespace HaXeContext.Model.Haxe3
         public MemberWithType ParseFunctionTypes(string sourceText)
         {
             var model = ASContext.Context.GetCodeModel(sourceText);
-            var member = model.Members.Items.First();
+            var member = model.Members.First();
             return new MemberWithType(member, member.Type);
         }
 
@@ -1732,7 +1732,7 @@ namespace HaXeContext.Model.Haxe3
         public IEnumerable<string> ParseFunctionParameters(string sourceText)
         {
             var model = ASContext.Context.GetCodeModel(sourceText);
-            var member = model.Members.Items.First();
+            var member = model.Members.First();
             return member.Parameters.Select(it => it.Type);
         }
 
@@ -2550,7 +2550,7 @@ namespace HaXeContext.Model.Haxe3
         {
             return ASContext.Context.GetCodeModel(ReadAllText(fileName))
                 .Classes.First()
-                .Members.Items.First()
+                .Members.First()
                 .Parameters.First().Value;
         }
     }

@@ -27,10 +27,11 @@ namespace ASCompletion.Completion
     
     public class ASDocumentation
     {
-        private static List<ICompletionListItem> docVariables;
+        static List<ICompletionListItem> docVariables;
         
         #region regular_expressions
-        private static readonly Regex re_tags = new Regex("<[/]?(p|br)[/]?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        static readonly Regex re_tags = new Regex("<[/]?(p|br)[/]?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         #endregion
         
         #region Comment generation
@@ -50,7 +51,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static bool HandleDocTagCompletion(ScintillaControl sci)
+        static bool HandleDocTagCompletion(ScintillaControl sci)
         {
             if (ASContext.CommonSettings.JavadocTags.IsNullOrEmpty()) return false;
 
@@ -76,9 +77,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Documentation tag template completion list item
         /// </summary>
-        private class TagItem : ICompletionListItem
+        class TagItem : ICompletionListItem
         {
-            private readonly string label;
+            readonly string label;
             
             public TagItem(string label) 
             {
@@ -97,12 +98,12 @@ namespace ASCompletion.Completion
         
         #region Tooltips
 
-        private static readonly Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
-        private static readonly Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
+        static readonly Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
+        static readonly Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
 
         public static CommentBlock ParseComment(string comment)
         {
@@ -147,8 +148,9 @@ namespace ASCompletion.Completion
                 return cb;
             }
             
-            if (tags[0].Index > 0) cb.Description = comment.Substring(0, tags[0].Index).Trim();
-            else cb.Description = "";
+            cb.Description = tags[0].Index > 0
+                ? comment.Substring(0, tags[0].Index).Trim()
+                : string.Empty;
             cb.TagName = new List<string>();
             cb.TagDesc = new List<string>();
 
@@ -260,7 +262,7 @@ namespace ASCompletion.Completion
             return details;
         }
 
-        private static string GetShortcutDocs()
+        static string GetShortcutDocs()
         {
             Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
             string foreColorString = themeForeColor != Color.Empty ? DataConverter.ColorToHex(themeForeColor).Replace("0x", "#") : "#666666:MULTIPLY";

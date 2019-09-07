@@ -118,7 +118,7 @@ namespace HaXeContext
             var mix = new MemberList();
             var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
             ASContext.Context.ResolveDotContext(sci, expr, mix);
-            Assert.AreEqual(code, mix.Items.FirstOrDefault());
+            Assert.AreEqual(code, mix.FirstOrDefault());
         }
 
         static IEnumerable<TestCaseData> ResolveDotContextIssue2467TestCases
@@ -447,7 +447,7 @@ namespace HaXeContext
                 return context.ResolveImports(it.ArgAt<FileModel>(0));
             });
             var type = ASContext.Context.ResolveType(fromClass, ASContext.Context.CurrentModel);
-            var expectedImports = type.Members.Items.Where(it => (it.Flags & FlagType.Static) != 0 && (it.Access & Visibility.Public) != 0).ToList();
+            var expectedImports = type.Members.Where(it => (it.Flags & FlagType.Static) != 0 && (it.Access & Visibility.Public) != 0).ToList();
             var actualImports = ASContext.Context.ResolveImports(context.CurrentModel);
             expectedImports.Sort();
             actualImports.Sort();

@@ -64,8 +64,7 @@ namespace ASCompletion.Completion
         public static string ToDeclarationString(MemberModel member, string template)
         {
             // Insert Name
-            if (member.Name is null) template = ReplaceTemplateVariable(template, "Name", null);
-            else template = ReplaceTemplateVariable(template, "Name", member.FullName);
+            template = ReplaceTemplateVariable(template, "Name", member.Name is null ? null : member.FullName);
 
             // If method, insert arguments
             template = ReplaceTemplateVariable(template, "Arguments", ParametersString(member, true));
@@ -83,43 +82,38 @@ namespace ASCompletion.Completion
 
         public static string ParametersString(MemberModel member, bool formatted)
         {
-            var result = "";
-            if (!member.Parameters.IsNullOrEmpty())
+            if (member.Parameters.IsNullOrEmpty()) return string.Empty;
+            var result = string.Empty;
+            var template = GetTemplate("FunctionParameter");
+            for (int i = 0, count = member.Parameters.Count; i < count; i++)
             {
-                var template = GetTemplate("FunctionParameter");
-                for (int i = 0, count = member.Parameters.Count; i < count; i++)
-                {
-                    var param = member.Parameters[i];
-                    var one = template;
-                    if (i + 1 < count) one = ReplaceTemplateVariable(one, "PComma", ",");
-                    else one = ReplaceTemplateVariable(one, "PComma", null);
-                    one = ReplaceTemplateVariable(one, "PName", param.Name);
-                    if (string.IsNullOrEmpty(param.Type)) one = ReplaceTemplateVariable(one, "PType", null);
-                    else one = ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
-                    if (param.Value is null) one = ReplaceTemplateVariable(one, "PDefaultValue", null);
-                    else one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value.Trim());
-                    result += one;
-                }
+                var param = member.Parameters[i];
+                var one = template;
+                one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
+                one = ReplaceTemplateVariable(one, "PName", param.Name);
+                one = string.IsNullOrEmpty(param.Type)
+                    ? ReplaceTemplateVariable(one, "PType", null)
+                    : ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
+                one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value?.Trim());
+                result += one;
             }
             return result;
         }
 
         public static string CallParametersString(MemberModel member)
         {
-            var result = "";
-            if (!member.Parameters.IsNullOrEmpty())
+            if (member.Parameters.IsNullOrEmpty()) return string.Empty;
+            var result = string.Empty;
+            var template = GetTemplate("FunctionParameter");
+            for (int i = 0, count = member.Parameters.Count; i < count; i++)
             {
-                var template = GetTemplate("FunctionParameter");
-                for (int i = 0, count = member.Parameters.Count; i < count; i++)
-                {
-                    var param = member.Parameters[i];
-                    var one = template;
-                    one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
-                    one = ReplaceTemplateVariable(one, "PName", GetParamName(param));
-                    one = ReplaceTemplateVariable(one, "PType", null);
-                    one = ReplaceTemplateVariable(one, "PDefaultValue", null);
-                    result += one;
-                }
+                var param = member.Parameters[i];
+                var one = template;
+                one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
+                one = ReplaceTemplateVariable(one, "PName", GetParamName(param));
+                one = ReplaceTemplateVariable(one, "PType", null);
+                one = ReplaceTemplateVariable(one, "PDefaultValue", null);
+                result += one;
             }
             return result;
         }
@@ -195,14 +189,11 @@ namespace ASCompletion.Completion
         {
             var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
             var path = Path.Combine(PathHelper.SnippetDir, lang, generators_folder, name + ".fds");
-            if (!File.Exists(path)) return "";
-            string content;
-            using (Stream src = File.OpenRead(path))
-            {
-                using var sr = new StreamReader(src);
-                content = sr.ReadToEnd();
-                sr.Close();
-            }
+            if (!File.Exists(path)) return string.Empty;
+            using Stream src = File.OpenRead(path);
+            using var sr = new StreamReader(src);
+            var content = sr.ReadToEnd();
+            sr.Close();
             return "$(Boundary)" + content.Replace("\r\n", "\n") + "$(Boundary)";
         }
 
@@ -210,14 +201,11 @@ namespace ASCompletion.Completion
         {
             var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
             var path = Path.Combine(PathHelper.SnippetDir, lang, boundaries_folder, name + ".fds");
-            if (!File.Exists(path)) return "";
-            string content;
-            using (Stream src = File.OpenRead(path))
-            {
-                using var sr = new StreamReader(src);
-                content = sr.ReadToEnd();
-                sr.Close();
-            }
+            if (!File.Exists(path)) return string.Empty;
+            using Stream src = File.OpenRead(path);
+            using var sr = new StreamReader(src);
+            var content = sr.ReadToEnd();
+            sr.Close();
             return content;
         }
 

@@ -71,10 +71,8 @@ namespace CodeRefactor.Provider
         internal static ASResult FindGetterSetter(ASResult target, string name)
         {
             var inClass = target.InClass;
-            var members = inClass.Members.Items;
-            for (int i = 0, length = members.Count; i < length; i++)
+            foreach (var member in inClass.Members)
             {
-                var member = members[i];
                 if (member.Name != name) continue;
                 var result = new ASResult();
                 ASComplete.FindMember(name, inClass, result, FlagType.Dynamic | FlagType.Function, 0);

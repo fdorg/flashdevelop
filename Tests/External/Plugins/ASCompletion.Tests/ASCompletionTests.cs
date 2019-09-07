@@ -119,8 +119,6 @@ namespace ASCompletion
 
 public static class CollectionExtensions
 {
-    public static MemberModel FirstOrDefault(this MemberList list, int line) => list.Items.FirstOrDefault(line);
-
     public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> items, int line) where TSource : MemberModel
     {
         return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);

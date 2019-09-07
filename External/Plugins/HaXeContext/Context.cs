@@ -1170,7 +1170,7 @@ namespace HaXeContext
             var type = member.Type;
             var isShortType = name == type;
             var curFile = Context.CurrentModel;
-            var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
+            var imports = curFile.Imports.Concat(ResolveDefaults(curFile.Package)).ToArray();
             foreach (var import in imports)
             {
                 if ((isShortType && import.Name == name) || import.Type == type) return true;
