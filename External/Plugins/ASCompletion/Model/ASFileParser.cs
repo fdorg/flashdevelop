@@ -141,7 +141,7 @@ namespace ASCompletion.Model
             if (model != null && !string.IsNullOrEmpty(comment)
                 && (model.Flags & FlagType.Function) == 0)
             {
-                MemberModel fnModel = extractTypedCallbackModel(comment);
+                MemberModel fnModel = ExtractTypedCallbackModel(comment);
                 if (fnModel != null)
                 {
                     if (!detectKindOnly)
@@ -175,12 +175,12 @@ namespace ASCompletion.Model
         /// <summary>
         /// String randomer
         /// </summary>
-        static string getRandomStringRepl() => "StringRepl" + random.Next(0xFFFFFFF);
+        static string GetRandomStringRepl() => "StringRepl" + random.Next(0xFFFFFFF);
 
         /// <summary>
         /// TypedCallback model extracting
         /// </summary>
-        static MemberModel extractTypedCallbackModel(string comment)
+        static MemberModel ExtractTypedCallbackModel(string comment)
         {
             if (string.IsNullOrEmpty(comment)) return null;
             if (comment.IndexOf('(') != 0 || comment.IndexOf(')') < 1) return null;
@@ -191,7 +191,7 @@ namespace ASCompletion.Model
             var i = qStrMatches.Count;
             while (i-- > 0)
             {
-                string strRepl = getRandomStringRepl();
+                string strRepl = GetRandomStringRepl();
                 qStrRepls.Add(strRepl, qStrMatches[i].Value);
                 comment = comment.Substring(0, qStrMatches[i].Index) + strRepl + comment.Substring(qStrMatches[i].Index + qStrMatches[i].Length);
             }
@@ -2143,22 +2143,22 @@ namespace ASCompletion.Model
 
         #region tool methods
 
-        public QType QualifiedName(FileModel InFile, string Name) 
+        public QType QualifiedName(FileModel inFile, string name) 
         {
             var qt = new QType();
-            var type = Name;
-            if (InFile.Package == "") type = Name;
-            else if (InFile.Module == "" || InFile.Module == Name) type = InFile.Package + "." + Name;
-            else type = InFile.Package + "." + InFile.Module + "." + Name;
+            var type = name;
+            if (inFile.Package == "") type = name;
+            else if (inFile.Module == "" || inFile.Module == name) type = inFile.Package + "." + name;
+            else type = inFile.Package + "." + inFile.Module + "." + name;
             qt.Type = type;
-            int p = Name.IndexOf('<');
+            int p = name.IndexOf('<');
             if (p > 0)
             {
-                qt.Template = Name.Substring(p);
-                if (Name[p - 1] == '.') p--;
-                qt.Name = Name.Substring(0, p);
+                qt.Template = name.Substring(p);
+                if (name[p - 1] == '.') p--;
+                qt.Name = name.Substring(0, p);
             }
-            else qt.Name = Name;
+            else qt.Name = name;
             return qt;
         }
 
