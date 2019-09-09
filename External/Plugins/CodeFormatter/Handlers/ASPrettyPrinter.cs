@@ -32,22 +32,22 @@ namespace CodeFormatter.Handlers
         public static int MLAsteriskStyle_All=1;
         public static int MLAsteriskStyle_None=2;
     
-        public static String Break_SubType_Array="array";
-        public static String Break_SubType_Parameters="parameters";
-        public static String Break_SubType_Arguments="args";
-        public static String Break_SubType_Object="object";
-        public static String Break_SubType_Other="other";
+        public static string Break_SubType_Array="array";
+        public static string Break_SubType_Parameters="parameters";
+        public static string Break_SubType_Arguments="args";
+        public static string Break_SubType_Object="object";
+        public static string Break_SubType_Other="other";
     
-        public static String Break_Commas="commas";
-        public static String Break_Arithmetic_Ops="arithmetic ops";
-        public static String Break_Logical_Ops="logical ops (&&, ||)";
-        public static String Break_Function_Calls="member access";
-        public static String Break_Other_Connectors="other connectors (., ::, etc.)";
-        public static String Break_Assignment="assignment";
-        public static String Break_Parameter_Assignment="parameter assignment";
-        public static String Break_Ternary="ternary ops";
-        public static String Break_Keyword="extends/implements";
-        public static Dictionary<String, Int32> Break_Table_Items;
+        public static string Break_Commas="commas";
+        public static string Break_Arithmetic_Ops="arithmetic ops";
+        public static string Break_Logical_Ops="logical ops (&&, ||)";
+        public static string Break_Function_Calls="member access";
+        public static string Break_Other_Connectors="other connectors (., ::, etc.)";
+        public static string Break_Assignment="assignment";
+        public static string Break_Parameter_Assignment="parameter assignment";
+        public static string Break_Ternary="ternary ops";
+        public static string Break_Keyword="extends/implements";
+        public static Dictionary<string, int> Break_Table_Items;
     
         public static int Break_Commas_code=0x1;
         public static int Break_Arithmetic_Ops_code=0x2;
@@ -67,18 +67,18 @@ namespace CodeFormatter.Handlers
         public static int Braces_RemoveUnnecessary=16; //mainly for 'switch' cases, where they are never necessary.
 
         //these are also used as items in the UI, and keys in the prefs, so don't change them
-        public static String BraceContext_package="package";
-        public static String BraceContext_Conditional="conditional compilation";
-        public static String BraceContext_interface="interface";
-        public static String BraceContext_class="class";
-        public static String BraceContext_functionDecl="function declaration";
-        public static String BraceContext_functionExpression="function expression";
-        public static String BraceContext_controlStatement="control statement";
-        public static String BraceContext_try="try";
-        public static String BraceContext_catch="catch";
-        public static String BraceContext_finally="finally";
-        public static String BraceContext_block="block";
-        public static Dictionary<String, Int32> Brace_Context_Items;
+        public static string BraceContext_package="package";
+        public static string BraceContext_Conditional="conditional compilation";
+        public static string BraceContext_interface="interface";
+        public static string BraceContext_class="class";
+        public static string BraceContext_functionDecl="function declaration";
+        public static string BraceContext_functionExpression="function expression";
+        public static string BraceContext_controlStatement="control statement";
+        public static string BraceContext_try="try";
+        public static string BraceContext_catch="catch";
+        public static string BraceContext_finally="finally";
+        public static string BraceContext_block="block";
+        public static Dictionary<string, int> Brace_Context_Items;
 
         public static int BraceContext_package_code=0x1;
         public static int BraceContext_Conditional_code=0x2;
@@ -136,8 +136,8 @@ namespace CodeFormatter.Handlers
         private int mLoopBraceModifyMode=Braces_NoModify;
         private int mSwitchBraceModifyMode=Braces_NoModify;
     
-        private List<String> mMetaTagsToKeepOnSameLineAsProperty;
-        private List<String> mMetaTagsToKeepOnSameLineAsFunction;
+        private List<string> mMetaTagsToKeepOnSameLineAsProperty;
+        private List<string> mMetaTagsToKeepOnSameLineAsFunction;
 
         private bool mUseBraceStyleSetting=true;
         private int mBraceStyleSetting=BraceStyle_Adobe;
@@ -188,10 +188,10 @@ namespace CodeFormatter.Handlers
         private bool mCRBeforeElse=false;
         private bool mCRBeforeWhile=false;
         private bool mCRBeforeCatch=false;
-        private String mSourceData=null;
-        private String mWorkingSource=null;
+        private string mSourceData=null;
+        private string mWorkingSource=null;
         private bool mEmptyStatementsOnNewLine=true;
-        private List<Int32> mAddedCRs;
+        private List<int> mAddedCRs;
         private CommonTokenStream mRawTokens;
         //private bool mIsCompleteFile;
         private IToken mLastToken = null;
@@ -201,7 +201,7 @@ namespace CodeFormatter.Handlers
         private List<Exception> mParseErrors;
         private StringBuilder mOutputBuffer;
         private List<IndentType> mIndentStack;
-        private List<Int32> mFormatTypeStack;
+        private List<int> mFormatTypeStack;
         private WrapOptions mArrayInitWrapOptions=null;
         private WrapOptions mMethodCallWrapOptions=null;
         private WrapOptions mMethodDeclWrapOptions=null;
@@ -224,7 +224,7 @@ namespace CodeFormatter.Handlers
         private int mAlignDeclMode=Decl_Align_Consecutive; //probably no need to allow other settings at this point
         private EqualContext mCurrentDeclEqualContext;
         private EqualContext mRootDeclEqualContext;
-        private Dictionary<String, Int32> mDeclEqualPosMap;
+        private Dictionary<string, int> mDeclEqualPosMap;
         private bool mAlreadyHaveDeclPositions=false;
     
     
@@ -237,11 +237,11 @@ namespace CodeFormatter.Handlers
         private bool mElseIfNeedToLoseIndent;
         private int mExcludeStackCount;
         private int mLastCapturePosition;
-        private Dictionary<Int32, ReplacementRange> mReplaceMap;
-        private String mAdditionalTextAdded;
-        private String mAdditionalTextAddedAllPasses;
-        private String mRemovedText;
-        private String mRemovedTextAllPasses;
+        private Dictionary<int, ReplacementRange> mReplaceMap;
+        private string mAdditionalTextAdded;
+        private string mAdditionalTextAddedAllPasses;
+        private string mRemovedText;
+        private string mRemovedTextAllPasses;
         private bool mInSingleLineFunctionMode;
     
     
@@ -251,7 +251,7 @@ namespace CodeFormatter.Handlers
         private Point mSelectedRange; //x=start line, y=end line (1-based)(lines 5 and 6 would be 5,6)
         private Point mOutputRange; //x=start offset, y=end offset (0-based offsets into outputbuffer)
         private Point mReplaceRange; //same semantics as mOutputRange
-        private String mLastBindableTagName;
+        private string mLastBindableTagName;
 
         public static int INITIAL_INDENT = 0;
         public static int BRACE_INDENT = 34;
@@ -261,7 +261,7 @@ namespace CodeFormatter.Handlers
 
         static ASPrettyPrinter()
         {
-            Break_Table_Items=new Dictionary<String, Int32>();
+            Break_Table_Items=new Dictionary<string, int>();
             Break_Table_Items[Break_Commas] = Break_Commas_code;
             Break_Table_Items[Break_Arithmetic_Ops] = Break_Arithmetic_Ops_code; 
             Break_Table_Items[Break_Assignment] = Break_Assignment_code; 
@@ -272,7 +272,7 @@ namespace CodeFormatter.Handlers
             Break_Table_Items[Break_Other_Connectors] = Break_Other_Connectors_code;
             Break_Table_Items[Break_Keyword] = Break_Keyword_code;
         
-            Brace_Context_Items=new Dictionary<String, Int32>();
+            Brace_Context_Items=new Dictionary<string, int>();
             Brace_Context_Items[BraceContext_Conditional] = BraceContext_Conditional_code;
             Brace_Context_Items[BraceContext_block] = BraceContext_block_code;
             Brace_Context_Items[BraceContext_catch] = BraceContext_catch_code;
@@ -297,12 +297,12 @@ namespace CodeFormatter.Handlers
             mExpressionWrapOptions=new WrapOptions(WrapOptions.WRAP_NONE);
             mXMLWrapOptions=new WrapOptions(WrapOptions.WRAP_DONT_PROCESS);
             mAdvancedNewlineBeforeBraceSettings=0;
-            mMetaTagsToKeepOnSameLineAsProperty=new List<String>();
-            mMetaTagsToKeepOnSameLineAsFunction=new List<String>();
+            mMetaTagsToKeepOnSameLineAsProperty=new List<string>();
+            mMetaTagsToKeepOnSameLineAsFunction=new List<string>();
             mAllowMultiplePasses=true;
         }
 
-        public ASPrettyPrinter(bool isCompleteFile, String sourceData)
+        public ASPrettyPrinter(string sourceData)
         {
             initSettings();
             mSourceData=sourceData;
@@ -313,7 +313,7 @@ namespace CodeFormatter.Handlers
         {
             return mBlockIndent;
         }
-        public String print(int startIndent)
+        public string print(int startIndent)
         {
             if (mSourceData.Contains(mIgnoreFileProcessing))
             {
@@ -345,7 +345,7 @@ namespace CodeFormatter.Handlers
                 mElseIfNeedToLoseIndent=false;
                 mLazyIndentType=(-1);
                 mLazyFormatType=(-1);
-                mFormatTypeStack=new List<Int32>();
+                mFormatTypeStack=new List<int>();
                 if (mDoFormat)
                     pushFormatMode(FORMAT_ALL);
                 else
@@ -364,7 +364,7 @@ namespace CodeFormatter.Handlers
                 mAddBraceStack=new List<StatementBraceInfo>();
                 mCompletedBraceInfos=new List<StatementBraceInfo>();
             
-                mAddedCRs=new List<Int32>();
+                mAddedCRs=new List<int>();
                 mParseErrors=null;
                 mIndentStack=new List<IndentType>();
                 mIndentStack.Add(new IndentType(INITIAL_INDENT, startIndent));
@@ -418,7 +418,7 @@ namespace CodeFormatter.Handlers
                                     int nextCR = mOutputBuffer.ToString().IndexOf('\n', startBracePos + 1);
                                     if (nextCR>=0)
                                     {
-                                        String nextChars = mOutputBuffer.ToString().Substring(startBracePos + 1, nextCR - (startBracePos + 1)).Trim();
+                                        string nextChars = mOutputBuffer.ToString().Substring(startBracePos + 1, nextCR - (startBracePos + 1)).Trim();
                                         if (nextChars.Length==0)
                                         {
                                             editItems.Add(new DeleteItem(nextCR, 1, -1));
@@ -427,7 +427,7 @@ namespace CodeFormatter.Handlers
                                     nextCR = mOutputBuffer.ToString().IndexOf('\n', endBracePos + 1);
                                     if (nextCR>=0)
                                     {
-                                        String nextChars = mOutputBuffer.ToString().Substring(endBracePos + 1, nextCR - (endBracePos + 1)).Trim();
+                                        string nextChars = mOutputBuffer.ToString().Substring(endBracePos + 1, nextCR - (endBracePos + 1)).Trim();
                                         if (nextChars.Length==0)
                                         {
                                             editItems.Add(new DeleteItem(nextCR, 1, -1));
@@ -457,7 +457,7 @@ namespace CodeFormatter.Handlers
                         */
 
                         if (mReplaceMap is null)
-                            mReplaceMap=new Dictionary<Int32, ReplacementRange>();
+                            mReplaceMap=new Dictionary<int, ReplacementRange>();
 
                         int addedChars=0;
                         for (int j=0;j<editItems.Count;j++)
@@ -492,9 +492,9 @@ namespace CodeFormatter.Handlers
                                 //add replacemap item, but only if non-whitespace is being deleted
                                 //TODO: what if a brace is added and deleted at same location? Will that break the merging code?
                                 DeleteItem dItem=(DeleteItem)item;
-                                Int32 start = dItem.getLocation() + addedChars;
-                                Int32 end = dItem.getLocation() + dItem.getLength() + addedChars;
-                                String removedData = mOutputBuffer.ToString().Substring(start, end - start);
+                                int start = dItem.getLocation() + addedChars;
+                                int end = dItem.getLocation() + dItem.getLength() + addedChars;
+                                string removedData = mOutputBuffer.ToString().Substring(start, end - start);
                                 if (dItem.getOriginalDeleteLocation()>=0)
                                 {
                                     ReplacementRange range=new ReplacementRange(new Point(item.getLocation()+addedChars, item.getLocation()+addedChars), new Point(dItem.getOriginalDeleteLocation(),dItem.getOriginalDeleteLocation()+dItem.getLength()));
@@ -510,13 +510,13 @@ namespace CodeFormatter.Handlers
                         }
                     
                 
-                    String resultText=mOutputBuffer.ToString();
+                    string resultText=mOutputBuffer.ToString();
                     
                     mParseErrors=p2.getParseErrors();
                     if (mParseErrors != null)
                         return null;
     
-                    String oldString=mWorkingSource+mAdditionalTextAdded;
+                    string oldString=mWorkingSource+mAdditionalTextAdded;
                     if (mAdditionalTextAdded.Length==0 && mRemovedText.Length==0 && ASFormatter.validateNonWhitespaceIdentical(resultText, mWorkingSource) || ((mAdditionalTextAdded.Length>0 || (mRemovedText.Length>0)) && ASFormatter.validateNonWhitespaceCharCounts(resultText+mRemovedText, oldString)))
                     {
                         //trim extra newlines at the end of result text
@@ -545,7 +545,7 @@ namespace CodeFormatter.Handlers
                     
                         if (mRootDeclEqualContext!=null)
                         {
-                            mDeclEqualPosMap=new Dictionary<String, Int32>();
+                            mDeclEqualPosMap=new Dictionary<string, int>();
                             mRootDeclEqualContext.fillMap(mDeclEqualPosMap);
                         }
                     
@@ -574,7 +574,7 @@ namespace CodeFormatter.Handlers
             return mSourceData;
         }
     
-        private static int getEndEOLs(String source)
+        private static int getEndEOLs(string source)
         {
             int count=0;
             for (int i=source.Length-1;i>=0;i--)
@@ -600,7 +600,7 @@ namespace CodeFormatter.Handlers
             if (buffer.Length>0) //don't add whitespace if we are at the start of the buffer
             {
                 int currentBlankLines=ASFormatter.getNumberOfEmptyLinesAtEnd(buffer);
-                foreach (Int32 crCode in mAddedCRs)
+                foreach (int crCode in mAddedCRs)
                 {
                     if (crCode==AddCR)
                     {
@@ -700,7 +700,7 @@ namespace CodeFormatter.Handlers
         
             if (i<0 || i>=buffer.Length)
                 return 0;
-            String lastLine=buffer.ToString().Substring(i);
+            string lastLine=buffer.ToString().Substring(i);
             int lastLineLength=0;
             for (i=0;i<lastLine.Length;i++)
             {
@@ -769,12 +769,12 @@ namespace CodeFormatter.Handlers
             mAddedCRs.Clear();
         }
     
-        String generateIndent(int spaces)
+        string generateIndent(int spaces)
         {
             return ASFormatter.generateIndent(spaces, mUseTabs, mTabSize);
         }
     
-        public static int findIndent(String line, int tabSize)
+        public static int findIndent(string line, int tabSize)
         {
             int spaceCount=0;
             for (int k=0;k<line.Length;k++)
@@ -806,12 +806,12 @@ namespace CodeFormatter.Handlers
         public int determineLastIndent(StringBuilder buffer)
         {
             //TODO: it's pretty inefficient to split the buffer when I should only grab lines as I need them
-            String[] lines=buffer.ToString().Split('\n');
+            string[] lines=buffer.ToString().Split('\n');
             if (lines.Length>0)
             {
                 for (int i=lines.Length-1;i>=0;i--)
                 {
-                    String line=lines[i];
+                    string line=lines[i];
                 
                     //skip to next (i.e. previous) line if this line starts with a line comment
                     if (AntlrUtilities.asTrim(line).StartsWithOrdinal("//"))
@@ -830,7 +830,7 @@ namespace CodeFormatter.Handlers
             int lastIndent=determineLastIndent(buffer);
             int currentIndent=getCurrentIndent();
             int newIndent=currentIndent;
-            String text=AntlrUtilities.asTrim(buffer.ToString()); //TODO: something more efficient
+            string text=AntlrUtilities.asTrim(buffer.ToString()); //TODO: something more efficient
             if (text.Length>0)
             {
                 newIndent=Math.Min(currentIndent, lastIndent);
@@ -863,10 +863,10 @@ namespace CodeFormatter.Handlers
         public List<Exception> getParseErrors() {
             return mParseErrors;
         }
-        public void setData(String text) {
+        public void setData(string text) {
             mSourceData=text;
         }
-        public bool isCRBeforeOpenBrace(List<Int32> contextStack)
+        public bool isCRBeforeOpenBrace(List<int> contextStack)
         {
             //if we are using the simple settings for adobe/sun
             if (isUseBraceStyleSetting())
@@ -882,7 +882,7 @@ namespace CodeFormatter.Handlers
             {
                 if (contextStack.Count>0)
                 {
-                    Int32 topItem=contextStack[contextStack.Count-1];
+                    int topItem=contextStack[contextStack.Count-1];
                     if ((topItem & mAdvancedNewlineBeforeBraceSettings)!=0)
                         return true;
                     else
@@ -900,9 +900,9 @@ namespace CodeFormatter.Handlers
             mCRBeforeOpenBrace = braceOnNewLine;
         }
     
-        public static String mStartExcludeProcessing="{FlexFormatter:Off}";
-        public static String mStopExcludeProcessing="{FlexFormatter:On}";
-        public static String mIgnoreFileProcessing="{FlexFormatter:IgnoreFile}";
+        public static string mStartExcludeProcessing="{FlexFormatter:Off}";
+        public static string mStopExcludeProcessing="{FlexFormatter:On}";
+        public static string mIgnoreFileProcessing="{FlexFormatter:IgnoreFile}";
 
         public void emit(IToken tok)
         {
@@ -954,7 +954,7 @@ namespace CodeFormatter.Handlers
                         break;
                     mBindablePos--;
                 }
-                String bindableText = mOutputBuffer.ToString().Substring(mBindablePos);
+                string bindableText = mOutputBuffer.ToString().Substring(mBindablePos);
                 mOutputBuffer.Remove(mBindablePos, mOutputBuffer.Length - mBindablePos);
             
                 //this should spit out the blank lines before function and similar whitespace
@@ -1032,7 +1032,7 @@ namespace CodeFormatter.Handlers
             bool onBlankLine=ASFormatter.isOnlyWhitespaceOnLastLine(mOutputBuffer); //I think I can only be on a blank line at the start of the document
             int blankLines=0;
             bool needToEnsureNewLine=false;
-            foreach (Int32 ws in mAddedCRs) 
+            foreach (int ws in mAddedCRs) 
             {
                 if (ws==AddCR || ws==AddCR_BlankLine)
                 {
@@ -1174,7 +1174,7 @@ namespace CodeFormatter.Handlers
                                     int replaceOffset=((CommonToken)t).StartIndex+line.mOriginalStartOffset;
                                     ReplacementRange range=new ReplacementRange(new Point(mOutputBuffer.Length, mOutputBuffer.Length+2), new Point(replaceOffset, replaceOffset));
                                     if (mReplaceMap is null)
-                                        mReplaceMap=new Dictionary<Int32, ReplacementRange>();
+                                        mReplaceMap=new Dictionary<int, ReplacementRange>();
                                     range.setChangedText("//", "");
                                     mReplaceMap[mOutputBuffer.Length] = range;
                                     mAdditionalTextAdded+="//";
@@ -1232,7 +1232,7 @@ namespace CodeFormatter.Handlers
                         //TODO: something else completely, which might involve adding newlines, wrapping lines, etc.
                         //    -when I wrote this for Java, I did some fancy code to determine the relative offset of
                         //    the original lines to maintain the indenting within the comment. 
-                        String[] commentLines=t.Text.Split('\n');
+                        string[] commentLines=t.Text.Split('\n');
                         int indentAmount=getIndentForNextLine(mOutputBuffer);
                         int originalIndent=0;
                         bool useReplaceRange=false;
@@ -1256,7 +1256,7 @@ namespace CodeFormatter.Handlers
                         if (isKeepRelativeCommentIndent())
                         {
                             //find original indent
-                            String lineData=t.Text;
+                            string lineData=t.Text;
                             int prevLineEnd=mSourceData.LastIndexOf('\n', ((CommonToken)t).StartIndex);
                             if (prevLineEnd<0)
                                 prevLineEnd=0;
@@ -1271,7 +1271,7 @@ namespace CodeFormatter.Handlers
                         {
                             bool onLastLine=(j==commentLines.Length-1);
                             indentAmount=getIndentForNextLine(mOutputBuffer);
-                            String data=AntlrUtilities.asTrim(commentLines[j]); //this removes the \r, if it exists
+                            string data=AntlrUtilities.asTrim(commentLines[j]); //this removes the \r, if it exists
                         
                             if (j>0)
                             {
@@ -1297,7 +1297,7 @@ namespace CodeFormatter.Handlers
                                         //else
                                         //indentAmount+=3;
                                         // FIXED: Multiline comment indent support added
-                                        String nextLine = data;
+                                        string nextLine = data;
                                         if (nextLine.Length > 0 && nextLine[0] == '*')
                                         {
                                             if (mIndentMultilineComments) indentAmount += 1;
@@ -1330,7 +1330,7 @@ namespace CodeFormatter.Handlers
                             CommonToken commonTok=(CommonToken)t;
                             for (;replaceArea.X<mOutputBuffer.Length;replaceArea.X++)
                             {
-                                if (!Char.IsWhiteSpace(mOutputBuffer[replaceArea.X]))
+                                if (!char.IsWhiteSpace(mOutputBuffer[replaceArea.X]))
                                     break;
                             }
                             ReplacementRange replaceRange=new ReplacementRange(replaceArea, new Point(commonTok.StartIndex, commonTok.StartIndex+t.Text.Length));
@@ -1338,7 +1338,7 @@ namespace CodeFormatter.Handlers
                             if (!ASFormatter.validateNonWhitespaceIdentical(replaceRange.getAddedText(), replaceRange.getDeletedText()))
                             {
                                 if (mReplaceMap is null)
-                                    mReplaceMap=new Dictionary<Int32, ReplacementRange>();
+                                    mReplaceMap=new Dictionary<int, ReplacementRange>();
                                 mReplaceMap[replaceArea.X] = replaceRange;
                             }
                         }
@@ -1418,7 +1418,7 @@ namespace CodeFormatter.Handlers
                     }
                     if (ASFormatter.isLineEmpty(mOutputBuffer))
                     {
-                        String indentString=generateIndent(indentAmount);
+                        string indentString=generateIndent(indentAmount);
                         mOutputBuffer.Append(indentString);
                     }
                 }
@@ -1514,7 +1514,7 @@ namespace CodeFormatter.Handlers
             if (mNextTokenInElseIfState)
             {
                 mNextTokenInElseIfState=false;
-                String newText = mOutputBuffer.ToString().Substring(currentBufferOffset);
+                string newText = mOutputBuffer.ToString().Substring(currentBufferOffset);
                 if (!newText.Contains("\n"))
                 {
                     mElseIfNeedToLoseIndent=true;
@@ -1529,7 +1529,7 @@ namespace CodeFormatter.Handlers
             mOutputBuffer.Append(tok.Text);
         }
     
-        private String[] wrapMultilineComment(int indentAmount, String[] commentLines, bool reflowLines, bool keepBlankLines, bool headerTextOnNewLines, int asteriskMode, String commentStart, int hangingIndentTabs) 
+        private string[] wrapMultilineComment(int indentAmount, string[] commentLines, bool reflowLines, bool keepBlankLines, bool headerTextOnNewLines, int asteriskMode, string commentStart, int hangingIndentTabs) 
         {
             //do I need an option for whether the begin/end are on separate lines from the text, and
             //maybe it doesn't matter if it all fits on one line?
@@ -1541,17 +1541,17 @@ namespace CodeFormatter.Handlers
             else
             {
                 //this will ignore relative comment indent; I don't think that setting is compatible with this
-                List<String> lines=new List<String>();
-                foreach (String line in commentLines) 
+                List<string> lines=new List<string>();
+                foreach (string line in commentLines) 
                 {
                     lines.Add(AntlrUtilities.asTrim(line));
                 }
-                String asteriskPrefix="* ";
+                string asteriskPrefix="* ";
             
                 bool hasAsterisks=false;
                 for (int i=0;i<lines.Count;i++)
                 {
-                    String line = lines[i];
+                    string line = lines[i];
                     if (line.StartsWith('*') && !line.StartsWithOrdinal("*/"))
                     {
                         hasAsterisks=true;
@@ -1565,13 +1565,13 @@ namespace CodeFormatter.Handlers
             
                 /////////////////////////////////////////////////////////////////////////////
                 //add space after open tag
-                String startLine = lines[0];
+                string startLine = lines[0];
                 startLine=AntlrUtilities.asTrim(startLine.Substring(commentStart.Length));
                 startLine=commentStart+(startLine.Length>0 ? " "+startLine : "");
                 lines[0] = startLine;
             
                 //and before close tag
-                String endLine=lines[lines.Count-1];
+                string endLine=lines[lines.Count-1];
                 endLine=AntlrUtilities.asTrim(endLine.Substring(0, endLine.Length-2));
                 endLine=(endLine.Length>0 ? endLine+" " : "")+"*/";
                 lines[lines.Count - 1] = endLine;
@@ -1579,9 +1579,9 @@ namespace CodeFormatter.Handlers
             
                 if (reflowLines)
                 {
-                    String buffer="";
-                    List<String> newLines=new List<String>();
-                    foreach (String line in lines)
+                    string buffer="";
+                    List<string> newLines=new List<string>();
+                    foreach (string line in lines)
                     {
                         if (line.Length==0 && keepBlankLines)
                         {
@@ -1617,19 +1617,19 @@ namespace CodeFormatter.Handlers
                     }
                     if (lines[lines.Count-1].Length>2)
                     {
-                        String lineData=lines[lines.Count-1];
+                        string lineData=lines[lines.Count-1];
                         lines[lines.Count-1] = AntlrUtilities.asTrim(lineData.Substring(0, lineData.Length-2));
                         lines.Add("*/");
                     }
                 }
             
                 //now, wrap the lines I have left
-                List<String> wrappedLines=new List<String>();
+                List<string> wrappedLines=new List<string>();
             
                 bool workingOnAttribute=false;
                 for (int i=0;i<lines.Count;i++)
                 {
-                    String line = lines[i];
+                    string line = lines[i];
                     if (line.Length==0)
                         workingOnAttribute=false;
                     int extraSpaces=0; //accounts for aligning text to right of "/* " or "*"
@@ -1638,7 +1638,7 @@ namespace CodeFormatter.Handlers
                         workingOnAttribute=true; //once we see an attribute, we assume that subsequent lines are as well, until we see a blank line
                     while (true)
                     {
-                        String currentLine;
+                        string currentLine;
                         int hangingSpaces=0;
                         if (workingOnAttribute && !line.StartsWith('@'))
                             hangingSpaces=mTabSize*hangingIndentTabs;
@@ -1680,24 +1680,24 @@ namespace CodeFormatter.Handlers
     
         //wrap the text of the line comment and return an array of line comments to replace the original.  
         //The original should be returned if it doesn't violate the max length
-        private List<CommentLineWrapData> wrapLineComment(String text, int indent, int maxLength) {
+        private List<CommentLineWrapData> wrapLineComment(string text, int indent, int maxLength) {
     //      int spacesBeforeText=0;
             List<CommentLineWrapData> lines=new List<CommentLineWrapData>();
             int originalOffset=0;
-            String remainingText=text;
+            string remainingText=text;
             if (remainingText.StartsWithOrdinal("//"))
             {
                 remainingText=remainingText.Substring(2);
                 originalOffset+=2;
             }
-            String preWhitespace=AntlrUtilities.findPreWhitespace(remainingText);
+            string preWhitespace=AntlrUtilities.findPreWhitespace(remainingText);
             originalOffset+=preWhitespace.Length;
             remainingText=remainingText.Trim();
         
             while (true)
             {
                 int breakPoint=findCommentBreakpoint(remainingText, indent+preWhitespace.Length+2, maxLength);
-                String lineText="";
+                string lineText="";
                 if (breakPoint<0 || breakPoint>=remainingText.Length)
                 {
                     lineText=remainingText;
@@ -1714,7 +1714,7 @@ namespace CodeFormatter.Handlers
                 wrapData.mOriginalStartOffset=originalOffset;
                 lines.Add(wrapData);
                 originalOffset+=breakPoint;
-                String newPreWS=AntlrUtilities.findPreWhitespace(remainingText);
+                string newPreWS=AntlrUtilities.findPreWhitespace(remainingText);
                 originalOffset+=newPreWS.Length;
                 remainingText=remainingText.Trim();
                 if (remainingText.Length==0)
@@ -1724,7 +1724,7 @@ namespace CodeFormatter.Handlers
             return lines;
         }
     
-        private int findCommentBreakpoint(String text, int extraChars, int maxLength)
+        private int findCommentBreakpoint(string text, int extraChars, int maxLength)
         {
             int testPos=Math.Min(text.Length, maxLength-extraChars);
             if (testPos<=0 || testPos==text.Length)
@@ -2335,7 +2335,7 @@ namespace CodeFormatter.Handlers
             mCollapseSpaceForAdjacentParens = collapseSpaceForAdjacentParens;
         }
 
-        public bool isDirectiveForNextElement(String directiveName)
+        public bool isDirectiveForNextElement(string directiveName)
         {
             return true; //looks like they should always be associated with the next code item
     //      //TODO: maybe change these to equals exact because they seem to be case sensitive
@@ -2650,7 +2650,7 @@ namespace CodeFormatter.Handlers
                     int lastCR=t.Text.LastIndexOf('\n');
                     if (lastCR>=0)
                     {
-                        String text=t.Text.Substring(lastCR+1);
+                        string text=t.Text.Substring(lastCR+1);
                         col=getColumnLength(col, text, 0, text.Length);
                         startTokenIndex++;
                         break;
@@ -2674,13 +2674,13 @@ namespace CodeFormatter.Handlers
         
             //handle the partial token we're currently on
             IToken t2=mRawTokens.Get(token.TokenIndex);
-            String text2=t2.Text.Substring(0, indexWithinToken);
+            string text2=t2.Text.Substring(0, indexWithinToken);
             col=getColumnLength(col, text2, 0, indexWithinToken);
         
             return col;
         }
     
-        private int getColumnLength(int col, String text, int start, int end)
+        private int getColumnLength(int col, string text, int start, int end)
         {
             for (int k=start;k<end && k<text.Length;k++)
             {
@@ -2745,7 +2745,7 @@ namespace CodeFormatter.Handlers
                 int currentIndent=getCurrentIndent();
                 if (lastIndent==currentIndent)
                     return;
-                String data = mOutputBuffer.ToString().Substring(lastCR + 1).Trim();
+                string data = mOutputBuffer.ToString().Substring(lastCR + 1).Trim();
                 if (data.Length==0)
                     return; //don't think it should ever be empty, but doesn't hurt to check
                 for (int i=0;i<data.Length;i++)
@@ -2769,12 +2769,12 @@ namespace CodeFormatter.Handlers
             
                 if (unindent)
                 {
-                    String newIndentString=generateIndent(currentIndent);
+                    string newIndentString=generateIndent(currentIndent);
                     int firstNonWS=0;
-                    String originalString = mOutputBuffer.ToString().Substring(lastCR + 1);
+                    string originalString = mOutputBuffer.ToString().Substring(lastCR + 1);
                     for (int i = 0; i < originalString.Length; i++)
                     {
-                        if (!Char.IsWhiteSpace(originalString[i]))
+                        if (!char.IsWhiteSpace(originalString[i]))
                         {
                             firstNonWS = i;
                             break;
@@ -2919,7 +2919,7 @@ namespace CodeFormatter.Handlers
     
         private int findWrapPoint(WrapInfo wi, int lineStart, int lineEnd, int depth, bool forceWrap, bool ignoreMax)
         {
-            String restOfText = mOutputBuffer.ToString().Substring(lineStart);
+            string restOfText = mOutputBuffer.ToString().Substring(lineStart);
             for (int i=wi.mWrapItems.Count-1;i>=0;i--)
             {
                 WrapItem info=wi.mWrapItems[i];
@@ -2937,7 +2937,7 @@ namespace CodeFormatter.Handlers
                     WrapItem info=wi.mWrapItems[i];
                     if (info.mStartPos<lineEnd && info.mStartPos>lineStart)
                     {
-                        int nextLineIndex=possiblyWrap(wi, info, i, lineStart, restOfText, depth, forceWrap, ignoreMax ? Int32.MaxValue : getMaxLineLength()+getAdvancedWrappingGraceColumns());
+                        int nextLineIndex=possiblyWrap(wi, info, i, lineStart, restOfText, depth, forceWrap, ignoreMax ? int.MaxValue : getMaxLineLength()+getAdvancedWrappingGraceColumns());
                         if (nextLineIndex>=0)
                             return nextLineIndex;
                     }               
@@ -2982,7 +2982,7 @@ namespace CodeFormatter.Handlers
             (mWrapAllParametersIfAny && info.getCommaContextType()==Break_SubType_Parameters)));        
         }
     
-        private int possiblyWrap(WrapInfo wi, WrapItem info, int infoIndex, int lineStart, String restOfText, int depth, bool forceWrap, int maxLineLength)
+        private int possiblyWrap(WrapInfo wi, WrapItem info, int infoIndex, int lineStart, string restOfText, int depth, bool forceWrap, int maxLineLength)
         {
             if (info.isBreakUsed())
                 return -1;
@@ -3115,7 +3115,7 @@ namespace CodeFormatter.Handlers
                         {
                             indentAmount=getColumnForPosition(wrapItem.getFirstParmPos());
                         }
-                        String indentWS=generateIndent(indentAmount);
+                        string indentWS=generateIndent(indentAmount);
                     
                         mOutputBuffer.Insert(insertPos, "\n"+indentWS);
                         wrapItem.setBreakUsed(true);
@@ -3466,7 +3466,7 @@ namespace CodeFormatter.Handlers
             }
         }
 
-        public void findSplitPoint(WrapItem info, String restOfText, int lineStart, int[] results)
+        public void findSplitPoint(WrapItem info, string restOfText, int lineStart, int[] results)
         {
             int splitPoint=info.getAlternateFirstItemWrapPoint();
             if (splitPoint<0)
@@ -3511,7 +3511,7 @@ namespace CodeFormatter.Handlers
             return mLastCapturePosition;
         }
 
-        public void saveWrapChar(IToken op, int breakType, bool breakBefore, bool indentToFirstParm, int firstParmLocation, String commaContextType)
+        public void saveWrapChar(IToken op, int breakType, bool breakBefore, bool indentToFirstParm, int firstParmLocation, string commaContextType)
         {
             if (!isUseAdvancedWrapping())
                 return;
@@ -3614,21 +3614,21 @@ namespace CodeFormatter.Handlers
             mSpacesBeforeArguments = spacesBeforeArguments;
         }
 
-        public List<String> getMetaTagsToKeepOnSameLineAsProperty() {
+        public List<string> getMetaTagsToKeepOnSameLineAsProperty() {
             return mMetaTagsToKeepOnSameLineAsProperty;
         }
 
-        public void setMetaTagsToKeepOnSameLineAsProperty(List<String> metaTagsToKeepOnSameLineAsProperty)
+        public void setMetaTagsToKeepOnSameLineAsProperty(List<string> metaTagsToKeepOnSameLineAsProperty)
         {
             mMetaTagsToKeepOnSameLineAsProperty = metaTagsToKeepOnSameLineAsProperty;
         }
 
-        public List<String> getMetaTagsToKeepOnSameLineAsFunction()
+        public List<string> getMetaTagsToKeepOnSameLineAsFunction()
         {
             return mMetaTagsToKeepOnSameLineAsFunction;
         }
 
-        public void setMetaTagsToKeepOnSameLineAsFunction(List<String> metaTagsToKeepOnSameLineAsFunction)
+        public void setMetaTagsToKeepOnSameLineAsFunction(List<string> metaTagsToKeepOnSameLineAsFunction)
         {
             mMetaTagsToKeepOnSameLineAsFunction = metaTagsToKeepOnSameLineAsFunction;
         }
@@ -3651,7 +3651,7 @@ namespace CodeFormatter.Handlers
             mIsNewlineBeforeBindableProperty = isNewlineBeforeBindableProperty;
         }
 
-        public void setLastBindableTagName(String lastBindableTagName) {
+        public void setLastBindableTagName(string lastBindableTagName) {
             mLastBindableTagName = lastBindableTagName;
         }
 
@@ -3718,13 +3718,13 @@ namespace CodeFormatter.Handlers
             //if the loop control statement itself crosses lines, then we want to add braces
             if (info.getOutputStatementStartPos()>0 && info.getOutputStatementEndPos()>0)
             {
-                String statementText = mOutputBuffer.ToString().Substring(info.getOutputStatementStartPos(), info.getOutputStatementEndPos() - info.getOutputStatementStartPos());
+                string statementText = mOutputBuffer.ToString().Substring(info.getOutputStatementStartPos(), info.getOutputStatementEndPos() - info.getOutputStatementStartPos());
                 if (statementText.Trim().IndexOf('\n')>=0)
                     return true;
             }
         
             //if the statement is on more than one line (that is, if there is wrapping involved), return true
-            String statementData = mOutputBuffer.ToString().Substring(info.getStartBracePos(), info.getEndBracePos() - info.getStartBracePos()).Trim();
+            string statementData = mOutputBuffer.ToString().Substring(info.getStartBracePos(), info.getEndBracePos() - info.getStartBracePos()).Trim();
             if (info.isBracesCurrentlyExist())
             {
                 //remove braces from statementData, if at ends
@@ -4010,7 +4010,7 @@ namespace CodeFormatter.Handlers
         }
     
     
-        public Dictionary<Int32, ReplacementRange> getReplaceMap()
+        public Dictionary<int, ReplacementRange> getReplaceMap()
         {
             return mReplaceMap;
         }
@@ -4096,7 +4096,7 @@ namespace CodeFormatter.Handlers
             for (int i=currentToken; i<mRawTokens.Count; i++)
             {
                 IToken t=mRawTokens.Get(i);
-                String tokenText=t.Text;
+                string tokenText=t.Text;
                 if (tokenText.IndexOf('\n')>=0)
                 {
                     return;
@@ -4198,7 +4198,7 @@ namespace CodeFormatter.Handlers
             mAllowMultiplePasses=false;
         }
     
-        public String getAddedText()
+        public string getAddedText()
         {
             return mAdditionalTextAddedAllPasses;
         }
@@ -4289,7 +4289,7 @@ namespace CodeFormatter.Handlers
                 int currentLength=determineLastLineLength(mOutputBuffer, getTabSize());
                 try 
                 {
-                    Int32 amt=mDeclEqualPosMap[mCurrentDeclEqualContext.getPathCode()];
+                    int amt=mDeclEqualPosMap[mCurrentDeclEqualContext.getPathCode()];
                     //now, increase the current length based on the number of extra whitespaces that are currently in the pipeline
                     for (int i=mAddedCRs.Count-1;i>=0;i--)
                     {
@@ -4320,7 +4320,7 @@ namespace CodeFormatter.Handlers
             mLineCommentColumn = column;
         }
 
-        public String getRemovedText() {
+        public string getRemovedText() {
             return mRemovedTextAllPasses;
         }
 
@@ -4538,7 +4538,7 @@ namespace CodeFormatter.Handlers
 
     public class CommentLineWrapData
     {
-        public String mText;
+        public string mText;
         public int mOriginalStartOffset;
     }
 
@@ -4556,14 +4556,14 @@ namespace CodeFormatter.Handlers
     
     public class InsertItem : EditItem
     {
-        private readonly String mData;
+        private readonly string mData;
         private readonly int mOriginalInsertLocation;
-        public InsertItem(int location, String insertString, int originalPos) : base(location)
+        public InsertItem(int location, string insertString, int originalPos) : base(location)
         {
             mData=insertString;
             mOriginalInsertLocation=originalPos;
         }
-        public String getData() {
+        public string getData() {
             return mData;
         }
         public int getOriginalInsertLocation() {
@@ -4722,7 +4722,7 @@ namespace CodeFormatter.Handlers
         readonly List<EqualContext> mChildren;
         int mMaxPosition;
         readonly EqualContext mParent;
-        readonly String mPathCode;
+        readonly string mPathCode;
         bool mNeedChanges;
         int mItemsSeen=0;
         public EqualContext(EqualContext parent, int index)
@@ -4741,7 +4741,7 @@ namespace CodeFormatter.Handlers
             mNeedChanges=false;
         }
         
-        public void fillMap(Dictionary<String, Int32> declEqualPosMap)
+        public void fillMap(Dictionary<string, int> declEqualPosMap)
         {
             declEqualPosMap[getPathCode()] = getMaxPosition();
             foreach (EqualContext context in mChildren)
@@ -4789,7 +4789,7 @@ namespace CodeFormatter.Handlers
             return mMaxPosition;
         }
         
-        public String getPathCode()
+        public string getPathCode()
         {
             return mPathCode;
         }
@@ -4819,7 +4819,7 @@ namespace CodeFormatter.Handlers
             //mWrapItems.addAll(wi.mWrapItems);
         }
 
-        public void addWrapChar(IToken op, int depth, int position, int breakType, bool breakBefore, bool indentToFirstParm, int firstParmLocation, int currentIndent, String commaContextType)
+        public void addWrapChar(IToken op, int depth, int position, int breakType, bool breakBefore, bool indentToFirstParm, int firstParmLocation, int currentIndent, string commaContextType)
         {
             WrapItem item = new WrapItem(op, depth, position, breakType, breakBefore, currentIndent);
             item.setIndentToFirstParm(indentToFirstParm);
@@ -4847,7 +4847,7 @@ namespace CodeFormatter.Handlers
     public class WrapItem
     {
         public int mDepth;
-        private readonly String mText;
+        private readonly string mText;
         public int mStartPos;
         private readonly int mBreakType;
         private readonly bool mBreakBefore;
@@ -4855,7 +4855,7 @@ namespace CodeFormatter.Handlers
         private int mIndent;
         private bool mBreakUsed;
         private bool mIndentToFirstParm;
-        private String mCommaContextType;
+        private string mCommaContextType;
         private int mNextItemPos; //used for aligning object/array items
         private int mAlternateFirstItemWrapPoint;
         public WrapItem(IToken t, int depth, int position, int breakType, bool breakBefore, int currentIndent)
@@ -4874,11 +4874,11 @@ namespace CodeFormatter.Handlers
             mNextItemPos = (-1);
             mAlternateFirstItemWrapPoint = (-1);
         }
-        public void setCommaContextType(String commaContextType)
+        public void setCommaContextType(string commaContextType)
         {
             mCommaContextType = commaContextType;
         }
-        public String getCommaContextType()
+        public string getCommaContextType()
         {
             return mCommaContextType;
         }
@@ -4905,7 +4905,7 @@ namespace CodeFormatter.Handlers
         {
             return mDepth;
         }
-        public String getText()
+        public string getText()
         {
             return mText;
         }
@@ -4995,9 +4995,9 @@ namespace CodeFormatter.Handlers
             mLabeledIndent = labeledIndent;
         }
 
-        public String toString()
+        public string toString()
         {
-            String buffer = "";
+            string buffer = "";
             buffer += "Size=" + mAmount + "->";
             switch (mType)
             {

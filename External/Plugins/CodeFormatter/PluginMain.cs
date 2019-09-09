@@ -214,7 +214,7 @@ namespace CodeFormatter
                     switch (DocumentType)
                     {
                         case TYPE_AS3:
-                            ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
+                            ASPrettyPrinter asPrinter = new ASPrettyPrinter(source);
                             FormatUtility.configureASPrinter(asPrinter, settingObject);
                             string asResultData = asPrinter.print(0);
                             if (asResultData is null)

@@ -180,26 +180,14 @@ namespace PluginCore.FRService
         /// </summary>
         public List<string> GetFiles()
         {
-            switch (type)
+            return type switch
             {
-                case OperationType.FindInRange:
-                    return files;
-
-                case OperationType.FindInSource:
-                    return files ??= new List<string> {path};
-
-                case OperationType.FindInFile:
-                    return files ??= new List<string> {path};
-
-                case OperationType.FindInPath:
-                    if (files is null)
-                    {
-                        var walker = new PathWalker(path, mask, recursive);
-                        files = walker.GetFiles();
-                    }
-                    return files;
-            }
-            return null;
+                OperationType.FindInRange => files,
+                OperationType.FindInSource => (files ??= new List<string> {path}),
+                OperationType.FindInFile => (files ??= new List<string> {path}),
+                OperationType.FindInPath => (files ??= new PathWalker(path, mask, recursive).GetFiles()),
+                _ => null
+            };
         }
 
     }

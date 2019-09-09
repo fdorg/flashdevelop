@@ -712,9 +712,8 @@ namespace HaXeContext
             base.GetCodeModel(result, src, scriptMode);
             // members
             {
-                for (var i = 0; i < result.Members.Count; i++)
+                foreach (var member in result.Members)
                 {
-                    var member = result.Members[i];
                     if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
                     foreach (var parameter in member.Parameters)
                     {
@@ -729,9 +728,8 @@ namespace HaXeContext
             // classes
             {
                 var isHaxe4 = GetCurrentSDKVersion() >= "4.0.0";
-                for (var i = 0; i < result.Classes.Count; i++)
+                foreach (var @class in result.Classes)
                 {
-                    var @class = result.Classes[i];
                     var flags = @class.Flags;
                     if ((flags & FlagType.Abstract) != 0)
                     {

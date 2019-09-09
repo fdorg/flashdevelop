@@ -143,7 +143,7 @@ namespace CodeFormatter.Handlers
 
         private void initialize()
         {
-            mASPrinter = new ASPrettyPrinter(false, "");
+            mASPrinter = new ASPrettyPrinter("");
             mManualAttrSortOrder = new List<string>();
             mIndentAmount = 4;
             mDoFormat = true;
