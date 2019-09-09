@@ -46,7 +46,7 @@ namespace ProjectManager.Controls.TreeView
             Expand();
         }
 
-        private void NotifyProjectRefresh()
+        void NotifyProjectRefresh()
         {
             base.NotifyRefresh();
         }
@@ -56,7 +56,7 @@ namespace ProjectManager.Controls.TreeView
             // do nothing yet, we are not finished
         }
 
-        private void RefreshReferences(bool recursive)
+        void RefreshReferences(bool recursive)
         {
             if (References != null && References.Parent is null)
             {
@@ -65,7 +65,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void RemoveReferences()
+        void RemoveReferences()
         {
             if (References != null && References.Parent == this)
                 Nodes.Remove(References);
@@ -102,7 +102,7 @@ namespace ProjectManager.Controls.TreeView
     {
         public string classpath;
 
-        public ClasspathNode(Project project, string classpath, string text) : base(classpath)
+        public ClasspathNode(string classpath, string text) : base(classpath)
         {
             isDraggable = false;
             isRenamable = false;
@@ -144,52 +144,33 @@ namespace ProjectManager.Controls.TreeView
         {
             base.Refresh(recursive);
 
-            base.isInvalid = !Directory.Exists(BackingPath);
-
-            if (!isInvalid)
-            {
-                ImageIndex = Icons.Classpath.Index;
-            }
-            else
-            {
-                ImageIndex = Icons.ClasspathError.Index;
-            }
+            isInvalid = !Directory.Exists(BackingPath);
+            ImageIndex = !isInvalid
+                ? Icons.Classpath.Index
+                : Icons.ClasspathError.Index;
 
             SelectedImageIndex = ImageIndex;
-
             NotifyRefresh();
         }
     }
 
     public class ProjectClasspathNode : ClasspathNode
     {
-        public ProjectClasspathNode(Project project, string classpath, string text) : base(project, classpath, text)
+        public ProjectClasspathNode(string classpath, string text) : base(classpath, text)
         {
-            if (text != Text)
-            {
-                ToolTipText = text;
-            }
-            else
-            {
-                ToolTipText = "";
-            }
+            ToolTipText = text != Text
+                ? text
+                : "";
         }
 
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
-
-            if (!IsInvalid)
-            {
-                ImageIndex = Icons.ProjectClasspath.Index;
-            }
-            else
-            {
-                ImageIndex = Icons.ProjectClasspathError.Index;
-            }
+            ImageIndex = !IsInvalid
+                ? Icons.ProjectClasspath.Index
+                : Icons.ProjectClasspathError.Index;
 
             SelectedImageIndex = ImageIndex;
-
             NotifyRefresh();
         }
     }
@@ -215,7 +196,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 foreach (var it in project.ExternalLibraries)
                 {
-                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, it, it);
+                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(it, it);
                     Nodes.Add(node);
                     node.Refresh(recursive);
                 }
@@ -238,7 +219,7 @@ namespace ProjectManager.Controls.TreeView
                     if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
                         continue;
 
-                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, absolute, projectClasspath);
+                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(absolute, projectClasspath);
                     Nodes.Add(cpNode);
                     cpNode.Refresh(recursive);
                 }
@@ -256,7 +237,7 @@ namespace ProjectManager.Controls.TreeView
                     if (absolute.StartsWithOrdinal(project.Directory + Path.DirectorySeparatorChar))
                         continue;
 
-                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(project, absolute, globalClasspath);
+                    var cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(absolute, globalClasspath);
                     Nodes.Add(cpNode);
                     cpNode.Refresh(recursive);
                 }
@@ -304,7 +285,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
+        GenericNode ReuseNode(string absolute, GenericNodeList nodesToDie)
         {
             foreach (GenericNode node in nodesToDie)
                 if (node.BackingPath == absolute)
