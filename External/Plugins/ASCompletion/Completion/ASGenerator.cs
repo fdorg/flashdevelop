@@ -4570,11 +4570,7 @@ namespace ASCompletion.Completion
         readonly ClassModel inClass;
         readonly Action action;
 
-        public GeneratorItem(string label, GeneratorJobType job, Action action) : this(label, job, action, null)
-        {
-        }
-
-        public GeneratorItem(string label, GeneratorJobType job, Action action, object data)
+        public GeneratorItem(string label, GeneratorJobType job, Action action)
         {
             Label = label;
             Job = job;
