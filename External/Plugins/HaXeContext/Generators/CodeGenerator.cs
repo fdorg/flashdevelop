@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -26,7 +25,7 @@ namespace HaXeContext.Generators
         ConvertStaticMethodCallToStaticExtensionCall = GeneratorJobType.User << 4,
     }
 
-    internal class CodeGenerator : ASGenerator
+    class CodeGenerator : ASGenerator
     {
         readonly CodeGeneratorInterfaceBehavior codeGeneratorInterfaceBehavior = new CodeGeneratorInterfaceBehavior();
 
@@ -161,7 +160,7 @@ namespace HaXeContext.Generators
             var access = ctx.TypesAffinity(curClass, tmpClass);
             while (!tmpClass.IsVoid())
             {
-                foreach (MemberModel member in tmpClass.Members)
+                foreach (var member in tmpClass.Members)
                 {
                     if (curClass.Members.Contains(member.Name, FlagType.Override, 0)) continue;
                     var parameters = member.Parameters;
@@ -371,11 +370,13 @@ namespace HaXeContext.Generators
                 if (type == "haxe.Constraints.Function") return string.Empty;
                 if (FileParser.IsFunctionType(type))
                 {
-                    var member = FileParser.FunctionTypeToMemberModel<MemberModel>(type, ASContext.Context.Features);
+                    var features = ASContext.Context.Features;
+                    var member = FileParser.FunctionTypeToMemberModel<MemberModel>(type, features);
                     if (member.Parameters.Count > 0 && member.Parameters[0].Type is { } result)
                     {
-                        if (result.Equals(ASContext.Context.Features.voidKey)) return string.Empty;
-                        return result;
+                        return result.Equals(features.voidKey)
+                            ? string.Empty
+                            : result;
                     }
                 }
             }
@@ -447,10 +448,10 @@ namespace HaXeContext.Generators
             result = TemplateUtils.ReplaceTemplateVariable(result, "MetaData", metadata);
             if (templateName != null)
             {
-                var accessor = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
-                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Modifiers", null);
-                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Member", method.Name);
-                result += accessor;
+                var template = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
+                template = TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", null);
+                template = TemplateUtils.ReplaceTemplateVariable(template, "Member", method.Name);
+                result += template;
             }
             return result;
         }

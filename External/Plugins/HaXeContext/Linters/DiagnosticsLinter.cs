@@ -14,7 +14,7 @@ using ScintillaNet;
 
 namespace HaXeContext.Linters
 {
-    internal class DiagnosticsLinter : ILintProvider
+    class DiagnosticsLinter : ILintProvider
     {
         readonly ProcessingQueue fileQueue;
 
@@ -191,14 +191,10 @@ namespace HaXeContext.Linters
             lock (running)
                 running.Remove(task);
 
-            Action<Action> act;
-            if (queue.TryTake(out act))
-            {
-                Task t = CreateTask(act);
-
-                lock (running)
-                    running.Add(t);
-            }
+            if (!queue.TryTake(out var act)) return;
+            var t = CreateTask(act);
+            lock (running)
+                running.Add(t);
         }
 
         Task CreateTask(Action<Action> action)

@@ -175,9 +175,9 @@ namespace AS3Context
 
         const string DEFAULT_FLASHVERSION = "14.0";
 
-        private string flashVersion = DEFAULT_FLASHVERSION;
-        private string as3ClassPath;
-        private string[] as3FileTypes;
+        string flashVersion = DEFAULT_FLASHVERSION;
+        string as3ClassPath;
+        string[] as3FileTypes;
 
         [DisplayName("Default Flash Version")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS3Context.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
@@ -223,8 +223,8 @@ namespace AS3Context
         #region Profiler settings
 
         const int DEFAULT_PROFILER_TIMEOUT = 30;
-        private int profilerTimeout;
-        private string[] customProfilers;
+        int profilerTimeout;
+        string[] customProfilers;
 
         [DisplayName("Profiler Timeout")]
         [LocalizedCategory("AS3Context.Category.Profiler"), LocalizedDescription("AS3Context.Description.ProfilerTimeout"), DefaultValue(DEFAULT_PROFILER_TIMEOUT)]
@@ -249,9 +249,9 @@ namespace AS3Context
         const bool DEFAULT_VERBOSEFDB = false;
         const bool DEFAULT_DISABLELIVECHECKING = false;
 
-        private bool disableFDB;
-        private bool verboseFDB;
-        private bool disableLiveChecking;
+        bool disableFDB;
+        bool verboseFDB;
+        bool disableLiveChecking;
 
         [DisplayName("Disable Flex Debugger Hosting")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("ASCompletion.Description.DisableFDB"), DefaultValue(DEFAULT_DISABLEFDB)]
@@ -279,9 +279,6 @@ namespace AS3Context
 
         #endregion
 
-        private void FireChanged()
-        {
-            OnClasspathChanged?.Invoke();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
     }
 }

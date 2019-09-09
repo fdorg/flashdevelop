@@ -75,14 +75,16 @@ namespace AS3Context
         #endregion
 
         #region tag completion
-        private static XMLContextTag tagContext;
-        private static XMLContextTag parentTag;
-        private static string tokenContext;
-        private static string checksum;
-        private static Dictionary<string, List<string>> allTags;
+
+        static XMLContextTag tagContext;
+        static XMLContextTag parentTag;
+        static string tokenContext;
+        static string checksum;
+
+        static Dictionary<string, List<string>> allTags;
         //static private Regex reIncPath = new Regex("[\"']([^\"']+)", RegexOptions.Compiled);
-        private static readonly Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
-        private static readonly Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
+        static readonly Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
+        static readonly Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
 
         /// <summary>
         /// Called 
@@ -135,7 +137,7 @@ namespace AS3Context
             return true;
         }
 
-        private static bool AddParentAttributes(List<ICompletionListItem> mix, List<string> excludes)
+        static bool AddParentAttributes(List<ICompletionListItem> mix, List<string> excludes)
         {
             bool isContainer = true;
             if (parentTag.Name != null) // add parent tag members
@@ -319,7 +321,7 @@ namespace AS3Context
             return true;
         }
 
-        private static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
+        static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
         {
             ClassModel curClass = mxmlContext.model.GetPublicClass();
             ClassModel tmpClass = tagClass;
@@ -371,7 +373,7 @@ namespace AS3Context
             return isContainer;
         }
 
-        private static List<ICompletionListItem> GetTagAttributeValues(ClassModel tagClass, string ns, string attribute)
+        static List<ICompletionListItem> GetTagAttributeValues(ClassModel tagClass, string ns, string attribute)
         {
             ClassModel curClass = mxmlContext.model.GetPublicClass();
             ClassModel tmpClass = tagClass;
@@ -441,7 +443,7 @@ namespace AS3Context
             return null;
         }
 
-        private static List<ICompletionListItem> GetAutoCompletionValuesFromInspectable(string type, List<ASMetaData> metas)
+        static List<ICompletionListItem> GetAutoCompletionValuesFromInspectable(string type, List<ASMetaData> metas)
         {
             if (metas.IsNullOrEmpty()) return GetAutoCompletionValuesFromType(type);
             foreach (var meta in metas)
@@ -465,7 +467,7 @@ namespace AS3Context
             return GetAutoCompletionValuesFromType(type);
         }
 
-        private static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
+        static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
         {
             if (model?.MetaDatas != null)
             {
@@ -518,7 +520,7 @@ namespace AS3Context
             return false;
         }
 
-        private static List<ICompletionListItem> GetAutoCompletionValuesFromEventType(string type)
+        static List<ICompletionListItem> GetAutoCompletionValuesFromEventType(string type)
         {
             ClassModel tmpClass = mxmlContext.model.GetPublicClass();
             ClassModel eventClass = context.ResolveType(type, mxmlContext.model);
@@ -576,7 +578,7 @@ namespace AS3Context
             return result;
         }
 
-        private static List<ICompletionListItem> GetAutoCompletionValuesFromType(string type)
+        static List<ICompletionListItem> GetAutoCompletionValuesFromType(string type)
         {
             if (type == "Boolean")
             {
@@ -619,7 +621,7 @@ namespace AS3Context
             return null;
         }
 
-        private static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
+        static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
             if (model?.MetaDatas is null) return;
             string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;
@@ -654,7 +656,7 @@ namespace AS3Context
             }
         }
 
-        private static FileModel ParseInclude(FileModel fileModel, ASMetaData meta)
+        static FileModel ParseInclude(FileModel fileModel, ASMetaData meta)
         {
             Match m = reIncPath.Match(meta.RawParams);
             if (m.Success)
@@ -692,11 +694,12 @@ namespace AS3Context
         #endregion
 
         #region context detection
-        private static bool GetContext(object data)
+
+        static bool GetContext(object data)
         {
             if (mxmlContext?.model is null) return false;
 
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (sci is null) return false;
 
             // XmlComplete context
@@ -733,7 +736,8 @@ namespace AS3Context
         #endregion
 
         #region tag resolution
-        private static void GetAllTags()
+
+        static void GetAllTags()
         {
             Dictionary<string, string> nss = mxmlContext.namespaces;
             MemberList allClasses = context.GetAllProjectClasses();
@@ -807,7 +811,7 @@ namespace AS3Context
             return name;
         }
 
-        private static ASResult ResolveAttribute(ClassModel model, string word)
+        static ASResult ResolveAttribute(ClassModel model, string word)
         {
             var result = new ASResult();
             var curClass = mxmlContext.model.GetPublicClass();
@@ -882,8 +886,8 @@ namespace AS3Context
     /// </summary>
     public class MxmlEventHandlerItem : ICompletionListItem
     {
-        private readonly MemberModel member;
-        private readonly int icon;
+        readonly MemberModel member;
+        readonly int icon;
 
         public MxmlEventHandlerItem(MemberModel oMember)
         {

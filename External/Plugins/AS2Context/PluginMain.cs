@@ -15,9 +15,9 @@ namespace AS2Context
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private AS2Settings settingObject;
-        private Context contextInstance;
-        private string settingFilename;
+        AS2Settings settingObject;
+        Context contextInstance;
+        string settingFilename;
 
         #region Required Properties
         
@@ -138,7 +138,7 @@ namespace AS2Context
         /// <summary>
         /// Fix some settings values when the context has been created
         /// </summary>
-        private void ValidateSettings()
+        void ValidateSettings()
         {
             if (settingObject.InstalledSDKs.IsNullOrEmpty())
             {
@@ -173,7 +173,7 @@ namespace AS2Context
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
+        void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
@@ -231,7 +231,7 @@ namespace AS2Context
         #region Macromedia/Adobe Flash IDE
 
         // locations in Application Data
-        private static readonly string[] MACROMEDIA_VERSIONS = {
+        static readonly string[] MACROMEDIA_VERSIONS = {
             "\\Adobe\\Flash CS5\\",
             "\\Adobe\\Flash CS4\\",
             "\\Adobe\\Flash CS3\\",
@@ -242,7 +242,7 @@ namespace AS2Context
         /// <summary>
         /// Explore the possible locations for the Macromedia Flash IDE classpath
         /// </summary>
-        private static string FindMMClassPath()
+        static string FindMMClassPath()
         {
             bool found = false;
             string deflang = CultureInfo.CurrentUICulture.Name;
@@ -261,7 +261,7 @@ namespace AS2Context
                 // look for other languages
                 else if (Directory.Exists(cp))
                 {
-                    string[] dirs = Directory.GetDirectories(cp);
+                    var dirs = Directory.GetDirectories(cp);
                     foreach (string dir in dirs)
                     {
                         if (Directory.Exists(dir + "\\Configuration\\Classes\\"))

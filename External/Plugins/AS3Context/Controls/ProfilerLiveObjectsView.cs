@@ -13,9 +13,9 @@ namespace AS3Context.Controls
     {
         public event ViewObjectEvent OnViewObject;
 
-        private Dictionary<string, TypeItem> items;
-        private readonly TypeItemComparer comparer;
-        private readonly ToolStripMenuItem viewObjectsItem;
+        Dictionary<string, TypeItem> items;
+        readonly TypeItemComparer comparer;
+        readonly ToolStripMenuItem viewObjectsItem;
 
         public ListView ListView { get; }
 
@@ -57,7 +57,7 @@ namespace AS3Context.Controls
             ListView.Sort();
         }
 
-        private void onViewObjects(object sender, EventArgs e)
+        void onViewObjects(object sender, EventArgs e)
         {
             if (ListView.SelectedItems.Count == 1)
             {

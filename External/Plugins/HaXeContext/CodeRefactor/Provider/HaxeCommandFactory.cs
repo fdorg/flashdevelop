@@ -11,7 +11,7 @@ namespace HaXeContext.CodeRefactor.Provider
 {
     using Command = RefactorCommand<IDictionary<string, List<SearchMatch>>>;
 
-    internal class HaxeCommandFactory : CommandFactory
+    class HaxeCommandFactory : CommandFactory
     {
         public HaxeCommandFactory()
         {

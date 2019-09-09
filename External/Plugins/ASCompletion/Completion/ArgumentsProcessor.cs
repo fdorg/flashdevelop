@@ -5,23 +5,20 @@ namespace ASCompletion.Completion
 {
     public class ArgumentsProcessor
     {
-        public static string Process(string text, Hashtable variables)
-        {
-            return new ArgumentsProcessor {variables = variables}.Run(text);
-        }
+        public static string Process(string text, Hashtable variables) => new ArgumentsProcessor {variables = variables}.Run(text);
 
         /* PRIVATE */
 
-        private static readonly Regex re_Argument =
+        static readonly Regex re_Argument =
             new Regex("\\$\\((?<name>[a-z]+)\\)", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-        private Hashtable variables;
+        Hashtable variables;
 
-        private string Run(string text) => re_Argument.Replace(text, Lookup);
+        string Run(string text) => re_Argument.Replace(text, Lookup);
 
-        private string Lookup(Match m)
+        string Lookup(Match m)
         {
-            string name = m.Groups["name"].Value;
+            var name = m.Groups["name"].Value;
             if (variables.ContainsKey(name)) return (string)variables[name];
             return m.Value;
         }

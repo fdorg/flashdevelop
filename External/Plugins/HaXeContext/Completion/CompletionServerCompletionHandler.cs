@@ -15,12 +15,12 @@ namespace HaXeContext
     {
         public event FallbackNeededHandler FallbackNeeded;
 
-        private readonly Process haxeProcess;
-        private readonly int port;
-        private readonly object lockObj = new object();
-        private bool isRunning;
-        private bool listening;
-        private bool failure;
+        readonly Process haxeProcess;
+        readonly int port;
+        readonly object lockObj = new object();
+        bool isRunning;
+        bool listening;
+        bool failure;
 
         public CompletionServerCompletionHandler(ProcessStartInfo haxeProcessStartInfo, int port)
         {
@@ -42,7 +42,7 @@ namespace HaXeContext
             try
             {
                 var client = new TcpClient("127.0.0.1", port);
-                var writer = new StreamWriter(client.GetStream());
+                using var writer = new StreamWriter(client.GetStream());
                 writer.WriteLine("--cwd " + ((HaxeProject) PluginBase.CurrentProject).Directory);
                 foreach (var arg in args)
                     writer.WriteLine(arg);
@@ -53,7 +53,7 @@ namespace HaXeContext
                 }
                 writer.Write("\0");
                 writer.Flush();
-                var reader = new StreamReader(client.GetStream());
+                using var reader = new StreamReader(client.GetStream());
                 var lines = reader.ReadToEnd();
                 client.Close();
                 return lines;
@@ -85,9 +85,9 @@ namespace HaXeContext
             }
         }
 
-        private void OnOutputDataReceived(object sender, DataReceivedEventArgs e) => TraceManager.AddAsync(e.Data, 2);
+        void OnOutputDataReceived(object sender, DataReceivedEventArgs e) => TraceManager.AddAsync(e.Data, 2);
 
-        private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
+        void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data is null) return;
             TraceManager.AddAsync(e.Data, 2);
@@ -99,7 +99,7 @@ namespace HaXeContext
             }
         }
 
-        private void HaxeProcess_Exited(object sender, EventArgs e) => isRunning = false;
+        void HaxeProcess_Exited(object sender, EventArgs e) => isRunning = false;
 
         public void Stop()
         {

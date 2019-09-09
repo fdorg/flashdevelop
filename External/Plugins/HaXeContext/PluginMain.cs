@@ -26,11 +26,11 @@ namespace HaXeContext
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private HaXeSettings settingObject;
-        private Context contextInstance;
-        private string settingFilename;
-        private KeyValuePair<string, InstalledSDK> customSDK;
-        private int logCount;
+        HaXeSettings settingObject;
+        Context contextInstance;
+        string settingFilename;
+        KeyValuePair<string, InstalledSDK> customSDK;
+        int logCount;
 
         #region Required Properties
         
@@ -237,11 +237,11 @@ namespace HaXeContext
         /// <summary>
         /// Fix some settings values when the context has been created
         /// </summary>
-        private void ValidateSettings()
+        void ValidateSettings()
         {
             if (settingObject.InstalledSDKs.IsNullOrEmpty() || PluginBase.MainForm.RefreshConfig)
             {
-                List<InstalledSDK> sdks = new List<InstalledSDK>();
+                var sdks = new List<InstalledSDK>();
                 var externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");
                 if (!string.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
                 {
@@ -251,12 +251,12 @@ namespace HaXeContext
                 if (settingObject.InstalledSDKs != null)
                 {
                     char[] slashes = { '/', '\\' };
-                    foreach (InstalledSDK oldSdk in settingObject.InstalledSDKs)
+                    foreach (var oldSdk in settingObject.InstalledSDKs)
                     {
-                        string oldPath = oldSdk.Path.TrimEnd(slashes);
-                        foreach (InstalledSDK newSdk in sdks)
+                        var oldPath = oldSdk.Path.TrimEnd(slashes);
+                        foreach (var newSdk in sdks)
                         {
-                            string newPath = newSdk.Path.TrimEnd(slashes);
+                            var newPath = newSdk.Path.TrimEnd(slashes);
                             if (newPath.Equals(oldPath, StringComparison.OrdinalIgnoreCase))
                             {
                                 sdks.Remove(newSdk);
@@ -270,7 +270,7 @@ namespace HaXeContext
             }
             else
             {
-                foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                foreach (var sdk in settingObject.InstalledSDKs)
                 {
                     ValidateSDK(sdk);
                 }
@@ -286,12 +286,12 @@ namespace HaXeContext
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
+        void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        private void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         bool OpenVirtualFileModel(string virtualPath)
         {
@@ -312,7 +312,7 @@ namespace HaXeContext
             return true;
         }
 
-        private InstalledSDK GetCustomSDK(string path)
+        InstalledSDK GetCustomSDK(string path)
         {
             InstalledSDK sdk;
             if (customSDK.Key == path) sdk = customSDK.Value;
@@ -337,17 +337,15 @@ namespace HaXeContext
             var path = GetSDKPath(sdk);
             if (path == "") return false;
 
-            bool result = 
-                ValidateHaxeShimSDK(sdk, path) ||
-                ValidateHaxeSDK(sdk, path) ||
-                ValidateUnknownHaxeSDK(sdk, path);
+            var result = ValidateHaxeShimSDK(sdk, path)
+                         || ValidateHaxeSDK(sdk, path)
+                         || ValidateUnknownHaxeSDK(sdk, path);
 
             if (!result) ErrorManager.ShowInfo("Unable to identify a Haxe SDK at path:\n" + sdk.Path);
-
             return result;
         }
 
-        private string GetSDKPath(InstalledSDK sdk)
+        static string GetSDKPath(InstalledSDK sdk)
         {
             var project = PluginBase.CurrentProject;
             var path = sdk.Path;
@@ -372,7 +370,7 @@ namespace HaXeContext
             return path;
         }
 
-        private bool ValidateHaxeShimSDK(InstalledSDK sdk, string path, string projectPath = "")
+        bool ValidateHaxeShimSDK(InstalledSDK sdk, string path, string projectPath = "")
         {
             var result = false;
             var haxePath = Path.Combine(path, "haxe.exe");
@@ -400,23 +398,21 @@ namespace HaXeContext
             return result;
         }
 
-        private bool ValidateHaxeSDK(InstalledSDK sdk, string path)
+        bool ValidateHaxeSDK(InstalledSDK sdk, string path)
         {
-            bool result = false;
-            string gitSha = "";
-
-            string haxePath = Path.Combine(path, "haxe.exe");
+            var result = false;
+            var gitSha = string.Empty;
+            var haxePath = Path.Combine(path, "haxe.exe");
             if (File.Exists(haxePath))
             {
-                Process p = StartHiddenProcess(haxePath, "-version");
-
-                string output = p.StandardError.ReadToEnd();
-                if (output == "") output = p.StandardOutput.ReadToEnd(); // haxe >= 4.0.0
+                var p = StartHiddenProcess(haxePath, "-version");
+                var output = p.StandardError.ReadToEnd();
+                if (output.Length == 0) output = p.StandardOutput.ReadToEnd(); // haxe >= 4.0.0
                 p.WaitForExit();
 
                 if (p.ExitCode == 0)
                 {
-                    Match mVer = Regex.Match(output, "^([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*");
+                    var mVer = Regex.Match(output, "^([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*");
                     if (mVer.Success)
                     {
                         sdk.Version = mVer.Groups[1].Value;
@@ -436,8 +432,8 @@ namespace HaXeContext
             var descriptor = lookup.FirstOrDefault(File.Exists);
             if (descriptor != null)
             {
-                string raw = File.ReadAllText(descriptor);
-                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+(-[0-9A-Za-z.-]+)?)");
+                var raw = File.ReadAllText(descriptor);
+                var mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+(-[0-9A-Za-z.-]+)?)");
                 if (mVer.Success)
                 {
                     if (!result)
@@ -465,7 +461,7 @@ namespace HaXeContext
             return result;
         }
 
-        private bool ValidateUnknownHaxeSDK(InstalledSDK sdk, string path)
+        static bool ValidateUnknownHaxeSDK(InstalledSDK sdk, string path)
         {
             if (!File.Exists(Path.Combine(path, "haxe.exe"))) return false;
             sdk.Version = "0.0.0";
@@ -473,9 +469,9 @@ namespace HaXeContext
             return true;
         }
 
-        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
+        public Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
-            ProcessStartInfo pi = new ProcessStartInfo();
+            var pi = new ProcessStartInfo();
             pi.FileName = fileName;
             pi.Arguments = arguments;
             pi.WorkingDirectory = workingDirectory;

@@ -46,43 +46,44 @@ namespace HaXeContext.Model
         const int VALUE_BUFFER = 1024;
 
         // parser context
-        private FileModel model;
-        private bool tryPackage;
-        private bool hasPackageSection;
-        private FlagType context;
-        private FlagType modifiers;
-        private FlagType curModifiers;
+        FileModel model;
+        bool tryPackage;
+        bool hasPackageSection;
+        FlagType context;
+        FlagType modifiers;
+
+        FlagType curModifiers;
         //private int modifiersPos;
-        private int line;
-        private int modifiersLine;
-        private bool foundColon;
-        private bool foundConstant;
-        private bool inParams;
-        private bool inEnum;
-        private bool inTypedef;
-        private bool inAbstract;
-        private bool inGeneric;
-        private bool inValue;
-        private bool hadValue;
-        private bool inType;
+        int line;
+        int modifiersLine;
+        bool foundColon;
+        bool foundConstant;
+        bool inParams;
+        bool inEnum;
+        bool inTypedef;
+        bool inAbstract;
+        bool inGeneric;
+        bool inValue;
+        bool hadValue;
+        bool inType;
         bool inNewFunctionType;// Haxe4 e.g. `var v:(String, Int, Int)->Void`
-        private bool inAnonType;
-        private int flattenNextBlock;
-        private FlagType foundKeyword;
-        private Token valueKeyword;
-        private MemberModel valueMember;
-        private Token curToken;
-        private Token prevToken;
-        private MemberModel curMember;
-        private MemberModel curMethod;
-        private Visibility curAccess;
-        private string curNamespace;
-        private ClassModel curClass;
-        private string lastComment;
-        private string curComment;
-        private bool isBlockComment;
-        private ContextFeatures features;
-        private List<ASMetaData> carriedMetaData;
+        bool inAnonType;
+        int flattenNextBlock;
+        FlagType foundKeyword;
+        Token valueKeyword;
+        MemberModel valueMember;
+        Token curToken;
+        Token prevToken;
+        MemberModel curMember;
+        MemberModel curMethod;
+        Visibility curAccess;
+        string curNamespace;
+        ClassModel curClass;
+        string lastComment;
+        string curComment;
+        bool isBlockComment;
+        ContextFeatures features;
+        List<ASMetaData> carriedMetaData;
         #endregion
 
         public bool ScriptMode { private get; set; }
@@ -1443,7 +1444,7 @@ namespace HaXeContext.Model
             //  Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
         }
 
-        private bool LookupRegex(string ba, ref int i)
+        bool LookupRegex(string ba, ref int i)
         {
             if (ba[i - 2] != '~') return false;
             var len = ba.Length;
@@ -1496,7 +1497,7 @@ namespace HaXeContext.Model
             return true;
         }
 
-        private ASMetaData LookupMeta(ref string ba, ref int i)
+        ASMetaData LookupMeta(ref string ba, ref int i)
         {
             var i0 = i;
             var line0 = line;
@@ -1645,7 +1646,7 @@ namespace HaXeContext.Model
         /// <param name="evalContext">The token could be an identifier</param>
         /// <param name="evalKeyword">The token could be a keyword</param>
         /// <returns>A keyword was found</returns>
-        private bool EvalToken(bool evalContext, bool evalKeyword)
+        bool EvalToken(bool evalContext, bool evalKeyword)
         {
             bool hadContext = context != 0;
             bool hadKeyword = foundKeyword != 0;

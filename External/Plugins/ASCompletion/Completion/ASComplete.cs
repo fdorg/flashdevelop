@@ -2040,7 +2040,7 @@ namespace ASCompletion.Completion
             else if (expr.ContextFunction != null || expr.Separator != ":" || (dotIndex > 0 && !result.IsNull()))
             {
                 // static or instance members?
-                FlagType mask = 0;
+                FlagType mask;
                 if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
                 else if (IsStatic(expr.ContextFunction)) mask = FlagType.Static;
                 else mask = 0;
@@ -2358,7 +2358,6 @@ namespace ASCompletion.Completion
 
         static ComaExpression GetFunctionContext(ScintillaControl sci, bool autoHide)
         {
-            ContextFeatures features = ASContext.Context.Features;
             ComaExpression coma = ComaExpression.None;
             int position = sci.CurrentPos - 1;
             char c = ' ';
@@ -2374,7 +2373,8 @@ namespace ASCompletion.Completion
 
             // var declaration
             GetWordLeft(sci, ref position);
-            string keyword = (c == ':') ? GetWordLeft(sci, ref position) : null;
+            var features = ASContext.Context.Features;
+            var keyword = (c == ':') ? GetWordLeft(sci, ref position) : null;
             if (keyword == features.varKey || (features.constKey != null && keyword == features.constKey))
                 coma = ComaExpression.VarDeclaration;
             // function return type
@@ -2397,7 +2397,7 @@ namespace ASCompletion.Completion
                     }
                 }
                 keyword = GetWordLeft(sci, ref position);
-                if (keyword == "" && sci.CharAt(position) == '>' && features.hasGenerics)
+                if (keyword.Length == 0 && sci.CharAt(position) == '>' && features.hasGenerics)
                 {
                     int groupCount = 1;
                     position--;
@@ -2426,7 +2426,7 @@ namespace ASCompletion.Completion
             else
             {
                 // config constant, or namespace access
-                if (keyword == "" && position > 0 && (char)sci.CharAt(position) == ':')
+                if (keyword.Length == 0 && position > 0 && (char)sci.CharAt(position) == ':')
                 {
                     var pos = position - 1;
                     keyword = GetWordLeft(sci, ref pos);
@@ -2512,11 +2512,11 @@ namespace ASCompletion.Completion
             }
             // import
             if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
-                return HandleImportCompletion(sci, "", autoHide);
+                return HandleImportCompletion(sci, string.Empty, autoHide);
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
             if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
-            if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
+            if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, string.Empty, autoHide, word);
             var beforeBody = true;
             var expr = CurrentResolvedContext?.Result?.Context;
             if (expr != null) beforeBody = expr.ContextFunction is null || expr.BeforeBody;
@@ -2547,7 +2547,7 @@ namespace ASCompletion.Completion
         protected virtual bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
         {
             var list = new List<ICompletionListItem>();
-            foreach (MemberModel it in ASContext.Context.GetAllProjectClasses())
+            foreach (var it in ASContext.Context.GetAllProjectClasses())
             {
                 if (!it.Flags.HasFlag(FlagType.Interface)) continue;
                 list.Add(new MemberItem(it));
@@ -2667,7 +2667,7 @@ namespace ASCompletion.Completion
             }
             return result ?? notFound;
             // Utils
-            string[] Split(string expr)
+            static string[] Split(string expr)
             {
                 var list = new List<string>();
                 var groupCount = 0;
@@ -2959,7 +2959,7 @@ namespace ASCompletion.Completion
                     if (!friendClass.IsVoid())
                     {
                         result.Type = friendClass;
-                        result.IsStatic = (p < 0);
+                        result.IsStatic = p < 0;
                         return result;
                     }
                 }
@@ -3844,9 +3844,7 @@ namespace ASCompletion.Completion
                             sb.Append(c);
                             braCount++;
                             position++;
-                            int endPos;
-                            if (expression.ContextFunction != null) endPos = sci.LineEndPosition(expression.ContextFunction.LineTo);
-                            else endPos = sci.LineEndPosition(expression.ContextMember.LineTo);
+                            var endPos = sci.LineEndPosition(expression.ContextFunction?.LineTo ?? expression.ContextMember.LineTo);
                             while (position < endPos)
                             {
                                 style = sci.BaseStyleAt(position);
@@ -4003,7 +4001,7 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         internal static ComaExpression DisambiguateComa(ScintillaControl sci, int position, int minPos)
         {
-            ContextFeatures features = ASContext.Context.Features;
+            var features = ASContext.Context.Features;
             // find block start '(' or '{'
             int parCount = 0;
             int braceCount = 0;
@@ -4015,8 +4013,8 @@ namespace ASCompletion.Completion
                 if (c == ':')
                 {
                     position--;
-                    string word = GetWordLeft(sci, ref position);
-                    word = GetWordLeft(sci, ref position);
+                    GetWordLeft(sci, ref position);
+                    var word = GetWordLeft(sci, ref position);
                     if (word == features.varKey) return ComaExpression.VarDeclaration;
                     continue;
                 }
@@ -4033,8 +4031,8 @@ namespace ASCompletion.Completion
                     if (parCount < 0)
                     {
                         position--;
-                        string word1 = GetWordLeft(sci, ref position);
-                        if (word1 == "" && sci.CharAt(position) == '>' && features.hasGenerics)
+                        var word1 = GetWordLeft(sci, ref position);
+                        if (word1.Length == 0 && sci.CharAt(position) == '>' && features.hasGenerics)
                         {
                             // Generic function: function generic<K>(arg:K)
                             int groupCount = 1;
@@ -4064,7 +4062,7 @@ namespace ASCompletion.Completion
                     if (braceCount < 0)
                     {
                         position--;
-                        string word1 = GetWordLeft(sci, ref position);
+                        var word1 = GetWordLeft(sci, ref position);
                         c = (word1.Length > 0) ? word1[word1.Length - 1] : (char) sci.CharAt(position);
                         if (":,(=".Contains(c))
                         {
@@ -4074,7 +4072,7 @@ namespace ASCompletion.Completion
                             if (c == ':' && sci.ConfigurationLanguage == "haxe")
                             {
                                 // Anonymous structures
-                                ComaExpression coma = DisambiguateComa(sci, position, minPos);
+                                var coma = DisambiguateComa(sci, position, minPos);
                                 if (coma == ComaExpression.FunctionDeclaration || coma == ComaExpression.VarDeclaration)
                                 {
                                     return ComaExpression.VarDeclaration;
@@ -4092,7 +4090,7 @@ namespace ASCompletion.Completion
                     //TODO: Change to ASContext.Context.CurrentModel
                     if (sci.ConfigurationLanguage == "haxe") // Haxe optional fields
                     {
-                        ComaExpression coma = DisambiguateComa(sci, position - 1, minPos);
+                        var coma = DisambiguateComa(sci, position - 1, minPos);
                         if (coma == ComaExpression.FunctionDeclaration) return coma; // Function optional argument
                         if (coma == ComaExpression.VarDeclaration)
                         {
@@ -4847,19 +4845,16 @@ namespace ASCompletion.Completion
 
         static string GetFileContents(FileModel model)
         {
-            if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
+            if (model is null || model.FileName.Length == 0 || !File.Exists(model.FileName)) return null;
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                foreach (var doc in PluginBase.MainForm.Documents)
+                if (doc.IsEditable && doc.FileName.Equals(model.FileName, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (doc.IsEditable && doc.FileName.ToUpper() == model.FileName.ToUpper())
-                    {
-                        return doc.SciControl.Text;
-                    }
+                    return doc.SciControl.Text;
                 }
-                var info = FileHelper.GetEncodingFileInfo(model.FileName);
-                return info.Contents;
             }
-            return null;
+            var info = FileHelper.GetEncodingFileInfo(model.FileName);
+            return info.Contents;
         }
 
         public static string GetToolTipText(ASResult expr) => ASContext.Context.CodeComplete.GetToolTipTextEx(expr);
@@ -5041,13 +5036,13 @@ namespace ASCompletion.Completion
 
         static bool SmartInsertion(ScintillaControl sci, int position, ASExpr expr, ASResult context)
         {
-            ContextFeatures features = ASContext.Context.Features;
-            FileModel cFile = ASContext.Context.CurrentModel;
+            var features = ASContext.Context.Features;
+            var cFile = ASContext.Context.CurrentModel;
             FileModel inFile;
             MemberModel import;
 
             // if completed a package-level member
-            if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package != "")
+            if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package.Length != 0)
             {
                 inFile = context.Member.InFile;
                 import = (MemberModel) context.Member.Clone();

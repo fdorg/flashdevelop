@@ -45,9 +45,9 @@ namespace AS3Context.Compiler
 
         #endregion
 
-        private static bool ignoreMessage;
-        private static FdbWrapper debugger;
-        private static DataEvent startMessage;
+        static bool ignoreMessage;
+        static FdbWrapper debugger;
+        static DataEvent startMessage;
 
         static void debugger_OnStarted(string line)
         {

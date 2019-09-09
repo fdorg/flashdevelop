@@ -17,26 +17,26 @@ namespace AS3Context.Controls
 {
     public partial class ProfilerUI : DockPanelControl, IThemeHandler
     {
-        private static readonly byte[] RESULT_OK = Encoding.Default.GetBytes("<flashconnect status=\"0\"/>\0");
-        private static readonly byte[] RESULT_IGNORED = Encoding.Default.GetBytes("<flashconnect status=\"3\"/>\0");
-        private static readonly byte[] RESULT_GC = Encoding.Default.GetBytes("<flashconnect status=\"4\"/>\0");
+        static readonly byte[] RESULT_OK = Encoding.Default.GetBytes("<flashconnect status=\"0\"/>\0");
+        static readonly byte[] RESULT_IGNORED = Encoding.Default.GetBytes("<flashconnect status=\"3\"/>\0");
+        static readonly byte[] RESULT_GC = Encoding.Default.GetBytes("<flashconnect status=\"4\"/>\0");
 
-        private static ProfilerUI instance;
-        private static bool gcWanted;
-        private static byte[] snapshotWanted;
+        static ProfilerUI instance;
+        static bool gcWanted;
+        static byte[] snapshotWanted;
         public DockContent PanelRef;
-        private bool autoStart;
-        private bool running;
-        private string current;
-        private readonly List<string> previous = new List<string>();
-        private readonly ObjectRefsGrid objectRefsGrid;
-        private readonly ProfilerLiveObjectsView liveObjectsView;
-        private readonly ProfilerMemView memView;
-        private readonly ProfilerObjectsView objectRefsView;
-        private readonly Timer detectDisconnect;
-        private List<ToolStripMenuItem> profilerItems;
-        private string profilerItemsCheck;
-        private string profilerSWF;
+        bool autoStart;
+        bool running;
+        string current;
+        readonly List<string> previous = new List<string>();
+        readonly ObjectRefsGrid objectRefsGrid;
+        readonly ProfilerLiveObjectsView liveObjectsView;
+        readonly ProfilerMemView memView;
+        readonly ProfilerObjectsView objectRefsView;
+        readonly Timer detectDisconnect;
+        List<ToolStripMenuItem> profilerItems;
+        string profilerItemsCheck;
+        string profilerSWF;
 
         public bool AutoStart => autoStart;
 
@@ -122,7 +122,7 @@ namespace AS3Context.Controls
             tabControl.SelectedTab = objectsPage;
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             this.labelTarget.Text = "";
             this.autoButton.Text = TextHelper.GetString("Label.AutoStartProfilerOFF");
@@ -152,13 +152,13 @@ namespace AS3Context.Controls
             SetProfilerCfg(false);
         }
 
-        private void runButton_Click(object sender, EventArgs e)
+        void runButton_Click(object sender, EventArgs e)
         {
             if (running) StopProfiling();
             else StartProfiling();
         }
 
-        private void gcButton_Click(object sender, EventArgs e)
+        void gcButton_Click(object sender, EventArgs e)
         {
             if (running && current != null) gcWanted = true;
         }
@@ -197,7 +197,7 @@ namespace AS3Context.Controls
             }
         }
 
-        private void autoButton_Click(object sender, EventArgs e)
+        void autoButton_Click(object sender, EventArgs e)
         {
             autoStart = !autoStart;
             autoButton.Image = PluginBase.MainForm.FindImage(autoStart ? "510" : "514");
@@ -208,7 +208,7 @@ namespace AS3Context.Controls
 
         #region Profiler selector
 
-        private void configureProfilerChooser()
+        void configureProfilerChooser()
         {
             profilerChooser.Image = PluginBase.MainForm.FindImage("274");
             profilerChooser.DropDownOpening += profilerChooser_DropDownOpening;
@@ -324,7 +324,7 @@ namespace AS3Context.Controls
 
         #region MM configuration
 
-        private bool SetProfilerCfg(bool active)
+        bool SetProfilerCfg(bool active)
         {
             try
             {
@@ -346,7 +346,7 @@ namespace AS3Context.Controls
             return true;
         }
 
-        private string AddDefaultProfiler()
+        string AddDefaultProfiler()
         {
             string swfPath = ResolvePath(CheckResource("Profiler5.swf", "Profiler.swf"));
             ASCompletion.Commands.CreateTrustFile.Run("FDProfiler.cfg", Path.GetDirectoryName(swfPath));
@@ -354,7 +354,7 @@ namespace AS3Context.Controls
             return "\r\nPreloadSwf=" + swfPath + "?host=" + settings.Host + "&port=" + settings.Port + "\r\n";
         }
 
-        private string AddCustomProfiler()
+        string AddCustomProfiler()
         {
             string swfPath = ResolvePath(profilerSWF);
             if (swfPath is null) return null;
@@ -362,49 +362,43 @@ namespace AS3Context.Controls
             return "\r\nPreloadSwf=" + swfPath + "\r\n";
         }
 
-        private string ResolvePath(string path)
+        string ResolvePath(string path)
         {
-            if (PluginBase.CurrentProject != null)
-                return PathHelper.ResolvePath(path, Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath));
-            return PathHelper.ResolvePath(path);
+            return PluginBase.CurrentProject != null
+                ? PathHelper.ResolvePath(path, Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath))
+                : PathHelper.ResolvePath(path);
         }
 
-        private FlashConnect.Settings GetFlashConnectSettings()
+        FlashConnect.Settings GetFlashConnectSettings()
         {
             IPlugin flashConnect = PluginBase.MainForm.FindPlugin("425ae753-fdc2-4fdf-8277-c47c39c2e26b");
             return flashConnect != null ? (FlashConnect.Settings)flashConnect.Settings : new FlashConnect.Settings();
         }
 
-        private static string CheckResource(string fileName, string resName)
+        static string CheckResource(string fileName, string resName)
         {
-            string fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
-            if (!File.Exists(fullPath))
+            var fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
+            if (File.Exists(fullPath)) return fullPath;
+            var id = "AS3Context.Resources." + resName;
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            using var br = new BinaryReader(assembly.GetManifestResourceStream(id));
+            using var bw = File.Create(fullPath);
+            var buffer = br.ReadBytes(1024);
+            while (buffer.Length > 0)
             {
-                string id = "AS3Context.Resources." + resName;
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                using (BinaryReader br = new BinaryReader(assembly.GetManifestResourceStream(id)))
-                {
-                    using (FileStream bw = File.Create(fullPath))
-                    {
-                        byte[] buffer = br.ReadBytes(1024);
-                        while (buffer.Length > 0)
-                        {
-                            bw.Write(buffer, 0, buffer.Length);
-                            buffer = br.ReadBytes(1024);
-                        }
-                        bw.Close();
-                    }
-                    br.Close();
-                }
+                bw.Write(buffer, 0, buffer.Length);
+                buffer = br.ReadBytes(1024);
             }
+            bw.Close();
+            br.Close();
             return fullPath;
         }
 
-        private void CreateDefaultCfg(string mmCfg)
+        static void CreateDefaultCfg(string mmCfg)
         {
             try
             {
-                string contents = "PolicyFileLog=1\r\nPolicyFileLogAppend=0\r\nErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n";
+                const string contents = "PolicyFileLog=1\r\nPolicyFileLogAppend=0\r\nErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n";
                 FileHelper.WriteFile(mmCfg, contents, Encoding.UTF8);
             }
             catch (Exception ex)
@@ -416,7 +410,4 @@ namespace AS3Context.Controls
         #endregion
 
     }
-
-    
-
 }

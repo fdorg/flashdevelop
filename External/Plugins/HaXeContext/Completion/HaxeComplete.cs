@@ -39,13 +39,13 @@ namespace HaXeContext
         // result
         public HaxeCompleteStatus Status;
         public string Errors;
-        private HaxeCompleteResult result;
-        private List<HaxePositionResult> positionResults;
-        private List<HaxeDiagnosticsResult> diagnosticsResults;
+        HaxeCompleteResult result;
+        List<HaxePositionResult> positionResults;
+        List<HaxeDiagnosticsResult> diagnosticsResults;
 
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
-        private readonly SemVer haxeVersion;
+        readonly SemVer haxeVersion;
 
         public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService, SemVer haxeVersion)
         {
@@ -73,7 +73,7 @@ namespace HaXeContext
 
         public void GetDiagnostics(HaxeCompleteResultHandler<List<HaxeDiagnosticsResult>> callback) => StartThread(callback, () => diagnosticsResults);
 
-        private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
+        void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
             SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
@@ -124,7 +124,7 @@ namespace HaXeContext
 
         protected virtual string GetFileContent() => null;
 
-        private string GetMode()
+        string GetMode()
         {
             return CompilerService switch
             {
@@ -136,7 +136,7 @@ namespace HaXeContext
             };
         }
 
-        private void RemoveComments(IList<string> hxmlArgs)
+        static void RemoveComments(IList<string> hxmlArgs)
         {
             for (var i = 0; i < hxmlArgs.Count; i++)
             {
@@ -147,7 +147,7 @@ namespace HaXeContext
             }
         }
 
-        private void EscapeMacros(IList<string> hxmlArgs)
+        static void EscapeMacros(IList<string> hxmlArgs)
         {
             for (var i = 0; i < hxmlArgs.Count; i++)
             {
@@ -159,7 +159,7 @@ namespace HaXeContext
             }
         }
 
-        void QuotePath(IList<string> hxmlArgs)
+        static void QuotePath(IList<string> hxmlArgs)
         {
             for (var i = 0; i < hxmlArgs.Count; i++)
             {
@@ -284,7 +284,7 @@ namespace HaXeContext
             return HaxeCompleteStatus.DIAGNOSTICS;
         }
 
-        HaxePositionResult ParseRange(JsonData range, string path)
+        static HaxePositionResult ParseRange(JsonData range, string path)
         {
             if (range is null) return null;
 
@@ -443,10 +443,9 @@ namespace HaXeContext
             result.Path = match.Groups["path"].Value;
             int.TryParse(match.Groups["line"].Value, out result.LineStart);
             var rangeType = match.Groups["range"].Value;
-            if (rangeType == "lines")
-                result.RangeType = HaxePositionCompleteRangeType.LINES;
-            else
-                result.RangeType = HaxePositionCompleteRangeType.CHARACTERS;
+            result.RangeType = rangeType == "lines"
+                ? HaxePositionCompleteRangeType.LINES
+                : HaxePositionCompleteRangeType.CHARACTERS;
 
             int.TryParse(match.Groups["start"].Value, out var start);
             int.TryParse(match.Groups["end"].Value, out var end);
@@ -465,12 +464,12 @@ namespace HaXeContext
             return result;
         }
 
-        bool IsOverload(MemberList members, MemberModel member)
+        static bool IsOverload(MemberList members, MemberModel member)
         {
             return members.Count > 0 && members[members.Count - 1].FullName == member.FullName;
-        } 
+        }
 
-        MemberModel ExtractMember(XmlReader reader)
+        static MemberModel ExtractMember(XmlReader reader)
         {
             var name = reader.GetAttribute("n");
             if (name is null) return null;
@@ -499,11 +498,9 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(type))
             {
                 if (member.Flags != 0) return;
-
-                if (char.IsLower(member.Name[0]))
-                    member.Flags = FlagType.Package;
-                else
-                    member.Flags = FlagType.Class;
+                member.Flags = char.IsLower(member.Name[0])
+                    ? FlagType.Package
+                    : FlagType.Class;
             }
             // Function or Variable
             else
@@ -513,7 +510,7 @@ namespace HaXeContext
                 {
                     member.Flags = FlagType.Function;
                     member.Parameters = new List<MemberModel>();
-                    for (int i = 0; i < types.Length - 1; i++)
+                    for (var i = 0; i < types.Length - 1; i++)
                     {
                         var param = new MemberModel(types[i].Trim(), "", FlagType.ParameterVar, Visibility.Public);
                         member.Parameters.Add(param);
