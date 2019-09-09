@@ -50,7 +50,6 @@ namespace PluginCore.Helpers
                 startPosition = endSelection;
                 startSelection = sci.SelectText(ENTRYPOINT, startPosition);
             }
-            if (positions.Count == 0) return false;
             sci.SetSelection(positions[0], positions[1]);
             for (var i = 2; i < positions.Count; i += 2)
             {
