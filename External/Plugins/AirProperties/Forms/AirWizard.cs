@@ -26,38 +26,39 @@ namespace AirProperties
         #region Validation Regular Expressions
 
         // Validation regex pattens based on / adapted from validation requirements in the Descriptor.xsd files from the AIR SDK.
-        private const string _IdRegexPattern = @"^[A-Za-z0-9\-\.]{1,212}$";
-        private const string _FileNameRegexPattern = @"^[^\*""/:&<>\?\\\|\. ]$|^[^\*""/:&<>\?\\\| ][^\*""/:&<>\?\\\|]*[^\*""/:<>\?\\\|\. ]$";
+        const string _IdRegexPattern = @"^[A-Za-z0-9\-\.]{1,212}$";
+
+        const string _FileNameRegexPattern = @"^[^\*""/:&<>\?\\\|\. ]$|^[^\*""/:&<>\?\\\| ][^\*""/:&<>\?\\\|]*[^\*""/:<>\?\\\|\. ]$";
         // Minor tweak to FilePathRegexPattern to prevent forward slash (/) as last character (causes packaging to fail with error). 
-        private const string _FilePathRegexPattern = @"^[^\*""/:&<>\?\\\|\. ]$|^[^\*""/:&<>\?\\\| ][^\*"":&<>\?\\\|]*[^\*""/:<>\?\\\|\. ]$";
+        const string _FilePathRegexPattern = @"^[^\*""/:&<>\?\\\|\. ]$|^[^\*""/:&<>\?\\\| ][^\*"":&<>\?\\\|]*[^\*""/:<>\?\\\|\. ]$";
         // There is no universal standard for AnyUriRegexPattern but this pattern is a good fit for image and content 
         // URIs used in the descriptor file, as these URIs are relative paths.
-        private const string _AnyUriRegexPattern = @"^[^\*"":&<>\?\\\|\. ]$|^[^\*"":&<>\?\\\| ][^\*"":&<>\?\\\|]*[^\*""/:<>\?\\\|\. ]$";
-        private const string _CoordinateRegexPattern = @"^(-)?\d+$";
-        private const string _NumberRegexPattern = @"^[0-9]*$";
-        private const string _PublisherRegexPattern = @"^[A-Fa-f0-9]{40}\.1$";
-        private const string _VersionRegexPattern = @"^[0-9]{1,3}(\.[0-9]{1,3}){0,2}$";
-        private const string _ExtensionRegexPattern = @"^[A-Za-z0-9\-\.]{1,212}$";
+        const string _AnyUriRegexPattern = @"^[^\*"":&<>\?\\\|\. ]$|^[^\*"":&<>\?\\\| ][^\*"":&<>\?\\\|]*[^\*""/:<>\?\\\|\. ]$";
+        const string _CoordinateRegexPattern = @"^(-)?\d+$";
+        const string _NumberRegexPattern = @"^[0-9]*$";
+        const string _PublisherRegexPattern = @"^[A-Fa-f0-9]{40}\.1$";
+        const string _VersionRegexPattern = @"^[0-9]{1,3}(\.[0-9]{1,3}){0,2}$";
+        const string _ExtensionRegexPattern = @"^[A-Za-z0-9\-\.]{1,212}$";
 
         #endregion
-               
-        private readonly PluginMain _pluginMain;
-        private readonly string _propertiesFilePath;
-        private string _propertiesFile;
-        private bool _isPropertiesLoaded;
-        private readonly List<string> _locales = new List<string>();
-        private readonly List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
-        private readonly List<PropertyManager.AirApplicationIconField> _iconFields;
-        private readonly List<PropertyManager.AirExtension> _extensions = new List<PropertyManager.AirExtension>();
-        private readonly List<string> _removedExtensions = new List<string>();
+
+        readonly PluginMain _pluginMain;
+        readonly string _propertiesFilePath;
+        string _propertiesFile;
+        bool _isPropertiesLoaded;
+        readonly List<string> _locales = new List<string>();
+        readonly List<PropertyManager.AirFileType> _fileTypes = new List<PropertyManager.AirFileType>();
+        readonly List<PropertyManager.AirApplicationIconField> _iconFields;
+        readonly List<PropertyManager.AirExtension> _extensions = new List<PropertyManager.AirExtension>();
+        readonly List<string> _removedExtensions = new List<string>();
 
         // Android extra
-        private List<PropertyManager.AndroidPermission> _androidPermissions;
-        private AndroidManifestManager androidManifest;
+        List<PropertyManager.AndroidPermission> _androidPermissions;
+        AndroidManifestManager androidManifest;
 
         // iOS extra
-        private IphonePlistManager iPhoneAdditions;
-        private IphonePlistManager iPhoneEntitlements;
+        IphonePlistManager iPhoneAdditions;
+        IphonePlistManager iPhoneEntitlements;
 
         public bool IsPropertiesLoaded => _isPropertiesLoaded;
 
@@ -111,7 +112,7 @@ namespace AirProperties
             SetTitle(PluginBase.CurrentProject.Name, airVersion);
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             // Common
             OKButton.Text = TextHelper.GetString("Label.Ok");
@@ -211,7 +212,7 @@ namespace AirProperties
             ExtensionBrowseButton.Text = TextHelper.GetString("Label.Browse");
         }
 
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             TitlePictureBox.Image = PluginMain.GetImage("blockdevice.png");
             NamePictureBox.Image = PluginMain.GetImage("irc_protocol.png");
@@ -219,7 +220,7 @@ namespace AirProperties
             LocalePictureBox.Image = PluginMain.GetImage("irc_protocol.png");
         }
 
-        private void InitializeControls()
+        void InitializeControls()
         {
             SystemChromeField.Items.Add(new ListItem(TextHelper.GetString("SystemChrome.None"), "none"));
             SystemChromeField.Items.Add(new ListItem(TextHelper.GetString("SystemChrome.Standard"), "standard"));
@@ -240,7 +241,7 @@ namespace AirProperties
             IPhoneInfoAdditionsField.SelectionTabs = new[] { 25, 50, 75, 100, 125, 150, 175, 200 };     
         }
 
-        private void InitializeLocales()
+        void InitializeLocales()
         {
             LocalesField.Items.Clear();
             if (_locales.Count > 0)
@@ -267,7 +268,7 @@ namespace AirProperties
             }
         }
 
-        private void InitializeAndroidPermissions()
+        void InitializeAndroidPermissions()
         {
             _androidPermissions = new List<PropertyManager.AndroidPermission>
                 {
@@ -417,7 +418,7 @@ namespace AirProperties
                 };
         }
 
-        private string GetSelectedLocale()
+        string GetSelectedLocale()
         {
             string item = (string)LocalesField.SelectedItem;
             if (item != null)
@@ -429,7 +430,7 @@ namespace AirProperties
             return string.Empty;
         }
 
-        private bool GetSelectedLocaleIsDefault()
+        bool GetSelectedLocaleIsDefault()
         {
             return LocalesField.SelectedIndex == 0;
         }
@@ -439,7 +440,7 @@ namespace AirProperties
             Text = " " + projectName + " - " + TextHelper.GetString("Title.AirWizard") + " (" + airVersion + ")";
         }
 
-        private void SetupUI()
+        void SetupUI()
         {
             // Remove unsupported properties
             if (PropertyManager.MajorVersion < PropertyManager.AirVersion.V36)
@@ -626,7 +627,7 @@ namespace AirProperties
             }
         }
 
-        private void LoadProperties(bool isDefault)
+        void LoadProperties(bool isDefault)
         {
             string contentProperty;
             string[] minSizeProperty;
@@ -802,7 +803,7 @@ namespace AirProperties
             }
         }
 
-        private string LookupPropertiesFile()
+        string LookupPropertiesFile()
         {
             string path = Path.Combine(_propertiesFilePath, "application.xml");
             if (File.Exists(path)) return path;
@@ -827,7 +828,7 @@ namespace AirProperties
             return path; // not found
         }
 
-        private bool LooksLikeAIRProperties(string file)
+        bool LooksLikeAIRProperties(string file)
         {
             try
             {
@@ -837,8 +838,8 @@ namespace AirProperties
             catch { }
             return false;
         }
-        
-        private void SaveProperties()
+
+        void SaveProperties()
         {
             string supportedProfilesProperty = string.Empty;
             if (File.Exists(_propertiesFile))
@@ -1000,7 +1001,7 @@ namespace AirProperties
             }
         }
 
-        private void SelectAndLoadPropertiesFile()
+        void SelectAndLoadPropertiesFile()
         {
             if (OpenPropertiesFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -1017,7 +1018,7 @@ namespace AirProperties
             }
         }
 
-        private bool CheckUniformFileNamePrefix(bool isApplicationIcon)
+        bool CheckUniformFileNamePrefix(bool isApplicationIcon)
         {
             bool isValid = true;
             if (_pluginMain.Settings.UseUniformFilenames)
@@ -1043,17 +1044,17 @@ namespace AirProperties
             return isValid;
         }
 
-        private void UpdateIcon(string fileName, ref TextBox fileNameTextBox, Point dimensions, bool isApplicationIcon)
+        void UpdateIcon(string fileName, ref TextBox fileNameTextBox, Point dimensions, bool isApplicationIcon)
         {
 
             string projectPath = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             string iconFolder = _pluginMain.Settings.ProjectIconsFolder;
             string destinationPath = projectPath + @"\" + iconFolder;
             string packagedFileName = _pluginMain.Settings.PackageIconsFolder;
-            string filePrefix;
-            if (isApplicationIcon) filePrefix = FileNameField.Text;
-            else filePrefix = FileTypeExtensionField.Text;
-            Bitmap img = new Bitmap(fileName);
+            var filePrefix = isApplicationIcon
+                ? FileNameField.Text
+                : FileTypeExtensionField.Text;
+            using var img = new Bitmap(fileName);
             // first, check if the image is the correct size
             if (img.Width == dimensions.X && img.Height == dimensions.Y)
             {
@@ -1094,7 +1095,7 @@ namespace AirProperties
 
 
         // adds the loaded file types to the list view
-        private void InitializeFileTypesListView()
+        void InitializeFileTypesListView()
         {
             FileTypesListView.SmallImageList = ListViewStateImageList;
             ListViewStateImageList.Images.Add(ValidationErrorProvider.Icon);
@@ -1122,7 +1123,7 @@ namespace AirProperties
         }
 
         //adds the loaded extensions to the list view
-        private void InitializeExtensionsListView()
+        void InitializeExtensionsListView()
         {
             ExtensionsListView.SmallImageList = ListViewStateImageList;
             ListViewStateImageList.Images.Add(ValidationErrorProvider.Icon);
@@ -1149,7 +1150,7 @@ namespace AirProperties
         }
 
         // gets the corresponding file type object from the list view selection
-        private PropertyManager.AirFileType GetSelectedFileType()
+        PropertyManager.AirFileType GetSelectedFileType()
         {
             PropertyManager.AirFileType selectedFileType = null;
             int selectedIndex = -1;
@@ -1165,7 +1166,7 @@ namespace AirProperties
         }
 
         // gets the corresponding extension object from the list view selection
-        private PropertyManager.AirExtension GetSelectedExtension()
+        PropertyManager.AirExtension GetSelectedExtension()
         {
             PropertyManager.AirExtension selectedExtension = null;
             int selectedIndex = -1;
@@ -1181,7 +1182,7 @@ namespace AirProperties
         }
 
         // refreshes the list view to reflect changes to the selected item
-        private void RefreshSelectedFileType()
+        void RefreshSelectedFileType()
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -1202,7 +1203,7 @@ namespace AirProperties
         }
 
         // refreshes the list view to reflect changes to the selected item
-        private void RefreshSelectedExtension()
+        void RefreshSelectedExtension()
         {
             PropertyManager.AirExtension selectedExtension = GetSelectedExtension();
             if (selectedExtension != null)
@@ -1222,7 +1223,7 @@ namespace AirProperties
         }
 
         //loads the properties of the selected file type to the corresponding controls
-        private void LoadSelectedFileType()
+        void LoadSelectedFileType()
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -1287,7 +1288,7 @@ namespace AirProperties
         }
 
         // loads the properties of the selected extension to the corresponding controls
-        private void LoadSelectedExtension()
+        void LoadSelectedExtension()
         {
             PropertyManager.AirExtension selectedExtension = GetSelectedExtension();
             if (selectedExtension != null)
@@ -1307,7 +1308,7 @@ namespace AirProperties
             }
         }
 
-        private void FilliPhoneAdditionsFields()
+        void FilliPhoneAdditionsFields()
         {
             WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIBackgroundModes") as IEnumerable, 
                                          IPhoneBGModesCombo);
@@ -1326,7 +1327,7 @@ namespace AirProperties
 
         }
 
-        private void FilliPhoneEntitlementsFields()
+        void FilliPhoneEntitlementsFields()
         {
             if (PropertyManager.MajorVersion > PropertyManager.AirVersion.V33)
                 WizardHelper.SetControlValue(iPhoneEntitlements.ValueOrNull("aps-environment") as string,
@@ -1334,7 +1335,7 @@ namespace AirProperties
 
         }
 
-        private void FillAndroidManifestFields()
+        void FillAndroidManifestFields()
         {
             MinimumAndroidOsField.Text = androidManifest.UsesSdk is null || androidManifest.UsesSdk.MinSdkVersion <= 0
                                              ? string.Empty : androidManifest.UsesSdk.MinSdkVersion.ToString();
@@ -1347,7 +1348,7 @@ namespace AirProperties
             }
         }
 
-        private static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
+        static byte[] UnzipFile(ZipFile zfile, ZipEntry entry)
         {
             Stream stream = zfile.GetInputStream(entry);
             byte[] data = new byte[entry.Size];
@@ -1359,12 +1360,12 @@ namespace AirProperties
 
         #region Event Handlers
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        void CancelButton_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void OKButton_Click(object sender, EventArgs e)
+        void OKButton_Click(object sender, EventArgs e)
         {
             if (ValidateChildren())
             {
@@ -1377,18 +1378,18 @@ namespace AirProperties
             }
         }
 
-        private void HelpButton_Click(object sender, EventArgs e)
+        void HelpButton_Click(object sender, EventArgs e)
         {
             //I don't think Adobe provide localized documentation so there's no point in localizing the help url
             System.Diagnostics.Process.Start("http://help.adobe.com/en_US/air/build/WS5b3ccc516d4fbf351e63e3d118666ade46-7ff1.html");
         }
 
-        private void SystemChromeField_SelectedIndexChanged(object sender, EventArgs e)
+        void SystemChromeField_SelectedIndexChanged(object sender, EventArgs e)
         {
             ValidateSystemChrome();
         }
 
-        private void AppIconButtonClick(object sender, EventArgs e)
+        void AppIconButtonClick(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
             string size = btn.Name.Replace("AppIconButton", "");
@@ -1403,7 +1404,7 @@ namespace AirProperties
             }
         }
 
-        private void FileTypeIconButtonClick(object sender, EventArgs e)
+        void FileTypeIconButtonClick(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
             string size = btn.Name.Replace("FileTypeIconButton", "");
@@ -1420,7 +1421,7 @@ namespace AirProperties
             }
         }
 
-        private void LocalesField_SelectedIndexChanged(object sender, EventArgs e)
+        void LocalesField_SelectedIndexChanged(object sender, EventArgs e)
         {
             //refresh the locale-specific properties
             if (_isPropertiesLoaded)
@@ -1430,7 +1431,7 @@ namespace AirProperties
             }
         }
 
-        private void LocalesField_Enter(object sender, EventArgs e)
+        void LocalesField_Enter(object sender, EventArgs e)
         {
             //save the locale-specific properties in case locale is about to change
             if (_isPropertiesLoaded)
@@ -1440,7 +1441,7 @@ namespace AirProperties
             }
         }
 
-        private void LocaleManagerButton_Click(object sender, EventArgs e)
+        void LocaleManagerButton_Click(object sender, EventArgs e)
         {
             List<string> originalLocales = new List<string>();
             originalLocales.AddRange(_locales);
@@ -1486,15 +1487,15 @@ namespace AirProperties
             }
         }
 
-        private void FileTypesListView_SelectedIndexChanged(object sender, EventArgs e)
+        void FileTypesListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSelectedFileType();
             //Validate all controls so the error provider activates on any invalid values
             //(bit heavy handed as it does all controls - not just those for file types, but it's way easier and the performance seems fine).
             ValidateChildren();
         }
-        
-        private void NewFileTypeButton_Click(object sender, EventArgs e)
+
+        void NewFileTypeButton_Click(object sender, EventArgs e)
         {
             //create new file type and call validate file types to set validation flags
             PropertyManager.AirFileType fileType = new PropertyManager.AirFileType();
@@ -1510,7 +1511,7 @@ namespace AirProperties
             RefreshSelectedFileType();
         }
 
-        private void RemoveFileTypeButton_Click(object sender, EventArgs e)
+        void RemoveFileTypeButton_Click(object sender, EventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -1520,7 +1521,7 @@ namespace AirProperties
             }
         }
 
-        private void ExtensionsListView_SelectedIndexChanged(object sender, EventArgs e)
+        void ExtensionsListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadSelectedExtension();
             //Validate all controls so the error provider activates on any invalid values
@@ -1528,7 +1529,7 @@ namespace AirProperties
             ValidateChildren();
         }
 
-        private void ExtensionAddButton_Click(object sender, EventArgs e)
+        void ExtensionAddButton_Click(object sender, EventArgs e)
         {
             //create new file type and call validate extensions to set validation flags
             PropertyManager.AirExtension extension = new PropertyManager.AirExtension();
@@ -1542,7 +1543,7 @@ namespace AirProperties
             RefreshSelectedExtension();
         }
 
-        private void ExtensionRemoveButton_Click(object sender, EventArgs e)
+        void ExtensionRemoveButton_Click(object sender, EventArgs e)
         {
             PropertyManager.AirExtension selectedExtension = GetSelectedExtension();
             if (selectedExtension != null)
@@ -1555,7 +1556,7 @@ namespace AirProperties
             }
         }
 
-        private void SupportedLanguagesButton_Click(object sender, EventArgs e)
+        void SupportedLanguagesButton_Click(object sender, EventArgs e)
         {
             List<string> locales = new List<string>();
             locales.AddRange(SupportedLanguagesField.Text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
@@ -1568,7 +1569,7 @@ namespace AirProperties
             }
         }
 
-        private void AndroidManifestAdditionsButton_Click(object sender, EventArgs e)
+        void AndroidManifestAdditionsButton_Click(object sender, EventArgs e)
         {
             if (AndroidAdvancedSettingsPanel.Visible)
             {
@@ -1594,7 +1595,7 @@ namespace AirProperties
             }
         }
 
-        private void AndroidUserPermissionsList_SelectedIndexChanged(object sender, EventArgs e)
+        void AndroidUserPermissionsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (AndroidUserPermissionsList.SelectedItems.Count > 0)
             {
@@ -1606,7 +1607,7 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneInfoAdditionsButton_Click(object sender, EventArgs e)
+        void IPhoneInfoAdditionsButton_Click(object sender, EventArgs e)
         {
             if (IPhoneAdvancedSettingsPanel.Visible)
             {
@@ -1630,7 +1631,7 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneDeviceCombo_DropDownClosed(object sender, EventArgs e)
+        void IPhoneDeviceCombo_DropDownClosed(object sender, EventArgs e)
         {
             if (IPhoneDeviceCombo.CheckedItems.Count == 0)
             {
@@ -1640,7 +1641,7 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneResolutionExcludeButton_Click(object sender, EventArgs e)
+        void IPhoneResolutionExcludeButton_Click(object sender, EventArgs e)
         {
             string devicesData = (string)(IPhoneResolutionExcludeButton.Tag ?? string.Empty);
             string[] devices = devicesData.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1651,7 +1652,7 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneForceCPUButton_Click(object sender, EventArgs e)
+        void IPhoneForceCPUButton_Click(object sender, EventArgs e)
         {
             using (var iOSDevicesForm = new IOSDeviceManager(IPhoneForceCPUField.Text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
             {
@@ -1660,12 +1661,12 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneResolutionCombo_SelectedIndexChanged(object sender, EventArgs e)
+        void IPhoneResolutionCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             IPhoneResolutionExcludeButton.Enabled = IPhoneResolutionCombo.SelectedIndex > 0;
         }
 
-        private void IPhoneExternalSWFsButton_Click(object sender, EventArgs e)
+        void IPhoneExternalSWFsButton_Click(object sender, EventArgs e)
         {
             using (var externalsFileDialog = new OpenFileDialog())
             {
@@ -1687,7 +1688,7 @@ namespace AirProperties
             }
         }
 
-        private void ExtensionBrowseButton_Click(object sender, EventArgs e)
+        void ExtensionBrowseButton_Click(object sender, EventArgs e)
         {
             using (var extensionBrowser = new OpenFileDialog())
             {
@@ -1768,14 +1769,14 @@ namespace AirProperties
             }
         }
 
-        private void RenderModeField_SelectedIndexChanged(object sender, EventArgs e)
+        void RenderModeField_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (DepthStencilField.Parent is null) return;
 
             DepthStencilField.Enabled = ((ListItem)RenderModeField.SelectedItem).Value == "direct";
         }
 
-        private void AppPropertiesTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        void AppPropertiesTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (AppPropertiesTabControl.SelectedTab == ExtensionsTabPage && _isPropertiesLoaded)
             {
@@ -1851,7 +1852,7 @@ namespace AirProperties
 
         // Ensures that Transparent value is false and cannot 
         // be changed when System Chrome is Standard
-        private void ValidateSystemChrome()
+        void ValidateSystemChrome()
         {
             var item = (ListItem)SystemChromeField.SelectedItem;
             if (item != null && item.Value == "standard")
@@ -1863,7 +1864,7 @@ namespace AirProperties
         }
 
         // validates that the supplied image URI is a PNG file
-        private bool ValidateImageExtension(string imageURI)
+        bool ValidateImageExtension(string imageURI)
         {
             return imageURI.ToLower().EndsWithOrdinal(".png");
         }
@@ -1871,7 +1872,7 @@ namespace AirProperties
         // loops through each loaded file type and sets initial validity flags
         // does represent a little bit of code duplication, but shit happens.
         // we need to do this is in case there are file types with invalid property values when the file is opened, or when a new file type is added
-        private void ValidateFileTypes()
+        void ValidateFileTypes()
         {
             foreach (PropertyManager.AirFileType fileType in _fileTypes)
             {
@@ -1901,7 +1902,7 @@ namespace AirProperties
         // loops through each loaded extension and sets initial validity flags
         // does represent a little bit of code duplication, but shit happens.
         // we need to do this is in case there are extensions with invalid property values when the file is opened, or when a new extension is added
-        private void ValidateExtensions()
+        void ValidateExtensions()
         {
             foreach (PropertyManager.AirExtension extension in _extensions)
             {
@@ -1910,7 +1911,7 @@ namespace AirProperties
             }
         }
 
-        private void ValidateAppIconField(object sender, CancelEventArgs e)
+        void ValidateAppIconField(object sender, CancelEventArgs e)
         {
             TextBox field = (TextBox)sender;
             string size = field.Name.Replace("tbAppIcon", "");
@@ -1923,7 +1924,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(field, string.Empty);
         }
 
-        private void ValidateFileTypeIconField(object sender, CancelEventArgs e)
+        void ValidateFileTypeIconField(object sender, CancelEventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             TextBox field = (TextBox)sender;
@@ -1947,7 +1948,7 @@ namespace AirProperties
             }
         }
 
-        private void IDField_Validating(object sender, CancelEventArgs e)
+        void IDField_Validating(object sender, CancelEventArgs e)
         {
             if (!Regex.IsMatch(IDField.Text, _IdRegexPattern))
             {
@@ -1957,7 +1958,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(IDField, "");
         }
 
-        private void VersionField_Validating(object sender, CancelEventArgs e)
+        void VersionField_Validating(object sender, CancelEventArgs e)
         {
             if (VersionField.Text.Length == 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
@@ -1967,7 +1968,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(VersionField, "");
         }
 
-        private void FileNameField_Validating(object sender, CancelEventArgs e)
+        void FileNameField_Validating(object sender, CancelEventArgs e)
         {
             FileNameField.Text = FileNameField.Text.Trim();
             if (!Regex.IsMatch(FileNameField.Text, _FileNameRegexPattern))
@@ -1978,7 +1979,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(FileNameField, "");
         }
 
-        private void InstallFolderField_Validating(object sender, CancelEventArgs e)
+        void InstallFolderField_Validating(object sender, CancelEventArgs e)
         {
             InstallFolderField.Text = InstallFolderField.Text.Trim();
             if (InstallFolderField.Text.Length > 0 && !Regex.IsMatch(InstallFolderField.Text, _FilePathRegexPattern))
@@ -1989,7 +1990,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(InstallFolderField, "");
         }
 
-        private void ProgramMenuFolderField_Validating(object sender, CancelEventArgs e)
+        void ProgramMenuFolderField_Validating(object sender, CancelEventArgs e)
         {
             ProgramMenuFolderField.Text = ProgramMenuFolderField.Text.Trim();
             if (ProgramMenuFolderField.Text.Length > 0 && !Regex.IsMatch(ProgramMenuFolderField.Text, _FilePathRegexPattern))
@@ -2001,7 +2002,7 @@ namespace AirProperties
         }
 
 
-        private void ContentField_Validating(object sender, CancelEventArgs e)
+        void ContentField_Validating(object sender, CancelEventArgs e)
         {
             ContentField.Text = ContentField.Text.Trim();
             if (!Regex.IsMatch(ContentField.Text, _AnyUriRegexPattern))
@@ -2012,7 +2013,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(ContentField, "");
         }
 
-        private void XField_Validating(object sender, CancelEventArgs e)
+        void XField_Validating(object sender, CancelEventArgs e)
         {
             XField.Text = XField.Text.Trim();
             if (XField.Text.Length > 0 && !Regex.IsMatch(XField.Text, _CoordinateRegexPattern))
@@ -2023,7 +2024,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(XField, "");
         }
 
-        private void YField_Validating(object sender, CancelEventArgs e)
+        void YField_Validating(object sender, CancelEventArgs e)
         {
             YField.Text = YField.Text.Trim();
             if (YField.Text.Length > 0 && !Regex.IsMatch(YField.Text, _CoordinateRegexPattern))
@@ -2034,7 +2035,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(YField, "");
         }
 
-        private void WidthField_Validating(object sender, CancelEventArgs e)
+        void WidthField_Validating(object sender, CancelEventArgs e)
         {
             WidthField.Text = WidthField.Text.Trim();
             if (WidthField.Text.Length > 0 && !Regex.IsMatch(WidthField.Text, _NumberRegexPattern))
@@ -2045,7 +2046,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(WidthField, "");
         }
 
-        private void HeightField_Validating(object sender, CancelEventArgs e)
+        void HeightField_Validating(object sender, CancelEventArgs e)
         {
             HeightField.Text = HeightField.Text.Trim();
             if (HeightField.Text.Length > 0 && !Regex.IsMatch(HeightField.Text, _NumberRegexPattern))
@@ -2056,7 +2057,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(HeightField, "");
         }
 
-        private void MinSizeXField_Validating(object sender, CancelEventArgs e)
+        void MinSizeXField_Validating(object sender, CancelEventArgs e)
         {
             bool isValid = true;
             MinSizeXField.Text = MinSizeXField.Text.Trim();
@@ -2080,7 +2081,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(MinSizeXField, "");
         }
 
-        private void MinSizeYField_Validating(object sender, CancelEventArgs e)
+        void MinSizeYField_Validating(object sender, CancelEventArgs e)
         {
             bool isValid = true;
             MinSizeYField.Text = MinSizeYField.Text.Trim();
@@ -2104,7 +2105,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(MinSizeYField, "");
         }
 
-        private void MaxSizeXField_Validating(object sender, CancelEventArgs e)
+        void MaxSizeXField_Validating(object sender, CancelEventArgs e)
         {
             bool isValid = true;
             MaxSizeXField.Text = MaxSizeXField.Text.Trim();
@@ -2128,7 +2129,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(MaxSizeXField, "");
         }
 
-        private void MaxSizeYField_Validating(object sender, CancelEventArgs e)
+        void MaxSizeYField_Validating(object sender, CancelEventArgs e)
         {
             bool isValid = true;
             MaxSizeYField.Text = MaxSizeYField.Text.Trim();
@@ -2152,7 +2153,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(MaxSizeYField, "");
         }
 
-        private void FileTypeNameField_Validating(object sender, CancelEventArgs e)
+        void FileTypeNameField_Validating(object sender, CancelEventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -2174,7 +2175,7 @@ namespace AirProperties
             }
         }
 
-        private void FileTypeExtensionField_Validating(object sender, CancelEventArgs e)
+        void FileTypeExtensionField_Validating(object sender, CancelEventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -2197,7 +2198,7 @@ namespace AirProperties
             }
         }
 
-        private void FileTypeDescriptionField_Validating(object sender, CancelEventArgs e)
+        void FileTypeDescriptionField_Validating(object sender, CancelEventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -2207,7 +2208,7 @@ namespace AirProperties
             }
         }
 
-        private void FileTypeContentTypeField_Validating(object sender, CancelEventArgs e)
+        void FileTypeContentTypeField_Validating(object sender, CancelEventArgs e)
         {
             PropertyManager.AirFileType selectedFileType = GetSelectedFileType();
             if (selectedFileType != null)
@@ -2230,7 +2231,7 @@ namespace AirProperties
             }
         }
 
-        private void FileTypesListView_Validating(object sender, CancelEventArgs e)
+        void FileTypesListView_Validating(object sender, CancelEventArgs e)
         {
             foreach (PropertyManager.AirFileType fileType in _fileTypes)
             {
@@ -2242,7 +2243,7 @@ namespace AirProperties
             }
         }
 
-        private void PublisherIDField_Validating(object sender, CancelEventArgs e)
+        void PublisherIDField_Validating(object sender, CancelEventArgs e)
         {
             PublisherIdField.Text = PublisherIdField.Text.Trim();
             if (PublisherIdField.Text.Length > 0 && !Regex.IsMatch(PublisherIdField.Text, _PublisherRegexPattern))
@@ -2253,7 +2254,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(PublisherIdField, "");
         }
 
-        private void VersionNoField_Validating(object sender, CancelEventArgs e)
+        void VersionNoField_Validating(object sender, CancelEventArgs e)
         {
             VersionNoField.Text = VersionNoField.Text.Trim();
             if (VersionNoField.Text.Length > 0 && !Regex.IsMatch(VersionNoField.Text, _VersionRegexPattern))
@@ -2264,7 +2265,7 @@ namespace AirProperties
             else ValidationErrorProvider.SetError(VersionNoField, "");
         }
 
-        private void ExtensionIdField_Validating(object sender, CancelEventArgs e)
+        void ExtensionIdField_Validating(object sender, CancelEventArgs e)
         {
             PropertyManager.AirExtension selectedExtension = GetSelectedExtension();
             if (selectedExtension != null)
@@ -2287,7 +2288,7 @@ namespace AirProperties
             }
         }
 
-        private void ExtensionsListView_Validating(object sender, CancelEventArgs e)
+        void ExtensionsListView_Validating(object sender, CancelEventArgs e)
         {
             foreach (PropertyManager.AirExtension extension in _extensions)
             {
@@ -2299,7 +2300,7 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneExternalSWFsField_Validating(object sender, CancelEventArgs e)
+        void IPhoneExternalSWFsField_Validating(object sender, CancelEventArgs e)
         {
             var externalsFile = IPhoneExternalSWFsField.Text;
             if (externalsFile == string.Empty) ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
@@ -2319,7 +2320,7 @@ namespace AirProperties
 
         }
 
-        private void IPhoneEntitlementsField_Validating(object sender, CancelEventArgs e)
+        void IPhoneEntitlementsField_Validating(object sender, CancelEventArgs e)
         {
             bool fillUi = iPhoneEntitlements is null;
             if (IPhoneAdvancedSettingsPanel.Visible || fillUi)
@@ -2347,7 +2348,7 @@ namespace AirProperties
             }
         }
 
-        private void IPhoneInfoAdditionsField_Validating(object sender, CancelEventArgs e)
+        void IPhoneInfoAdditionsField_Validating(object sender, CancelEventArgs e)
         {
             bool fillUi = iPhoneAdditions is null;
             if (IPhoneAdvancedSettingsPanel.Visible || fillUi)
@@ -2392,7 +2393,7 @@ namespace AirProperties
             }
         }
 
-        private void AndroidManifestAdditionsField_Validating(object sender, CancelEventArgs e)
+        void AndroidManifestAdditionsField_Validating(object sender, CancelEventArgs e)
         {
             bool fillUi = androidManifest is null;
             if (AndroidAdvancedSettingsPanel.Visible || fillUi)
@@ -2440,7 +2441,7 @@ namespace AirProperties
             }
         }
 
-        private void MinimumiOsVersionField_Validating(object sender, CancelEventArgs e)
+        void MinimumiOsVersionField_Validating(object sender, CancelEventArgs e)
         {
             if (MinimumiOsVersionField.Text != string.Empty)
             {
@@ -2469,7 +2470,7 @@ namespace AirProperties
             }
         }
 
-        private void MinimumAndroidOsField_Validating(object sender, CancelEventArgs e)
+        void MinimumAndroidOsField_Validating(object sender, CancelEventArgs e)
         {
             int osVersion;
             if (MinimumAndroidOsField.Text == string.Empty)

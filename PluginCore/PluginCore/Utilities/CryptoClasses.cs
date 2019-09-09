@@ -56,7 +56,7 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] Compute(byte[] bytes)
         {
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            using var md5 = new MD5CryptoServiceProvider();
             return md5.ComputeHash(bytes);
         }
 
@@ -65,7 +65,7 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
-            HMACMD5 hmac = new HMACMD5(key);
+            using var hmac = new HMACMD5(key);
             return hmac.ComputeHash(bytes);
         }
 
@@ -83,7 +83,7 @@ namespace PluginCore.Utilities
             if (fipsComplianceRequired) return ComputeFIPS(bytes);
             try
             {
-                SHA1Managed sha1 = new SHA1Managed();
+                using var sha1 = new SHA1Managed();
                 return sha1.ComputeHash(bytes);
             }
             catch (InvalidOperationException)
@@ -94,7 +94,7 @@ namespace PluginCore.Utilities
         }
         static byte[] ComputeFIPS(byte[] bytes)
         {
-            SHA1Cng sha1 = new SHA1Cng();
+            using var sha1 = new SHA1Cng();
             return sha1.ComputeHash(bytes);
         }
 
@@ -103,7 +103,7 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
-            HMACSHA1 hmac = new HMACSHA1(key);
+            using var hmac = new HMACSHA1(key);
             return hmac.ComputeHash(bytes);
         }
 
@@ -121,7 +121,7 @@ namespace PluginCore.Utilities
             if (fipsComplianceRequired) return ComputeFIPS(bytes);
             try
             {
-                SHA256Managed sha256 = new SHA256Managed();
+                using var sha256 = new SHA256Managed();
                 return sha256.ComputeHash(bytes);
             }
             catch (InvalidOperationException)
@@ -132,7 +132,7 @@ namespace PluginCore.Utilities
         }
         static byte[] ComputeFIPS(byte[] bytes)
         {
-            SHA256Cng sha256 = new SHA256Cng();
+            using var sha256 = new SHA256Cng();
             return sha256.ComputeHash(bytes);
         }
 
@@ -141,7 +141,7 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
-            HMACSHA256 hmac = new HMACSHA256(key);
+            using var hmac = new HMACSHA256(key);
             return hmac.ComputeHash(bytes);
         }
 
@@ -154,7 +154,7 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] Compute(byte[] bytes)
         {
-            RIPEMD160Managed rmd160 = new RIPEMD160Managed();
+            using var rmd160 = new RIPEMD160Managed();
             return rmd160.ComputeHash(bytes);
         }
 
@@ -163,10 +163,8 @@ namespace PluginCore.Utilities
         /// </summary>
         public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
-            HMACRIPEMD160 hmac = new HMACRIPEMD160(key);
+            using var hmac = new HMACRIPEMD160(key);
             return hmac.ComputeHash(bytes);
         }
-
     }
-
 }

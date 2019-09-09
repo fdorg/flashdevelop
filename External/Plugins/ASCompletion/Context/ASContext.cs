@@ -298,7 +298,7 @@ namespace ASCompletion.Context
         {
             if (lang is null) return null;
             lang = lang.ToLower();
-            foreach (RegisteredContext reg in allContexts)
+            foreach (var reg in allContexts)
             {
                 if (reg.Language == lang && reg.Inlined is null) return reg.Context;
             }
@@ -326,7 +326,7 @@ namespace ASCompletion.Context
             // reset previous contexts
             if (validContexts.Count > 0)
             {
-                foreach (IASContext oldcontext in validContexts)
+                foreach (var oldcontext in validContexts)
                     oldcontext.CurrentFile = null;
             }
             validContexts = new List<IASContext>();
@@ -351,7 +351,7 @@ namespace ASCompletion.Context
                 string ext = Path.GetExtension(filename);
                 if (!string.IsNullOrEmpty(ext) && lang == "xml")
                     lang = ext.Substring(1).ToLower();
-                foreach (RegisteredContext reg in allContexts)
+                foreach (var reg in allContexts)
                 {
                     if (reg.Language == lang)
                     {
@@ -369,7 +369,7 @@ namespace ASCompletion.Context
 
         internal static void SetCurrentLine(int line)
         {
-            ScintillaControl sci = CurSciControl;
+            var sci = CurSciControl;
             if (validContexts.Count == 0 || sci is null)
             {
                 HasContext = false;
@@ -461,7 +461,7 @@ namespace ASCompletion.Context
 
             Application.DoEvents();
 
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+            var doc = PluginBase.MainForm.CurrentDocument;
             SetCurrentFile(doc, !doc.IsEditable); 
         }
 
@@ -653,8 +653,7 @@ namespace ASCompletion.Context
         /// <param name="path">Path to add</param>
         public virtual bool SetTemporaryPath(string path)
         {
-            if (temporaryPath == path)
-                return false;
+            if (temporaryPath == path) return false;
             if (temporaryPath != null)
             {
                 while (classPath.Count > 0 && classPath[0].IsTemporaryPath)
@@ -879,10 +878,8 @@ namespace ASCompletion.Context
         public virtual FileModel CreateFileModel(string fileName)
         {
             if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
-                return new FileModel(fileName ?? "");
-            var fileModel = new FileModel(PathHelper.GetLongPathName(fileName));
-            fileModel.Context = this;
-            return fileModel;
+                return new FileModel(fileName ?? string.Empty);
+            return new FileModel(PathHelper.GetLongPathName(fileName)) {Context = this};
         }
 
         /// <summary>
@@ -1541,7 +1538,7 @@ namespace ASCompletion.Context
     #region Completion cache
     public class CompletionCache
     {
-        private bool isDirty;
+        bool isDirty;
 
         public readonly string Package;
         public string Classname;
@@ -1575,7 +1572,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Build scintilla keywords from class names
         /// </summary>
-        private string GetKeywords()
+        string GetKeywords()
         {
             if (Elements is null) return "";
             var keywords = new List<string>();

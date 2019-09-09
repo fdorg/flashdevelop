@@ -1099,8 +1099,8 @@ namespace FlashDevelop.Dialogs
                 string languageName = Path.GetFileNameWithoutExtension(language);
                 this.languageDropDown.Items.Add(languageName);
             }
-            InstalledFontCollection fonts = new InstalledFontCollection();
-            this.fontNameComboBox.Items.Add("");
+            using var fonts = new InstalledFontCollection();
+            fontNameComboBox.Items.Add("");
             foreach (FontFamily font in fonts.Families)
             {
                 this.fontNameComboBox.Items.Add(font.GetName(1033));

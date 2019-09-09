@@ -24,7 +24,7 @@ namespace ASCompletion.Model
         internal static event Action<FileModel> OnFileAdded;
 
         //static private readonly bool cacheEnabled = false;
-        private static Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
+        static Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
 
         /// <summary>
         /// Delete all models and remove all watchers
@@ -88,16 +88,16 @@ namespace ASCompletion.Model
         public bool IsValid;
         public bool IsVirtual;
         public bool ValidatePackage;
-        private readonly object lockObject = new object();
-        private bool inited;
-        private bool inUse;
-        private WatcherEx watcher;
-        private Timer updater;
-        private string[] masks;
-        private string basePath;
-        private Dictionary<string, FileModel> files;
-        private List<string> toExplore;
-        private List<string> toRemove;
+        readonly object lockObject = new object();
+        bool inited;
+        bool inUse;
+        WatcherEx watcher;
+        Timer updater;
+        string[] masks;
+        string basePath;
+        Dictionary<string, FileModel> files;
+        List<string> toExplore;
+        List<string> toRemove;
 
         /*public Dictionary<string, FileModel> Files
         {
@@ -145,7 +145,7 @@ namespace ASCompletion.Model
 
         #region init_timers
 
-        private void Init()
+        void Init()
         {
             if (inited && IsValid) return;
             inited = true;
@@ -241,7 +241,8 @@ namespace ASCompletion.Model
         #endregion
 
         #region Watcher events
-        private bool maskMatch(string fileName)
+
+        bool maskMatch(string fileName)
         {
             foreach (string mask in masks)
             {
@@ -254,7 +255,7 @@ namespace ASCompletion.Model
             return false;
         }
 
-        private void watcher_Renamed(object sender, RenamedEventArgs e)
+        void watcher_Renamed(object sender, RenamedEventArgs e)
         {
             // possibly renamed the watched folder
             if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
@@ -294,7 +295,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private void watcher_Changed(object sender, FileSystemEventArgs e)
+        void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
@@ -334,7 +335,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private void watcher_Deleted(object sender, FileSystemEventArgs e)
+        void watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             if (!e.FullPath.StartsWithOrdinal(basePath) && e.FullPath != Path)
                 return;
@@ -366,7 +367,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private void ParseNewFile(string fileName)
+        void ParseNewFile(string fileName)
         {
             if (Owner is null || Owner.Settings.LazyClasspathExploration || !File.Exists(fileName)) return;
             var newModel = Owner.CreateFileModel(fileName);
@@ -375,7 +376,7 @@ namespace ASCompletion.Model
             SetTimer();
         }
 
-        private void DoScheduledOperations()
+        void DoScheduledOperations()
         {
             if (toExplore.Count == 0) return;
             var _toExplore = new string[toExplore.Count];
@@ -428,7 +429,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private void AddNewFilesIn(string path)
+        void AddNewFilesIn(string path)
         {
             if (!Directory.Exists(path) || (File.GetAttributes(path) & FileAttributes.Hidden) != 0) return;
             var explored = new List<string>();
@@ -446,7 +447,7 @@ namespace ASCompletion.Model
                 }
         }
 
-        private void ExploreFolder(string path, string[] masks, List<string> explored, List<string> foundFiles)
+        void ExploreFolder(string path, string[] masks, List<string> explored, List<string> foundFiles)
         {
             if (!Directory.Exists(path)) return;
             explored.Add(path);
