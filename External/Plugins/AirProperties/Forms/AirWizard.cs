@@ -1,4 +1,6 @@
-﻿// TODO: This form is getting huge, it should be refactored. It isn't hard, just abstract properties and link fields, possible values and valid versions together, taking into account that some versions add new values to existing properties. This would clean things like SetupUI, LoadProperties, SaveProperties...
+﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+// TODO: This form is getting huge, it should be refactored. It isn't hard, just abstract properties and link fields, possible values and valid versions together, taking into account that some versions add new values to existing properties. This would clean things like SetupUI, LoadProperties, SaveProperties...
 
 using System;
 using System.IO;

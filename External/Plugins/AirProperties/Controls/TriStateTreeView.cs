@@ -1,4 +1,6 @@
-﻿// Copyright (CPOL) 2011 RikTheVeggie - see http://www.codeproject.com/info/cpol10.aspx
+﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+// Copyright (CPOL) 2011 RikTheVeggie - see http://www.codeproject.com/info/cpol10.aspx
 // Tri-State Tree View http://www.codeproject.com/script/Articles/ViewDownloads.aspx?aid=202435
 
 namespace AirProperties.Controls
