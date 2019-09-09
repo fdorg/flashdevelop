@@ -71,26 +71,26 @@ namespace ASCompletion
         public ImageList TreeIcons => treeIcons;
 
         public ToolStripMenuItem LookupMenuItem;
-        private System.ComponentModel.IContainer components;
+        System.ComponentModel.IContainer components;
         public ImageListManager treeIcons;
-        private System.Timers.Timer tempoClick;
+        System.Timers.Timer tempoClick;
 
-        private readonly GeneralSettings settings;
-        private string prevChecksum;
-        private List<int> prevLines;
-        private Stack<LookupLocation> lookupLocations;
+        readonly GeneralSettings settings;
+        string prevChecksum;
+        List<int> prevLines;
+        Stack<LookupLocation> lookupLocations;
 
-        private TreeNode currentHighlight;
-        private ToolStrip toolStrip;
-        private ToolStripSpringTextBox findTextTxt;
-        private ToolStripDropDownButton sortDropDown;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem noneItem;
-        private ToolStripMenuItem sortedItem;
-        private ToolStripMenuItem sortedByKindItem;
-        private ToolStripMenuItem sortedSmartItem;
-        private ToolStripMenuItem sortedGroupItem;
-        private ToolStripButton clearButton;
+        TreeNode currentHighlight;
+        ToolStrip toolStrip;
+        ToolStripSpringTextBox findTextTxt;
+        ToolStripDropDownButton sortDropDown;
+        ToolStripSeparator toolStripSeparator1;
+        ToolStripMenuItem noneItem;
+        ToolStripMenuItem sortedItem;
+        ToolStripMenuItem sortedByKindItem;
+        ToolStripMenuItem sortedSmartItem;
+        ToolStripMenuItem sortedGroupItem;
+        ToolStripButton clearButton;
 
         #region initialization
         public PluginUI(PluginMain plugin)
@@ -102,7 +102,7 @@ namespace ASCompletion
             ResumeLayout();
         }
 
-        private void InitializeControls()
+        void InitializeControls()
         {
             InitializeComponent();
             treeIcons.ColorDepth = ColorDepth.Depth32Bit;
@@ -135,7 +135,7 @@ namespace ASCompletion
             ScrollBarEx.Attach(OutlineTree);
         }
 
-        private void TreeIcons_Populate(object sender, EventArgs e)
+        void TreeIcons_Populate(object sender, EventArgs e)
         {
             treeIcons.Images.AddRange(new[]
             {
@@ -189,7 +189,7 @@ namespace ASCompletion
             return assembly.GetManifestResourceStream(prefix + name);
         }
 
-        private void InitializeTexts()
+        void InitializeTexts()
         {
             this.noneItem.Text = TextHelper.GetString("Outline.SortNone");
             this.sortedItem.Text = TextHelper.GetString("Outline.SortDefault");
@@ -271,7 +271,7 @@ namespace ASCompletion
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
@@ -393,7 +393,7 @@ namespace ASCompletion
 
         #region Status
 
-        private delegate void SetStatusInvoker(string state, int value, int max);
+        delegate void SetStatusInvoker(string state, int value, int max);
 
         /// <summary>
         /// Show a status bar
@@ -480,7 +480,7 @@ namespace ASCompletion
             SetHighlight(null);
         }
 
-        private TreeNode MatchNodeText(IEnumerable nodes, string match)
+        TreeNode MatchNodeText(IEnumerable nodes, string match)
         {
             foreach(TreeNode node in nodes)
             {
@@ -494,7 +494,7 @@ namespace ASCompletion
             return null;
         }
 
-        private void SetHighlight(TreeNode node)
+        void SetHighlight(TreeNode node)
         {
             if (node == currentHighlight) return;
             if (currentHighlight != null)
@@ -594,7 +594,7 @@ namespace ASCompletion
             }
         }
 
-        private void RefreshView(FileModel aFile)
+        void RefreshView(FileModel aFile)
         {
             //TraceManager.Add("Outline refresh...");
             OutlineTree.BeginStatefulUpdate();
@@ -703,7 +703,7 @@ namespace ASCompletion
             }
         }
 
-        private void UpdateTree(FileModel aFile, IList<string> modelNames, IList<int> newLines)
+        void UpdateTree(FileModel aFile, IList<string> modelNames, IList<int> newLines)
         {
             try
             {
@@ -741,7 +741,7 @@ namespace ASCompletion
             }
         }
 
-        private void AddExtend(TreeNodeCollection tree, ClassModel aClass)
+        void AddExtend(TreeNodeCollection tree, ClassModel aClass)
         {
             var folder = new TreeNode(TextHelper.GetString("Info.ExtendsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
 
@@ -766,7 +766,7 @@ namespace ASCompletion
             if (folder.Nodes.Count > 0) tree.Add(folder);
         }
 
-        private void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
+        void AddImplements(TreeNodeCollection tree, ICollection<string> implementsTypes)
         {
             if (implementsTypes.IsNullOrEmpty()) return;
             var folder = new TreeNode(TextHelper.GetString("Info.ImplementsNode"), ICON_FOLDER_CLOSED, ICON_FOLDER_OPEN);
@@ -777,7 +777,7 @@ namespace ASCompletion
             tree.Add(folder);
         }
 
-        private void AddMembersSorted(TreeNodeCollection tree, MemberList members)
+        void AddMembersSorted(TreeNodeCollection tree, MemberList members)
         {
             if (settings.SortingMode == OutlineSorting.None)
             {
@@ -789,24 +789,21 @@ namespace ASCompletion
             }
             else
             {
-                IComparer<MemberModel> comparer = null;
-                if (settings.SortingMode == OutlineSorting.Sorted)
-                    comparer = null;
-                else if (settings.SortingMode == OutlineSorting.SortedByKind)
-                    comparer = new ByKindMemberComparer();
-                else if (settings.SortingMode == OutlineSorting.SortedSmart)
-                    comparer = new SmartMemberComparer();
-                else if (settings.SortingMode == OutlineSorting.SortedGroup)
-                    comparer = new ByKindMemberComparer();
-
-                MemberList copy = new MemberList();
-                copy.Add(members);
+                var comparer = settings.SortingMode switch
+                {
+                    OutlineSorting.Sorted => null,
+                    OutlineSorting.SortedByKind => new ByKindMemberComparer(),
+                    OutlineSorting.SortedSmart => new SmartMemberComparer(),
+                    OutlineSorting.SortedGroup => new ByKindMemberComparer(), // TODO slavara: Possible BUG
+                    _ => (IComparer<MemberModel>) null,
+                };
+                var copy = new MemberList {members};
                 copy.Sort(comparer);
                 AddMembers(tree, copy);
             }
         }
 
-        private void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
+        void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
         {
             MemberList regions = aFile.Regions;
             int count = regions.Count;
@@ -874,9 +871,9 @@ namespace ASCompletion
             var sci = ASContext.CurSciControl;
             var ctx = ASContext.Context;
             var hasInference = ctx.Features.hasInference;
-            for (var i = 0; i < members.Count; i++)
+            foreach (var it in members)
             {
-                var member = members[i];
+                var member = it;
                 var img = GetIcon(member.Flags, member.Access);
                 if (hasInference && string.IsNullOrEmpty(member.Type))
                 {
@@ -939,7 +936,7 @@ namespace ASCompletion
             }
         }
 
-        private void SortDropDown_DropDownOpening(object sender, EventArgs e)
+        void SortDropDown_DropDownOpening(object sender, EventArgs e)
         {
             noneItem.Checked = settings.SortingMode == OutlineSorting.None;
             sortedItem.Checked = settings.SortingMode == OutlineSorting.Sorted;
@@ -948,7 +945,7 @@ namespace ASCompletion
             sortedSmartItem.Checked = settings.SortingMode == OutlineSorting.SortedSmart;
         }
 
-        private void SortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        void SortDropDown_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             ToolStripMenuItem item = e.ClickedItem as ToolStripMenuItem;
             if (item is null || item.Checked) return;
@@ -966,7 +963,7 @@ namespace ASCompletion
         /// <summary>
         /// Selection des items de l'arbre
         /// </summary>
-        private void ClassTreeSelect(object sender, TreeNode node)
+        void ClassTreeSelect(object sender, TreeNode node)
         {
             if (tempoClick is null)
             {
@@ -979,7 +976,7 @@ namespace ASCompletion
             tempoClick.Enabled = true;
         }
 
-        private void DelayedClassTreeSelect(object sender, System.Timers.ElapsedEventArgs e)
+        void DelayedClassTreeSelect(object sender, System.Timers.ElapsedEventArgs e)
         {
             TreeNode node = OutlineTree.SelectedNode;
             if (node is null)
@@ -1035,7 +1032,7 @@ namespace ASCompletion
         #region Find declaration
 
         // if highlight is true, shows the node and paint it with color 
-        private void ShowAndHighlightNode(TreeNode node, bool highlight)
+        void ShowAndHighlightNode(TreeNode node, bool highlight)
         {
             if (highlight)
             {
@@ -1050,7 +1047,7 @@ namespace ASCompletion
             }
         }
 
-        private bool IsMatch(string inputText, string searchText)
+        bool IsMatch(string inputText, string searchText)
         {
             if (inputText is null || searchText == "")
             {
@@ -1059,7 +1056,7 @@ namespace ASCompletion
             return inputText.ToUpper().Contains(searchText);
         }
 
-        private void HighlightAllMatchingDeclaration(string text)
+        void HighlightAllMatchingDeclaration(string text)
         {
             try
             {
@@ -1074,7 +1071,7 @@ namespace ASCompletion
             }
         }
 
-        private void HighlightDeclarationInGroup(IEnumerable nodes, string text)
+        void HighlightDeclarationInGroup(IEnumerable nodes, string text)
         {
             foreach (TreeNode sub in nodes)
             {
@@ -1092,7 +1089,7 @@ namespace ASCompletion
         }
 
         // Display informative text in the search field
-        private string searchInvitation = TextHelper.GetString("Info.SearchInvitation");
+        string searchInvitation = TextHelper.GetString("Info.SearchInvitation");
 
         void FindProcTxtEnter(object sender, EventArgs e)
         {
@@ -1113,7 +1110,7 @@ namespace ASCompletion
             }
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
+        void clearButton_Click(object sender, EventArgs e)
         {
             findTextTxt.Text = "";
             FindProcTxtLeave(null, null);
@@ -1170,7 +1167,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        private TreeNode FindMatch(IEnumerable nodes)
+        TreeNode FindMatch(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
