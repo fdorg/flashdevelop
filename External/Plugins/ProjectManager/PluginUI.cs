@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using ProjectManager.Actions;
@@ -19,53 +18,49 @@ namespace ProjectManager
     public class PluginUI : DockPanelControl
     {
         public FDMenus menus;
-        readonly TreeBar treeBar;
         Project project;
         readonly LinkLabel help;
-        readonly ProjectTreeView tree;
-        readonly ProjectContextMenu menu;
-        bool isEditingLabel;
 
         public event EventHandler NewProject;
         public event EventHandler OpenProject;
         public event EventHandler ImportProject;
         public event RenameEventHandler Rename;
         
-        public PluginUI(PluginMain plugin, FDMenus menus, FileActions fileActions, ProjectActions projectActions)
+        public PluginUI(FDMenus menus, FileActions fileActions, ProjectActions projectActions)
         {
             this.menus = menus;
-            this.AutoKeyHandling = true;
-            this.Text = TextHelper.GetString("Title.PluginPanel");
+            AutoKeyHandling = true;
+            Text = TextHelper.GetString("Title.PluginPanel");
             
             #region Build TreeView and Toolbar
 
-            menu = new ProjectContextMenu();
-            menu.Rename.Click += RenameNode;
+            Menu = new ProjectContextMenu();
+            Menu.Rename.Click += RenameNode;
 
-            treeBar = new TreeBar(menus, menu);
+            TreeBar = new TreeBar();
 
-            tree = new ProjectTreeView();
-            tree.BorderStyle = BorderStyle.None;
-            tree.Dock = DockStyle.Fill;
-            tree.ImageIndex = 0;
-            tree.ImageList = Icons.ImageList;
-            tree.LabelEdit = true;
-            tree.SelectedImageIndex = 0;
-            tree.ShowRootLines = false;
-            tree.HideSelection = false;
-            tree.ContextMenuStrip = menu;
-            tree.AfterLabelEdit += tree_AfterLabelEdit;
-            tree.BeforeLabelEdit += tree_BeforeLabelEdit;
-            tree.BeforeSelect += tree_BeforeSelect;
-            tree.AfterSelect += tree_AfterSelect;
+            Tree = new ProjectTreeView();
+            Tree.BorderStyle = BorderStyle.None;
+            Tree.Dock = DockStyle.Fill;
+            Tree.ImageIndex = 0;
+            Tree.ImageList = Icons.ImageList;
+            Tree.LabelEdit = true;
+            Tree.SelectedImageIndex = 0;
+            Tree.ShowRootLines = false;
+            Tree.HideSelection = false;
+            Tree.ContextMenuStrip = Menu;
+            Tree.AfterLabelEdit += tree_AfterLabelEdit;
+            Tree.BeforeLabelEdit += tree_BeforeLabelEdit;
+            Tree.BeforeSelect += tree_BeforeSelect;
+            Tree.AfterSelect += tree_AfterSelect;
 
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
-            panel.Controls.Add(tree);
-            panel.Controls.Add(treeBar);
+            panel.Controls.Add(Tree);
+            panel.Controls.Add(TreeBar);
 
-            menu.ProjectTree = tree;
-            ScrollBarEx.Attach(tree);
+            Menu.ProjectTree = Tree;
+            ScrollBarEx.Attach(Tree);
 
             #endregion
 
@@ -101,8 +96,8 @@ namespace ProjectManager
 
             #endregion
 
-            this.Controls.Add(help);
-            this.Controls.Add(panel);
+            Controls.Add(help);
+            Controls.Add(panel);
 
             #region Events
 
@@ -121,7 +116,7 @@ namespace ProjectManager
 
         internal void NotifyIssues()
         {
-            treeBar.ProjectHasIssues = BuildActions.LatestSDKMatchQuality > 0;
+            TreeBar.ProjectHasIssues = BuildActions.LatestSDKMatchQuality > 0;
         }
 
         public void SetProject(Project project)
@@ -130,12 +125,12 @@ namespace ProjectManager
 
             this.project = project;
 
-            List<Project> projects = tree.Projects;
+            var projects = Tree.Projects;
             projects.Clear(); // only one project active
             if (project != null) projects.Add(project);
-            tree.Projects = projects;
-            tree.Project = project;
-            tree_AfterSelect(tree, null);
+            Tree.Projects = projects;
+            Tree.Project = project;
+            tree_AfterSelect(Tree, null);
 
             help.Visible = (project is null);
 
@@ -148,9 +143,9 @@ namespace ProjectManager
 
         #region Public Properties
 
-        public ProjectTreeView Tree => this.tree;
-        public ProjectContextMenu Menu => this.menu;
-        public TreeBar TreeBar => this.treeBar;
+        public ProjectTreeView Tree { get; }
+        public ProjectContextMenu Menu { get; }
+        public TreeBar TreeBar { get; }
 
         public bool IsTraceDisabled
         {
@@ -165,11 +160,7 @@ namespace ProjectManager
         /// <summary>
         /// A label of the project tree is currently beeing edited
         /// </summary> 
-        public bool IsEditingLabel
-        {
-            get => this.isEditingLabel;
-            set => this.isEditingLabel = value;
-        }
+        public bool IsEditingLabel { get; set; }
 
         #endregion
 
@@ -178,9 +169,9 @@ namespace ProjectManager
         /// <summary>
         /// Instructions panel link clicked
         /// </summary>
-        private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string action = e.Link.LinkData as string;
+            var action = e.Link.LinkData as string;
             if (action == "create" && NewProject is { } newProject) newProject(sender, e);
             else if (action == "open" && OpenProject is { } openProject) openProject(sender, e);
             else if (action != null && action.StartsWith("import|")) ImportProject?.Invoke(sender, e);
@@ -195,8 +186,8 @@ namespace ProjectManager
         {
             try
             {
-                string parent = Path.GetDirectoryName(path);
-                WatcherNode node = tree.NodeMap[parent] as WatcherNode;
+                var parent = Path.GetDirectoryName(path);
+                var node = Tree.NodeMap[parent] as WatcherNode;
                 node?.UpdateLater();
             }
             catch { }
@@ -205,21 +196,19 @@ namespace ProjectManager
         /// <summary>
         /// We don't want to trigger these while editing
         /// </summary>
-        private void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (!e.CancelEdit)
-            {
-                DataEvent de = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileBeforeRename, tree.SelectedNode.BackingPath);
-                EventManager.DispatchEvent(this, de);
-                if (de.Handled) e.CancelEdit = true;
-                else isEditingLabel = true;
-            }
+            if (e.CancelEdit) return;
+            var de = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileBeforeRename, Tree.SelectedNode.BackingPath);
+            EventManager.DispatchEvent(this, de);
+            if (de.Handled) e.CancelEdit = true;
+            else IsEditingLabel = true;
         }
 
         /// <summary>
         /// Happens if you back out
         /// </summary>
-        private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             string languageDisplayName = "(" + project.LanguageDisplayName + ")";
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
@@ -237,10 +226,10 @@ namespace ProjectManager
                         newName = Path.Combine(project.Directory, label);
                         newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
                     }
-                    catch (Exception)
+                    catch
                     {
                         e.CancelEdit = true;
-                        isEditingLabel = false;
+                        IsEditingLabel = false;
                         return;
                     }
                     if (rename(oldName, newName))
@@ -250,7 +239,7 @@ namespace ProjectManager
                         {
                             File.Delete(oldName);
                         }
-                        catch (Exception)
+                        catch
                         {
                             // ignored
                         }
@@ -263,7 +252,7 @@ namespace ProjectManager
             else e.CancelEdit = true;
             if (e.Node is ProjectNode && !e.Node.Text.Contains(languageDisplayName))
                 e.Node.Text += " " + languageDisplayName;
-            isEditingLabel = false;
+            IsEditingLabel = false;
         }
 
         /// <summary>
@@ -272,53 +261,50 @@ namespace ProjectManager
         void tree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
             if (!(e.Node is GenericNode)) e.Cancel = true;
-            isEditingLabel = false;
+            IsEditingLabel = false;
         }
 
         /// <summary>
         /// Customize the context menu
         /// </summary>
-        private void tree_AfterSelect(object sender, TreeViewEventArgs e)
+        void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (tree.SelectedNodes.Count == 0) return;
-            Project project = Tree.ProjectOf(tree.SelectedNodes[0] as GenericNode);
-            menu.Configure(tree.SelectedNodes, project);
+            if (Tree.SelectedNodes.Count == 0) return;
+            Project project = Tree.ProjectOf(Tree.SelectedNodes[0] as GenericNode);
+            Menu.Configure(Tree.SelectedNodes, project);
             // notify other plugins of tree nodes selection - ourben@fdc
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.TreeSelectionChanged, tree.SelectedNodes);
-            EventManager.DispatchEvent(tree, de); 
+            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.TreeSelectionChanged, Tree.SelectedNodes);
+            EventManager.DispatchEvent(Tree, de); 
         }
 
         /// <summary>
         /// A new file was created and we want it to be selected after
         /// the filesystemwatcher finds it and makes us refresh
         /// </summary>
-        private void NewFileCreated(string path)
+        void NewFileCreated(string path)
         {
-            tree.PathToSelect = path;
+            Tree.PathToSelect = path;
             WatchParentOf(path);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private void RenameNode(object sender, EventArgs e)
+        void RenameNode(object sender, EventArgs e)
         {
-            if (tree.SelectedNode is ProjectNode)
+            if (Tree.SelectedNode is ProjectNode)
             {
-                string label = tree.SelectedNode.Text;
+                string label = Tree.SelectedNode.Text;
                 int index = label.IndexOfOrdinal("(" + project.LanguageDisplayName + ")");
-                if (index != -1) tree.SelectedNode.Text = label.Remove(index).Trim();
+                if (index != -1) Tree.SelectedNode.Text = label.Remove(index).Trim();
             }
-            tree.ForceLabelEdit();
+            Tree.ForceLabelEdit();
         }
 
         /// <summary>
         /// The project has changed, so refresh the tree
         /// </summary>
-        private void ProjectModified(string[] paths)
-        {
-            tree.RefreshTree(paths);
-        }
+        void ProjectModified(string[] paths) => Tree.RefreshTree(paths);
 
         #endregion
 

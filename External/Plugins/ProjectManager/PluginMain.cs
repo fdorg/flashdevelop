@@ -227,7 +227,7 @@ namespace ProjectManager
 
             projectActions = new ProjectActions(pluginUI);
 
-            pluginUI = new PluginUI(this, menus, fileActions, projectActions);
+            pluginUI = new PluginUI(menus, fileActions, projectActions);
             pluginUI.NewProject += delegate { NewProject(); };
             pluginUI.OpenProject += delegate { OpenProject(); };
             pluginUI.ImportProject += ImportProject;
@@ -1342,8 +1342,7 @@ namespace ProjectManager
         void TreeAddFileFromTemplate(string templatePath, bool noName)
         {
             var project = Tree.ProjectOf(Tree.SelectedNode);
-            if (project != null)
-                fileActions.AddFileFromTemplate(project, Tree.SelectedPath, templatePath, noName);
+            if (project != null) fileActions.AddFileFromTemplate(Tree.SelectedPath, templatePath, noName);
         }
 
         void TreeAddFolder() => fileActions.AddFolder(Tree.SelectedPath);

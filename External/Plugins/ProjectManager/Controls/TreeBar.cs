@@ -6,7 +6,6 @@ using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
-using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls
 {
@@ -24,17 +23,14 @@ namespace ProjectManager.Controls
         public ToolStripButton CollapseAll;
         public ToolStripSeparator Separator;
 
-        private ProjectContextMenu treeMenu;
-
-        public TreeBar(FDMenus menus, ProjectContextMenu treeMenu)
+        public TreeBar()
         {
-            this.treeMenu = treeMenu;
-            this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.Size = new Size(200, 26);
-            this.Renderer = new DockPanelStripRenderer();
-            this.GripStyle = ToolStripGripStyle.Hidden;
-            this.Padding = new Padding(2, 1, 2, 1);
-            this.CanOverflow = false;
+            ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            Size = new Size(200, 26);
+            Renderer = new DockPanelStripRenderer();
+            GripStyle = ToolStripGripStyle.Hidden;
+            Padding = new Padding(2, 1, 2, 1);
+            CanOverflow = false;
 
             RefreshSelected = new ToolStripButton(Icons.Refresh.Img);
             RefreshSelected.ToolTipText = TextHelper.GetString("ToolTip.Refresh");

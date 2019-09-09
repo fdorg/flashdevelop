@@ -65,6 +65,11 @@ namespace ProjectManager.Actions
 
         #region Add File From Template
 
+        public void AddFileFromTemplate(string inDirectory, string templatePath, bool noName)
+        {
+            AddFileFromTemplate(null, inDirectory, templatePath, noName);
+        }
+
         public void AddFileFromTemplate(Project project, string inDirectory, string templatePath, bool noName)
         {
             try
