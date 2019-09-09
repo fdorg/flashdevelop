@@ -3043,7 +3043,7 @@ namespace ASCompletion.Completion
             var line = sci.LineFromPosition(insertPosition);
             insertPosition = sci.LineIndentPosition(line);
             
-            int lastPos = -1;
+            var lastPos = -1;
             sci.Colourise(0, -1);
             while (true)
             {

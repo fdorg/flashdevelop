@@ -539,7 +539,7 @@ namespace AS3Context
 
                 member.Parameters = new List<MemberModel>();
                 int n = method.paramTypes.Length;
-                int defaultValues = n - method.optionalValues?.Length ?? n;
+                int defaultValues = n - (method.optionalValues?.Length ?? n);
                 for (int i = 0; i < n; i++)
                 {
                     MemberModel param = new MemberModel();

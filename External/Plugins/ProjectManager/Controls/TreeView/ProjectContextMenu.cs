@@ -358,7 +358,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(AddLibrary, 2, addLibrary);
             if (addLibrary) menu.Add(LibraryOptions, 2);
 
-            if (projectTree.SelectedPaths.Length == 1 && project.IsCompilable)
+            if (projectTree.SelectedNodes.Count == 1 && project.IsCompilable)
             {
                 var node = (DirectoryNode) projectTree.SelectedNode;
                 if (node.InsideClasspath == node) menu.Add(RemoveSourcePath, 2, true);
@@ -509,7 +509,7 @@ namespace ProjectManager.Controls.TreeView
             menu.Add(Insert, 0);
             if (IsBuildable(path))
             {
-                if (projectTree.SelectedPaths.Length == 1) menu.Add(BuildProjectFile, 2);
+                if (projectTree.SelectedNodes.Count == 1) menu.Add(BuildProjectFile, 2);
                 else menu.Add(BuildProjectFiles, 2);
             }
             AddFileItems(menu, path);
