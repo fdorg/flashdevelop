@@ -32,7 +32,7 @@ namespace PluginCore.Localization
             {
                 if (!initialized)
                 {
-                    DescriptionValue = TextHelper.GetString(base.Description) ?? string.Empty;
+                    DescriptionValue = TextHelper.GetString(base.Description);
                     initialized = true;
                 }
                 return DescriptionValue;
