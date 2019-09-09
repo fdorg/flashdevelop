@@ -34,12 +34,13 @@ namespace AS3Context
             new Regex("[/\\\\](playerglobal|airglobal|builtin)\\.swc", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         #region initialization
-        private readonly AS3Settings as3settings;
-        private bool hasAIRSupport;
-        private bool hasMobileSupport;
-        private MxmlFilterContext mxmlFilterContext; // extract inlined AS3 ranges & MXML tags
-        private readonly Timer timerCheck;
-        private string fileWithSquiggles;
+
+        readonly AS3Settings as3settings;
+        bool hasAIRSupport;
+        bool hasMobileSupport;
+        MxmlFilterContext mxmlFilterContext; // extract inlined AS3 ranges & MXML tags
+        readonly Timer timerCheck;
+        string fileWithSquiggles;
         protected bool mxmlEnabled;
 
         /// <summary>
@@ -389,7 +390,7 @@ namespace AS3Context
         /// <summary>
         /// Find any playerglobal.swc
         /// </summary>
-        private string MatchPlayerGlobalAny(ref int majorVersion, ref int minorVersion, string sdkLibs)
+        string MatchPlayerGlobalAny(ref int majorVersion, ref int minorVersion, string sdkLibs)
         {
             char S = Path.DirectorySeparatorChar;
             string libPlayer = sdkLibs + S + "player";
@@ -425,7 +426,7 @@ namespace AS3Context
         /// <summary>
         /// Find version-matching playerglobal.swc
         /// </summary>
-        private string MatchPlayerGlobalExact(int majorVersion, int minorVersion, string sdkLibs)
+        string MatchPlayerGlobalExact(int majorVersion, int minorVersion, string sdkLibs)
         {
             string playerglobal = null;
             char S = Path.DirectorySeparatorChar;
@@ -534,7 +535,7 @@ namespace AS3Context
             return base.CreateFileModel(fileName);
         }
 
-        private void GuessPackage(string fileName, FileModel nFile)
+        void GuessPackage(string fileName, FileModel nFile)
         {
             foreach(PathModel aPath in classPath)
                 if (fileName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
@@ -609,12 +610,12 @@ namespace AS3Context
             }
         }
 
-        private void timerCheck_Elapsed(object sender, ElapsedEventArgs e) => BackgroundSyntaxCheck();
+        void timerCheck_Elapsed(object sender, ElapsedEventArgs e) => BackgroundSyntaxCheck();
 
         /// <summary>
         /// Checking syntax of current file
         /// </summary>
-        private void BackgroundSyntaxCheck()
+        void BackgroundSyntaxCheck()
         {
             if (!IsFileValid) return;
 
@@ -628,7 +629,7 @@ namespace AS3Context
             FlexShells.Instance.CheckAS3(CurrentFile, sdk, sci.Text);
         }
 
-        private void AddSquiggles(ScintillaControl sci, int line, int start, int end)
+        void AddSquiggles(ScintillaControl sci, int line, int start, int end)
         {
             if (sci is null) return;
             fileWithSquiggles = CurrentFile;
@@ -636,7 +637,7 @@ namespace AS3Context
             sci.AddHighlight(2, (int)IndicatorStyle.Squiggle, 0x000000ff, position, end - start);
         }
 
-        private void ClearSquiggles(ScintillaControl sci)
+        void ClearSquiggles(ScintillaControl sci)
         {
             if (sci is null) return;
             try
@@ -649,7 +650,7 @@ namespace AS3Context
             }
         }
 
-        private void FlexShell_SyntaxError(string error)
+        void FlexShell_SyntaxError(string error)
         {
             if (!IsFileValid) return;
             var document = PluginBase.MainForm.CurrentDocument;
@@ -676,7 +677,7 @@ namespace AS3Context
         /// <summary>
         /// Convert multibyte column to byte length
         /// </summary>
-        private int MBSafeColumn(ScintillaControl sci, int line, int length)
+        int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
             var text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
@@ -728,48 +729,49 @@ namespace AS3Context
             if (!completionCache.IsDirty && completionCache.AllTypes != null)
                 return completionCache.AllTypes;
 
-            MemberList fullList = new MemberList();
+            var fullList = new MemberList();
             ClassModel aClass;
             MemberModel item;
             // public & internal classes
             string package = CurrentModel?.Package;
-            foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
-            {
-                aPath.ForeachFile((aFile) =>
+            foreach (var aPath in classPath)
+                if (aPath.IsValid && !aPath.Updating)
                 {
-                    if (!aFile.HasPackage)
-                        return true; // skip
+                    aPath.ForeachFile((aFile) =>
+                    {
+                        if (!aFile.HasPackage)
+                            return true; // skip
 
-                    aClass = aFile.GetPublicClass();
-                    if (!aClass.IsVoid() && aClass.IndexType is null)
-                    {
-                        if (aClass.Access == Visibility.Public
-                            || (aClass.Access == Visibility.Internal && aFile.Package == package))
+                        aClass = aFile.GetPublicClass();
+                        if (!aClass.IsVoid() && aClass.IndexType is null)
                         {
-                            item = aClass.ToMemberModel();
-                            item.Name = item.Type;
-                            fullList.Add(item);
+                            if (aClass.Access == Visibility.Public
+                                || (aClass.Access == Visibility.Internal && aFile.Package == package))
+                            {
+                                item = aClass.ToMemberModel();
+                                item.Name = item.Type;
+                                fullList.Add(item);
+                            }
                         }
-                    }
-                    if (aFile.Package.Length > 0 && aFile.Members.Count > 0)
-                    {
-                        foreach (MemberModel member in aFile.Members)
+                        if (aFile.Package.Length > 0 && aFile.Members.Count > 0)
                         {
-                            item = (MemberModel) member.Clone();
-                            item.Name = aFile.Package + "." + item.Name;
-                            fullList.Add(item);
+                            foreach (var member in aFile.Members)
+                            {
+                                item = (MemberModel) member.Clone();
+                                item.Name = aFile.Package + "." + item.Name;
+                                fullList.Add(item);
+                            }
                         }
-                    }
-                    else if (aFile.Members.Count > 0)
-                    {
-                        foreach (MemberModel member in aFile.Members)
+                        else if (aFile.Members.Count > 0)
                         {
-                            fullList.Add((MemberModel) member.Clone());
+                            foreach (var member in aFile.Members)
+                            {
+                                fullList.Add((MemberModel) member.Clone());
+                            }
                         }
-                    }
-                    return true;
-                });
-            }
+                        return true;
+                    });
+                }
             // void
             fullList.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
             // private classes
@@ -834,12 +836,10 @@ namespace AS3Context
         {
             if (member == ClassModel.VoidClass) return false;
             // same package is auto-imported
-            var package = member.InFile?.Package;
-            if (package is null) {
-                package = member.Type.Length > member.Name.Length
-                        ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
-                        : string.Empty;
-            }
+            var package = member.InFile?.Package
+                          ?? (member.Type.Length > member.Name.Length
+                              ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
+                              : string.Empty);
             return package == Context.CurrentModel.Package || base.IsImported(member, atLine);
         }
 
@@ -866,8 +866,9 @@ namespace AS3Context
                     // transform Vector<T> to Vector.<T>
                     if (cname.Contains("Vector<")) cname = cname.Replace("Vector<", "Vector.<");
                     var genType = re_genericType.Match(cname);
-                    if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                    return ClassModel.VoidClass;
+                    return genType.Success
+                        ? ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile)
+                        : ClassModel.VoidClass;
                 }
             }
             return base.ResolveType(cname, inFile);
@@ -878,7 +879,7 @@ namespace AS3Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            var tokenLength = token != null ? token.Length : 0;
+            var tokenLength = token?.Length ?? 0;
             if (tokenLength > 0)
             {
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
@@ -924,9 +925,9 @@ namespace AS3Context
         /// <summary>
         /// Retrieve/build typed copies of generic types
         /// </summary>
-        private ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
+        ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
         {
-            ClassModel originalClass = base.ResolveType(baseType, inFile);
+            var originalClass = base.ResolveType(baseType, inFile);
             if (originalClass.IsVoid()) return originalClass;
             if (indexType == "*")
             {
@@ -934,13 +935,13 @@ namespace AS3Context
                 return originalClass;
             }
 
-            ClassModel indexClass = ResolveType(indexType, inFile);
+            var indexClass = ResolveType(indexType, inFile);
             if (indexClass.IsVoid()) return originalClass;
             indexType = indexClass.QualifiedName;
 
             FileModel aFile = originalClass.InFile;
             // is the type already cloned?
-            foreach (ClassModel otherClass in aFile.Classes)
+            foreach (var otherClass in aFile.Classes)
                 if (otherClass.IndexType == indexType) return otherClass;
 
             // clone the type
@@ -950,7 +951,7 @@ namespace AS3Context
             aClass.IndexType = indexType;
 
             string typed = "<" + indexType + ">";
-            foreach (MemberModel member in aClass.Members)
+            foreach (var member in aClass.Members)
             {
                 if (member.Name == baseType) member.Name = baseType.Replace("<T>", typed);
                 if (member.Type != null && member.Type.Contains('T'))
@@ -961,7 +962,7 @@ namespace AS3Context
                 }
                 if (member.Parameters != null)
                 {
-                    foreach (MemberModel param in member.Parameters)
+                    foreach (var param in member.Parameters)
                     {
                         if (param.Type != null && param.Type.Contains('T'))
                         {
@@ -979,20 +980,20 @@ namespace AS3Context
 
         protected MemberList GetPrivateClasses()
         {
-            MemberList list = new MemberList();
+            var list = new MemberList();
             // private classes
             if (cFile != null)
-                foreach (ClassModel model in cFile.Classes)
+                foreach (var model in cFile.Classes)
                     if (model.Access == Visibility.Private)
                     {
-                        MemberModel item = model.ToMemberModel();
+                        var item = model.ToMemberModel();
                         item.Type = item.Name;
                         item.Access = Visibility.Private;
                         list.Add(item);
                     }
             // 'Class' members
             if (cClass != null)
-                foreach (MemberModel member in cClass.Members)
+                foreach (var member in cClass.Members)
                     if (member.Type == "Class") list.Add(member);
             return list;
         }
@@ -1002,7 +1003,7 @@ namespace AS3Context
         /// </summary>
         protected override void InitTopLevelElements()
         {
-            string filename = "toplevel.as";
+            const string filename = "toplevel.as";
             topLevel = new FileModel(filename);
 
             if (!topLevel.Members.Contains(features.ThisKey, 0, 0))
@@ -1099,7 +1100,7 @@ namespace AS3Context
             FlexShells.Instance.RunMxmlc(command, as3settings.GetDefaultSDK().Path);
         }
 
-        private bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
+        bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
 
         /// <summary>
         /// Calls RunCMD with additional parameters taken from the classes @mxmlc doc tag

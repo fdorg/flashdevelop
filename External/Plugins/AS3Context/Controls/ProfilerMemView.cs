@@ -61,7 +61,7 @@ namespace AS3Context.Controls
             Graph.Invalidate();
         }
 
-        private string FormatMemory(int mem)
+        string FormatMemory(int mem)
         {
             double m = mem / 1024.0;
             return (Math.Round(m * 10.0) / 10.0).ToString("N0");
@@ -73,16 +73,16 @@ namespace AS3Context.Controls
         public List<float> Values = new List<float>();
         public float MaxValue = 1;
         public int TimeScale = 4;
-        private Color back;
-        private Color rect;
-        private Color norm;
-        private Color peak;
-        private Color cur;
+        Color back;
+        Color rect;
+        Color norm;
+        Color peak;
+        Color cur;
 
         public MemGraph()
         {
-            this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-            this.UpdateColors();
+            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            UpdateColors();
         }
 
         public void UpdateColors()

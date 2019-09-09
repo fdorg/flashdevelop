@@ -16,7 +16,7 @@ namespace ASCompletion.Completion
 
         public static string GetStaticExternOverride(MemberModel member)
         {
-            var modifiers = "";
+            var modifiers = string.Empty;
             var flags = member.Flags;
             if ((flags & FlagType.Extern) > 0) modifiers += "extern ";
             if ((flags & FlagType.Static) > 0) modifiers += "static ";
@@ -32,7 +32,7 @@ namespace ASCompletion.Completion
             if ((access & Visibility.Public) > 0) return "public ";
             if ((access & Visibility.Protected) > 0) return "protected ";
             if ((access & Visibility.Internal) > 0) return "internal ";
-            return "";
+            return string.Empty;
         }
 
         public static string ToDeclarationWithModifiersString(MemberModel member, string template)
@@ -180,7 +180,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Templates are stored in the plugin's Data folder
         /// </summary>
-        public static string GetTemplate(string name, string altName) => GetTemplate(name) is { } tmp && tmp != "" ? tmp : GetTemplate(altName);
+        public static string GetTemplate(string name, string altName) => GetTemplate(name) is { } tmp && tmp.Length != 0
+            ? tmp
+            : GetTemplate(altName);
 
         /// <summary>
         /// Templates are stored in the plugin's Data folder

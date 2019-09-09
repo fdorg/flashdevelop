@@ -2,7 +2,7 @@
 
 namespace HaXeContext.Helpers
 {
-    internal static class ProcessExtensions
+    static class ProcessExtensions
     {
         public static ProcessStartInfo Clone(this ProcessStartInfo src)
         {

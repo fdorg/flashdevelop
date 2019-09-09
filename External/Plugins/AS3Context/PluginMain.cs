@@ -24,13 +24,13 @@ namespace AS3Context
 {
     public class PluginMain : IPlugin, InstalledSDKOwner
     {
-        private Context contextInstance;
-        private string settingFilename;
-        private bool inMXML;
-        private Image pluginIcon;
-        private ProfilerUI profilerUI;
-        private DockContent profilerPanel;
-        private ToolStripButton viewButton;
+        Context contextInstance;
+        string settingFilename;
+        bool inMXML;
+        Image pluginIcon;
+        ProfilerUI profilerUI;
+        DockContent profilerPanel;
+        ToolStripButton viewButton;
 
         #region Required Properties
 
@@ -232,43 +232,32 @@ namespace AS3Context
                     else if (inMXML)
                     {
                         var de = (DataEvent) e;
-                        if (de.Action == "XMLCompletion.Element")
+                        de.Handled = de.Action switch
                         {
-                            de.Handled = MxmlComplete.HandleElement(de.Data);
-                        }
-                        if (de.Action == "XMLCompletion.Namespace")
-                        {
-                            de.Handled = MxmlComplete.HandleNamespace(de.Data);
-                        }
-                        else if (de.Action == "XMLCompletion.CloseElement")
-                        {
-                            de.Handled = MxmlComplete.HandleElementClose(de.Data);
-                        }
-                        else if (de.Action == "XMLCompletion.Attribute")
-                        {
-                            de.Handled = MxmlComplete.HandleAttribute(de.Data);
-                        }
-                        else if (de.Action == "XMLCompletion.AttributeValue")
-                        {
-                            de.Handled = MxmlComplete.HandleAttributeValue(de.Data);
-                        }
+                            "XMLCompletion.Element" => MxmlComplete.HandleElement(de.Data),
+                            "XMLCompletion.Namespace" => MxmlComplete.HandleNamespace(de.Data),
+                            "XMLCompletion.CloseElement" => MxmlComplete.HandleElementClose(de.Data),
+                            "XMLCompletion.Attribute" => MxmlComplete.HandleAttribute(de.Data),
+                            "XMLCompletion.AttributeValue" => MxmlComplete.HandleAttributeValue(de.Data),
+                            _ => de.Handled
+                        };
                     }
                 }
             }
         }
 
-        private bool OpenVirtualFileModel(string virtualPath)
+        bool OpenVirtualFileModel(string virtualPath)
         {
-            int p = virtualPath.IndexOfOrdinal("::");
+            var p = virtualPath.IndexOfOrdinal("::");
             if (p < 0) return false;
 
-            string container = virtualPath.Substring(0, p);
-            string ext = Path.GetExtension(container).ToLower();
+            var container = virtualPath.Substring(0, p);
+            var ext = Path.GetExtension(container).ToLower();
             if (ext != ".swf" && ext != ".swc" && ext != ".ane") return false;
             if (!File.Exists(container)) return false;
 
-            PathModel path = new PathModel(container, contextInstance);
-            ContentParser parser = new ContentParser(path.Path);
+            var path = new PathModel(container, contextInstance);
+            var parser = new ContentParser(path.Path);
             parser.Run();
             AbcConverter.Convert(parser, path, contextInstance);
 
@@ -313,7 +302,7 @@ namespace AS3Context
         /// <summary>
         /// Create dock panels
         /// </summary>
-        private void CreatePanels()
+        void CreatePanels()
         {
             profilerUI = new ProfilerUI {Text = TextHelper.GetString("Title.Profiler")};
             profilerPanel = PluginBase.MainForm.CreateDockablePanel(profilerUI, Guid, pluginIcon, DockState.Hidden);
@@ -324,7 +313,7 @@ namespace AS3Context
         /// <summary>
         /// Create toolbar icons & menu items
         /// </summary>
-        private void CreateMenuItems()
+        void CreateMenuItems()
         {
             if (!(PluginBase.MainForm.FindMenuItem("ViewMenu") is ToolStripMenuItem menu)) return;
 
@@ -342,10 +331,10 @@ namespace AS3Context
         /// <summary>
         /// Insert toolbar item at right position
         /// </summary>
-        private void AddToolbarItems()
+        void AddToolbarItems()
         {
             ToolStripItem checkSyntax = null;
-            ToolStrip toolbar = PluginBase.MainForm.ToolStrip;
+            var toolbar = PluginBase.MainForm.ToolStrip;
             foreach (ToolStripItem item in toolbar.Items)
             {
                 if (item.Name == "CheckSyntax") 
@@ -399,11 +388,11 @@ namespace AS3Context
         /// <summary>
         /// Fix some settings values when the context has been created
         /// </summary>
-        private void ValidateSettings()
+        void ValidateSettings()
         {
             if (Settings.InstalledSDKs.IsNullOrEmpty() || PluginBase.MainForm.RefreshConfig)
             {
-                List<InstalledSDK> sdks = new List<InstalledSDK>();
+                var sdks = new List<InstalledSDK>();
                 var includedSDK = "Tools\\flexsdk";
                 if (Directory.Exists(PathHelper.ResolvePath(includedSDK)))
                 {
@@ -417,11 +406,11 @@ namespace AS3Context
                     sdks.Add(new InstalledSDK(this) {Path = includedSDK});
                 }
                 /* Resolve AppMan Flex SDKs */
-                string appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flexsdk");
+                var appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flexsdk");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] versionDirs = Directory.GetDirectories(appManDir);
-                    foreach (string versionDir in versionDirs)
+                    var versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (var versionDir in versionDirs)
                     {
                         if (Directory.Exists(versionDir))
                         {
@@ -433,8 +422,8 @@ namespace AS3Context
                 appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\flexairsdk");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] versionDirs = Directory.GetDirectories(appManDir);
-                    foreach (string versionDir in versionDirs)
+                    var versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (var versionDir in versionDirs)
                     {
                         if (Directory.Exists(versionDir))
                         {
@@ -446,8 +435,8 @@ namespace AS3Context
                 appManDir = Path.Combine(PathHelper.BaseDir, @"Apps\ascsdk");
                 if (Directory.Exists(appManDir))
                 {
-                    string[] versionDirs = Directory.GetDirectories(appManDir);
-                    foreach (string versionDir in versionDirs)
+                    var versionDirs = Directory.GetDirectories(appManDir);
+                    foreach (var versionDir in versionDirs)
                     {
                         if (Directory.Exists(versionDir))
                         {
@@ -461,12 +450,12 @@ namespace AS3Context
                 if (Settings.InstalledSDKs != null)
                 {
                     char[] slashes = { '/', '\\' };
-                    foreach (InstalledSDK oldSdk in Settings.InstalledSDKs)
+                    foreach (var oldSdk in Settings.InstalledSDKs)
                     {
-                        string oldPath = oldSdk.Path.TrimEnd(slashes);
-                        foreach (InstalledSDK newSdk in sdks)
+                        var oldPath = oldSdk.Path.TrimEnd(slashes);
+                        foreach (var newSdk in sdks)
                         {
-                            string newPath = newSdk.Path.TrimEnd(slashes);
+                            var newPath = newSdk.Path.TrimEnd(slashes);
                             if (newPath.Equals(oldPath, StringComparison.OrdinalIgnoreCase))
                             {
                                 sdks.Remove(newSdk);
@@ -494,18 +483,16 @@ namespace AS3Context
         /// </summary>
         void settingObjectOnInstalledSDKsChanged()
         {
-            if (contextInstance != null)
-            {
-                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.InstalledSDKsChanged", "as3");
-                EventManager.DispatchEvent(contextInstance, de);
-                if (!de.Handled) contextInstance.BuildClassPath();
-            }
+            if (contextInstance is null) return;
+            var de = new DataEvent(EventType.Command, "ProjectManager.InstalledSDKsChanged", "as3");
+            EventManager.DispatchEvent(contextInstance, de);
+            if (!de.Handled) contextInstance.BuildClassPath();
         }
 
         /// <summary>
         /// Update the classpath if an important setting has changed
         /// </summary>
-        private void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
+        void SettingObjectOnClasspathChanged() => contextInstance?.BuildClassPath();
 
         /// <summary>
         /// Saves the plugin settings
@@ -543,8 +530,8 @@ namespace AS3Context
             // look for other languages
             if (Directory.Exists(basePath))
             {
-                string[] dirs = Directory.GetDirectories(basePath);
-                foreach (string dir in dirs)
+                var dirs = Directory.GetDirectories(basePath);
+                foreach (var dir in dirs)
                 {
                     if (Directory.Exists(dir + "\\Configuration\\ActionScript 3.0"))
                     {
@@ -565,8 +552,7 @@ namespace AS3Context
             var path = sdk.Path;
             if (path is null) return false;
             var mBin = Regex.Match(path, "[/\\\\]bin$", RegexOptions.IgnoreCase);
-            if (mBin.Success)
-                sdk.Path = path = path.Substring(0, mBin.Index);
+            if (mBin.Success) sdk.Path = path = path.Substring(0, mBin.Index);
 
             var project = PluginBase.CurrentProject;
             path = project != null
@@ -605,7 +591,7 @@ namespace AS3Context
                     if (sdk.Name.StartsWithOrdinal("Flex") && File.Exists(descriptor))
                     {
                         raw = File.ReadAllText(descriptor);
-                        Match mAIR = Regex.Match(raw, "Adobe AIR ([0-9.]+) SDK");
+                        var mAIR = Regex.Match(raw, "Adobe AIR ([0-9.]+) SDK");
                         if (mAIR.Success)
                         {
                             sdk.Name += ", AIR " + mAIR.Groups[1].Value;

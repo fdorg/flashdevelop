@@ -7,7 +7,7 @@ namespace HaXeContext
 {
     public class CompilerCompletionHandler : IHaxeCompletionHandler
     {
-        private readonly ThreadLocal<ProcessStartInfo> haxeProcessStartInfo;
+        readonly ThreadLocal<ProcessStartInfo> haxeProcessStartInfo;
 
         public CompilerCompletionHandler(ProcessStartInfo haxeProcessStartInfo)
         {
@@ -19,16 +19,15 @@ namespace HaXeContext
 
         public string GetCompletion(string[] args, string fileContent)
         {
-            if (args is null || haxeProcessStartInfo is null)
-                return string.Empty;
+            if (args is null || haxeProcessStartInfo is null) return string.Empty;
             try
             {
-                using var haxeProcess = new Process();
-                haxeProcess.StartInfo = haxeProcessStartInfo.Value;
-                haxeProcess.StartInfo.Arguments = string.Join(" ", args);
-                haxeProcess.EnableRaisingEvents = true;
-                haxeProcess.Start();
-                return haxeProcess.StandardError.ReadToEnd();
+                using var process = new Process();
+                process.StartInfo = haxeProcessStartInfo.Value;
+                process.StartInfo.Arguments = string.Join(" ", args);
+                process.EnableRaisingEvents = true;
+                process.Start();
+                return process.StandardError.ReadToEnd();
             }
             catch 
             { 
