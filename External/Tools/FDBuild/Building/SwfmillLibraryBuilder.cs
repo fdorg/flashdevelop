@@ -66,7 +66,7 @@ namespace FDBuild.Building
                 string backupSwfPath = Path.Combine("obj", projectName + "Resources.old");
                 string arguments = $"simple \"{relLibraryPath}\" \"{swfPath}\"";
 
-                SwfmillLibraryWriter swfmill = new SwfmillLibraryWriter(relLibraryPath);
+                using var swfmill = new SwfmillLibraryWriter(relLibraryPath);
                 swfmill.WriteProject(project);
 
                 if (swfmill.NeedsMoreFrames) Frame = 3;

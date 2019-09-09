@@ -46,18 +46,18 @@ namespace ProjectManager.Actions
         public event FileMovedHandler FileMoved;
         public event FileMovedHandler FileCopied;
 
-        public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
+        public FileActions(IMainForm mainForm)
         {
             this.mainForm = mainForm;
         }
 
-        private void PushCurrentDirectory()
+        void PushCurrentDirectory()
         {
             storedDirectory = Environment.CurrentDirectory;
             Environment.CurrentDirectory = Application.StartupPath;
         }
 
-        private void PopCurrentDirectory()
+        void PopCurrentDirectory()
         {
             try { Environment.CurrentDirectory = storedDirectory; }
             catch { }
@@ -253,12 +253,12 @@ namespace ProjectManager.Actions
 
         #region Working With Existing Files
 
-        private bool cut;
+        bool cut;
 
         /// <summary>
         /// Notify of file action and allow plugins to handle the operation
         /// </summary>
-        private bool CancelAction(string name, object context)
+        bool CancelAction(string name, object context)
         {
             DataEvent de = new DataEvent(EventType.Command, name, context);
             EventManager.DispatchEvent(this, de);
@@ -611,7 +611,7 @@ namespace ProjectManager.Actions
             }
         }
 
-        private string CopyFile(string file, string toDirectory)
+        string CopyFile(string file, string toDirectory)
         {
             string fileName = Path.GetFileName(file);
             string filePath = Path.Combine(toDirectory, fileName);
@@ -630,13 +630,13 @@ namespace ProjectManager.Actions
             return filePath;
         }
 
-        private void DisableWatchers()
+        void DisableWatchers()
         {
             DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
             EventManager.DispatchEvent(this, disableWatchers);
         }
 
-        private void EnableWatchers()
+        void EnableWatchers()
         {
             DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
             EventManager.DispatchEvent(this, enableWatchers);
@@ -646,17 +646,17 @@ namespace ProjectManager.Actions
 
         #region Event Helpers
 
-        private void OnFileCreated(string path) => FileCreated?.Invoke(path);
+        void OnFileCreated(string path) => FileCreated?.Invoke(path);
 
-        private void OnFileMoved(string fromPath, string toPath) => FileMoved?.Invoke(fromPath, toPath);
+        void OnFileMoved(string fromPath, string toPath) => FileMoved?.Invoke(fromPath, toPath);
 
-        private void OnFilePasted(string fromPath, string toPath) => FileCopied?.Invoke(fromPath, toPath);
+        void OnFilePasted(string fromPath, string toPath) => FileCopied?.Invoke(fromPath, toPath);
 
-        private void OnFileDeleted(string path) => FileDeleted?.Invoke(path);
+        void OnFileDeleted(string path) => FileDeleted?.Invoke(path);
 
-        private void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
+        void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
 
-        private void OnOpenFile(string path) => OpenFile?.Invoke(path);
+        void OnOpenFile(string path) => OpenFile?.Invoke(path);
 
         #endregion
 

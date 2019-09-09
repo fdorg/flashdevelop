@@ -189,14 +189,15 @@ namespace ProjectManager.Building.AS3
                     File.Copy(configFile, backupConfig, true);
 
                 //write "new" config to tmp 
-                FlexConfigWriter config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
+                using var config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
                 config.WriteConfig(project, sdkVersion, extraClasspaths, noTrace == false, asc2Mode);
 
                 //compare tmp to current
                 bool configChanged = !File.Exists(backupConfig) || !File.Exists(configFile) || !FileComparer.IsEqual(configFileTmp, configFile);
 
                 //copy temp file to config if there is a change
-                if (configChanged){
+                if (configChanged)
+                {
                     File.Copy(configFileTmp, configFile, true);
                 }
 

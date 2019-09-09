@@ -54,7 +54,7 @@ namespace FDBuild.Building.AS3
                 if (File.Exists(configFile)) File.Copy(configFile, backupConfig, true);
 
                 //write "new" config to tmp 
-                var config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
+                using var config = new FlexConfigWriter(project.GetAbsolutePath(configFileTmp));
                 config.WriteConfig(project, sdkVersion, extraClassPaths, !noTrace, false);
 
                 //compare tmp to current

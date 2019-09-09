@@ -219,7 +219,7 @@ namespace ProjectManager
 
             flashDevelopActions = new FlashDevelopActions(MainForm);
 
-            fileActions = new FileActions(MainForm,flashDevelopActions);
+            fileActions = new FileActions(MainForm);
             fileActions.OpenFile += OpenFile;
             fileActions.FileDeleted += FileDeleted;
             fileActions.FileMoved += FileMoved;
