@@ -233,7 +233,10 @@ namespace ScintillaNet.Configuration
                     {
                         return TO_COLORREF(int.Parse(aColor));
                     }
-                    catch(Exception){}
+                    catch
+                    {
+                        // ignored
+                    }
                 }
                 return TO_COLORREF(c.ToArgb() & 0x00ffffff);
             }
@@ -248,7 +251,7 @@ namespace ScintillaNet.Configuration
         {
             if (number != null)
             {
-                Value v = _parent.MasterScintilla.GetValue(number);
+                var v = _parent.MasterScintilla.GetValue(number);
                 while (v != null)
                 {
                     number = v.val;
@@ -259,7 +262,10 @@ namespace ScintillaNet.Configuration
                 {
                     return int.Parse(number);
                 }
-                catch(Exception){}
+                catch
+                {
+                    // ignored
+                }
             }
             return 0;
 
