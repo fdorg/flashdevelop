@@ -1088,10 +1088,12 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             DateTime result;
             
-            try {
+            try
+            {
                 result = new DateTime(dateTime1970.Ticks + ticks * timeConversionFactor);
             }
-            catch(ArgumentOutOfRangeException) {
+            catch(ArgumentOutOfRangeException)
+            {
                 result = dateTime1970;
             }
             return result;

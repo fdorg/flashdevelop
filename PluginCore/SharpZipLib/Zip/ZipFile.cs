@@ -4114,7 +4114,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 throw new ZipException("No temporary stream has been created");
             }
 
-            Stream result = null;
+            Stream result;
 
             string moveTempName = GetTempFileName(fileName_, false);
             bool newFileCreated = false;
@@ -4128,7 +4128,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 
                 result = File.Open(fileName_, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
-            catch(Exception) {
+            catch
+            {
                 result  = null;
 
                 // Try to roll back changes...
