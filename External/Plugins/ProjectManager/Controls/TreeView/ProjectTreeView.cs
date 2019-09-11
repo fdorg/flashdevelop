@@ -6,7 +6,9 @@ using System.Windows.Forms;
 using ProjectManager.Projects;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Managers;
 
 namespace ProjectManager.Controls.TreeView
@@ -110,18 +112,13 @@ namespace ProjectManager.Controls.TreeView
 
         // this is called by GenericNode when a selected node is refreshed, so that
         // the context menu can rebuild itself accordingly.
-        public void NotifySelectionChanged()
-        {
-            OnAfterSelect(new TreeViewEventArgs(SelectedNode));
-        }
+        public void NotifySelectionChanged() => OnAfterSelect(new TreeViewEventArgs(SelectedNode));
 
         public static bool IsFileTypeHidden(string path)
         {
             if (Path.GetFileName(path).StartsWithOrdinal("~$")) return true;
-            string ext = Path.GetExtension(path).ToLower();
-            foreach (var exclude in PluginMain.Settings.ExcludedFileTypes)
-                if (ext == exclude) return true;
-            return false;
+            var ext = Path.GetExtension(path).ToLower();
+            return PluginMain.Settings.ExcludedFileTypes.Any(ext.Equals);
         }
 
         public void RefreshNode(GenericNode node)
@@ -134,7 +131,6 @@ namespace ProjectManager.Controls.TreeView
             if (node is null) return;
             // if you refresh a SwfFileNode this way (by asking for it), you get
             // special feedback
-
             if (node is SwfFileNode swfNode) swfNode.RefreshWithFeedback(true);
             else node.Refresh(true);
         }
@@ -232,10 +228,12 @@ namespace ProjectManager.Controls.TreeView
         {
             get
             {
-                var paths = new List<string>();
-                foreach (GenericNode node in SelectedNodes)
+                var selectedNodes = SelectedNodes;
+                if (selectedNodes.IsNullOrEmpty()) return EmptyArray<string>.Instance;
+                var result = new List<string>();
+                foreach (GenericNode node in selectedNodes)
                 {
-                    paths.Add(node.BackingPath);
+                    result.Add(node.BackingPath);
 
                     // if this is a "mapped" file, that is a file that "hides" other related files,
                     // make sure we select the related files also.
@@ -245,14 +243,14 @@ namespace ProjectManager.Controls.TreeView
                             if (mappedNode is FileNode)
                                 paths.Add(mappedNode.BackingPath);*/
                 }
-                return paths.ToArray();
+                return result.ToArray();
             }
             set
             {
                 var nodes = new List<TreeNode>();
                 foreach (var path in value)
-                    if (nodeMap.ContainsKey(path))
-                        nodes.Add(nodeMap[path]);
+                    if (nodeMap.TryGetValue(path, out var node))
+                        nodes.Add(node);
                 SelectedNodes = nodes;
             }
         }
@@ -269,10 +267,10 @@ namespace ProjectManager.Controls.TreeView
             }
             set
             {
-                foreach (string path in value)
+                foreach (var path in value)
                     if (nodeMap.ContainsKey(path))
                     {
-                        GenericNode node = nodeMap[path];
+                        var node = nodeMap[path];
                         if (!(node is SwfFileNode) && !(node is ProjectNode))
                         {
                             node.Expand();
@@ -301,11 +299,11 @@ namespace ProjectManager.Controls.TreeView
         /// </summary>
         public void RebuildTree()
         {
-            Point scrollPos = new Point();
+            var scrollPos = new Point();
             // store old tree state
-            List<string> previouslyExpanded = ExpandedPaths;
+            var previouslyExpanded = ExpandedPaths;
             if (Win32.ShouldUseWin32()) scrollPos = Win32.GetScrollPos(this);
-            string currentPath = SelectedNode?.BackingPath;
+            var currentPath = SelectedNode?.BackingPath;
 
             try
             {
@@ -446,7 +444,7 @@ namespace ProjectManager.Controls.TreeView
 
         protected override DataObject BeginDragNodes(List<TreeNode> nodes)
         {
-            DataObject data = base.BeginDragNodes(nodes);
+            var data = base.BeginDragNodes(nodes);
 
             // we also want to drag files, not just nodes, so that we can drop
             // them on explorer, etc.
@@ -492,11 +490,9 @@ namespace ProjectManager.Controls.TreeView
         protected override TreeNode ChangeDropTarget(TreeNode targetNode)
         {
             // you can only drop things into folders
-            GenericNode node = targetNode as GenericNode;
-
+            var node = targetNode as GenericNode;
             while (node != null && (!node.IsDropTarget || node.IsInvalid))
                 node = node.Parent as GenericNode;
-
             return node;
         }
 
@@ -504,5 +500,4 @@ namespace ProjectManager.Controls.TreeView
         #endregion
 
     }
-
 }

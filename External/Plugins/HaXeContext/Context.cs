@@ -20,6 +20,7 @@ using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
 using HaXeContext.Model;
+using PluginCore.Collections;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -259,7 +260,10 @@ namespace HaXeContext
                         if (Directory.Exists(line))
                             paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
                     }
-                    catch (Exception) { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
             while (!p.StandardOutput.EndOfStream);
@@ -277,7 +281,7 @@ namespace HaXeContext
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (Directory.Exists(haxePath))
             {
-                string path = haxePath;
+                var path = haxePath;
                 haxePath = Path.Combine(path, "haxe.exe");
                 if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
             }
@@ -287,8 +291,8 @@ namespace HaXeContext
                 return null;
             }
 
-            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
-            Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
+            var projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            var p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
 
             var paths = new List<string>();
             var isPathExpected = false;
@@ -310,7 +314,7 @@ namespace HaXeContext
             while (!p.StandardOutput.EndOfStream);
 
             var error = p.StandardError.ReadToEnd();
-            if (error != "") TraceManager.Add(error, (int)TraceType.Error);
+            if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
 
             p.WaitForExit();
             p.Close();
@@ -378,7 +382,7 @@ namespace HaXeContext
 
             features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
                 ? new[] {'!'}
-                : new char[0];
+                : EmptyArray<char>.Instance;
 
             UseGenericsShortNotationChange();
         }
@@ -2526,8 +2530,8 @@ namespace HaXeContext
                 var p = StartHiddenProcess(lixPath, "install haxelib:" + item.Key, projectDir);
                 var output = p.StandardOutput.ReadToEnd();
                 var error = p.StandardError.ReadToEnd();
-                if (output != "") TraceManager.Add(output, (int)TraceType.Info);
-                else if (error != "") TraceManager.Add(error, (int)TraceType.Error);
+                if (output.Length != 0) TraceManager.Add(output, (int)TraceType.Info);
+                else if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
                 p.WaitForExit();
                 p.Close();
             }

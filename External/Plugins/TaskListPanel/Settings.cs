@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace TaskListPanel
@@ -14,11 +15,11 @@ namespace TaskListPanel
     [Serializable]
     public class Settings
     {
-        private ExploringMode exploringMode = ExploringMode.Light;
-        private int[] images = new[] { 229, 197, 197 };
-        private string[] extensions = new[] { ".txt" };
-        private string[] groups = new[] { "TODO", "FIXME", "BUG" };
-        private string[] excluded = new string[0] {};
+        ExploringMode exploringMode = ExploringMode.Light;
+        int[] images = new[] { 229, 197, 197 };
+        string[] extensions = new[] { ".txt" };
+        string[] groups = new[] { "TODO", "FIXME", "BUG" };
+        string[] excluded = EmptyArray<string>.Instance;
 
         /// <summary> 
         /// Exploring mode, the way we should operate
@@ -37,7 +38,7 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Excluded Paths")]
         [LocalizedDescription("TaskListPanel.Description.ExcludedPaths")]
-        [DefaultValue(new string[0] {})]
+        [DefaultValue(new string[] {})]
         public string[] ExcludedPaths
         {
             get => excluded;
