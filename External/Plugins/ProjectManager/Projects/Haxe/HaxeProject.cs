@@ -106,7 +106,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private void ClearDocumentClass()
+        void ClearDocumentClass()
         {
             if (string.IsNullOrEmpty(CompilerOptions.MainClass)) 
                 return;
@@ -264,7 +264,7 @@ namespace ProjectManager.Projects.Haxe
             return pr.ToArray();
         }
 
-        private string GetClassName(string absTarget, string cp)
+        string GetClassName(string absTarget, string cp)
         {
             var className = absTarget.Substring(cp.Length);
             className = className.Substring(0, className.LastIndexOf('.'));
@@ -329,7 +329,7 @@ namespace ProjectManager.Projects.Haxe
 
         #region HXML parsing
 
-        private void ParseHXML(string[] raw)
+        void ParseHXML(string[] raw)
         {
             if (raw != null && (raw.Length == 0 || raw[0] is null))
                 raw = null;
@@ -369,7 +369,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
+        void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
         {
             var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
@@ -432,7 +432,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private LanguagePlatform FindPlatform(string op)
+        static LanguagePlatform FindPlatform(string op)
         {
             var lang = PlatformData.SupportedLanguages["haxe"];
             foreach (var platform in lang.Platforms.Values)
@@ -442,7 +442,7 @@ namespace ProjectManager.Projects.Haxe
             return null;
         }
 
-        private string CleanPath(string path, string cwd)
+        string CleanPath(string path, string cwd)
         {
             path = path.Replace("\"", string.Empty);
             path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);

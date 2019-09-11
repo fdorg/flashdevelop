@@ -19,6 +19,7 @@ using FlashDevelop.Settings;
 using FlashDevelop.Utilities;
 using ICSharpCode.SharpZipLib.Zip;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -3766,7 +3767,7 @@ namespace FlashDevelop
                 var button = (ToolStripItem)sender;
                 var command = ((ItemData)button.Tag).Tag;
                 var mfType = CurrentDocument.SciControl.GetType();
-                var method = mfType.GetMethod(command, new Type[0]);
+                var method = mfType.GetMethod(command, EmptyArray<Type>.Instance);
                 method.Invoke(CurrentDocument.SciControl, null);
             }
             catch (Exception ex)

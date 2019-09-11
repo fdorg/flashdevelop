@@ -13,6 +13,7 @@ using ProjectManager.Actions;
 using System.Collections.Generic;
 using System.Linq;
 using Ookii.Dialogs;
+using PluginCore.Collections;
 
 namespace ProjectManager.Controls
 {
@@ -814,7 +815,7 @@ namespace ProjectManager.Controls
         {
             this.classpathControl = new ProjectManager.Controls.ClasspathControl();
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.classpathControl.Classpaths = new string[0];
+            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
             this.classpathControl.Language = null;
             this.classpathControl.Location = new System.Drawing.Point(17, 22);
             this.classpathControl.Name = "classpathControl";
@@ -1430,8 +1431,8 @@ namespace ProjectManager.Controls
 
         private bool IsExternalConfiguration()
         {
-            string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
-            PlatformVersion version = langPlatform?.GetVersion(selectedVersion);
+            var selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
+            var version = langPlatform?.GetVersion(selectedVersion);
             return version?.Commands != null && version.Commands.ContainsKey("display");
         }
 
@@ -1441,7 +1442,7 @@ namespace ProjectManager.Controls
         {
             if (PlatformData.SupportedLanguages.ContainsKey(BaseProject.Language))
             {
-                SupportedLanguage lang = PlatformData.SupportedLanguages[BaseProject.Language];
+                var lang = PlatformData.SupportedLanguages[BaseProject.Language];
                 if (lang.Platforms.ContainsKey(platformName))
                     return lang.Platforms[platformName];
             }

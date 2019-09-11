@@ -11,6 +11,7 @@ using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
+using PluginCore.Collections;
 using PluginCore.Managers;
 
 // TODO: Tests with different formatting options using parameterized tests
@@ -1004,7 +1005,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), new string[0])
+                yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), EmptyArray<string>.Instance)
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData(ReadAllText("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})

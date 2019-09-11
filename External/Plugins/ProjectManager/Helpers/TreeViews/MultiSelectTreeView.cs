@@ -37,7 +37,7 @@ namespace System.Windows.Forms
                 multiSelect = value;
                 
                 if (!multiSelect)
-                    foreach (TreeNode node in selectedNodes)
+                    foreach (var node in selectedNodes)
                         UnpaintNode(node);
             }
         }
@@ -82,12 +82,7 @@ namespace System.Windows.Forms
         /// </summary>
         public List<TreeNode> SelectedNodes
         {
-            get
-            {
-                if (multiSelect)
-                    return selectedNodes;
-                return new List<TreeNode> {SelectedNode};
-            }
+            get => multiSelect ? selectedNodes : new List<TreeNode> {SelectedNode};
             set
             {
                 if (value is null)
@@ -110,7 +105,7 @@ namespace System.Windows.Forms
         // mouse UP which causes stupid focus rectangle drawing and flickering.
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            TreeNode clickedNode = GetNodeAt(e.X, e.Y);
+            var clickedNode = GetNodeAt(e.X, e.Y);
             if (clickedNode != null)
             {
                 // if you clicked on an already-selected group of nodes, don't unselect
@@ -118,15 +113,14 @@ namespace System.Windows.Forms
                 if (clickedNode != SelectedNode && SelectedNodes.Contains(clickedNode))
                     ignoreNextMultiSelect = true;
 
-                if (e.Button == MouseButtons.Left &&
-                    clickedNode != base.SelectedNode)
+                if (e.Button == MouseButtons.Left && clickedNode != SelectedNode)
                     IgnoreNextLabelEdit(); // workaround for treeview drawing bug
 
                 // unpaint this node now for less flicker
                 if (multiSelect && IsCtrlDown && !IsShiftDown && selectedNodes.Contains(clickedNode))
                     UnpaintNode(clickedNode);
                 else
-                    base.SelectedNode = clickedNode;
+                    SelectedNode = clickedNode;
             }
 
             base.OnMouseDown (e);
@@ -134,8 +128,7 @@ namespace System.Windows.Forms
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            TreeNode clickedNode = base.GetNodeAt(e.X, e.Y);
-
+            var clickedNode = GetNodeAt(e.X, e.Y);
             if (clickedNode != null)
             {
                 if (multiSelect && e.Button == MouseButtons.Left && 
@@ -149,7 +142,7 @@ namespace System.Windows.Forms
                 }
             }
 
-            base.OnMouseUp (e);
+            base.OnMouseUp(e);
         }
 
         protected override void OnBeforeLabelEdit(NodeLabelEditEventArgs e)
