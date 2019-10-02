@@ -2337,28 +2337,26 @@ namespace ASCompletion.Completion
             if (coma != ComaExpression.FunctionDeclaration && coma != ComaExpression.VarDeclaration)
                 return false;
 
-            if (!ASContext.Context.Settings.LazyClasspathExploration
-                && ASContext.Context.Settings.CompletionListAllTypes)
+            var ctx = ASContext.Context;
+            if (!ctx.Settings.LazyClasspathExploration && ctx.Settings.CompletionListAllTypes)
             {
                 // show all project classes
                 HandleAllClassesCompletion(sci, tail, true, false);
             }
             else
             {
-                bool outOfDate = ASContext.Context.UnsetOutOfDate();
-
+                bool outOfDate = ctx.UnsetOutOfDate();
                 // list visible classes
                 var known = GetVisibleElements();
                 var list = known.Select(member => new MemberItem(member)).ToList<ICompletionListItem>();
                 CompletionList.Show(list, autoHide, tail);
-                if (outOfDate) ASContext.Context.SetOutOfDate();
+                if (outOfDate) ctx.SetOutOfDate();
             }
             return true;
         }
 
         static ComaExpression GetFunctionContext(ScintillaControl sci, bool autoHide)
         {
-            var result = ComaExpression.None;
             var position = sci.CurrentPos - 1;
             var c = ' ';
             //bool inGenericType = false;
@@ -2373,14 +2371,15 @@ namespace ASCompletion.Completion
 
             // var declaration
             GetWordLeft(sci, ref position);
-            var features = ASContext.Context.Features;
-            var keyword = (c == ':') ? GetWordLeft(sci, ref position) : null;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
+            var keyword = c == ':' ? GetWordLeft(sci, ref position) : null;
             if (keyword == features.varKey || (features.constKey != null && keyword == features.constKey))
-                result = ComaExpression.VarDeclaration;
+                return ComaExpression.VarDeclaration;
             // function return type
-            else if ((char)sci.CharAt(position) == ')')
+            if ((char)sci.CharAt(position) == ')')
             {
-                int parCount = 0;
+                var parCount = 0;
                 while (position > 0)
                 {
                     position--;
@@ -2399,7 +2398,7 @@ namespace ASCompletion.Completion
                 keyword = GetWordLeft(sci, ref position);
                 if (keyword.Length == 0 && sci.CharAt(position) == '>' && features.hasGenerics)
                 {
-                    int groupCount = 1;
+                    var groupCount = 1;
                     position--;
                     while (position >= 0 && groupCount > 0)
                     {
@@ -2410,31 +2409,24 @@ namespace ASCompletion.Completion
                     }
                     keyword = GetWordLeft(sci, ref position);
                 }
-                if (keyword == features.functionKey)
-                    result = ComaExpression.FunctionDeclaration;
-                else
-                {
-                    keyword = GetWordLeft(sci, ref position);
-                    if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
-                        result = ComaExpression.FunctionDeclaration;
-                    else if (ASContext.Context.CurrentModel.haXe && keyword == features.varKey
-                             && (ASContext.Context.CurrentMember is null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
-                        result = ComaExpression.VarDeclaration;  // Haxe Properties
-                }
+                if (keyword == features.functionKey) return ComaExpression.FunctionDeclaration;
+                keyword = GetWordLeft(sci, ref position);
+                if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
+                    return ComaExpression.FunctionDeclaration;
+                if (ctx.CurrentModel.haXe
+                    && keyword == features.varKey
+                    && (ctx.CurrentMember is null || (ctx.CurrentMember.Flags & FlagType.Function) == 0))
+                    return ComaExpression.VarDeclaration;  // Haxe Properties
+                return ComaExpression.None;
             }
-            // needs more guessing
-            else
+            // config constant, or namespace access
+            if (string.IsNullOrEmpty(keyword) && position > 0 && (char)sci.CharAt(position) == ':')
             {
-                // config constant, or namespace access
-                if (string.IsNullOrEmpty(keyword) && position > 0 && (char)sci.CharAt(position) == ':')
-                {
-                    var pos = position - 1;
-                    keyword = GetWordLeft(sci, ref pos);
-                    if (string.IsNullOrEmpty(keyword) && autoHide) return ComaExpression.None;
-                }
-                result = DisambiguateComa(sci, position, 0);
+                var pos = position - 1;
+                keyword = GetWordLeft(sci, ref pos);
+                if (string.IsNullOrEmpty(keyword) && autoHide) return ComaExpression.None;
             }
-            return result;
+            return DisambiguateComa(sci, position, 0);
         }
 
         /// <summary>
