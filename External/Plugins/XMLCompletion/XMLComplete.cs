@@ -220,22 +220,16 @@ namespace XMLCompletion
         {
             try
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
+                var assembly = Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + ext + ".xml");
                 if (src is null) return false;
-
-                string content;
-                using (StreamReader sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                using var reader = new StreamReader(src);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
-                using (StreamWriter sw = File.CreateText(file))
-                {
-                    sw.Write(content);
-                    sw.Close();
-                }
+                using var writer = File.CreateText(file);
+                writer.Write(content);
+                writer.Close();
                 return true;
             }
             catch

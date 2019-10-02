@@ -52,12 +52,10 @@ namespace ASCompletion.TestUtils
         {
             var asm = Assembly.GetExecutingAssembly();
 
-            using (var stream = asm.GetManifestResourceStream(resourceFile))
-            {
-                byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length);
-                return buffer;
-            }
+            using var stream = asm.GetManifestResourceStream(resourceFile);
+            byte[] buffer = new byte[stream.Length];
+            stream.Read(buffer, 0, buffer.Length);
+            return buffer;
         }
     }
 }

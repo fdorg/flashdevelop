@@ -424,41 +424,37 @@ namespace FlashDebugger
 
         private void TsbExportFiltered_Click(object sender, EventArgs e)
         {
-            using (var fileDialog = new SaveFileDialog())
+            using var fileDialog = new SaveFileDialog();
+            fileDialog.OverwritePrompt = true;
+            fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
+            if (fileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                fileDialog.OverwritePrompt = true;
-                fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
-                if (fileDialog.ShowDialog(this) == DialogResult.OK)
+                try
                 {
-                    try
-                    {
-                        breakPointManager.Save(fileDialog.FileName);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorManager.ShowError(ex);
-                    }
+                    breakPointManager.Save(fileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
                 }
             }
         }
 
         private void TsbImport_Click(object sender, EventArgs e)
         {
-            using (var fileDialog = new OpenFileDialog())
+            using var fileDialog = new OpenFileDialog();
+            fileDialog.CheckFileExists = true;
+            fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
+            if (fileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                fileDialog.CheckFileExists = true;
-                fileDialog.Filter = TextHelper.GetString("ProjectManager.Info.FileFilter");
-                if (fileDialog.ShowDialog(this) == DialogResult.OK)
+                try
                 {
-                    try
-                    {
-                        breakPointManager.Import(fileDialog.FileName);
-                        breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorManager.ShowWarning(TextHelper.GetString("Error.InvalidFile"), ex);
-                    }
+                    breakPointManager.Import(fileDialog.FileName);
+                    breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowWarning(TextHelper.GetString("Error.InvalidFile"), ex);
                 }
             }
         }

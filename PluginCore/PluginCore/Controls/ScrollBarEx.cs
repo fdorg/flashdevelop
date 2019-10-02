@@ -181,11 +181,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundVertical(Graphics g, Rectangle rect)
         {
-            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -195,11 +193,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundHorizontal(Graphics g, Rectangle rect)
         {
-            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -210,11 +206,9 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
-            using (Brush brush = new SolidBrush(color))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -225,11 +219,9 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
-            using (Brush brush = new SolidBrush(color))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -241,20 +233,17 @@ namespace PluginCore.Controls
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
         private static void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
-            using (Brush brush = new SolidBrush(color))
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
+            PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
+            float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
+            g.FillPolygon(brush, new[]
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-                PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
-                float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
-                g.FillPolygon(brush, new[]
-                    {
-                        new PointF(rect.Left - 0.5f, baseY),
-                        new PointF(rect.Right - 0.5f, baseY),
-                        headPoint
-                    });
-
-            }
+                new PointF(rect.Left - 0.5f, baseY),
+                new PointF(rect.Right - 0.5f, baseY),
+                headPoint
+            });
         }
 
         /// <summary>
@@ -266,19 +255,17 @@ namespace PluginCore.Controls
         /// <param name="arrowLeft">true for a left arrow, false otherwise.</param>
         private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowLeft)
         {
-            using (Brush brush = new SolidBrush(color))
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
+            PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
+            float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
+            g.FillPolygon(brush, new[]
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-                PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
-                float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
-                g.FillPolygon(brush, new[]
-                    {
-                        new PointF(baseX, rect.Top - 0.5f),
-                        new PointF(baseX, rect.Bottom - 0.5f),
-                        headPoint
-                    });
-            }
+                new PointF(baseX, rect.Top - 0.5f),
+                new PointF(baseX, rect.Bottom - 0.5f),
+                headPoint
+            });
         }
 
         #endregion
@@ -1087,19 +1074,15 @@ namespace PluginCore.Controls
             // draw current line
             if (this.curPos > -1 && this.orientation == ScrollBarOrientation.Vertical)
             {
-                using (SolidBrush brush = new SolidBrush(this.curPosColor))
-                {
-                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                    e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
-                }
+                using SolidBrush brush = new SolidBrush(this.curPosColor);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
             }
 
             // draw border
-            using (Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled)))
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
-            }
+            using Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled));
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
         }
 
         /// <summary>

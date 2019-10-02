@@ -798,31 +798,28 @@ namespace System.Windows.Forms
 			graphics.SmoothingMode = SmoothingMode.HighSpeed;
 			
 			//	Get TabPageBorder
-			using (GraphicsPath tabPageBorderPath = this.GetTabPageBorder(index)) {
+            using GraphicsPath tabPageBorderPath = this.GetTabPageBorder(index);
+            //	Paint the background
+            using (Brush fillBrush = this._StyleProvider.GetPageBackgroundBrush(index)){
+                graphics.FillPath(fillBrush, tabPageBorderPath);
+            }
 				
-				//	Paint the background
-				using (Brush fillBrush = this._StyleProvider.GetPageBackgroundBrush(index)){
-					graphics.FillPath(fillBrush, tabPageBorderPath);
-				}
-				
-				if (this._Style != TabStyle.None){
+            if (this._Style != TabStyle.None){
 					
-					//	Paint the tab
-					this._StyleProvider.PaintTab(index, graphics);
+                //	Paint the tab
+                this._StyleProvider.PaintTab(index, graphics);
 					
-					//	Draw any image
-					this.DrawTabImage(index, graphics);
+                //	Draw any image
+                this.DrawTabImage(index, graphics);
 
-					//	Draw the text
-					this.DrawTabText(index, graphics);
+                //	Draw the text
+                this.DrawTabText(index, graphics);
 
-				}
+            }
 				
-				//	Paint the border
-				this.DrawTabBorder(tabPageBorderPath, index, graphics);
-				
-			}
-		}
+            //	Paint the border
+            this.DrawTabBorder(tabPageBorderPath, index, graphics);
+        }
 
 		private void DrawTabBorder(GraphicsPath path, int index, Graphics graphics)
 		{
@@ -836,10 +833,9 @@ namespace System.Windows.Forms
 				borderColor = this._StyleProvider.BorderColor;
 			}
 
-			using (Pen borderPen =new Pen(borderColor)){
-				graphics.DrawPath(borderPen, path);
-			}
-		}
+            using Pen borderPen =new Pen(borderColor);
+            graphics.DrawPath(borderPen, path);
+        }
 
 		private void DrawTabText(int index, Graphics graphics)
 		{
@@ -847,20 +843,20 @@ namespace System.Windows.Forms
 			graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			Rectangle tabBounds = this.GetTabTextRect(index);
 			
-			if (this.SelectedIndex == index) {
-				using (Brush textBrush = new SolidBrush(this._StyleProvider.TextColorSelected)){
-					graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
-				}
-			} else {
-				if (this.TabPages[index].Enabled) {
-					using (Brush textBrush = new SolidBrush(this._StyleProvider.TextColor)){
-						graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
-					}
-				} else {
-					using (Brush textBrush = new SolidBrush(this._StyleProvider.TextColorDisabled)){
-						graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
-					}
-				}
+			if (this.SelectedIndex == index)
+            {
+                using Brush textBrush = new SolidBrush(this._StyleProvider.TextColorSelected);
+                graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
+            } else {
+				if (this.TabPages[index].Enabled)
+                {
+                    using Brush textBrush = new SolidBrush(this._StyleProvider.TextColor);
+                    graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
+                } else
+                {
+                    using Brush textBrush = new SolidBrush(this._StyleProvider.TextColorDisabled);
+                    graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
+                }
 			}
 		}
 
@@ -1211,11 +1207,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private Rectangle GetTabImageRect(int index){
-			using (GraphicsPath tabBorderPath = this._StyleProvider.GetTabBorder(index)){
-				return this.GetTabImageRect(tabBorderPath);
-			}
-		}
+		private Rectangle GetTabImageRect(int index)
+        {
+            using GraphicsPath tabBorderPath = this._StyleProvider.GetTabBorder(index);
+            return this.GetTabImageRect(tabBorderPath);
+        }
 		private Rectangle GetTabImageRect(GraphicsPath tabBorderPath){
 			Rectangle imageRect = new Rectangle();
 			RectangleF rect = tabBorderPath.GetBounds();

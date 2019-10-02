@@ -499,15 +499,15 @@ namespace ICSharpCode.SharpZipLib.Zip
             events_?.ProcessFile?.Invoke(sender, e);
 
             if ( e.ContinueRunning ) {
-                try {
+                try
+                {
                     // The open below is equivalent to OpenRead which gaurantees that if opened the 
                     // file will not be changed by subsequent openers, but precludes opening in some cases
                     // were it could succeed.
-                    using (FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                        ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
-                        outputStream_.PutNextEntry(entry);
-                        AddFileContents(e.Name, stream);
-                    }
+                    using FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
+                    outputStream_.PutNextEntry(entry);
+                    AddFileContents(e.Name, stream);
                 }
                 catch(Exception ex) {
                     if (events_ != null) {

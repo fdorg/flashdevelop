@@ -116,10 +116,9 @@ namespace PluginCore.Utilities
                 info.Delete();
                 return Activator.CreateInstance(type);
             }
-            using (FileStream stream = info.Open(FileMode.Open, FileAccess.Read))
-            {
-                return formatter.Deserialize(stream);
-            }
+
+            using FileStream stream = info.Open(FileMode.Open, FileAccess.Read);
+            return formatter.Deserialize(stream);
         }
 
         /// <summary>

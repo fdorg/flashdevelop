@@ -149,35 +149,33 @@ namespace FlashDebugger.Controls
 
         private void DoResize()
         {
-            using (Graphics g = Tree.CreateGraphics())
+            using Graphics g = Tree.CreateGraphics();
+            int nameMaxW = TextWidth(g, Tree.Columns[0].Header) + DataTree.Margin.Horizontal;
+            int valueMaxW = TextWidth(g, Tree.Columns[1].Header) + DataTree.Margin.Horizontal;
+            int height = 0;
+            DataTree.Tree.Columns[0].Width = Screen.GetWorkingArea(this).Width;
+            foreach (TreeNodeAdv node in DataTree.Tree.Root.Children)
             {
-                int nameMaxW = TextWidth(g, Tree.Columns[0].Header) + DataTree.Margin.Horizontal;
-                int valueMaxW = TextWidth(g, Tree.Columns[1].Header) + DataTree.Margin.Horizontal;
-                int height = 0;
-                DataTree.Tree.Columns[0].Width = Screen.GetWorkingArea(this).Width;
-                foreach (TreeNodeAdv node in DataTree.Tree.Root.Children)
-                {
-                    CalcHeightWidth(g, node, ref height, ref nameMaxW, ref valueMaxW);
-                }
-                DataTree.Tree.Columns[0].Width = nameMaxW;
-                DataTree.Tree.Columns[1].Width = valueMaxW;
-                int width = nameMaxW + valueMaxW + DataTree.Tree.Margin.Horizontal + Padding.Horizontal + SystemInformation.VerticalScrollBarWidth;
-                Form parentForm = PluginBase.MainForm as Form;
-                Point locationMainForm = parentForm.PointToClient(Location);
-                int maxWidth = parentForm.Width - locationMainForm.X - Padding.Horizontal - 2 * SystemInformation.VerticalScrollBarWidth;
-                if (width > maxWidth)
-                {
-                    width = maxWidth;
-                }
-                Width = width;
-                int h = DataTree.Tree.ColumnHeaderHeight + height + Padding.Vertical + SystemInformation.HorizontalScrollBarHeight;
-                int maxHeight = parentForm.Height - locationMainForm.Y - Padding.Vertical - 2 * SystemInformation.HorizontalScrollBarHeight;
-                if (h > maxHeight)
-                {
-                    h = maxHeight;
-                }
-                Height = h;
+                CalcHeightWidth(g, node, ref height, ref nameMaxW, ref valueMaxW);
             }
+            DataTree.Tree.Columns[0].Width = nameMaxW;
+            DataTree.Tree.Columns[1].Width = valueMaxW;
+            int width = nameMaxW + valueMaxW + DataTree.Tree.Margin.Horizontal + Padding.Horizontal + SystemInformation.VerticalScrollBarWidth;
+            Form parentForm = PluginBase.MainForm as Form;
+            Point locationMainForm = parentForm.PointToClient(Location);
+            int maxWidth = parentForm.Width - locationMainForm.X - Padding.Horizontal - 2 * SystemInformation.VerticalScrollBarWidth;
+            if (width > maxWidth)
+            {
+                width = maxWidth;
+            }
+            Width = width;
+            int h = DataTree.Tree.ColumnHeaderHeight + height + Padding.Vertical + SystemInformation.HorizontalScrollBarHeight;
+            int maxHeight = parentForm.Height - locationMainForm.Y - Padding.Vertical - 2 * SystemInformation.HorizontalScrollBarHeight;
+            if (h > maxHeight)
+            {
+                h = maxHeight;
+            }
+            Height = h;
         }
 
         private bool CalcHeightWidth(Graphics g, TreeNodeAdv node, ref int height, ref int widthName, ref int widthValue)

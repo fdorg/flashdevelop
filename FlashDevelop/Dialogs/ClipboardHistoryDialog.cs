@@ -230,22 +230,19 @@ namespace FlashDevelop.Dialogs
             {
                 return;
             }
-            using (var brush = new SolidBrush(e.BackColor))
+
+            using var brush = new SolidBrush(e.BackColor);
+            e.Graphics.FillRectangle(brush, e.Bounds);
+            string[] lines = listBox.GetItemText(listBox.Items[e.Index]).Split('\n');
+            for (int i = 0; i < lines.Length; i++)
             {
-                e.Graphics.FillRectangle(brush, e.Bounds);
-                string[] lines = listBox.GetItemText(listBox.Items[e.Index]).Split('\n');
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    lines[i] = lines[i].Trim();
-                }
-                string text = (e.Index + 1) + "    " + string.Join(" ", lines);
-                brush.Color = e.ForeColor;
-                using (var stringFormat = new StringFormat())
-                {
-                    stringFormat.Trimming = StringTrimming.EllipsisCharacter;
-                    e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat);
-                }
+                lines[i] = lines[i].Trim();
             }
+            string text = (e.Index + 1) + "    " + string.Join(" ", lines);
+            brush.Color = e.ForeColor;
+            using var stringFormat = new StringFormat();
+            stringFormat.Trimming = StringTrimming.EllipsisCharacter;
+            e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat);
         }
 
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
