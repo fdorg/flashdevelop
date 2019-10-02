@@ -702,23 +702,22 @@ namespace ICSharpCode.SharpZipLib.Tar
 
                 if (!IsBinary(entryFilename)) {
                     tempFileName = Path.GetTempFileName();
-                    
-                    using (StreamReader inStream  = File.OpenText(entryFilename))
+
+                    using var input  = File.OpenText(entryFilename);
+                    using Stream outStream = File.Create(tempFileName);
+                    while (true)
                     {
-                        using Stream outStream = File.Create(tempFileName);
-                        while (true) {
-                            string line = inStream.ReadLine();
-                            if (line is null) {
-                                break;
-                            }
-                            byte[] data = Encoding.ASCII.GetBytes(line);
-                            outStream.Write(data, 0, data.Length);
-                            outStream.WriteByte((byte)'\n');
+                        string line = input.ReadLine();
+                        if (line is null) {
+                            break;
                         }
-                            
-                        outStream.Flush();
+                        byte[] data = Encoding.ASCII.GetBytes(line);
+                        outStream.Write(data, 0, data.Length);
+                        outStream.WriteByte((byte)'\n');
                     }
-                    
+                            
+                    outStream.Flush();
+
                     entry.Size = new FileInfo(tempFileName).Length;
                     entryFilename = tempFileName;
                 }

@@ -1707,20 +1707,18 @@ namespace AirProperties
                 byte[] buffer = UnzipFile(zFile, entry);
 
                 string extensionId = null;
-                using (var stream = new MemoryStream(buffer))
+                using var stream = new MemoryStream(buffer);
+                using var reader = XmlReader.Create(stream);
+                reader.MoveToContent();
+
+                while (reader.Read())
                 {
-                    using var reader = XmlReader.Create(stream);
-                    reader.MoveToContent();
+                    if (reader.NodeType != XmlNodeType.Element) continue;
 
-                    while (reader.Read())
+                    if (reader.Name == "id")
                     {
-                        if (reader.NodeType != XmlNodeType.Element) continue;
-
-                        if (reader.Name == "id")
-                        {
-                            extensionId = reader.ReadInnerXml();
-                            break;
-                        }
+                        extensionId = reader.ReadInnerXml();
+                        break;
                     }
                 }
 
@@ -1794,20 +1792,18 @@ namespace AirProperties
                                 byte[] buffer = UnzipFile(zFile, entry);
 
                                 string extensionId = null;
-                                using (var stream = new MemoryStream(buffer))
+                                using var stream = new MemoryStream(buffer);
+                                using var reader = XmlReader.Create(stream);
+                                reader.MoveToContent();
+
+                                while (reader.Read())
                                 {
-                                    using var reader = XmlReader.Create(stream);
-                                    reader.MoveToContent();
+                                    if (reader.NodeType != XmlNodeType.Element) continue;
 
-                                    while (reader.Read())
+                                    if (reader.Name == "id")
                                     {
-                                        if (reader.NodeType != XmlNodeType.Element) continue;
-
-                                        if (reader.Name == "id")
-                                        {
-                                            extensionId = reader.ReadInnerXml();
-                                            break;
-                                        }
+                                        extensionId = reader.ReadInnerXml();
+                                        break;
                                     }
                                 }
 

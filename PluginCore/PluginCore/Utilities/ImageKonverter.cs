@@ -85,22 +85,20 @@ namespace PluginCore.Utilities
         {
             try
             {
-                Bitmap bitmap = new Bitmap(image.Width, image.Height);
-                using (Graphics graphics = Graphics.FromImage(bitmap))
+                var bitmap = new Bitmap(image.Width, image.Height);
+                using var graphics = Graphics.FromImage(bitmap);
+                var matrix = new ColorMatrix(new[]
                 {
-                    ColorMatrix matrix = new ColorMatrix(new[]
-                    {
-                        new[] { 0.30f, 0.30f, 0.30f, 0, 0 },
-                        new[] { 0.59f, 0.59f, 0.59f, 0, 0},
-                        new[] { 0.11f, 0.11f, 0.11f, 0, 0},
-                        new float[] { 0, 0, 0, 1, 0, 0},
-                        new float[] { 0, 0, 0, 0, 1, 0},
-                        new float[] { 0, 0, 0, 0, 0, 1 }
-                    });
-                    ImageAttributes attributes = new ImageAttributes();
-                    attributes.SetColorMatrix(matrix);
-                    graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
-                }
+                    new[] { 0.30f, 0.30f, 0.30f, 0, 0 },
+                    new[] { 0.59f, 0.59f, 0.59f, 0, 0},
+                    new[] { 0.11f, 0.11f, 0.11f, 0, 0},
+                    new float[] { 0, 0, 0, 1, 0, 0},
+                    new float[] { 0, 0, 0, 0, 1, 0},
+                    new float[] { 0, 0, 0, 0, 0, 1 }
+                });
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(matrix);
+                graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
                 return bitmap;
             }
             catch (Exception ex)
