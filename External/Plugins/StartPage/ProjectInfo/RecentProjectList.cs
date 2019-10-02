@@ -6,15 +6,15 @@ namespace StartPage.ProjectInfo
 {
     public class RecentProjectList : List<RecentProject>
     {
-        private readonly XmlSerializer xmlSerializer;
+        readonly XmlSerializer xmlSerializer;
 
         public RecentProjectList()
         {
-            this.xmlSerializer = XmlSerializer.FromTypes(new[]{this.GetType()})[0];
+            xmlSerializer = XmlSerializer.FromTypes(new[]{GetType()})[0];
         }
         public RecentProjectList(List<string> recentProjects)
         {
-            this.Update(recentProjects);
+            Update(recentProjects);
         }
 
         /// <summary>
@@ -22,10 +22,10 @@ namespace StartPage.ProjectInfo
         /// </summary>
         public void Update(List<string> recentProjects)
         {
-            this.Clear();
+            Clear();
             foreach (string recentProject in recentProjects)
             {
-                this.Add(new RecentProject(recentProject));
+                Add(new RecentProject(recentProject));
             }
         }
 
@@ -34,11 +34,10 @@ namespace StartPage.ProjectInfo
         /// </summary>
         public string ToXml()
         {
-            StringWriter sw = new StringWriter();
-            this.xmlSerializer.Serialize(sw, this);
-            return sw.ToString();
+            var writer = new StringWriter();
+            xmlSerializer.Serialize(writer, this);
+            return writer.ToString();
         }
-
     }
 
     public class RecentProject
@@ -49,23 +48,22 @@ namespace StartPage.ProjectInfo
         public string Created = "Error getting file information.";
         public string Modified = "Error getting file information.";
 
+        public RecentProject() { }
         public RecentProject(string path)
         {
-            FileInfo fileInfo = new FileInfo(path);
-            this.Path = path; // Store the path...
-            this.Name = fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
-            if (this.Name.Length == 0) // FlexBuilder project are "path/to/.actionscriptProperties"
+            var fileInfo = new FileInfo(path);
+            Path = path; // Store the path...
+            Name = fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
+            if (Name.Length == 0) // FlexBuilder project are "path/to/.actionscriptProperties"
             {
-                this.Name = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetDirectoryName(path));
+                Name = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetDirectoryName(path));
             }
-            this.Type = fileInfo.Extension;
+            Type = fileInfo.Extension;
             if (fileInfo.Exists)
             {
-                this.Created = fileInfo.CreationTime.ToString();
-                this.Modified = fileInfo.LastWriteTime.ToString();
+                Created = fileInfo.CreationTime.ToString();
+                Modified = fileInfo.LastWriteTime.ToString();
             }
         }
-
     }
-
 }
