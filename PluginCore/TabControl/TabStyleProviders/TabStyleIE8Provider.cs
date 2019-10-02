@@ -165,25 +165,22 @@ namespace System.Windows.Forms
 				if (closerRect.Contains(this._TabControl.MousePosition)){
 					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect)){
 						graphics.FillPath(Brushes.White, closerPath);
-						using (Pen closerPen = new Pen(this.BorderColor)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							closerPen.Width = 2;
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-				} else {
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColor)){
-							closerPen.Width = 2;
-							graphics.DrawPath(closerPen, closerPath);
-
-						}
-					}
-				}
+                        using Pen closerPen = new Pen(this.BorderColor);
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+					using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using Pen closerPen = new Pen(this._CloserColorActive);
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+				} else
+                {
+                    using GraphicsPath closerPath = GetCloserPath(closerRect);
+                    using Pen closerPen = new Pen(this._CloserColor);
+                    closerPen.Width = 2;
+                    graphics.DrawPath(closerPen, closerPath);
+                }
 
 			}
 		}

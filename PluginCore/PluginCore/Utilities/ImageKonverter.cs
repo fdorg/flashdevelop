@@ -50,29 +50,27 @@ namespace PluginCore.Utilities
                 float bri = 1f + (brightness / 100f);
                 float baseSat = 1.0f - sat;
                 float adjBrightness = bri - 1f;
-                using (Graphics graphics = Graphics.FromImage(dest))
-                {
-                    // clear the destination before drawing the image
-                    graphics.Clear(Color.Transparent);
-                    ColorMatrix colorMatrix = new ColorMatrix();
-                    // adjust saturation
-                    colorMatrix[0, 0] = baseSat * rwgt + sat;
-                    colorMatrix[0, 1] = baseSat * rwgt;
-                    colorMatrix[0, 2] = baseSat * rwgt;
-                    colorMatrix[1, 0] = baseSat * gwgt;
-                    colorMatrix[1, 1] = baseSat * gwgt + sat;
-                    colorMatrix[1, 2] = baseSat * gwgt;
-                    colorMatrix[2, 0] = baseSat * bwgt;
-                    colorMatrix[2, 1] = baseSat * bwgt;
-                    colorMatrix[2, 2] = baseSat * bwgt + sat;
-                    // adjust brightness
-                    colorMatrix[4, 0] = adjBrightness;
-                    colorMatrix[4, 1] = adjBrightness;
-                    colorMatrix[4, 2] = adjBrightness;
-                    ImageAttributes attributes = new ImageAttributes();
-                    attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-                    graphics.DrawImage(source, new Rectangle(0, 0, dest.Width, dest.Height), 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
-                }
+                using Graphics graphics = Graphics.FromImage(dest);
+                // clear the destination before drawing the image
+                graphics.Clear(Color.Transparent);
+                ColorMatrix colorMatrix = new ColorMatrix();
+                // adjust saturation
+                colorMatrix[0, 0] = baseSat * rwgt + sat;
+                colorMatrix[0, 1] = baseSat * rwgt;
+                colorMatrix[0, 2] = baseSat * rwgt;
+                colorMatrix[1, 0] = baseSat * gwgt;
+                colorMatrix[1, 1] = baseSat * gwgt + sat;
+                colorMatrix[1, 2] = baseSat * gwgt;
+                colorMatrix[2, 0] = baseSat * bwgt;
+                colorMatrix[2, 1] = baseSat * bwgt;
+                colorMatrix[2, 2] = baseSat * bwgt + sat;
+                // adjust brightness
+                colorMatrix[4, 0] = adjBrightness;
+                colorMatrix[4, 1] = adjBrightness;
+                colorMatrix[4, 2] = adjBrightness;
+                ImageAttributes attributes = new ImageAttributes();
+                attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                graphics.DrawImage(source, new Rectangle(0, 0, dest.Width, dest.Height), 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
             }
             catch (Exception ex)
             {

@@ -265,8 +265,8 @@ namespace ProjectManager.Actions
         private string ExtractPackagedProject(string packagePath)
         {
             using (FileStream fs = new FileStream(packagePath, FileMode.Open, FileAccess.Read))
-            using (ZipFile zFile = new ZipFile(fs))
             {
+                using ZipFile zFile = new ZipFile(fs);
                 if (zFile.GetEntry(".actionscriptProperties") != null)
                 {
                     using var saveDialog = new VistaFolderBrowserDialog();

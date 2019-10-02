@@ -1297,22 +1297,20 @@ namespace ProjectManager.Controls
 
         private void outputBrowseButton_Click(object sender, EventArgs e)
         {
-            using (SaveFileDialog dialog = new SaveFileDialog())
+            using SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
+            dialog.OverwritePrompt = false;
+            dialog.InitialDirectory = BaseProject.Directory;
+            // try pre-setting the current output path
+            try
             {
-                dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
-                dialog.OverwritePrompt = false;
-                dialog.InitialDirectory = BaseProject.Directory;
-                // try pre-setting the current output path
-                try
-                {
-                    string path = BaseProject.GetAbsolutePath(outputSwfBox.Text);
-                    if (File.Exists(path)) dialog.FileName = path;
-                }
-                catch { }
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    outputSwfBox.Text = BaseProject.GetRelativePath(dialog.FileName);
-                }
+                string path = BaseProject.GetAbsolutePath(outputSwfBox.Text);
+                if (File.Exists(path)) dialog.FileName = path;
+            }
+            catch { }
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                outputSwfBox.Text = BaseProject.GetRelativePath(dialog.FileName);
             }
         }
 
@@ -1330,14 +1328,13 @@ namespace ProjectManager.Controls
                 caption = TextHelper.GetString("Title.CustomTestMovieCommand");
                 label = TextHelper.GetString("Label.CustomTestMovieCommand");
             }
-            using (LineEntryDialog dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? ""))
+
+            using LineEntryDialog dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? "");
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    BaseProject.TestMovieCommand = dialog.Line;
-                    Modified();
-                    btnOK.Focus();
-                }
+                BaseProject.TestMovieCommand = dialog.Line;
+                Modified();
+                btnOK.Focus();
             }
         }
 

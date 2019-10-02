@@ -555,41 +555,37 @@ namespace System.Windows.Forms
 		#region Painting
 		
         // HACK: Allow override
-		public virtual void PaintTab(int index, Graphics graphics){
-			using (GraphicsPath tabpath = this.GetTabBorder(index)) {
-				using (Brush fillBrush = this.GetTabBackgroundBrush(index)) {
-					//	Paint the background
-					graphics.FillPath(fillBrush, tabpath);
+		public virtual void PaintTab(int index, Graphics graphics)
+        {
+            using GraphicsPath tabpath = this.GetTabBorder(index);
+            using Brush fillBrush = this.GetTabBackgroundBrush(index);
+            //	Paint the background
+            graphics.FillPath(fillBrush, tabpath);
 					
-					//	Paint a focus indication
-					if (this._TabControl.Focused){
-						this.DrawTabFocusIndicator(tabpath, index, graphics);
-					}
+            //	Paint a focus indication
+            if (this._TabControl.Focused){
+                this.DrawTabFocusIndicator(tabpath, index, graphics);
+            }
 
-					//	Paint the closer
-					this.DrawTabCloser(index, graphics);
-
-				}
-			}
-		}
+            //	Paint the closer
+            this.DrawTabCloser(index, graphics);
+        }
 		
 		protected virtual void DrawTabCloser(int index, Graphics graphics){
 			if (this._ShowTabCloser){
 				Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
 				graphics.SmoothingMode = SmoothingMode.AntiAlias;
-				using (GraphicsPath closerPath = TabStyleProvider.GetCloserPath(closerRect)){
-					if (closerRect.Contains(this._TabControl.MousePosition)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					} else {
-						using (Pen closerPen = new Pen(this._CloserColor)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-					
-				}
-			}
+                using GraphicsPath closerPath = TabStyleProvider.GetCloserPath(closerRect);
+                if (closerRect.Contains(this._TabControl.MousePosition))
+                {
+                    using Pen closerPen = new Pen(this._CloserColorActive);
+                    graphics.DrawPath(closerPen, closerPath);
+                } else
+                {
+                    using Pen closerPen = new Pen(this._CloserColor);
+                    graphics.DrawPath(closerPen, closerPath);
+                }
+            }
 		}
 		
 		protected static GraphicsPath GetCloserPath(Rectangle closerRect){

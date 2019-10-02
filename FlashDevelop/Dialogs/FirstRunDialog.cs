@@ -281,8 +281,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static DialogResult Show()
         {
-            using (FirstRunDialog firstRunDialog = new FirstRunDialog())
-                return firstRunDialog.ShowDialog();
+            using FirstRunDialog firstRunDialog = new FirstRunDialog();
+            return firstRunDialog.ShowDialog();
         }
 
         #endregion
