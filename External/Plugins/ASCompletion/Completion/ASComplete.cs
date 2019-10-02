@@ -2358,9 +2358,9 @@ namespace ASCompletion.Completion
 
         static ComaExpression GetFunctionContext(ScintillaControl sci, bool autoHide)
         {
-            ComaExpression coma = ComaExpression.None;
-            int position = sci.CurrentPos - 1;
-            char c = ' ';
+            var result = ComaExpression.None;
+            var position = sci.CurrentPos - 1;
+            var c = ' ';
             //bool inGenericType = false;
             while (position > 0)
             {
@@ -2376,7 +2376,7 @@ namespace ASCompletion.Completion
             var features = ASContext.Context.Features;
             var keyword = (c == ':') ? GetWordLeft(sci, ref position) : null;
             if (keyword == features.varKey || (features.constKey != null && keyword == features.constKey))
-                coma = ComaExpression.VarDeclaration;
+                result = ComaExpression.VarDeclaration;
             // function return type
             else if ((char)sci.CharAt(position) == ')')
             {
@@ -2411,30 +2411,30 @@ namespace ASCompletion.Completion
                     keyword = GetWordLeft(sci, ref position);
                 }
                 if (keyword == features.functionKey)
-                    coma = ComaExpression.FunctionDeclaration;
+                    result = ComaExpression.FunctionDeclaration;
                 else
                 {
                     keyword = GetWordLeft(sci, ref position);
                     if (keyword == features.functionKey || keyword == features.getKey || keyword == features.setKey)
-                        coma = ComaExpression.FunctionDeclaration;
+                        result = ComaExpression.FunctionDeclaration;
                     else if (ASContext.Context.CurrentModel.haXe && keyword == features.varKey
                              && (ASContext.Context.CurrentMember is null || (ASContext.Context.CurrentMember.Flags & FlagType.Function) == 0))
-                        coma = ComaExpression.VarDeclaration;  // Haxe Properties
+                        result = ComaExpression.VarDeclaration;  // Haxe Properties
                 }
             }
             // needs more guessing
             else
             {
                 // config constant, or namespace access
-                if (keyword.Length == 0 && position > 0 && (char)sci.CharAt(position) == ':')
+                if (string.IsNullOrEmpty(keyword) && position > 0 && (char)sci.CharAt(position) == ':')
                 {
                     var pos = position - 1;
                     keyword = GetWordLeft(sci, ref pos);
-                    if (keyword.Length != 0 && autoHide) return ComaExpression.None;
+                    if (string.IsNullOrEmpty(keyword) && autoHide) return ComaExpression.None;
                 }
-                coma = DisambiguateComa(sci, position, 0);
+                result = DisambiguateComa(sci, position, 0);
             }
-            return coma;
+            return result;
         }
 
         /// <summary>
