@@ -1504,6 +1504,16 @@ namespace ASCompletion.Context
         }
 
         #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <summary>
+        /// Provides the support for '<' and '>' matching
+        /// </summary>
+        public virtual void OnBraceMatch(ScintillaControl sci)
+        {
+        }
+        #endregion
     }
 
     #region Registered Context class

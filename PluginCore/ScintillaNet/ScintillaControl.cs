@@ -4165,32 +4165,25 @@ namespace ScintillaNet
         /// </summary>
         private void OnBraceMatch(ScintillaControl sci)
         {
-            if (isBraceMatching && sci.SelText.Length == 0)
+            if (!isBraceMatching || sci.SelText.Length != 0) return;
+            var position = CurrentPos - 1;
+            var character = (char)CharAt(position);
+            if (character != '{' && character != '}' && character != '(' && character != ')' && character != '[' && character != ']')
             {
-                int position = CurrentPos - 1;
-                char character = (char)CharAt(position);
-                if (character != '{' && character != '}' && character != '(' && character != ')' && character != '[' && character != ']')
+                position = CurrentPos;
+                character = (char)CharAt(position);
+            }
+            if (character == '{' || character == '}' || character == '(' || character == ')' || character == '[' || character == ']')
+            {
+                if (!PositionIsOnComment(position))
                 {
-                    position = CurrentPos;
-                    character = (char)CharAt(position);
-                }
-                if (character == '{' || character == '}' || character == '(' || character == ')' || character == '[' || character == ']')
-                {
-                    if (!PositionIsOnComment(position))
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(position);
+                    if (bracePosEnd != -1) BraceHighlight(bracePosStart, bracePosEnd);
+                    if (useHighlightGuides)
                     {
-                        int bracePosStart = position;
-                        int bracePosEnd = BraceMatch(position);
-                        if (bracePosEnd != -1) BraceHighlight(bracePosStart, bracePosEnd);
-                        if (useHighlightGuides)
-                        {
-                            int line = LineFromPosition(position);
-                            HighlightGuide = GetLineIndentation(line);
-                        }
-                    }
-                    else
-                    {
-                        BraceHighlight(-1, -1);
-                        HighlightGuide = 0;
+                        var line = LineFromPosition(position);
+                        HighlightGuide = GetLineIndentation(line);
                     }
                 }
                 else
@@ -4198,6 +4191,11 @@ namespace ScintillaNet
                     BraceHighlight(-1, -1);
                     HighlightGuide = 0;
                 }
+            }
+            else
+            {
+                BraceHighlight(-1, -1);
+                HighlightGuide = 0;
             }
         }
 

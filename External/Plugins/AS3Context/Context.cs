@@ -1122,5 +1122,101 @@ namespace AS3Context
             return true;
         }
         #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <inheritdoc cref="ASContext.OnBraceMatch"/>
+        public override void OnBraceMatch(ScintillaControl sci)
+        {
+            if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
+            var position = sci.CurrentPos - 1;
+            var character = (char) sci.CharAt(position);
+            if (character != '<' && character != '>')
+            {
+                position = sci.CurrentPos;
+                character = (char) sci.CharAt(position);
+            }
+            if (character == '<' || character == '>')
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(sci, position);
+                    if (bracePosEnd != -1) sci.BraceHighlight(bracePosStart, bracePosEnd);
+                    if (sci.UseHighlightGuides)
+                    {
+                        var line = sci.LineFromPosition(position);
+                        sci.HighlightGuide = sci.GetLineIndentation(line);
+                    }
+                }
+                else
+                {
+                    sci.BraceHighlight(-1, -1);
+                    sci.HighlightGuide = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
+        /// </summary>
+        protected virtual int BraceMatch(ScintillaControl sci, int position)
+        {
+            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var comment = sci.PositionIsOnComment(position, sci.Lexer);
+            var sub = 0;
+            var c = sci.CharAt(position);
+            switch (c)
+            {
+                case '<':
+                    var length = sci.TextLength;
+                    while (position < length)
+                    {
+                        position++;
+                        var ch = sci.CharAt(position);
+                        if (ch == ' ') continue;
+                        if (ch == '<')
+                        {
+                            if (comment == sci.PositionIsOnComment(position, sci.Lexer)) sub++;
+                        }
+                        else if (ch == '>' && comment == sci.PositionIsOnComment(position, sci.Lexer))
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        else if (ch != '.' // Vector<Vector.<>>
+                                 && !characters.Contains((char) ch))
+                        {
+                            return -1;
+                        }
+                    }
+                    break;
+                case '>':
+                    while (position >= 0)
+                    {
+                        position--;
+                        var ch = sci.CharAt(position);
+                        if (ch == ' ') continue;
+                        if (ch == '>')
+                        {
+                            if (comment == sci.PositionIsOnComment(position, sci.Lexer)) sub++;
+                        }
+                        else if (ch == '<' && comment == sci.PositionIsOnComment(position, sci.Lexer))
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        else if (ch != '.' // Vector<Vector.<>>
+                                 && !characters.Contains((char) ch))
+                        {
+                            return -1;
+                        }
+                    }
+                    break;
+            }
+            return -1;
+        }
+
+        #endregion
     }
 }

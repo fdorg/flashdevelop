@@ -423,5 +423,13 @@ namespace ASCompletion.Context
 
         #endregion
 
+        #region Custom behavior of Scintilla
+
+        /// <summary>
+        /// Provides the support for '<' and '>' matching
+        /// </summary>
+        void OnBraceMatch(ScintillaControl sci);
+
+        #endregion
     }
 }

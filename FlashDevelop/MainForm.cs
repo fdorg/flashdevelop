@@ -1323,7 +1323,7 @@ namespace FlashDevelop
                 BeginInvoke((MethodInvoker)(() => OnScintillaControlUpdateControl(sci)));
                 return;
             }
-            ITabbedDocument document = DocumentManager.FindDocument(sci);
+            var document = DocumentManager.FindDocument(sci);
             if (sci != null && document != null && document.IsEditable)
             {
                 string statusText = " " + TextHelper.GetString("Info.StatusText");
@@ -1338,7 +1338,7 @@ namespace FlashDevelop
             else StatusLabel.Text = " ";
             OnUpdateMainFormDialogTitle();
             ButtonManager.UpdateFlaggedButtons();
-            NotifyEvent ne = new NotifyEvent(EventType.UIRefresh);
+            var ne = new NotifyEvent(EventType.UIRefresh);
             EventManager.DispatchEvent(this, ne);
         }
 
