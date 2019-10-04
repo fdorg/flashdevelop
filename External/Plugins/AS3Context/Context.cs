@@ -1160,13 +1160,12 @@ namespace AS3Context
         /// <summary>
         /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
         /// </summary>
-        protected virtual int BraceMatch(ScintillaControl sci, int position)
+        protected internal int BraceMatch(ScintillaControl sci, int position)
         {
-            if (sci.PositionIsOnComment(position, sci.Lexer)) return -1;
+            if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position)) return -1;
             var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var sub = 0;
-            var c = sci.CharAt(position);
-            switch (c)
+            switch (sci.CharAt(position))
             {
                 case '<':
                     var length = sci.TextLength;
@@ -1174,17 +1173,17 @@ namespace AS3Context
                     {
                         position++;
                         if (sci.PositionIsOnComment(position)) continue;
-                        var ch = sci.CharAt(position);
-                        if (ch == ' ') continue;
-                        if (ch == '<') sub++;
-                        else if (ch == '>')
+                        var c = sci.CharAt(position);
+                        if (c == ' ') continue;
+                        if (c == '<') sub++;
+                        else if (c == '>')
                         {
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch != '.'
+                        else if (c != '.'
                                  // Vector<Vector.<>>
-                                 && !characters.Contains((char) ch))
+                                 && !characters.Contains((char) c))
                         {
                             return -1;
                         }
@@ -1195,17 +1194,17 @@ namespace AS3Context
                     {
                         position--;
                         if (sci.PositionIsOnComment(position)) continue;
-                        var ch = sci.CharAt(position);
-                        if (ch == ' ') continue;
-                        if (ch == '>') sub++;
-                        else if (ch == '<')
+                        var c = sci.CharAt(position);
+                        if (c == ' ') continue;
+                        if (c == '>') sub++;
+                        else if (c == '<')
                         {
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch != '.'
+                        else if (c != '.'
                                  // Vector<Vector.<>>
-                                 && !characters.Contains((char) ch))
+                                 && !characters.Contains((char) c))
                         {
                             return -1;
                         }
