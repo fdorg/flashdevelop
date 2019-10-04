@@ -2535,6 +2535,121 @@ namespace HaXeContext
         }
 
         #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <inheritdoc cref="ASContext.OnBraceMatch"/>
+        public override void OnBraceMatch(ScintillaControl sci)
+        {
+            if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
+            var position = sci.CurrentPos - 1;
+            var character = (char)sci.CharAt(position);
+            if (character != '<' && character != '>')
+            {
+                position = sci.CurrentPos;
+                character = (char)sci.CharAt(position);
+            }
+            if (character == '<' || character == '>')
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(sci, position);
+                    if (bracePosEnd != -1) sci.BraceHighlight(bracePosStart, bracePosEnd);
+                    if (sci.UseHighlightGuides)
+                    {
+                        var line = sci.LineFromPosition(position);
+                        sci.HighlightGuide = sci.GetLineIndentation(line);
+                    }
+                }
+                else
+                {
+                    sci.BraceHighlight(-1, -1);
+                    sci.HighlightGuide = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
+        /// </summary>
+        protected virtual int BraceMatch(ScintillaControl sci, int position)
+        {
+            if (sci.PositionIsOnComment(position)) return -1;
+            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var sub = 0;
+            switch (sci.CharAt(position))
+            {
+                case '<':
+                    var length = sci.TextLength;
+                    if (position == length) return -1;
+                    switch (sci.CharAt(position + 1))
+                    {
+                        case '=': // a $(EntryPoint)<= b
+                        case '<': // a $(EntryPoint)<< b
+                            return -1;
+                    }
+                    // a <$(EntryPoint)< b
+                    if (sci.CharAt(position - 1) == '<') return -1;
+                    var genCount = 0;
+                    while (position < length)
+                    {
+                        position++;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var ch = sci.CharAt(position);
+                        if (ch == ' ') continue;
+                        if (ch == '<') sub++;
+                        else if (ch == '>')
+                        {
+                            // TParameter-$(EntryPoint)>TReturn
+                            if (sci.CharAt(position - 1) == '-') continue;
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        else if (ch == '-')
+                        {
+                            if (position < length
+                                // $(EntryPoint)->
+                                && sci.CharAt(position + 1) == '>') position++;
+                        }
+                        else if (ch == '|'      // a < b $(EntryPoint)||
+                                 || ch == '&'   // a < b $(EntryPoint)&&
+                                 || ch == '='   // a <$(EntryPoint)= b
+                                 || ch == ';'   // a < b$(EntryPoint);
+                                 )
+                            return -1;
+                        else if (ch == '{') genCount++;
+                        else if (ch == '}' && genCount > 0) genCount--;
+                        else if (genCount == 0 && !characters.Contains((char)ch))
+                            return -1;
+                    }
+                    break;
+                case '>':
+                    while (position > 0)
+                    {
+                        position--;
+                        var ch = sci.CharAt(position);
+                        if (ch == ' ') continue;
+                        if (ch == '>')
+                        {
+                            sub++;
+                        }
+                        else if (ch == '<')
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        else if (!characters.Contains((char)ch))
+                        {
+                            return -1;
+                        }
+                    }
+                    break;
+            }
+            return -1;
+        }
+
+        #endregion
     }
 
     class HaxeCompletionCache: CompletionCache
