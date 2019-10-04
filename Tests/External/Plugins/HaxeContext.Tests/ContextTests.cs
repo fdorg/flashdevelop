@@ -515,6 +515,12 @@ namespace HaXeContext
                 yield return new TestCaseData("new Map$(EntryPoint)<Int, Int>. Issue 2855. Case 19")
                     .Returns("new Map<Int, Int".Length)
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array$(EntryPoint)<Int->?String>. Issue 2855. Case 20")
+                    .Returns("new Array<Int->?String".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array<Int->?String$(EntryPoint)>. Issue 2855. Case 21")
+                    .Returns("new Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
             }
         }
 
