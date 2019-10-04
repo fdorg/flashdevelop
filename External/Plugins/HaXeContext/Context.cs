@@ -2573,12 +2573,13 @@ namespace HaXeContext
         /// <summary>
         /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
         /// </summary>
-        protected virtual int BraceMatch(ScintillaControl sci, int position)
+        protected internal int BraceMatch(ScintillaControl sci, int position)
         {
-            if (sci.PositionIsOnComment(position)) return -1;
+            if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position)) return -1;
             var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var sub = 0;
             var genCount = 0;
+            var parCount = 0;
             switch (sci.CharAt(position))
             {
                 case '<':
@@ -2596,53 +2597,53 @@ namespace HaXeContext
                     {
                         position++;
                         if (sci.PositionIsOnComment(position)) continue;
-                        var ch = sci.CharAt(position);
-                        if (ch == ' ') continue;
-                        if (ch == '<') sub++;
-                        else if (ch == '>')
+                        var c = sci.CharAt(position);
+                        if (c == ';') return -1;
+                        if (c == ' ') continue;
+                        if (c == '<') sub++;
+                        else if (c == '>')
                         {
                             // TParameter-$(EntryPoint)>TReturn
                             if (sci.CharAt(position - 1) == '-') continue;
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch == '-'
-                                 && position < length
-                                 // $(EntryPoint)->
-                                 && sci.CharAt(position + 1) == '>')
+                        else if (c == '-'
+                            && position < length
+                            // $(EntryPoint)->
+                            && sci.CharAt(position + 1) == '>')
                             position++;
-                        else if (ch == '|'      // a < b $(EntryPoint)||
-                                 || ch == '&'   // a < b $(EntryPoint)&&
-                                 || ch == '='   // a <$(EntryPoint)= b
-                                 || ch == ';'   // a < b$(EntryPoint);
-                                 )
+                        else if (// a < b $(EntryPoint)||
+                                 c == '|'      
+                                 // a < b $(EntryPoint)&&
+                                 || c == '&'
+                                 // a <$(EntryPoint)= b
+                                 || c == '='
+                                 // a < b$(EntryPoint);
+                                 || c == ';')
                             return -1;
-                        else if (ch == '{') genCount++;
-                        else if (ch == '}' && genCount > 0) genCount--;
-                        else if (genCount == 0 && !characters.Contains((char)ch))
-                            return -1;
+                        // Array<Int->$(EntryPoint){v:Type}>
+                        else if (parCount == 0 && c == '{') genCount++;
+                        else if (parCount == 0 && c == '}' && genCount > 0) genCount--;
+                        // Array<$(EntryPoint)(Int->{v:Type})>
+                        else if (genCount == 0 && c == '(') parCount++;
+                        else if (genCount == 0 && c == ')' && parCount > 0) parCount--;
+                        else if (genCount == 0 && parCount == 0 && !characters.Contains((char)c)) return -1;
                     }
                     break;
                 case '>':
-                    switch (sci.CharAt(position - 1))
-                    {
-                        //case '>': // >$(EntryPoint)>
-                        case '-': // -$(EntryPoint)>
-                            return -1;
-                    }
-                    switch (sci.CharAt(position + 1))
-                    {
-                        //case '>': // $(EntryPoint)>>
-                        case '=': // $(EntryPoint)>=
-                            return -1;
-                    }
+                    // -$(EntryPoint)>
+                    if (sci.CharAt(position - 1) == '-') return -1;
+                    // $(EntryPoint)>=
+                    if (sci.CharAt(position + 1) == '=') return -1; 
                     while (position > 0)
                     {
                         position--;
                         if (sci.PositionIsOnComment(position)) continue;
-                        var ch = sci.CharAt(position);
-                        if (ch == ' ') continue;
-                        if (ch == '>')
+                        var c = sci.CharAt(position);
+                        if (c == ';') return -1;
+                        if (c == ' ') continue;
+                        if (c == '>')
                         {
                             if (// TParameter->$(EntryPoint)TReturn
                                 sci.CharAt(position - 1) == '-')
@@ -2652,23 +2653,20 @@ namespace HaXeContext
                             }
                             sub++;
                         }
-                        else if (ch == '<')
+                        else if (c == '<')
                         {
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch == '-'
-                                 // $(EntryPoint)->
-                                 && sci.CharAt(position + 1) == '>')
-                        {
-                            continue;
-                        }
-                        else if (ch == '}') genCount++;
-                        else if (ch == '{' && genCount > 0) genCount--;
-                        else if (genCount == 0 && !characters.Contains((char)ch))
-                        {
-                            return -1;
-                        }
+                        // $(EntryPoint)->
+                        else if (c == '-' && sci.CharAt(position + 1) == '>') {}
+                        // Array<Int->{v:Type}$(EntryPoint)>
+                        else if (parCount == 0 && c == '}') genCount++;
+                        else if (parCount == 0 && c == '{' && genCount > 0) genCount--;
+                        // Array<(Int->{v:Type})$(EntryPoint)>
+                        else if (genCount == 0 && c == ')') parCount++;
+                        else if (genCount == 0 && c == '(' && parCount > 0) parCount--;
+                        else if (genCount == 0 && parCount == 0 && !characters.Contains((char)c)) return -1;
                     }
                     break;
             }
