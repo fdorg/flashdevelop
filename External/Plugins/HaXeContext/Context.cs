@@ -2608,6 +2608,8 @@ namespace HaXeContext
                             sub--;
                             if (sub < 0) return position;
                         }
+                        // Map<Int$(EntryPoint), String>
+                        else if (c == ',') continue;
                         else if (c == '-'
                             && position < length
                             // $(EntryPoint)->
@@ -2658,6 +2660,8 @@ namespace HaXeContext
                             sub--;
                             if (sub < 0) return position;
                         }
+                        // Map<Int,$(EntryPoint) String>
+                        else if (c == ',') continue;
                         // $(EntryPoint)->
                         else if (c == '-' && sci.CharAt(position + 1) == '>') {}
                         // Array<Int->{v:Type}$(EntryPoint)>
