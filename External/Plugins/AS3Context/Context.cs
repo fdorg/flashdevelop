@@ -1162,8 +1162,8 @@ namespace AS3Context
         /// </summary>
         protected virtual int BraceMatch(ScintillaControl sci, int position)
         {
+            if (sci.PositionIsOnComment(position, sci.Lexer)) return -1;
             var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var comment = sci.PositionIsOnComment(position, sci.Lexer);
             var sub = 0;
             var c = sci.CharAt(position);
             switch (c)
@@ -1173,18 +1173,17 @@ namespace AS3Context
                     while (position < length)
                     {
                         position++;
+                        if (sci.PositionIsOnComment(position)) continue;
                         var ch = sci.CharAt(position);
                         if (ch == ' ') continue;
-                        if (ch == '<')
-                        {
-                            if (comment == sci.PositionIsOnComment(position, sci.Lexer)) sub++;
-                        }
-                        else if (ch == '>' && comment == sci.PositionIsOnComment(position, sci.Lexer))
+                        if (ch == '<') sub++;
+                        else if (ch == '>')
                         {
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch != '.' // Vector<Vector.<>>
+                        else if (ch != '.'
+                                 // Vector<Vector.<>>
                                  && !characters.Contains((char) ch))
                         {
                             return -1;
@@ -1195,18 +1194,17 @@ namespace AS3Context
                     while (position >= 0)
                     {
                         position--;
+                        if (sci.PositionIsOnComment(position)) continue;
                         var ch = sci.CharAt(position);
                         if (ch == ' ') continue;
-                        if (ch == '>')
-                        {
-                            if (comment == sci.PositionIsOnComment(position, sci.Lexer)) sub++;
-                        }
-                        else if (ch == '<' && comment == sci.PositionIsOnComment(position, sci.Lexer))
+                        if (ch == '>') sub++;
+                        else if (ch == '<')
                         {
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch != '.' // Vector<Vector.<>>
+                        else if (ch != '.'
+                                 // Vector<Vector.<>>
                                  && !characters.Contains((char) ch))
                         {
                             return -1;
