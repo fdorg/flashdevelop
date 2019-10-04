@@ -453,5 +453,83 @@ namespace HaXeContext
             actualImports.Sort();
             Assert.AreEqual(expectedImports, actualImports.Items);
         }
+
+        static IEnumerable<TestCaseData> BraceMatchIssue2855
+        {
+            get
+            {
+                yield return new TestCaseData("a >>$(EntryPoint) b. Issue 2855. Case 1")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a >$(EntryPoint)> b. Issue 2855. Case 2")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a <<$(EntryPoint) b. Issue 2855. Case 3")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a <$(EntryPoint)< b. Issue 2855. Case 4")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array<Int$(EntryPoint)>. Issue 2855. Case 5")
+                    .Returns("new Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array<Array<Int>$(EntryPoint)>. Issue 2855. Case 6")
+                    .Returns("new Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array<Array<Int->Int$(EntryPoint)>>. Issue 2855. Case 7")
+                    .Returns("new Array<Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array<Array<{x:Array<Int>}->Int$(EntryPoint)>>. Issue 2855. Case 8")
+                    .Returns("new Array<Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("<\"<$(EntryPoint)>\">. Issue 2855. Case 9")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("/*<$(EntryPoint)>*/. Issue 2855. Case 10")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("//<$(EntryPoint)>. Issue 2855. Case 11")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("Array<Int->$(EntryPoint)>. Issue 2855. Case 12")
+                    .Returns("Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("Array<((Int->Int)->String)$(EntryPoint)>. Issue 2855. Case 13")
+                    .Returns("Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("var v = 1;)$(EntryPoint)>. Issue 2855. Case 14")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("var v = 1;Int->}$(EntryPoint)>. Issue 2855. Case 15")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("<$(EntryPoint){Int-. Issue 2855. Case 16")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("<$(EntryPoint){Int->;. Issue 2855. Case 17")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Map<Int, Int$(EntryPoint)>. Issue 2855. Case 18")
+                    .Returns("new Map".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Map$(EntryPoint)<Int, Int>. Issue 2855. Case 19")
+                    .Returns("new Map<Int, Int".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array$(EntryPoint)<Int->?String>. Issue 2855. Case 20")
+                    .Returns("new Array<Int->?String".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Array<Int->?String$(EntryPoint)>. Issue 2855. Case 21")
+                    .Returns("new Array".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(BraceMatchIssue2855))]
+        public int BraceMatch(string sourceText)
+        {
+            SetSrc(sci, sourceText);
+            var result = ((Context)ASContext.GetLanguageContext("haxe")).BraceMatch(sci, sci.CurrentPos);
+            return result;
+        }
     }
 }

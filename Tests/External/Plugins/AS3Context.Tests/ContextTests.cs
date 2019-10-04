@@ -11,7 +11,6 @@ namespace AS3Context
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
-
         protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         protected static string GetFullPath(string fileName) => $"{nameof(AS3Context)}.Test_Files.parser.{fileName}.as";
@@ -23,7 +22,7 @@ namespace AS3Context
             sci.ConfigurationLanguage = "as3";
         }
 
-        IEnumerable<TestCaseData> DecomposeTypesTestCases
+        static IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
             get
             {
@@ -81,7 +80,7 @@ namespace AS3Context
             return ASContext.Context.IsImported(member, sci.CurrentLine);
         }
 
-        IEnumerable<TestCaseData> ResolveTokenTestCases
+        static IEnumerable<TestCaseData> ResolveTokenTestCases
         {
             get
             {
@@ -128,5 +127,59 @@ namespace AS3Context
 
         [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
         public ClassModel ResolveToken(string token) => ASContext.Context.ResolveToken(token, null);
+
+        static IEnumerable<TestCaseData> BraceMatchIssue2855
+        {
+            get
+            {
+                yield return new TestCaseData("a >>$(EntryPoint) b. Issue 2855. Case 1")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a >$(EntryPoint)> b. Issue 2855. Case 2")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a <<$(EntryPoint) b. Issue 2855. Case 3")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a <$(EntryPoint)< b. Issue 2855. Case 4")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Vector.<int$(EntryPoint)>. Issue 2855. Case 5")
+                    .Returns("new Vector.".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Vector.<int>$(EntryPoint). Issue 2855. Case 6")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Vector.<Vector.<int>$(EntryPoint)>. Issue 2855. Case 7")
+                    .Returns("new Vector.".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Vector.<Vector.<int$(EntryPoint)>>. Issue 2855. Case 8")
+                    .Returns("new Vector.<Vector.".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("\"new Vector.<Vector.<int$(EntryPoint)>>\". Issue 2855. Case 9")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new Vector.<Vector.</*<uint*/int$(EntryPoint)>>. Issue 2855. Case 10")
+                    .Returns("new Vector.<Vector.".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("/*<$(EntryPoint)>*/. Issue 2855. Case 11")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("a < b\na $(EntryPoint)> b. Issue 2855. Case 12")
+                    .Returns(-1)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+                yield return new TestCaseData("new <int$(EntryPoint)>[1,2,3]. Issue 2855. Case 13")
+                    .Returns("new ".Length)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2855");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(BraceMatchIssue2855))]
+        public int BraceMatch(string sourceText)
+        {
+            SetSrc(sci, sourceText);
+            var result = ((Context)ASContext.GetLanguageContext("as3")).BraceMatch(sci, sci.CurrentPos);
+            return result;
+        }
     }
 }

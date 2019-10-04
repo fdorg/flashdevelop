@@ -176,6 +176,7 @@ namespace ASCompletion
                     // caret position in editor
                     case EventType.UIRefresh:
                         if (!doc.IsEditable) return;
+                        ASContext.Context.OnBraceMatch(sci);
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
                         return;
