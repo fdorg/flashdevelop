@@ -2578,6 +2578,7 @@ namespace HaXeContext
             if (sci.PositionIsOnComment(position)) return -1;
             var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var sub = 0;
+            var genCount = 0;
             switch (sci.CharAt(position))
             {
                 case '<':
@@ -2591,7 +2592,6 @@ namespace HaXeContext
                     }
                     // a <$(EntryPoint)< b
                     if (sci.CharAt(position - 1) == '<') return -1;
-                    var genCount = 0;
                     while (position < length)
                     {
                         position++;
@@ -2606,12 +2606,11 @@ namespace HaXeContext
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (ch == '-')
-                        {
-                            if (position < length
-                                // $(EntryPoint)->
-                                && sci.CharAt(position + 1) == '>') position++;
-                        }
+                        else if (ch == '-'
+                                 && position < length
+                                 // $(EntryPoint)->
+                                 && sci.CharAt(position + 1) == '>')
+                            position++;
                         else if (ch == '|'      // a < b $(EntryPoint)||
                                  || ch == '&'   // a < b $(EntryPoint)&&
                                  || ch == '='   // a <$(EntryPoint)= b
@@ -2625,13 +2624,32 @@ namespace HaXeContext
                     }
                     break;
                 case '>':
+                    switch (sci.CharAt(position - 1))
+                    {
+                        //case '>': // >$(EntryPoint)>
+                        case '-': // -$(EntryPoint)>
+                            return -1;
+                    }
+                    switch (sci.CharAt(position + 1))
+                    {
+                        //case '>': // $(EntryPoint)>>
+                        case '=': // $(EntryPoint)>=
+                            return -1;
+                    }
                     while (position > 0)
                     {
                         position--;
+                        if (sci.PositionIsOnComment(position)) continue;
                         var ch = sci.CharAt(position);
                         if (ch == ' ') continue;
                         if (ch == '>')
                         {
+                            if (// TParameter->$(EntryPoint)TReturn
+                                sci.CharAt(position - 1) == '-')
+                            {
+                                position--;
+                                continue;
+                            }
                             sub++;
                         }
                         else if (ch == '<')
@@ -2639,7 +2657,15 @@ namespace HaXeContext
                             sub--;
                             if (sub < 0) return position;
                         }
-                        else if (!characters.Contains((char)ch))
+                        else if (ch == '-'
+                                 // $(EntryPoint)->
+                                 && sci.CharAt(position + 1) == '>')
+                        {
+                            continue;
+                        }
+                        else if (ch == '}') genCount++;
+                        else if (ch == '{' && genCount > 0) genCount--;
+                        else if (genCount == 0 && !characters.Contains((char)ch))
                         {
                             return -1;
                         }
