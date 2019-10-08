@@ -6317,4 +6317,11 @@ AND - All conditions are met.</value>
     <value>Interface name must start with an uppercase letter.</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsCaseSensitive" xml:space="preserve">
+    <value>Match case</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
 </root>
