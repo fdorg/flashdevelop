@@ -2974,33 +2974,31 @@ namespace ASCompletion.Completion
             InsertCode(position, declaration);
         }
 
-        static void GenerateClass(ScintillaControl sci, ClassModel inClass, ASExpr data)
+        static void GenerateClass(ScintillaControl sci, MemberModel inClass, ASExpr data)
         {
             var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(data.PositionExpression, false));
             GenerateClass(inClass, data.Value, parameters);
         }
 
-        static void GenerateClass(ScintillaControl sci, ClassModel inClass, string className)
+        static void GenerateClass(ScintillaControl sci, MemberModel inClass, string className)
         {
             var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true));
             GenerateClass(inClass, className, parameters);
         }
 
-        static void GenerateClass(ClassModel inClass, string className, IEnumerable<FunctionParameter> parameters)
+        static void GenerateClass(MemberModel inClass, string className, IEnumerable<FunctionParameter> parameters)
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
 
             var constructorArgs = new List<MemberModel>();
             var constructorArgTypes = new List<string>();
-            var paramMember = new MemberModel();
             foreach (var p in parameters)
             {
                 constructorArgs.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                 constructorArgTypes.Add(CleanType(GetQualifiedType(p.paramQualType, inClass)));
             }
-            
-            paramMember.Parameters = constructorArgs;
 
+            var paramMember = new MemberModel {Parameters = constructorArgs};
             var paramsString = TemplateUtils.ParametersString(paramMember, true);
             var info = new Hashtable();
             info["className"] = string.IsNullOrEmpty(className) ? "Class" : className;
