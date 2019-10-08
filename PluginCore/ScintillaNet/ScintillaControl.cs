@@ -4064,14 +4064,14 @@ namespace ScintillaNet
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
                     {
-                        StartHighlightSelectionTimer(sci);
+                        StartHighlightSelectionTimer();
                         break;
                     }
                     case Enums.HighlightMatchingWordsMode.SelectedWord:
                     {
                         if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
                         {
-                            StartHighlightSelectionTimer(sci);
+                            StartHighlightSelectionTimer();
                         }
                         break;
                     }
@@ -4085,7 +4085,7 @@ namespace ScintillaNet
         /// <summary>
         /// Use timer for aggressive selection highlighting
         /// </summary>
-        private void StartHighlightSelectionTimer(ScintillaControl sci)
+        private void StartHighlightSelectionTimer()
         {
             if (highlightDelay is null)
             {
@@ -4100,6 +4100,7 @@ namespace ScintillaNet
             }
             highlightDelay.Start();
         }
+
         void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             highlightDelay.Stop();
@@ -4112,24 +4113,25 @@ namespace ScintillaNet
         private void HighlightWordsMatchingSelected()
         {
             if (TextLength == 0 || TextLength > 64 * 1024) return;
-            Language language = Configuration.GetLanguage(ConfigurationLanguage);
-            int color = language.editorstyle.HighlightWordBackColor;
-            string word = GetWordFromPosition(CurrentPos);
+            var word = GetWordFromPosition(CurrentPos);
             if (string.IsNullOrEmpty(word)) return;
             if (PositionIsOnComment(CurrentPos))
             {
                 RemoveHighlights(1);
                 return;
             }
-            string pattern = word.Trim();
-            FRSearch search = new FRSearch(pattern);
-            search.WholeWord = true;
-            search.NoCase = true;
-            search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
-            search.SourceFile = FileName;
+            var pattern = word.Trim();
+            var search = new FRSearch(pattern)
+            {
+                WholeWord = true,
+                NoCase = !PluginBase.MainForm.Settings.HighlightMatchingWordsCaseSensitive,
+                Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals,
+                SourceFile = FileName
+            };
             RemoveHighlights(1);
             var test = search.Matches(Text);
-            AddHighlights(1, test, color);
+            var language = Configuration.GetLanguage(ConfigurationLanguage);
+            AddHighlights(1, test, language.editorstyle.HighlightWordBackColor);
             hasHighlights = true;
         }
 

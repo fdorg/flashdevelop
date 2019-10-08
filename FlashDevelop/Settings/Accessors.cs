@@ -13,7 +13,7 @@ using ScintillaNet.Enums;
 
 namespace FlashDevelop.Settings
 {
-    public partial class SettingObject : ISettings
+    public partial class SettingObject
     {
         #region Folding
 
@@ -23,8 +23,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldAtElse")]
         public bool FoldAtElse
         {
-            get => this.foldAtElse;
-            set => this.foldAtElse = value;
+            get => foldAtElse;
+            set => foldAtElse = value;
         }
 
         [DefaultValue(true)]
@@ -33,8 +33,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldComment")]
         public bool FoldComment
         {
-            get => this.foldComment;
-            set => this.foldComment = value;
+            get => foldComment;
+            set => foldComment = value;
         }
 
         [DefaultValue(false)]
@@ -43,8 +43,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldCompact")]
         public bool FoldCompact
         {
-            get => this.foldCompact;
-            set => this.foldCompact = value;
+            get => foldCompact;
+            set => foldCompact = value;
         }
 
         [DefaultValue(true)]
@@ -53,8 +53,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldHtml")]
         public bool FoldHtml
         {
-            get => this.foldHtml;
-            set => this.foldHtml = value;
+            get => foldHtml;
+            set => foldHtml = value;
         }
 
         [DefaultValue(true)]
@@ -63,8 +63,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldPreprocessor")]
         public bool FoldPreprocessor
         {
-            get => this.foldPreprocessor;
-            set => this.foldPreprocessor = value;
+            get => foldPreprocessor;
+            set => foldPreprocessor = value;
         }
 
         [DefaultValue(true)]
@@ -73,8 +73,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.UseFolding")]
         public bool UseFolding
         {
-            get => this.useFolding;
-            set => this.useFolding = value;
+            get => useFolding;
+            set => useFolding = value;
         }
 
         [DisplayName("Fold Flags")]
@@ -83,8 +83,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FoldFlags")]
         public FoldFlag FoldFlags
         {
-            get => this.foldFlags;
-            set => this.foldFlags = value;
+            get => foldFlags;
+            set => foldFlags = value;
         }
 
         #endregion
@@ -97,8 +97,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewEOL")]
         public bool ViewEOL
         {
-            get => this.viewEOL;
-            set => this.viewEOL = value;
+            get => viewEOL;
+            set => viewEOL = value;
         }
 
         [DefaultValue(true)]
@@ -107,8 +107,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewShortcuts")]
         public bool ViewShortcuts
         {
-            get => this.viewShortcuts;
-            set => this.viewShortcuts = value;
+            get => viewShortcuts;
+            set => viewShortcuts = value;
         }
 
         [DefaultValue(true)]
@@ -117,8 +117,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewBookmarks")]
         public bool ViewBookmarks
         {
-            get => this.viewBookmarks;
-            set => this.viewBookmarks = value;
+            get => viewBookmarks;
+            set => viewBookmarks = value;
         }
 
         [DefaultValue(true)]
@@ -127,8 +127,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewLineNumbers")]
         public bool ViewLineNumbers
         {
-            get => this.viewLineNumbers;
-            set => this.viewLineNumbers = value;
+            get => viewLineNumbers;
+            set => viewLineNumbers = value;
         }
 
         [DefaultValue(true)]
@@ -137,8 +137,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewIndentationGuides")]
         public bool ViewIndentationGuides
         {
-            get => this.viewIndentationGuides;
-            set => this.viewIndentationGuides = value;
+            get => viewIndentationGuides;
+            set => viewIndentationGuides = value;
         }
 
         [DefaultValue(false)]
@@ -147,8 +147,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewWhitespace")]
         public bool ViewWhitespace
         {
-            get => this.viewWhitespace;
-            set => this.viewWhitespace = value;
+            get => viewWhitespace;
+            set => viewWhitespace = value;
         }
 
         [DefaultValue(true)]
@@ -157,8 +157,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewToolBar")]
         public bool ViewToolBar
         {
-            get => this.viewToolBar;
-            set => this.viewToolBar = value;
+            get => viewToolBar;
+            set => viewToolBar = value;
         }
 
         [DefaultValue(true)]
@@ -167,8 +167,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewStatusBar")]
         public bool ViewStatusBar
         {
-            get => this.viewStatusBar;
-            set => this.viewStatusBar = value;
+            get => viewStatusBar;
+            set => viewStatusBar = value;
         }
 
         [DefaultValue(false)]
@@ -177,8 +177,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ViewModifiedLines")]
         public bool ViewModifiedLines
         {
-            get => this.viewModifiedLines;
-            set => this.viewModifiedLines = value;
+            get => viewModifiedLines;
+            set => viewModifiedLines = value;
         }
 
         [XmlIgnore]
@@ -188,8 +188,8 @@ namespace FlashDevelop.Settings
         [DefaultValue(typeof(Font), "Courier New, 8.75pt")]
         public Font ConsoleFont
         {
-            get => this.consoleFont;
-            set => this.consoleFont = value;
+            get => consoleFont;
+            set => consoleFont = value;
         }
 
         [XmlIgnore]
@@ -200,8 +200,8 @@ namespace FlashDevelop.Settings
         [RequiresRestart]
         public Font DefaultFont
         {
-            get => this.defaultFont;
-            set => this.defaultFont = value;
+            get => defaultFont;
+            set => defaultFont = value;
         }
 
         #endregion
@@ -214,8 +214,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CaretLineVisible")]
         public bool CaretLineVisible
         {
-            get => this.caretLineVisible;
-            set => this.caretLineVisible = value;
+            get => caretLineVisible;
+            set => caretLineVisible = value;
         }
 
         [DefaultValue(false)]
@@ -224,8 +224,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.KeepCaretCentered")]
         public bool KeepCaretCentered
         {
-            get => this.keepCaretCentered;
-            set => this.keepCaretCentered = value;
+            get => keepCaretCentered;
+            set => keepCaretCentered = value;
         }
 
         [DefaultValue(false)]
@@ -234,8 +234,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.EndAtLastLine")]
         public bool EndAtLastLine
         {
-            get => this.endAtLastLine;
-            set => this.endAtLastLine = value;
+            get => endAtLastLine;
+            set => endAtLastLine = value;
         }
 
         [DefaultValue(true)]
@@ -244,8 +244,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HighlightGuide")]
         public bool HighlightGuide
         {
-            get => this.highlightGuide;
-            set => this.highlightGuide = value;
+            get => highlightGuide;
+            set => highlightGuide = value;
         }
 
         [DefaultValue(0)]
@@ -254,8 +254,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.PrintMarginColumn")]
         public int PrintMarginColumn
         {
-            get => this.printMarginColumn;
-            set => this.printMarginColumn = value;
+            get => printMarginColumn;
+            set => printMarginColumn = value;
         }
 
         [DisplayName("Virtual Space Mode")]
@@ -264,8 +264,8 @@ namespace FlashDevelop.Settings
         [DefaultValue(VirtualSpaceMode.RectangularSelection)]
         public VirtualSpaceMode VirtualSpaceMode
         {
-            get => this.virtualSpaceMode;
-            set => this.virtualSpaceMode = value;
+            get => virtualSpaceMode;
+            set => virtualSpaceMode = value;
         }
 
         [DisplayName("End Of Line Mode")]
@@ -274,8 +274,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.EOLMode")]
         public EndOfLine EOLMode
         {
-            get => this.eolMode;
-            set => this.eolMode = value;
+            get => eolMode;
+            set => eolMode = value;
         }
 
         [DefaultValue(500)]
@@ -284,8 +284,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CaretPeriod")]
         public int CaretPeriod
         {
-            get => this.caretPeriod;
-            set => this.caretPeriod = value;
+            get => caretPeriod;
+            set => caretPeriod = value;
         }
 
         [DefaultValue(2)]
@@ -294,8 +294,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CaretWidth")]
         public int CaretWidth
         {
-            get => this.caretWidth;
-            set => this.caretWidth = value;
+            get => caretWidth;
+            set => caretWidth = value;
         }
 
         [DefaultValue(3000)]
@@ -304,11 +304,11 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ScrollWidth")]
         public int ScrollWidth
         {
-            get => this.scrollWidth;
+            get => scrollWidth;
             set
             {
                 if (value < 0) throw new ArgumentOutOfRangeException();
-                this.scrollWidth = value;
+                scrollWidth = value;
             }
         }
 
@@ -318,8 +318,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DefaultFileExtension")]
         public string DefaultFileExtension
         {
-            get => this.defaultFileExtension;
-            set => this.defaultFileExtension = value;
+            get => defaultFileExtension;
+            set => defaultFileExtension = value;
         }
 
         [DefaultValue(15000)]
@@ -328,8 +328,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.BackupInterval")]
         public int BackupInterval
         {
-            get => this.backupInterval;
-            set => this.backupInterval = value;
+            get => backupInterval;
+            set => backupInterval = value;
         }
 
         [DefaultValue(3000)]
@@ -338,8 +338,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.FilePollInterval")]
         public int FilePollInterval
         {
-            get => this.filePollInterval;
-            set => this.filePollInterval = value;
+            get => filePollInterval;
+            set => filePollInterval = value;
         }
 
         [DefaultValue(HighlightMatchingWordsMode.SelectionOrPosition)]
@@ -348,9 +348,15 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsMode")]
         public HighlightMatchingWordsMode HighlightMatchingWordsMode
         {
-            get => this.highlightMatchingWordsMode;
-            set => this.highlightMatchingWordsMode = value;
+            get => highlightMatchingWordsMode;
+            set => highlightMatchingWordsMode = value;
         }
+
+        [DefaultValue(false)]
+        [DisplayName("Highlight Matching Words Case-Sensitive")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.HighlightMatchingWordsCaseSensitive")]
+        public bool HighlightMatchingWordsCaseSensitive { get; set; } = false;
 
         [DefaultValue(1200)]
         [DisplayName("Highlight Matching Words Delay")]
@@ -360,10 +366,10 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
-                return this.highlightMatchingWordsDelay;
+                if (highlightMatchingWordsDelay <= 0) highlightMatchingWordsDelay = 1200;
+                return highlightMatchingWordsDelay;
             }
-            set => this.highlightMatchingWordsDelay = value;
+            set => highlightMatchingWordsDelay = value;
         }
 
         [DefaultValue(50)]
@@ -374,13 +380,13 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                if (this.clipboardHistorySize <= 0) this.clipboardHistorySize = 50; // value was lost in the settings file, and was set via serialization.
-                return this.clipboardHistorySize;
+                if (clipboardHistorySize <= 0) clipboardHistorySize = 50; // value was lost in the settings file, and was set via serialization.
+                return clipboardHistorySize;
             }
             set
             {
                 if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
-                this.clipboardHistorySize = value;
+                clipboardHistorySize = value;
             }
         }
 
@@ -395,8 +401,8 @@ namespace FlashDevelop.Settings
         [RequiresRestart]
         public LocaleVersion LocaleVersion
         {
-            get => this.localeVersion;
-            set => this.localeVersion = value;
+            get => localeVersion;
+            set => localeVersion = value;
         }
 
         [DefaultValue(CodePage.UTF8)]
@@ -405,8 +411,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DefaultCodePage")]
         public CodePage DefaultCodePage
         {
-            get => this.defaultCodePage;
-            set => this.defaultCodePage = value;
+            get => defaultCodePage;
+            set => defaultCodePage = value;
         }
 
         [DefaultValue(false)]
@@ -415,8 +421,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.SaveUnicodeWithBOM")]
         public bool SaveUnicodeWithBOM
         {
-            get => this.saveUnicodeWithBOM;
-            set => this.saveUnicodeWithBOM = value;
+            get => saveUnicodeWithBOM;
+            set => saveUnicodeWithBOM = value;
         }
 
         #endregion
@@ -429,8 +435,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.BackSpaceUnIndents")]
         public bool BackSpaceUnIndents
         {
-            get => this.backSpaceUnIndents;
-            set => this.backSpaceUnIndents = value;
+            get => backSpaceUnIndents;
+            set => backSpaceUnIndents = value;
         }
 
         [DefaultValue(true)]
@@ -439,8 +445,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.TabIndents")]
         public bool TabIndents
         {
-            get => this.tabIndents;
-            set => this.tabIndents = value;
+            get => tabIndents;
+            set => tabIndents = value;
         }
 
         [DefaultValue(IndentView.Real)]
@@ -451,10 +457,10 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                if ((int)this.indentView == 0) this.indentView = IndentView.Real;
-                return this.indentView;
+                if ((int)indentView == 0) indentView = IndentView.Real;
+                return indentView;
             }
-            set => this.indentView = value;
+            set => indentView = value;
         }
 
         [DisplayName("Smart Indent Type")]
@@ -463,8 +469,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.SmartIndentType")]
         public SmartIndent SmartIndentType
         {
-            get => this.smartIndentType;
-            set => this.smartIndentType = value;
+            get => smartIndentType;
+            set => smartIndentType = value;
         }
 
         [DisplayName("Coding Style Type")]
@@ -473,8 +479,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CodingStyle")]
         public CodingStyle CodingStyle
         {
-            get => this.codingStyle;
-            set => this.codingStyle = value;
+            get => codingStyle;
+            set => codingStyle = value;
         }
 
         [DisplayName("Comment Block Indenting")]
@@ -483,8 +489,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CommentBlockStyle")]
         public CommentBlockStyle CommentBlockStyle
         {
-            get => this.commentBlockStyle;
-            set => this.commentBlockStyle = value;
+            get => commentBlockStyle;
+            set => commentBlockStyle = value;
         }
 
         [DefaultValue(4)]
@@ -493,8 +499,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.IndentSize")]
         public int IndentSize
         {
-            get => this.indentSize;
-            set => this.indentSize = value;
+            get => indentSize;
+            set => indentSize = value;
         }
 
         [DefaultValue(4)]
@@ -503,8 +509,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.TabWidth")]
         public int TabWidth
         {
-            get => this.tabWidth;
-            set => this.tabWidth = value;
+            get => tabWidth;
+            set => tabWidth = value;
         }
 
         [DefaultValue(true)]
@@ -513,8 +519,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.UseTabs")]
         public bool UseTabs
         {
-            get => this.useTabs;
-            set => this.useTabs = value;
+            get => useTabs;
+            set => useTabs = value;
         }
 
         #endregion
@@ -527,8 +533,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ApplyFileExtension")]
         public bool ApplyFileExtension
         {
-            get => this.applyFileExtension;
-            set => this.applyFileExtension = value;
+            get => applyFileExtension;
+            set => applyFileExtension = value;
         }
 
         [DefaultValue(false)]
@@ -537,8 +543,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.AutoReloadModifiedFiles")]
         public bool AutoReloadModifiedFiles
         {
-            get => this.autoReloadModifiedFiles;
-            set => this.autoReloadModifiedFiles = value;
+            get => autoReloadModifiedFiles;
+            set => autoReloadModifiedFiles = value;
         }
 
         [DefaultValue(false)]
@@ -547,8 +553,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.SequentialTabbing")]
         public bool SequentialTabbing
         {
-            get => this.sequentialTabbing;
-            set => this.sequentialTabbing = value;
+            get => sequentialTabbing;
+            set => sequentialTabbing = value;
         }
 
         [DefaultValue(false)]
@@ -557,8 +563,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WrapText")]
         public bool WrapText
         {
-            get => this.wrapText;
-            set => this.wrapText = value;
+            get => wrapText;
+            set => wrapText = value;
         }
 
         [DefaultValue(true)]
@@ -567,8 +573,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.BraceMatchingEnabled")]
         public bool BraceMatchingEnabled
         {
-            get => this.braceMatchingEnabled;
-            set => this.braceMatchingEnabled = value;
+            get => braceMatchingEnabled;
+            set => braceMatchingEnabled = value;
         }
 
         [DefaultValue(true)]
@@ -577,8 +583,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.LineCommentsAfterIndent")]
         public bool LineCommentsAfterIndent
         {
-            get => this.lineCommentsAfterIndent;
-            set => this.lineCommentsAfterIndent = value;
+            get => lineCommentsAfterIndent;
+            set => lineCommentsAfterIndent = value;
         }
 
         [DefaultValue(false)]
@@ -587,8 +593,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.MoveCursorAfterComment")]
         public bool MoveCursorAfterComment
         {
-            get => this.moveCursorAfterComment;
-            set => this.moveCursorAfterComment = value;
+            get => moveCursorAfterComment;
+            set => moveCursorAfterComment = value;
         }
 
         [DefaultValue(15)]
@@ -599,10 +605,10 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                if (this.maxRecentFiles <= 0) this.maxRecentFiles = 15;
-                return this.maxRecentFiles;
+                if (maxRecentFiles <= 0) maxRecentFiles = 15;
+                return maxRecentFiles;
             }
-            set => this.maxRecentFiles = value;
+            set => maxRecentFiles = value;
         }
 
         [DefaultValue(1000)]
@@ -625,8 +631,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.RestoreFileStates")]
         public bool RestoreFileStates
         {
-            get => this.restoreFileStates;
-            set => this.restoreFileStates = value;
+            get => restoreFileStates;
+            set => restoreFileStates = value;
         }
 
         [DefaultValue(true)]
@@ -635,8 +641,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.RestoreFileSession")]
         public bool RestoreFileSession
         {
-            get => this.restoreFileSession;
-            set => this.restoreFileSession = value;
+            get => restoreFileSession;
+            set => restoreFileSession = value;
         }
 
         [DefaultValue(false)]
@@ -645,8 +651,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ConfirmOnExit")]
         public bool ConfirmOnExit
         {
-            get => this.confirmOnExit;
-            set => this.confirmOnExit = value;
+            get => confirmOnExit;
+            set => confirmOnExit = value;
         }
 
         [DefaultValue(false)]
@@ -655,8 +661,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisableReplaceFilesConfirm")]
         public bool DisableReplaceFilesConfirm
         {
-            get => this.disableReplaceFilesConfirm;
-            set => this.disableReplaceFilesConfirm = value;
+            get => disableReplaceFilesConfirm;
+            set => disableReplaceFilesConfirm = value;
         }
 
         [DefaultValue(true)]
@@ -665,8 +671,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.RedirectFilesResults")]
         public bool RedirectFilesResults
         {
-            get => this.redirectFilesResults;
-            set => this.redirectFilesResults = value;
+            get => redirectFilesResults;
+            set => redirectFilesResults = value;
         }
 
         [DefaultValue(false)]
@@ -675,8 +681,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisableFindOptionSync")]
         public bool DisableFindOptionSync
         {
-            get => this.disableFindOptionSync;
-            set => this.disableFindOptionSync = value;
+            get => disableFindOptionSync;
+            set => disableFindOptionSync = value;
         }
 
         [DefaultValue(false)]
@@ -685,8 +691,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisableFindTextUpdating")]
         public bool DisableFindTextUpdating
         {
-            get => this.disableFindTextUpdating;
-            set => this.disableFindTextUpdating = value;
+            get => disableFindTextUpdating;
+            set => disableFindTextUpdating = value;
         }
 
         [DefaultValue(false)]
@@ -695,8 +701,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisableSimpleQuickFind")]
         public bool DisableSimpleQuickFind
         {
-            get => this.disableSimpleQuickFind;
-            set => this.disableSimpleQuickFind = value;
+            get => disableSimpleQuickFind;
+            set => disableSimpleQuickFind = value;
         }
 
         [DefaultValue(false)]
@@ -705,8 +711,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisableTabDifferentiation")]
         public bool DisableTabDifferentiation
         {
-            get => this.disableTabDifferentiation;
-            set => this.disableTabDifferentiation = value;
+            get => disableTabDifferentiation;
+            set => disableTabDifferentiation = value;
         }
 
         #endregion
@@ -719,8 +725,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.KeepIndentTabs")]
         public bool KeepIndentTabs
         {
-            get => this.keepIndentTabs;
-            set => this.keepIndentTabs = value;
+            get => keepIndentTabs;
+            set => keepIndentTabs = value;
         }
 
         [DefaultValue(false)]
@@ -729,8 +735,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.StripTrailingSpaces")]
         public bool StripTrailingSpaces
         {
-            get => this.stripTrailingSpaces;
-            set => this.stripTrailingSpaces = value;
+            get => stripTrailingSpaces;
+            set => stripTrailingSpaces = value;
         }
 
         [DefaultValue(true)]
@@ -739,8 +745,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.EnsureConsistentLineEnds")]
         public bool EnsureConsistentLineEnds
         {
-            get => this.ensureConsistentLineEnds;
-            set => this.ensureConsistentLineEnds = value;
+            get => ensureConsistentLineEnds;
+            set => ensureConsistentLineEnds = value;
         }
 
         [DefaultValue(false)]
@@ -749,8 +755,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.EnsureLastLineEnd")]
         public bool EnsureLastLineEnd
         {
-            get => this.ensureLastLineEnd;
-            set => this.ensureLastLineEnd = value;
+            get => ensureLastLineEnd;
+            set => ensureLastLineEnd = value;
         }
 
         #endregion
@@ -762,8 +768,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.CheckForUpdates")]
         public UpdateInterval CheckForUpdates
         {
-            get => this.checkForUpdates;
-            set => this.checkForUpdates = value;
+            get => checkForUpdates;
+            set => checkForUpdates = value;
         }
 
         [DisplayName("Latest Startup Command")]
@@ -771,8 +777,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.LatestCommand")]
         public int LatestCommand
         {
-            get => this.latestCommand;
-            set => this.latestCommand = value;
+            get => latestCommand;
+            set => latestCommand = value;
         }
 
         [DisplayName("Last Active Path")]
@@ -781,8 +787,8 @@ namespace FlashDevelop.Settings
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string LatestDialogPath
         {
-            get => this.latestDialogPath;
-            set => this.latestDialogPath = value;
+            get => latestDialogPath;
+            set => latestDialogPath = value;
         }
 
         [DisplayName("Window Size")]
@@ -790,8 +796,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WindowSize")]
         public Size WindowSize
         {
-            get => this.windowSize;
-            set => this.windowSize = value;
+            get => windowSize;
+            set => windowSize = value;
         }
 
         [DisplayName("Window State")]
@@ -799,8 +805,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WindowState")]
         public FormWindowState WindowState
         {
-            get => this.windowState;
-            set => this.windowState = value;
+            get => windowState;
+            set => windowState = value;
         }
 
         [DisplayName("Window Position")]
@@ -808,8 +814,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WindowPosition")]
         public Point WindowPosition
         {
-            get => this.windowPosition;
-            set => this.windowPosition = value;
+            get => windowPosition;
+            set => windowPosition = value;
         }
 
         [DisplayName("Previous Documents")]
@@ -818,8 +824,8 @@ namespace FlashDevelop.Settings
         [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor,System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public List<string> PreviousDocuments
         {
-            get => this.previousDocuments;
-            set => this.previousDocuments = value;
+            get => previousDocuments;
+            set => previousDocuments = value;
         }
 
         [DisplayName("Disabled Plugins")]
@@ -828,8 +834,8 @@ namespace FlashDevelop.Settings
         [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor,System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public List<string> DisabledPlugins
         {
-            get => this.disabledPlugins;
-            set => this.disabledPlugins = value;
+            get => disabledPlugins;
+            set => disabledPlugins = value;
         }
 
         #endregion
@@ -842,10 +848,10 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.HoverDelay")]
         public int HoverDelay
         {
-            get => this.uiHoverDelay;
+            get => uiHoverDelay;
             set
             {
-                this.uiHoverDelay = value;
+                uiHoverDelay = value;
                 foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 {
                     if (doc.IsEditable) doc.SciControl.MouseDwellTime = uiHoverDelay;
@@ -859,8 +865,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisplayDelay")]
         public int DisplayDelay
         {
-            get => this.uiDisplayDelay;
-            set => this.uiDisplayDelay = value;
+            get => uiDisplayDelay;
+            set => uiDisplayDelay = value;
         }
 
         [DefaultValue(false)]
@@ -869,8 +875,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ShowDetails")]
         public bool ShowDetails
         {
-            get => this.uiShowDetails;
-            set => this.uiShowDetails = value;
+            get => uiShowDetails;
+            set => uiShowDetails = value;
         }
 
         [DefaultValue(true)]
@@ -879,8 +885,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.AutoFilterList")]
         public bool AutoFilterList
         {
-            get => this.uiAutoFilterList;
-            set => this.uiAutoFilterList = value;
+            get => uiAutoFilterList;
+            set => uiAutoFilterList = value;
         }
 
         [DefaultValue(true)]
@@ -889,8 +895,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.EnableAutoHide")]
         public bool EnableAutoHide
         {
-            get => this.uiEnableAutoHide;
-            set => this.uiEnableAutoHide = value;
+            get => uiEnableAutoHide;
+            set => uiEnableAutoHide = value;
         }
 
         [DefaultValue(false)]
@@ -899,8 +905,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.WrapList")]
         public bool WrapList
         {
-            get => this.uiWrapList;
-            set => this.uiWrapList = value;
+            get => uiWrapList;
+            set => uiWrapList = value;
         }
 
         [DefaultValue(false)]
@@ -909,8 +915,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.DisableSmartMatch")]
         public bool DisableSmartMatch
         {
-            get => this.uiDisableSmartMatch;
-            set => this.uiDisableSmartMatch = value;
+            get => uiDisableSmartMatch;
+            set => uiDisableSmartMatch = value;
         }
 
         [DefaultValue("")]
@@ -919,8 +925,8 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.InsertionTriggers")]
         public string InsertionTriggers
         {
-            get => this.uiInsertionTriggers;
-            set => this.uiInsertionTriggers = value;
+            get => uiInsertionTriggers;
+            set => uiInsertionTriggers = value;
         }
 
         #endregion
@@ -934,8 +940,8 @@ namespace FlashDevelop.Settings
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string CustomSnippetDir
         {
-            get => this.customSnippetDir;
-            set => this.customSnippetDir = value;
+            get => customSnippetDir;
+            set => customSnippetDir = value;
         }
 
         [DefaultValue("")]
@@ -945,8 +951,8 @@ namespace FlashDevelop.Settings
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string CustomTemplateDir
         {
-            get => this.customTemplateDir;
-            set => this.customTemplateDir = value;
+            get => customTemplateDir;
+            set => customTemplateDir = value;
         }
 
         [DefaultValue("")]
@@ -956,8 +962,8 @@ namespace FlashDevelop.Settings
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string CustomProjectsDir
         {
-            get => this.customProjectsDir;
-            set => this.customProjectsDir = value;
+            get => customProjectsDir;
+            set => customProjectsDir = value;
         }
 
         [DefaultValue("")]
@@ -967,8 +973,8 @@ namespace FlashDevelop.Settings
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         public string CustomCommandPrompt
         {
-            get => this.customCommandPrompt;
-            set => this.customCommandPrompt = value;
+            get => customCommandPrompt;
+            set => customCommandPrompt = value;
         }
 
         #endregion
@@ -978,8 +984,8 @@ namespace FlashDevelop.Settings
         [Browsable(false)]
         public long LastUpdateCheck
         {
-            get => this.lastUpdateCheck;
-            set => this.lastUpdateCheck = value;
+            get => lastUpdateCheck;
+            set => lastUpdateCheck = value;
         }
 
         #endregion
@@ -1030,7 +1036,5 @@ namespace FlashDevelop.Settings
         }
 
         #endregion
-
     }
-
 }

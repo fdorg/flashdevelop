@@ -551,8 +551,9 @@ namespace PluginCore
         SmartIndent SmartIndentType { get; set; }
         VirtualSpaceMode VirtualSpaceMode { get; set; }
         IndentView IndentView { get; set; }
-        HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
         int HighlightMatchingWordsDelay { get; set; }
+        HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
+        bool HighlightMatchingWordsCaseSensitive { get; set; }
         CodePage DefaultCodePage { get; set; }
         int TabWidth { get; set; }
         int IndentSize { get; set; }

@@ -6327,4 +6327,8 @@ AND - All conditions are met.</value>
     <value>To static extension call</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsCaseSensitive" xml:space="preserve">
+    <value>Match case</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>
