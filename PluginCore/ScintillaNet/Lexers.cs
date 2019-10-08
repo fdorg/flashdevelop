@@ -1,5 +1,3 @@
-using System;
-
 namespace ScintillaNet.Lexers
 {
     public enum PYTHON
@@ -56,7 +54,6 @@ namespace ScintillaNet.Lexers
         LASTPREDEFINED = 39
     }
 
-    [Flags]
     public enum CPP
     {    
         DEFAULT = 0,
