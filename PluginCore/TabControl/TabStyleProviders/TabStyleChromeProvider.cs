@@ -95,22 +95,23 @@ namespace System.Windows.Forms
 				Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
 				graphics.SmoothingMode = SmoothingMode.AntiAlias;
 				if (closerRect.Contains(this._TabControl.MousePosition)){
-					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect))
-                    {
-                        using SolidBrush closerBrush = new SolidBrush(Color.FromArgb(193, 53, 53));
-                        graphics.FillPath(closerBrush, closerPath);
-                    }
-					using (GraphicsPath closerPath = GetCloserPath(closerRect))
-                    {
-                        using Pen closerPen = new Pen(this._CloserColorActive);
-                        graphics.DrawPath(closerPen, closerPath);
-                    }
-				} else
-                {
-                    using GraphicsPath closerPath = GetCloserPath(closerRect);
-                    using Pen closerPen = new Pen(this._CloserColor);
-                    graphics.DrawPath(closerPen, closerPath);
-                }
+					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect)){
+						using (SolidBrush closerBrush = new SolidBrush(Color.FromArgb(193, 53, 53))){
+							graphics.FillPath(closerBrush, closerPath);
+						}
+					}
+					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
+						using (Pen closerPen = new Pen(this._CloserColorActive)){
+							graphics.DrawPath(closerPen, closerPath);
+						}
+					}
+				} else {
+					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
+						using (Pen closerPen = new Pen(this._CloserColor)){
+							graphics.DrawPath(closerPen, closerPath);
+						}
+					}
+				}
 
 				
 			}

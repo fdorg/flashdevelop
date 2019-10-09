@@ -105,33 +105,37 @@ namespace Ude.Core
         /// <returns>filtered buffer</returns>
         protected static byte[] FilterWithoutEnglishLetters(byte[] buf, int offset, int len) 
         {
-            using var ms = new MemoryStream(buf.Length);
-            bool meetMSB = false;
-            int max = offset + len;
-            int prev = offset;
-            int cur = offset;
+            byte[] result = null;
 
-            while (cur < max) {
-                byte b = buf[cur];
+            using (MemoryStream ms = new MemoryStream(buf.Length)) {
+                
+                bool meetMSB = false;
+                int max = offset + len;
+                int prev = offset;
+                int cur = offset;
 
-                if ((b & 0x80) != 0) {
-                    meetMSB = true;
-                } else if (b < CAPITAL_A || (b > CAPITAL_Z && b < SMALL_A)
-                                         || b > SMALL_Z) {
-                    if (meetMSB && cur > prev) {
-                        ms.Write(buf, prev, cur - prev);
-                        ms.WriteByte(SPACE);
-                        meetMSB = false;
+                while (cur < max) {
+                    byte b = buf[cur];
+
+                    if ((b & 0x80) != 0) {
+                        meetMSB = true;
+                    } else if (b < CAPITAL_A || (b > CAPITAL_Z && b < SMALL_A)
+                               || b > SMALL_Z) {
+                        if (meetMSB && cur > prev) {
+                            ms.Write(buf, prev, cur - prev);
+                            ms.WriteByte(SPACE);
+                            meetMSB = false;
+                        }
+                        prev = cur + 1;
                     }
-                    prev = cur + 1;
+                    cur++;
                 }
-                cur++;
-            }
 
-            if (meetMSB && cur > prev)
-                ms.Write(buf, prev, cur - prev);
-            ms.SetLength(ms.Position);
-            var result = ms.ToArray();
+                if (meetMSB && cur > prev)
+                    ms.Write(buf, prev, cur - prev);
+                ms.SetLength(ms.Position);
+                result = ms.ToArray();
+            }
             return result;
         }
 
@@ -143,39 +147,43 @@ namespace Ude.Core
         /// <returns>a filtered copy of the input buffer</returns>
         protected static byte[] FilterWithEnglishLetters(byte[] buf, int offset, int len)
         {
-            using var ms = new MemoryStream(buf.Length);
-            bool inTag = false;
-            int max = offset + len;
-            int prev = offset;
-            int cur = offset;
+            byte[] result = null;
 
-            while (cur < max) {
-                    
-                byte b = buf[cur];
-                    
-                if (b == GREATER_THAN)
-                    inTag = false;
-                else if (b == LESS_THAN)
-                    inTag = true;
+            using (MemoryStream ms = new MemoryStream(buf.Length)) {
+                
+                bool inTag = false;
+                int max = offset + len;
+                int prev = offset;
+                int cur = offset;
 
-                // it's ascii, but it's not a letter
-                if ((b & 0x80) == 0 && (b < CAPITAL_A || b > SMALL_Z
-                                                      || (b > CAPITAL_Z && b < SMALL_A))) {
-                    if (cur > prev && !inTag) {
-                        ms.Write(buf, prev, cur - prev);
-                        ms.WriteByte(SPACE);
+                while (cur < max) {
+                    
+                    byte b = buf[cur];
+                    
+                    if (b == GREATER_THAN)
+                        inTag = false;
+                    else if (b == LESS_THAN)
+                        inTag = true;
+
+                    // it's ascii, but it's not a letter
+                    if ((b & 0x80) == 0 && (b < CAPITAL_A || b > SMALL_Z
+                           || (b > CAPITAL_Z && b < SMALL_A))) {
+                        if (cur > prev && !inTag) {
+                            ms.Write(buf, prev, cur - prev);
+                            ms.WriteByte(SPACE);
+                        }
+                        prev = cur + 1;
                     }
-                    prev = cur + 1;
+                    cur++;
                 }
-                cur++;
-            }
 
-            // If the current segment contains more than just a symbol 
-            // and it is not inside a tag then keep it.
-            if (!inTag && cur > prev)
-                ms.Write(buf, prev, cur - prev);
-            ms.SetLength(ms.Position);
-            var result = ms.ToArray();
+                // If the current segment contains more than just a symbol 
+                // and it is not inside a tag then keep it.
+                if (!inTag && cur > prev)
+                    ms.Write(buf, prev, cur - prev);
+                ms.SetLength(ms.Position);
+                result = ms.ToArray();
+            }
             return result;
         }
     }

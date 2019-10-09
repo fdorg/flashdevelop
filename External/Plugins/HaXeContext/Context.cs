@@ -397,12 +397,15 @@ namespace HaXeContext
         {
             features.metadata = new Dictionary<string, string>();
 
-            var processInfo = CreateHaxeProcessInfo("--help-metas");
+            ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
             if (processInfo is null) return;
-            using var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true};
-            process.Start();
+            string metaList;
+            using (var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true})
+            {
+                process.Start();
 
-            var metaList = process.StandardOutput.ReadToEnd();
+                metaList = process.StandardOutput.ReadToEnd();
+            }
 
             var regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");

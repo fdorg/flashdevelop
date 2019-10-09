@@ -559,11 +559,13 @@ namespace PluginCore.PluginCore.Utilities
             Bitmap output = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
 
             // Now lock the bitmap into memory
-            using var graphics = Graphics.FromImage(copy);
-            graphics.PageUnit = GraphicsUnit.Pixel;
+            using (Graphics g = Graphics.FromImage(copy))
+            {
+                g.PageUnit = GraphicsUnit.Pixel;
 
-            // Draw the source image onto the copy bitmap
-            graphics.DrawImage(source, bounds);
+                // Draw the source image onto the copy bitmap
+                g.DrawImage(source, bounds);
+            }
 
             // Define a pointer to the bitmap data
             BitmapData sourceData = null;

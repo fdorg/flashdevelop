@@ -191,13 +191,15 @@ namespace SourceControl.Managers
             if (tree.ImageList.Images.Count <= node.ImageIndex)
                 return;
 
-            var original = tree.ImageList.Images[node.ImageIndex];
-            var composed = original.Clone() as Bitmap;
-            var curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
-            using var destination = Graphics.FromImage(composed);
-            destination.DrawImage(iconSkin, 
-                new Rectangle(0, 0, composed.Width, composed.Height), 
-                new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
+            Image original = tree.ImageList.Images[node.ImageIndex];
+            Bitmap composed = original.Clone() as Bitmap;
+            int curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
+            using (Graphics destination = Graphics.FromImage(composed))
+            {
+                destination.DrawImage(iconSkin, 
+                    new Rectangle(0, 0, composed.Width, composed.Height), 
+                    new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
+            }
             int index = tree.ImageList.Images.Count;
             tree.ImageList.Images.Add(composed);
             map[node.ImageIndex] = index;

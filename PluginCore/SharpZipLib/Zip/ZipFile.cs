@@ -1418,8 +1418,9 @@ namespace ICSharpCode.SharpZipLib.Zip
                     // Create an empty archive if none existed originally.
                     if( entries_.Length==0 ) {
                         byte[] theComment=(newComment_!=null)?newComment_.RawComment:ZipConstants.ConvertToArray(comment_);
-                        using ZipHelperStream zhs=new ZipHelperStream(baseStream_);
-                        zhs.WriteEndOfCentralDirectory(0, 0, 0, theComment);
+                        using( ZipHelperStream zhs=new ZipHelperStream(baseStream_) ) {
+                            zhs.WriteEndOfCentralDirectory(0, 0, 0, theComment);
+                        }
                     }
                 }
 
@@ -2395,11 +2396,12 @@ namespace ICSharpCode.SharpZipLib.Zip
             long dataStart = workFile.baseStream_.Position;
 
             // TODO: This is slow if the changes don't effect the data!!
-            if ( update.Entry.IsFile && (update.Filename != null) )
-            {
-                using Stream output = workFile.GetOutputStream(update.OutEntry);
-                using Stream source = this.GetInputStream(update.Entry);
-                CopyBytes(update, output, source, source.Length, true);
+            if ( update.Entry.IsFile && (update.Filename != null) ) {
+                using ( Stream output = workFile.GetOutputStream(update.OutEntry) ) {
+                    using ( Stream source = this.GetInputStream(update.Entry) ) {
+                        CopyBytes(update, output, source, source.Length, true);
+                    }
+                }
             }
 
             long dataEnd = workFile.baseStream_.Position;
@@ -2993,8 +2995,9 @@ namespace ICSharpCode.SharpZipLib.Zip
         // NOTE this returns the offset of the first byte after the signature.
         long LocateBlockWithSignature(int signature, long endLocation, int minimumBlockSize, int maximumVariableData)
         {
-            using ZipHelperStream les = new ZipHelperStream(baseStream_);
-            return les.LocateBlockWithSignature(signature, endLocation, minimumBlockSize, maximumVariableData);
+            using ( ZipHelperStream les = new ZipHelperStream(baseStream_) ) {
+                return les.LocateBlockWithSignature(signature, endLocation, minimumBlockSize, maximumVariableData);
+            }
         }
         
         /// <summary>

@@ -249,17 +249,23 @@ namespace XMLCompletion
         {
             try
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
-                if (src is null) return false;
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
+                if (src is null)
+                    return false;
 
-                using var reader = new StreamReader(src);
-                var content = reader.ReadToEnd();
-                reader.Close();
+                string content;
+                using (StreamReader sr = new StreamReader(src))
+                {
+                    content = sr.ReadToEnd();
+                    sr.Close();
+                }
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                using var writer = File.CreateText(filePath);
-                writer.Write(content);
-                writer.Close();
+                using (StreamWriter sw = File.CreateText(filePath))
+                {
+                    sw.Write(content);
+                    sw.Close();
+                }
                 return true;
             }
             catch

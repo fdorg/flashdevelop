@@ -1204,8 +1204,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private static bool IsFontInstalled(string fontName)
         {
-            using var testFont = new Font(fontName, 9);
-            return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
+            using (var testFont = new Font(fontName, 9))
+            {
+                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         /// <summary>
@@ -1882,8 +1884,11 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using EditorDialog sp = new EditorDialog();
-            sp.ShowDialog();
+            using (EditorDialog sp = new EditorDialog())
+            {
+                sp.ShowDialog();
+            }
+                
         }
 
         #endregion

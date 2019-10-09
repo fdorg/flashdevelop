@@ -69,20 +69,22 @@ namespace ProjectManager.Controls.AS2
 
         private void inputBrowseButton_Click(object sender, System.EventArgs e)
         {
-            using OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = TextHelper.GetString("Info.FlashMovieFilter");
-            dialog.InitialDirectory = project.Directory;
-
-            // try pre-setting the current input path
-            try
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                string path = project.GetAbsolutePath(inputSwfBox.Text);
-                if (File.Exists(path)) dialog.FileName = path;
-            }
-            catch { }
+                dialog.Filter = TextHelper.GetString("Info.FlashMovieFilter");
+                dialog.InitialDirectory = project.Directory;
 
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-                inputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+                // try pre-setting the current input path
+                try
+                {
+                    string path = project.GetAbsolutePath(inputSwfBox.Text);
+                    if (File.Exists(path)) dialog.FileName = path;
+                }
+                catch { }
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    inputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+            }
         }
 
         protected override bool Apply()

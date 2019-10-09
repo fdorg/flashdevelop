@@ -581,19 +581,21 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void SelectCustomShortcut(object sender, EventArgs e)
         {
-            using var dialog = new OpenFileDialog
+            using (var dialog = new OpenFileDialog
             {
                 Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
                 InitialDirectory = PathHelper.ShortcutsDir,
                 Title = " " + TextHelper.GetString("Title.OpenFileDialog")
-            };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
+            })
             {
-                this.listView.BeginUpdate();
-                ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
-                bool conflicts = this.UpdateAllShortcutsConflicts();
-                this.listView.EndUpdate();
-                if (conflicts) this.ShowConflictsPresent(); // Make sure the warning message shows up after the listview is rendered
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    this.listView.BeginUpdate();
+                    ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                    bool conflicts = this.UpdateAllShortcutsConflicts();
+                    this.listView.EndUpdate();
+                    if (conflicts) this.ShowConflictsPresent(); // Make sure the warning message shows up after the listview is rendered
+                }
             }
         }
 
@@ -602,7 +604,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void SaveCustomShortcut(object sender, EventArgs e)
         {
-            using var dialog = new SaveFileDialog
+            using (var dialog = new SaveFileDialog
             {
                 AddExtension = true,
                 DefaultExt = ".fda",
@@ -610,10 +612,12 @@ namespace FlashDevelop.Dialogs
                 InitialDirectory = PathHelper.ShortcutsDir,
                 OverwritePrompt = true,
                 Title = " " + TextHelper.GetString("Title.SaveFileDialog")
-            };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
+            })
             {
-                ShortcutManager.SaveCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    ShortcutManager.SaveCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                }
             }
         }
 

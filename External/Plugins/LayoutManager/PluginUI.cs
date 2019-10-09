@@ -409,11 +409,14 @@ namespace LayoutManager
         {
             try
             {
-                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                var src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
-                using var reader = new StreamReader(src, true);
-                var content = reader.ReadToEnd();
-                reader.Close();
+                string content;
+                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Stream src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
+                using (StreamReader sr = new StreamReader(src, true))
+                {
+                    content = sr.ReadToEnd();
+                    sr.Close();
+                }
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
                 FileHelper.WriteFile(file, content, Encoding.Unicode);
             }

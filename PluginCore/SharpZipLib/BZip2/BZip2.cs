@@ -60,11 +60,11 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
                 throw new Exception("Null Stream");
             }
             
-            try
-            {
-                using BZip2InputStream bzipInput = new BZip2InputStream(inStream);
-                bzipInput.IsStreamOwner = isStreamOwner;
-                StreamUtils.Copy(bzipInput, outStream, new byte[4096]);
+            try {
+                using (BZip2InputStream bzipInput = new BZip2InputStream(inStream)) {
+                    bzipInput.IsStreamOwner = isStreamOwner;
+                    StreamUtils.Copy(bzipInput, outStream, new byte[4096]);
+                }
             } finally {
                 if (isStreamOwner) {
                     // inStream is closed by the BZip2InputStream if stream owner
@@ -88,11 +88,11 @@ namespace ICSharpCode.SharpZipLib.BZip2 {
                 throw new Exception("Null Stream");
             }
 
-            try
-            {
-                using BZip2OutputStream bzipOutput = new BZip2OutputStream(outStream, level);
-                bzipOutput.IsStreamOwner = isStreamOwner;
-                StreamUtils.Copy(inStream, bzipOutput, new byte[4096]);
+            try {
+                using (BZip2OutputStream bzipOutput = new BZip2OutputStream(outStream, level)) {
+                    bzipOutput.IsStreamOwner = isStreamOwner;
+                    StreamUtils.Copy(inStream, bzipOutput, new byte[4096]);
+                }
             } finally {
                 if (isStreamOwner) {
                     // outStream is closed by the BZip2OutputStream if stream owner

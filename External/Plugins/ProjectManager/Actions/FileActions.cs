@@ -575,17 +575,18 @@ namespace ProjectManager.Actions
                     }
 
                     // offer to choose the new name
-                    var label = TextHelper.GetString("Info.NewDuplicateName");
-                    var title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
-                    var suggestion = Path.GetFileNameWithoutExtension(copyPath);
-                    using var dialog = new LineEntryDialog(title, label, suggestion);
-                    var choice = dialog.ShowDialog();
-                    if (choice == DialogResult.OK && dialog.Line.Trim().Length > 0)
+                    string label = TextHelper.GetString("Info.NewDuplicateName");
+                    string title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
+                    string suggestion = Path.GetFileNameWithoutExtension(copyPath);
+                    using (LineEntryDialog askName = new LineEntryDialog(title, label, suggestion))
                     {
-                        copyPath = Path.Combine(Path.GetDirectoryName(toPath), dialog.Line.Trim()) + Path.GetExtension(toPath);
+                        DialogResult choice = askName.ShowDialog();
+                        if (choice == DialogResult.OK && askName.Line.Trim().Length > 0)
+                        {
+                            copyPath = Path.Combine(Path.GetDirectoryName(toPath), askName.Line.Trim()) + Path.GetExtension(toPath);
+                        }
+                        else throw new UserCancelException();
                     }
-                    else throw new UserCancelException();
-
                     toPath = copyPath;
                 }
 

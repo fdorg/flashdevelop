@@ -119,29 +119,31 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void packageBrowse_Click(object sender, EventArgs e)
         {
-            using PackageBrowser browser = new PackageBrowser();
-            browser.Project = this.Project;
-
-            foreach (string item in Project.AbsoluteClasspaths)
-                browser.AddClassPath(item);
-
-            if (browser.ShowDialog(this) == DialogResult.OK)
+            using (PackageBrowser browser = new PackageBrowser())
             {
-                if (browser.Package != null)
+                browser.Project = this.Project;
+
+                foreach (string item in Project.AbsoluteClasspaths)
+                    browser.AddClassPath(item);
+
+                if (browser.ShowDialog(this) == DialogResult.OK)
                 {
-                    string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
-                    string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
-                    if (package != null)
+                    if (browser.Package != null)
                     {
-                        Directory = browser.Package;
-                        package = package.Replace(Path.DirectorySeparatorChar, '.');
-                        this.packageBox.Text = package;
+                        string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
+                        string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
+                        if (package != null)
+                        {
+                            Directory = browser.Package;
+                            package = package.Replace(Path.DirectorySeparatorChar, '.');
+                            this.packageBox.Text = package;
+                        }
                     }
-                }
-                else
-                {
-                    this.Directory = browser.Project.Directory;
-                    this.packageBox.Text = "";
+                    else
+                    {
+                        this.Directory = browser.Project.Directory;
+                        this.packageBox.Text = "";
+                    }
                 }
             }
         }
@@ -154,20 +156,22 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            using var browser = new ClassBrowser();
-            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            try
+            using (var browser = new ClassBrowser())
             {
-                browser.ClassList = context.GetAllProjectClasses();
+                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                try
+                {
+                    browser.ClassList = context.GetAllProjectClasses();
+                }
+                catch { }
+                //browser.ExcludeFlag = FlagType.Interface;
+                browser.IncludeFlag = FlagType.Interface;
+                if (browser.ShowDialog(this) == DialogResult.OK)
+                {
+                    this.baseBox.Text = browser.SelectedClass;
+                }
+                this.okButton.Focus();
             }
-            catch { }
-            //browser.ExcludeFlag = FlagType.Interface;
-            browser.IncludeFlag = FlagType.Interface;
-            if (browser.ShowDialog(this) == DialogResult.OK)
-            {
-                this.baseBox.Text = browser.SelectedClass;
-            }
-            this.okButton.Focus();
         }
 
         private void packageBox_TextChanged(object sender, EventArgs e)

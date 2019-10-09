@@ -409,16 +409,20 @@ namespace WeifenLuo.WinFormsUI.Docking
                         Rectangle rect = RectangleToClient(DockPane.RectangleToScreen(DockPane.ClientRectangle));
                         PaneDiamond.Location = new Point(rect.Left + (rect.Width - PaneDiamond.Width) / 2, rect.Top + (rect.Height - PaneDiamond.Height) / 2);
                         PaneDiamond.Visible = true;
-                        using GraphicsPath graphicsPath = PaneIndicator.DisplayingGraphicsPath.Clone() as GraphicsPath;
-                        var pts = new[]
+                        using (GraphicsPath graphicsPath = PaneIndicator.DisplayingGraphicsPath.Clone() as GraphicsPath)
+                        {
+                            Point[] pts = new[]
                         {
                             new Point(PaneDiamond.Left, PaneDiamond.Top),
                             new Point(PaneDiamond.Right, PaneDiamond.Top),
                             new Point(PaneDiamond.Left, PaneDiamond.Bottom)
                         };
-                        using var matrix = new Matrix(PaneDiamond.ClientRectangle, pts);
-                        graphicsPath.Transform(matrix);
-                        region.Union(graphicsPath);
+                            using (Matrix matrix = new Matrix(PaneDiamond.ClientRectangle, pts))
+                            {
+                                graphicsPath.Transform(matrix);
+                            }
+                            region.Union(graphicsPath);
+                        }
                     }
                     else
                         PaneDiamond.Visible = false;
@@ -622,13 +626,17 @@ namespace WeifenLuo.WinFormsUI.Docking
                     }
                     else
                     {
-                        using var path = pane.TabStripControl.GetOutline(contentIndex);
-                        var rectF = path.GetBounds();
-                        var rect = new Rectangle((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
-                        using var matrix = new Matrix(rect, new[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) });
-                        path.Transform(matrix);
-                        var region = new Region(path);
-                        SetDragForm(rect, region);
+                        using (GraphicsPath path = pane.TabStripControl.GetOutline(contentIndex))
+                        {
+                            RectangleF rectF = path.GetBounds();
+                            Rectangle rect = new Rectangle((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
+                            using (Matrix matrix = new Matrix(rect, new[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) }))
+                            {
+                                path.Transform(matrix);
+                            }
+                            Region region = new Region(path);
+                            SetDragForm(rect, region);
+                        }
                     }
                 }
 

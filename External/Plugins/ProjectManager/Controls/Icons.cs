@@ -264,10 +264,12 @@ namespace ProjectManager.Controls
 
         public static Image Overlay(Image image, Image overlay, int x, int y)
         {
-            var composed = (Bitmap) image.Clone();
-            using var destination = Graphics.FromImage(composed);
-            var dest = new Rectangle(ScaleHelper.Scale(x), ScaleHelper.Scale(y), overlay.Width, overlay.Height);
-            destination.DrawImage(overlay, dest, new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
+            Bitmap composed = image.Clone() as Bitmap;
+            using (Graphics destination = Graphics.FromImage(composed))
+            {
+                Rectangle dest = new Rectangle(ScaleHelper.Scale(x), ScaleHelper.Scale(y), overlay.Width, overlay.Height);
+                destination.DrawImage(overlay, dest, new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
+            }
             return composed;
         }
 

@@ -433,17 +433,19 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ExportArguments(object sender, EventArgs e)
         {
-            using SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            sfd.InitialDirectory = Globals.MainForm.WorkingDirectory;
-            if (sfd.ShowDialog() == DialogResult.OK)
+            using (SaveFileDialog sfd = new SaveFileDialog())
             {
-                List<Argument> args = new List<Argument>();
-                foreach (ListViewItem item in this.argsListView.SelectedItems)
+                sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
+                sfd.InitialDirectory = Globals.MainForm.WorkingDirectory;
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    args.Add((Argument)item.Tag);
+                    List<Argument> args = new List<Argument>();
+                    foreach (ListViewItem item in this.argsListView.SelectedItems)
+                    {
+                        args.Add((Argument)item.Tag);
+                    }
+                    ObjectSerializer.Serialize(sfd.FileName, args);
                 }
-                ObjectSerializer.Serialize(sfd.FileName, args);
             }
         }
 
@@ -452,15 +454,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ImportArguments(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            ofd.InitialDirectory = Globals.MainForm.WorkingDirectory;
-            if (ofd.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                List<Argument> args = new List<Argument>();
-                args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
-                arguments.AddRange(args); // Append imported
-                this.PopulateArgumentList(arguments);
+                ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
+                ofd.InitialDirectory = Globals.MainForm.WorkingDirectory;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    List<Argument> args = new List<Argument>();
+                    args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
+                    arguments.AddRange(args); // Append imported
+                    this.PopulateArgumentList(arguments);
+                }
             }
         }
 
@@ -477,8 +481,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static void Show()
         {
-            using ArgumentDialog argumentDialog = new ArgumentDialog();
-            argumentDialog.ShowDialog();
+            using (ArgumentDialog argumentDialog = new ArgumentDialog())
+            {
+                argumentDialog.ShowDialog();
+            }
         }
 
         #endregion

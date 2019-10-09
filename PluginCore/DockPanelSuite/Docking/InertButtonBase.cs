@@ -62,8 +62,10 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (IsMouseOver && Enabled)
             {
-                using Pen pen = new Pen(ForeColor);
-                e.Graphics.DrawRectangle(pen, Rectangle.Inflate(ClientRectangle, -1, -1));
+                using (Pen pen = new Pen(ForeColor))
+                {
+                    e.Graphics.DrawRectangle(pen, Rectangle.Inflate(ClientRectangle, -1, -1));
+                }
             }
 
             var quantizer = new RecolorQuantizer(ForeColor);

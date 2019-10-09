@@ -14,10 +14,17 @@ namespace Ookii.Dialogs
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            using var dialog = new VistaFolderBrowserDialog();
-            if (value != null) dialog.SelectedPath = $"{value}";
-            if (dialog.ShowDialog(null) == DialogResult.OK)
-                return dialog.SelectedPath;
+            using (VistaFolderBrowserDialog browser = new VistaFolderBrowserDialog())
+            {
+                if (value != null)
+                {
+                    browser.SelectedPath = $"{value}";
+                }
+
+                if (browser.ShowDialog(null) == DialogResult.OK)
+                    return browser.SelectedPath;
+            }
+
             return value;
         }
     }

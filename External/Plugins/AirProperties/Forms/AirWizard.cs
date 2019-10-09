@@ -1445,40 +1445,42 @@ namespace AirProperties
             //Save active 
             PropertyManager.SetProperty("name", NameField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
             PropertyManager.SetProperty("description", DescriptionField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
-            using LocaleManager frmLocaleMan = new LocaleManager(_locales);
-            if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
+            using (LocaleManager frmLocaleMan = new LocaleManager(_locales))
             {
-                //Check to see if any locales have been removed
-                foreach (string locale in originalLocales)
+                if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
                 {
-                    if (!_locales.Contains(locale))
+                    //Check to see if any locales have been removed
+                    foreach (string locale in originalLocales)
                     {
-                        //remove affected properties from properties file
-                        PropertyManager.RemoveLocalizedProperty("name", locale);
-                        PropertyManager.RemoveLocalizedProperty("description", locale);
+                        if (!_locales.Contains(locale))
+                        {
+                            //remove affected properties from properties file
+                            PropertyManager.RemoveLocalizedProperty("name", locale);
+                            PropertyManager.RemoveLocalizedProperty("description", locale);
+                        }
                     }
+                    //Check to see if any locales have been added
+                    foreach (string locale in _locales)
+                    {
+                        if (!originalLocales.Contains(locale))
+                        {
+                            //create the affected properties now, even though value is empty, so the locale 
+                            //will be preserved if the user closes the form without specifying a value
+                            PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
+                            PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
+                        }
+                    }
+                    //Re-initialize locales and refresh affected property fields
+                    InitializeLocales();
+                    PropertyManager.GetProperty("name", NameField, GetSelectedLocale());
+                    PropertyManager.GetProperty("description", DescriptionField, GetSelectedLocale());
                 }
-                //Check to see if any locales have been added
-                foreach (string locale in _locales)
+                else
                 {
-                    if (!originalLocales.Contains(locale))
-                    {
-                        //create the affected properties now, even though value is empty, so the locale 
-                        //will be preserved if the user closes the form without specifying a value
-                        PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
-                        PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
-                    }
+                    //reset the locales in case any changes were made
+                    _locales.Clear();
+                    _locales.AddRange(originalLocales);
                 }
-                //Re-initialize locales and refresh affected property fields
-                InitializeLocales();
-                PropertyManager.GetProperty("name", NameField, GetSelectedLocale());
-                PropertyManager.GetProperty("description", DescriptionField, GetSelectedLocale());
-            }
-            else
-            {
-                //reset the locales in case any changes were made
-                _locales.Clear();
-                _locales.AddRange(originalLocales);
             }
         }
 
@@ -1555,10 +1557,12 @@ namespace AirProperties
         {
             List<string> locales = new List<string>();
             locales.AddRange(SupportedLanguagesField.Text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
-            using LocaleManager frmLocaleMan = new LocaleManager(locales);
-            if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
+            using (LocaleManager frmLocaleMan = new LocaleManager(locales))
             {
-                SupportedLanguagesField.Text = string.Join(" ", locales.ToArray());
+                if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
+                {
+                    SupportedLanguagesField.Text = string.Join(" ", locales.ToArray());
+                }
             }
         }
 
@@ -1638,16 +1642,20 @@ namespace AirProperties
         {
             string devicesData = (string)(IPhoneResolutionExcludeButton.Tag ?? string.Empty);
             string[] devices = devicesData.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            using var iOSDevicesForm = new IOSDeviceManager(devices);
-            if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
-                IPhoneResolutionExcludeButton.Tag = iOSDevicesForm.SelectedDevices;
+            using (var iOSDevicesForm = new IOSDeviceManager(devices))
+            {
+                if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
+                    IPhoneResolutionExcludeButton.Tag = iOSDevicesForm.SelectedDevices;
+            }
         }
 
         private void IPhoneForceCPUButton_Click(object sender, EventArgs e)
         {
-            using var iOSDevicesForm = new IOSDeviceManager(IPhoneForceCPUField.Text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-            if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
-                IPhoneForceCPUField.Text = iOSDevicesForm.SelectedDevices;
+            using (var iOSDevicesForm = new IOSDeviceManager(IPhoneForceCPUField.Text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
+            {
+                if (iOSDevicesForm.ShowDialog(this) == DialogResult.OK)
+                    IPhoneForceCPUField.Text = iOSDevicesForm.SelectedDevices;
+            }
         }
 
         private void IPhoneResolutionCombo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1657,96 +1665,104 @@ namespace AirProperties
 
         private void IPhoneExternalSWFsButton_Click(object sender, EventArgs e)
         {
-            using var externalsFileDialog = new OpenFileDialog();
-            externalsFileDialog.InitialDirectory = Path.GetDirectoryName(_propertiesFile);
-            externalsFileDialog.CheckFileExists = true;
-            if (externalsFileDialog.ShowDialog(this) == DialogResult.OK)
+            using (var externalsFileDialog = new OpenFileDialog())
             {
-                var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
-                if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
+                externalsFileDialog.InitialDirectory = Path.GetDirectoryName(_propertiesFile);
+                externalsFileDialog.CheckFileExists = true;
+                if (externalsFileDialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    string msg = TextHelper.GetString("Info.CheckFileLocation");
-                    ErrorManager.ShowWarning(msg, null);
-                }
-                else
-                {
-                    IPhoneExternalSWFsField.Text = externalsFile.Replace('\\', '/');
+                    var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
+                    if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
+                    {
+                        string msg = TextHelper.GetString("Info.CheckFileLocation");
+                        ErrorManager.ShowWarning(msg, null);
+                    }
+                    else
+                    {
+                        IPhoneExternalSWFsField.Text = externalsFile.Replace('\\', '/');
+                    }
                 }
             }
         }
 
         private void ExtensionBrowseButton_Click(object sender, EventArgs e)
         {
-            using var extensionBrowser = new OpenFileDialog();
-            extensionBrowser.CheckFileExists = true;
-            extensionBrowser.Filter = TextHelper.GetString("Info.AneFilter");
-            extensionBrowser.InitialDirectory = _propertiesFilePath;
-
-            if (extensionBrowser.ShowDialog(this) == DialogResult.OK)
+            using (var extensionBrowser = new OpenFileDialog())
             {
-                ZipFile zFile;
-                try
+                extensionBrowser.CheckFileExists = true;
+                extensionBrowser.Filter = TextHelper.GetString("Info.AneFilter");
+                extensionBrowser.InitialDirectory = _propertiesFilePath;
+
+                if (extensionBrowser.ShowDialog(this) == DialogResult.OK)
                 {
-                    zFile = new ZipFile(extensionBrowser.FileName);
-                }
-                catch (Exception ex)
-                {
-                    string msg = TextHelper.GetString("Info.CouldNotLoadANE") + "\n" + ex.Message;
-                    ErrorManager.ShowWarning(msg, null);
-                    return;
-                }
-                var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
-
-                if (entry is null)
-                {
-                    string msg = TextHelper.GetString("Info.ANEDescFileNotFound");
-                    ErrorManager.ShowWarning(msg, null);
-                    return;
-                }
-
-                byte[] buffer = UnzipFile(zFile, entry);
-
-                string extensionId = null;
-                using var stream = new MemoryStream(buffer);
-                using var reader = XmlReader.Create(stream);
-                reader.MoveToContent();
-
-                while (reader.Read())
-                {
-                    if (reader.NodeType != XmlNodeType.Element) continue;
-
-                    if (reader.Name == "id")
+                    ZipFile zFile;
+                    try
                     {
-                        extensionId = reader.ReadInnerXml();
+                        zFile = new ZipFile(extensionBrowser.FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = TextHelper.GetString("Info.CouldNotLoadANE") + "\n" + ex.Message;
+                        ErrorManager.ShowWarning(msg, null);
+                        return;
+                    }
+                    var entry = zFile.GetEntry("META-INF/ANE/extension.xml");
+
+                    if (entry is null)
+                    {
+                        string msg = TextHelper.GetString("Info.ANEDescFileNotFound");
+                        ErrorManager.ShowWarning(msg, null);
+                        return;
+                    }
+
+                    byte[] buffer = UnzipFile(zFile, entry);
+
+                    string extensionId = null;
+                    using (var stream = new MemoryStream(buffer))
+                    {
+                        using (var reader = XmlReader.Create(stream))
+                        {
+                            reader.MoveToContent();
+
+                            while (reader.Read())
+                            {
+                                if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                if (reader.Name == "id")
+                                {
+                                    extensionId = reader.ReadInnerXml();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (extensionId is null)
+                    {
+                        string msg = TextHelper.GetString("Info.ExtensionIDNotFound");
+                        ErrorManager.ShowWarning(msg, null);
+                        return;
+                    }
+
+                    PropertyManager.AirExtension extension = null;
+
+                    // We look for the extension in case it is already added, and modify its path, maybe FD is missing the external library entry and the user
+                    //wants to add it.
+                    foreach (var existingExtension in _extensions)
+                    {
+                        if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
                         break;
                     }
+                    if (extension is null)
+                    {
+                        extension = new PropertyManager.AirExtension() { ExtensionId = extensionId, IsValid = true };
+                        _extensions.Add(extension);
+                        //I don't validation and selection is needed in this case
+                        var extensionListItem = new ListViewItem(extension.ExtensionId);
+                        ExtensionsListView.Items.Add(extensionListItem);
+                    }
+                    extension.Path = extensionBrowser.FileName;
                 }
-
-                if (extensionId is null)
-                {
-                    string msg = TextHelper.GetString("Info.ExtensionIDNotFound");
-                    ErrorManager.ShowWarning(msg, null);
-                    return;
-                }
-
-                PropertyManager.AirExtension extension = null;
-
-                // We look for the extension in case it is already added, and modify its path, maybe FD is missing the external library entry and the user
-                //wants to add it.
-                foreach (var existingExtension in _extensions)
-                {
-                    if (existingExtension.ExtensionId == extensionId) extension = existingExtension;
-                    break;
-                }
-                if (extension is null)
-                {
-                    extension = new PropertyManager.AirExtension() { ExtensionId = extensionId, IsValid = true };
-                    _extensions.Add(extension);
-                    //I don't validation and selection is needed in this case
-                    var extensionListItem = new ListViewItem(extension.ExtensionId);
-                    ExtensionsListView.Items.Add(extensionListItem);
-                }
-                extension.Path = extensionBrowser.FileName;
             }
         }
 
@@ -1792,18 +1808,22 @@ namespace AirProperties
                                 byte[] buffer = UnzipFile(zFile, entry);
 
                                 string extensionId = null;
-                                using var stream = new MemoryStream(buffer);
-                                using var reader = XmlReader.Create(stream);
-                                reader.MoveToContent();
-
-                                while (reader.Read())
+                                using (var stream = new MemoryStream(buffer))
                                 {
-                                    if (reader.NodeType != XmlNodeType.Element) continue;
-
-                                    if (reader.Name == "id")
+                                    using (var reader = XmlReader.Create(stream))
                                     {
-                                        extensionId = reader.ReadInnerXml();
-                                        break;
+                                        reader.MoveToContent();
+
+                                        while (reader.Read())
+                                        {
+                                            if (reader.NodeType != XmlNodeType.Element) continue;
+
+                                            if (reader.Name == "id")
+                                            {
+                                                extensionId = reader.ReadInnerXml();
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
 

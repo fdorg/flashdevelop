@@ -48,10 +48,12 @@ namespace HaXeContext.TestUtils
         public static byte[] ReadAllBytes(string resourceFile)
         {
             var asm = Assembly.GetExecutingAssembly();
-            using var stream = asm.GetManifestResourceStream(resourceFile);
-            var buffer = new byte[stream.Length];
-            stream.Read(buffer, 0, buffer.Length);
-            return buffer;
+            using (var stream = asm.GetManifestResourceStream(resourceFile))
+            {
+                var buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, buffer.Length);
+                return buffer;
+            }
         }
     }
 }

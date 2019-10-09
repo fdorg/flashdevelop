@@ -16,8 +16,8 @@ namespace ScintillaNet
             if (image.PixelFormat != PixelFormat.Format32bppArgb)
             {
                 var clone = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
-                using var graphics = Graphics.FromImage(clone);
-                graphics.DrawImage(image, rect);
+                using (var graphics = Graphics.FromImage(clone))
+                    graphics.DrawImage(image, rect);
 
                 image = clone;
             }

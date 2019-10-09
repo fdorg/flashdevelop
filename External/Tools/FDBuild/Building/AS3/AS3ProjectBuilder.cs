@@ -134,8 +134,10 @@ namespace ProjectManager.Building.AS3
 
             if (File.Exists(fdbuildHints))
             {
-                using var reader = File.OpenText(fdbuildHints);
-                flexsdkPath = reader.ReadLine();
+                using (StreamReader reader = File.OpenText(fdbuildHints))
+                {
+                    flexsdkPath = reader.ReadLine();
+                }
                 if (!Directory.Exists(flexsdkPath)) Console.WriteLine("Compiler path configured in FDBuildHints.txt doesn't exist:\n" + flexsdkPath);
                 else
                 {

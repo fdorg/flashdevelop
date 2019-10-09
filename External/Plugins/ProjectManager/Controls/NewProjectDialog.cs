@@ -498,8 +498,10 @@ namespace ProjectManager.Controls
                 string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
                 if (File.Exists(projectDescription))
                 {
-                    using StreamReader reader = File.OpenText(projectDescription);
-                    descriptionLabel.Text = reader.ReadToEnd();
+                    using (StreamReader reader = File.OpenText(projectDescription))
+                    {
+                        descriptionLabel.Text = reader.ReadToEnd();
+                    }
                 }
                 else descriptionLabel.Text = "";
                 okButton.Enabled = true;
@@ -521,38 +523,40 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, System.EventArgs e)
         {
-            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
-            dialog.RootFolder = Environment.SpecialFolder.Desktop;
-            dialog.UseDescriptionForTitle = true;
-            dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
+            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            {
+                dialog.RootFolder = Environment.SpecialFolder.Desktop;
+                dialog.UseDescriptionForTitle = true;
+                dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
 
-            string selectedPath = locationTextBox.Text;
-            // try to get as close as we can to the directory you typed in
-            try
-            {
-                while (!Directory.Exists(selectedPath))
+                string selectedPath = locationTextBox.Text;
+                // try to get as close as we can to the directory you typed in
+                try
                 {
-                    selectedPath = Path.GetDirectoryName(selectedPath);
-                }
-            }
-            catch
-            {
-                selectedPath = ProjectPaths.DefaultProjectsDirectory;
-            }
-            dialog.SelectedPath = selectedPath;
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                locationTextBox.Text = dialog.SelectedPath;
-                locationTextBox.SelectionStart = locationTextBox.Text.Length;
-
-                // smart project naming
-                if (!this.createDirectoryBox.Checked
-                    && this.nameTextBox.Text == TextHelper.GetString("Info.NewProject"))
-                {
-                    string name = Path.GetFileName(dialog.SelectedPath);
-                    if (name.Length > 5)
+                    while (!Directory.Exists(selectedPath))
                     {
-                        this.nameTextBox.Text = name.Substring(0, 1).ToUpper() + name.Substring(1);
+                        selectedPath = Path.GetDirectoryName(selectedPath);
+                    }
+                }
+                catch
+                {
+                    selectedPath = ProjectPaths.DefaultProjectsDirectory;
+                }
+                dialog.SelectedPath = selectedPath;
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    locationTextBox.Text = dialog.SelectedPath;
+                    locationTextBox.SelectionStart = locationTextBox.Text.Length;
+
+                    // smart project naming
+                    if (!this.createDirectoryBox.Checked
+                        && this.nameTextBox.Text == TextHelper.GetString("Info.NewProject"))
+                    {
+                        string name = Path.GetFileName(dialog.SelectedPath);
+                        if (name.Length > 5)
+                        {
+                            this.nameTextBox.Text = name.Substring(0, 1).ToUpper() + name.Substring(1);
+                        }
                     }
                 }
             }
