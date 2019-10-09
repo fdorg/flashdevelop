@@ -2521,20 +2521,37 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_1", "<T>")
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_1", GeneratorJobType.Class, "<T>")
                     .SetName("new NewClass$(EntryPoint)<String>. Issue2589. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
-                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_2", "<T1, T2>")
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_2", GeneratorJobType.Class, "<T1, T2>")
                     .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int>. Issue2589. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
-                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_3", "<T1, T2, T3>")
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_3", GeneratorJobType.Class, "<T1, T2, T3>")
                     .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_4", GeneratorJobType.Class, "<T1, T2, T3>")
+                    .SetName("new NewClass$(EntryPoint)/*<Int>*/<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
             }
         }
 
-        [Test, TestCaseSource(nameof(GenerateClassIssue2589TestCases))]
-        public void GenerateClassIssue2589(string fileName, string classTemplate)
+        static IEnumerable<TestCaseData> GenerateInterfaceIssue2870TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateInterfaceTest_issue2870_1", GeneratorJobType.Interface, "<T>")
+                    .SetName("var v:INewInterface$(EntryPoint)<String>. Issue2870. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2870");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(GenerateClassIssue2589TestCases)),
+            TestCaseSource(nameof(GenerateInterfaceIssue2870TestCases)),
+        ]
+        public void GenerateNewType(string fileName, GeneratorJobType job, string classTemplate)
         {
             var handler = Substitute.For<IEventHandler>();
             handler
@@ -2559,7 +2576,7 @@ namespace HaXeContext.Generators
             SetCurrentFileName(GetFullPath(fileName));
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
-            var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
+            var item = options.Find(it => ((GeneratorItem)it).Job == job);
             var value = item.Value;
         }
 
