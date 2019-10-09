@@ -2599,7 +2599,7 @@ namespace HaXeContext
                         if (sci.PositionIsOnComment(position)) continue;
                         var c = sci.CharAt(position);
                         if (c == ';') return -1;
-                        if (c == ' ') continue;
+                        if (c <= ' ') continue;
                         if (c == '<') sub++;
                         else if (c == '>')
                         {
@@ -2646,7 +2646,7 @@ namespace HaXeContext
                         if (sci.PositionIsOnComment(position)) continue;
                         var c = sci.CharAt(position);
                         if (c == ';') return -1;
-                        if (c == ' ') continue;
+                        if (c <= ' ') continue;
                         if (c == '>')
                         {
                             if (// TParameter->$(EntryPoint)TReturn

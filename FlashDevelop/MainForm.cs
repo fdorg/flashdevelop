@@ -2159,12 +2159,12 @@ namespace FlashDevelop
         {
             try
             {
-                Encoding encoding = Encoding.GetEncoding((int)AppSettings.DefaultCodePage);
-                string contents = FileHelper.ReadFile(templatePath);
-                string processed = ProcessArgString(contents);
-                string lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
+                var encoding = Encoding.GetEncoding((int)AppSettings.DefaultCodePage);
+                var contents = FileHelper.ReadFile(templatePath);
+                var processed = ProcessArgString(contents);
+                var lineEndChar = LineEndDetector.GetNewLineMarker((int)Settings.EOLMode);
                 processed = Regex.Replace(processed, @"\r\n?|\n", lineEndChar);
-                ActionPoint actionPoint = SnippetHelper.ProcessActionPoint(processed);
+                var actionPoint = SnippetHelper.ProcessActionPoint(processed);
                 FileHelper.WriteFile(newFilePath, actionPoint.Text, encoding, Globals.Settings.SaveUnicodeWithBOM);
                 if (actionPoint.EntryPosition != -1)
                 {
@@ -2174,17 +2174,17 @@ namespace FlashDevelop
                         Documents[0].Close();
                         closingForOpenFile = false;
                     }
-                    TextEvent te = new TextEvent(EventType.FileTemplate, newFilePath);
+                    var te = new TextEvent(EventType.FileTemplate, newFilePath);
                     EventManager.DispatchEvent(this, te);
                     if (!te.Handled)
                     {
-                        ITabbedDocument document = (ITabbedDocument)CreateEditableDocument(newFilePath, actionPoint.Text, encoding.CodePage);
+                        var document = (ITabbedDocument)CreateEditableDocument(newFilePath, actionPoint.Text, encoding.CodePage);
                         SnippetHelper.ExecuteActionPoint(actionPoint, document.SciControl);
                     }
                 }
                 else
                 {
-                    TextEvent te = new TextEvent(EventType.FileTemplate, newFilePath);
+                    var te = new TextEvent(EventType.FileTemplate, newFilePath);
                     EventManager.DispatchEvent(this, te);
                 }
             }

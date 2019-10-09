@@ -1152,7 +1152,7 @@ namespace ASCompletion.Completion
                         return;
                     }
                     // default behavior
-                    generator.GenerateProperty(job, member, inClass, sci);
+                    generator.GenerateProperty(job, sci, inClass, member);
                     break;
 
                 case GeneratorJobType.BasicEvent:
@@ -1441,7 +1441,8 @@ namespace ASCompletion.Completion
             }
         }
 
-        protected virtual void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
+        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass,
+            MemberModel member)
         {
             var ctx = ASContext.Context;
             var name = GetPropertyNameFor(member);
@@ -2754,7 +2755,7 @@ namespace ASCompletion.Completion
             }
             var position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
             sci.SetSel(position, position);
-            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, member, position, inClass, false);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, position, inClass, member, false);
         }
 
         static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
@@ -2912,10 +2913,12 @@ namespace ASCompletion.Completion
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
             newMember.Parameters = parameters.Select(generator.ToParameterVar).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
-            generator.GenerateFunction(sci, newMember, position, inClass, detach);
+            generator.GenerateFunction(sci, position, inClass, newMember, detach);
         }
 
-        protected virtual void GenerateFunction(ScintillaControl sci, MemberModel member, int position, ClassModel inClass, bool detach)
+        protected virtual void GenerateFunction(ScintillaControl sci, int position,
+            ClassModel inClass, MemberModel member,
+            bool detach)
         {
             string template;
             if ((inClass.Flags & FlagType.Interface) > 0)
@@ -2974,36 +2977,37 @@ namespace ASCompletion.Completion
             InsertCode(position, declaration);
         }
 
-        static void GenerateClass(ScintillaControl sci, ClassModel inClass, ASExpr data)
+        static void GenerateClass(ScintillaControl sci, MemberModel inClass, ASExpr data)
         {
-            var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(data.PositionExpression, false));
-            GenerateClass(inClass, data.Value, parameters);
+            var position = sci.WordEndPosition(data.PositionExpression, false);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateClass(sci, position, inClass, data.Value);
         }
 
-        static void GenerateClass(ScintillaControl sci, ClassModel inClass, string className)
+        static void GenerateClass(ScintillaControl sci, MemberModel inClass, string name)
         {
-            var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            GenerateClass(inClass, className, parameters);
+            var position = sci.WordEndPosition(sci.CurrentPos, true);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateClass(sci, position, inClass, name);
         }
 
-        static void GenerateClass(ClassModel inClass, string className, IEnumerable<FunctionParameter> parameters)
+        protected void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name)
+        {
+            GenerateClass(sci, position, inClass, name, new Hashtable());
+        }
+
+        protected virtual void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name, Hashtable info)
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
-
+            var parameters = ParseFunctionParameters(sci, position);
             var constructorArgs = new List<MemberModel>();
             var constructorArgTypes = new List<string>();
-            var paramMember = new MemberModel();
             foreach (var p in parameters)
             {
                 constructorArgs.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                 constructorArgTypes.Add(CleanType(GetQualifiedType(p.paramQualType, inClass)));
             }
-            
-            paramMember.Parameters = constructorArgs;
-
+            var paramMember = new MemberModel {Parameters = constructorArgs};
             var paramsString = TemplateUtils.ParametersString(paramMember, true);
-            var info = new Hashtable();
-            info["className"] = string.IsNullOrEmpty(className) ? "Class" : className;
+            info["className"] = string.IsNullOrEmpty(name) ? "Class" : name;
             info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", PluginBase.CurrentProject.GetType().Name, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
             info["constructorArgs"] = paramsString.Length > 0 ? paramsString : null;
