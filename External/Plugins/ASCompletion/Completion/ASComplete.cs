@@ -4330,9 +4330,9 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        protected static char GetCharLeft(ScintillaControl sci,ref int position) => GetCharLeft(sci, true, ref position);
+        public static char GetCharLeft(ScintillaControl sci,ref int position) => GetCharLeft(sci, true, ref position);
 
-        protected static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
+        public static char GetCharLeft(ScintillaControl sci, bool skipWhiteSpace, ref int position)
         {
             while (position >= 0)
             {
@@ -4345,9 +4345,9 @@ namespace ASCompletion.Completion
             return ' ';
         }
 
-        protected static char GetCharRight(ScintillaControl sci,ref int position) => GetCharRight(sci, true, ref position);
+        public static char GetCharRight(ScintillaControl sci,ref int position) => GetCharRight(sci, true, ref position);
 
-        protected static char GetCharRight(ScintillaControl sci, bool skipWhiteSpace, ref int position)
+        public static char GetCharRight(ScintillaControl sci, bool skipWhiteSpace, ref int position)
         {
             var length = sci.Length;
             while (position < length)

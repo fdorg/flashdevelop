@@ -225,9 +225,22 @@ namespace HaXeContext.Generators
 
         protected override void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name, Hashtable info)
         {
-            if (sci.CharAt(position) == '<')
+            info["GenericTemplate"] = GetGenericDeclaration(sci, position);
+            base.GenerateClass(sci, position, inClass, name, info);
+        }
+
+        protected override void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name, Hashtable info)
+        {
+            info["GenericTemplate"] = GetGenericDeclaration(sci, sci.CurrentPos);
+            base.GenerateInterface(sci, inClass, name, info);
+        }
+
+        static string GetGenericDeclaration(ScintillaControl sci, int position)
+        {
+            position = ASComplete.ExpressionEndPosition(sci, position, true);
+            if (ASComplete.GetCharRight(sci, ref position) == '<')
             {
-                var ctx = (Context) ASContext.GetLanguageContext("haxe");
+                var ctx = (Context)ASContext.GetLanguageContext("haxe");
                 var endTemplatePosition = ctx.BraceMatch(sci, position);
                 if (endTemplatePosition != -1)
                 {
@@ -266,21 +279,19 @@ namespace HaXeContext.Generators
                         }
                         else if (c == ',' && parCount == 0 && braCount == 0 && genCount == 0) numTypes++;
                     }
-                    string template;
-                    if (numTypes == 1) template = "<T>";
-                    else
+
+                    if (numTypes == 1) return "<T>";
+                    var sb = new StringBuilder("<T1");
+                    for (var i = 1; i < numTypes; i++)
                     {
-                        template = "<T1";
-                        for (var i = 1; i < numTypes; i++)
-                        {
-                            template += ", T" + (i + 1);
-                        }
-                        template += ">";
+                        sb.Append(", T");
+                        sb.Append((i + 1).ToString());
                     }
-                    info["classTemplate"] = template;
+                    sb.Append(">");
+                    return sb.ToString();
                 }
             }
-            base.GenerateClass(sci, position, inClass, name, info);
+            return null;
         }
 
         protected override void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)

@@ -1351,7 +1351,7 @@ namespace ASCompletion.Completion
                     break;
 
                 case GeneratorJobType.Interface:
-                    GenerateInterface(inClass, contextToken);
+                    GenerateInterface(sci, inClass, contextToken);
                     break;
 
                 case GeneratorJobType.ToString:
@@ -3016,10 +3016,14 @@ namespace ASCompletion.Completion
             EventManager.DispatchEvent(null, de);
         }
 
-        static void GenerateInterface(MemberModel inClass, string name)
+        static void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name)
+        {
+            ((ASGenerator)ASContext.Context.CodeGenerator).GenerateInterface(sci, inClass, name, new Hashtable());
+        }
+
+        protected virtual void GenerateInterface(ScintillaControl sci, MemberModel inClass, string name, Hashtable info)
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
-            var info = new Hashtable();
             info["interfaceName"] = string.IsNullOrEmpty(name) ? "IInterface" : name;
             info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", PluginBase.CurrentProject.GetType().Name, $"Interface{ASContext.Context.Settings.DefaultExtension}.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);

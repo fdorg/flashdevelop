@@ -103,17 +103,20 @@ namespace ASClassWizard
                                                  : "class";
                                 if (templateType.Equals("class", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    var classTemplate = table["classTemplate"] as string;
-                                    var className = table["className"] as string ?? TextHelper.GetString("Wizard.Label.NewClass");
-                                    var inDirectory = (string) table["inDirectory"];
+
+                                    var inDirectory = (string)table["inDirectory"];
+                                    var typeTemplate = table["GenericTemplate"] as string;
+                                    var name = table["className"] as string ?? TextHelper.GetString("Wizard.Label.NewClass");
                                     var constructorArgs = table["constructorArgs"] as string;
                                     var constructorArgsTypes = table["constructorArgTypes"] as List<string>;
-                                    DisplayClassWizard(inDirectory, templateFile, classTemplate, className, constructorArgs, constructorArgsTypes);
+                                    DisplayClassWizard(inDirectory, templateFile, typeTemplate, name, constructorArgs, constructorArgsTypes);
                                 }
                                 else if (templateType.Equals("interface", StringComparison.OrdinalIgnoreCase))
                                 {
+                                    var inDirectory = (string) table["inDirectory"];
+                                    var typeTemplate = table["GenericTemplate"] as string;
                                     var name = table["interfaceName"] as string ?? TextHelper.GetString("Wizard.Label.NewInterface");
-                                    DisplayInterfaceWizard((string) table["inDirectory"], templateFile, name);
+                                    DisplayInterfaceWizard(inDirectory, templateFile, typeTemplate, name);
                                 }
                             }
                         }
@@ -161,7 +164,7 @@ namespace ASClassWizard
 
         void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
-        void DisplayClassWizard(string inDirectory, string templateFile, string classTemplate, string className, string constructorArgs, List<string> constructorArgTypes)
+        void DisplayClassWizard(string inDirectory, string templateFile, string typeTemplate, string className, string constructorArgs, List<string> constructorArgTypes)
         {
             var project = (Project) PluginBase.CurrentProject;
             using var dialog = new AS3ClassWizard();
@@ -179,7 +182,7 @@ namespace ASClassWizard
                 is_final: dialog.isFinal(),
                 create_inherited: dialog.getGenerateInheritedMethods(),
                 create_constructor: dialog.getGenerateConstructor()
-            ) {Template = classTemplate};
+            ) {Template = typeTemplate};
             try
             {
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -191,7 +194,7 @@ namespace ASClassWizard
             }
         }
 
-        void DisplayInterfaceWizard(string inDirectory, string templateFile, string name)
+        void DisplayInterfaceWizard(string inDirectory, string templateFile, string typeTemplate, string name)
         {
             var project = (Project) PluginBase.CurrentProject;
             using var dialog = new AS3InterfaceWizard();
@@ -209,7 +212,7 @@ namespace ASClassWizard
                 is_final: false,
                 create_inherited: false,
                 create_constructor: false
-            );
+            ) {Template = typeTemplate};
             try
             {
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);

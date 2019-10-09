@@ -3,6 +3,6 @@ package $(Package);
 $(Import)/**
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-interface $(FileName)$(Extends) $(CSLB){
+interface $(FileName)$(Template)$(Extends) $(CSLB){
 	$(EntryPoint)
 }
