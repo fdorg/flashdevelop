@@ -2467,6 +2467,7 @@ namespace HaXeContext.Generators
             ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, new Hashtable {["scope"] = scope});
             return sci.Text;
         }
+
         static IEnumerable<TestCaseData> GenerateClassTestCases
         {
             get
@@ -2504,6 +2505,52 @@ namespace HaXeContext.Generators
                             var info = (Hashtable)de.Data;
                             var actualArgs = (string)info[nameof(constructorArgs)];
                             Assert.AreEqual(constructorArgs, actualArgs);
+                            break;
+                    }
+                });
+            EventManager.AddEventHandler(handler, EventType.Command);
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFileName(GetFullPath(fileName));
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
+            var value = item.Value;
+        }
+
+        static IEnumerable<TestCaseData> GenerateClassIssue2589TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_1", "<T>")
+                    .SetName("new NewClass$(EntryPoint)<String>. Issue2589. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_2", "<T1, T2>")
+                    .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int>. Issue2589. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_3", "<T1, T2, T3>")
+                    .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GenerateClassIssue2589TestCases))]
+        public void GenerateClassIssue2589(string fileName, string classTemplate)
+        {
+            var handler = Substitute.For<IEventHandler>();
+            handler
+                .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                .Do(it =>
+                {
+                    var e = it.ArgAt<NotifyEvent>(1);
+                    switch (e.Type)
+                    {
+                        case EventType.Command:
+                            EventManager.RemoveEventHandler(handler);
+                            e.Handled = true;
+                            var de = (DataEvent)e;
+                            var info = (Hashtable)de.Data;
+                            var actualArgs = (string)info[nameof(classTemplate)];
+                            Assert.AreEqual(classTemplate, actualArgs);
                             break;
                     }
                 });

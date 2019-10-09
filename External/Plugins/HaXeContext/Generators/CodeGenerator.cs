@@ -227,7 +227,8 @@ namespace HaXeContext.Generators
         {
             if (sci.CharAt(position) == '<')
             {
-                var endTemplatePosition = ((Context)ASContext.Context).BraceMatch(sci, position);
+                var ctx = (Context) ASContext.GetLanguageContext("haxe");
+                var endTemplatePosition = ctx.BraceMatch(sci, position);
                 if (endTemplatePosition != -1)
                 {
                     var parCount = 0;
