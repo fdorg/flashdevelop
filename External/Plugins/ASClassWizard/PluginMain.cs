@@ -20,12 +20,12 @@ namespace ASClassWizard
 {
     public class PluginMain : IPlugin
     {
-        private AS3ClassOptions lastFileOptions;
-        private string lastFileFromTemplate;
-        private IASContext processContext;
-        private string processOnSwitch;
-        private string constructorArgs;
-        private List<string> constructorArgTypes;
+        AS3ClassOptions lastFileOptions;
+        string lastFileFromTemplate;
+        IASContext processContext;
+        string processOnSwitch;
+        string constructorArgs;
+        List<string> constructorArgTypes;
 
         #region Required Properties
         
@@ -143,19 +143,19 @@ namespace ASClassWizard
             }
         }
 
-        private bool IsWizardTemplate(string templateFile) => templateFile != null && File.Exists(templateFile + ".wizard");
+        bool IsWizardTemplate(string templateFile) => templateFile != null && File.Exists(templateFile + ".wizard");
 
         #endregion
 
         #region Custom Methods
 
-        private void AddEventHandlers()
+        void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.Command | EventType.ProcessArgs);
             EventManager.AddEventHandler(this, EventType.FileSwitch, HandlingPriority.Low);
         }
 
-        private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
+        void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
         void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
@@ -290,14 +290,14 @@ namespace ASClassWizard
             }
         }
 
-        private string GetPackage(string classpath, string path)
+        string GetPackage(string classpath, string path)
         {
             if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase)) return "";
             var subPath = path.Substring(classpath.Length).Trim('/', '\\', ' ', '.');
             return subPath.Replace(Path.DirectorySeparatorChar, '.');
         }
 
-        private string ProcessArgs(string args)
+        string ProcessArgs(string args)
         {
             if (lastFileFromTemplate != null)
             {
@@ -321,7 +321,7 @@ namespace ASClassWizard
             return args;
         }
 
-        private string ProcessFileTemplate(string args)
+        string ProcessFileTemplate(string args)
         {
             int eolMode = (int)PluginBase.MainForm.Settings.EOLMode;
             string lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
@@ -467,7 +467,7 @@ namespace ASClassWizard
             return args;
         }
 
-        private void AddImports(ICollection<string> imports, MemberModel member, ClassModel inClass)
+        void AddImports(ICollection<string> imports, MemberModel member, ClassModel inClass)
         {
             AddImport(imports, member.Type, inClass);
             if (member.Parameters is null) return;
@@ -481,7 +481,7 @@ namespace ASClassWizard
             }
         }
 
-        private void AddImport(ICollection<string> imports, string cname, MemberModel inClass)
+        void AddImport(ICollection<string> imports, string cname, MemberModel inClass)
         {
             var aClass = processContext.ResolveType(cname, inClass.InFile);
             if (!aClass.IsVoid() && aClass.InFile.Package != "")

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -66,8 +67,8 @@ namespace HaXeContext.Generators
         {
             if (!base.CanShowAssignStatementToVariable(sci, expr)) return false;
             // for example: return cast expr<generator>, return untyped expr<generator>
-            return ((expr.Context.WordBefore != "cast" || expr.Context.WordBefore != "untyped")
-                    && sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return");
+            return (expr.Context.WordBefore != "cast" || expr.Context.WordBefore != "untyped")
+                   && sci.GetWordLeft(expr.Context.WordBeforePosition - 1, true) != "return";
         }
 
         /// <inheritdoc />
@@ -222,6 +223,65 @@ namespace HaXeContext.Generators
             base.AssignStatementToVar(sci, position, name, type);
         }
 
+        protected override void GenerateClass(ScintillaControl sci, int position, MemberModel inClass, string name, Hashtable info)
+        {
+            if (sci.CharAt(position) == '<')
+            {
+                var endTemplatePosition = ((Context)ASContext.Context).BraceMatch(sci, position);
+                if (endTemplatePosition != -1)
+                {
+                    var parCount = 0;
+                    var braCount = 0;
+                    var genCount = 0;
+                    var numTypes = 1;
+                    for (var i = position + 1; i < endTemplatePosition; i++)
+                    {
+                        if (sci.PositionIsOnComment(i)) continue;
+                        var c = (char)sci.CharAt(i);
+                        if (c == ' ') continue;
+                        if (c == '(')
+                        {
+                            if (braCount == 0 && genCount == 0) parCount++;
+                        }
+                        else if (c == ')')
+                        {
+                            if (braCount == 0 && genCount == 0) parCount--;
+                        }
+                        else if (c == '{')
+                        {
+                            if (parCount == 0 && genCount == 0) braCount++;
+                        }
+                        else if (c == '}')
+                        {
+                            if (parCount == 0 && genCount == 0) braCount--;
+                        }
+                        else if (c == '<')
+                        {
+                            if (braCount == 0 && parCount == 0) genCount++;
+                        }
+                        else if (c == '>')
+                        {
+                            if (braCount == 0 && parCount == 0) genCount--;
+                        }
+                        else if (c == ',' && parCount == 0 && braCount == 0 && genCount == 0) numTypes++;
+                    }
+                    string template;
+                    if (numTypes == 1) template = "<T>";
+                    else
+                    {
+                        template = "<T1";
+                        for (var i = 1; i < numTypes; i++)
+                        {
+                            template += ", T" + (i + 1);
+                        }
+                        template += ">";
+                    }
+                    info["classTemplate"] = template;
+                }
+            }
+            base.GenerateClass(sci, position, inClass, name, info);
+        }
+
         protected override void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)
         {
             if (currentTarget != null)
@@ -244,7 +304,7 @@ namespace HaXeContext.Generators
             InsertCode(position, template, sci);
         }
 
-        protected override void GenerateFunction(ScintillaControl sci, MemberModel member, int position, ClassModel inClass, bool detach)
+        protected override void GenerateFunction(ScintillaControl sci, int position, ClassModel inClass, MemberModel member, bool detach)
         {
             if (inClass.Flags.HasFlag(FlagType.TypeDef) || inClass.Flags.HasFlag(FlagType.Interface))
             {
@@ -253,10 +313,10 @@ namespace HaXeContext.Generators
                 var declaration = TemplateUtils.ToDeclarationString(member, template);
                 GenerateFunction(position, declaration, detach);
             }
-            else base.GenerateFunction(sci, member, position, inClass, detach);
+            else base.GenerateFunction(sci, position, inClass, member, detach);
         }
 
-        protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
+        protected override void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass, MemberModel member)
         {
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
