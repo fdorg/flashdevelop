@@ -74,7 +74,9 @@ namespace ASCompletion.Completion
             if (ASContext.Context is ASContext ctx) ctx.UpdateCurrentFile(false);
 
             lookupPosition = -1;
-            if (sci.PositionIsOnComment(position)) return false;
+            if (sci.PositionIsOnComment(position)
+                // for example: new NewClass$(EntryPoint)/*comment*/();
+                && sci.PositionIsOnComment(--position)) return false;
             var style = sci.BaseStyleAt(position);
             if (style == 19 || style == 24) // on keyword
                 return false;

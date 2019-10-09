@@ -2530,6 +2530,9 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateClassTest_issue2589_3", "<T1, T2, T3>")
                     .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_4", "<T1, T2, T3>")
+                    .SetName("new NewClass$(EntryPoint)/*<Int>*/<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
             }
         }
 
