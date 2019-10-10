@@ -144,7 +144,7 @@ namespace FlashDevelop.Managers
                 so.FoldedLines.Add(line);
             }
             int lineBookmark = -1;
-            while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1 << 0)) >= 0)
+            while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1)) >= 0)
             {
                 so.BookmarkedLines.Add(lineBookmark);
             }
@@ -154,11 +154,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Converts a path to a valid file name
         /// </summary>
-        private static string ConvertToFileName(string path)
-        {
-            return HashCalculator.CalculateSHA1(path);
-        }
-
+        static string ConvertToFileName(string path) => HashCalculator.CalculateSHA1(path);
     }
 
     [Serializable]
@@ -171,6 +167,4 @@ namespace FlashDevelop.Managers
         public List<int> BookmarkedLines = new List<int>();
         public List<int> FoldedLines = new List<int>();
     }
-
 }
-

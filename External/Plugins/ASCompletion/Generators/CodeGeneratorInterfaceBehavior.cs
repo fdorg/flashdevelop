@@ -10,17 +10,23 @@ namespace ASCompletion.Generators
 {
     public class CodeGeneratorInterfaceBehavior : ICodeGeneratorBehavior
     {
-        public void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
+        public bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
             var line = sci.LineFromPosition(position);
             var found = ((ASGenerator) ASContext.Context.CodeGenerator).GetDeclarationAtLine(line);
-            if (CanShowNewInterfaceList(sci, position, expr, found)) ShowNewInterfaceList(sci, expr, found, options);
+            if (CanShowNewInterfaceList(sci, position, expr, found))
+            {
+                ShowNewInterfaceList(sci, expr, found, options);
+                return true;
+            }
             if (CanShowNewMemberList(sci, position, expr, found))
             {
                 ShowNewVariableList(sci, expr, found, options);
                 ShowNewPropertyList(sci, expr, found, options);
                 ShowNewMethodList(sci, expr, found, options);
+                return true;
             }
+            return false;
         }
 
         protected virtual bool CanShowNewInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
@@ -66,19 +72,33 @@ namespace ASCompletion.Generators
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
         }
 
-        public void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
+        public bool GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
         {
+            var result = false;
             sci.BeginUndoAction();
             try
             {
-                if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(sci, member, TemplateUtils.GetTemplate("IGetterSetter"));
-                else if (job == GeneratorJobType.Setter) GenerateProperty(sci, member, TemplateUtils.GetTemplate("ISetter"));
-                else if (job == GeneratorJobType.Getter) GenerateProperty(sci, member, TemplateUtils.GetTemplate("IGetter"));
+                if (job == GeneratorJobType.GetterSetter)
+                {
+                    GenerateGetterSetter(sci, member, TemplateUtils.GetTemplate("IGetterSetter"));
+                    result = true;
+                }
+                else if (job == GeneratorJobType.Setter)
+                {
+                    GenerateProperty(sci, member, TemplateUtils.GetTemplate("ISetter"));
+                    result = true;
+                }
+                else if (job == GeneratorJobType.Getter)
+                {
+                    GenerateProperty(sci, member, TemplateUtils.GetTemplate("IGetter"));
+                    result = true;
+                }
             }
             finally
             {
                 sci.EndUndoAction();
             }
+            return result;
         }
 
         static void GenerateGetterSetter(ScintillaControl sci, MemberModel member, string template)

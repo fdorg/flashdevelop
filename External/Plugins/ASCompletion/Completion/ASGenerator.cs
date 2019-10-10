@@ -117,12 +117,7 @@ namespace ASCompletion.Completion
             }
 
             var behavior = GetCodeGeneratorBehavior();
-            if (behavior != null)
-            {
-                behavior.ContextualGenerator(sci, position, resolve, options);
-                return;
-            }
-            
+            if (behavior != null && behavior.ContextualGenerator(sci, position, resolve, options)) return;
             if (CanShowConvertToConst(sci, position, resolve, found))
             {
                 ShowConvertToConst(found, options);
@@ -1148,11 +1143,8 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.GetterSetter:
                     var generator = (ASGenerator) ASContext.Context.CodeGenerator;
                     var strategy = generator.GetCodeGeneratorBehavior();
-                    if (strategy != null)
-                    {
-                        ((CodeGeneratorInterfaceBehavior) strategy).GenerateProperty(job, sci, member, inClass);
+                    if (strategy != null && ((CodeGeneratorInterfaceBehavior)strategy).GenerateProperty(job, sci, member, inClass))
                         return;
-                    }
                     // default behavior
                     generator.GenerateProperty(job, sci, inClass, member);
                     break;
@@ -1170,7 +1162,7 @@ namespace ASCompletion.Completion
 
                     position = sci.PositionFromLine(latest.LineTo + 1) - (sci.EOLMode == 0 ? 2 : 1);
                     sci.SetSel(position, position);
-                    string type = contextParam;
+                    var type = contextParam;
                     if (job == GeneratorJobType.BasicEvent)
                         type = itemLabel.Contains("DataEvent") ? "DataEvent" : "Event";
                     GenerateEventHandler(contextToken, type, member, position, inClass);
@@ -1443,8 +1435,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass,
-            MemberModel member)
+        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass, MemberModel member)
         {
             var ctx = ASContext.Context;
             var name = GetPropertyNameFor(member);
@@ -1883,7 +1874,7 @@ namespace ASCompletion.Completion
             int app = 0;
             var newParameters = new List<MemberModel>();
             var existingParameters = memberModel.Parameters;
-            for (int i = 0; i < functionParameters.Count; i++)
+            for (var i = 0; i < functionParameters.Count; i++)
             {
                 var p = functionParameters[i];
                 if (existingParameters != null
@@ -2812,7 +2803,7 @@ namespace ASCompletion.Completion
             else if ((visibility & Visibility.Public) > 0) blockTmpl = TemplateUtils.GetBoundary("PublicMethods");
             else blockTmpl = TemplateUtils.GetBoundary("PrivateMethods");
 
-            var position = 0;
+            int position;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, blockTmpl);
             if (latest is null || (!isOtherClass && member is null))
             {
@@ -3194,7 +3185,7 @@ namespace ASCompletion.Completion
             else maxLine = ASContext.Context.CurrentModel.PrivateSectionIndex;
             while (line < maxLine)
             {
-                string text = sci.GetLine(line++);
+                var text = sci.GetLine(line++);
                 if (text.Contains('{'))
                 {
                     firstVar = true;
@@ -3613,7 +3604,7 @@ namespace ASCompletion.Completion
             InsertCode(position, template);
         }
 
-        static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position, ClassModel inClass)
+        static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position, MemberModel inClass)
         {
             var ctx = ASContext.Context;
             var sci = ASContext.CurSciControl;
@@ -3765,7 +3756,7 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        static string GetPrivateAccessor(MemberModel member, ClassModel inClass)
+        static string GetPrivateAccessor(MemberModel member, MemberModel inClass)
         {
             var acc = GetStaticKeyword(member);
             if (!string.IsNullOrEmpty(acc)) acc += " ";
@@ -3827,7 +3818,7 @@ namespace ASCompletion.Completion
                 : inClass.Members;
 
             MemberModel found = null;
-            foreach (MemberModel member in list)
+            foreach (var member in list)
             {
                 if (member.Name == name)
                 {
@@ -3985,7 +3976,7 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             var features = ctx.Features;
             var typesUsed = new List<string>();
-            var isProxy = (member.Namespace == "flash_proxy");
+            var isProxy = member.Namespace == "flash_proxy";
             if (isProxy) typesUsed.Add("flash.utils.flash_proxy");
             
             var line = sci.LineFromPosition(position);
@@ -4108,7 +4099,7 @@ namespace ASCompletion.Completion
                     while (!baseClassType.IsVoid())
                     {
                         var inClassMembers = baseClassType.Members;
-                        foreach (MemberModel inClassMember in inClassMembers)
+                        foreach (var inClassMember in inClassMembers)
                         {
                             if ((inClassMember.Flags & FlagType.Function) > 0 && m.Name.Equals(inClassMember.Name))
                             {
@@ -4538,7 +4529,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public enum GeneratorJobType : long
     {
-        GetterSetter = 1 << 0,
+        GetterSetter = 1,
         Getter = 1 << 1,
         Setter = 1 << 2,
         ComplexEvent = 1 << 3,
