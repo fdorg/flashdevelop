@@ -29,11 +29,14 @@ namespace HaXeContext.Generators
     class CodeGenerator : ASGenerator
     {
         readonly CodeGeneratorInterfaceBehavior codeGeneratorInterfaceBehavior = new CodeGeneratorInterfaceBehavior();
+        readonly CodeGeneratorAbstractBehavior codeGeneratorAbstractBehavior = new CodeGeneratorAbstractBehavior();
 
         protected override ICodeGeneratorBehavior GetCodeGeneratorBehavior()
         {
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0)
                 return codeGeneratorInterfaceBehavior;
+            if ((ASContext.Context.CurrentClass.Flags & FlagType.Abstract) != 0)
+                return codeGeneratorAbstractBehavior;
             return base.GetCodeGeneratorBehavior();
         }
 

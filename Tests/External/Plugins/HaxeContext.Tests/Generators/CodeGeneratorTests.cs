@@ -1728,6 +1728,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateVariableIssue2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateVariable_issue2477_1", GeneratorJobType.VariablePublic, true)
+                    .Returns(ReadAllText("AfterGenerateVariable_issue2477_1"))
+                    .SetName("Issue2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateVariable_issue2477_2", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterGenerateVariable_issue2477_2"))
+                    .SetName("Issue2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
         static IEnumerable<TestCaseData> ImplementInterfaceTestCases
         {
             get
@@ -1884,6 +1899,29 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGenerateGetterSetter_issue2838_1"))
                     .SetName("Generate getter and setter. Issue 2838. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2838");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateGetterSetter2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_1", GeneratorJobType.Getter, false)
+                    .Returns(null)
+                    .SetName("Generate getter. Issue 2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_1", GeneratorJobType.Setter, false)
+                    .Returns(null)
+                    .SetName("Generate setter. Issue 2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_1", GeneratorJobType.GetterSetter, false)
+                    .Returns(null)
+                    .SetName("Generate getter and setter. Issue 2477. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_4", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2477_4"))
+                    .SetName("Generate getter and setter. Issue 2477. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
             }
         }
 
@@ -2092,6 +2130,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateVariableTestCases)),
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(GenerateVariableIssue1734TestCases)),
+            TestCaseSource(nameof(GenerateVariableIssue2477TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2531TestCases)),
@@ -2102,6 +2141,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInferVar2456TestCases)),
             TestCaseSource(nameof(GenerateGetterSetter2838TestCases)),
+            TestCaseSource(nameof(GenerateGetterSetter2477TestCases)),
             TestCaseSource(nameof(GenerateConstructorIssue2845TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
@@ -2517,6 +2557,22 @@ namespace HaXeContext.Generators
             var value = item.Value;
         }
 
+        static IEnumerable<TestCaseData> GenerateClassIssue2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_1", GeneratorJobType.Class, "<T>")
+                    .SetName("abstract A(NewClass$(EntryPoint)<String>). Issue2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_2", GeneratorJobType.Class, "<T>")
+                    .SetName("abstract A() from NewClass$(EntryPoint)<String>. Issue2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_3", GeneratorJobType.Class, "<T>")
+                    .SetName("abstract A() to NewClass$(EntryPoint)<String>. Issue2477. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
         static IEnumerable<TestCaseData> GenerateClassIssue2589TestCases
         {
             get
@@ -2536,6 +2592,22 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateInterfaceIssue2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_1", GeneratorJobType.Interface, "<T>")
+                    .SetName("abstract A(NewInterface$(EntryPoint)<String>). Issue2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_2", GeneratorJobType.Interface, "<T>")
+                    .SetName("abstract A() from NewInterface$(EntryPoint)<String>. Issue2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_3", GeneratorJobType.Interface, "<T>")
+                    .SetName("abstract A() to NewInterface$(EntryPoint)<String>. Issue2477. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
         static IEnumerable<TestCaseData> GenerateInterfaceIssue2870TestCases
         {
             get
@@ -2548,7 +2620,9 @@ namespace HaXeContext.Generators
 
         [
             Test,
+            TestCaseSource(nameof(GenerateClassIssue2477TestCases)),
             TestCaseSource(nameof(GenerateClassIssue2589TestCases)),
+            TestCaseSource(nameof(GenerateInterfaceIssue2477TestCases)),
             TestCaseSource(nameof(GenerateInterfaceIssue2870TestCases)),
         ]
         public void GenerateNewType(string fileName, GeneratorJobType job, string classTemplate)

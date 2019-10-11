@@ -117,12 +117,8 @@ namespace ASCompletion.Completion
             }
 
             var behavior = GetCodeGeneratorBehavior();
-            if (behavior != null)
-            {
-                behavior.ContextualGenerator(sci, position, resolve, options);
-                return;
-            }
-            
+            if (behavior != null && behavior.ContextualGenerator(sci, position, resolve, options)) return;
+
             if (CanShowConvertToConst(sci, position, resolve, found))
             {
                 ShowConvertToConst(found, options);
@@ -1147,12 +1143,8 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.Setter:
                 case GeneratorJobType.GetterSetter:
                     var generator = (ASGenerator) ASContext.Context.CodeGenerator;
-                    var strategy = generator.GetCodeGeneratorBehavior();
-                    if (strategy != null)
-                    {
-                        ((CodeGeneratorInterfaceBehavior) strategy).GenerateProperty(job, sci, member, inClass);
-                        return;
-                    }
+                    var customBehavior = generator.GetCodeGeneratorBehavior();
+                    if (customBehavior != null && ((CodeGeneratorDefaultBehavior) customBehavior).GenerateProperty(job, sci, member, inClass)) return;
                     // default behavior
                     generator.GenerateProperty(job, sci, inClass, member);
                     break;
@@ -2454,7 +2446,9 @@ namespace ASCompletion.Completion
             var latest = GetLatestMemberForVariable(job, inClass, visibility, isStatic);
             int position;
             // if we generate variable in current class..
-            if (!isOtherClass && member is null)
+            if (!isOtherClass && (member == null
+                                  // TODO slavara: temporary solution for #2477
+                                  || (member.Name == null && member.Type == null && member.Access == 0 && member.Flags == FlagType.Static)))
             {
                 detach = false;
                 lookupPosition = -1;
@@ -4568,8 +4562,9 @@ namespace ASCompletion.Completion
             Label = label;
             Job = job;
             this.action = action;
+            Data = data;
         }
-        
+
         public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass) : this(label, job, member, inClass, null)
         {
         }

@@ -1771,6 +1771,16 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2589_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2589_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateInterfaceTest_issue2870_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateVariable_issue2477_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateVariable_issue2477_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateVariable_issue2477_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateVariable_issue2477_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2477_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2477_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2477_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2477_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2477_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2477_3.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
