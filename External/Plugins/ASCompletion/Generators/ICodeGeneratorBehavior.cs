@@ -7,6 +7,6 @@ namespace ASCompletion.Generators
 {
     public interface ICodeGeneratorBehavior
     {
-        bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options);
+        bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, ICollection<ICompletionListItem> options);
     }
 }

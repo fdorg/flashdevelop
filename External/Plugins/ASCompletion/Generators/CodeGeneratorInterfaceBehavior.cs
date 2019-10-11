@@ -10,7 +10,7 @@ namespace ASCompletion.Generators
 {
     public class CodeGeneratorInterfaceBehavior : CodeGeneratorDefaultBehavior
     {
-        public override bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
+        public override bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, ICollection<ICompletionListItem> options)
         {
             base.ContextualGenerator(sci, position, expr, options);
             return true;
