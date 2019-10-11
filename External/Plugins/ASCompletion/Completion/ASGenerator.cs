@@ -1435,16 +1435,15 @@ namespace ASCompletion.Completion
             }
         }
 
-        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass,
-            MemberModel member)
+        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass, MemberModel member)
         {
-            var ctx = ASContext.Context;
             var name = GetPropertyNameFor(member);
-            var location = ASContext.CommonSettings.PropertiesGenerationLocation;
+            PropertiesGenerationLocations location;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
             if (latest != null) location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
             else
             {
+                location = ASContext.CommonSettings.PropertiesGenerationLocation;
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
                     if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter)
@@ -1482,7 +1481,7 @@ namespace ASCompletion.Completion
                 if ((member.Flags & FlagType.Function) != 0)
                 {
                     member = (MemberModel) member.Clone();
-                    member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
+                    member.Type = ASContext.Context.CodeComplete.ToFunctionDeclarationString(member);
                 }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
                 else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
@@ -4514,7 +4513,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public enum GeneratorJobType : long
     {
-        GetterSetter = 1 << 0,
+        GetterSetter = 1,
         Getter = 1 << 1,
         Setter = 1 << 2,
         ComplexEvent = 1 << 3,

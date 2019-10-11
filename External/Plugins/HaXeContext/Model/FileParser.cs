@@ -9,7 +9,7 @@ namespace HaXeContext.Model
 {
     public enum HaxeFlagType : ulong
     {
-        Macro = FlagType.User << 0,
+        Macro = FlagType.User,
         Inline = FlagType.User << 1,
     }
 

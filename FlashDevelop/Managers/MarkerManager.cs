@@ -8,7 +8,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Mask value for all availables markers
         /// </summary>
-        public static int MARKERS = 1 << 0;
+        public static int MARKERS = 1;
 
         /// <summary>
         /// Gets the mask of the marker

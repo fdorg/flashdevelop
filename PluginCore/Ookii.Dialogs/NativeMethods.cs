@@ -307,10 +307,10 @@ namespace Ookii.Dialogs
             public IntPtr lParam;
         }
 
-        [Flags()]
+        [Flags]
         public enum DrawThemeTextFlags
         {
-            TextColor = 1 << 0,
+            TextColor = 1,
             BorderColor = 1 << 1,
             ShadowColor = 1 << 2,
             ShadowType = 1 << 3,
