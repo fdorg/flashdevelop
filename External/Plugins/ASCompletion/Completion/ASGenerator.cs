@@ -4538,7 +4538,7 @@ namespace ASCompletion.Completion
     /// </summary>
     public enum GeneratorJobType : long
     {
-        GetterSetter = 1 << 0,
+        GetterSetter = 1,
         Getter = 1 << 1,
         Setter = 1 << 2,
         ComplexEvent = 1 << 3,
