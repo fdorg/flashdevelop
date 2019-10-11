@@ -144,7 +144,7 @@ namespace FlashDevelop.Managers
                 so.FoldedLines.Add(line);
             }
             int lineBookmark = -1;
-            while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1 << 0)) >= 0)
+            while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1)) >= 0)
             {
                 so.BookmarkedLines.Add(lineBookmark);
             }
