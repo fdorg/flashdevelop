@@ -1778,6 +1778,9 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2477_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateGetterSetter_issue2477_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateGetterSetter_issue2477_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2477_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2477_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateClassTest_issue2477_3.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
