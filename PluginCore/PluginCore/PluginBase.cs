@@ -4,11 +4,6 @@ namespace PluginCore
 {
     public class PluginBase
     {
-        private static IProject project;
-        private static IProject solution;
-        private static InstalledSDK sdk;
-        private static IMainForm instance;
-
         /// <summary>
         /// Activates if the sender is MainForm
         /// </summary>
@@ -16,52 +11,34 @@ namespace PluginCore
         {
             if (sender.GetType().ToString() == "FlashDevelop.MainForm")
             {
-                instance = sender;
+                MainForm = sender;
             }
         }
 
         /// <summary>
         /// Gets the instance of the Settings
         /// </summary>
-        public static ISettings Settings
-        {
-            get { return instance.Settings; }
-        }
+        public static ISettings Settings => MainForm.Settings;
 
         /// <summary>
         /// Gets the instance of the MainForm
         /// </summary>
-        public static IMainForm MainForm
-        {
-            get { return instance; }
-        }
+        public static IMainForm MainForm { get; set; }
 
         /// <summary>
         /// Sets and gets the current project
         /// </summary>
-        public static IProject CurrentProject
-        {
-            get { return project; }
-            set { project = value; }
-        }
+        public static IProject CurrentProject { get; set; }
 
         /// <summary>
         /// Sets and gets the current solution
         /// </summary>
-        public static IProject CurrentSolution
-        {
-            get { return solution; }
-            set { solution = value; }
-        }
+        public static IProject CurrentSolution { get; set; }
 
         /// <summary>
         /// Sets and gets the current project's SDK
         /// </summary>
-        public static InstalledSDK CurrentSDK
-        {
-            get { return sdk; }
-            set { sdk = value; }
-        }
+        public static InstalledSDK CurrentSDK { get; set; }
 
         /// <summary>
         /// Run action on UI thread
@@ -69,10 +46,8 @@ namespace PluginCore
         /// <param name="action"></param>
         public static void RunAsync(MethodInvoker action)
         {
-            Form ui = MainForm as Form;
-            if (ui != null && ui.InvokeRequired) ui.BeginInvoke(action);
+            if (MainForm is Form ui && ui.InvokeRequired) ui.BeginInvoke(action);
             else action.Invoke();
         }
     }
-
 }

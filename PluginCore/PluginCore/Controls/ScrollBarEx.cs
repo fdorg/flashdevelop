@@ -23,30 +23,29 @@ namespace PluginCore.Controls
         /// <summary>
         /// Attaches the custom scrollbars to the specified controls, requires restart.
         /// </summary>
-        public static IDisposable Attach(Object obj)
+        public static IDisposable Attach(object obj)
         {
             return ScrollBarEx.Attach(obj, false);
         }
-        public static IDisposable Attach(Object obj, Boolean childrenToo)
+        public static IDisposable Attach(object obj, bool childrenToo)
         {
             if (!Win32.ShouldUseWin32() && !PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false)) return null;
-            else if (obj is Control && childrenToo)
+            if (obj is Control parent && childrenToo)
             {
-                Control parent = obj as Control;
-                foreach (Control ctrl in parent.Controls) ScrollBarEx.Attach(ctrl);
+                foreach (Control ctrl in parent.Controls) Attach(ctrl);
                 return null;
             }
-            else if (obj is ListBox) return new ListBoxScroller(obj as ListBox);
-            else if (obj is ListView) return new ListViewScroller(obj as ListView);
-            else if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
-            else if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
-            else if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
-            else if (obj is PropertyGrid) return new PropertyGridScroller(obj as PropertyGrid);
-            else if (obj is TextBox && (obj as TextBox).Multiline && (obj as TextBox).WordWrap)
+            if (obj is ListBox listBox) return new ListBoxScroller(listBox);
+            if (obj is ListView listView) return new ListViewScroller(listView);
+            if (obj is TreeView treeView) return new TreeViewScroller(treeView);
+            if (obj is RichTextBox richTextBox) return new RichTextBoxScroller(richTextBox);
+            if (obj is DataGridView dataGridView) return new DataGridViewScroller(dataGridView);
+            if (obj is PropertyGrid propertyGrid) return new PropertyGridScroller(propertyGrid);
+            if (obj is TextBox textBox && textBox.Multiline && textBox.WordWrap)
             {
-                return new TextBoxScroller(obj as TextBoxEx);
+                return new TextBoxScroller(textBox as TextBoxEx);
             }
-            else return null;
+            return null;
         }
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException("g");
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
@@ -120,25 +119,16 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException("g");
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
                 return;
-
-            Color color;
-            switch (state)
+            var color = state switch
             {
-                case ScrollBarState.Hot:
-                    color = foreColorHot;
-                    break;
-                case ScrollBarState.Pressed:
-                    color = foreColorPressed;
-                    break;
-                default:
-                    color = foreColor;
-                    break;
-            }
-
+                ScrollBarState.Hot => foreColorHot,
+                ScrollBarState.Pressed => foreColorPressed,
+                _ => foreColor,
+            };
             switch (orientation)
             {
                 case ScrollBarOrientation.Vertical:
@@ -160,28 +150,19 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException("g");
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
 
-            Color color;
-
-            switch (state)
+            var color = state switch
             {
-                case ScrollBarArrowButtonState.UpHot:
-                case ScrollBarArrowButtonState.DownHot:
-                    color = arrowColorHot;
-                    break;
-                case ScrollBarArrowButtonState.UpPressed:
-                case ScrollBarArrowButtonState.DownPressed:
-                    color = arrowColorPressed;
-                    break;
-                default:
-                    color = arrowColor;
-                    break;
-            }
-
+                ScrollBarArrowButtonState.UpHot => arrowColorHot,
+                ScrollBarArrowButtonState.DownHot => arrowColorHot,
+                ScrollBarArrowButtonState.UpPressed => arrowColorPressed,
+                ScrollBarArrowButtonState.DownPressed => arrowColorPressed,
+                _ => arrowColor,
+            };
             switch (orientation)
             {
                 case ScrollBarOrientation.Vertical:
@@ -200,11 +181,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundVertical(Graphics g, Rectangle rect)
         {
-            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -214,11 +193,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundHorizontal(Graphics g, Rectangle rect)
         {
-            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -229,11 +206,9 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
-            using (Brush brush = new SolidBrush(color))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -244,11 +219,9 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
-            using (Brush brush = new SolidBrush(color))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -260,20 +233,17 @@ namespace PluginCore.Controls
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
         private static void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
-            using (Brush brush = new SolidBrush(color))
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
+            PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
+            float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
+            g.FillPolygon(brush, new[]
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-                PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
-                float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
-                g.FillPolygon(brush, new PointF[]
-                    {
-                        new PointF(rect.Left - 0.5f, baseY),
-                        new PointF(rect.Right - 0.5f, baseY),
-                        headPoint
-                    });
-
-            }
+                new PointF(rect.Left - 0.5f, baseY),
+                new PointF(rect.Right - 0.5f, baseY),
+                headPoint
+            });
         }
 
         /// <summary>
@@ -285,19 +255,17 @@ namespace PluginCore.Controls
         /// <param name="arrowLeft">true for a left arrow, false otherwise.</param>
         private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowLeft)
         {
-            using (Brush brush = new SolidBrush(color))
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
+            PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
+            float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
+            g.FillPolygon(brush, new[]
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-                PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
-                float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
-                g.FillPolygon(brush, new PointF[]
-                    {
-                        new PointF(baseX, rect.Top - 0.5f),
-                        new PointF(baseX, rect.Bottom - 0.5f),
-                        headPoint
-                    });
-            }
+                new PointF(baseX, rect.Top - 0.5f),
+                new PointF(baseX, rect.Bottom - 0.5f),
+                headPoint
+            });
         }
 
         #endregion
@@ -477,7 +445,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// The progress timer for moving the thumb.
         /// </summary>
-        private Timer progressTimer = new Timer();
+        private readonly Timer progressTimer = new Timer();
 
         /// <summary>
         /// Context menu strip.
@@ -590,10 +558,7 @@ namespace PluginCore.Controls
         [DefaultValue(-1)]
         public int CurrentPosition
         {
-            get
-            {
-                return this.curPos;
-            }
+            get => this.curPos;
             set
             {
                 // no change, return
@@ -614,10 +579,7 @@ namespace PluginCore.Controls
         [DefaultValue(-1)]
         public int MaxCurrentPosition
         {
-            get
-            {
-                return this.maxCurPos;
-            }
+            get => this.maxCurPos;
             set
             {
                 // no change, return
@@ -638,10 +600,7 @@ namespace PluginCore.Controls
         [DefaultValue(ScrollBarOrientation.Vertical)]
         public ScrollBarOrientation Orientation
         {
-            get
-            {
-                return this.orientation;
-            }
+            get => this.orientation;
             set
             {
                 // no change - return
@@ -672,10 +631,7 @@ namespace PluginCore.Controls
         [DefaultValue(0)]
         public int Minimum
         {
-            get
-            {
-                return this.minimum;
-            }
+            get => this.minimum;
             set
             {
                 // no change or value invalid - return
@@ -716,10 +672,7 @@ namespace PluginCore.Controls
         [DefaultValue(100)]
         public int Maximum
         {
-            get
-            {
-                return this.maximum;
-            }
+            get => this.maximum;
             set
             {
                 // no change or new max. value invalid - return
@@ -755,10 +708,7 @@ namespace PluginCore.Controls
         [DefaultValue(10)]
         public int ViewPortSize
         {
-            get
-            {
-                return this.viewPortSize;
-            }
+            get => this.viewPortSize;
             set
             {
                 // no change or new value invalid - return
@@ -781,10 +731,7 @@ namespace PluginCore.Controls
         [DefaultValue(1)]
         public int SmallChange
         {
-            get
-            {
-                return this.smallChange;
-            }
+            get => this.smallChange;
             set
             {
                 // no change or new small change value invalid - return
@@ -805,10 +752,7 @@ namespace PluginCore.Controls
         [DefaultValue(10)]
         public int LargeChange
         {
-            get
-            {
-                return this.largeChange;
-            }
+            get => this.largeChange;
             set
             {
                 // no change or new large change value is invalid - return
@@ -838,10 +782,7 @@ namespace PluginCore.Controls
         [DefaultValue(0)]
         public int Value
         {
-            get
-            {
-                return this.value;
-            }
+            get => this.value;
             set
             {
                 // no change or invalid value - return
@@ -866,10 +807,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ActiveBorder")]
         public Color BorderColor
         {
-            get
-            {
-                return this.borderColor;
-            }
+            get => this.borderColor;
             set
             {
                 this.borderColor = value;
@@ -885,10 +823,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "InactiveBorder")]
         public Color DisabledBorderColor
         {
-            get
-            {
-                return this.borderColorDisabled;
-            }
+            get => this.borderColorDisabled;
             set
             {
                 this.borderColorDisabled = value;
@@ -904,10 +839,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "Control")]
         public override Color BackColor
         {
-            get
-            {
-                return this.backColor;
-            }
+            get => this.backColor;
             set
             {
                 this.backColor = value;
@@ -923,10 +855,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlLight")]
         public Color DisabledBackColor
         {
-            get
-            {
-                return this.backColorDisabled;
-            }
+            get => this.backColorDisabled;
             set
             {
                 this.backColorDisabled = value;
@@ -942,10 +871,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ScrollBar")]
         public override Color ForeColor
         {
-            get
-            {
-                return this.foreColor;
-            }
+            get => this.foreColor;
             set
             {
                 this.foreColor = value;
@@ -961,7 +887,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDark")]
         public Color HotForeColor
         {
-            get { return this.foreColorHot; }
+            get => this.foreColorHot;
             set
             {
                 this.foreColorHot = value;
@@ -977,10 +903,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDarkDark")]
         public Color ActiveForeColor
         {
-            get
-            {
-                return this.foreColorPressed;
-            }
+            get => this.foreColorPressed;
             set
             {
                 this.foreColorPressed = value;
@@ -996,7 +919,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "ControlDark")]
         public Color ArrowColor
         {
-            get { return this.arrowColor; }
+            get => this.arrowColor;
             set
             {
                 this.arrowColor = value;
@@ -1012,7 +935,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "Highlight")]
         public Color HotArrowColor
         {
-            get { return this.arrowColorHot; }
+            get => this.arrowColorHot;
             set
             {
                 this.arrowColorHot = value;
@@ -1028,7 +951,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(SystemColors), "HotTrack")]
         public Color ActiveArrowColor
         {
-            get { return this.arrowColorPressed; }
+            get => this.arrowColorPressed;
             set
             {
                 this.arrowColorPressed = value;
@@ -1044,10 +967,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(Color), "DarkBlue")]
         public Color CurrentPositionColor
         {
-            get
-            {
-                return this.curPosColor;
-            }
+            get => this.curPosColor;
             set
             {
                 this.curPosColor = value;
@@ -1063,10 +983,7 @@ namespace PluginCore.Controls
         [DefaultValue(typeof(double), "1")]
         public double Opacity
         {
-            get
-            {
-                return this.contextMenu.Opacity;
-            }
+            get => this.contextMenu.Opacity;
             set
             {
                 // no change - return
@@ -1157,19 +1074,15 @@ namespace PluginCore.Controls
             // draw current line
             if (this.curPos > -1 && this.orientation == ScrollBarOrientation.Vertical)
             {
-                using (SolidBrush brush = new SolidBrush(this.curPosColor))
-                {
-                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                    e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
-                }
+                using SolidBrush brush = new SolidBrush(this.curPosColor);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
             }
 
             // draw border
-            using (Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled)))
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
-            }
+            using Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled));
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
         }
 
         /// <summary>
@@ -1181,7 +1094,7 @@ namespace PluginCore.Controls
             int bottomLimit = (this.maxCurPos > this.maximum) ? thumbBottomLimitBottom : this.thumbBottomLimitTop;
             int pixelRange = bottomLimit - this.thumbTopLimit; // == size - (overScroll ? thumbSize : 0) - arrows - paddings
             int realRange = this.maxCurPos - this.minimum;
-            float perc = (realRange != 0) ? ((float)(this.curPos - this.minimum) / (float)realRange) : 0f;
+            float perc = (realRange != 0) ? ((this.curPos - this.minimum) / (float)realRange) : 0f;
             return Math.Max(this.thumbTopLimit, Math.Min(bottomLimit, perc * pixelRange + this.arrowPaddedLength));
         }
 
@@ -1338,7 +1251,7 @@ namespace PluginCore.Controls
                         int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
                         int position = ((this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X) - this.arrowPaddedLength;
                         // percent of the new position
-                        float perc = (pixelRange != 0) ? ((float)position / (float)pixelRange) : 0f;
+                        float perc = (pixelRange != 0) ? (position / (float)pixelRange) : 0f;
                         // the new value is somewhere between max and min, starting
                         // at min position
                         this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
@@ -1633,8 +1546,7 @@ namespace PluginCore.Controls
             // with checking if new value is in bounds (min/max)
             if (up)
                 return Math.Max(this.minimum, this.value - (smallIncrement ? this.smallChange : this.largeChange));
-            else
-                return Math.Min(this.maximum, this.value + (smallIncrement ? this.smallChange : this.largeChange));
+            return Math.Min(this.maximum, this.value + (smallIncrement ? this.smallChange : this.largeChange));
         }
 
         /// <summary>
@@ -1645,7 +1557,7 @@ namespace PluginCore.Controls
         {
             int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
             int realRange = this.maximum - this.minimum;
-            float perc = (realRange != 0) ? ((float)(this.value - this.minimum) / (float)realRange) : 0f;
+            float perc = (realRange != 0) ? ((this.value - this.minimum) / (float)realRange) : 0f;
             return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + this.arrowPaddedLength)));
         }
 
@@ -1656,8 +1568,8 @@ namespace PluginCore.Controls
         private int GetThumbSize()
         {
             int trackSize = (this.orientation == ScrollBarOrientation.Vertical ? this.Height : this.Width) - 2 * this.arrowPaddedLength;
-            float newThumbSize = (float)this.viewPortSize * (float)trackSize / (float)(this.maximum - this.minimum + this.viewPortSize);
-            return Convert.ToInt32(Math.Min((float)trackSize, Math.Max(newThumbSize, ScaleHelper.Scale(8))));
+            float newThumbSize = this.viewPortSize * (float)trackSize / (this.maximum - this.minimum + this.viewPortSize);
+            return Convert.ToInt32(Math.Min(trackSize, Math.Max(newThumbSize, ScaleHelper.Scale(8))));
         }
 
         /// <summary>
@@ -1909,7 +1821,7 @@ namespace PluginCore.Controls
             int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
             int position = ((this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X) - this.arrowPaddedLength;
             // percent of the new position
-            float perc = (pixelRange != 0) ? ((float)position / (float)pixelRange) : 0f;
+            float perc = (pixelRange != 0) ? (position / (float)pixelRange) : 0f;
             int oldValue = this.value;
             this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
             this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, oldValue, this.value, this.scrollOrientation));
@@ -2001,13 +1913,13 @@ namespace PluginCore.Controls
         /// <summary>
         /// Handle the incoming theme events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
-                if (control.Parent == null) return;
-                else if (enabled)
+                bool enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
+                if (control.Parent is null) return;
+                if (enabled)
                 {
                     if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();
                     UpdateScrollBarTheme();
@@ -2154,7 +2066,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// 
         /// </summary>
-        protected virtual void OnResize(Object sender, EventArgs e)
+        protected virtual void OnResize(object sender, EventArgs e)
         {
             int borderWidth = 0;
             if (control is PropertyGrid && borderWidth == 0) borderWidth = 1;
@@ -2190,12 +2102,12 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the scroll state on control paint
         /// </summary>
-        protected virtual void OnPaint(Object sender, PaintEventArgs e) => UpdateScrollState();
+        protected virtual void OnPaint(object sender, PaintEventArgs e) => UpdateScrollState();
 
         /// <summary>
         /// Updates the control on scrollbar scroll
         /// </summary>
-        protected virtual void OnScroll(Object sender, ScrollEventArgs e) {}
+        protected virtual void OnScroll(object sender, ScrollEventArgs e) {}
     }
 
     public class TextBoxScroller : ScrollerBase
@@ -2229,7 +2141,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the current line index
         /// </summary>
-        public Int32 GetLineIndex(int index)
+        public int GetLineIndex(int index)
         {
             return Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
         }
@@ -2237,7 +2149,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the amount of lines, also with wrapping
         /// </summary>
-        public Int32 GetLineCount()
+        public int GetLineCount()
         {
             return Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
         }
@@ -2245,15 +2157,15 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the first visible line on screen
         /// </summary>
-        public Int32 GetFirstVisibleLine()
+        public int GetFirstVisibleLine()
         {
-            return (Int32)Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
+            return Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
         }
 
         /// <summary>
         /// Gets the amount of visible lines
         /// </summary>
-        public Int32 GetVisibleLines()
+        public int GetVisibleLines()
         {
             var rect = new Win32.RECT();
             Win32.SendMessage(textBox.Handle, Win32.EM_GETRECT, IntPtr.Zero, ref rect);
@@ -2266,9 +2178,9 @@ namespace PluginCore.Controls
         /// </summary>
         protected override void UpdateScrollState()
         {
-            Int32 vScrollMax = GetLineCount();
-            Int32 vScrollPos = GetFirstVisibleLine();
-            Int32 vScrollPage = GetVisibleLines();
+            int vScrollMax = GetLineCount();
+            int vScrollPos = GetFirstVisibleLine();
+            int vScrollPage = GetVisibleLines();
             if (this.textBox.ScrollBars != ScrollBars.Vertical)
             {
                 // Force scrollbar so that content is displayed correctly...
@@ -2287,7 +2199,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the textBox on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2329,7 +2241,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the textBox on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2376,7 +2288,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the amount of visible rows
         /// </summary>
-        private Int32 GetVisibleRows()
+        private int GetVisibleRows()
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2384,7 +2296,7 @@ namespace PluginCore.Controls
                 {
                     Type type = ctrl.GetType();
                     FieldInfo field = type.GetField("visibleRows", BindingFlags.Instance | BindingFlags.NonPublic);
-                    return (Int32)field.GetValue(ctrl) - 1;
+                    return (int)field.GetValue(ctrl) - 1;
                 }
             }
             return 0;
@@ -2393,7 +2305,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the scroll position of the scrollbar
         /// </summary>
-        private void SetScrollOffset(Int32 value)
+        private void SetScrollOffset(int value)
         {
             foreach (Control ctrl in propertyGrid.Controls)
             {
@@ -2449,7 +2361,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the propertyGrid on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || propertyGrid.SelectedObjects.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2490,7 +2402,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the treeView on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || treeView.Nodes.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
@@ -2556,25 +2468,25 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the listView on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || listView.Items.Count == 0) return;
-            Int32 height = listView.GetItemRect(0).Height; // Item height in pixels
+            int height = listView.GetItemRect(0).Height; // Item height in pixels
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Int32 vScroll;
+                int vScroll;
                 if (listView.ShowGroups && !PlatformHelper.isRunningOnWine())
                 {
-                    Int32 prevPos = Win32.GetScrollPos(listView.Handle, Win32.SB_VERT);
+                    int prevPos = Win32.GetScrollPos(listView.Handle, Win32.SB_VERT);
                     vScroll = -(prevPos - e.NewValue);
                 }
                 else vScroll = -(e.OldValue - e.NewValue) * height;
-                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
+                Win32.SendMessage(listView.Handle, (int)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
             }
             else
             {
-                Int32 hScroll = -(e.OldValue - e.NewValue);
-                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
+                int hScroll = -(e.OldValue - e.NewValue);
+                Win32.SendMessage(listView.Handle, (int)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
             }
         }
     }
@@ -2610,16 +2522,16 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the listBox on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || listBox.Items.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Win32.PostMessage((IntPtr)listBox.Handle, Win32.WM_VSCROLL, 4 + 0x10000 * e.NewValue, 0);
+                Win32.PostMessage(listBox.Handle, Win32.WM_VSCROLL, 4 + 0x10000 * e.NewValue, 0);
             }
             else
             {
-                Win32.PostMessage((IntPtr)listBox.Handle, Win32.WM_HSCROLL, 4 + 0x10000 * e.NewValue, 0);
+                Win32.PostMessage(listBox.Handle, Win32.WM_HSCROLL, 4 + 0x10000 * e.NewValue, 0);
             }
         }
     }
@@ -2657,12 +2569,12 @@ namespace PluginCore.Controls
         /// </summary>
         protected override void UpdateScrollState()
         {
-            Int32 vScrollMax = dataGridView.RowCount;
-            Int32 vScrollPos = dataGridView.FirstDisplayedScrollingRowIndex;
-            Int32 vScrollPage = dataGridView.DisplayedRowCount(false);
-            Int32 hScrollMax = dataGridView.ColumnCount;
-            Int32 hScrollPos = dataGridView.FirstDisplayedScrollingColumnIndex;
-            Int32 hScrollPage = dataGridView.DisplayedColumnCount(false);
+            int vScrollMax = dataGridView.RowCount;
+            int vScrollPos = dataGridView.FirstDisplayedScrollingRowIndex;
+            int vScrollPage = dataGridView.DisplayedRowCount(false);
+            int hScrollMax = dataGridView.ColumnCount;
+            int hScrollPos = dataGridView.FirstDisplayedScrollingColumnIndex;
+            int hScrollPage = dataGridView.DisplayedColumnCount(false);
             vScrollBar.Visible = vScrollMax > (vScrollPage - 1) && vScrollMax != vScrollPage;
             hScrollBar.Visible = hScrollMax > (hScrollPage - 1) && hScrollMax != hScrollPage;
             vScrollBar.Scroll -= OnScroll;
@@ -2682,7 +2594,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Updates the dataGridView on scrollbar scroll
         /// </summary>
-        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        protected override void OnScroll(object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || dataGridView.RowCount == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll) dataGridView.FirstDisplayedScrollingRowIndex = e.NewValue;

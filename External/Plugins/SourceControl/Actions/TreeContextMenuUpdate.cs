@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
 using ProjectManager.Controls.TreeView;
 using SourceControl.Managers;
-using SourceControl.Sources;
 
 namespace SourceControl.Actions
 {
@@ -15,10 +13,10 @@ namespace SourceControl.Actions
 
         internal static void SetMenu(ProjectTreeView tree, ProjectSelectionState state)
         {
-            if (tree == null || state.Manager == null) return;
+            if (tree is null || state.Manager is null) return;
 
-            IVCMenuItems menuItems = state.Manager.MenuItems;
-            menuItems.CurrentNodes = (TreeNode[]) tree.SelectedNodes.ToArray(typeof(TreeNode));
+            var menuItems = state.Manager.MenuItems;
+            menuItems.CurrentNodes = tree.SelectedNodes.ToArray();
             menuItems.CurrentManager = state.Manager;
 
             AddSCMainItem(tree);
@@ -37,13 +35,9 @@ namespace SourceControl.Actions
 
             // classical VC menu items
 
-            var items = new List<ToolStripItem>();
+            var items = new List<ToolStripItem> {menuItems.Update, menuItems.Commit, menuItems.Push, menuItems.ShowLog};
 
             // generic
-            items.Add(menuItems.Update);
-            items.Add(menuItems.Commit);
-            items.Add(menuItems.Push);
-            items.Add(menuItems.ShowLog);
             int minLen = items.Count;
 
             // specific
@@ -67,28 +61,28 @@ namespace SourceControl.Actions
             }
 
             if (items.Count > minLen) items.Insert(minLen, menuItems.MidSeparator);
-            items.RemoveAll(item => item == null);
+            items.RemoveAll(item => item is null);
             scItem.DropDownItems.AddRange(items.ToArray());
         }
 
-        private static void AddSCMainItem(ProjectTreeView tree)
+        private static void AddSCMainItem(MultiSelectTreeView tree)
         {
-            if (scItem == null)
+            if (scItem is null)
             {
                 scItem = new ToolStripMenuItem();
                 scItem.Text = TextHelper.GetString("Label.SourceControl");
                 scItem.Image = PluginBase.MainForm.FindImage("480");
             }
             // add in same group as Open/Execute/Shell menu...
-            Boolean isProjectNode = tree.SelectedNodes.Count > 0 && tree.SelectedNodes[0].GetType().ToString().EndsWithOrdinal("ProjectNode");
-            Int32 index = GetNthSeparatorIndex(tree.ContextMenuStrip, isProjectNode ? 2 : 1);
+            bool isProjectNode = tree.SelectedNodes.Count > 0 && tree.SelectedNodes[0].GetType().ToString().EndsWithOrdinal("ProjectNode");
+            int index = GetNthSeparatorIndex(tree.ContextMenuStrip, isProjectNode ? 2 : 1);
             if (index >= 0) tree.ContextMenuStrip.Items.Insert(index, scItem);
             else tree.ContextMenuStrip.Items.Add(scItem);
         }
 
-        private static Int32 GetNthSeparatorIndex(ContextMenuStrip menu, Int32 n)
+        private static int GetNthSeparatorIndex(ContextMenuStrip menu, int n)
         {
-            Int32 index = -1;
+            int index = -1;
             foreach (ToolStripItem item in menu.Items)
             {
                 index++;

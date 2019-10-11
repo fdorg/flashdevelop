@@ -15,26 +15,26 @@ namespace CodeRefactor
 
         [DisplayName("Separate Packages")]
         [LocalizedDescription("CodeRefactor.Description.SeparatePackages"), DefaultValue(false)]
-        public Boolean SeparatePackages
+        public bool SeparatePackages
         {
-            get { return this.separatePackages; }
-            set { this.separatePackages = value; }
+            get => separatePackages;
+            set => separatePackages = value;
         }
 
         [DisplayName("Disable Move Refactoring")]
         [LocalizedDescription("CodeRefactor.Description.DisableMoveRefactoring"), DefaultValue(false)]
-        public Boolean DisableMoveRefactoring
+        public bool DisableMoveRefactoring
         {
-            get { return this.disableMoveRefactoring; }
-            set { this.disableMoveRefactoring = value; }
+            get => disableMoveRefactoring;
+            set => disableMoveRefactoring = value;
         }
 
         [DisplayName("Use Inline Renaming")]
         [LocalizedDescription("CodeRefactor.Description.UseInlineRenaming"), DefaultValue(DEFAULT_USE_INLINE_RENAMING)]
         public bool UseInlineRenaming
         {
-            get { return useInlineRenaming; }
-            set { useInlineRenaming = value; }
+            get => useInlineRenaming;
+            set => useInlineRenaming = value;
         }
     }
 }

@@ -11,10 +11,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// 
         /// </summary>
-        private static Form Main
-        {
-            get { return PluginBase.MainForm as Form; }
-        }
+        private static Form Main => PluginBase.MainForm as Form;
 
         /// <summary>
         /// 
@@ -23,7 +20,7 @@ namespace CodeRefactor.Provider
         {
             get
             {
-                if (progressDialog == null)
+                if (progressDialog is null)
                 {
                     progressDialog = new ProgressDialog();
                     Main.AddOwnedForm(progressDialog);

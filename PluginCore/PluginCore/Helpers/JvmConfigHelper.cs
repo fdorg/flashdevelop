@@ -7,14 +7,14 @@ namespace PluginCore.Helpers
 {
     public class JvmConfigHelper
     {
-        static public Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
+        public static Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
 
         /// <summary>
         /// Read a jvm.config file and returns its variables as a Dictionary.
         /// </summary>
         public static Dictionary<string, string> ReadConfig(string configPath)
         {
-            if (configPath == null) configPath = "";
+            if (configPath is null) configPath = "";
             string hash = configPath;
             if (Cache.ContainsKey(hash)) return Cache[hash];
             if (Directory.Exists(configPath))
@@ -71,23 +71,18 @@ namespace PluginCore.Helpers
             return value;
         }
 
-        public static string GetJavaEXE()
-        {
-            return GetJavaEXE(null, null);
-        }
-        public static string GetJavaEXE(Dictionary<string, string> jvmConfig)
-        {
-            return GetJavaEXE(jvmConfig, null);
-        }
+        public static string GetJavaEXE() => GetJavaEXE(null, null);
+
+        public static string GetJavaEXE(Dictionary<string, string> jvmConfig) => GetJavaEXE(jvmConfig, null);
+
         public static string GetJavaEXE(Dictionary<string, string> jvmConfig, string flexSdkPath)
         {
-            string defaultExe = "java";
-            string home = GetJavaHome(jvmConfig, flexSdkPath);
-            if (!String.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
+            var home = GetJavaHome(jvmConfig, flexSdkPath);
+            if (!string.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
                 return Path.Combine(home, "bin","java");
             }
-            return defaultExe;
+            return "java";
         }
 
         public static string GetJavaHome(Dictionary<string, string> jvmConfig, string flexSdkPath)
@@ -95,9 +90,9 @@ namespace PluginCore.Helpers
             string home = null;
             if (jvmConfig != null && jvmConfig.ContainsKey("java.home"))
             {
-                home = ResolvePath(jvmConfig["java.home"], flexSdkPath, true);
+                home = ResolvePath(jvmConfig["java.home"], flexSdkPath);
             }
-            if (home == null)
+            if (home is null)
             {
                 home = Environment.ExpandEnvironmentVariables("%JAVA_HOME%");
                 if (home.StartsWith("%", StringComparison.Ordinal)) home = null;
@@ -107,14 +102,14 @@ namespace PluginCore.Helpers
 
         // Duplicated from 'PluginCore.PathHelper.ResolvePath()'
         // because JvmConfigHelper is used in external tool 'FDBuild'
-        private static string ResolvePath(String path, String relativeTo, Boolean checkResolvedPathExisting)
+        private static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Boolean isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
-            Boolean isPathAbsSlashed = (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal)) && !isPathNetworked;
+            bool isPathNetworked = path.StartsWith("\\\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
+            bool isPathAbsSlashed = (path.StartsWith("\\", StringComparison.Ordinal) || path.StartsWith("/", StringComparison.Ordinal)) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
-            String resolvedPath;
+            string resolvedPath;
             if (relativeTo != null)
             {
                 resolvedPath = Path.Combine(relativeTo, path);
@@ -125,14 +120,7 @@ namespace PluginCore.Helpers
             return null;
         }
 
-        private static String AppDir
-        {
-            get
-            {
-                return Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            }
-        }
-
+        private static string AppDir => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
     }
 
 }

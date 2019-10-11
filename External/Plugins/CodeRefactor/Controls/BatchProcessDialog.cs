@@ -44,7 +44,7 @@ namespace CodeRefactor.Controls
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.Location = new System.Drawing.Point(216, 106);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -55,7 +55,7 @@ namespace CodeRefactor.Controls
             // 
             // operationComboBox
             // 
-            this.operationComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.operationComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.operationComboBox.FormattingEnabled = true;
             this.operationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.operationComboBox.Location = new System.Drawing.Point(15, 27);
@@ -81,7 +81,7 @@ namespace CodeRefactor.Controls
             // 
             // processButton
             // 
-            this.processButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.processButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.processButton.Location = new System.Drawing.Point(133, 106);
             this.processButton.Name = "processButton";
             this.processButton.Size = new System.Drawing.Size(75, 23);
@@ -92,7 +92,7 @@ namespace CodeRefactor.Controls
             // 
             // targetComboBox
             // 
-            this.targetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.targetComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.targetComboBox.FormattingEnabled = true;
             this.targetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             this.targetComboBox.Location = new System.Drawing.Point(15, 73);
@@ -138,7 +138,7 @@ namespace CodeRefactor.Controls
         {
             this.targetComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.operationComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-            this.targetComboBox.Items.AddRange(new Object[] 
+            this.targetComboBox.Items.AddRange(new object[] 
             {
                 TextHelper.GetString("Info.OpenFiles"),
                 TextHelper.GetString("Info.ProjectSources")
@@ -158,7 +158,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// 
         /// </summary>
-        private void ProcessButtonClick(Object sender, EventArgs e)
+        private void ProcessButtonClick(object sender, EventArgs e)
         {
             var item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
 
@@ -187,7 +187,7 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Closes the batch process dialog
         /// </summary>
-        private void CancelButtonClick(Object sender, EventArgs e)
+        private void CancelButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }

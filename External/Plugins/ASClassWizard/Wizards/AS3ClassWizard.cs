@@ -58,21 +58,21 @@ namespace ASClassWizard.Wizards
             this.cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
         }
 
-        public String StartupPackage
+        public string StartupPackage
         {
-            set { packageBox.Text = value; }
+            set => packageBox.Text = value;
         }
 
-        public String StartupClassName
+        public string StartupClassName
         {
-            set { classBox.Text = value; }
+            set => classBox.Text = value;
         }
 
         public string Directory { get; set; }
 
         public Project Project
         {
-            get { return project; }
+            get => project;
             set 
             { 
                 this.project = value;
@@ -110,7 +110,7 @@ namespace ASClassWizard.Wizards
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyClassName");
             else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidClassName");
-            else if (project.Language == "haxe" && Char.IsLower(GetName()[0]))
+            else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseClassName");
 
             if (errorMessage != "")
@@ -133,32 +133,29 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void packageBrowse_Click(object sender, EventArgs e)
         {
+            using PackageBrowser browser = new PackageBrowser();
+            browser.Project = this.Project;
 
-            using (PackageBrowser browser = new PackageBrowser())
+            foreach (string item in Project.AbsoluteClasspaths)
+                browser.AddClassPath(item);
+
+            if (browser.ShowDialog(this) == DialogResult.OK)
             {
-                browser.Project = this.Project;
-
-                foreach (string item in Project.AbsoluteClasspaths)
-                    browser.AddClassPath(item);
-
-                if (browser.ShowDialog(this) == DialogResult.OK)
+                if (browser.Package != null)
                 {
-                    if (browser.Package != null)
+                    string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
+                    string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
+                    if (package != null)
                     {
-                        string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
-                        string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
-                        if (package != null)
-                        {
-                            Directory = browser.Package;
-                            package = package.Replace(Path.DirectorySeparatorChar, '.');
-                            this.packageBox.Text = package;
-                        }
+                        Directory = browser.Package;
+                        package = package.Replace(Path.DirectorySeparatorChar, '.');
+                        this.packageBox.Text = package;
                     }
-                    else
-                    {
-                        this.Directory = browser.Project.Directory;
-                        this.packageBox.Text = "";
-                    }
+                }
+                else
+                {
+                    this.Directory = browser.Project.Directory;
+                    this.packageBox.Text = "";
                 }
             }
         }
@@ -171,22 +168,20 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            using (ClassBrowser browser = new ClassBrowser())
+            using ClassBrowser browser = new ClassBrowser();
+            IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            try
             {
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    browser.ClassList = context.GetAllProjectClasses();
-                }
-                catch { }
-                browser.ExcludeFlag = FlagType.Interface;
-                browser.IncludeFlag = FlagType.Class;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    this.baseBox.Text = browser.SelectedClass;
-                }
-                this.okButton.Focus();
+                browser.ClassList = context.GetAllProjectClasses();
             }
+            catch { }
+            browser.ExcludeFlag = FlagType.Interface;
+            browser.IncludeFlag = FlagType.Class;
+            if (browser.ShowDialog(this) == DialogResult.OK)
+            {
+                this.baseBox.Text = browser.SelectedClass;
+            }
+            this.okButton.Focus();
         }
 
         /// <summary>
@@ -194,37 +189,35 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void implementBrowse_Click(object sender, EventArgs e)
         {
-            using (var browser = new ClassBrowser())
+            using var browser = new ClassBrowser();
+            MemberList known = null;
+            browser.IncludeFlag = FlagType.Interface;
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            try
             {
-                MemberList known = null;
-                browser.IncludeFlag = FlagType.Interface;
-                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    known = context.GetAllProjectClasses();
-                    known.Merge(ASContext.Context.GetVisibleExternalElements());
-                }
-                catch (Exception error)
-                {
-                    Debug.WriteLine(error.StackTrace);
-                }
-                browser.ClassList = known;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    if (browser.SelectedClass != null)
-                    {
-                        foreach (string item in this.implementList.Items)
-                        {
-                            if (item == browser.SelectedClass) return;
-                        }
-                        this.implementList.Items.Add(browser.SelectedClass);
-                    }
-                }
-                this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-                this.superCheck.Enabled = this.implementList.Items.Count > 0;
-                ValidateClass();
+                known = context.GetAllProjectClasses();
+                known.Merge(ASContext.Context.GetVisibleExternalElements());
             }
+            catch (Exception error)
+            {
+                Debug.WriteLine(error.StackTrace);
+            }
+            browser.ClassList = known;
+            if (browser.ShowDialog(this) == DialogResult.OK)
+            {
+                if (browser.SelectedClass != null)
+                {
+                    foreach (string item in this.implementList.Items)
+                    {
+                        if (item == browser.SelectedClass) return;
+                    }
+                    this.implementList.Items.Add(browser.SelectedClass);
+                }
+            }
+            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
+            this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
+            this.superCheck.Enabled = this.implementList.Items.Count > 0;
+            ValidateClass();
         }
 
         /// <summary>

@@ -57,7 +57,7 @@ namespace Ude.Core
         
         private const int CLASS_NUM = 8; // total classes
         
-        private readonly static byte[] Latin1_CharToClass = {
+        private static readonly byte[] Latin1_CharToClass = {
           OTH, OTH, OTH, OTH, OTH, OTH, OTH, OTH,   // 00 - 07
           OTH, OTH, OTH, OTH, OTH, OTH, OTH, OTH,   // 08 - 0F
           OTH, OTH, OTH, OTH, OTH, OTH, OTH, OTH,   // 10 - 17
@@ -97,7 +97,7 @@ namespace Ude.Core
            2 : normal 
            3 : very likely
         */
-        private readonly static byte[] Latin1ClassModel = {
+        private static readonly byte[] Latin1ClassModel = {
             /*      UDF OTH ASC ASS ACV ACO ASV ASO  */
             /*UDF*/  0,  0,  0,  0,  0,  0,  0,  0,
             /*OTH*/  0,  3,  3,  3,  3,  3,  3,  3,
@@ -110,7 +110,7 @@ namespace Ude.Core
         };
 
         private byte lastCharClass;
-        private int[] freqCounter = new int[FREQ_CAT_NUM];
+        private readonly int[] freqCounter = new int[FREQ_CAT_NUM];
         
         public Latin1Prober()
         {

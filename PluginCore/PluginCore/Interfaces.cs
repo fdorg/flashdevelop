@@ -21,13 +21,13 @@ namespace PluginCore
 
         #region IPlugin Properties
 
-        Int32 Api { get; }
-        String Name { get; }
-        String Guid { get; }
-        String Help { get; }
-        String Author { get; }
-        String Description { get; }
-        Object Settings { get; }
+        int Api { get; }
+        string Name { get; }
+        string Guid { get; }
+        string Help { get; }
+        string Author { get; }
+        string Description { get; }
+        object Settings { get; }
 
         // List of valid API levels:
         // FlashDevelop 4.0 = 1
@@ -39,7 +39,7 @@ namespace PluginCore
     {
         #region IEventHandler Methods
 
-        void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority);
+        void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority);
 
         #endregion
     }
@@ -58,21 +58,21 @@ namespace PluginCore
         #region ITabbedDocument Properties
 
         Icon Icon { get; set; }
-        String FileName { get; }
-        String Text { get; set; }
-        Boolean UseCustomIcon { get; set; }
+        string FileName { get; }
+        string Text { get; set; }
+        bool UseCustomIcon { get; set; }
         Control.ControlCollection Controls { get; }
         SplitContainer SplitContainer { get; }
         ScintillaControl SciControl { get; }
         ScintillaControl SplitSci1 { get; }
         ScintillaControl SplitSci2 { get; }
-        Boolean IsModified { get; set; }
-        Boolean IsSplitted { get; set; }
-        Boolean IsBrowsable { get; }
-        Boolean IsUntitled { get; }
-        Boolean IsEditable { get; }
-        Boolean HasBookmarks { get; }
-        Boolean IsAloneInPane { get; }
+        bool IsModified { get; set; }
+        bool IsSplitted { get; set; }
+        bool IsBrowsable { get; }
+        bool IsUntitled { get; }
+        bool IsEditable { get; }
+        bool HasBookmarks { get; }
+        bool IsAloneInPane { get; }
 
         #endregion
 
@@ -81,9 +81,9 @@ namespace PluginCore
         void Close();
         void Activate();
         void RefreshTexts();
-        void Reload(Boolean showQuestion);
-        void Revert(Boolean showQuestion);
-        void Save(String file);
+        void Reload(bool showQuestion);
+        void Revert(bool showQuestion);
+        void Save(string file);
         void Save(string file, string reason);
         void Save();
 
@@ -94,9 +94,9 @@ namespace PluginCore
     {
         #region ICompletionListItem Properties
 
-        String Label { get; }
-        String Value { get; }
-        String Description { get; }
+        string Label { get; }
+        string Value { get; }
+        string Description { get; }
         Bitmap Icon { get; }
 
         #endregion
@@ -132,39 +132,39 @@ namespace PluginCore
         /// <summary>
         /// Themes the controls from the parent.
         /// </summary>
-        void ThemeControls(Object control);
+        void ThemeControls(object control);
         /// <summary>
         /// Clears the temporary file from disk.
         /// </summary>
-        void ClearTemporaryFiles(String file);
+        void ClearTemporaryFiles(string file);
         /// <summary>
         /// Shows the settings dialog.
         /// </summary>
-        void ShowSettingsDialog(String itemName);
+        void ShowSettingsDialog(string itemName);
         /// <summary>
         /// Shows the error dialog if the sender is <see cref="Managers.ErrorManager"/>.
         /// </summary>
-        void ShowErrorDialog(Object sender, Exception ex);
+        void ShowErrorDialog(object sender, Exception ex);
         /// <summary>
         /// Shows the settings dialog with a filter.
         /// </summary>
-        void ShowSettingsDialog(String itemName, String filter);
+        void ShowSettingsDialog(string itemName, string filter);
         /// <summary>
         /// Lets you update menu items using the flag functionality.
         /// </summary>
-        void AutoUpdateMenuItem(ToolStripItem item, String action);
+        void AutoUpdateMenuItem(ToolStripItem item, string action);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, System.Windows.Forms.Keys keys);
+        void RegisterShortcutItem(string id, System.Windows.Forms.Keys keys);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, ToolStripMenuItem item);
+        void RegisterShortcutItem(string id, ToolStripMenuItem item);
         /// <summary>
         /// Registers a new secondary menu item with the shortcut manager.
         /// </summary>
-        void RegisterSecondaryItem(String id, ToolStripItem item);
+        void RegisterSecondaryItem(string id, ToolStripItem item);
         /// <summary>
         /// Updates a registered secondary menu item in the shortcut manager
         /// - should be called when the tooltip changes.
@@ -173,15 +173,15 @@ namespace PluginCore
         /// <summary>
         /// Create the specified new document from the given template.
         /// </summary>
-        void FileFromTemplate(String templatePath, String newFilePath);
+        void FileFromTemplate(string templatePath, string newFilePath);
         /// <summary>
         /// Opens an editable document.
         /// </summary>
-        DockContent OpenEditableDocument(String file, Boolean restoreFileState);
+        DockContent OpenEditableDocument(string file, bool restoreFileState);
         /// <summary>
         /// Opens an editable document.
         /// </summary>
-        DockContent OpenEditableDocument(String file);
+        DockContent OpenEditableDocument(string file);
         /// <summary>
         /// Creates a new custom document.
         /// </summary>
@@ -189,71 +189,71 @@ namespace PluginCore
         /// <summary>
         /// Creates a new empty document.
         /// </summary>
-        DockContent CreateEditableDocument(String file, String text, Int32 codepage);
+        DockContent CreateEditableDocument(string file, string text, int codepage);
         /// <summary>
         /// Creates a floating panel for the plugin.
         /// </summary>
-        DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
+        DockContent CreateDockablePanel(Control form, string guid, Image image, DockState defaultDockState);
         /// <summary>
         /// Creates a dynamic persist panel for plugins.
         /// </summary>
-        DockContent CreateDynamicPersistDockablePanel(Control ctrl, String guid, String id, Image image, DockState defaultDockState);
+        DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState);
         /// <summary>
         /// Calls a normal <see cref="IMainForm"/> method.
         /// </summary>
-        Boolean CallCommand(String command, String arguments);
+        bool CallCommand(string command, string arguments);
         /// <summary>
         /// Finds the menu items that have the specified name.
         /// </summary>
-        List<ToolStripItem> FindMenuItems(String name);
+        List<ToolStripItem> FindMenuItems(string name);
         /// <summary>
         /// Finds the specified menu item by name.
         /// </summary>
-        ToolStripItem FindMenuItem(String name);
+        ToolStripItem FindMenuItem(string name);
         /// <summary>
         /// Processes the argument string variables.
         /// </summary>
-        String ProcessArgString(String args);
+        string ProcessArgString(string args);
         /// <summary>
         /// Gets the specified item's shortcut keys.
         /// </summary>
-        System.Windows.Forms.Keys GetShortcutItemKeys(String id);
+        System.Windows.Forms.Keys GetShortcutItemKeys(string id);
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        String GetShortcutItemId(System.Windows.Forms.Keys keys);
+        string GetShortcutItemId(System.Windows.Forms.Keys keys);
         /// <summary>
         /// Gets a theme property value.
         /// </summary>
-        String GetThemeValue(String id);
+        string GetThemeValue(string id);
         /// <summary>
         /// Gets a theme property color.
         /// </summary>
-        Color GetThemeColor(String id);
+        Color GetThemeColor(string id);
         /// <summary>
         /// Gets a theme flag value.
         /// </summary>
-        Boolean GetThemeFlag(String id);
+        bool GetThemeFlag(string id);
         /// <summary>
         /// Gets a theme flag value with a fallback.
         /// </summary>
-        Boolean GetThemeFlag(String id, Boolean fallback);
+        bool GetThemeFlag(string id, bool fallback);
         /// <summary>
         /// Gets a theme property value with a fallback.
         /// </summary>
-        String GetThemeValue(String id, String fallback);
+        string GetThemeValue(string id, string fallback);
         /// <summary>
         /// Gets a theme property color with a fallback.
         /// </summary>
-        Color GetThemeColor(String id, Color fallback);
+        Color GetThemeColor(string id, Color fallback);
         /// <summary>
         /// Sets if child controls should use theme.
         /// </summary>
-        void SetUseTheme(Object parent, Boolean use);
+        void SetUseTheme(object parent, bool use);
         /// <summary>
         /// Finds the specified plugin.
         /// </summary>
-        IPlugin FindPlugin(String guid);
+        IPlugin FindPlugin(string guid);
         /// <summary>
         /// Adjusts the image for different themes.
         /// </summary>
@@ -267,37 +267,37 @@ namespace PluginCore
         /// <para/>
         /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
         /// </summary>
-        Image FindImage(String data);
+        Image FindImage(string data);
         /// <summary>
         /// Finds the specified composed/ready image.
         /// <para/>
         /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
         /// </summary>
-        Image FindImage(String data, Boolean autoAdjust);
+        Image FindImage(string data, bool autoAdjust);
         /// <summary>
         /// Finds the specified composed/ready image that is automatically adjusted according to the theme.
         /// The image size is always 16x16.
         /// <para/>
         /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted.
         /// </summary>
-        Image FindImage16(String data);
+        Image FindImage16(string data);
         /// <summary>
         /// Finds the specified composed/ready image. The image size is always 16x16.
         /// <para/>
         /// If you make a copy of the image returned by this method, the copy will not be automatically adjusted, even if <code>autoAdjusted</code> is <code>true</code>.
         /// </summary>
-        Image FindImage16(String data, Boolean autoAdjusted);
+        Image FindImage16(string data, bool autoAdjusted);
         /// <summary>
         /// Finds the specified composed/ready image and returns a copy of the image that has its color adjusted.
         /// This method is typically used for populating a <see cref="ImageList"/> object.
         /// <para/>
         /// Equivalent to calling <code>ImageSetAdjust(FindImage(data, false))</code>.
         /// </summary>
-        Image FindImageAndSetAdjust(String data);
+        Image FindImageAndSetAdjust(string data);
         /// <summary>
         /// Gets the amount of FD instances running
         /// </summary>
-        Int32 GetInstanceCount();
+        int GetInstanceCount();
 
         #endregion
 
@@ -326,7 +326,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the application start arguments.
         /// </summary>
-        String[] StartArguments { get; }
+        string[] StartArguments { get; }
         /// <summary>
         /// Gets the application custom arguments.
         /// </summary>
@@ -338,7 +338,7 @@ namespace PluginCore
         /// <summary>
         /// Gets or sets the working directory.
         /// </summary>
-        String WorkingDirectory { get; set; }
+        string WorkingDirectory { get; set; }
         /// <summary>
         /// Gets the tool strip panel.
         /// </summary>
@@ -378,63 +378,63 @@ namespace PluginCore
         /// <summary>
         /// Gets whether FlashDevelop holds modified documents.
         /// </summary>
-        Boolean HasModifiedDocuments { get; }
+        bool HasModifiedDocuments { get; }
         /// <summary>
         /// Gets whether FlashDevelop is closing.
         /// </summary>
-        Boolean ClosingEntirely { get; }
+        bool ClosingEntirely { get; }
         /// <summary>
         /// Gets whether a process is running.
         /// </summary>
-        Boolean ProcessIsRunning { get; }
+        bool ProcessIsRunning { get; }
         /// <summary>
         /// Gets whether a document is reloading.
         /// </summary>
-        Boolean ReloadingDocument { get; }
+        bool ReloadingDocument { get; }
         /// <summary>
         /// Gets whether contents are being processed.
         /// </summary>
-        Boolean ProcessingContents { get; }
+        bool ProcessingContents { get; }
         /// <summary>
         /// Gets whether contents are being restored.
         /// </summary>
-        Boolean RestoringContents { get; }
+        bool RestoringContents { get; }
         /// <summary>
         /// Gets saving multiple.
         /// </summary>
-        Boolean SavingMultiple { get; }
+        bool SavingMultiple { get; }
         /// <summary>
         /// Gets whether the panel is active.
         /// </summary>
-        Boolean PanelIsActive { get; }
+        bool PanelIsActive { get; }
         /// <summary>
         /// Gets whether FlashDevelop is in full screen.
         /// </summary>
-        Boolean IsFullScreen { get; }
+        bool IsFullScreen { get; }
         /// <summary>
         /// Gets whether FlashDevelop is in standalone mode.
         /// </summary>
-        Boolean StandaloneMode { get; }
+        bool StandaloneMode { get; }
         /// <summary>
         /// Gets whether FlashDevelop is in multi-instance mode.
         /// </summary>
-        Boolean MultiInstanceMode { get; }
+        bool MultiInstanceMode { get; }
         /// <summary>
         /// Gets whether this <see cref="IMainForm"/> is the first instance.
         /// </summary>
-        Boolean IsFirstInstance { get; }
+        bool IsFirstInstance { get; }
         /// <summary>
         /// Gets whether a restart is required.
         /// </summary>
-        Boolean RestartRequested { get; }
+        bool RestartRequested { get; }
         /// <summary>
         /// Gets whether the application requires a restart to apply changes.
         /// </summary>
-        Boolean RequiresRestart { get; }
+        bool RequiresRestart { get; }
         /// <summary>
         /// Gets whether the config should be refreshed.
         /// </summary>
-        Boolean RefreshConfig { get; }
+        bool RefreshConfig { get; }
         /// <summary>
         /// Gets the ignored keys.
         /// </summary>
@@ -442,15 +442,15 @@ namespace PluginCore
         /// <summary>
         /// Gets the version of the application.
         /// </summary>
-        String ProductVersion { get; }
+        string ProductVersion { get; }
         /// <summary>
         /// Gets the full human readable version string.
         /// </summary>
-        String ProductName { get; }
+        string ProductName { get; }
         /// <summary>
         /// Gets the command prompt executable (custom or cmd.exe by default).
         /// </summary>
-        String CommandPromptExecutable { get; }
+        string CommandPromptExecutable { get; }
 
         #endregion
     }
@@ -459,30 +459,30 @@ namespace PluginCore
     {
         #region IProject Methods
 
-        String[] GetHiddenPaths();
-        String GetRelativePath(String path);
-        String GetAbsolutePath(String path);
+        string[] GetHiddenPaths();
+        string GetRelativePath(string path);
+        string GetAbsolutePath(string path);
 
         /// <summary>
         /// When in Release configuration, remove 'debug' from the given path.
         /// Pattern: ([a-zA-Z0-9])[-_.]debug([\\/.])
         /// </summary>
-        String FixDebugReleasePath(String path);
+        string FixDebugReleasePath(string path);
 
         #endregion
 
         #region IProject Properties
 
-        String Name { get; }
-        String Language { get; }
-        String OutputPathAbsolute { get; }
-        String[] SourcePaths { get; }
-        Boolean TraceEnabled { get; }
-        Boolean EnableInteractiveDebugger { get; }
-        String ProjectPath { get; }
-        String PreferredSDK { get; }
-        String CurrentSDK { get; }
-        String DefaultSearchFilter { get; }
+        string Name { get; }
+        string Language { get; }
+        string OutputPathAbsolute { get; }
+        string[] SourcePaths { get; }
+        bool TraceEnabled { get; }
+        bool EnableInteractiveDebugger { get; }
+        string ProjectPath { get; }
+        string PreferredSDK { get; }
+        string CurrentSDK { get; }
+        string DefaultSearchFilter { get; }
 
         #endregion
     }
@@ -493,88 +493,89 @@ namespace PluginCore
 
         Font DefaultFont { get; set; }
         Font ConsoleFont { get; set; }
-        List<String> DisabledPlugins { get; set; }
-        List<String> PreviousDocuments { get; set; }
+        List<string> DisabledPlugins { get; set; }
+        List<string> PreviousDocuments { get; set; }
         LocaleVersion LocaleVersion { get; set; }
         UiRenderMode RenderMode { get; set; }
         CodingStyle CodingStyle { get; set; }
         CommentBlockStyle CommentBlockStyle { get; set; }
         FlatStyle ComboBoxFlatStyle { get; set; }
-        String DefaultFileExtension { get; set; }
-        String LatestDialogPath { get; set; }
-        Boolean ConfirmOnExit { get; set; }
-        String CustomSnippetDir { get; set; }
-        String CustomTemplateDir { get; set; }
-        String CustomProjectsDir { get; set; }
-        String CustomCommandPrompt { get; set; }
-        Boolean DisableFindOptionSync { get; set; }
-        Boolean DisableSimpleQuickFind { get; set; }
-        Boolean DisableReplaceFilesConfirm { get; set; }
-        Boolean AutoReloadModifiedFiles { get; set; }
-        Boolean UseListViewGrouping { get; set; }
-        Boolean RedirectFilesResults { get; set; }
-        Boolean DisableFindTextUpdating { get; set; }
-        Boolean ApplyFileExtension { get; set; }
-        Boolean RestoreFileStates { get; set; }
-        Boolean RestoreFileSession { get; set; }
-        Boolean BackSpaceUnIndents { get; set; }
-        Boolean BraceMatchingEnabled { get; set; }
-        Boolean CaretLineVisible { get; set; }
-        Boolean EnsureConsistentLineEnds { get; set; }
-        Boolean EnsureLastLineEnd { get; set; }
-        Boolean UseSystemColors { get; set; }
-        Boolean FoldAtElse { get; set; }
-        Boolean FoldComment { get; set; }
-        Boolean FoldCompact { get; set; }
-        Boolean FoldHtml { get; set; }
-        Boolean FoldPreprocessor { get; set; }
-        Boolean HighlightGuide { get; set; }
-        Boolean LineCommentsAfterIndent { get; set; }
-        Boolean MoveCursorAfterComment { get; set; }
-        Boolean StripTrailingSpaces { get; set; }
-        Boolean SequentialTabbing { get; set; }
-        Boolean TabIndents { get; set; }
-        Boolean UseFolding { get; set; }
-        Boolean UseTabs { get; set; }
-        Boolean ViewEOL { get; set; }
-        Boolean ViewBookmarks { get; set; }
-        Boolean ViewLineNumbers { get; set; }
-        Boolean ViewIndentationGuides { get; set; }
-        Boolean ViewModifiedLines { get; set; }
-        Boolean ViewToolBar { get; set; }
-        Boolean ViewStatusBar { get; set; }
-        Boolean ViewWhitespace { get; set; }
-        Boolean ViewShortcuts { get; set; }
-        Boolean WrapText { get; set; }
+        string DefaultFileExtension { get; set; }
+        string LatestDialogPath { get; set; }
+        bool ConfirmOnExit { get; set; }
+        string CustomSnippetDir { get; set; }
+        string CustomTemplateDir { get; set; }
+        string CustomProjectsDir { get; set; }
+        string CustomCommandPrompt { get; set; }
+        bool DisableFindOptionSync { get; set; }
+        bool DisableSimpleQuickFind { get; set; }
+        bool DisableReplaceFilesConfirm { get; set; }
+        bool AutoReloadModifiedFiles { get; set; }
+        bool UseListViewGrouping { get; set; }
+        bool RedirectFilesResults { get; set; }
+        bool DisableFindTextUpdating { get; set; }
+        bool ApplyFileExtension { get; set; }
+        bool RestoreFileStates { get; set; }
+        bool RestoreFileSession { get; set; }
+        bool BackSpaceUnIndents { get; set; }
+        bool BraceMatchingEnabled { get; set; }
+        bool CaretLineVisible { get; set; }
+        bool EnsureConsistentLineEnds { get; set; }
+        bool EnsureLastLineEnd { get; set; }
+        bool UseSystemColors { get; set; }
+        bool FoldAtElse { get; set; }
+        bool FoldComment { get; set; }
+        bool FoldCompact { get; set; }
+        bool FoldHtml { get; set; }
+        bool FoldPreprocessor { get; set; }
+        bool HighlightGuide { get; set; }
+        bool LineCommentsAfterIndent { get; set; }
+        bool MoveCursorAfterComment { get; set; }
+        bool StripTrailingSpaces { get; set; }
+        bool SequentialTabbing { get; set; }
+        bool TabIndents { get; set; }
+        bool UseFolding { get; set; }
+        bool UseTabs { get; set; }
+        bool ViewEOL { get; set; }
+        bool ViewBookmarks { get; set; }
+        bool ViewLineNumbers { get; set; }
+        bool ViewIndentationGuides { get; set; }
+        bool ViewModifiedLines { get; set; }
+        bool ViewToolBar { get; set; }
+        bool ViewStatusBar { get; set; }
+        bool ViewWhitespace { get; set; }
+        bool ViewShortcuts { get; set; }
+        bool WrapText { get; set; }
         EndOfLine EOLMode { get; set; }
         FoldFlag FoldFlags { get; set; }
         SmartIndent SmartIndentType { get; set; }
         VirtualSpaceMode VirtualSpaceMode { get; set; }
         IndentView IndentView { get; set; }
+        int HighlightMatchingWordsDelay { get; set; }
         HighlightMatchingWordsMode HighlightMatchingWordsMode { get; set; }
-        Int32 HighlightMatchingWordsDelay { get; set; }
+        bool HighlightMatchingWordsCaseSensitive { get; set; }
         CodePage DefaultCodePage { get; set; }
-        Int32 TabWidth { get; set; }
-        Int32 IndentSize { get; set; }
-        Int32 CaretPeriod { get; set; }
-        Int32 CaretWidth { get; set; }
-        Int32 ScrollWidth { get; set; }
-        Int32 PrintMarginColumn { get; set; }
+        int TabWidth { get; set; }
+        int IndentSize { get; set; }
+        int CaretPeriod { get; set; }
+        int CaretWidth { get; set; }
+        int ScrollWidth { get; set; }
+        int PrintMarginColumn { get; set; }
         Size WindowSize { get; set; }
         FormWindowState WindowState { get; set; }
         Point WindowPosition { get; set; }
-        Int32 HoverDelay { get; set; }
-        Int32 DisplayDelay { get; set; }
-        Boolean ShowDetails { get; set; }
-        Boolean AutoFilterList { get; set; }
-        Boolean EnableAutoHide { get; set; }
-        Boolean WrapList { get; set; }
-        Boolean DisableSmartMatch { get; set; }
-        Boolean SaveUnicodeWithBOM { get; set; }
-        Boolean KeepCaretCentered { get; set; }
-        Boolean EndAtLastLine { get; set; }
-        String InsertionTriggers { get; set; }
-        Int32 ClipboardHistorySize { get; set; }
+        int HoverDelay { get; set; }
+        int DisplayDelay { get; set; }
+        bool ShowDetails { get; set; }
+        bool AutoFilterList { get; set; }
+        bool EnableAutoHide { get; set; }
+        bool WrapList { get; set; }
+        bool DisableSmartMatch { get; set; }
+        bool SaveUnicodeWithBOM { get; set; }
+        bool KeepCaretCentered { get; set; }
+        bool EndAtLastLine { get; set; }
+        string InsertionTriggers { get; set; }
+        int ClipboardHistorySize { get; set; }
 
         #endregion
     }
@@ -583,8 +584,8 @@ namespace PluginCore
     {
         #region ISession Properties
 
-        Int32 Index { get; set; }
-        List<String> Files { get; set; }
+        int Index { get; set; }
+        List<string> Files { get; set; }
         SessionType Type { get; set; }
 
         #endregion

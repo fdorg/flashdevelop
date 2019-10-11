@@ -11,7 +11,7 @@ namespace SourceControl.Managers
 {
     public class VCManager
     {
-        Timer refreshTimer;
+        readonly Timer refreshTimer;
         OverlayManager ovManager;
 
         public VCManager(OverlayManager ovManager)
@@ -24,7 +24,7 @@ namespace SourceControl.Managers
 
             refreshTimer = new Timer();
             refreshTimer.Interval = 100;
-            refreshTimer.Tick += new EventHandler(RefreshTimer_Tick);
+            refreshTimer.Tick += RefreshTimer_Tick;
             refreshTimer.Stop();
         }
 
@@ -42,11 +42,11 @@ namespace SourceControl.Managers
 
         void Manager_OnChange(IVCManager sender)
         {
-            (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
+            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker)(() =>
             {
                 refreshTimer.Stop();
                 refreshTimer.Start();
-            });
+            }));
         }
 
         void RefreshTimer_Tick(object sender, EventArgs e)

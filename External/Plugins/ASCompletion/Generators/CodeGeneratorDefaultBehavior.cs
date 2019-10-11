@@ -47,7 +47,7 @@ namespace ASCompletion.Generators
                    && expr.IsNull() && expr.Context.ContextFunction == null && expr.Context.ContextMember == null;
         }
 
-        protected virtual void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
+        protected virtual void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
         }
 

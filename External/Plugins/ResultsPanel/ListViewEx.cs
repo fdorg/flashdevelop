@@ -2,7 +2,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 namespace ResultsPanel
 {
@@ -11,17 +10,9 @@ namespace ResultsPanel
         private int upArrowIndex;
         private int downArrowIndex;
 
-        internal ColumnHeader SortedColumn
-        {
-            get;
-            private set;
-        }
+        internal ColumnHeader SortedColumn { get; private set; }
 
-        internal SortOrder SortOrder
-        {
-            get;
-            private set;
-        }
+        internal SortOrder SortOrder { get; private set; }
 
         internal ListViewEx()
         {
@@ -104,17 +95,12 @@ namespace ResultsPanel
                 base.OnDrawColumnHeader(sender, e);
                 if (isSorted)
                 {
-                    Image arrow = null;
-                    switch (SortOrder)
+                    var arrow = SortOrder switch
                     {
-                        case SortOrder.Ascending:
-                            arrow = this.SmallImageList.Images[upArrowIndex];
-                            break;
-                        case SortOrder.Descending:
-                            arrow = this.SmallImageList.Images[downArrowIndex];
-                            break;
-                    }
-
+                        SortOrder.Ascending => SmallImageList.Images[upArrowIndex],
+                        SortOrder.Descending => SmallImageList.Images[downArrowIndex],
+                        _ => null,
+                    };
                     int x = e.Bounds.Location.X + (e.Bounds.Width - 16) / 2;
                     e.Graphics.DrawImage(arrow, x, e.Bounds.Y - 5);
                 }
@@ -153,47 +139,13 @@ namespace ResultsPanel
                 SortedColumn.ImageIndex = -1;
             }
 
-            switch (order)
+            column.ImageIndex = order switch
             {
-                case SortOrder.None:
-                    column.ImageIndex = -1;
-                    break;
-                case SortOrder.Ascending:
-                    column.ImageIndex = upArrowIndex;
-                    break;
-                case SortOrder.Descending:
-                    column.ImageIndex = downArrowIndex;
-                    break;
-            }
-        }
-
-        private void DrawArrow(IDeviceContext device, Rectangle bounds, SortOrder order = System.Windows.Forms.SortOrder.None)
-        {
-            if (order == SortOrder.None)
-            {
-                order = SortOrder;
-            }
-
-            VisualStyleElement arrow = null;
-            switch (order)
-            {
-                case SortOrder.Ascending:
-                    arrow = VisualStyleElement.Header.SortArrow.SortedUp;
-                    break;
-                case SortOrder.Descending:
-                    arrow = VisualStyleElement.Header.SortArrow.SortedDown;
-                    break;
-            }
-
-            var arrowRenderer = new VisualStyleRenderer(arrow);
-            arrowRenderer.DrawBackground(device, new Rectangle(bounds.Location, bounds.Size));
-        }
-
-        private void DrawColumnText(IDeviceContext device, Rectangle bounds, String text, Font font, Color foreColor)
-        {
-            int textHeight = TextRenderer.MeasureText("HeightTest", font).Height + 1;
-            Rectangle textRect = new Rectangle(bounds.X + 3, bounds.Y + (bounds.Height / 2) - (textHeight / 2), bounds.Width, bounds.Height);
-            TextRenderer.DrawText(device, text, font, textRect.Location, foreColor);
+                SortOrder.None => -1,
+                SortOrder.Ascending => upArrowIndex,
+                SortOrder.Descending => downArrowIndex,
+                _ => column.ImageIndex,
+            };
         }
     }
 }

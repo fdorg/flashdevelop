@@ -7,6 +7,6 @@ public class Main {
 
 class Foo {
 	public function new(float:Float, int:Int, float1:Float, int1:Int) {
-		;
+		
 	}
 }

@@ -6022,6 +6022,10 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>The number of recent files to remember in the recent files drop-down.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>El número máximo de líneas se puede generar a la vez.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
     <comment>Added after 5.2.0</comment>
@@ -6298,6 +6302,14 @@ AND - All conditions are met.</value>
   </data>
   <data name="ASClassWizard.Wizard.Error.LowercaseInterfaceName" xml:space="preserve">
     <value>Interface name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Label.ConvertStaticMethodCallToStaticExtensionCall" xml:space="preserve">
+    <value>To static extension call</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsCaseSensitive" xml:space="preserve">
+    <value>Match case</value>
     <comment>Added after 5.3.3</comment>
   </data>
 </root>

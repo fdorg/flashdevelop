@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ASCompletion;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using NSubstitute;
@@ -9,10 +10,10 @@ using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
-    using GeneratorJobType = HaXeContext.Generators.GeneratorJob;
+    using GeneratorJobType = GeneratorJob;
 
     [TestFixture]
-    public class CodeGeneratorTests2 : ASGeneratorTests.GenerateJob
+    public class CodeGeneratorTests2 : ASCompletionTests
     {
         [TestFixtureSetUp]
         public void Setup()
@@ -238,13 +239,13 @@ namespace HaXeContext.Generators
         static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, CodeGeneratorTests.ReadAllText(fileName));
-            CodeGeneratorTests.SetCurrentFile(fileName);
+            CodeGeneratorTests.SetCurrentFileName(fileName);
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                var item = options.Find(it => it is GeneratorItem && ((GeneratorItem) it).Job == (ASCompletion.Completion.GeneratorJobType) job);
+                var item = options.Find(it => it is GeneratorItem generatorItem && generatorItem.Job == (ASCompletion.Completion.GeneratorJobType) job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
                 return sci.Text;

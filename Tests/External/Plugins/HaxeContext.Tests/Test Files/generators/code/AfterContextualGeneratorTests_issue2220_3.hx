@@ -4,7 +4,7 @@ class EFoo {
 		get()
 	}
 	
-	public function get() {
+	public function get():Void {
 		
 	}
 }

@@ -16,13 +16,13 @@ namespace PluginCore.Controls
         public delegate void LineEventHandler(ScintillaControl sender, int line);
 
         #region Singleton Instance
-        static private UITools manager;
+        private static UITools manager;
 
-        static public UITools Manager
+        public static UITools Manager
         {
             get
             {
-                if (manager == null)
+                if (manager is null)
                 {
                     manager = new UITools();
                 }
@@ -30,29 +30,17 @@ namespace PluginCore.Controls
             }
         }
 
-        static public CodeTip CodeTip
-        {
-            get { return manager.codeTip; }
-        }
+        public static CodeTip CodeTip => manager.codeTip;
 
-        static public RichToolTip Tip
-        {
-            get { return manager.simpleTip; }
-        }
+        public static RichToolTip Tip => manager.simpleTip;
 
-        static public RichToolTip ErrorTip
-        {
-            get { return manager.errorTip; }
-        }
+        public static RichToolTip ErrorTip => manager.errorTip;
 
-        static public MethodCallTip CallTip
-        {
-            get { return manager.callTip; }
-        }
+        public static MethodCallTip CallTip => manager.callTip;
 
-        static public void Init()
+        public static void Init()
         {
-            if (manager == null)
+            if (manager is null)
             {
                 manager = new UITools();
             }
@@ -78,20 +66,20 @@ namespace PluginCore.Controls
         /// </remarks>
         public bool ShowDetails
         {
-            get { return showDetails; }
-            set { showDetails = value; }
+            get => showDetails;
+            set => showDetails = value;
         }
 
-        private EventType eventMask = 
+        private readonly EventType eventMask = 
             EventType.Keys | 
             EventType.FileSave | 
             EventType.Command | 
             EventType.FileSwitch;
 
-        private CodeTip codeTip;
-        private RichToolTip simpleTip;
-        private MethodCallTip callTip;
-        private RichToolTip errorTip;
+        private readonly CodeTip codeTip;
+        private readonly RichToolTip simpleTip;
+        private readonly MethodCallTip callTip;
+        private readonly RichToolTip errorTip;
 
         private bool ignoreKeys;
         private bool showDetails;
@@ -199,7 +187,7 @@ namespace PluginCore.Controls
 
         private void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
         {
-            if (OnMouseHover == null || sci == null || DisableEvents) return;
+            if (OnMouseHover is null || sci is null || DisableEvents) return;
             try
             {
                 // check mouse over the editor
@@ -271,14 +259,17 @@ namespace PluginCore.Controls
                 {
                     if (Win32.ShouldUseWin32())
                     {
-                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (Int32)m.WParam, (Int32)m.LParam);
+                        Win32.SendMessage(CompletionList.GetHandle(), m.Msg, (int)m.WParam, (int)m.LParam);
                         return true;
                     }
-                    else return false;
+
+                    return false;
                 }
-                else return false;
+
+                return false;
             }
-            else if (m.Msg == Win32.WM_KEYDOWN)
+
+            if (m.Msg == Win32.WM_KEYDOWN)
             {
                 if ((int)m.WParam == 17) // Ctrl
                 {
@@ -309,8 +300,7 @@ namespace PluginCore.Controls
 
         public void UnlockControl()
         {
-            if (CompletionList.Active || CallTip.CallTipActive)
-                return;
+            if (CompletionList.Active || CallTip.CallTipActive) return;
             Application.RemoveMessageFilter(this);
             if (lockedSciControl != null && lockedSciControl.IsAlive)
             {
@@ -322,10 +312,10 @@ namespace PluginCore.Controls
 
         private void OnUIRefresh(ScintillaControl sci)
         {
-            Form mainForm = PluginBase.MainForm as Form;
+            var mainForm = (Form) PluginBase.MainForm;
             if (mainForm.InvokeRequired)
             {
-                mainForm.BeginInvoke((MethodInvoker)delegate { this.OnUIRefresh(sci); });
+                mainForm.BeginInvoke((MethodInvoker)delegate { OnUIRefresh(sci); });
                 return;
             }
             if (sci != null && sci.IsFocus)
@@ -343,18 +333,17 @@ namespace PluginCore.Controls
         
         private void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
         {
-            if (OnTextChanged != null && !DisableEvents) 
-                OnTextChanged(sci, position, length, linesAdded);
+            if (!DisableEvents) OnTextChanged?.Invoke(sci, position, length, linesAdded);
         }
+
         private void OnTextDeleted(ScintillaControl sci, int position, int length, int linesAdded)
         {
-            if (OnTextChanged != null && !DisableEvents) 
-                OnTextChanged(sci, position, -length, linesAdded);
+            if (!DisableEvents) OnTextChanged?.Invoke(sci, position, -length, linesAdded);
         }
 
         private void OnChar(ScintillaControl sci, int value)
         {
-            if (sci == null || DisableEvents) return;
+            if (sci is null || DisableEvents) return;
             if (!CompletionList.Active && !callTip.CallTipActive)
             {
                 SendChar(sci, value);
@@ -373,14 +362,10 @@ namespace PluginCore.Controls
             if (callTip.CallTipActive) callTip.OnChar(sci, value);
             if (CompletionList.Active) CompletionList.OnChar(sci, value);
             else SendChar(sci, value);
-            return;
         }
 
-        public void SendChar(ScintillaControl sci, int value)
-        {
-            if (OnCharAdded != null) OnCharAdded(sci, value);   
-        }
-        
+        public void SendChar(ScintillaControl sci, int value) => OnCharAdded?.Invoke(sci, value);
+
         private bool HandleKeys(Keys key)
         {
             // UITools is currently broadcasting a shortcut, ignore!
@@ -422,7 +407,7 @@ namespace PluginCore.Controls
             if (!CompletionList.Active && !callTip.CallTipActive) return false;
             
             // hide if pressing Esc or Ctrl+Key combination
-            if (lockedSciControl == null || !lockedSciControl.IsAlive || key == Keys.Escape
+            if (lockedSciControl is null || !lockedSciControl.IsAlive || key == Keys.Escape
                 || ((Control.ModifierKeys & Keys.Control) != 0 && Control.ModifierKeys != (Keys.Control|Keys.Alt)) )
             {
                 if (key == (Keys.Control | Keys.C) || key == (Keys.Control | Keys.A))
@@ -451,13 +436,13 @@ namespace PluginCore.Controls
             }
             
             // switches
-            else if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
+            if ((key & Keys.ShiftKey) == Keys.ShiftKey || (key & Keys.ControlKey) == Keys.ControlKey || (key & Keys.Menu) == Keys.Menu)
             {
                 return false;
             }
 
             // handle special keys
-            bool handled = false;
+            var handled = false;
             if (callTip.CallTipActive) handled |= callTip.HandleKeys(sci, key);
             if (CompletionList.Active) handled |= CompletionList.HandleKeys(sci, key);
             return handled;
@@ -469,11 +454,11 @@ namespace PluginCore.Controls
         /// </summary>
         public int LineHeight(ScintillaControl sci)
         {
-            if (sci == null) return 0;
+            if (sci is null) return 0;
             // evaluate the font size
-            Font tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
-            Graphics g = sci.CreateGraphics();
-            SizeF textSize = g.MeasureString("S", tempFont);
+            var tempFont = new Font(sci.Font.Name, sci.Font.Size+sci.ZoomLevel);
+            var g = sci.CreateGraphics();
+            var textSize = g.MeasureString("S", tempFont);
             return (int)Math.Ceiling(textSize.Height);
         }
 

@@ -7,6 +7,6 @@ public class Main {
 
 class Foo {
 	public function new() {
-		;
+		
 	}
 }

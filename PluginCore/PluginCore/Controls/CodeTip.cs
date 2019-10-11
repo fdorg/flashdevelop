@@ -10,8 +10,8 @@ namespace PluginCore.Controls
 {
     public class CodeTip
     {
-        ScintillaControl editor;
-        Panel codeTip;
+        readonly ScintillaControl editor;
+        readonly Panel codeTip;
         int columnWidth;
         int rowHeight;
 
@@ -59,7 +59,7 @@ namespace PluginCore.Controls
             editor.SetProperty("lexer.cpp.track.preprocessor", "0");
 
             Language language = GetLanguage(editor.ConfigurationLanguage);
-            if (language == null)
+            if (language is null)
                 return;
 
             UseStyle defaultStyle = null;
@@ -72,7 +72,7 @@ namespace PluginCore.Controls
                 }
             }
 
-            if (defaultStyle == null)
+            if (defaultStyle is null)
                 return;
 
             codeTip.BackColor = DataConverter.BGRToColor(defaultStyle.BackgroundColor);
@@ -151,7 +151,7 @@ namespace PluginCore.Controls
 
         Language GetLanguage(string name)
         {
-            if (PluginBase.MainForm == null || PluginBase.MainForm.SciConfig == null)
+            if (PluginBase.MainForm is null || PluginBase.MainForm.SciConfig is null)
                 return null;
 
             Language language = PluginBase.MainForm.SciConfig.GetLanguage(name);

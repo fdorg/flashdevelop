@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -28,7 +28,6 @@ namespace ProjectManager.Projects
             string[] a = baseDirectory.Split(slash);
             string[] b = path.Split(slash);
 
-            ArrayList relPath = new ArrayList();
             int i = 0;
 
             // skip equal parts
@@ -39,10 +38,10 @@ namespace ProjectManager.Projects
             }
 
             // only common drive letter, consider not relative
-            if (i <= 1)
-                return path; 
+            if (i <= 1) return path;
 
             // at this point, i is the index of the first diverging element of the two paths
+            var relPath = new List<string>();
             int backtracks = a.Length - i;
             for (int j = 0; j < backtracks; j++)
                 relPath.Add("..");
@@ -50,7 +49,7 @@ namespace ProjectManager.Projects
             for (int j = i; j < b.Length; j++)
                 relPath.Add(b[j]);
 
-            string relativePath = string.Join(slash.ToString(), relPath.ToArray(typeof(string)) as string[]);
+            string relativePath = string.Join(slash.ToString(), relPath.ToArray());
             string special = (relativePath.Length > 0) ? relativePath : "."; // special case
 
             if (special.StartsWith("..", StringComparison.Ordinal) && special.Contains(":")) // invalid relative path...
@@ -77,9 +76,6 @@ namespace ProjectManager.Projects
             }
         }
 
-        public static string DefaultProjectsDirectory 
-        {
-            get { return Environment.GetFolderPath(Environment.SpecialFolder.Personal); }
-        }
+        public static string DefaultProjectsDirectory => Environment.GetFolderPath(Environment.SpecialFolder.Personal);
     }
 }

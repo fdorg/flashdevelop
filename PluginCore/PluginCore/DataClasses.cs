@@ -13,15 +13,15 @@ namespace PluginCore
     /// </summary>
     public class ItemData
     {
-        public String Id = String.Empty;
-        public String Tag = String.Empty;
-        public String Flags = String.Empty;
+        public string Id = string.Empty;
+        public string Tag = string.Empty;
+        public string Flags = string.Empty;
 
-        public ItemData(String id, String tag, String flags)
+        public ItemData(string id, string tag, string flags)
         {
-            if (id != null) this.Id = id;
-            if (tag != null) this.Tag = tag;
-            if (flags != null) this.Flags = flags;
+            if (id != null) Id = id;
+            if (tag != null) Tag = tag;
+            if (flags != null) Flags = flags;
         }
 
     }
@@ -32,11 +32,11 @@ namespace PluginCore
     [Serializable]
     public class Argument
     {
-        private String key = String.Empty;
-        private String value = String.Empty;
+        private string key = string.Empty;
+        private string value = string.Empty;
 
         public Argument() { }
-        public Argument(String key, String value)
+        public Argument(string key, string value)
         {
             this.key = key;
             this.value = value;
@@ -45,24 +45,24 @@ namespace PluginCore
         /// <summary>
         /// Gets and sets the key
         /// </summary> 
-        public String Key
+        public string Key
         {
-            get { return this.key; }
-            set { this.key = value; }
+            get => key;
+            set => key = value;
         }
 
         /// <summary>
         /// Gets and sets the value
         /// </summary> 
-        public String Value
+        public string Value
         {
-            get { return this.value; }
-            set { this.value = value; }
+            get => value;
+            set => this.value = value;
         }
 
         public override string ToString()
         {
-            return String.IsNullOrEmpty(this.key) ? "New argument" : "$(" + this.key + ")";
+            return string.IsNullOrEmpty(key) ? "New argument" : "$(" + key + ")";
         }
     }
 
@@ -89,12 +89,12 @@ namespace PluginCore
     [Serializable]
     public class InstalledSDK
     {
-        static public readonly InstalledSDK INVALID_SDK = new InstalledSDK(null);
+        public static readonly InstalledSDK INVALID_SDK = new InstalledSDK(null);
 
-        private String path;
-        private String name;
-        private String version;
-        private String classPath;
+        private string path;
+        private string name;
+        private string version;
+        private string classPath;
         private bool isValid;
 
         [field: NonSerialized]
@@ -102,28 +102,28 @@ namespace PluginCore
 
         [Category("Location")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String Path
+        public string Path
         {
-            get { return this.path; }
+            get => path;
             set
             {
-                this.path = value;
+                path = value;
                 Validate();
             }
         }
 
         [Category("Properties")]
-        public String Name
+        public string Name
         {
-            get { return this.name; }
-            set { this.name = value; }
+            get => name;
+            set => name = value;
         }
 
         [Category("Properties")]
-        public String Version
+        public string Version
         {
-            get { return this.version; }
-            set { this.version = value; }
+            get => version;
+            set => version = value;
         }
 
         [Browsable(false)]
@@ -144,51 +144,40 @@ namespace PluginCore
         }
 
         [Browsable(false)]
-        public bool IsHaxeShim
-        {
-            get { return this.classPath != null; }
-        }
+        public bool IsHaxeShim => classPath != null;
 
         [Browsable(false)]
         public string ClassPath
         {
-            get { return this.classPath; }
-            set { this.classPath = value; }
+            get => classPath;
+            set => classPath = value;
         }
 
         [Browsable(false)]
         public InstalledSDKOwner Owner
         {
-            get { return owner; }
-            set { owner = value; }
+            get => owner;
+            set => owner = value;
         }
 
         public InstalledSDK(InstalledSDKOwner owner) { this.owner = owner; }
-        public InstalledSDK() { this.owner = InstalledSDKContext.Current; }
+        public InstalledSDK() { owner = InstalledSDKContext.Current; }
 
-        public int Compare(InstalledSDK sdk)
-        {
-            return 0;
-        }
+        public int Compare(InstalledSDK sdk) => 0;
 
-        public override string ToString()
-        {
-            return String.IsNullOrEmpty(this.name) ? "New SDK" : this.name;
-        }
+        public override string ToString() => string.IsNullOrEmpty(name) ? "New SDK" : name;
 
         public string ToPreferredSDK()
         {
-            if (!String.IsNullOrEmpty(this.version))
-                return (this.name ?? "") + ";" + version + ";";
-            else
-                return (this.name ?? "") + ";" + (this.version ?? "") + ";" + (this.path ?? "");
+            if (!string.IsNullOrEmpty(version)) return $"{name ?? string.Empty};{version};";
+            return $"{name ?? string.Empty};{version ?? string.Empty};{path ?? string.Empty}";
         }
 
         public void Validate()
         {
             if (owner != null)
             {
-                InstalledSDKOwner o = owner;
+                var o = owner;
                 owner = null;
                 isValid = o.ValidateSDK(this);
                 owner = o;
@@ -209,7 +198,7 @@ namespace PluginCore
     /// </summary>
     public class InstalledSDKContext: IDisposable
     {
-        static public InstalledSDKOwner Current;
+        public static InstalledSDKOwner Current;
 
         public InstalledSDKOwner owner;
 

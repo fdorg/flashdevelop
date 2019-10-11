@@ -13,8 +13,8 @@ namespace ProjectManager.Projects
             {
                 string hiddenPath = List[i] as string;
 
-                if (hiddenPath.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
-                    hiddenPath == path)
+                if (hiddenPath.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                    || hiddenPath == path)
                 {
                     List.RemoveAt(i--); // search this index again
                 }
@@ -29,8 +29,8 @@ namespace ProjectManager.Projects
             {
                 string hiddenPath = List[i] as string;
 
-                if (hiddenPath == path ||
-                    path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+                if (hiddenPath == path
+                    || path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
                 {
                     List.RemoveAt(i--); // search this index again
                 }
@@ -40,8 +40,7 @@ namespace ProjectManager.Projects
         public bool IsHidden(string path)
         {
             foreach (string hiddenPath in List)
-                if (hiddenPath == path ||
-                    path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+                if (hiddenPath == path || path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
                     return true;
             return false;
         }
@@ -57,15 +56,14 @@ namespace ProjectManager.Projects
             return false;
         }
 
-        public String[] ToArray()
+        public string[] ToArray()
         {
-            String[] hiddenPaths = new String[List.Count];
-            for (Int32 i = 0; i < List.Count; i++)
+            string[] hiddenPaths = new string[List.Count];
+            for (int i = 0; i < List.Count; i++)
             {
                 hiddenPaths.SetValue(List[i], i);
             }
             return hiddenPaths;
         }
-
     }
 }

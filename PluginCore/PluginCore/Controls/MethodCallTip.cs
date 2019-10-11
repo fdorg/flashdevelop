@@ -43,15 +43,9 @@ namespace PluginCore.Controls
             }
         }
 
-        public bool CallTipActive
-        {
-            get { return isActive; }
-        }
+        public bool CallTipActive => isActive;
 
-        public bool Focused
-        {
-            get { return toolTipRTB.Focused; }
-        }
+        public bool Focused => toolTipRTB.Focused;
 
         public override void Hide()
         {
@@ -67,17 +61,13 @@ namespace PluginCore.Controls
             base.Hide();
         }
 
-        public bool CheckPosition(int position)
-        {
-            return position == currentPos;
-        }
+        public bool CheckPosition(int position) => position == currentPos;
 
         public void CallTipShow(ScintillaControl sci, int position, string text) => CallTipShow(sci, position, text, true);
 
         public void CallTipShow(ScintillaControl sci, int position, string text, bool redraw)
         {
-            if (toolTip.Visible && position == memberPos && text == currentText)
-                return;
+            if (toolTip.Visible && position == memberPos && text == currentText) return;
 
             toolTip.Visible = false;
             currentText = text;
@@ -153,10 +143,7 @@ namespace PluginCore.Controls
             UpdateTip(sci);
         }
 
-        public new void UpdateTip(ScintillaControl sci)
-        {
-            if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
-        }
+        public new void UpdateTip(ScintillaControl sci) => OnUpdateCallTip?.Invoke(sci, currentPos);
 
         public bool HandleKeys(ScintillaControl sci, Keys key)
         {
@@ -194,7 +181,10 @@ namespace PluginCore.Controls
                         sci.CharRight();
                         currentPos = sci.CurrentPos;
                         if (sci.CurrentLine != currentLine) Hide();
-                        else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+                        else
+                        {
+                            OnUpdateCallTip?.Invoke(sci, currentPos);
+                        }
                     }
                     return true;
 
@@ -207,7 +197,10 @@ namespace PluginCore.Controls
                         else
                         {
                             if (sci.CurrentLine != currentLine) Hide();
-                            else if (OnUpdateCallTip != null) OnUpdateCallTip(sci, currentPos);
+                            else
+                            {
+                                OnUpdateCallTip?.Invoke(sci, currentPos);
+                            }
                         }
                     }
                     return true;
@@ -216,8 +209,11 @@ namespace PluginCore.Controls
                     currentPos = sci.CurrentPos - 1;
                     if (currentPos + deltaPos <= startPos)
                         Hide();
-                    else if (OnUpdateCallTip != null)
-                        OnUpdateCallTip.Invoke(sci, currentPos);
+                    else
+                    {
+                        OnUpdateCallTip?.Invoke(sci, currentPos);
+                    }
+
                     return false;
 
                 case Keys.Tab:

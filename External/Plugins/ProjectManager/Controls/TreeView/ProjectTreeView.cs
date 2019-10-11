@@ -6,7 +6,9 @@ using System.Windows.Forms;
 using ProjectManager.Projects;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Managers;
 
 namespace ProjectManager.Controls.TreeView
@@ -59,9 +61,9 @@ namespace ProjectManager.Controls.TreeView
             {
                 if (recursive) RefreshNodeColors(node.Nodes, recursive);
 
-                node.BackColor = this.BackColor;
-                node.ForeColor = this.ForeColor;
-                node.ForeColorRequest = this.ForeColor;
+                node.BackColor = BackColor;
+                node.ForeColor = ForeColor;
+                node.ForeColorRequest = ForeColor;
             }
         }
 
@@ -80,8 +82,7 @@ namespace ProjectManager.Controls.TreeView
             var p = node;
             while (p != null && !(p is ProjectNode))
                 p = p.Parent as GenericNode;
-            if (p is ProjectNode) return (p as ProjectNode).ProjectRef;
-            return null;
+            return (p as ProjectNode)?.ProjectRef;
         }
 
         public void Select(string path)
@@ -111,18 +112,13 @@ namespace ProjectManager.Controls.TreeView
 
         // this is called by GenericNode when a selected node is refreshed, so that
         // the context menu can rebuild itself accordingly.
-        public void NotifySelectionChanged()
-        {
-            OnAfterSelect(new TreeViewEventArgs(SelectedNode));
-        }
+        public void NotifySelectionChanged() => OnAfterSelect(new TreeViewEventArgs(SelectedNode));
 
         public static bool IsFileTypeHidden(string path)
         {
             if (Path.GetFileName(path).StartsWithOrdinal("~$")) return true;
-            string ext = Path.GetExtension(path).ToLower();
-            foreach (var exclude in PluginMain.Settings.ExcludedFileTypes)
-                if (ext == exclude) return true;
-            return false;
+            var ext = Path.GetExtension(path).ToLower();
+            return PluginMain.Settings.ExcludedFileTypes.Any(ext.Equals);
         }
 
         public void RefreshNode(GenericNode node)
@@ -132,10 +128,9 @@ namespace ProjectManager.Controls.TreeView
             {
                 node = node.Parent as GenericNode;
             }
-            if (node == null) return;
+            if (node is null) return;
             // if you refresh a SwfFileNode this way (by asking for it), you get
             // special feedback
-
             if (node is SwfFileNode swfNode) swfNode.RefreshWithFeedback(true);
             else node.Refresh(true);
         }
@@ -144,14 +139,14 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void DefWndProc(ref Message m)
         {
-            if (m.Msg == 515 && DoubleClick != null) // WM_LBUTTONDBLCLK - &H203
+            if (m.Msg == 515 && DoubleClick is { } doubleClick) // WM_LBUTTONDBLCLK - &H203
             {
                 // ok, we only want the base treeview to handle double-clicking to expand things
                 // if there's one node selected and it's a folder.
                 if (SelectedNodes.Count == 1 && SelectedNode is DirectoryNode)
                     base.DefWndProc(ref m);
                 else
-                    DoubleClick(this, EventArgs.Empty); // let someone else handle it!
+                    doubleClick(this, EventArgs.Empty); // let someone else handle it!
             }
             else base.DefWndProc(ref m);
         }
@@ -164,7 +159,7 @@ namespace ProjectManager.Controls.TreeView
 
         public Project Project
         {
-            get { return activeProject; }
+            get => activeProject;
             set
             {
                 activeProject = value;
@@ -185,7 +180,7 @@ namespace ProjectManager.Controls.TreeView
 
         public List<Project> Projects
         {
-            get { return projects; }
+            get => projects;
             set
             {
                 projects = value != null ? new List<Project>(value) : new List<Project>();
@@ -223,8 +218,8 @@ namespace ProjectManager.Controls.TreeView
 
         public new GenericNode SelectedNode
         {
-            get { return base.SelectedNode as GenericNode; }
-            set { base.SelectedNode = value; }
+            get => base.SelectedNode as GenericNode;
+            set => base.SelectedNode = value;
         }
 
         public string SelectedPath => SelectedNode?.BackingPath;
@@ -233,10 +228,12 @@ namespace ProjectManager.Controls.TreeView
         {
             get
             {
-                ArrayList paths = new ArrayList();
-                foreach (GenericNode node in SelectedNodes)
+                var selectedNodes = SelectedNodes;
+                if (selectedNodes.IsNullOrEmpty()) return EmptyArray<string>.Instance;
+                var result = new List<string>();
+                foreach (GenericNode node in selectedNodes)
                 {
-                    paths.Add(node.BackingPath);
+                    result.Add(node.BackingPath);
 
                     // if this is a "mapped" file, that is a file that "hides" other related files,
                     // make sure we select the related files also.
@@ -246,14 +243,14 @@ namespace ProjectManager.Controls.TreeView
                             if (mappedNode is FileNode)
                                 paths.Add(mappedNode.BackingPath);*/
                 }
-                return paths.ToArray(typeof(string)) as string[];
+                return result.ToArray();
             }
             set
             {
-                ArrayList nodes = new ArrayList();
-                foreach (string path in value)
-                    if (nodeMap.ContainsKey(path))
-                        nodes.Add(nodeMap[path]);
+                var nodes = new List<TreeNode>();
+                foreach (var path in value)
+                    if (nodeMap.TryGetValue(path, out var node))
+                        nodes.Add(node);
                 SelectedNodes = nodes;
             }
         }
@@ -270,10 +267,10 @@ namespace ProjectManager.Controls.TreeView
             }
             set
             {
-                foreach (string path in value)
+                foreach (var path in value)
                     if (nodeMap.ContainsKey(path))
                     {
-                        GenericNode node = nodeMap[path];
+                        var node = nodeMap[path];
                         if (!(node is SwfFileNode) && !(node is ProjectNode))
                         {
                             node.Expand();
@@ -302,11 +299,11 @@ namespace ProjectManager.Controls.TreeView
         /// </summary>
         public void RebuildTree()
         {
-            Point scrollPos = new Point();
+            var scrollPos = new Point();
             // store old tree state
-            List<string> previouslyExpanded = ExpandedPaths;
+            var previouslyExpanded = ExpandedPaths;
             if (Win32.ShouldUseWin32()) scrollPos = Win32.GetScrollPos(this);
-            string currentPath = SelectedNode?.BackingPath;
+            var currentPath = SelectedNode?.BackingPath;
 
             try
             {
@@ -379,7 +376,7 @@ namespace ProjectManager.Controls.TreeView
             try
             {
                 BeginUpdate();
-                if (paths == null)
+                if (paths is null)
                 {
                     // full recursive refresh
                     foreach (GenericNode node in Nodes)
@@ -445,9 +442,9 @@ namespace ProjectManager.Controls.TreeView
                 base.OnItemDrag(e);
         }
 
-        protected override DataObject BeginDragNodes(ArrayList nodes)
+        protected override DataObject BeginDragNodes(List<TreeNode> nodes)
         {
-            DataObject data = base.BeginDragNodes(nodes);
+            var data = base.BeginDragNodes(nodes);
 
             // we also want to drag files, not just nodes, so that we can drop
             // them on explorer, etc.
@@ -462,44 +459,40 @@ namespace ProjectManager.Controls.TreeView
 
         protected override void OnMoveNode(TreeNode node, TreeNode targetNode)
         {
-            if (MovePath != null && node is GenericNode genericNode)
+            if (node is GenericNode genericNode && MovePath is { } movePath)
             {
-                string fromPath = genericNode.BackingPath;
-                string toPath = ((GenericNode) targetNode).BackingPath;
-
-                MovePath(fromPath, toPath);
+                var fromPath = genericNode.BackingPath;
+                var toPath = ((GenericNode) targetNode).BackingPath;
+                movePath(fromPath, toPath);
             }
         }
 
         protected override void OnCopyNode(TreeNode node, TreeNode targetNode)
         {
-            if (CopyPath != null && node is GenericNode genericNode)
+            if (node is GenericNode genericNode && CopyPath is { } copePath)
             {
-                string fromPath = genericNode.BackingPath;
-                string toPath = ((GenericNode) targetNode).BackingPath;
-
-                CopyPath(fromPath, toPath);
+                var fromPath = genericNode.BackingPath;
+                var toPath = ((GenericNode) targetNode).BackingPath;
+                copePath(fromPath, toPath);
             }
         }
 
         protected override void OnFileDrop(string[] paths, TreeNode targetNode)
         {
-            if (CopyPath != null && targetNode is GenericNode node)
+            if (targetNode is GenericNode node && CopyPath is { } copePath)
             {
-                string toPath = node.BackingPath;
-                foreach (string fromPath in paths)
-                    CopyPath(fromPath, toPath);
+                var toPath = node.BackingPath;
+                foreach (var fromPath in paths)
+                    copePath(fromPath, toPath);
             }
         }
 
         protected override TreeNode ChangeDropTarget(TreeNode targetNode)
         {
             // you can only drop things into folders
-            GenericNode node = targetNode as GenericNode;
-
+            var node = targetNode as GenericNode;
             while (node != null && (!node.IsDropTarget || node.IsInvalid))
                 node = node.Parent as GenericNode;
-
             return node;
         }
 
@@ -507,5 +500,4 @@ namespace ProjectManager.Controls.TreeView
         #endregion
 
     }
-
 }

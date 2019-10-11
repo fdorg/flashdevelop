@@ -10,13 +10,11 @@ namespace LintingHelper.Helpers
         /// </summary>
         public static List<T> GetOrCreate<S, T>(this Dictionary<S, List<T>> dict, S key)
         {
-            List<T> list;
-            if (!dict.TryGetValue(key, out list))
+            if (!dict.TryGetValue(key, out var list))
             {
                 list = new List<T>();
                 dict[key] = list;
             }
-
             return list;
         }
     }

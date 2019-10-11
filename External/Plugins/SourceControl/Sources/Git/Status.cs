@@ -17,7 +17,7 @@ namespace SourceControl.Sources.Git
         StatusNode temp;
         string dirty;
         string updatingPath;
-        Ignores ignores;
+        readonly Ignores ignores;
 
         public Status(string path)
         {
@@ -28,7 +28,7 @@ namespace SourceControl.Sources.Git
         public StatusNode Get(string path)
         {
             StatusNode found = root.FindPath(path);
-            if (found == null)
+            if (found is null)
             {
                 foreach (IgnoreEntry ignore in ignores)
                 {
@@ -57,7 +57,7 @@ namespace SourceControl.Sources.Git
 
         public bool SetPathDirty(string path)
         {
-            if (path == null) return false;
+            if (path is null) return false;
             if (string.IsNullOrEmpty(dirty))
             {
                 dirty = path;
@@ -79,20 +79,20 @@ namespace SourceControl.Sources.Git
             return true;
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
             {
-                String label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
+                string label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
                 TraceManager.AddAsync(label + " (" + exitCode + ")");
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
-        override protected void Runner_Output(object sender, string line)
+        protected override void Runner_Output(object sender, string line)
         {
             int fileIndex = 3;
             if (line.Length < fileIndex) return;
@@ -123,7 +123,7 @@ namespace SourceControl.Sources.Git
 
     class StatusNode
     {
-        static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
+        public static StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
         public bool HasChildren;
         public string Name;
@@ -152,7 +152,7 @@ namespace SourceControl.Sources.Git
             {
                 StatusNode child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }
@@ -195,8 +195,7 @@ namespace SourceControl.Sources.Git
             if (!HasChildren)
             {
                 HasChildren = true;
-                Children = new Dictionary<string, StatusNode>();
-                Children.Add(name, node);
+                Children = new Dictionary<string, StatusNode> {{name, node}};
             }
             else if (Children.ContainsKey(name))
             {

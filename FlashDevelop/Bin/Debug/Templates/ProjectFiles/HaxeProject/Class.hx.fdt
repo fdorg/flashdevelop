@@ -4,7 +4,7 @@ package $(Package);
 $(CBI)* ...
 $(CBI)* @author $(DefaultUser)
 $(CBI)*/
-class $(FileName) $(CSLB){
+class $(FileName)$(Template) $(CSLB){
 
 	public function new() $(CSLB){
 		$(EntryPoint)

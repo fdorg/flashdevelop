@@ -7,6 +7,7 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using NSubstitute;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;
@@ -68,7 +69,7 @@ namespace ASCompletion.TestUtils
             mock.GetCodeModel((FileModel)null).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as FileModel;
-                return src == null ? null : context.GetCodeModel(src);
+                return src is null ? null : context.GetCodeModel(src);
             });
             mock.GetCodeModel(Arg.Any<string>(), Arg.Any<bool>()).ReturnsForAnyArgs(x =>
             {
@@ -88,7 +89,7 @@ namespace ASCompletion.TestUtils
             mock.GetFileModel(null).ReturnsForAnyArgs(it =>
             {
                 var fileName = it[0] as string;
-                return fileName == null ? null : context.GetFileModel(fileName);
+                return fileName is null ? null : context.GetFileModel(fileName);
             });
             mock.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
             {
@@ -101,7 +102,7 @@ namespace ASCompletion.TestUtils
             mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>
             {
                 var expr = it.ArgAt<ASExpr>(1);
-                return expr == null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
+                return expr is null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
             });
             mock.When(it => it.ResolveDotContext(Arg.Any<ScintillaControl>(), Arg.Any<ASResult>(), Arg.Any<MemberList>()))
                 .Do(it => context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), it.ArgAt<ASResult>(1), it.ArgAt<MemberList>(2)));
@@ -110,11 +111,11 @@ namespace ASCompletion.TestUtils
             {
                 var inClass = it.ArgAt<ClassModel>(0);
                 var withClass = it.ArgAt<ClassModel>(1);
-                return inClass == null || withClass == null ? Visibility.Default : context.TypesAffinity(inClass, withClass);
+                return inClass is null || withClass is null ? Visibility.Default : context.TypesAffinity(inClass, withClass);
             });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
-            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? new string[0]));
+            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? EmptyArray<string>.Instance));
             mock.Classpath.Returns(context.Classpath);
             mock.CreateFileModel(null).ReturnsForAnyArgs(it => context.CreateFileModel(it.ArgAt<string>(0)));
             var allProjectClasses = context.GetAllProjectClasses();

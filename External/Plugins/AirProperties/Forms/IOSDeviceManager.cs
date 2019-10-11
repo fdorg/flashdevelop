@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AirProperties.Controls;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace AirProperties.Forms
@@ -14,15 +15,15 @@ namespace AirProperties.Forms
         private readonly DeviceClassification[] iOSDevices;
 
         private string _selectedDevices;
-        public string SelectedDevices { get { return _selectedDevices; } }
+        public string SelectedDevices => _selectedDevices;
 
         public IOSDeviceManager(string[] selectedDevices)
         {
             InitializeComponent();
 
-            this.OKButton.Text = TextHelper.GetString("Label.Ok");
-            this.CancelButton1.Text = TextHelper.GetString("Label.Cancel");
-            this.Text = TextHelper.GetString("Title.SelectIOSDevices");
+            OKButton.Text = TextHelper.GetString("Label.Ok");
+            CancelButton1.Text = TextHelper.GetString("Label.Cancel");
+            Text = TextHelper.GetString("Title.SelectIOSDevices");
 
             var iPadDevices = new DeviceClassification("iPad", "iPad", new[]
                 {
@@ -109,7 +110,7 @@ namespace AirProperties.Forms
                 // We could make SelectedNodes a read/write property, and find the nodes by key after in the setter, but it just came out this way
                 if (selected != null && selected.Contains(device.HardwareId)) selectedNodes.Add(newNode);
 
-                if (device.SubClassifications != null && device.SubClassifications.Length > 0)
+                if (!device.SubClassifications.IsNullOrEmpty())
                     FillTree(device.SubClassifications, selected, newNode);
             }
 
@@ -141,9 +142,9 @@ namespace AirProperties.Forms
 
         public class DeviceClassification
         {
-            public String Name { get; set; }
+            public string Name { get; set; }
 
-            public String HardwareId { get; set; }
+            public string HardwareId { get; set; }
 
             public DeviceClassification[] SubClassifications { get; set; }
 

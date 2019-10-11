@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,21 +6,21 @@ namespace PluginCore.Controls
     public class WinFormUtils
     {
 
-        private static RichTextBox _tempRTB = new RichTextBox();
+        private static readonly RichTextBox _tempRTB = new RichTextBox();
 
         public static Size MeasureRichTextBox(RichTextBox richTextBox)
         {
             return MeasureRichTextBox(richTextBox, true, richTextBox.Width, richTextBox.Height, richTextBox.WordWrap);
         }
-        public static Size MeasureRichTextBox(RichTextBox richTextBox, Boolean useSelfForTest, int width, int height, Boolean wordWrap)
+        public static Size MeasureRichTextBox(RichTextBox richTextBox, bool useSelfForTest, int width, int height, bool wordWrap)
         {
             Size outSize = new Size();
 
-            if (richTextBox == null)
+            if (richTextBox is null)
                 return outSize;
 
-            String rtf = richTextBox.Rtf;
-            if (rtf == null)
+            string rtf = richTextBox.Rtf;
+            if (rtf is null)
                 return outSize;
 
             int lastIdx = rtf.LastIndexOf('}');
@@ -44,7 +43,7 @@ namespace PluginCore.Controls
 
             lastIdx = -1;
             int maxW = rtb.GetPositionFromCharIndex(rtb.TextLength).X;
-            int currW = 0;
+            int currW;
             while (true)
             {
                 lastIdx = rtb.Text.IndexOf('\n', lastIdx + 1);
@@ -78,7 +77,7 @@ namespace PluginCore.Controls
                         currLineChars = 0;
 
                         if (--firstLineCount <= 0)
-                            maxDelta = 0.5f * (float)firstLineChars;
+                            maxDelta = 0.5f * firstLineChars;
                     }
                     prevW = currW;
 
@@ -89,7 +88,7 @@ namespace PluginCore.Controls
                         continue;
                     }
 
-                    var delta = lerp(maxDelta, -0.1f * maxDelta, ((float)currW) / ((float)width));
+                    var delta = lerp(maxDelta, -0.1f * maxDelta, currW / ((float)width));
 
                     if (delta < 1.0f)
                         delta = 1.0f;

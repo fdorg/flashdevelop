@@ -11,7 +11,7 @@ class Main {
 }
 
 class Foo {
-	public function foo(f:Timer->Vector<Int>) {
+	public function foo(f:Timer->Vector<Int>):Void {
 		
 	}
 }

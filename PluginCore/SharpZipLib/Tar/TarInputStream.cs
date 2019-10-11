@@ -77,62 +77,41 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return tarBuffer.IsStreamOwner; }
-            set { tarBuffer.IsStreamOwner = value; }
+            get => tarBuffer.IsStreamOwner;
+            set => tarBuffer.IsStreamOwner = value;
         }
 
         #region Stream Overrides
         /// <summary>
         /// Gets a value indicating whether the current stream supports reading
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return inputStream.CanRead;
-            }
-        }
-        
+        public override bool CanRead => inputStream.CanRead;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports seeking
         /// This property always returns false.
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanSeek => false;
+
         /// <summary>
         /// Gets a value indicating if the stream supports writing.
         /// This property always returns false.
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanWrite => false;
+
         /// <summary>
         /// The length in bytes of the stream
         /// </summary>
-        public override long Length {
-            get {
-                return inputStream.Length;
-            }
-        }
-        
+        public override long Length => inputStream.Length;
+
         /// <summary>
         /// Gets or sets the position within the stream. 
         /// Setting the Position is not supported and throws a NotSupportedExceptionNotSupportedException
         /// </summary>
         /// <exception cref="NotSupportedException">Any attempt to set position</exception>
         public override long Position {
-            get {
-                return inputStream.Position;
-            }
-            set {
-                throw new NotSupportedException("TarInputStream Seek not supported");
-            }
+            get => inputStream.Position;
+            set => throw new NotSupportedException("TarInputStream Seek not supported");
         }
         
         /// <summary>
@@ -225,9 +204,9 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) 
+            if ( buffer is null ) 
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             int totalRead = 0;
@@ -270,7 +249,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             while (numToRead > 0) 
             {
                 byte[] rec = tarBuffer.ReadBlock();
-                if (rec == null) 
+                if (rec is null) 
                 {
                     // Unexpected EOF!
                     throw new TarException("unexpected EOF with " + numToRead + " bytes unread");
@@ -324,10 +303,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <summary>
         /// Get the record size being used by this stream's TarBuffer.
         /// </summary>
-        public int RecordSize
-        {
-            get { return tarBuffer.RecordSize; }
-        }
+        public int RecordSize => tarBuffer.RecordSize;
 
         /// <summary>
         /// Get the record size being used by this stream's TarBuffer.
@@ -351,12 +327,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>
         /// The number of available bytes for the current entry.
         /// </returns>
-        public long Available {
-            get {
-                return entrySize - entryOffset;
-            }
-        }
-        
+        public long Available => entrySize - entryOffset;
+
         /// <summary>
         /// Skip bytes in the input buffer. This skips bytes in the
         /// current entry's data, not the entire archive, and will
@@ -390,12 +362,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// Return a value of true if marking is supported; false otherwise.
         /// </summary>
         /// <remarks>Currently marking is not supported, the return value is always false.</remarks>
-        public bool IsMarkSupported {
-            get {
-                return false;
-            }
-        }
-        
+        public bool IsMarkSupported => false;
+
         /// <summary>
         /// Since we do not support marking just yet, we do nothing.
         /// </summary>
@@ -438,7 +406,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             
             byte[] headerBuf = tarBuffer.ReadBlock();
             
-            if (headerBuf == null) {
+            if (headerBuf is null) {
                 hasHitEOF = true;
             } else if (TarBuffer.IsEndOfArchiveBlock(headerBuf)) {
                 hasHitEOF = true;
@@ -473,7 +441,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                                 throw new InvalidHeaderException("Failed to read long name entry");
                             }
                             
-                            longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead).ToString());
+                            longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead));
                             numToRead -= numRead;
                         }
                         
@@ -499,7 +467,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                         headerBuf = tarBuffer.ReadBlock();
                     }
                     
-                    if (entryFactory == null) {
+                    if (entryFactory is null) {
                         currentEntry = new TarEntry(headerBuf);
                         if (longName != null) {
                             currentEntry.Name = longName.ToString();
@@ -519,8 +487,8 @@ namespace ICSharpCode.SharpZipLib.Tar
                     entrySize = 0;
                     entryOffset = 0;
                     currentEntry = null;
-                    string errorText = string.Format("Bad header in record {0} block {1} {2}",
-                        tarBuffer.CurrentRecord, tarBuffer.CurrentBlock, ex.Message);
+                    string errorText =
+                        $"Bad header in record {tarBuffer.CurrentRecord} block {tarBuffer.CurrentBlock} {ex.Message}";
                     throw new InvalidHeaderException(errorText);
                 }
             }

@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -14,82 +13,57 @@ namespace FlashDebugger
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "FlashDebugger";
-        private String pluginHelp = "http://www.flashdevelop.org/community/";
-        private String pluginDesc = "Hosts the ActionScript 3 debugger in FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
         private PanelsHelper panelsHelpers;
         private MenusHelper menusHelper;
-        private String settingFilename;
+        private string settingFilename;
         private Image pluginImage;
-        private Boolean firstRun = false;
+        private bool firstRun;
 
-        static internal Settings settingObject;
-        static internal LiveDataTip liveDataTip;
-        static internal DebuggerManager debugManager;
-        static internal BreakPointManager breakPointManager;
-        static internal WatchManager watchManager;
-        static internal Boolean disableDebugger = false;
+        internal static Settings settingObject;
+        internal static LiveDataTip liveDataTip;
+        internal static DebuggerManager debugManager;
+        internal static BreakPointManager breakPointManager;
+        internal static WatchManager watchManager;
+        internal static bool disableDebugger;
 
         #region Required Properties
 
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name => nameof(FlashDebugger);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return PanelsHelper.localsGuid; }
-        }
+        public string Guid => PanelsHelper.localsGuid;
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author => "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Hosts the ActionScript 3 debugger in FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help => "http://www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        public Object Settings
-        {
-            get { return settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -121,15 +95,15 @@ namespace FlashDebugger
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            if (debugManager == null) return;
+            if (debugManager is null) return;
             switch (e.Type)
             {
                 case EventType.FileOpen:
-                    TextEvent evnt = (TextEvent)e;
-                    ScintillaHelper.AddSciEvent(evnt.Value);
-                    breakPointManager.SetBreakPointsToEditor(evnt.Value);
+                    var te = (TextEvent)e;
+                    ScintillaHelper.AddSciEvent(te.Value);
+                    breakPointManager.SetBreakPointsToEditor(te.Value);
                     break;
 
                 case EventType.UIStarted:
@@ -154,19 +128,19 @@ namespace FlashDebugger
                     break;
 
                 case EventType.Command:
-                    DataEvent buildevnt = (DataEvent)e;
-                    if (buildevnt.Action == "AS3Context.StartDebugger")
+                    var de = (DataEvent)e;
+                    if (de.Action == "AS3Context.StartDebugger")
                     {
                         if (settingObject.StartDebuggerOnTestMovie)
                         {
-                            if (debugManager.Start(buildevnt.Data != null)) buildevnt.Handled = true;
+                            if (debugManager.Start(de.Data != null)) de.Handled = true;
                         }
                         return;
                     }
-                    if (!buildevnt.Action.StartsWithOrdinal("ProjectManager"))  return;
-                    if (buildevnt.Action == ProjectManagerEvents.Project)
+                    if (!de.Action.StartsWithOrdinal("ProjectManager"))  return;
+                    if (de.Action == ProjectManagerEvents.Project)
                     {
-                        IProject project = PluginBase.CurrentProject;
+                        var project = PluginBase.CurrentProject;
                         if (project != null && project.EnableInteractiveDebugger)
                         {
                             disableDebugger = false;
@@ -197,7 +171,7 @@ namespace FlashDebugger
                         }
                     }
                     else if (disableDebugger) return;
-                    if (buildevnt.Action == ProjectManagerCommands.HotBuild || buildevnt.Action == ProjectManagerCommands.BuildProject)
+                    if (de.Action == ProjectManagerCommands.HotBuild || de.Action == ProjectManagerCommands.BuildProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -208,7 +182,7 @@ namespace FlashDebugger
                             debugManager.Stop_Click(null, null);
                         }
                     }
-                    if (buildevnt.Action == ProjectManagerEvents.TestProject)
+                    if (de.Action == ProjectManagerEvents.TestProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -220,7 +194,7 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    if (buildevnt.Action == ProjectManagerEvents.TestProject)
+                    if (de.Action == ProjectManagerEvents.TestProject)
                     {
                         menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
                     }
@@ -237,10 +211,10 @@ namespace FlashDebugger
         /// </summary>
         private void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "FlashDebugger");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
+            var path = Path.Combine(PathHelper.DataDir, nameof(FlashDebugger));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
             breakPointManager = new BreakPointManager();
             watchManager = new WatchManager();
             debugManager = new DebuggerManager();
@@ -250,10 +224,7 @@ namespace FlashDebugger
         /// <summary>
         /// Creates the required menu items
         /// </summary>
-        private void CreateMenuItems()
-        {
-            menusHelper = new MenusHelper(pluginImage, debugManager, settingObject);
-        }
+        private void CreateMenuItems() => menusHelper = new MenusHelper(pluginImage, debugManager);
 
         /// <summary>
         /// Creates a plugin panel for the plugin
@@ -261,16 +232,13 @@ namespace FlashDebugger
         private void CreatePluginPanel()
         {
             panelsHelpers = new PanelsHelper(this, pluginImage);
-            if (this.firstRun) this.panelsHelpers.DockTogether();
+            if (firstRun) panelsHelpers.DockTogether();
         }
 
         /// <summary>
         /// Initializes the localization of the plugin
         /// </summary>
-        private void InitLocalization()
-        {
-            pluginDesc = TextHelper.GetString("Info.Description");
-        }
+        private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
         /// <summary>
         /// Adds the required event handlers
@@ -292,28 +260,22 @@ namespace FlashDebugger
         public void LoadSettings()
         {
             settingObject = new Settings();
-            if (!File.Exists(this.settingFilename))
+            if (!File.Exists(settingFilename))
             {
                 SaveSettings();
                 firstRun = true;
             }
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);
-                settingObject = (Settings)obj;
+                settingObject = (Settings)ObjectSerializer.Deserialize(settingFilename, settingObject);
             }
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         #endregion
-
     }
-
 }

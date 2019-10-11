@@ -13,9 +13,9 @@ namespace SourceControl.Managers
 {
     public class FSWatchers
     {
-        Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
-        HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
-        Timer updateTimer;
+        readonly Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
+        readonly HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
+        readonly Timer updateTimer;
         string lastDirtyPath;
         bool disposing;
 
@@ -38,7 +38,7 @@ namespace SourceControl.Managers
         {
             try
             {
-                if (updateTimer != null) updateTimer.Stop();
+                updateTimer?.Stop();
 
                 lock (watchers)
                 {
@@ -73,7 +73,7 @@ namespace SourceControl.Managers
         internal void SetProject(Project project)
         {
             Clear();
-            if (project == null) return;
+            if (project is null) return;
 
             CreateWatchers(project.Directory);
 
@@ -93,7 +93,7 @@ namespace SourceControl.Managers
         {
             try
             {
-                if (String.IsNullOrEmpty(path) || !Directory.Exists(path))
+                if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
                     return;
 
                 foreach (FileSystemWatcher watcher in watchers.Keys)
@@ -131,8 +131,8 @@ namespace SourceControl.Managers
             var watcher = new FileSystemWatcher(path);
             watcher.IncludeSubdirectories = true;
             watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.Attributes;
-            watcher.Changed += new FileSystemEventHandler(Watcher_Changed);
-            watcher.Deleted += new FileSystemEventHandler(Watcher_Changed);
+            watcher.Changed += Watcher_Changed;
+            watcher.Deleted += Watcher_Changed;
             watcher.EnableRaisingEvents = true;
             watchers.Add(watcher, manager);
 
@@ -179,7 +179,7 @@ namespace SourceControl.Managers
 
         public void Changed(IVCManager manager)
         {
-            if (disposing || updateTimer == null) return;
+            if (disposing || updateTimer is null) return;
 
             lock (dirtyVC)
             {

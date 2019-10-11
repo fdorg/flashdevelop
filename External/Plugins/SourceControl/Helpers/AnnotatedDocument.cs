@@ -15,7 +15,7 @@ namespace SourceControl.Helpers
     {
         #region Fields
 
-        private static List<AnnotatedDocument> documents;
+        private static readonly List<AnnotatedDocument> documents;
 
         private IBlameCommand command;
         private string fileName;
@@ -67,7 +67,7 @@ namespace SourceControl.Helpers
         {
             string title = Path.Combine(Path.GetDirectoryName(fileName), "[Annotated] " + Path.GetFileName(fileName));
             var doc = PluginBase.MainForm.CreateEditableDocument(title, string.Empty, Encoding.UTF8.CodePage) as ITabbedDocument;
-            return doc == null ? null : new AnnotatedDocument(command, fileName, doc);
+            return doc is null ? null : new AnnotatedDocument(command, fileName, doc);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace SourceControl.Helpers
         {
             if (applyingTheme)
             {
-                sci.BeginInvoke((MethodInvoker) delegate { UpdateTheme(false); });
+                sci.BeginInvoke((MethodInvoker) (() => UpdateTheme(false)));
                 return;
             }
             var random = new Random();
@@ -333,10 +333,7 @@ namespace SourceControl.Helpers
 
         #region Event Handlers
 
-        private void Document_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Dispose();
-        }
+        private void Document_FormClosed(object sender, FormClosedEventArgs e) => Dispose();
 
         private void ContextMenu_Opening(object sender, CancelEventArgs e)
         {
@@ -383,47 +380,42 @@ namespace SourceControl.Helpers
 
         #region IDisposable
 
-        private bool disposed = false;
+        private bool disposed;
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (disposed) return;
+            if (disposing)
             {
-                if (disposing)
+                documents.Remove(this);
+                command?.Dispose();
+                tooltip?.Dispose();
+                if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
+                if (sci != null)
                 {
-                    documents.Remove(this);
-                    if (command != null) command.Dispose();
-                    if (tooltip != null) tooltip.Dispose();
-                    if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
-                    if (sci != null)
-                    {
-                        sci.DwellStart -= Sci_DwellStart;
-                        sci.DwellEnd -= Sci_DwellEnd;
-                    }
-                    if (contextMenu != null)
-                    {
-                        contextMenu.Opening -= ContextMenu_Opening;
-                        showOnFileHistoryMenuItem.Click -= ShowOnFileHistoryMenuItem_Click;
-                    }
+                    sci.DwellStart -= Sci_DwellStart;
+                    sci.DwellEnd -= Sci_DwellEnd;
                 }
-
-                command = null;
-                fileName = null;
-                document = null;
-                sci = null;
-                annotations = null;
-                commits = null;
-                tooltip = null;
-                contextMenu = null;
-                showOnFileHistoryMenuItem = null;
-
-                disposed = true;
+                if (contextMenu != null)
+                {
+                    contextMenu.Opening -= ContextMenu_Opening;
+                    showOnFileHistoryMenuItem.Click -= ShowOnFileHistoryMenuItem_Click;
+                }
             }
+
+            command = null;
+            fileName = null;
+            document = null;
+            sci = null;
+            annotations = null;
+            commits = null;
+            tooltip = null;
+            contextMenu = null;
+            showOnFileHistoryMenuItem = null;
+
+            disposed = true;
         }
 
         #endregion

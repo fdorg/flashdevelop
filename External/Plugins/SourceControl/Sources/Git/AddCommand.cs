@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Git
 {
@@ -7,7 +6,7 @@ namespace SourceControl.Sources.Git
     {
         public AddCommand(string path)
         {
-            string args = String.Format("add \"{0}\"", Path.GetFileName(path));
+            var args = $"add \"{Path.GetFileName(path)}\"";
             Run(args, Path.GetDirectoryName(path));
         }
     }

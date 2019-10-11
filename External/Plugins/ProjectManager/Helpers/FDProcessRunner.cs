@@ -13,7 +13,7 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class FDProcessRunner
     {
-        IMainForm mainForm;
+        readonly IMainForm mainForm;
 
         // some fudging to detect if a particular process was started by us and if so, what
         // name to associate with that process.
@@ -59,10 +59,7 @@ namespace ProjectManager.Helpers
             if (runningProcessName != null)
             {
                 bool success = result.EndsWithOrdinal("(0)");
-                if (processEndedHandler != null)
-                {
-                    processEndedHandler.DynamicInvoke(new object[] { success });
-                }
+                processEndedHandler?.DynamicInvoke(success);
                 // restore current directory
                 Environment.CurrentDirectory = savedDirectory;
                 processEndedHandler = null;

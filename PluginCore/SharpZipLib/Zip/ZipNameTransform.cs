@@ -164,12 +164,10 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// a windows path is done.</remarks>
         public string TrimPrefix
         {
-            get { return trimPrefix_; }
+            get => trimPrefix_;
             set {
                 trimPrefix_ = value;
-                if (trimPrefix_ != null) {
-                    trimPrefix_ = trimPrefix_.ToLower();
-                }
+                trimPrefix_ = trimPrefix_?.ToLower();
             }
         }
 

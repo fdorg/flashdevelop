@@ -6035,6 +6035,10 @@
     <value>The number of recent files to remember in the recent files drop-down.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>单次可以输出的最大行数。</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
     <comment>Added after 5.2.0</comment>
@@ -6312,5 +6316,12 @@ AND - All conditions are met.</value>
   <data name="ASClassWizard.Wizard.Error.LowercaseInterfaceName" xml:space="preserve">
     <value>Interface name must start with an uppercase letter.</value>
     <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsCaseSensitive" xml:space="preserve">
+    <value>Match case</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>

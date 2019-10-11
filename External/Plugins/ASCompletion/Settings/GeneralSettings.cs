@@ -15,7 +15,7 @@ namespace ASCompletion.Settings
 
         const bool DEFAULT_SMARTTIPS = true;
         const bool DEFAULT_JAVADOCS = true;
-        static public string[] DEFAULT_TAGS = new string[] {
+        public static string[] DEFAULT_TAGS = new[] {
             "author","copy","default","deprecated","eventType","example","exampleText","exception",
             "haxe","inheritDoc","internal","link","mtasc","mxmlc","param","private","return","see",
             "serial","serialData","serialField","since","throws","usage","version"
@@ -31,32 +31,32 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.JavadocTagsEnabled"), DefaultValue(DEFAULT_JAVADOCS)]
         public bool JavadocTagsEnabled
         {
-            get { return javadocTagsEnabled; }
-            set { javadocTagsEnabled = value; }
+            get => javadocTagsEnabled;
+            set => javadocTagsEnabled = value;
         }
 
         [DisplayName("Javadoc Tags")]
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.JavadocTags")]
         public string[] JavadocTags
         {
-            get { return javadocTags; }
-            set { javadocTags = value; }
+            get => javadocTags;
+            set => javadocTags = value;
         }
 
         [DisplayName("Enable Smart Tips")]
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.SmartTipsEnabled"), DefaultValue(DEFAULT_SMARTTIPS)]
         public bool SmartTipsEnabled
         {
-            get { return smartTipsEnabled; }
-            set { smartTipsEnabled = value; }
+            get => smartTipsEnabled;
+            set => smartTipsEnabled = value;
         }
 
         [DisplayName("Limit Of Description Lines")]
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.DescriptionLinesLimit"), DefaultValue(DEFAULT_MAXLINES)]
         public int DescriptionLinesLimit
         {
-            get { return descriptionLinesLimit; }
-            set { descriptionLinesLimit = Math.Max(1, value); }
+            get => descriptionLinesLimit;
+            set => descriptionLinesLimit = Math.Max(1, value);
         }
 
 
@@ -93,8 +93,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_DISABLE_CLOSEBRACE)]
         public bool DisableAutoCloseBraces
         {
-            get { return disableAutoCloseBraces; }
-            set { disableAutoCloseBraces = value; }
+            get => disableAutoCloseBraces;
+            set => disableAutoCloseBraces = value;
         }
 
         [DisplayName("Condense Whitespace")]
@@ -102,8 +102,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_CONDENSE_WS)]
         public bool CondenseWhitespace
         {
-            get { return condenseWhitespace; }
-            set { condenseWhitespace = value; }
+            get => condenseWhitespace;
+            set => condenseWhitespace = value;
         }
 
         [DisplayName("Disable Code Reformat")]
@@ -111,8 +111,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_DISABLE_REFORMAT)]
         public bool DisableCodeReformat
         {
-            get { return disableCodeReformat; }
-            set { disableCodeReformat = value; }
+            get => disableCodeReformat;
+            set => disableCodeReformat = value;
         }
 
         [DisplayName("Reformat Braces")]
@@ -120,8 +120,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_REFORMAT_BRACES)]
         public bool ReformatBraces
         {
-            get { return reformatBraces; }
-            set { reformatBraces = value; }
+            get => reformatBraces;
+            set => reformatBraces = value;
         }
 
         [DisplayName("Add Space Before Function Call")]
@@ -129,8 +129,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_SPACEBEFOREFUNCTIONCALL)]
         public bool SpaceBeforeFunctionCall
         {
-            get { return spaceBeforeFunctionCall; }
-            set { spaceBeforeFunctionCall = value; }
+            get => spaceBeforeFunctionCall;
+            set => spaceBeforeFunctionCall = value;
         }
 
         [DisplayName("Always Complete Word Length")]
@@ -138,8 +138,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_ALWAYSCOMPLETELENGTH)]
         public int AlwaysCompleteWordLength
         {
-            get { return alwaysCompleteWordLength; }
-            set { alwaysCompleteWordLength = value; }
+            get => alwaysCompleteWordLength;
+            set => alwaysCompleteWordLength = value;
         }
 
         [DisplayName("Disable Automatic Call-Tip")]
@@ -147,8 +147,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_DISABLECALLTIP)]
         public bool DisableCallTip
         {
-            get { return disableCallTip; }
-            set { disableCallTip = value; }
+            get => disableCallTip;
+            set => disableCallTip = value;
         }
 
         [DisplayName("Disable Known Types Coloring")]
@@ -156,8 +156,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_DISABLETYPESCOLORING)]
         public bool DisableKnownTypesColoring
         {
-            get { return disableKnownTypesColoring; }
-            set { disableKnownTypesColoring = value; }
+            get => disableKnownTypesColoring;
+            set => disableKnownTypesColoring = value;
         }
 
         [DisplayName("Characters Not Surrounded By Spaces")]
@@ -165,8 +165,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_COMPACTCHARS)]
         public string CompactChars
         {
-            get { return compactChars ?? DEFAULT_COMPACTCHARS; }
-            set { compactChars = value; }
+            get => compactChars ?? DEFAULT_COMPACTCHARS;
+            set => compactChars = value;
         }
 
         [DisplayName("Characters Requiring Whitespace")]
@@ -174,8 +174,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_SPACEDCHARS)]
         public string SpacedChars
         {
-            get { return spacedChars ?? DEFAULT_SPACEDCHARS; }
-            set { spacedChars = value; }
+            get => spacedChars ?? DEFAULT_SPACEDCHARS;
+            set => spacedChars = value;
         }
 
         [DisplayName("Always Add Space After")]
@@ -183,8 +183,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_ADDSPACEAFTER)]
         public string AddSpaceAfter
         {
-            get { return addSpaceAfter ?? DEFAULT_ADDSPACEAFTER; }
-            set { addSpaceAfter = value; }
+            get => addSpaceAfter ?? DEFAULT_ADDSPACEAFTER;
+            set => addSpaceAfter = value;
         }
 
         #endregion
@@ -198,8 +198,8 @@ namespace ASCompletion.Settings
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string PathToFlashIDE
         {
-            get { return pathToFlashIDE; }
-            set { pathToFlashIDE = value; }
+            get => pathToFlashIDE;
+            set => pathToFlashIDE = value;
         }
         #endregion
 
@@ -221,24 +221,24 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.OutlineView"), LocalizedDescription("ASCompletion.Description.OutlineViewShowExtends"), DefaultValue(DEFAULT_EXTENDS)]
         public bool ShowExtends
         {
-            get { return showExtends; }
-            set { showExtends = value; }
+            get => showExtends;
+            set => showExtends = value;
         }
 
         [DisplayName("Show Implements")]
         [LocalizedCategory("ASCompletion.Category.OutlineView"), LocalizedDescription("ASCompletion.Description.OutlineViewShowImplements"), DefaultValue(DEFAULT_IMPLEMENTS)]
         public bool ShowImplements
         {
-            get { return showImplements; }
-            set { showImplements = value; }
+            get => showImplements;
+            set => showImplements = value;
         }
 
         [DisplayName("Show Imports")]
         [LocalizedCategory("ASCompletion.Category.OutlineView"), LocalizedDescription("ASCompletion.Description.OutlineViewShowImports"), DefaultValue(DEFAULT_IMPORTS)]
         public bool ShowImports
         {
-            get { return showImports; }
-            set { showImports = value; }
+            get => showImports;
+            set => showImports = value;
         }
 
         [DisplayName("Show Regions")]
@@ -246,16 +246,16 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.OutlineView"), DefaultValue(DEFAULT_REGIONS)]
         public bool ShowRegions 
         {
-            get { return showRegions; }
-            set { showRegions = value; }
+            get => showRegions;
+            set => showRegions = value;
         }
 
         [DisplayName("Sorting Mode")]
         [LocalizedCategory("ASCompletion.Category.OutlineView"), LocalizedDescription("ASCompletion.Description.SortingMode"), DefaultValue(DEFAULT_MODE)]
         public OutlineSorting SortingMode
         {
-            get { return sortingMode; }
-            set { sortingMode = value; }
+            get => sortingMode;
+            set => sortingMode = value;
         }
 
         #endregion
@@ -271,16 +271,16 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.Advanced"), LocalizedDescription("ASCompletion.Description.DisableCache"), DefaultValue(DEFAULT_CACHE)]
         public bool DisableCache
         {
-            get { return disableCache; }
-            set { disableCache = value; }
+            get => disableCache;
+            set => disableCache = value;
         }
         
         [DisplayName("Last ActionScript Version")]
         [LocalizedCategory("ASCompletion.Category.Advanced"), LocalizedDescription("ASCompletion.Description.LastASVersion")]
         public string LastASVersion
         {
-            get { return lastASVersion; }
-            set { lastASVersion = value; }
+            get => lastASVersion;
+            set => lastASVersion = value;
         }
         #endregion
 
@@ -301,12 +301,12 @@ namespace ASCompletion.Settings
         const bool DEFAULT_GENERATE_SCOPE = false;
         const HandlerNamingConventions DEFAULT_HANDLER_CONVENTION = HandlerNamingConventions.target_eventName;
 
-        static public string[] DEFAULT_EVENTAUTOREMOVE = new string[] {
+        public static string[] DEFAULT_EVENTAUTOREMOVE = {
               "Event.ADDED_TO_STAGE", "Event.REMOVED_FROM_STAGE",
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
-        static Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
+        static readonly Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
         {
             new Brace("Parentheses", '(', ')', false, true, new[]
             {
@@ -363,8 +363,8 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.EventListenersAutoRemove")]
         public string[] EventListenersAutoRemove
         {
-            get { return eventListenersAutoRemove ?? DEFAULT_EVENTAUTOREMOVE; }
-            set { eventListenersAutoRemove = value; }
+            get => eventListenersAutoRemove ?? DEFAULT_EVENTAUTOREMOVE;
+            set => eventListenersAutoRemove = value;
         }
 
         [DisplayName("Generate Protected Declarations")]
@@ -372,8 +372,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_GENERATE_PROTECTED)]
         public bool GenerateProtectedDeclarations
         {
-            get { return generateProtectedDeclarations; }
-            set { generateProtectedDeclarations = value; }
+            get => generateProtectedDeclarations;
+            set => generateProtectedDeclarations = value;
         }
         
         [DisplayName("Declaration Modifier Order")]
@@ -382,8 +382,8 @@ namespace ASCompletion.Settings
         [Editor(typeof(ModifierOrderEditor), typeof(UITypeEditor))]
         public string[] DeclarationModifierOrder
         {
-            get { return declarationModifierOrder ?? DEFAULT_DECLARATION_MODIFIER_ORDER; }
-            set { declarationModifierOrder = value; }
+            get => declarationModifierOrder ?? DEFAULT_DECLARATION_MODIFIER_ORDER;
+            set => declarationModifierOrder = value;
         }
 
         [DisplayName("Generate Explicit Scope")]
@@ -391,8 +391,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_GENERATE_SCOPE)]
         public bool GenerateScope
         {
-            get { return generateScope; }
-            set { generateScope = value; }
+            get => generateScope;
+            set => generateScope = value;
         }
 
         [DisplayName("Generate Default Modifier Declaration")]
@@ -402,8 +402,8 @@ namespace ASCompletion.Settings
         DefaultValue(false)]
         public bool GenerateDefaultModifierDeclaration
         {
-            get { return generateDefaultModifierDeclaration; }
-            set { generateDefaultModifierDeclaration = value; }
+            get => generateDefaultModifierDeclaration;
+            set => generateDefaultModifierDeclaration = value;
         }
 
         [DisplayName("Properties Generation Location")]
@@ -411,8 +411,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_GENERATE_PROPERTIES)]
         public PropertiesGenerationLocations PropertiesGenerationLocation
         {
-            get { return propertiesGenerationLocation; }
-            set { propertiesGenerationLocation = value; }
+            get => propertiesGenerationLocation;
+            set => propertiesGenerationLocation = value;
         }
 
         [DisplayName("Methods Generation Location")]
@@ -420,8 +420,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_GENERATE_METHODS)]
         public MethodsGenerationLocations MethodsGenerationLocations
         {
-            get { return methodsGenerationLocation; }
-            set { methodsGenerationLocation = value; }
+            get => methodsGenerationLocation;
+            set => methodsGenerationLocation = value;
         }
 
         [DisplayName("Add Closing Braces")]
@@ -429,8 +429,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_GENERATE_ADDCLOSINGBRACES)]
         public bool AddClosingBraces
         {
-            get { return addClosingBraces; }
-            set { addClosingBraces = value; }
+            get => addClosingBraces;
+            set => addClosingBraces = value;
         }
 
         [DisplayName("Add Closing Braces Rules")]
@@ -438,8 +438,8 @@ namespace ASCompletion.Settings
         [Editor(typeof(AddClosingBracesRulesEditor), typeof(UITypeEditor))]
         public Brace[] AddClosingBracesRules
         {
-            get { return addClosingBracesRules ?? DEFAULT_ADD_CLOSING_BRACES_RULES; }
-            set { addClosingBracesRules = value.Length == 0 ? null : value; }
+            get => addClosingBracesRules ?? DEFAULT_ADD_CLOSING_BRACES_RULES;
+            set => addClosingBracesRules = value.Length == 0 ? null : value;
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]
@@ -447,8 +447,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_GENERATE_PREFIXFIELDS)]
         public string PrefixFields
         {
-            get { return prefixFields; }
-            set { prefixFields = value; }
+            get => prefixFields;
+            set => prefixFields = value;
         }
 
         [DisplayName("Handler Generation Naming Convention")]
@@ -456,8 +456,8 @@ namespace ASCompletion.Settings
         DefaultValue(DEFAULT_HANDLER_CONVENTION)]
         public HandlerNamingConventions HandlerNamingConvention
         {
-            get { return handlerNamingConvention; }
-            set { handlerNamingConvention = value; }
+            get => handlerNamingConvention;
+            set => handlerNamingConvention = value;
         }
 
         GeneratedMemberBodyStyle generatedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode;
@@ -466,8 +466,8 @@ namespace ASCompletion.Settings
         [LocalizedCategory("ASCompletion.Category.Generation"), DefaultValue(GeneratedMemberBodyStyle.UncompilableCode)]
         public GeneratedMemberBodyStyle GeneratedMemberDefaultBodyStyle
         {
-            get { return generatedMemberDefaultBodyStyle; }
-            set { generatedMemberDefaultBodyStyle = value; }
+            get => generatedMemberDefaultBodyStyle;
+            set => generatedMemberDefaultBodyStyle = value;
         }
 
         #endregion

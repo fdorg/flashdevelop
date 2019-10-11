@@ -12,8 +12,8 @@ namespace PluginCore.Controls
 {
     public class SmartForm : FormEx, IEventHandler
     {
-        private String formGuid;
-        private String helpLink;
+        private string formGuid;
+        private string helpLink;
         private FormProps formProps;
         public event SavePropsHandler SaveProps;
         public event ApplyPropsHandler ApplyProps;
@@ -23,8 +23,8 @@ namespace PluginCore.Controls
         public SmartForm()
         {
             this.formProps = new FormProps();
-            this.Load += new EventHandler(this.SmartFormLoad);
-            this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
+            this.Load += this.SmartFormLoad;
+            this.FormClosed += this.SmartFormClosed;
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
             ScaleHelper.AdjustForHighDPI(this);
         }
@@ -32,45 +32,39 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets or sets the help link
         /// </summary>
-        public String HelpLink
+        public string HelpLink
         {
-            get { return this.helpLink; }
-            set { this.helpLink = value; }
+            get => this.helpLink;
+            set => this.helpLink = value;
         }
 
         /// <summary>
         /// Gets or sets the form guid
         /// </summary>
-        public String FormGuid
+        public string FormGuid
         {
-            get { return this.formGuid; }
-            set { this.formGuid = value.ToUpper(); }
+            get => this.formGuid;
+            set => this.formGuid = value.ToUpper();
         }
 
         /// <summary>
         /// Gets or sets the help link
         /// </summary>
-        public override Boolean UseTheme
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
-        }
+        public override bool UseTheme => PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false);
 
         /// <summary>
         /// Path to the unique setting file
         /// </summary>
-        private String FormPropsFile
-        {
-            get { return Path.Combine(this.FormStatesDir, this.formGuid + ".fdb"); }
-        }
+        private string FormPropsFile => Path.Combine(this.FormStatesDir, this.formGuid + ".fdb");
 
         /// <summary>
         /// Path to the form state file directory
         /// </summary>
-        private String FormStatesDir
+        private string FormStatesDir
         {
             get
             {
-                String formStatesDir = Path.Combine(PathHelper.SettingDir, "FormStates");
+                string formStatesDir = Path.Combine(PathHelper.SettingDir, "FormStates");
                 if (!Directory.Exists(formStatesDir)) Directory.CreateDirectory(formStatesDir);
                 return formStatesDir;
             }
@@ -92,7 +86,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Handles the incoming theming change event and updates.
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme) this.ApplyTheming();
         }
@@ -100,26 +94,26 @@ namespace PluginCore.Controls
         /// <summary>
         /// Load the form state from a setting file and applies it
         /// </summary>
-        private void SmartFormLoad(Object sender, EventArgs e)
+        private void SmartFormLoad(object sender, EventArgs e)
         {
             this.ApplyTheming();
             if (this.StartPosition == FormStartPosition.CenterParent)
             {
                 this.CenterToParent();
             }
-            if (!String.IsNullOrEmpty(this.formGuid) && File.Exists(this.FormPropsFile))
+            if (!string.IsNullOrEmpty(this.formGuid) && File.Exists(this.FormPropsFile))
             {
-                Object obj = ObjectSerializer.Deserialize(this.FormPropsFile, this.formProps);
+                object obj = ObjectSerializer.Deserialize(this.FormPropsFile, this.formProps);
                 this.formProps = (FormProps)obj;
                 if (!this.formProps.WindowSize.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
                 {
                     this.Size = this.formProps.WindowSize;
                 }
             }
-            if (!String.IsNullOrEmpty(this.helpLink))
+            if (!string.IsNullOrEmpty(this.helpLink))
             {
                 this.HelpButton = true;
-                this.HelpButtonClicked += new CancelEventHandler(this.SmartFormHelpButtonClick);
+                this.HelpButtonClicked += this.SmartFormHelpButtonClick;
             }
             ApplyProps?.Invoke(this);
         }
@@ -127,10 +121,10 @@ namespace PluginCore.Controls
         /// <summary>
         /// Saves the current form state to a setting file
         /// </summary>
-        private void SmartFormClosed(Object sender, FormClosedEventArgs e)
+        private void SmartFormClosed(object sender, FormClosedEventArgs e)
         {
             SaveProps?.Invoke(this);
-            if (!String.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
+            if (!string.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
             {
                 this.formProps.WindowSize = this.Size;
                 ObjectSerializer.Serialize(this.FormPropsFile, this.formProps);
@@ -140,7 +134,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Browse to the specified help link
         /// </summary>
-        private void SmartFormHelpButtonClick(Object sender, CancelEventArgs e)
+        private void SmartFormHelpButtonClick(object sender, CancelEventArgs e)
         {
             PluginBase.MainForm.CallCommand("Browse", this.helpLink);
         }
@@ -148,7 +142,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Get custom property value
         /// </summary>
-        public String GetPropValue(String key)
+        public string GetPropValue(string key)
         {
             for (var i = 0; i < this.formProps.ExtraProps.Count; i++)
             {
@@ -161,7 +155,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Set custom property value
         /// </summary>
-        public void SetPropValue(String key, String value)
+        public void SetPropValue(string key, string value)
         {
             Argument argument;
             for (var i = 0; i < this.formProps.ExtraProps.Count; i++)

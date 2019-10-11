@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -12,34 +11,34 @@ namespace PluginCore.FRService
         /// <summary>
         /// Properties of the class 
         /// </summary> 
-        protected String path;
-        protected String mask;
-        protected String source;
-        protected Boolean recursive;
-        protected List<String> files;
+        protected string path;
+        protected string mask;
+        protected string source;
+        protected bool recursive;
+        protected List<string> files;
         protected OperationType type;
         protected FRSearch search;
         protected string replacement;
-        protected Boolean cacheDocuments = false;
-        protected Boolean updateSourceFile = true;
-        protected IDictionary<String, ITabbedDocument> openDocuments = null;
+        protected bool cacheDocuments;
+        protected bool updateSourceFile = true;
+        protected IDictionary<string, ITabbedDocument> openDocuments;
 
         /// <summary>
         /// Enables the caching
         /// </summary>
-        public Boolean CacheDocuments
+        public bool CacheDocuments
         {
-            get { return cacheDocuments; }
-            set { cacheDocuments = value; }
+            get => cacheDocuments;
+            set => cacheDocuments = value;
         }
 
         /// <summary>
         /// Updates the source file only
         /// </summary>
-        public Boolean UpdateSourceFileOnly
+        public bool UpdateSourceFileOnly
         {
-            get { return updateSourceFile; }
-            set { updateSourceFile = value; }
+            get => updateSourceFile;
+            set => updateSourceFile = value;
         }
 
         /// <summary>
@@ -47,8 +46,8 @@ namespace PluginCore.FRService
         /// </summary>
         public string Replacement
         {
-            get { return replacement; }
-            set { replacement = value; }
+            get => replacement;
+            set => replacement = value;
         }
 
         /// <summary>
@@ -65,65 +64,59 @@ namespace PluginCore.FRService
         /// <summary>
         /// Constructor of the class 
         /// </summary> 
-        public FRConfiguration(List<String> files, FRSearch search)
+        public FRConfiguration(List<string> files, FRSearch search)
         {
-            this.type = OperationType.FindInRange;
+            type = OperationType.FindInRange;
             this.search = search;
             this.files = files;
         }
-        public FRConfiguration(String fileName, String source, FRSearch search)
+        public FRConfiguration(string fileName, string source, FRSearch search)
         {
-            this.type = OperationType.FindInSource;
-            this.path = fileName;
+            type = OperationType.FindInSource;
+            path = fileName;
             this.search = search;
             this.source = source;
         }
-        public FRConfiguration(String fileName, FRSearch search)
+        public FRConfiguration(string fileName, FRSearch search)
         {
-            this.type = OperationType.FindInFile;
-            this.path = fileName;
+            type = OperationType.FindInFile;
+            path = fileName;
             this.search = search;
         }
-        public FRConfiguration(String path, String fileMask, Boolean recursive, FRSearch search)
+        public FRConfiguration(string path, string fileMask, bool recursive, FRSearch search)
         {
             this.path = path;
-            this.type = OperationType.FindInPath;
+            type = OperationType.FindInPath;
             this.recursive = recursive;
-            this.mask = fileMask;
+            mask = fileMask;
             this.search = search;
         }
 
         /// <summary>
         /// Gets the search
         /// </summary> 
-        public FRSearch GetSearch()
-        {
-            return this.search;
-        }
+        public FRSearch GetSearch() => search;
 
         /// <summary>
         /// Gets the source
         /// </summary>
-        public string GetSource(String file)
+        public string GetSource(string file)
         {
-            switch (type)
+            return type switch
             {
-                case OperationType.FindInSource:
-                    return this.source;
-
-                default:
-                    return ReadCurrentFileSource(file);
-            }
+                OperationType.FindInSource => source,
+                _ => ReadCurrentFileSource(file),
+            };
         }
 
         /// <summary>
         /// Reads the source
         /// </summary>
-        protected string ReadCurrentFileSource(String file)
+        protected string ReadCurrentFileSource(string file)
         {
             if (cacheDocuments)
             {
-                if (openDocuments == null) CacheOpenDocuments();
+                if (openDocuments is null) CacheOpenDocuments();
                 if (openDocuments.ContainsKey(file)) return openDocuments[file].SciControl.Text;
             }
             return FileHelper.ReadFile(file);
@@ -132,22 +125,19 @@ namespace PluginCore.FRService
         /// <summary>
         /// Checks if the document is cached
         /// </summary>
-        protected bool IsDocumentCached(String file)
-        {
-            return openDocuments.ContainsKey(file);
-        }
+        protected bool IsDocumentCached(string file) => openDocuments.ContainsKey(file);
 
         /// <summary>
         /// Caches the documents
         /// </summary>
         protected void CacheOpenDocuments()
         {
-            this.openDocuments = new Dictionary<String, ITabbedDocument>();
+            openDocuments = new Dictionary<string, ITabbedDocument>();
             foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
             {
                 if (document.IsEditable)
                 {
-                    this.openDocuments[document.FileName] = document;
+                    openDocuments[document.FileName] = document;
                 }
             }
         }
@@ -160,23 +150,22 @@ namespace PluginCore.FRService
             switch (type)
             {
                 case OperationType.FindInSource:
-                    this.source = src;
+                    source = src;
                     break;
 
                 default:
                     EncodingFileInfo info = FileHelper.GetEncodingFileInfo(file);
-                    if (this.updateSourceFile || !this.IsDocumentCached(file))
+                    if (updateSourceFile || !IsDocumentCached(file))
                     {
                         FileHelper.WriteFile(file, src, Encoding.GetEncoding(info.CodePage), info.ContainsBOM);
                     }
                     else 
                     {
                         // make this method thread safe
-                        if ((PluginBase.MainForm as Form).InvokeRequired)
+                        if (((Form) PluginBase.MainForm).InvokeRequired)
                         {
-                            (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker) delegate {
-                                openDocuments[file].SciControl.Text = src;
-                            });
+                            ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) (() =>
+                                openDocuments[file].SciControl.Text = src));
                         }
                         else openDocuments[file].SciControl.Text = src;
                     }
@@ -187,36 +176,26 @@ namespace PluginCore.FRService
         /// <summary>
         /// Gets the files
         /// </summary>
-        public List<String> GetFiles()
+        public List<string> GetFiles()
         {
             switch (type)
             {
                 case OperationType.FindInRange:
-                    return this.files;
-
-                case OperationType.FindInSource:
-                    if (this.files == null)
-                    {
-                        this.files = new List<String>();
-                        this.files.Add(path);
-                    }
                     return files;
 
+                case OperationType.FindInSource:
+                    return files ??= new List<string> {path};
+
                 case OperationType.FindInFile:
-                    if (this.files == null)
-                    {
-                        this.files = new List<String>();
-                        this.files.Add(path);
-                    }
-                    return this.files;
+                    return files ??= new List<string> {path};
 
                 case OperationType.FindInPath:
-                    if (this.files == null)
+                    if (files is null)
                     {
-                        PathWalker walker = new PathWalker(this.path, this.mask, this.recursive);
-                        this.files = walker.GetFiles();
+                        var walker = new PathWalker(path, mask, recursive);
+                        files = walker.GetFiles();
                     }
-                    return this.files;
+                    return files;
             }
             return null;
         }

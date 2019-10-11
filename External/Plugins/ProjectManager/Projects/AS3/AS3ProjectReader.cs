@@ -7,18 +7,15 @@ namespace ProjectManager.Projects.AS3
 {
     public class AS3ProjectReader : ProjectReader
     {
-        AS3Project project;
+        readonly AS3Project project;
 
         public AS3ProjectReader(string filename)
             : base(filename, new AS3Project(filename))
         {
-            this.project = base.Project as AS3Project;
+            project = Project as AS3Project;
         }
 
-        public new AS3Project ReadProject()
-        {
-            return base.ReadProject() as AS3Project;
-        }
+        public new AS3Project ReadProject() => base.ReadProject() as AS3Project;
 
         protected override void PostProcess()
         {
@@ -35,7 +32,7 @@ namespace ProjectManager.Projects.AS3
             bool isAIR = project.MovieOptions.Platform.Contains("AIR");
             if (project.CompilerOptions.Additional != null)
             {
-                string add = String.Join("\n", project.CompilerOptions.Additional).Trim().Replace("\n\n", "\n");
+                string add = string.Join("\n", project.CompilerOptions.Additional).Trim().Replace("\n\n", "\n");
                 if (!isAIR && add.Contains("configname=air"))
                 {
                     add = Regex.Replace(add, "(\\+)?configname=air", "");
@@ -52,17 +49,17 @@ namespace ProjectManager.Projects.AS3
         protected override void ProcessNode(string name)
         {
             if (NodeType == XmlNodeType.Element)
-            switch (name)
-            {
-                case "build": ReadBuildOptions(); break;
-                case "library": ReadLibraryAssets(); break;
-                case "includeLibraries": ReadIncludeLibraries(); break;
-                case "libraryPaths": ReadLibrayPath(); break;
-                case "externalLibraryPaths": ReadExternalLibraryPaths(); break;
-                case "rslPaths": ReadRSLPaths(); break;
-                case "intrinsics": ReadIntrinsicPaths(); break;
-                default: base.ProcessNode(name); break;
-            }
+                switch (name)
+                {
+                    case "build": ReadBuildOptions(); break;
+                    case "library": ReadLibraryAssets(); break;
+                    case "includeLibraries": ReadIncludeLibraries(); break;
+                    case "libraryPaths": ReadLibrayPath(); break;
+                    case "externalLibraryPaths": ReadExternalLibraryPaths(); break;
+                    case "rslPaths": ReadRSLPaths(); break;
+                    case "intrinsics": ReadIntrinsicPaths(); break;
+                    default: base.ProcessNode(name); break;
+                }
         }
 
         private void ReadIntrinsicPaths()
@@ -120,7 +117,7 @@ namespace ProjectManager.Projects.AS3
             {
                 string path = OSPath(GetAttribute("path"));
 
-                if (path == null)
+                if (path is null)
                     throw new Exception("All library assets must have a 'path' attribute.");
 
                 LibraryAsset asset = new LibraryAsset(project, path);

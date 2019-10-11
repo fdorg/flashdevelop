@@ -12,7 +12,7 @@ namespace FlashDevelop.Settings
         /// <summary>
         /// Sets a value of a setting
         /// </summary>
-        public void SetValue(String name, Object value)
+        public void SetValue(string name, object value)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace FlashDevelop.Settings
         /// <summary>
         /// Gets a value of a setting as an object
         /// </summary>
-        public Object GetValue(String name)
+        public object GetValue(string name)
         {
             try
             {
@@ -55,10 +55,10 @@ namespace FlashDevelop.Settings
                 PropertyInfo[] properties = settings.GetType().GetProperties();
                 foreach (PropertyInfo property in properties)
                 {
-                    Object current = settings.GetValue(property.Name);
-                    if (current == null || (current is Color && (Color)current == Color.Empty))
+                    object current = settings.GetValue(property.Name);
+                    if (current is null || (current is Color && (Color)current == Color.Empty))
                     {
-                        Object value = defaults.GetValue(property.Name);
+                        object value = defaults.GetValue(property.Name);
                         settings.SetValue(property.Name, value);
                     }
                 }

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 
@@ -19,13 +18,13 @@ namespace ASCompletion.Commands
         /// <returns>Operation successful</returns>
         public static bool Run(string name, string path)
         {
-            if (name == null || path == null) return false;
+            if (name is null || path is null) return false;
             try
             {
                 path += " ";
                 string separator = Path.DirectorySeparatorChar.ToString();
                 string appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string fixedPath = String.Format(FULLPATH, appDataDir, separator);
+                string fixedPath = string.Format(FULLPATH, appDataDir, separator);
                 if (!Directory.Exists(fixedPath)) Directory.CreateDirectory(fixedPath);
                 string file = Path.Combine(fixedPath, name);
                 if (File.Exists(file))

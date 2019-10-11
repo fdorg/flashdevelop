@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace PluginCore.BBCode
@@ -13,7 +12,7 @@ namespace PluginCore.BBCode
         public IPairTagMatcher pairTagMatcher;
         public IPairTagMatchHandler pairTagHandler;
 
-        public String input;
+        public string input;
         public IndexTree lastTree;
 
 
@@ -21,7 +20,7 @@ namespace PluginCore.BBCode
         {
             lastTree = null;
 
-            if (pairTagMatcher == null || string.IsNullOrEmpty(this.input))
+            if (pairTagMatcher is null || string.IsNullOrEmpty(this.input))
                 return null;
 
             lastTree = _parse();
@@ -48,7 +47,7 @@ namespace PluginCore.BBCode
             {
                 m = pairTagMatcher.searchOpener((uint)(prevI + prevL));
 
-                if (m == null)
+                if (m is null)
                     break;
 
                 prevI = m.tagIndex;
@@ -67,7 +66,7 @@ namespace PluginCore.BBCode
         private IndexTree _buildTree(List<IPairTagMatch> openers)
         {
             uint inputL = (uint)input.Length;
-            Boolean closerOutOfBounds;
+            bool closerOutOfBounds;
             int closerStartAt;
             Dictionary<int, IPairTagMatch> closerIndices = new Dictionary<int, IPairTagMatch>();
             IPairTagMatch mOp;
@@ -83,7 +82,7 @@ namespace PluginCore.BBCode
                 while (true)
                 {
                     mCl = pairTagMatcher.searchCloserFor(mOp, (uint)closerStartAt);
-                    if (mCl == null)
+                    if (mCl is null)
                     {
                         mCl = new VoidCloserTagMatch((int)inputL);
                         closerOutOfBounds = true;
@@ -106,7 +105,7 @@ namespace PluginCore.BBCode
 
                     if (closerOutOfBounds)
                         break;
-                    else if (mCl != null)
+                    if (mCl != null)
                         closerStartAt = mCl.tagIndex + 1;
                 }
             }

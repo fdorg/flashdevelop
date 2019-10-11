@@ -8,18 +8,11 @@ namespace FlashDebugger.Helpers
     /// </summary>
     public static class DataTreeExporterFactory
     {
-
-        private readonly static IDictionary<string, IDataTreeExporter> exporters;
-        public static IDictionary<string, IDataTreeExporter> Exporters
-        {
-            get { return exporters; }
-        }
+        public static IDictionary<string, IDataTreeExporter> Exporters { get; }
 
         static DataTreeExporterFactory()
         {
-            exporters = new Dictionary<string, IDataTreeExporter>();
-            exporters[""] = new DefaultDataTreeExporter();
+            Exporters = new Dictionary<string, IDataTreeExporter> {[""] = new DefaultDataTreeExporter()};
         }
-
     }
 }

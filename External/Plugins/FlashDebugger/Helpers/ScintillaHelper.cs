@@ -27,20 +27,18 @@ namespace FlashDebugger
         /// <summary>
         /// 
         /// </summary>
-        static public void AddSciEvent(String value)
+        public static void AddSciEvent(string value)
         {
-            ITabbedDocument document = DocumentManager.FindDocument(value);
-            if (document != null && document.IsEditable)
-            {
-                InitMarkers(document.SplitSci1);
-                InitMarkers(document.SplitSci2);
-            }
+            var document = DocumentManager.FindDocument(value);
+            if (document is null || !document.IsEditable) return;
+            InitMarkers(document.SplitSci1);
+            InitMarkers(document.SplitSci2);
         }
 
-        static public void InitMarkers(ScintillaControl sci)
+        public static void InitMarkers(ScintillaControl sci)
         {
-            sci.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
-            sci.MarkerChanged += new MarkerChangedHandler(SciControl_MarkerChanged);
+            sci.ModEventMask |= (int)ModificationFlags.ChangeMarker;
+            sci.MarkerChanged += SciControl_MarkerChanged;
             sci.MarginSensitiveN(BreakpointMargin, true);
             int mask = sci.GetMarginMaskN(BreakpointMargin);
             mask |= GetMarkerMask(markerBPEnabled);
@@ -57,11 +55,11 @@ namespace FlashDebugger
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage("as3"); // default
             sci.MarkerSetBack(markerBPEnabled, lang.editorstyle.ErrorLineBack); // enable
             sci.MarkerSetBack(markerBPDisabled, lang.editorstyle.DisabledLineBack); // disable
-            sci.MarginClick += new MarginClickHandler(SciControl_MarginClick);
-            sci.Modified += new ModifiedHandler(sci_Modified);
+            sci.MarginClick += SciControl_MarginClick;
+            sci.Modified += sci_Modified;
         }
 
-        static public void sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
+        public static void sci_Modified(ScintillaControl sender, int position, int modificationType, string text, int length, int linesAdded, int line, int foldLevelNow, int foldLevelPrev)
         {
             if (linesAdded != 0)
             {
@@ -70,34 +68,22 @@ namespace FlashDebugger
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public void SciControl_MarkerChanged(ScintillaControl sender, Int32 line)
+        public static void SciControl_MarkerChanged(ScintillaControl sender, int line)
         {
             if (line < 0) return;
-            ITabbedDocument document = DocumentManager.FindDocument(sender);
-            if (document == null || !document.IsEditable) return;
+            var document = DocumentManager.FindDocument(sender);
+            if (document is null || !document.IsEditable) return;
             ApplyHighlights(document.SplitSci1, line, true);
             ApplyHighlights(document.SplitSci2, line, false);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void ApplyHighlights(ScintillaControl sender, Int32 line)
-        {
-            ApplyHighlights(sender, line, true);
-        }
+        public static void ApplyHighlights(ScintillaControl sender, int line) => ApplyHighlights(sender, line, true);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public void ApplyHighlights(ScintillaControl sender, Int32 line, Boolean notify)
+        public static void ApplyHighlights(ScintillaControl sender, int line, bool notify)
         {
-            Boolean bCurrentLine = IsMarkerSet(sender, markerCurrentLine, line);
-            Boolean bBpActive = IsMarkerSet(sender, markerBPEnabled, line);
-            Boolean bBpDisabled = IsMarkerSet(sender, markerBPDisabled, line);
+            bool bCurrentLine = IsMarkerSet(sender, markerCurrentLine, line);
+            bool bBpActive = IsMarkerSet(sender, markerBPEnabled, line);
+            bool bBpDisabled = IsMarkerSet(sender, markerBPDisabled, line);
             if (bCurrentLine)
             {
                 RemoveHighlight(sender, line, indicatorDebugDisabledBreakpoint);
@@ -126,10 +112,7 @@ namespace FlashDebugger
                 PluginMain.breakPointManager.SetBreakPointInfo(sender.FileName, line, !(bBpActive || bBpDisabled), bBpActive);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public void SciControl_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
+        public static void SciControl_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
         {
             if (margin != BreakpointMargin) return;
             //if (PluginMain.debugManager.FlashInterface.isDebuggerStarted && !PluginMain.debugManager.FlashInterface.isDebuggerSuspended) return;
@@ -145,68 +128,45 @@ namespace FlashDebugger
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public void RemoveSciEvent(String value)
+        public static void RemoveSciEvent(string value)
         {
-            ITabbedDocument document = DocumentManager.FindDocument(Path.GetFileName(value));
-            if (document != null && document.IsEditable)
-            {
-                document.SplitSci1.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
-                document.SplitSci1.MarkerChanged -= new MarkerChangedHandler(SciControl_MarkerChanged);
-                document.SplitSci2.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
-                document.SplitSci2.MarkerChanged -= new MarkerChangedHandler(SciControl_MarkerChanged);
-            }
+            var document = DocumentManager.FindDocument(Path.GetFileName(value));
+            if (document is null || !document.IsEditable) return;
+            document.SplitSci1.ModEventMask |= (int)ModificationFlags.ChangeMarker;
+            document.SplitSci1.MarkerChanged -= SciControl_MarkerChanged;
+            document.SplitSci2.ModEventMask |= (int)ModificationFlags.ChangeMarker;
+            document.SplitSci2.MarkerChanged -= SciControl_MarkerChanged;
         }
 
         #endregion
 
         #region Helper Methods
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public void ToggleMarker(ScintillaControl sci, Int32 marker, Int32 line)
+        public static void ToggleMarker(ScintillaControl sci, int marker, int line)
         {
-            Int32 lineMask = sci.MarkerGet(line);
+            int lineMask = sci.MarkerGet(line);
             if ((lineMask & GetMarkerMask(marker)) == 0) sci.MarkerAdd(line, marker);
             else sci.MarkerDelete(line, marker);
         }
 
-        static public Boolean IsBreakPointEnabled(ScintillaControl sci, Int32 line)
-        {
-            return IsMarkerSet(sci, markerBPEnabled, line);
-        }
+        public static bool IsBreakPointEnabled(ScintillaControl sci, int line) => IsMarkerSet(sci, markerBPEnabled, line);
 
-        static public Boolean IsMarkerSet(ScintillaControl sci, Int32 marker, Int32 line)
-        {
-            return (sci.MarkerGet(line) & GetMarkerMask(marker)) != 0;
-        }
+        public static bool IsMarkerSet(ScintillaControl sci, int marker, int line) => (sci.MarkerGet(line) & GetMarkerMask(marker)) != 0;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public Int32 GetMarkerMask(Int32 marker)
-        {
-            return 1 << marker;
-        }
+        public static int GetMarkerMask(int marker) => 1 << marker;
 
         #endregion
 
         #region Highlighting
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void AddHighlight(ScintillaControl sci, Int32 line, Int32 indicator, Int32 value)
+        public static void AddHighlight(ScintillaControl sci, int line, int indicator, int value)
         {
-            if (sci == null) return;
-            Int32 start = sci.PositionFromLine(line);
-            Int32 length = sci.LineLength(line);
+            if (sci is null) return;
+            int start = sci.PositionFromLine(line);
+            int length = sci.LineLength(line);
             if (start < 0 || length < 1) return;
-            Int32 es = sci.EndStyled;
-            Int32 mask = (1 << sci.StyleBits) - 1;
+            int es = sci.EndStyled;
+            int mask = (1 << sci.StyleBits) - 1;
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
             if (indicator == indicatorDebugCurrentLine)
             {
@@ -230,17 +190,14 @@ namespace FlashDebugger
             sci.StartStyling(es, mask);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static void RemoveHighlight(ScintillaControl sci, Int32 line, Int32 indicator)
+        public static void RemoveHighlight(ScintillaControl sci, int line, int indicator)
         {
-            if (sci == null) return;
-            Int32 start = sci.PositionFromLine(line);
-            Int32 length = sci.LineLength(line);
+            if (sci is null) return;
+            int start = sci.PositionFromLine(line);
+            int length = sci.LineLength(line);
             if (start < 0 || length < 1) return;
-            Int32 es = sci.EndStyled;
-            Int32 mask = (1 << sci.StyleBits) - 1;
+            int es = sci.EndStyled;
+            int mask = (1 << sci.StyleBits) - 1;
             Language lang = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage);
             if (indicator == indicatorDebugCurrentLine)
             {
@@ -263,22 +220,19 @@ namespace FlashDebugger
             sci.StartStyling(es, mask);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static void RemoveAllHighlights(ScintillaControl sci)
         {
-            if (sci == null) return;
-            Int32 es = sci.EndStyled;
-            Int32[] indics = new Int32[] { indicatorDebugCurrentLine, indicatorDebugDisabledBreakpoint, indicatorDebugEnabledBreakpoint };
-            foreach (Int32 indicator in indics)
+            if (sci is null) return;
+            int es = sci.EndStyled;
+            int[] indics = { indicatorDebugCurrentLine, indicatorDebugDisabledBreakpoint, indicatorDebugEnabledBreakpoint };
+            foreach (int indicator in indics)
             {
                 sci.CurrentIndicator = indicator;
                 for (int position = 0; position < sci.Length;)
                 {
-                    Int32 start = sci.IndicatorStart(indicator, position);
-                    Int32 end = sci.IndicatorEnd(indicator, start);
-                    Int32 length = end - start;
+                    int start = sci.IndicatorStart(indicator, position);
+                    int end = sci.IndicatorEnd(indicator, start);
+                    int length = end - start;
                     if (length > 0)
                     {
                         sci.IndicatorClearRange(start, length);
@@ -294,61 +248,51 @@ namespace FlashDebugger
 
         #region Document Management
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public ScintillaControl GetScintillaControl(string name)
+        public static ScintillaControl GetScintillaControl(string name)
         {
-            ITabbedDocument[] documents = PluginBase.MainForm.Documents;
-            foreach (ITabbedDocument docment in documents)
+            foreach (var document in PluginBase.MainForm.Documents)
             {
-                ScintillaControl sci = docment.SciControl;
+                var sci = document.SciControl;
                 if (sci != null && name == sci.FileName) return sci;
             }
             return null;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static public Int32 GetScintillaControlIndex(ScintillaControl sci)
+        public static int GetScintillaControlIndex(ScintillaControl sci)
         {
-            ITabbedDocument[] documents = PluginBase.MainForm.Documents;
-            for (Int32 i = 0; i < documents.Length; i++)
+            var documents = PluginBase.MainForm.Documents;
+            for (int i = 0; i < documents.Length; i++)
             {
                 if (documents[i].SciControl == sci) return i;
             }
             return -1;
         }
 
-        static public ITabbedDocument GetDocument(string filefullpath)
+        public static ITabbedDocument GetDocument(string filefullpath)
         {
-            ITabbedDocument[] documents = PluginBase.MainForm.Documents;
-            foreach (ITabbedDocument document in documents)
+            var documents = PluginBase.MainForm.Documents;
+            foreach (var document in documents)
             {
-                ScintillaControl sci = document.SciControl;
+                var sci = document.SciControl;
                 if (sci != null && filefullpath == sci.FileName) return document;
             }
             return null;
         }
 
-        static public void ActivateDocument(string filefullpath)
-        {
-            ActivateDocument(filefullpath, -1, false);
-        }
+        public static void ActivateDocument(string filefullpath) => ActivateDocument(filefullpath, -1, false);
 
-        static public ScintillaControl ActivateDocument(string filefullpath, int line, Boolean bSelectLine)
+        public static ScintillaControl ActivateDocument(string filefullpath, int line, bool bSelectLine)
         {
             var doc = PluginBase.MainForm.OpenEditableDocument(filefullpath, false) as ITabbedDocument;
-            if (doc == null || doc.FileName != filefullpath) return null;
+            if (doc is null || doc.FileName != filefullpath) return null;
             ScintillaControl sci = doc.SciControl;
             if (line >= 0)
             {
                 sci.EnsureVisible(line);
-                Int32 start = sci.PositionFromLine(line);
+                int start = sci.PositionFromLine(line);
                 if (bSelectLine)
                 {
-                    Int32 end = start + sci.LineLength(line);
+                    int end = start + sci.LineLength(line);
                     sci.SetSel(start, end);
                 }
                 else
@@ -361,20 +305,20 @@ namespace FlashDebugger
 
         #region Breakpoint Management
 
-        static internal void RunToCursor_Click(Object sender, EventArgs e)
+        internal static void RunToCursor_Click(object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             PluginMain.breakPointManager.SetTemporaryBreakPoint(PluginBase.MainForm.CurrentDocument.FileName, sci.CurrentLine);
             PluginMain.debugManager.Continue_Click(sender, e);
         }
 
-        static internal void ToggleBreakPoint_Click(Object sender, EventArgs e)
+        internal static void ToggleBreakPoint_Click(object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             ToggleMarker(sci, markerBPEnabled, sci.CurrentLine);
         }
 
-        static internal void DeleteAllBreakPoints_Click(Object sender, EventArgs e)
+        internal static void DeleteAllBreakPoints_Click(object sender, EventArgs e)
         {
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 if (doc.IsEditable)
@@ -387,10 +331,10 @@ namespace FlashDebugger
             PluginMain.breakPointManager.ClearAll();
         }
 
-        static internal void ToggleBreakPointEnable_Click(Object sender, EventArgs e)
+        internal static void ToggleBreakPointEnable_Click(object sender, EventArgs e)
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Int32 line = sci.CurrentLine;
+            int line = sci.CurrentLine;
             if (IsMarkerSet(sci, markerBPEnabled, line))
             {
                 sci.MarkerDelete(line, markerBPEnabled);
@@ -403,7 +347,7 @@ namespace FlashDebugger
             }
         }
 
-        static internal void DisableAllBreakPoints_Click(Object sender, EventArgs e)
+        internal static void DisableAllBreakPoints_Click(object sender, EventArgs e)
         {
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
@@ -416,7 +360,7 @@ namespace FlashDebugger
             }
         }
 
-        static internal void EnableAllBreakPoints_Click(Object sender, EventArgs e)
+        internal static void EnableAllBreakPoints_Click(object sender, EventArgs e)
         {
             foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
             {
@@ -432,5 +376,4 @@ namespace FlashDebugger
         #endregion
 
     }
-
 }

@@ -205,10 +205,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the modified array of items.
         /// </summary>
-        public T[] Value
-        {
-            get { return value; }
-        }
+        public T[] Value => value;
 
         #endregion
 
@@ -403,18 +400,12 @@ namespace PluginCore.Controls
 
         class Item : ListViewItem
         {
-            bool locked;
-            T value;
+            readonly bool locked;
+            readonly T value;
 
-            public bool Locked
-            {
-                get { return locked; }
-            }
+            public bool Locked => locked;
 
-            public T Value
-            {
-                get { return value; }
-            }
+            public T Value => value;
 
             public Item(T value) : this(value, false)
             {

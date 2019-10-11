@@ -54,26 +54,14 @@ namespace System.Windows.Forms
 		{
 			base.Dispose(disposing);
 			if (disposing) {
-				if (this._BackImage != null){
-					this._BackImage.Dispose();
-				}
-				if (this._BackBufferGraphics != null){
-					this._BackBufferGraphics.Dispose();
-				}
-				if (this._BackBuffer != null){
-					this._BackBuffer.Dispose();
-				}
-				if (this._TabBufferGraphics != null){
-					this._TabBufferGraphics.Dispose();
-				}
-				if (this._TabBuffer != null){
-					this._TabBuffer.Dispose();
-				}
-				
-				if (this._StyleProvider != null){
-					this._StyleProvider.Dispose();
-				}
-			}
+                _BackImage?.Dispose();
+                _BackBufferGraphics?.Dispose();
+                _BackBuffer?.Dispose();
+                _TabBufferGraphics?.Dispose();
+                _TabBuffer?.Dispose();
+
+                _StyleProvider?.Dispose();
+            }
 		}
 
 		#endregion
@@ -101,21 +89,19 @@ namespace System.Windows.Forms
 		[Category("Appearance"),  DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public TabStyleProvider DisplayStyleProvider {
 			get {
-				if (this._StyleProvider == null){
+				if (this._StyleProvider is null){
 					this.DisplayStyle = TabStyle.Default;
 				}
 				
 				return this._StyleProvider;
 			}
-			set {
-				this._StyleProvider = value;
-			}
-		}
+			set => this._StyleProvider = value;
+        }
 
 		[Category("Appearance"), DefaultValue(typeof(TabStyle), "Default"), RefreshProperties(RefreshProperties.All)]
 		public TabStyle DisplayStyle {
-			get { return this._Style; }
-			set {
+			get => this._Style;
+            set {
 				if (this._Style != value){
 					this._Style = value;
 					this._StyleProvider = TabStyleProvider.CreateProvider(this);
@@ -126,10 +112,8 @@ namespace System.Windows.Forms
 
 		[Category("Appearance"), RefreshProperties(RefreshProperties.All)]
 		public new bool Multiline {
-			get {
-				return base.Multiline;
-			}
-			set {
+			get => base.Multiline;
+            set {
 				base.Multiline = value;
 				this.Invalidate();
 			}
@@ -140,15 +124,13 @@ namespace System.Windows.Forms
 		//	We are handling this on the Style Provider
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		public new Point Padding {
-			get { return this.DisplayStyleProvider.Padding; }
-			set {
-				this.DisplayStyleProvider.Padding = value;
-			}
-		}
+			get => this.DisplayStyleProvider.Padding;
+            set => this.DisplayStyleProvider.Padding = value;
+        }
 		
 		public override bool RightToLeftLayout {
-			get { return base.RightToLeftLayout; }
-			set { 
+			get => base.RightToLeftLayout;
+            set { 
 				base.RightToLeftLayout = value; 
 				this.UpdateStyles();
 			}
@@ -159,16 +141,14 @@ namespace System.Windows.Forms
 		//	We are handling this on the Style Provider
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool HotTrack {
-			get { return this.DisplayStyleProvider.HotTrack; }
-			set {
-				this.DisplayStyleProvider.HotTrack = value;
-			}
-		}
+			get => this.DisplayStyleProvider.HotTrack;
+            set => this.DisplayStyleProvider.HotTrack = value;
+        }
 
 		[Category("Appearance")]
 		public new TabAlignment Alignment {
-			get { return base.Alignment; }
-			set {
+			get => base.Alignment;
+            set {
 				base.Alignment = value;
 				switch (value) {
 					case TabAlignment.Top:
@@ -189,50 +169,45 @@ namespace System.Windows.Forms
 		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value")]
 		public new TabAppearance Appearance{
-			get{
-				return base.Appearance;
-			}
-			set{
-				//	Don't permit setting to other appearances as we are doing all the painting
-				base.Appearance = TabAppearance.Normal;
-			}
-		}
+			get => base.Appearance;
+            set => base.Appearance = TabAppearance.Normal;
+        }
 		
 		public override Rectangle DisplayRectangle {
 			get {
 				//	Special processing to hide tabs
 				if (this._Style == TabStyle.None) {
 					return new Rectangle(0, 0, Width, Height);
-				} else {
-					int tabStripHeight = 0;
-					int itemHeight = 0;
-					
-					if (this.Alignment <= TabAlignment.Bottom) {
-						itemHeight = this.ItemSize.Height;
-					} else {
-						itemHeight = this.ItemSize.Width;
-					}
-					
-					tabStripHeight = 5 + (itemHeight * this.RowCount);
-					
-					Rectangle rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
-					switch (this.Alignment) {
-						case TabAlignment.Top:
-							rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
-							break;
-						case TabAlignment.Bottom:
-							rect = new Rectangle(4, 4, Width - 8, Height - tabStripHeight - 4);
-							break;
-						case TabAlignment.Left:
-							rect = new Rectangle(tabStripHeight, 4, Width - tabStripHeight - 4, Height - 8);
-							break;
-						case TabAlignment.Right:
-							rect = new Rectangle(4, 4, Width - tabStripHeight - 4, Height - 8);
-							break;
-					}
-					return rect;
 				}
-			}
+
+                int tabStripHeight = 0;
+                int itemHeight = 0;
+					
+                if (this.Alignment <= TabAlignment.Bottom) {
+                    itemHeight = this.ItemSize.Height;
+                } else {
+                    itemHeight = this.ItemSize.Width;
+                }
+					
+                tabStripHeight = 5 + (itemHeight * this.RowCount);
+					
+                Rectangle rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
+                switch (this.Alignment) {
+                    case TabAlignment.Top:
+                        rect = new Rectangle(4, tabStripHeight, Width - 8, Height - tabStripHeight - 4);
+                        break;
+                    case TabAlignment.Bottom:
+                        rect = new Rectangle(4, 4, Width - 8, Height - tabStripHeight - 4);
+                        break;
+                    case TabAlignment.Left:
+                        rect = new Rectangle(tabStripHeight, 4, Width - tabStripHeight - 4, Height - 8);
+                        break;
+                    case TabAlignment.Right:
+                        rect = new Rectangle(4, 4, Width - tabStripHeight - 4, Height - 8);
+                        break;
+                }
+                return rect;
+            }
 		}
 
 		[Browsable(false)]
@@ -242,14 +217,14 @@ namespace System.Windows.Forms
 				int index = NativeMethods.SendMessage(this.Handle, NativeMethods.TCM_HITTEST, IntPtr.Zero, NativeMethods.ToIntPtr(hitTestInfo)).ToInt32();
 				if (index == -1){
 					return -1;
-				} else {
-					if (this.TabPages[index].Enabled){
-						return index;
-					} else {
-						return -1;
-					}
 				}
-			}
+
+                if (this.TabPages[index].Enabled){
+                    return index;
+                }
+
+                return -1;
+            }
 		}
 		
 		[Browsable(false)]
@@ -258,10 +233,10 @@ namespace System.Windows.Forms
 				int activeIndex = this.ActiveIndex;
 				if (activeIndex > -1){
 					return this.TabPages[activeIndex];
-				} else {
-					return null;
 				}
-			}
+
+                return null;
+            }
 		}
 		
 		#endregion
@@ -345,7 +320,7 @@ namespace System.Windows.Forms
 		}
 
 		private void BackupTabPages(){
-			if (this._TabPages == null){
+			if (this._TabPages is null){
 				this._TabPages = new List<TabPage>();
 				foreach (TabPage page in this.TabPages){
 					this._TabPages.Add(page);
@@ -461,24 +436,17 @@ namespace System.Windows.Forms
 					this._BackImage.Dispose();
 					this._BackImage = null;
 				}
-				if (this._BackBufferGraphics != null){
-					this._BackBufferGraphics.Dispose();
-				}
-				if (this._BackBuffer != null){
-					this._BackBuffer.Dispose();
-				}
 
-				this._BackBuffer = new Bitmap(this.Width, this.Height);
+                _BackBufferGraphics?.Dispose();
+                _BackBuffer?.Dispose();
+
+                this._BackBuffer = new Bitmap(this.Width, this.Height);
 				this._BackBufferGraphics = Graphics.FromImage(this._BackBuffer);
 
-				if (this._TabBufferGraphics != null){
-					this._TabBufferGraphics.Dispose();
-				}
-				if (this._TabBuffer != null){
-					this._TabBuffer.Dispose();
-				}
+                _TabBufferGraphics?.Dispose();
+                _TabBuffer?.Dispose();
 
-				this._TabBuffer = new Bitmap(this.Width, this.Height);
+                this._TabBuffer = new Bitmap(this.Width, this.Height);
 				this._TabBufferGraphics = Graphics.FromImage(this._TabBuffer);
 
 				if (this._BackImage != null){
@@ -626,28 +594,24 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected virtual void OnTabImageClick(TabControlEventArgs e){
-			if (this.TabImageClick != null){
-				this.TabImageClick(this, e);
-			}
-		}
+		protected virtual void OnTabImageClick(TabControlEventArgs e)
+        {
+            TabImageClick?.Invoke(this, e);
+        }
 
-		protected virtual void OnTabClosing(TabControlCancelEventArgs e){
-			if (this.TabClosing != null){
-				this.TabClosing(this, e);
-			}
-		}		
+		protected virtual void OnTabClosing(TabControlCancelEventArgs e)
+        {
+            TabClosing?.Invoke(this, e);
+        }		
 		
 		protected virtual void OnHScroll(ScrollEventArgs e){
 			//	repaint the moved tabs
 			this.Invalidate();
 			
 			//	Raise the event
-			if (this.HScroll != null){
-				this.HScroll(this, e);
-			}
-			
-			if (e.Type == ScrollEventType.EndScroll){
+            HScroll?.Invoke(this, e);
+
+            if (e.Type == ScrollEventType.EndScroll){
 				this._oldValue = e.NewValue;
 			}
 		}
@@ -718,7 +682,7 @@ namespace System.Windows.Forms
 			//	Buffer code from Gil. Schmidt http://www.codeproject.com/KB/graphics/DoubleBuffering.aspx
 			
 			if (this.Width > 0 && this.Height > 0){
-				if (this._BackImage == null){
+				if (this._BackImage is null){
 					//	Cached Background Image
 					this._BackImage = new Bitmap(this.Width, this.Height);
 					Graphics backGraphics = Graphics.FromImage(this._BackImage);
@@ -813,7 +777,7 @@ namespace System.Windows.Forms
 				GraphicsState state = graphics.Save();
 				
 				//	Set the graphicsobject to be relative to the parent
-				graphics.TranslateTransform((float)-this.Location.X, (float)-this.Location.Y);
+				graphics.TranslateTransform(-this.Location.X, -this.Location.Y);
 				graphics.SmoothingMode = SmoothingMode.HighSpeed;
 				
 				//	Paint the parent
@@ -834,31 +798,28 @@ namespace System.Windows.Forms
 			graphics.SmoothingMode = SmoothingMode.HighSpeed;
 			
 			//	Get TabPageBorder
-			using (GraphicsPath tabPageBorderPath = this.GetTabPageBorder(index)) {
+            using GraphicsPath tabPageBorderPath = this.GetTabPageBorder(index);
+            //	Paint the background
+            using (Brush fillBrush = this._StyleProvider.GetPageBackgroundBrush(index)){
+                graphics.FillPath(fillBrush, tabPageBorderPath);
+            }
 				
-				//	Paint the background
-				using (Brush fillBrush = this._StyleProvider.GetPageBackgroundBrush(index)){
-					graphics.FillPath(fillBrush, tabPageBorderPath);
-				}
-				
-				if (this._Style != TabStyle.None){
+            if (this._Style != TabStyle.None){
 					
-					//	Paint the tab
-					this._StyleProvider.PaintTab(index, graphics);
+                //	Paint the tab
+                this._StyleProvider.PaintTab(index, graphics);
 					
-					//	Draw any image
-					this.DrawTabImage(index, graphics);
+                //	Draw any image
+                this.DrawTabImage(index, graphics);
 
-					//	Draw the text
-					this.DrawTabText(index, graphics);
+                //	Draw the text
+                this.DrawTabText(index, graphics);
 
-				}
+            }
 				
-				//	Paint the border
-				this.DrawTabBorder(tabPageBorderPath, index, graphics);
-				
-			}
-		}
+            //	Paint the border
+            this.DrawTabBorder(tabPageBorderPath, index, graphics);
+        }
 
 		private void DrawTabBorder(GraphicsPath path, int index, Graphics graphics)
 		{
@@ -872,10 +833,9 @@ namespace System.Windows.Forms
 				borderColor = this._StyleProvider.BorderColor;
 			}
 
-			using (Pen borderPen =new Pen(borderColor)){
-				graphics.DrawPath(borderPen, path);
-			}
-		}
+            using Pen borderPen =new Pen(borderColor);
+            graphics.DrawPath(borderPen, path);
+        }
 
 		private void DrawTabText(int index, Graphics graphics)
 		{
@@ -883,20 +843,20 @@ namespace System.Windows.Forms
 			graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			Rectangle tabBounds = this.GetTabTextRect(index);
 			
-			if (this.SelectedIndex == index) {
-				using (Brush textBrush = new SolidBrush(this._StyleProvider.TextColorSelected)){
-					graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
-				}
-			} else {
-				if (this.TabPages[index].Enabled) {
-					using (Brush textBrush = new SolidBrush(this._StyleProvider.TextColor)){
-						graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
-					}
-				} else {
-					using (Brush textBrush = new SolidBrush(this._StyleProvider.TextColorDisabled)){
-						graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
-					}
-				}
+			if (this.SelectedIndex == index)
+            {
+                using Brush textBrush = new SolidBrush(this._StyleProvider.TextColorSelected);
+                graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
+            } else {
+				if (this.TabPages[index].Enabled)
+                {
+                    using Brush textBrush = new SolidBrush(this._StyleProvider.TextColor);
+                    graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
+                } else
+                {
+                    using Brush textBrush = new SolidBrush(this._StyleProvider.TextColorDisabled);
+                    graphics.DrawString(this.TabPages[index].Text, this.Font, textBrush, tabBounds, this.GetStringFormat());
+                }
 			}
 		}
 
@@ -949,7 +909,7 @@ namespace System.Windows.Forms
 				format.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.Hide;
 			}
 			if (this.RightToLeft == RightToLeft.Yes){
-				format.FormatFlags = format.FormatFlags | StringFormatFlags.DirectionRightToLeft;
+				format.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 			}
 			return format;
 		}
@@ -1015,7 +975,7 @@ namespace System.Windows.Forms
 				                               || (!string.IsNullOrEmpty(this.TabPages[index].ImageKey)
 				                                   && !this.TabPages[index].ImageKey.Equals("(none)", StringComparison.OrdinalIgnoreCase)))){
 					Rectangle imageRect = this.GetTabImageRect(index);
-					if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != ((ContentAlignment) 0)) {
+					if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != 0) {
 						if (this.Alignment <= TabAlignment.Bottom) {
 							textRect.X = imageRect.Right + 4;
 							textRect.Width -= (textRect.Right - (int)tabBounds.Right);
@@ -1042,7 +1002,7 @@ namespace System.Windows.Forms
 								}
 							}
 						}
-					} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != ((ContentAlignment) 0)) {
+					} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != 0) {
 						//	If there is a closer allow for it
 						if (this._StyleProvider.ShowTabCloser) {
 							Rectangle closerRect = this.GetTabCloserRect(index);
@@ -1247,11 +1207,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private Rectangle GetTabImageRect(int index){
-			using (GraphicsPath tabBorderPath = this._StyleProvider.GetTabBorder(index)){
-				return this.GetTabImageRect(tabBorderPath);
-			}
-		}
+		private Rectangle GetTabImageRect(int index)
+        {
+            using GraphicsPath tabBorderPath = this._StyleProvider.GetTabBorder(index);
+            return this.GetTabImageRect(tabBorderPath);
+        }
 		private Rectangle GetTabImageRect(GraphicsPath tabBorderPath){
 			Rectangle imageRect = new Rectangle();
 			RectangleF rect = tabBorderPath.GetBounds();
@@ -1278,14 +1238,14 @@ namespace System.Windows.Forms
 			
 			//	Ensure image is fully visible
 			if (this.Alignment <= TabAlignment.Bottom) {
-				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != ((ContentAlignment) 0)){
+				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != 0){
 					imageRect = new Rectangle((int)rect.X, (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 16)/2), 16, 16);
 					while (!tabBorderPath.IsVisible(imageRect.X, imageRect.Y)) {
 						imageRect.X += 1;	
 					}
 					imageRect.X += 4;
 
-				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != ((ContentAlignment) 0)){
+				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != 0){
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)(((int)rect.Right - (int)rect.X - (int)rect.Height + 2)/2)), (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 16)/2), 16, 16);
 				} else {
 					imageRect = new Rectangle((int)rect.Right, (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 16)/2), 16, 16);
@@ -1300,13 +1260,13 @@ namespace System.Windows.Forms
 					}
 				}
 			} else {
-				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != ((ContentAlignment) 0)){
+				if ((this._StyleProvider.ImageAlign & NativeMethods.AnyLeftAlign) != 0){
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)((int)rect.Width - 16)/2), (int)rect.Y, 16, 16);
 					while (!tabBorderPath.IsVisible(imageRect.X, imageRect.Y)) {
 						imageRect.Y += 1;	
 					}
 					imageRect.Y += 4;
-				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != ((ContentAlignment) 0)){
+				} else if ((this._StyleProvider.ImageAlign & NativeMethods.AnyCenterAlign) != 0){
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)((int)rect.Width - 16)/2), (int)rect.Y + (int)Math.Floor((double)(((int)rect.Bottom - (int)rect.Y - (int)rect.Width + 2)/2)), 16, 16);
 				} else {
 					imageRect = new Rectangle((int)rect.X + (int)Math.Floor((double)((int)rect.Width - 16)/2), (int)rect.Bottom , 16, 16);

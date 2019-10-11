@@ -6,7 +6,7 @@ class EFoo {
 }
 
 class Foo {
-	public static function foo(array:Array<T>) {
+	public static function foo(array:Array<T>):Void {
 		
 	}
 }

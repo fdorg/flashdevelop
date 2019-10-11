@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -15,7 +14,7 @@ namespace PluginCore
         public static string FLASHPLAYER_PLATFORM = "Flash Player";
         public static string JAVASCRIPT_PLATFORM = "JavaScript";
 
-        public static Dictionary<String, SupportedLanguage> SupportedLanguages;
+        public static Dictionary<string, SupportedLanguage> SupportedLanguages;
 
         public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
@@ -54,7 +53,7 @@ namespace PluginCore
 
         public static void Load(string path)
         {
-            SupportedLanguages = new Dictionary<String, SupportedLanguage>();
+            SupportedLanguages = new Dictionary<string, SupportedLanguage>();
             if (!Directory.Exists(path)) return;
 
             // walk AS2, AS3, Haxe...
@@ -131,24 +130,15 @@ namespace PluginCore
             return platform;
         }
 
-        private static bool GetBool(XmlNode node, string attribute)
-        {
-            return (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
-        }
+        private static bool GetBool(XmlNode node, string attribute) => (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
 
-        private static string GetAttribute(XmlNode node, string name)
-        {
-            var attr = node.Attributes[name];
-            if (attr != null) return attr.Value;
-            return null;
-        }
+        private static string GetAttribute(XmlNode node, string name) => node.Attributes?[name]?.Value;
 
         private static string[] GetList(XmlNode node, string attribute)
         {
             // build targets, ie. html5, flash, android for openfl
-            var attr = node.Attributes[attribute];
-            if (attr == null) return null;
-            else return attr.Value.Split(',');
+            var attr = node.Attributes?[attribute];
+            return attr?.Value.Split(',');
         }
 
         private static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
@@ -178,7 +168,7 @@ namespace PluginCore
         private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
         {
             // custom display/build/run/clean commands, ie. for openfl
-            var commands = defaultCommands == null 
+            var commands = defaultCommands is null 
                 ? new Dictionary<string, PlatformCommand>()
                 : new Dictionary<string, PlatformCommand>(defaultCommands);
 
@@ -199,11 +189,7 @@ namespace PluginCore
             return null;
         }
 
-        private static string ParseSwfVersion(XmlNode node)
-        {
-            var attr = node.Attributes["swf-version"];
-            return attr != null ? attr.Value : null;
-        }
+        private static string ParseSwfVersion(XmlNode node) => node.Attributes["swf-version"]?.Value;
 
         #endregion
     }
@@ -243,10 +229,7 @@ namespace PluginCore
         public string GetProjectTemplate(string target)
         {
             var templateNode = RawData.SelectSingleNode("templates/template[@target='" + target + "']/@value");
-                
-            if (templateNode != null) return templateNode.Value;
-
-            return null;
+            return templateNode?.Value;
         }
     }
 
@@ -265,4 +248,3 @@ namespace PluginCore
         public XmlNode RawData;
     }
 }
-

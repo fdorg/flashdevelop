@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Collections;
 
 namespace ProjectManager.Controls
 {
@@ -20,7 +21,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private readonly System.ComponentModel.IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -28,9 +29,9 @@ namespace ProjectManager.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -54,7 +55,7 @@ namespace ProjectManager.Controls
             // classpathControl
             // 
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.classpathControl.Classpaths = new string[0];
+            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
             this.classpathControl.Location = new System.Drawing.Point(10, 19);
             this.classpathControl.Name = "classpathControl";
             this.classpathControl.Size = new System.Drawing.Size(357, 135);
@@ -135,7 +136,7 @@ namespace ProjectManager.Controls
 
         #endregion
 
-        ProjectManagerSettings settings;
+        readonly ProjectManagerSettings settings;
         bool pathChanged;
 
         public ClasspathDialog(ProjectManagerSettings settings)
@@ -151,12 +152,12 @@ namespace ProjectManager.Controls
         {
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 string label = TextHelper.GetString("Title.GlobalClasspathsBox");
-                groupBox1.Text = String.Format(label, value.ToUpper());
+                groupBox1.Text = string.Format(label, value.ToUpper());
                 classpathControl.Language = value;
             }
-            get { return classpathControl.Language; }
+            get => classpathControl.Language;
         }
 
         public void InitializeLocalization()
@@ -170,8 +171,8 @@ namespace ProjectManager.Controls
 
         public string[] Classpaths
         {
-            get { return classpathControl.Classpaths; }
-            set { classpathControl.Classpaths = value; }
+            get => classpathControl.Classpaths;
+            set => classpathControl.Classpaths = value;
         }
 
         private void classpathControl_Changed(object sender, EventArgs e)
@@ -182,7 +183,7 @@ namespace ProjectManager.Controls
         private void classpathControl_IndexChanged(object sender, EventArgs e)
         {
             SaveClasspath();
-            Int32 index = classpathControl.LanguageBox.SelectedIndex;
+            int index = classpathControl.LanguageBox.SelectedIndex;
             this.Language = classpathControl.LanguageBox.Items[index].ToString().ToLower();
             this.Classpaths = this.settings.GetGlobalClasspaths(this.Language).ToArray();
         }
@@ -192,7 +193,7 @@ namespace ProjectManager.Controls
             if (pathChanged)
             {
                 pathChanged = false;
-                List<String> cps = new List<String>();
+                List<string> cps = new List<string>();
                 cps.AddRange(this.Classpaths);
                 this.settings.SetGlobalClasspaths(this.Language, cps);
             }

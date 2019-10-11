@@ -20,21 +20,12 @@ namespace WeifenLuo.WinFormsUI.Docking
             SetStyle(ControlStyles.Selectable, false);
         }
 
-        private DockPane m_dockPane;
-        protected DockPane DockPane
-        {
-            get {   return m_dockPane;  }
-        }
+        private readonly DockPane m_dockPane;
+        protected DockPane DockPane => m_dockPane;
 
-        protected DockPane.AppearanceStyle Appearance
-        {
-            get {   return DockPane.Appearance; }
-        }
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
-        protected bool HasTabPageContextMenu
-        {
-            get { return DockPane.HasTabPageContextMenu; }
-        }
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
 
         protected void ShowTabPageContextMenu(Point position)
         {

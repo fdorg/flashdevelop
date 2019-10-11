@@ -89,7 +89,7 @@ namespace CodeRefactor.Commands
             var newName = "newVar";
             var label = TextHelper.GetString("Label.NewName");
             var title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-            var askName = new LineEntryDialog(title, label, newName);
+            using var askName = new LineEntryDialog(title, label, newName);
             var choice = askName.ShowDialog();
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (choice != DialogResult.OK)
@@ -173,7 +173,7 @@ namespace CodeRefactor.Commands
                     var lineNumber = match.Line;
                     var changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
                     var offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
-                    column = column + offset;
+                    column += offset;
                     changedLine = changedLine.Substring(0, column) + newName + changedLine.Substring(column + match.Length);
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (newNameLength - match.Length);
@@ -229,7 +229,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        string description;
+        readonly string description;
         public string Description
         {
             get
@@ -246,7 +246,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public Bitmap Icon { get; private set; }
+        public Bitmap Icon { get; }
 
         /// <summary>
         /// Modify the highlight indicator alpha and select current word.

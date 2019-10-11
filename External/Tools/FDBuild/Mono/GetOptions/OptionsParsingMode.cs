@@ -12,4 +12,3 @@ namespace Mono.GetOptions
         Windows = 2
     }
 }
-

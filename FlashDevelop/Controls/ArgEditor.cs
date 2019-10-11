@@ -8,7 +8,7 @@ namespace FlashDevelop.Controls
         private System.Windows.Forms.Label argLabel;
         private System.Windows.Forms.ComboBox argValues;
 
-        public ArgEditor(String args, String[] values)
+        public ArgEditor(string args, string[] values)
         {
             this.InitializeComponent();
             this.argLabel.Text = args;
@@ -80,19 +80,19 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// 
         /// </summary>
-        public String Argument
+        public string Argument
         {
-            get { return this.argLabel.Text; }
-            set { this.argLabel.Text = value; }
+            get => this.argLabel.Text;
+            set => this.argLabel.Text = value;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String Value
+        public string Value
         {
-            get { return this.argValues.Text; }
-            set { this.argValues.Text = value; }
+            get => this.argValues.Text;
+            set => this.argValues.Text = value;
         }
 
         #endregion

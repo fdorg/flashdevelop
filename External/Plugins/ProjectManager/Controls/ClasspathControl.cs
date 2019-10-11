@@ -13,7 +13,7 @@ namespace ProjectManager.Controls
 {
     public class ClasspathControl : UserControl
     {
-        String language;
+        string language;
         Project project; // if not null, use relative paths
 
         public event EventHandler Changed;
@@ -39,9 +39,9 @@ namespace ProjectManager.Controls
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -66,59 +66,59 @@ namespace ProjectManager.Controls
             // 
             // listBox
             // 
-            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.listBox.Location = new System.Drawing.Point(1, 1);
             this.listBox.Name = "listBox";
             this.listBox.Size = new System.Drawing.Size(271, 133);
             this.listBox.TabIndex = 0;
-            this.listBox.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
-            this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
-            this.listBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseMove);
+            this.listBox.DoubleClick += this.listBox_DoubleClick;
+            this.listBox.SelectedIndexChanged += this.listBox_SelectedIndexChanged;
+            this.listBox.MouseMove += this.listBox_MouseMove;
             this.listBox.IntegralHeight = false;
             // 
             // btnNewClasspath
             // 
-            this.btnNewClasspath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnNewClasspath.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.btnNewClasspath.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnNewClasspath.Location = new System.Drawing.Point(0, 147);
             this.btnNewClasspath.Name = "btnNewClasspath";
             this.btnNewClasspath.Size = new System.Drawing.Size(107, 21);
             this.btnNewClasspath.TabIndex = 1;
             this.btnNewClasspath.Text = "&Add Classpath...";
-            this.btnNewClasspath.Click += new System.EventHandler(this.btnNewClasspath_Click);
+            this.btnNewClasspath.Click += this.btnNewClasspath_Click;
             // 
             // btnRemove
             // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnRemove.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.btnRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnRemove.Location = new System.Drawing.Point(111, 147);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(69, 21);
             this.btnRemove.TabIndex = 2;
             this.btnRemove.Text = "&Remove";
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            this.btnRemove.Click += this.btnRemove_Click;
             // 
             // btnUp
             // 
-            this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUp.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnUp.Location = new System.Drawing.Point(278, 0);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(24, 24);
             this.btnUp.TabIndex = 3;
-            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            this.btnUp.Click += this.btnUp_Click;
             // 
             // btnDown
             // 
-            this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDown.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnDown.Location = new System.Drawing.Point(278, 24);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(24, 24);
             this.btnDown.TabIndex = 4;
-            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+            this.btnDown.Click += this.btnDown_Click;
             // 
             // langComboBox
             // 
-            this.langComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.langComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.langComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.langComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.langComboBox.FormattingEnabled = true;
@@ -170,22 +170,22 @@ namespace ProjectManager.Controls
 
         public Project Project
         {
-            get { return project; }
-            set { project = value; }
+            get => project;
+            set => project = value;
         }
 
         public ComboBox LanguageBox
         {
-            get { return this.langComboBox; }
-            set { this.langComboBox = value; }
+            get => this.langComboBox;
+            set => this.langComboBox = value;
         }
 
         public string Language
         {
-            get { return this.language; }
+            get => this.language;
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 for(int i=0; i<langComboBox.Items.Count; i++)
                     if (value.Equals(langComboBox.Items[i] as string, StringComparison.OrdinalIgnoreCase))
                     {
@@ -221,7 +221,7 @@ namespace ProjectManager.Controls
 
         private void OnChanged()
         {
-            if (Changed != null) Changed(this, new EventArgs());
+            Changed?.Invoke(this, new EventArgs());
         }
 
         private void SetButtons()
@@ -235,35 +235,33 @@ namespace ProjectManager.Controls
 
         private void btnNewClasspath_Click(object sender, EventArgs e)
         {
-            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
+
+            if (project != null) dialog.SelectedPath = project.Directory;
+            if (lastBrowserPath != null && Directory.Exists(lastBrowserPath)) dialog.SelectedPath = lastBrowserPath;
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                dialog.UseDescriptionForTitle = true;
-                dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
-
-                if (project != null) dialog.SelectedPath = project.Directory;
-                if (lastBrowserPath != null && Directory.Exists(lastBrowserPath)) dialog.SelectedPath = lastBrowserPath;
-
-                if (dialog.ShowDialog(this) == DialogResult.OK)
+                string path = dialog.SelectedPath;
+                if (project != null)
                 {
-                    string path = dialog.SelectedPath;
-                    if (project != null)
+                    if (CanBeRelative(path))
                     {
-                        if (CanBeRelative(path))
-                        {
-                            path = project.GetRelativePath(path);
-                            // remove default classpath if you add a subfolder in the classpath
-                            if (!path.StartsWithOrdinal("..") && listBox.Items.Count == 1 
-                                && (listBox.Items[0] as ClasspathEntry).Classpath == ".")
-                                listBox.Items.Clear();
-                        }
+                        path = project.GetRelativePath(path);
+                        // remove default classpath if you add a subfolder in the classpath
+                        if (!path.StartsWithOrdinal("..") && listBox.Items.Count == 1 
+                                                          && (listBox.Items[0] as ClasspathEntry).Classpath == ".")
+                            listBox.Items.Clear();
                     }
-                    if (listBox.Items.Count > 0 && !WarnConflictingPath(path)) return;
-                    ClasspathEntry entry = new ClasspathEntry(path);
-                    if (!listBox.Items.Contains(entry)) listBox.Items.Add(entry);
-                    OnChanged();
-                    lastBrowserPath = dialog.SelectedPath;
                 }
+                if (listBox.Items.Count > 0 && !WarnConflictingPath(path)) return;
+                ClasspathEntry entry = new ClasspathEntry(path);
+                if (!listBox.Items.Contains(entry)) listBox.Items.Add(entry);
+                OnChanged();
+                lastBrowserPath = dialog.SelectedPath;
             }
         }
 
@@ -290,31 +288,29 @@ namespace ProjectManager.Controls
         private void listBox_DoubleClick(object sender, System.EventArgs e)
         {
             ClasspathEntry entry = listBox.SelectedItem as ClasspathEntry;
-            if (entry == null) return; // you could have double-clicked on whitespace
-            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            if (entry is null) return; // you could have double-clicked on whitespace
+            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
+            if (project != null)
             {
-                dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                dialog.UseDescriptionForTitle = true;
-                dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
+                dialog.SelectedPath = project.GetAbsolutePath(entry.Classpath);
+                if (!Directory.Exists(dialog.SelectedPath)) dialog.SelectedPath = project.Directory;
+            }
+            else dialog.SelectedPath = entry.Classpath;
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string selectedPath = dialog.SelectedPath;
                 if (project != null)
                 {
-                    dialog.SelectedPath = project.GetAbsolutePath(entry.Classpath);
-                    if (!Directory.Exists(dialog.SelectedPath)) dialog.SelectedPath = project.Directory;
+                    if (CanBeRelative(selectedPath)) 
+                        selectedPath = project.GetRelativePath(selectedPath);
                 }
-                else dialog.SelectedPath = entry.Classpath;
-
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    string selectedPath = dialog.SelectedPath;
-                    if (project != null)
-                    {
-                        if (CanBeRelative(selectedPath)) 
-                            selectedPath = project.GetRelativePath(selectedPath);
-                    }
-                    if (selectedPath == entry.Classpath) return; // nothing to do!
-                    listBox.Items[listBox.SelectedIndex] = new ClasspathEntry(selectedPath);
-                    OnChanged();
-                }
+                if (selectedPath == entry.Classpath) return; // nothing to do!
+                listBox.Items[listBox.SelectedIndex] = new ClasspathEntry(selectedPath);
+                OnChanged();
             }
         }
 
@@ -392,7 +388,7 @@ namespace ProjectManager.Controls
 
         private class ClasspathEntry
         {
-            public string Classpath;
+            public readonly string Classpath;
 
             public ClasspathEntry(string classpath)
             {
@@ -401,7 +397,7 @@ namespace ProjectManager.Controls
 
             public override string ToString()
             {
-                String projPath = TextHelper.GetString("Info.ProjectDirectory");
+                string projPath = TextHelper.GetString("Info.ProjectDirectory");
                 return (Classpath == ".") ? projPath : Classpath;
             }
 
@@ -409,7 +405,7 @@ namespace ProjectManager.Controls
             {
                 ClasspathEntry entry = obj as ClasspathEntry;
                 if (entry != null) return entry.Classpath == Classpath;
-                else return base.Equals(obj);
+                return base.Equals(obj);
             }
 
             public override int GetHashCode()

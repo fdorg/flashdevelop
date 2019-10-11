@@ -8,20 +8,20 @@ namespace ProjectManager.Building
     /// </summary>
     public class BuildEventRunner
     {
-        Project project;
-        BuildEventVars vars;
+        readonly Project project;
+        readonly BuildEventVars vars;
 
         public BuildEventRunner(Project project, string compilerPath)
         {
             this.project = project;
             project.CurrentSDK = compilerPath;
-            this.vars = new BuildEventVars(project);
+            vars = new BuildEventVars(project);
         }
 
         //parse line into command/argument pair
         private string[] tokenize(string line)
         {
-            string[] result = new String[2];
+            string[] result = new string[2];
 
             if (line.StartsWith("\"", StringComparison.Ordinal))
             {
@@ -42,9 +42,7 @@ namespace ProjectManager.Building
         public void Run(string buildEvents, bool noTrace)
         {
             string[] events = buildEvents.Split('\n');
-            if (events.Length == 0)
-                return;
-
+            if (events.Length == 0) return;
             BuildEventInfo[] infos = vars.GetVars();
             foreach (string buildEvent in events)
             {
@@ -52,19 +50,19 @@ namespace ProjectManager.Building
 
                 string line = buildEvent.Trim();
 
-                if (line.Length <= 0)
+                if (line.Length == 0)
                     continue; // nothing to do
 
                 // conditional execution
                 if (line.StartsWith("DEBUG:", StringComparison.Ordinal))
                 {
                     if (noTrace) continue;
-                    else line = line.Substring("DEBUG:".Length).Trim();
+                    line = line.Substring("DEBUG:".Length).Trim();
                 }
                 if (line.StartsWith("RELEASE:", StringComparison.Ordinal))
                 {
                     if (!noTrace) continue;
-                    else line = line.Substring("RELEASE:".Length).Trim();
+                    line = line.Substring("RELEASE:".Length).Trim();
                 }
                 // expand variables
                 foreach (BuildEventInfo info in infos)

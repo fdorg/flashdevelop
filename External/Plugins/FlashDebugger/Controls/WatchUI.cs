@@ -11,20 +11,20 @@ namespace FlashDebugger.Controls
 {
     public class WatchUI : DockPanelControl
     {
-        private DataTreeControl treeControl;
-        private WatchManager watchManager;
+        private readonly DataTreeControl treeControl;
+        private readonly WatchManager watchManager;
 
         public WatchUI(WatchManager watchManager)
         {
-            this.AutoKeyHandling = true;
-            this.treeControl = new DataTreeControl(true);
-            this.treeControl.Tree.BorderStyle = BorderStyle.None;
-            this.treeControl.Resize += new EventHandler(this.TreeControlResize);
-            this.treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
-            this.treeControl.Dock = DockStyle.Fill;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.treeControl);
+            AutoKeyHandling = true;
+            treeControl = new DataTreeControl(true);
+            treeControl.Tree.BorderStyle = BorderStyle.None;
+            treeControl.Resize += TreeControlResize;
+            treeControl.Tree.Font = PluginBase.Settings.DefaultFont;
+            treeControl.Dock = DockStyle.Fill;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(treeControl);
 
             this.watchManager = watchManager;
             this.watchManager.ExpressionAdded += WatchManager_ExpressionAdded;
@@ -34,35 +34,35 @@ namespace FlashDebugger.Controls
             this.watchManager.ExpressionsLoaded += WatchManager_ExpressionsLoaded;
         }
 
-        private void TreeControlResize(Object sender, EventArgs e)
+        private void TreeControlResize(object sender, EventArgs e)
         {
-            Int32 w = this.treeControl.Width / 2;
-            this.treeControl.Tree.Columns[0].Width = w;
-            this.treeControl.Tree.Columns[1].Width = w - 8;
+            int w = treeControl.Width / 2;
+            treeControl.Tree.Columns[0].Width = w;
+            treeControl.Tree.Columns[1].Width = w - 8;
         }
 
-        private void WatchManager_ExpressionAdded(Object sender, WatchExpressionArgs e)
+        private void WatchManager_ExpressionAdded(object sender, WatchExpressionArgs e)
         {
             treeControl.Nodes.Insert(e.Position, GetExpressionNode(e.Expression));
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionRemoved(Object sender, WatchExpressionArgs e)
+        private void WatchManager_ExpressionRemoved(object sender, WatchExpressionArgs e)
         {
             UpdateElements();
         }
 
-        private void WatchManager_ExpressionReplaced(Object sender, WatchExpressionReplaceArgs e)
+        private void WatchManager_ExpressionReplaced(object sender, WatchExpressionReplaceArgs e)
         {
             treeControl.Nodes[e.Position] = GetExpressionNode(e.NewExpression);
         }
 
-        private void WatchManager_ExpressionsCleared(Object sender, EventArgs e)
+        private void WatchManager_ExpressionsCleared(object sender, EventArgs e)
         {
             treeControl.Nodes.Clear();
         }
 
-        private void WatchManager_ExpressionsLoaded(Object sender, EventArgs e)
+        private void WatchManager_ExpressionsLoaded(object sender, EventArgs e)
         {
             UpdateElements();
         }

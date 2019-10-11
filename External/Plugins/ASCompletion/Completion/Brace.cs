@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PluginCore;
+using PluginCore.Collections;
 
 namespace ASCompletion.Completion
 {
@@ -18,38 +20,38 @@ namespace ASCompletion.Completion
 
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get => name;
+            set => name = value;
         }
         
         public char Open
         {
-            get { return open; }
-            set { open = value; }
+            get => open;
+            set => open = value;
         }
         
         public char Close
         {
-            get { return close; }
-            set { close = value; }
+            get => close;
+            set => close = value;
         }
 
         public bool AddSpace
         {
-            get { return addSpace; }
-            set { addSpace = value; }
+            get => addSpace;
+            set => addSpace = value;
         }
 
         public bool IgnoreWhitespace
         {
-            get { return ignoreWhitespace; }
-            set { ignoreWhitespace = value; }
+            get => ignoreWhitespace;
+            set => ignoreWhitespace = value;
         }
 
         public Rule[] Rules
         {
-            get { return rules; }
-            set { rules = value ?? new Rule[0]; }
+            get => rules;
+            set => rules = value ?? EmptyArray<Rule>.Instance;
         }
         
         /// <summary>
@@ -70,9 +72,9 @@ namespace ASCompletion.Completion
         /// </summary>
         public bool ShouldOpen(char charBefore, byte styleBefore, char charAfter, byte styleAfter)
         {
-            for (int i = 0; i < rules.Length; i++)
+            foreach (var it in rules)
             {
-                if (rules[i].Matches(charBefore, styleBefore, charAfter, styleAfter))
+                if (it.Matches(charBefore, styleBefore, charAfter, styleAfter))
                 {
                     return true;
                 }
@@ -145,56 +147,56 @@ namespace ASCompletion.Completion
 
             public bool NotAfterChars
             {
-                get { return notAfterChars; }
-                set { notAfterChars = value; }
+                get => notAfterChars;
+                set => notAfterChars = value;
             }
 
             public string AfterChars
             {
-                get { return FromRegex(afterChars); }
-                set { afterChars = ToRegex(value); }
+                get => FromRegex(afterChars);
+                set => afterChars = ToRegex(value);
             }
 
             public bool NotAfterStyles
             {
-                get { return notAfterStyles; }
-                set { notAfterStyles = value; }
+                get => notAfterStyles;
+                set => notAfterStyles = value;
             }
 
             public Style[] AfterStyles
             {
-                get { return afterStyles ?? new Style[0]; }
-                set { afterStyles = value == null || value.Length == 0 ? null : value; }
+                get => afterStyles ?? EmptyArray<Style>.Instance;
+                set => afterStyles = value.IsNullOrEmpty() ? null : value;
             }
             
             public bool NotBeforeChars
             {
-                get { return notBeforeChars; }
-                set { notBeforeChars = value; }
+                get => notBeforeChars;
+                set => notBeforeChars = value;
             }
 
             public string BeforeChars
             {
-                get { return FromRegex(beforeChars); }
-                set { beforeChars = ToRegex(value); }
+                get => FromRegex(beforeChars);
+                set => beforeChars = ToRegex(value);
             }
             
             public bool NotBeforeStyles
             {
-                get { return notBeforeStyles; }
-                set { notBeforeStyles = value; }
+                get => notBeforeStyles;
+                set => notBeforeStyles = value;
             }
 
             public Style[] BeforeStyles
             {
-                get { return beforeStyles ?? new Style[0]; }
-                set { beforeStyles = value == null || value.Length == 0 ? null : value; }
+                get => beforeStyles ?? EmptyArray<Style>.Instance;
+                set => beforeStyles = value.IsNullOrEmpty() ? null : value;
             }
 
             public Logic Logic
             {
-                get { return logic; }
-                set { logic = value; }
+                get => logic;
+                set => logic = value;
             }
 
             private static Regex ToRegex(string value)
@@ -208,7 +210,7 @@ namespace ASCompletion.Completion
 
             private static string FromRegex(Regex value)
             {
-                if (value == null)
+                if (value is null)
                 {
                     return string.Empty;
                 }
@@ -228,7 +230,7 @@ namespace ASCompletion.Completion
 
             private static bool RegexCheck(Regex regex, char c, bool exclude)
             {
-                if (regex == null)
+                if (regex is null)
                 {
                     return exclude;
                 }
@@ -237,7 +239,7 @@ namespace ASCompletion.Completion
 
             private static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
-                if (array == null)
+                if (array is null)
                 {
                     return exclude;
                 }
@@ -269,13 +271,11 @@ namespace ASCompletion.Completion
                         || RegexCheck(beforeChars, charAfter, notBeforeChars)
                         || ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
                 }
-                else /*if (logic == Logic.And)*/
-                {
-                    return RegexCheck(afterChars, charBefore, notAfterChars)
-                        && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
-                        && RegexCheck(beforeChars, charAfter, notBeforeChars)
-                        && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
-                }
+
+                return RegexCheck(afterChars, charBefore, notAfterChars)
+                       && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
+                       && RegexCheck(beforeChars, charAfter, notBeforeChars)
+                       && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
             }
         }
 

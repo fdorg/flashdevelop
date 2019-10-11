@@ -82,10 +82,7 @@ namespace ProjectManager.Controls
 
         public bool ProjectHasIssues
         {
-            set
-            {
-                ProjectProperties.Image = value ? Icons.OptionsWithIssues.Img : Icons.Options.Img;
-            }
+            set => ProjectProperties.Image = value ? Icons.OptionsWithIssues.Img : Icons.Options.Img;
         }
     }    
 

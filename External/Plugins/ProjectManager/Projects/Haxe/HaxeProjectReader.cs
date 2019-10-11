@@ -7,18 +7,15 @@ namespace ProjectManager.Projects.Haxe
 {
     public class HaxeProjectReader : ProjectReader
     {
-        HaxeProject project;
+        readonly HaxeProject project;
 
         public HaxeProjectReader(string filename)
             : base(filename, new HaxeProject(filename))
         {
-            this.project = base.Project as HaxeProject;
+            project = Project as HaxeProject;
         }
 
-        public new HaxeProject ReadProject()
-        {
-            return base.ReadProject() as HaxeProject;
-        }
+        public new HaxeProject ReadProject() => base.ReadProject() as HaxeProject;
 
         protected override void PostProcess()
         {
@@ -28,7 +25,7 @@ namespace ProjectManager.Projects.Haxe
             {
                 bool needSave = false;
                 // old projects fix
-                if (options.Platform == "NME" && project.TargetBuild == null
+                if (options.Platform == "NME" && project.TargetBuild is null
                     && project.TestMovieCommand != "" && project.TestMovieBehavior != TestMovieBehavior.OpenDocument)
                 {
                     project.TestMovieCommand = "";
@@ -40,7 +37,7 @@ namespace ProjectManager.Projects.Haxe
                     options.Version = "1.0";
                     needSave = true;
                 }
-                if (options.Platform == null)
+                if (options.Platform is null)
                 {
                     options.Platform = PlatformData.FLASHPLAYER_PLATFORM;
                     needSave = true;
@@ -82,7 +79,7 @@ namespace ProjectManager.Projects.Haxe
                         options.MajorVersion = 0; 
                         break;
                 }
-                if (platform == null)
+                if (platform is null)
                 {
                     platform = PlatformData.FLASHPLAYER_PLATFORM;
                     options.MajorVersion = 14;
@@ -95,15 +92,12 @@ namespace ProjectManager.Projects.Haxe
 
         static string GetBuilder(string projectFile)
         {
-            if (string.IsNullOrEmpty(projectFile))
-                return "Lime";
-            switch (Path.GetExtension(projectFile).ToLower())
+            if (string.IsNullOrEmpty(projectFile)) return "Lime";
+            return Path.GetExtension(projectFile).ToLower() switch
             {
-                case ".nmml":
-                    return "Nme";
-                default:
-                    return "Lime";
-            }
+                ".nmml" => "Nme",
+                _ => "Lime",
+            };
         }
 
         // process Haxe-specific stuff
@@ -164,7 +158,7 @@ namespace ProjectManager.Projects.Haxe
                 string path = OSPath(GetAttribute("path"));
                 string mode = GetAttribute("mode");
 
-                if (path == null)
+                if (path is null)
                     throw new Exception("All library assets must have a 'path' attribute.");
 
                 LibraryAsset asset = new LibraryAsset(project, path);
@@ -181,7 +175,7 @@ namespace ProjectManager.Projects.Haxe
                     asset.Sharepoint = GetAttribute("sharepoint"); // could be null
 
                 if (asset.IsImage && GetAttribute("bitmap") != null)
-                    asset.BitmapLinkage = Boolean.Parse(GetAttribute("bitmap"));
+                    asset.BitmapLinkage = bool.Parse(GetAttribute("bitmap"));
 
                 Read();
             }

@@ -365,10 +365,10 @@ namespace ICSharpCode.SharpZipLib.GZip
 
             // NOTE The total here is the original total modulo 2 ^ 32.
             uint total = 
-                (uint)((uint)footer[4] & 0xff) |
-                (uint)(((uint)footer[5] & 0xff) << 8) |
-                (uint)(((uint)footer[6] & 0xff) << 16) |
-                (uint)((uint)footer[7] << 24);
+                (uint)footer[4] & 0xff |
+                ((uint)footer[5] & 0xff) << 8 |
+                ((uint)footer[6] & 0xff) << 16 |
+                (uint)footer[7] << 24;
 
             if (bytesRead != total) {
                 throw new GZipException("Number of bytes mismatch in footer");

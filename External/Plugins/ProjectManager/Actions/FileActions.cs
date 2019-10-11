@@ -33,10 +33,9 @@ namespace ProjectManager.Actions
     /// </summary>
     public class FileActions
     {
-        IMainForm mainForm;
+        readonly IMainForm mainForm;
         string storedDirectory;
         string lastFileFromTemplate;
-        FlashDevelopActions fdActions;
 
         public event FileNameHandler FileCreated;
         public event ProjectModifiedHandler ProjectModified;
@@ -47,7 +46,6 @@ namespace ProjectManager.Actions
 
         public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
         {
-            this.fdActions = fdActions;
             this.mainForm = mainForm;
         }
 
@@ -70,7 +68,7 @@ namespace ProjectManager.Actions
             try
             {
                 // the template could be named something like "MXML.fdt", or maybe "Class.as.fdt"
-                string extension = "";
+                string extension;
                 string fileName = Path.GetFileNameWithoutExtension(templatePath);
                 string caption = TextHelper.GetString("Label.AddNew") + " ";
 
@@ -98,33 +96,28 @@ namespace ProjectManager.Actions
                 }
 
                 // let plugins handle the file creation
-                Hashtable info = new Hashtable();
-                info["templatePath"] = templatePath;
-                info["inDirectory"] = inDirectory;
-                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
+                var info = new Hashtable {["templatePath"] = templatePath, ["inDirectory"] = inDirectory};
+                var de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
                 EventManager.DispatchEvent(this, de);
                 if (de.Handled) return;
 
-                using (LineEntryDialog dialog = new LineEntryDialog(caption, TextHelper.GetString("Label.FileName"),
-                        fileName + extension))
+                using var dialog = new LineEntryDialog(caption, TextHelper.GetString("Label.FileName"), fileName + extension);
+                dialog.SelectRange(0, fileName.Length);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    dialog.SelectRange(0, fileName.Length);
+                    FlashDevelopActions.CheckAuthorName();
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        FlashDevelopActions.CheckAuthorName();
+                    string newFilePath = Path.Combine(inDirectory, dialog.Line);
+                    if (!Path.HasExtension(newFilePath) && extension != ".ext")
+                        newFilePath = Path.ChangeExtension(newFilePath, extension);
 
-                        string newFilePath = Path.Combine(inDirectory, dialog.Line);
-                        if (!Path.HasExtension(newFilePath) && extension != ".ext")
-                            newFilePath = Path.ChangeExtension(newFilePath, extension);
+                    if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
 
-                        if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
+                    // save this so when we are asked to process args, we know what file it's talking about
+                    lastFileFromTemplate = newFilePath;
 
-                        // save this so when we are asked to process args, we know what file it's talking about
-                        lastFileFromTemplate = newFilePath;
-
-                        mainForm.FileFromTemplate(templatePath, newFilePath);
-                    }
+                    mainForm.FileFromTemplate(templatePath, newFilePath);
                 }
             }
             catch (UserCancelException) { }
@@ -151,7 +144,7 @@ namespace ProjectManager.Actions
                     string classpath = project.AbsoluteClasspaths.GetClosestParent(path);
 
                     // Can't find parent, look in global classpaths
-                    if (classpath == null)
+                    if (classpath is null)
                     {
                         PathCollection globalPaths = new PathCollection();
                         foreach (string cp in PluginMain.Settings.GlobalClasspaths)
@@ -183,55 +176,51 @@ namespace ProjectManager.Actions
 
         public void AddLibraryAsset(Project project, string inDirectory)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using var dialog = new OpenFileDialog();
+            dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+            dialog.Multiselect = false;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-                dialog.Multiselect = false;
+                string filePath = CopyFile(dialog.FileName, inDirectory);
 
-                if (dialog.ShowDialog() == DialogResult.OK)
+                // null means the user cancelled
+                if (filePath is null) return;
+
+                // add as an asset
+                project.SetLibraryAsset(filePath, true);
+
+                if (!FileInspector.IsSwc(filePath))
                 {
-                    string filePath = CopyFile(dialog.FileName, inDirectory);
+                    // ask if you want to keep this file updated
+                    string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    string message = TextHelper.GetString("Info.ConfirmFileUpdate");
 
-                    // null means the user cancelled
-                    if (filePath == null) return;
+                    DialogResult result = MessageBox.Show(mainForm, message, caption,
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                    // add as an asset
-                    project.SetLibraryAsset(filePath, true);
-
-                    if (!FileInspector.IsSwc(filePath))
+                    if (result == DialogResult.Yes)
                     {
-                        // ask if you want to keep this file updated
-                        string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                        string message = TextHelper.GetString("Info.ConfirmFileUpdate");
-
-                        DialogResult result = MessageBox.Show(mainForm, message, caption,
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                        if (result == DialogResult.Yes)
-                        {
-                            LibraryAsset asset = project.GetAsset(filePath);
-                            asset.UpdatePath = project.GetRelativePath(dialog.FileName);
-                        }
+                        LibraryAsset asset = project.GetAsset(filePath);
+                        asset.UpdatePath = project.GetRelativePath(dialog.FileName);
                     }
-
-                    project.Save();
-                    OnProjectModified(new string[] { filePath });
                 }
+
+                project.Save();
+                OnProjectModified(new[] { filePath });
             }
         }
 
         public void AddExistingFile(string inDirectory)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
-            {
-                dialog.Title = TextHelper.GetString("Label.AddExistingFile");
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-                dialog.Multiselect = false;
+            using var dialog = new OpenFileDialog();
+            dialog.Title = TextHelper.GetString("Label.AddExistingFile");
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+            dialog.Multiselect = false;
 
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    CopyFile(dialog.FileName, inDirectory);
-            }
+            if (dialog.ShowDialog() == DialogResult.OK)
+                CopyFile(dialog.FileName, inDirectory);
         }
 
         public void AddFolder(string inDirectory)
@@ -253,7 +242,7 @@ namespace ProjectManager.Actions
             }
             catch (Exception exception)
             {
-                String msg = TextHelper.GetString("Info.CouldNotAddFolder");
+                string msg = TextHelper.GetString("Info.CouldNotAddFolder");
                 ErrorManager.ShowInfo(msg + " " + exception.Message);
             }
         }
@@ -297,7 +286,7 @@ namespace ProjectManager.Actions
             if (File.Exists(toPath)) 
                 toPath = Path.GetDirectoryName(toPath);
 
-            DataObject o = Clipboard.GetDataObject() as DataObject;
+            var o = (DataObject) Clipboard.GetDataObject();
             if (o.GetDataPresent(DataFormats.FileDrop))
             {
                 // the data is in the form of an array of paths
@@ -318,8 +307,8 @@ namespace ProjectManager.Actions
 
         public void Delete(string path, bool confirm)
         {
-            if (confirm && CancelAction(ProjectFileActionsEvents.FileDelete, new string[] { path })) return;
-            if (!confirm && CancelAction(ProjectFileActionsEvents.FileDeleteSilent, new string[] { path })) return;
+            if (confirm && CancelAction(ProjectFileActionsEvents.FileDelete, new[] { path })) return;
+            if (!confirm && CancelAction(ProjectFileActionsEvents.FileDeleteSilent, new[] { path })) return;
 
             try
             {
@@ -336,7 +325,7 @@ namespace ProjectManager.Actions
                     string msg = TextHelper.GetString("Info.AndAllItsContents");
                     message = string.Format("\"{0}\" " + msg + " {1}", name, message);
                 }
-                else message = string.Format("\"{0}\" {1}", name, message);
+                else message = $"\"{name}\" {message}";
 
                 DialogResult result = DialogResult.OK;
 
@@ -350,7 +339,7 @@ namespace ProjectManager.Actions
                     DisableWatchers();
                     if (!FileHelper.Recycle(path))
                     {
-                        String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                        string error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(error + " " + path);
                     }
 
@@ -399,7 +388,7 @@ namespace ProjectManager.Actions
                             {
                                 if (!FileHelper.Recycle(path))
                                 {
-                                    String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                                    string error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                                     throw new Exception(error + " " + path);
                                 }
                             }
@@ -423,8 +412,8 @@ namespace ProjectManager.Actions
         {
             if (FolderHelper.IsIllegalFolderName(newName)) // is name illegal (ie. CON, AUX etc..)
             {
-                String message = TextHelper.GetString("Info.ReservedDirName");
-                ErrorManager.ShowInfo(String.Format(message, newName));
+                string message = TextHelper.GetString("Info.ReservedDirName");
+                ErrorManager.ShowInfo(string.Format(message, newName));
                 return false;
             }
 
@@ -443,7 +432,7 @@ namespace ProjectManager.Actions
                     return false;
             }
 
-            if (CancelAction(ProjectFileActionsEvents.FileRename, new string[] { oldPath, newName })) return false;
+            if (CancelAction(ProjectFileActionsEvents.FileRename, new[] { oldPath, newName })) return false;
 
             try
             {
@@ -508,7 +497,7 @@ namespace ProjectManager.Actions
 
         public void Move(string fromPath, string toPath)
         {
-            if (CancelAction(ProjectFileActionsEvents.FileMove, new string[] { fromPath, toPath })) return;
+            if (CancelAction(ProjectFileActionsEvents.FileMove, new[] { fromPath, toPath })) return;
 
             try
             {
@@ -527,7 +516,7 @@ namespace ProjectManager.Actions
                 {
                     if (!FileHelper.Recycle(toPath))
                     {
-                        String message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                        string message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                         throw new Exception(message + " " + toPath);
                     }
                 }
@@ -553,7 +542,7 @@ namespace ProjectManager.Actions
 
         public void Copy(string fromPath, string toPath)
         {
-            if (CancelAction(ProjectFileActionsEvents.FileCopy, new string[] { fromPath, toPath })) return;
+            if (CancelAction(ProjectFileActionsEvents.FileCopy, new[] { fromPath, toPath })) return;
 
             try
             {
@@ -572,7 +561,7 @@ namespace ProjectManager.Actions
                 {
                     string copyPath = Path.Combine(
                         Path.GetDirectoryName(toPath),
-                        String.Format(TextHelper.GetString("Label.CopyOf"), Path.GetFileNameWithoutExtension(fromPath))
+                        string.Format(TextHelper.GetString("Label.CopyOf"), Path.GetFileNameWithoutExtension(fromPath))
                         ) + Path.GetExtension(fromPath);
 
                     int copies = 1;
@@ -581,23 +570,22 @@ namespace ProjectManager.Actions
                         copies++;
                         copyPath = Path.Combine(
                             Path.GetDirectoryName(toPath),
-                            String.Format(TextHelper.GetString("Label.CopyOf") + " ({1})", Path.GetFileNameWithoutExtension(fromPath), copies)
+                            string.Format(TextHelper.GetString("Label.CopyOf") + " ({1})", Path.GetFileNameWithoutExtension(fromPath), copies)
                             ) + Path.GetExtension(fromPath);
                     }
 
                     // offer to choose the new name
-                    string label = TextHelper.GetString("Info.NewDuplicateName");
-                    string title = String.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
-                    string suggestion = Path.GetFileNameWithoutExtension(copyPath);
-                    using (LineEntryDialog askName = new LineEntryDialog(title, label, suggestion))
+                    var label = TextHelper.GetString("Info.NewDuplicateName");
+                    var title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
+                    var suggestion = Path.GetFileNameWithoutExtension(copyPath);
+                    using var dialog = new LineEntryDialog(title, label, suggestion);
+                    var choice = dialog.ShowDialog();
+                    if (choice == DialogResult.OK && dialog.Line.Trim().Length > 0)
                     {
-                        DialogResult choice = askName.ShowDialog();
-                        if (choice == DialogResult.OK && askName.Line.Trim().Length > 0)
-                        {
-                            copyPath = Path.Combine(Path.GetDirectoryName(toPath), askName.Line.Trim()) + Path.GetExtension(toPath);
-                        }
-                        else throw new UserCancelException();
+                        copyPath = Path.Combine(Path.GetDirectoryName(toPath), dialog.Line.Trim()) + Path.GetExtension(toPath);
                     }
+                    else throw new UserCancelException();
+
                     toPath = copyPath;
                 }
 
@@ -655,41 +643,17 @@ namespace ProjectManager.Actions
 
         #region Event Helpers
 
-        private void OnFileCreated(string path)
-        {
-            if (FileCreated != null)
-                FileCreated(path);
-        }
+        private void OnFileCreated(string path) => FileCreated?.Invoke(path);
 
-        private void OnFileMoved(string fromPath, string toPath)
-        {
-            if (FileMoved != null)
-                FileMoved(fromPath, toPath);
-        }
+        private void OnFileMoved(string fromPath, string toPath) => FileMoved?.Invoke(fromPath, toPath);
 
-        private void OnFilePasted(string fromPath, string toPath)
-        {
-            if (FileCopied != null)
-                FileCopied(fromPath, toPath);
-        }
+        private void OnFilePasted(string fromPath, string toPath) => FileCopied?.Invoke(fromPath, toPath);
 
-        private void OnFileDeleted(string path)
-        {
-            if (FileDeleted != null)
-                FileDeleted(path);
-        }
+        private void OnFileDeleted(string path) => FileDeleted?.Invoke(path);
 
-        private void OnProjectModified(string[] paths)
-        {
-            if (ProjectModified != null)
-                ProjectModified(paths);
-        }
+        private void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
 
-        private void OnOpenFile(string path)
-        {
-            if (OpenFile != null)
-                OpenFile(path);
-        }
+        private void OnOpenFile(string path) => OpenFile?.Invoke(path);
 
         #endregion
 

@@ -37,7 +37,6 @@ namespace ASCompletion.Context
         protected ClassModel cClass;
         protected bool inPrivateSection;
         protected FileModel topLevel;
-        protected string lastClassWarning;
         protected internal CompletionCache completionCache;
         // path normalization
         protected static bool doPathNormalization;
@@ -83,11 +82,10 @@ namespace ASCompletion.Context
         //static private int setCount = 0;
         public static IASContext Context
         {
-            get { return context; }
+            get => context;
             set
             {
-                if (value == null) context = defaultContext;
-                else context = value;
+                context = value ?? defaultContext;
                 // update GUI
                 if (Panel != null && context.CurrentModel != null)
                 {
@@ -112,19 +110,19 @@ namespace ASCompletion.Context
         
         public virtual IContextSettings Settings
         {
-            get { return null; }
+            get => null;
             set { }
         }
 
         public virtual ContextFeatures Features 
         {
-            get { return features; }
-            set { features = value; }
+            get => features;
+            set => features = value;
         }
 
         public virtual int CurrentLine
         {
-            get { return cLine; }
+            get => cLine;
             set
             {
                 if (cFile != null)
@@ -157,32 +155,30 @@ namespace ASCompletion.Context
                 if (cFile.OutOfDate) UpdateCurrentFile(true);
                 return cClass ?? ClassModel.VoidClass;
             }
-            set { cClass = value; }
+            set => cClass = value;
         }
 
         public virtual string CurrentFile
         {
             get
             {
-                if (cFile == null) cFile = FileModel.Ignore;
+                if (cFile is null) cFile = FileModel.Ignore;
                 return cFile.FileName;
             }
             set
             {
                 cacheRefreshTimer.Enabled = false;
-                if (value == null)
+                if (value is null)
                 {
                     cFile = FileModel.Ignore;
                     cLine = -1;
                     return;
                 }
-                else
-                {
-                    // first use
-                    if (!started) BuildClassPath();
-                    // parse file
-                    GetCurrentFileModel(value);
-                }
+
+                // first use
+                if (!started) BuildClassPath();
+                // parse file
+                GetCurrentFileModel(value);
                 // require context
                 Context = this;
             }
@@ -190,8 +186,8 @@ namespace ASCompletion.Context
 
         public virtual FileModel CurrentModel
         {
-            get { return cFile; }
-            set { cFile = value; }
+            get => cFile;
+            set => cFile = value;
         }
 
         /// <summary>
@@ -199,8 +195,8 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual bool InPrivateSection
         {
-            get { return inPrivateSection; }
-            set { inPrivateSection = value; }
+            get => inPrivateSection;
+            set => inPrivateSection = value;
         }
 
         /// <summary>
@@ -211,10 +207,10 @@ namespace ASCompletion.Context
         {
             get 
             {
-                if (cFile == null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings == null)
+                if (cFile is null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings is null)
                     return false;
-                if (cFile.InlinedRanges == null || !(CurSciControl is ScintillaControl sci)) return true;
-                int position = sci.CurrentPos;
+                if (cFile.InlinedRanges is null || !(CurSciControl is { } sci)) return true;
+                var position = sci.CurrentPos;
                 foreach (InlineRange range in cFile.InlinedRanges)
                 {
                     if (position > range.Start && position < range.End) return true;
@@ -230,8 +226,8 @@ namespace ASCompletion.Context
         /// </summary>
         public FileModel TopLevel
         {
-            get { return topLevel; }
-            set { topLevel = value; }
+            get => topLevel;
+            set => topLevel = value;
         }
 
         /// <summary>
@@ -239,8 +235,8 @@ namespace ASCompletion.Context
         /// </summary>
         public List<PathModel> Classpath
         {
-            get { return classPath; }
-            set { classPath = value; }
+            get => classPath;
+            set => classPath = value;
         }
         #endregion
 
@@ -298,11 +294,11 @@ namespace ASCompletion.Context
         /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
         public static IASContext GetLanguageContext(string lang)
         {
-            if (lang == null) return null;
+            if (lang is null) return null;
             lang = lang.ToLower();
             foreach (RegisteredContext reg in allContexts)
             {
-                if (reg.Language == lang && reg.Inlined == null) return reg.Context;
+                if (reg.Language == lang && reg.Inlined is null) return reg.Context;
             }
             return null;
         }
@@ -372,7 +368,7 @@ namespace ASCompletion.Context
         internal static void SetCurrentLine(int line)
         {
             ScintillaControl sci = CurSciControl;
-            if (validContexts.Count == 0 || sci == null)
+            if (validContexts.Count == 0 || sci is null)
             {
                 HasContext = false;
                 return;
@@ -425,16 +421,14 @@ namespace ASCompletion.Context
         /// </summary>
         public static void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            if (validContexts.Count > 0)
-            {
-                foreach (IASContext context in validContexts)
-                    context.TrackTextChange(sender, position, length, linesAdded);
-            }
+            if (validContexts.Count == 0) return;
+            foreach (var context in validContexts)
+                context.TrackTextChange(sender, position, length, linesAdded);
         }
 
         /*private static void RepaintRanges(ScintillaNet.ScintillaControl sci)
         {
-            if (context.CurrentModel == null || context.CurrentModel.InlinedRanges == null)
+            if (context.CurrentModel is null || context.CurrentModel.InlinedRanges is null)
                 return;
 
             int es = sci.EndStyled;
@@ -604,7 +598,8 @@ namespace ASCompletion.Context
                 explorer.Run();
                 return true;
             }
-            else if (path.WasExplored && path.IsVirtual)
+
+            if (path.WasExplored && path.IsVirtual)
             {
                 // restore metadatas
                 ExploreVirtualPath(path);
@@ -672,11 +667,11 @@ namespace ASCompletion.Context
                 // avoid duplicated pathes
                 path = NormalizePath(path);
                 foreach (PathModel apath in classPath)
-                if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
-                {
-                    temporaryPath = null;
-                    return false;
-                }
+                    if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        temporaryPath = null;
+                        return false;
+                    }
                 // add path
                 temporaryPath = path;
                 PathModel tempModel = PathModel.GetModel(temporaryPath, this);
@@ -730,36 +725,34 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual void TrackTextChange(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            if (cFile != FileModel.Ignore && !cFile.OutOfDate)
+            if (cFile == FileModel.Ignore || cFile.OutOfDate) return;
+            // test: modifications inside function body
+            if (linesAdded == 0 && cMember != null && (cMember.Flags & FlagType.Function) > 0)
             {
-                // test: modifications inside function body
-                if (linesAdded == 0 && cMember != null && (cMember.Flags & FlagType.Function) > 0)
+                // TODO  More precise text modifications tracking
+                int line = sender.LineFromPosition(position);
+                if (line > cMember.LineFrom && line <= cMember.LineTo)
                 {
-                    // TODO  More precise text modifications tracking
-                    int line = sender.LineFromPosition(position);
-                    if (line > cMember.LineFrom && line <= cMember.LineTo)
+                    // file AS3 in MXML ranges
+                    if (cFile.InlinedRanges != null)
                     {
-                        // file AS3 in MXML ranges
-                        if (cFile.InlinedRanges != null)
+                        foreach (InlineRange range in cFile.InlinedRanges)
                         {
-                            foreach (InlineRange range in cFile.InlinedRanges)
-                            {
-                                if (range.Start > position) range.Start += length;
-                                if (range.End > position) range.End += length;
-                            }
+                            if (range.Start > position) range.Start += length;
+                            if (range.End > position) range.End += length;
                         }
-                        return;
                     }
-                    /*string fbody = "";
+                    return;
+                }
+                /*string fbody = "";
                     for (int i = cMember.LineFrom; i <= cMember.LineTo; i++)
                     {
                         fbody += sci.GetLine(i);
                     }
                     position -= sci.PositionFromLine(cMember.LineFrom);
                     if (fbody.IndexOf('{') < position) return;*/
-                }
-                cFile.OutOfDate = true;
             }
+            cFile.OutOfDate = true;
         }
 
         /// <summary>
@@ -952,12 +945,12 @@ namespace ASCompletion.Context
         {
             cFile = GetCachedFileModel(fileName);
             cFile.FileName = fileName; // fix casing changes
-            if (cFile.Context == null || cFile.Context != this)
+            if (cFile.Context is null || cFile.Context != this)
             {
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else if (CurSciControl is ScintillaControl sci)
+            else if (CurSciControl is { } sci)
             {
                 cLine = sci.CurrentLine;
                 UpdateContext(cLine);
@@ -972,7 +965,7 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile == null || !(CurSciControl is ScintillaControl sci)) return;
+            if (cFile is null || !(CurSciControl is { } sci)) return;
             GetCodeModel(cFile, sci.Text);
             cLine = sci.CurrentLine;
             UpdateContext(cLine);
@@ -1034,9 +1027,8 @@ namespace ASCompletion.Context
         /// <returns></returns>
         public virtual ASResult GetDeclarationAtLine(int line)
         {
-            var result = new ASResult();
-            result.InClass = ClassModel.VoidClass;
-            if (cFile == null) return result;
+            var result = new ASResult {InClass = ClassModel.VoidClass};
+            if (cFile is null) return result;
             // current class
             foreach (var aClass in cFile.Classes)
             {
@@ -1255,7 +1247,7 @@ namespace ASCompletion.Context
             else if (node.Tag is string tag)
             {
                 string[] info = tag.Split('@');
-                if (info.Length == 2 && int.TryParse(info[1], out int line))
+                if (info.Length == 2 && int.TryParse(info[1], out var line))
                 {
                     ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
                 }
@@ -1373,7 +1365,7 @@ namespace ASCompletion.Context
                 SetStatusText(Settings.CheckSyntaxDone);
             }
 
-            if (outputFile == null) return;
+            if (outputFile is null) return;
             string swf = outputFile;
             outputFile = null;
 
@@ -1433,16 +1425,16 @@ namespace ASCompletion.Context
                     dest = list[1];
                 }
             }
-            var aFile = src == null ? cFile : GetCodeModel(src);
+            var aFile = src is null ? cFile : GetCodeModel(src);
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);
 
             // no destination, replace text
-            if (dest == null)
+            if (dest is null)
             {
                 MainForm.CallCommand("New", null);
-                if (CurSciControl is ScintillaControl sci)
+                if (CurSciControl is { } sci)
                 {
                     sci.CurrentPos = 0;
                     sci.Text = code;
@@ -1463,16 +1455,13 @@ namespace ASCompletion.Context
         #endregion
 
         #region common tool methods
-        public static void SetStatusText(string text)
-        {
-            MainForm.StatusStrip.Items[0].Text = "  " + text;
-        }
+        public static void SetStatusText(string text) => MainForm.StatusStrip.Items[0].Text = "  " + text;
+
         protected static string GetStatusText()
         {
             if (MainForm.StatusStrip.Items[0].Text.Length > 2)
                 return MainForm.StatusStrip.Items[0].Text.Substring(2);
-            else
-                return "";
+            return "";
         }
 
         public static string NormalizeFilename(string path)
@@ -1499,8 +1488,8 @@ namespace ASCompletion.Context
         }
         public static string GetLastStringToken(string str, string sep)
         {
-            if (str == null) return "";
-            if (sep == null) return str;
+            if (str is null) return "";
+            if (sep is null) return str;
             int p = str.LastIndexOfOrdinal(sep);
             return (p >= 0) ? str.Substring(p + 1) : str;
         }
@@ -1514,6 +1503,16 @@ namespace ASCompletion.Context
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);
         }
 
+        #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <summary>
+        /// Provides the support for '<' and '>' matching
+        /// </summary>
+        public virtual void OnBraceMatch(ScintillaControl sci)
+        {
+        }
         #endregion
     }
 
@@ -1560,13 +1559,13 @@ namespace ASCompletion.Context
         public MemberList Imports;
         public bool IsDirty
         {
-            get { return isDirty; }
+            get => isDirty;
             set { isDirty = value; Imports = null; }
         }
 
         public CompletionCache(IASContext context, MemberList elements)
         {
-            if (context.CurrentModel == null)
+            if (context.CurrentModel is null)
             {
                 Package = "";
                 Classname = "";
@@ -1586,7 +1585,7 @@ namespace ASCompletion.Context
         /// </summary>
         private string GetKeywords()
         {
-            if (Elements == null) return "";
+            if (Elements is null) return "";
             var keywords = new List<string>();
             foreach (MemberModel item in Elements)
             {

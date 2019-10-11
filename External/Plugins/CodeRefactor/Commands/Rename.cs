@@ -26,16 +26,15 @@ namespace CodeRefactor.Commands
     {
         private readonly Command findAllReferencesCommand;
         private Command renamePackage;
-        private bool isRenamePackage;
-        private string renamePackagePath;
-
+        private readonly bool isRenamePackage;
+        private readonly string renamePackagePath;
         private string oldFileName;
         private string newFileName;
 
         public string OldName { get; private set; }
         public string NewName { get; private set; }
-        public ASResult Target { get; private set; }
-        public string TargetName { get; private set; }
+        public ASResult Target { get; }
+        public string TargetName { get; }
 
         /// <summary>
         /// A new Rename refactoring command.
@@ -43,8 +42,7 @@ namespace CodeRefactor.Commands
         /// Outputs found results.
         /// Uses the current text location as the declaration target.
         /// </summary>
-        public Rename()
-            : this(true) { }
+        public Rename() : this(true) { }
         
         /// <summary>
         /// A new Rename refactoring command.
@@ -85,7 +83,7 @@ namespace CodeRefactor.Commands
         public Rename(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false)
         {
             Results = new Dictionary<string, List<SearchMatch>>();
-            if (target == null)
+            if (target is null)
             {
                 TraceManager.Add("Refactor target is null.");
                 return;
@@ -95,21 +93,16 @@ namespace CodeRefactor.Commands
             if (target.IsPackage)
             {
                 isRenamePackage = true;
-
-                string package = target.Path.Replace('.', Path.DirectorySeparatorChar);
+                var package = target.Path.Replace('.', Path.DirectorySeparatorChar);
                 foreach (var aPath in ASContext.Context.Classpath)
                 {
-                    if (aPath.IsValid && !aPath.Updating)
-                    {
-                        string path = Path.Combine(aPath.Path, package);
-                        if (Directory.Exists(path))
-                        {
-                            TargetName = Path.GetFileName(path);
-                            renamePackagePath = path;
-                            StartRename(inline, TargetName, newName);
-                            return;
-                        }
-                    }
+                    if (!aPath.IsValid || aPath.Updating) continue;
+                    var path = Path.Combine(aPath.Path, package);
+                    if (!Directory.Exists(path)) continue;
+                    TargetName = Path.GetFileName(path);
+                    renamePackagePath = path;
+                    StartRename(inline, TargetName, newName);
+                    return;
                 }
                 return;
             }
@@ -146,10 +139,7 @@ namespace CodeRefactor.Commands
                 RegisterDocumentHelper(AssociatedDocumentHelper);
 
                 // Targets have to be validated before getting and modifying all references, otherwise we may end with some bad state
-                if (ValidateTargets())
-                {
-                    findAllReferencesCommand.Execute();
-                }
+                if (ValidateTargets()) findAllReferencesCommand.Execute();
                 else
                 {
                     AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
@@ -176,39 +166,36 @@ namespace CodeRefactor.Commands
         private bool ValidateTargets()
         {
             var target = findAllReferencesCommand.CurrentTarget;
-            bool isEnum = target.Type.IsEnum();
-            bool isClass = false;
+            var isEnum = target.Type.Flags.HasFlag(FlagType.Enum);
+            var isClass = false;
 
             if (!isEnum)
             {
-                bool isVoid = target.Type.IsVoid();
-                isClass = !isVoid && target.IsStatic && (target.Member == null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
+                isClass = !target.Type.IsVoid() && target.IsStatic && (target.Member is null || RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Constructor));
             }
 
-            bool isGlobalFunction = false;
-            bool isGlobalNamespace = false;
+            var isGlobalFunction = false;
+            var isGlobalNamespace = false;
 
-            if (!isEnum && !isClass && (target.InClass == null || target.InClass.IsVoid()))
+            if (!isEnum && !isClass && (target.InClass is null || target.InClass.IsVoid()))
             {
                 isGlobalFunction = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Function);
                 isGlobalNamespace = RefactoringHelper.CheckFlag(target.Member.Flags, FlagType.Namespace);
             }
 
             // Types with not their own file
-            if (!isEnum && !isClass && !isGlobalFunction && !isGlobalNamespace)
-                return true;
+            if (!isEnum && !isClass && !isGlobalFunction && !isGlobalNamespace) return true;
 
             var member = isEnum || isClass ? target.Type : target.Member;
             var inFile = member.InFile;
 
             oldFileName = inFile.FileName;
-            string oldName = Path.GetFileNameWithoutExtension(oldFileName);
+            var oldName = Path.GetFileNameWithoutExtension(oldFileName);
 
             // Private classes and similars
-            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(member.Name))
-                return true;
+            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(member.Name)) return true;
 
-            string fullPath = Path.GetFullPath(inFile.FileName);
+            var fullPath = Path.GetFullPath(inFile.FileName);
             fullPath = Path.GetDirectoryName(fullPath);
 
             newFileName = Path.Combine(fullPath, NewName + Path.GetExtension(oldFileName));
@@ -303,9 +290,8 @@ namespace CodeRefactor.Commands
         private void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
             // We close previous files to avoid unwanted "file modified" dialogs
-            ITabbedDocument doc;
-            bool reopen = false;
-            if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldFileName, out doc))
+            var reopen = false;
+            if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldFileName, out var doc))
             {
                 doc.Close();
                 reopen = true;
@@ -319,7 +305,7 @@ namespace CodeRefactor.Commands
             // name casing changed
             if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
             {
-                string tmpPath = oldFileName + "$renaming$";
+                var tmpPath = $"{oldFileName}$renaming$";
                 File.Move(oldFileName, tmpPath);
                 RefactoringHelper.Move(tmpPath, newFileName, true, oldFileName);
             }
@@ -340,8 +326,7 @@ namespace CodeRefactor.Commands
                 results[newFileName] = results[oldFileName];
                 results.Remove(oldFileName);
             }
-            if (reopen)
-                PluginBase.MainForm.OpenEditableDocument(newFileName);
+            if (reopen) PluginBase.MainForm.OpenEditableDocument(newFileName);
         }
 
         /// <summary>
@@ -349,7 +334,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            int newNameLength = NewName.Length;
+            var newNameLength = NewName.Length;
             // outputs the lines as they change
             // some funky stuff to make sure it highlights/reports the resultant changes rather than the old data
             // TODO: this works on the assumption that multiple changes on the same line will come from left-to-right; consider updating to work regardless of order
@@ -363,32 +348,29 @@ namespace CodeRefactor.Commands
                 var reportableLines = new Dictionary<int, List<string>>();
                 foreach (var match in entry.Value)
                 {
-                    int column = match.Column;
-                    int lineNumber = match.Line;
+                    var column = match.Column;
+                    var lineNumber = match.Line;
                     // if we've already modified the line, we use the data from the last change
-                    string changedLine = (lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText);
-                    int offset = (lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0);
+                    var changedLine = (lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText);
+                    var offset = (lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0);
                     // offsets our column references to take into account previous changes to the line
-                    column = column + offset;
+                    column += offset;
                     // determines what the newly formed line will look like
                     changedLine = changedLine.Substring(0, column) + NewName + changedLine.Substring(column + match.Length);
                     // stores the changes in case we have to modify the line again later
                     lineChanges[lineNumber] = changedLine;
                     lineOffsets[lineNumber] = offset + (newNameLength - match.Length);
                     // stores the line entry in our report set
-                    if (!reportableLines.ContainsKey(lineNumber))
-                    {
-                        reportableLines[lineNumber] = new List<string>();
-                    }
+                    if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
                     // the data we store matches the TraceManager.Add's formatting.  We insert the {0} at the end so that we can insert the final line state later
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
+                    reportableLines[lineNumber].Add($"{entry.Key}:{match.Line}: chars {column}-{(column + newNameLength)} : {{0}}");
                 }
                 // report all the lines
                 foreach (var lineSetsToReport in reportableLines)
                 {
                     // the final state of the line after all renaming
-                    string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
-                    foreach (string lineToReport in lineSetsToReport.Value)
+                    var renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    foreach (var lineToReport in lineSetsToReport.Value)
                     {
                         // use the String.Format and replace the {0} from above with our final line state
                         TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info, PluginMain.TraceGroup);
@@ -411,16 +393,15 @@ namespace CodeRefactor.Commands
             if (useInline)
             {
                 var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                int position = sci.WordEndPosition(sci.CurrentPos, true);
-
-                var inlineRename = new InlineRename(sci, oldName, position, null, null, isRenamePackage ? new bool?() : new bool?(true), Target);
+                var position = sci.WordEndPosition(sci.CurrentPos, true);
+                var inlineRename = new InlineRename(sci, oldName, position, null, null, isRenamePackage ? new bool?() : true, Target);
                 inlineRename.Apply += OnApply;
                 inlineRename.Cancel += OnCancel;
             }
             else
             {
-                string title = " " + string.Format(TextHelper.GetString("Title.RenameDialog"), oldName);
-                string label = TextHelper.GetString("Label.NewName");
+                var title = " " + string.Format(TextHelper.GetString("Title.RenameDialog"), oldName);
+                var label = TextHelper.GetString("Label.NewName");
                 var dialog = new LineEntryDialog(title, label, oldName);
 
                 switch (dialog.ShowDialog())
@@ -470,11 +451,9 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void UpdateDefaultFlags(InlineRename inlineRename)
         {
-            if (inlineRename != null)
-            {
-                inlineRename.Apply -= OnApply;
-                inlineRename.Cancel -= OnCancel;
-            }
+            if (inlineRename is null) return;
+            inlineRename.Apply -= OnApply;
+            inlineRename.Cancel -= OnCancel;
         }
 
         #endregion

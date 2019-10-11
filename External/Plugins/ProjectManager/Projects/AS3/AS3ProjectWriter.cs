@@ -4,12 +4,12 @@ namespace ProjectManager.Projects.AS3
 {
     public class AS3ProjectWriter : ProjectWriter
     {
-        AS3Project project;
+        readonly AS3Project project;
 
-        public AS3ProjectWriter(AS3Project project, string filename)
+        public AS3ProjectWriter(Project project, string filename)
             : base(project, filename)
         {
-            this.project = base.Project as AS3Project;
+            this.project = Project as AS3Project;
         }
 
         protected override void OnAfterWriteClasspaths()
@@ -112,7 +112,7 @@ namespace ProjectManager.Projects.AS3
 
         void WriteNamespaces(MxmlcOptions options)
         {
-            if (options.Namespaces == null || options.Namespaces.Length == 0) return;
+            if (options.Namespaces is null || options.Namespaces.Length == 0) return;
             var namespaces = new StringBuilder();
             foreach (var ns in options.Namespaces)
             {

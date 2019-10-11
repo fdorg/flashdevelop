@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -23,8 +23,8 @@ namespace SourceControl.Managers
         {
             this.fsWatchers = fsWatchers;
 
-            FileNode.OnFileNodeRefresh += new FileNodeRefresh(FileNode_OnFileNodeRefresh);
-            DirectoryNode.OnDirectoryNodeRefresh += new DirectoryNodeRefresh(DirectoryNode_OnDirectoryNodeRefresh);
+            FileNode.OnFileNodeRefresh += FileNode_OnFileNodeRefresh;
+            DirectoryNode.OnDirectoryNodeRefresh += DirectoryNode_OnDirectoryNodeRefresh;
 
             OverlayMap.Init();
         }
@@ -50,18 +50,18 @@ namespace SourceControl.Managers
             }
         }
 
-        private void RefreshNodes(TreeNodeCollection nodes)
+        private void RefreshNodes(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node is DirectoryNode)
+                if (node is DirectoryNode directoryNode)
                 {
-                    if (UpdateNodeStatus(node as GenericNode))
-                        RefreshNodes(node.Nodes);
+                    if (UpdateNodeStatus(directoryNode))
+                        RefreshNodes(directoryNode.Nodes);
                 }
-                else if (node is FileNode)
+                else if (node is FileNode fileNode)
                 {
-                    UpdateNodeStatus(node as GenericNode);
+                    UpdateNodeStatus(fileNode);
                 }
             }
         }
@@ -72,19 +72,16 @@ namespace SourceControl.Managers
             TreeContextMenuUpdate.SetMenu(currentTree, state);
         }
 
-        void ResetNodes(TreeNodeCollection nodes)
+        void ResetNodes(IEnumerable nodes)
         {
             foreach (TreeNode node in nodes)
             {
-                if (node is GenericNode)
+                GenericNode gnode = node as GenericNode;
+                if (gnode?.Meta != null && gnode.Meta.ContainsKey(META_VC))
                 {
-                    GenericNode gnode = (GenericNode)node;
-                    if (gnode.Meta != null && gnode.Meta.ContainsKey(META_VC))
-                    {
-                        gnode.Meta.Remove(META_VC);
-                        gnode.Meta.Remove(META_ROOT);
-                        gnode.Meta.Remove(META_STATUS);
-                    }
+                    gnode.Meta.Remove(META_VC);
+                    gnode.Meta.Remove(META_ROOT);
+                    gnode.Meta.Remove(META_STATUS);
                 }
                 if (node.Nodes.Count > 0) ResetNodes(node.Nodes);
             }
@@ -98,24 +95,19 @@ namespace SourceControl.Managers
             UpdateNodeStatus(node);
         }
 
-        void FileNode_OnFileNodeRefresh(FileNode node)
-        {
-            UpdateNodeStatus(node);
-        }
+        void FileNode_OnFileNodeRefresh(FileNode node) => UpdateNodeStatus(node);
 
         bool UpdateNodeStatus(GenericNode node)
         {
-            if (node.Meta == null)
+            if (node.Meta is null)
                 node.Meta = new Dictionary<string, object>();
 
             if (!node.Meta.ContainsKey(META_VC))
                 LocateVC(node);
 
-            IVCManager currentVC = node.Meta[META_VC] as IVCManager;
-            string root = (string)node.Meta[META_ROOT];
-
-            if (currentVC != null && currentTree != null)
+            if (node.Meta[META_VC] is IVCManager currentVC && currentTree != null)
             {
+                string root = (string)node.Meta[META_ROOT];
                 VCItemStatus status = currentVC.GetOverlay(node.BackingPath, root);
                 node.Meta[META_STATUS] = status;
                 OverlayMap.SetOverlay(status, node, currentTree);
@@ -130,15 +122,12 @@ namespace SourceControl.Managers
             node.Meta[META_ROOT] = null;
             node.Meta[META_STATUS] = VCItemStatus.Unknown;
 
-            if (node.Parent != null && node.Parent is GenericNode)
+            GenericNode parent = node.Parent as GenericNode;
+            if (parent?.Meta != null && parent.Meta.ContainsKey(META_VC))
             {
-                GenericNode parent = (GenericNode)node.Parent;
-                if (parent.Meta != null && parent.Meta.ContainsKey(META_VC))
-                {
-                    node.Meta[META_VC] = parent.Meta[META_VC];
-                    node.Meta[META_ROOT] = parent.Meta[META_ROOT];
-                    return;
-                }
+                node.Meta[META_VC] = parent.Meta[META_VC];
+                node.Meta[META_ROOT] = parent.Meta[META_ROOT];
+                return;
             }
 
             WatcherVCResult result = fsWatchers.ResolveVC(node.BackingPath);
@@ -155,9 +144,9 @@ namespace SourceControl.Managers
     class OverlayMap: Dictionary<int, int>
     {
         static Image iconSkin;
-        static Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
+        static readonly Dictionary<VCItemStatus, OverlayMap> maps = new Dictionary<VCItemStatus, OverlayMap>();
 
-        static public void Init()
+        public static void Init()
         {
             iconSkin = GetSkin();
 
@@ -177,7 +166,7 @@ namespace SourceControl.Managers
             return PluginBase.MainForm.GetAutoAdjustedImage(ProjectWatcher.Skin); //can be changed by external SC-Plugin
         }
 
-        static public void Reset()
+        public static void Reset()
         {
             foreach (OverlayMap map in maps.Values)
                 map.Clear();
@@ -188,7 +177,7 @@ namespace SourceControl.Managers
             maps.Add(status, new OverlayMap());
         }
 
-        static public void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
+        public static void SetOverlay(VCItemStatus status, TreeNode node, TreeView tree)
         {
             if (!maps.ContainsKey(status)) return;
             OverlayMap map = maps[status];
@@ -202,15 +191,13 @@ namespace SourceControl.Managers
             if (tree.ImageList.Images.Count <= node.ImageIndex)
                 return;
 
-            Image original = tree.ImageList.Images[node.ImageIndex];
-            Bitmap composed = original.Clone() as Bitmap;
-            Int32 curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
-            using (Graphics destination = Graphics.FromImage(composed))
-            {
-                destination.DrawImage(iconSkin, 
-                    new Rectangle(0, 0, composed.Width, composed.Height), 
-                    new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
-            }
+            var original = tree.ImageList.Images[node.ImageIndex];
+            var composed = original.Clone() as Bitmap;
+            var curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
+            using var destination = Graphics.FromImage(composed);
+            destination.DrawImage(iconSkin, 
+                new Rectangle(0, 0, composed.Width, composed.Height), 
+                new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
             int index = tree.ImageList.Images.Count;
             tree.ImageList.Images.Add(composed);
             map[node.ImageIndex] = index;
@@ -228,23 +215,23 @@ namespace SourceControl.Managers
 
     public class ProjectSelectionState
     {
-        public int Files = 0;
-        public int Dirs = 0;
-        public int Unknown = 0;
-        public int Ignored = 0;
-        public int Added = 0;
-        public int Revert = 0;
-        public int Diff = 0;
-        public int Conflict = 0;
-        public int Modified = 0;
-        public int Replaced = 0;
-        public int Other = 0;
-        public int Total = 0;
-        public IVCManager Manager = null;
+        public int Files;
+        public int Dirs;
+        public int Unknown;
+        public int Ignored;
+        public int Added;
+        public int Revert;
+        public int Diff;
+        public int Conflict;
+        public int Modified;
+        public int Replaced;
+        public int Other;
+        public int Total;
+        public IVCManager Manager;
 
-        public ProjectSelectionState(ProjectTreeView tree)
+        public ProjectSelectionState(MultiSelectTreeView tree)
         {
-            if (tree == null || tree.SelectedNodes.Count == 0)
+            if (tree is null || tree.SelectedNodes.Count == 0)
                 return;
 
             foreach (TreeNode node in tree.SelectedNodes)
@@ -254,11 +241,11 @@ namespace SourceControl.Managers
                 else return; // unknown node in selection - no action
 
                 GenericNode gnode = (GenericNode)node;
-                if (gnode.Meta == null || !gnode.Meta.ContainsKey(OverlayManager.META_STATUS)
+                if (gnode.Meta is null || !gnode.Meta.ContainsKey(OverlayManager.META_STATUS)
                     || !gnode.Meta.ContainsKey(OverlayManager.META_VC))
                     return; // incomplete status
 
-                if (Manager == null) Manager = gnode.Meta[OverlayManager.META_VC] as IVCManager;
+                if (Manager is null) Manager = gnode.Meta[OverlayManager.META_VC] as IVCManager;
                 else if (gnode.Meta[OverlayManager.META_VC] != Manager)
                     return; // several managers...
 

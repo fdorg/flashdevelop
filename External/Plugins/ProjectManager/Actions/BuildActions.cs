@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -23,18 +24,17 @@ namespace ProjectManager.Actions
     /// </summary>
     public class BuildActions
     {
-        static public int LatestSDKMatchQuality;
+        public static int LatestSDKMatchQuality;
         static bool setPlayerglobalHomeEnv;
 
-        IMainForm mainForm;
-        PluginMain pluginMain;
-        FDProcessRunner fdProcess;
-        string ipcName;
+        readonly IMainForm mainForm;
+        readonly PluginMain pluginMain;
+        readonly FDProcessRunner fdProcess;
 
         public event BuildCompleteHandler BuildComplete;
         public event BuildCompleteHandler BuildFailed;
 
-        public string IPCName { get { return ipcName; } }
+        public string IPCName { get; }
 
         public BuildActions(IMainForm mainForm, PluginMain pluginMain)
         {
@@ -45,13 +45,13 @@ namespace ProjectManager.Actions
             this.fdProcess = new FDProcessRunner(mainForm);
 
             // setup remoting service so FDBuild can use our in-memory services like FlexCompilerShell
-            this.ipcName = Guid.NewGuid().ToString();
+            this.IPCName = Guid.NewGuid().ToString();
             SetupRemotingServer();
         }
 
         private void SetupRemotingServer()
         {
-            IpcChannel channel = new IpcChannel(ipcName);
+            IpcChannel channel = new IpcChannel(IPCName);
             ChannelServices.RegisterChannel(channel, false);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(FlexCompilerShell), "FlexCompilerShell", WellKnownObjectMode.Singleton);
         }
@@ -73,9 +73,7 @@ namespace ProjectManager.Actions
             if (project.OutputType == OutputType.OtherIDE)
             {
                 // compile using associated IDE
-                string error;
-                string command = project.GetOtherIDE(runOutput, releaseMode, out error);
-
+                var command = project.GetOtherIDE(runOutput, releaseMode, out var error);
                 if (error != null) ErrorManager.ShowInfo(TextHelper.GetString(error));
                 else
                 {
@@ -94,21 +92,20 @@ namespace ProjectManager.Actions
                 }
                 return false;
             }
-            else if (project.OutputType == OutputType.CustomBuild)
+
+            if (project.OutputType == OutputType.CustomBuild)
             {
                 // validate commands not empty
                 if (project.PreBuildEvent.Trim().Length == 0 && project.PostBuildEvent.Trim().Length == 0)
                 {
-                    String info = TextHelper.GetString("Info.NoOutputAndNoBuild");
+                    string info = TextHelper.GetString("Info.NoOutputAndNoBuild");
                     TraceManager.Add(info);
                 }
             }
             else if (project.IsCompilable)
             {
                 // ask the project to validate itself
-                string error;
-                project.ValidateBuild(out error);
-
+                project.ValidateBuild(out var error);
                 if (error != null)
                 {
                     ErrorManager.ShowInfo(TextHelper.GetString(error));
@@ -117,19 +114,19 @@ namespace ProjectManager.Actions
 
                 if (project.OutputPath.Length == 0)
                 {
-                    String info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
+                    string info = TextHelper.GetString("Info.SpecifyValidOutputSWF");
                     ErrorManager.ShowInfo(info);
                     return false;
                 }
 
-                if (compiler == null || (!Directory.Exists(compiler) && !File.Exists(compiler)))
+                if (compiler is null || (!Directory.Exists(compiler) && !File.Exists(compiler)))
                 {
                     string info = TextHelper.GetString("Info.CheckSDKSettings");
                     MessageBox.Show(info, TextHelper.GetString("Title.ConfigurationRequired"), MessageBoxButtons.OK);
                     return false;
                 }
             }
-            
+
             // close running AIR projector
             if (project.MovieOptions.Platform.StartsWithOrdinal("AIR"))
             {
@@ -143,7 +140,7 @@ namespace ProjectManager.Actions
             return FDBuild(project, runOutput, releaseMode, sdk);
         }
 
-        static public bool RunFlashIDE(Project project, bool runOutput, bool releaseMode)
+        public static bool RunFlashIDE(Project project, bool runOutput, bool releaseMode)
         {
             string cmd = (runOutput) ? "testmovie" : "buildmovie";
             if (!PluginMain.Settings.DisableExtFlashIntegration) cmd += "-fd";
@@ -153,17 +150,15 @@ namespace ProjectManager.Actions
 
             cmd = Path.Combine("Tools", "flashide", cmd);
             cmd = PathHelper.ResolvePath(cmd, null);
-            if (cmd == null || !File.Exists(cmd))
+            if (cmd is null || !File.Exists(cmd))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.JsflNotFound"));
                 return false;
             }
-            else
-            {
-                DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CallFlashIDE", cmd);
-                EventManager.DispatchEvent(project, de);
-                return de.Handled;
-            }
+
+            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CallFlashIDE", cmd);
+            EventManager.DispatchEvent(project, de);
+            return de.Handled;
         }
 
         public bool FDBuild(Project project, bool runOutput, bool releaseMode, InstalledSDK sdk)
@@ -173,7 +168,7 @@ namespace ProjectManager.Actions
 
             string fdBuildPath = Path.Combine(PathHelper.ToolDir, "fdbuild", "fdbuild.exe");
 
-            string arguments = " -ipc " + ipcName;
+            string arguments = " -ipc " + IPCName;
             if (sdk != null)
             {
                 if (!string.IsNullOrEmpty(sdk.Version))
@@ -233,62 +228,52 @@ namespace ProjectManager.Actions
             return true;
         }
 
-        void OnBuildComplete(IProject project, bool runOutput)
-        {
-            if (BuildComplete != null) BuildComplete(project, runOutput);
-        }
+        void OnBuildComplete(IProject project, bool runOutput) => BuildComplete?.Invoke(project, runOutput);
 
-        void OnBuildFailed(IProject project, bool runOutput)
-        {
-            if (BuildFailed != null) BuildFailed(project, runOutput);
-        }
+        void OnBuildFailed(IProject project, bool runOutput) => BuildFailed?.Invoke(project, runOutput);
 
-        void AddTrustFile(Project project)
+        void AddTrustFile(IProject project)
         {
-            string directory = Path.GetDirectoryName(project.OutputPathAbsolute);
+            var directory = Path.GetDirectoryName(project.OutputPathAbsolute);
             if (!Directory.Exists(directory)) return;
-            string trustParams = "FlashDevelop.cfg;" + directory;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.CreateTrustFile", trustParams);
+            var trustParams = "FlashDevelop.cfg;" + directory;
+            var de = new DataEvent(EventType.Command, "ASCompletion.CreateTrustFile", trustParams);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void NotifyBuildStarted() { fdProcess.ProcessStartedEventCaught(); }
-        public void NotifyBuildEnded(string result) { fdProcess.ProcessEndedEventCaught(result); }
-        public void SetStatusBar(string text) { mainForm.StatusLabel.Text = " " + text; }
+        public void NotifyBuildStarted() => fdProcess.ProcessStartedEventCaught();
+
+        public void NotifyBuildEnded(string result) => fdProcess.ProcessEndedEventCaught(result);
+
+        public void SetStatusBar(string text) => mainForm.StatusLabel.Text = " " + text;
 
         /* SDK MANAGEMENT */
 
-        static public InstalledSDK GetProjectSDK(Project project)
+        public static InstalledSDK GetProjectSDK(Project project)
         {
-            if (project == null) return null;
+            if (project is null) return null;
             InstalledSDK[] sdks = GetInstalledSDKs(project);
             return MatchSDK(sdks, project);
         }
 
-        static public string GetCompilerPath(Project project)
-        {
-            return GetCompilerPath(project, GetProjectSDK(project));
-        }
+        public static string GetCompilerPath(Project project) => GetCompilerPath(project, GetProjectSDK(project));
 
-        static public string GetCompilerPath(Project project, InstalledSDK sdk)
+        public static string GetCompilerPath(Project project, InstalledSDK sdk)
         {
-            if (project == null) return null;
+            if (project is null) return null;
             project.CurrentSDK = PathHelper.ResolvePath(sdk.Path, project.Directory);
             if (project == PluginBase.CurrentProject) PluginBase.CurrentSDK = sdk;
             return project.CurrentSDK;
         }
 
-        static public InstalledSDK MatchSDK(InstalledSDK[] sdks, IProject project)
-        {
-            return MatchSDK(sdks, project.PreferredSDK);
-        }
+        public static InstalledSDK MatchSDK(InstalledSDK[] sdks, IProject project) => MatchSDK(sdks, project.PreferredSDK);
 
-        static public InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
+        public static InstalledSDK MatchSDK(InstalledSDK[] sdks, string preferredSDK)
         {
-            if (sdks == null) sdks = new InstalledSDK[] { };
+            if (sdks is null) sdks = EmptyArray<InstalledSDK>.Instance;
 
             // default sdk
-            if (String.IsNullOrEmpty(preferredSDK))
+            if (string.IsNullOrEmpty(preferredSDK))
             {
                 LatestSDKMatchQuality = -1;
                 foreach (InstalledSDK sdk in sdks)
@@ -296,7 +281,7 @@ namespace ProjectManager.Actions
                 return InstalledSDK.INVALID_SDK;
             }
 
-            string[] parts = (";;" + preferredSDK).Split(';'); // name;version
+            var parts = (";;" + preferredSDK).Split(';'); // name;version
             
             // match name
             string name = parts[parts.Length - 3];
@@ -357,7 +342,7 @@ namespace ProjectManager.Actions
                     string[] pb = new SemVer(sb[j].Trim()).ToString().Split('.');
                     int major = int.Parse(pa[0]) - int.Parse(pb[0]);
                     if (major < 0) return int.MaxValue;
-                    else if (major > 0) score += 10;
+                    if (major > 0) score += 10;
                     else
                     {
                         int minor = int.Parse(pa[1]) - int.Parse(pb[1]);
@@ -377,20 +362,15 @@ namespace ProjectManager.Actions
             return score;
         }
 
-        static public InstalledSDK[] GetInstalledSDKs(IProject project)
-        {
-            return GetInstalledSDKs(project.Language);
-        }
+        public static InstalledSDK[] GetInstalledSDKs(IProject project) => GetInstalledSDKs(project.Language);
 
-        static public InstalledSDK[] GetInstalledSDKs(string language)
+        public static InstalledSDK[] GetInstalledSDKs(string language)
         {
-            Hashtable infos = new Hashtable();
-            infos["language"] = language;
-            DataEvent de = new DataEvent(EventType.Command, "ASCompletion.InstalledSDKs", infos);
+            var infos = new Hashtable {["language"] = language};
+            var de = new DataEvent(EventType.Command, "ASCompletion.InstalledSDKs", infos);
             EventManager.DispatchEvent(null, de);
             if (infos.ContainsKey("sdks") && infos["sdks"] != null) return (InstalledSDK[])infos["sdks"];
-            else return null;
+            return null;
         }
     }
-
 }

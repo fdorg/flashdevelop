@@ -51,6 +51,14 @@ namespace CodeRefactor.Provider
                     .Returns(true)
                     .SetName("Issue 2013. case 8")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2013");
+                yield return new TestCaseData("RenameValidator_issue2830_1")
+                    .Returns(false)
+                    .SetName("Issue 2830. case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2830");
+                yield return new TestCaseData("RenameValidator_issue2830_2")
+                    .Returns(false)
+                    .SetName("Issue 2830. case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2830");
             }
         }
 

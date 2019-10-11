@@ -18,20 +18,15 @@ namespace WeifenLuo.WinFormsUI
 
         private class RepeatClickEventArgs : EventArgs
         {
-            private static RepeatClickEventArgs _empty;
-
             static RepeatClickEventArgs()
             {
-                _empty = new RepeatClickEventArgs();
+                Empty = new RepeatClickEventArgs();
             }
 
-            public new static RepeatClickEventArgs Empty
-            {
-                get {   return _empty;  }
-            }
+            public new static RepeatClickEventArgs Empty { get; private set; }
         }
 
-        private IContainer components = new Container();
+        private readonly IContainer components = new Container();
         private int m_borderWidth = 1;
         private bool m_mouseOver = false;
         private bool m_mouseCapture = false;
@@ -79,24 +74,23 @@ namespace WeifenLuo.WinFormsUI
             // Should not be allowed to select this control
             SetStyle(ControlStyles.Selectable, false);
 
-            m_timer = new Timer();
-            m_timer.Enabled = false;
-            m_timer.Tick += new EventHandler(Timer_Tick);
+            Timer = new Timer();
+            Timer.Enabled = false;
+            Timer.Tick += Timer_Tick;
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (components != null)
-                    components.Dispose();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
 
         public Color BorderColor
         {
-            get {   return m_borderColor;   }
+            get => m_borderColor;
             set
             {
                 if (m_borderColor != value)
@@ -114,8 +108,7 @@ namespace WeifenLuo.WinFormsUI
 
         public int BorderWidth
         {
-            get { return m_borderWidth; }
-
+            get => m_borderWidth;
             set
             {
                 if (value < 1)
@@ -137,10 +130,9 @@ namespace WeifenLuo.WinFormsUI
 
                 try
                 {
-                    if (ImageList == null || ImageIndexEnabled == -1)
+                    if (ImageList is null || ImageIndexEnabled == -1)
                         return null;
-                    else
-                        return ImageList.Images[m_imageIndexEnabled];
+                    return ImageList.Images[m_imageIndexEnabled];
                 }
                 catch
                 {
@@ -172,10 +164,9 @@ namespace WeifenLuo.WinFormsUI
 
                 try
                 {
-                    if (ImageList == null || ImageIndexDisabled == -1)
+                    if (ImageList is null || ImageIndexDisabled == -1)
                         return null;
-                    else
-                        return ImageList.Images[m_imageIndexDisabled];
+                    return ImageList.Images[m_imageIndexDisabled];
                 }
                 catch
                 {
@@ -195,7 +186,7 @@ namespace WeifenLuo.WinFormsUI
 
         public int ImageIndexEnabled
         {
-            get {   return m_imageIndexEnabled; }
+            get => m_imageIndexEnabled;
             set
             {
                 if (m_imageIndexEnabled != value)
@@ -208,7 +199,7 @@ namespace WeifenLuo.WinFormsUI
 
         public int ImageIndexDisabled
         {
-            get {   return m_imageIndexDisabled;    }
+            get => m_imageIndexDisabled;
             set
             {
                 if (m_imageIndexDisabled != value)
@@ -221,8 +212,7 @@ namespace WeifenLuo.WinFormsUI
 
         public bool IsPopup
         {
-            get { return m_isPopup; }
-
+            get => m_isPopup;
             set
             {
                 if (m_isPopup != value)
@@ -235,7 +225,7 @@ namespace WeifenLuo.WinFormsUI
 
         public bool Monochrome
         {
-            get {   return m_monochrom; }
+            get => m_monochrom;
             set
             {
                 if (value != m_monochrom)
@@ -248,14 +238,14 @@ namespace WeifenLuo.WinFormsUI
 
         public bool RepeatClick
         {
-            get {   return (ClickStatus != RepeatClickStatus.Disabled); }
-            set {   ClickStatus = RepeatClickStatus.Stopped;    }
+            get => (ClickStatus != RepeatClickStatus.Disabled);
+            set => ClickStatus = RepeatClickStatus.Stopped;
         }
 
         private RepeatClickStatus m_clickStatus = RepeatClickStatus.Disabled;
         private RepeatClickStatus ClickStatus
         {
-            get {   return m_clickStatus;   }
+            get => m_clickStatus;
             set
             {
                 if (m_clickStatus == value)
@@ -274,34 +264,18 @@ namespace WeifenLuo.WinFormsUI
             }
         }
 
-        private int m_repeatClickDelay = 500;
-        public int RepeatClickDelay
-        {
-            get {   return m_repeatClickDelay;  } 
-            set {   m_repeatClickDelay = value; }
-        }
-
-        private int m_repeatClickInterval = 100;
-        public int RepeatClickInterval
-        {
-            get {   return m_repeatClickInterval;   }
-            set {   m_repeatClickInterval = value;  }
-        }
-
-        private Timer m_timer;
-        private Timer Timer
-        {
-            get {   return m_timer; }
-        }
+        public int RepeatClickDelay { get; set; } = 500;
+        public int RepeatClickInterval { get; set; } = 100;
+        private Timer Timer { get; set; }
 
         public string ToolTipText
         {
-            get {   return m_toolTipText;   }
+            get => m_toolTipText;
             set
             {
                 if (m_toolTipText != value)
                 {
-                    if (m_toolTip == null)
+                    if (m_toolTip is null)
                         m_toolTip = new ToolTip(this.components);
                     m_toolTipText = value;
                     m_toolTip.SetToolTip(this, value);
@@ -432,15 +406,13 @@ namespace WeifenLuo.WinFormsUI
 
         private void DrawBackground(Graphics g)
         {
-            using (SolidBrush brush = new SolidBrush(BackColor))
-            {
-                g.FillRectangle(brush, ClientRectangle);
-            }
+            using var brush = new SolidBrush(BackColor);
+            g.FillRectangle(brush, ClientRectangle);
         }
 
         private void DrawImage(Graphics g)
         {
-            Image image = this.Enabled ? ImageEnabled : ((ImageDisabled != null) ? ImageDisabled : ImageEnabled);
+            Image image = this.Enabled ? ImageEnabled : ImageDisabled ?? ImageEnabled;
             ImageAttributes imageAttr = null;
 
             if (null == image)
@@ -467,17 +439,13 @@ namespace WeifenLuo.WinFormsUI
 
             if ((!Enabled) && (null == ImageDisabled))
             {
-                using (Bitmap bitmapMono = new Bitmap(image, ClientRectangle.Size))
+                using var bitmapMono = new Bitmap(image, ClientRectangle.Size);
+                if (imageAttr != null)
                 {
-                    if (imageAttr != null)
-                    {
-                        using (Graphics gMono = Graphics.FromImage(bitmapMono))
-                        {
-                            gMono.DrawImage(image, new Point[3] { new Point(0, 0), new Point(image.Width - 1, 0), new Point(0, image.Height - 1) }, rect, GraphicsUnit.Pixel, imageAttr);
-                        }
-                    }
-                    ControlPaint.DrawImageDisabled(g, bitmapMono, 0, 0, this.BackColor);
+                    using var gMono = Graphics.FromImage(bitmapMono);
+                    gMono.DrawImage(image, new Point[3] { new Point(0, 0), new Point(image.Width - 1, 0), new Point(0, image.Height - 1) }, rect, GraphicsUnit.Pixel, imageAttr);
                 }
+                ControlPaint.DrawImageDisabled(g, bitmapMono, 0, 0, this.BackColor);
             }
             else
             {
@@ -491,7 +459,7 @@ namespace WeifenLuo.WinFormsUI
                 pts[2].X = pts[0].X;
                 pts[2].Y = pts[1].Y + ClientRectangle.Height;
 
-                if (imageAttr == null)
+                if (imageAttr is null)
                     g.DrawImage(image, pts, rect, GraphicsUnit.Pixel);
                 else
                     g.DrawImage(image, pts, rect, GraphicsUnit.Pixel, imageAttr);
@@ -558,10 +526,8 @@ namespace WeifenLuo.WinFormsUI
                 stringFormat.LineAlignment = StringAlignment.Far;
             }
 
-            using (Brush brush = new SolidBrush(ForeColor))
-            {
-                g.DrawString(Text, Font, brush, rect, stringFormat);
-            }
+            using Brush brush = new SolidBrush(ForeColor);
+            g.DrawString(Text, Font, brush, rect, stringFormat);
         }
 
         private void DrawBorder(Graphics g)

@@ -15,7 +15,7 @@ namespace FlashDevelop.Dialogs
 {
     public class SettingDialog : SmartForm
     {
-        private System.String helpUrl;
+        private string helpUrl;
         private System.Windows.Forms.ListView itemListView;
         private System.Windows.Forms.PictureBox infoPictureBox;
         private System.Windows.Forms.ColumnHeader columnHeader;
@@ -31,13 +31,13 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label descLabel;
-        private String itemFilter = String.Empty;
-        private String itemName = String.Empty;
-        private static Int32 lastItemIndex = 0;
+        private readonly string itemFilter = string.Empty;
+        private readonly string itemName = string.Empty;
+        private static int lastItemIndex = 0;
         private InstalledSDKContext sdkContext;
-        private static Hashtable requireRestart = new Hashtable();
+        private static readonly Hashtable requireRestart = new Hashtable();
 
-        public SettingDialog(String name, String filter)
+        public SettingDialog(string name, string filter)
         {
             this.itemName = name;
             this.itemFilter = filter;
@@ -82,7 +82,7 @@ namespace FlashDevelop.Dialogs
             // 
             // itemListView
             //
-            this.itemListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left)));
+            this.itemListView.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left;
             this.itemListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.itemListView.HideSelection = false;
             this.itemListView.Location = new System.Drawing.Point(12, 12);
@@ -94,22 +94,22 @@ namespace FlashDevelop.Dialogs
             this.itemListView.View = System.Windows.Forms.View.Details;
             this.itemListView.Alignment = ListViewAlignment.Left;
             this.itemListView.Columns.Add(this.columnHeader);
-            this.itemListView.SelectedIndexChanged += new System.EventHandler(this.ItemListViewSelectedIndexChanged);
+            this.itemListView.SelectedIndexChanged += this.ItemListViewSelectedIndexChanged;
             // 
             // itemPropertyGrid
             // 
-            this.itemPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemPropertyGrid.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.itemPropertyGrid.Location = new System.Drawing.Point(183, 54);
             this.itemPropertyGrid.Name = "itemPropertyGrid";
             this.itemPropertyGrid.Size = new System.Drawing.Size(502, 386);
             this.itemPropertyGrid.TabIndex = 3;
             this.itemPropertyGrid.ToolbarVisible = false;
             this.itemPropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.itemPropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(this.PropertyValueChanged);
+            this.itemPropertyGrid.PropertyValueChanged += this.PropertyValueChanged;
             // 
             // closeButton
             // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(586, 447);
             this.closeButton.Name = "closeButton";
@@ -117,11 +117,11 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 4;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // nameLabel
             // 
-            this.nameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.nameLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.nameLabel.AutoSize = true;
             this.nameLabel.Enabled = false;
             this.nameLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -134,7 +134,7 @@ namespace FlashDevelop.Dialogs
             // infoPictureBox
             //
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoPictureBox.Location = new System.Drawing.Point(13, 451);
             this.infoPictureBox.Name = "infoPictureBox";
             this.infoPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -143,7 +143,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoLabel
             // 
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoLabel.AutoSize = true;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.infoLabel.Location = new System.Drawing.Point(34, 452);
@@ -154,7 +154,7 @@ namespace FlashDevelop.Dialogs
             // 
             // descLabel
             // 
-            this.descLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.descLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.descLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.descLabel.Location = new System.Drawing.Point(185, 31);
             this.descLabel.Name = "descLabel";
@@ -172,7 +172,7 @@ namespace FlashDevelop.Dialogs
             this.disableCheckBox.TabIndex = 7;
             this.disableCheckBox.Text = " Disable";
             this.disableCheckBox.UseVisualStyleBackColor = true;
-            this.disableCheckBox.Click += new System.EventHandler(this.DisableCheckBoxCheck);
+            this.disableCheckBox.Click += this.DisableCheckBoxCheck;
             // 
             // helpLabel
             //
@@ -183,30 +183,30 @@ namespace FlashDevelop.Dialogs
             this.helpLabel.TabIndex = 9;
             this.helpLabel.TabStop = true;
             this.helpLabel.Text = "Help";
-            this.helpLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HelpLabelClick);
+            this.helpLabel.LinkClicked += this.HelpLabelClick;
             // 
             // filterText
             //
-            this.filterText.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.filterText.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.filterText.Location = new System.Drawing.Point(537, 26);
             this.filterText.Name = "FilterText";
             this.filterText.Size = new System.Drawing.Size(120, 20);
             this.filterText.TabIndex = 10;
-            this.filterText.TextChanged += new System.EventHandler(this.FilterTextTextChanged);
+            this.filterText.TextChanged += this.FilterTextTextChanged;
             // 
             // clearFilterButton
             //
-            this.clearFilterButton.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.clearFilterButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.clearFilterButton.Location = new System.Drawing.Point(661, 24);
             this.clearFilterButton.Name = "clearFilterButton";
             this.clearFilterButton.Size = new System.Drawing.Size(26, 23);
             this.clearFilterButton.TabIndex = 11;
             this.clearFilterButton.UseVisualStyleBackColor = true;
-            this.clearFilterButton.Click += new System.EventHandler(this.ClearFilterButtonClick);
+            this.clearFilterButton.Click += this.ClearFilterButtonClick;
             // 
             // filterLabel
             // 
-            this.filterLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.filterLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.filterLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.filterLabel.Location = new System.Drawing.Point(538, 10);
             this.filterLabel.Name = "filterLabel";
@@ -241,10 +241,10 @@ namespace FlashDevelop.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Settings";
-            this.Load += new System.EventHandler(this.DialogLoad);
-            this.Shown += new System.EventHandler(this.DialogShown);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DialogClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DialogClosed);
+            this.Load += this.DialogLoad;
+            this.Shown += this.DialogShown;
+            this.FormClosing += this.DialogClosing;
+            this.FormClosed += this.DialogClosed;
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -291,8 +291,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeItemGroups()
         {
-            String mainHeader = TextHelper.GetString("Group.Main");
-            String pluginsHeader = TextHelper.GetString("Group.Plugins");
+            string mainHeader = TextHelper.GetString("Group.Main");
+            string pluginsHeader = TextHelper.GetString("Group.Plugins");
             this.mainGroup = new ListViewGroup(mainHeader, HorizontalAlignment.Left);
             this.pluginsGroup = new ListViewGroup(pluginsHeader, HorizontalAlignment.Left);
             this.itemListView.Groups.Add(this.mainGroup);
@@ -323,12 +323,12 @@ namespace FlashDevelop.Dialogs
         private void PopulatePluginList()
         {
             this.itemListView.Items.Clear();
-            Int32 count = PluginServices.AvailablePlugins.Count;
+            int count = PluginServices.AvailablePlugins.Count;
             ListViewItem main = new ListViewItem(DistroConfig.DISTRIBUTION_NAME, 2);
             this.itemListView.BeginUpdate();
             this.itemListView.Items.Add(main);
             this.mainGroup.Items.Add(main);
-            for (Int32 i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 AvailablePlugin plugin = PluginServices.AvailablePlugins[i];
                 ListViewItem item = new ListViewItem(plugin.Instance.Name, 0);
@@ -337,11 +337,11 @@ namespace FlashDevelop.Dialogs
                 {
                     item.ImageIndex = 1;
                 }
-                if (!String.IsNullOrEmpty(this.itemFilter)) // Set default filter...
+                if (!string.IsNullOrEmpty(this.itemFilter)) // Set default filter...
                 {
-                    this.filterText.TextChanged -= new EventHandler(this.FilterTextTextChanged);
+                    this.filterText.TextChanged -= this.FilterTextTextChanged;
                     this.filterText.Text = this.itemFilter;
-                    this.filterText.TextChanged += new EventHandler(this.FilterTextTextChanged);
+                    this.filterText.TextChanged += this.FilterTextTextChanged;
                 }
                 if (this.filterText.Text.Length > 0)
                 {
@@ -364,9 +364,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Selects the correct setting item
         /// </summary>
-        private void SelectCorrectItem(String itemName)
+        private void SelectCorrectItem(string itemName)
         {
-            for (Int32 i = 0; i < this.itemListView.Items.Count; i++)
+            for (int i = 0; i < this.itemListView.Items.Count; i++)
             {
                 ListViewItem item = this.itemListView.Items[i];
                 if (item.Text == itemName)
@@ -380,11 +380,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the selected plugin in the prop grid
         /// </summary>
-        private void ItemListViewSelectedIndexChanged(Object sender, EventArgs e)
+        private void ItemListViewSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
-                Int32 selectedIndex = this.itemListView.SelectedIndices[0];
+                int selectedIndex = this.itemListView.SelectedIndices[0];
                 if (selectedIndex == 0)
                 {
                     sdkContext = new InstalledSDKContext(null);
@@ -416,7 +416,7 @@ namespace FlashDevelop.Dialogs
             else
             {
                 this.nameLabel.Enabled = false;
-                this.descLabel.Text = String.Empty;
+                this.descLabel.Text = string.Empty;
                 this.nameLabel.Text = TextHelper.GetString("Info.NoItemSelected");
                 this.itemPropertyGrid.SelectedObject = null;
                 this.itemPropertyGrid.Enabled = false;
@@ -453,7 +453,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if a propery exist in a plugin
         /// </summary>
-        private Boolean CheckIfExist(IPlugin plugin, String text)
+        private bool CheckIfExist(IPlugin plugin, string text)
         {
             if (plugin.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
@@ -476,7 +476,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if the property matches in any property infos
         /// </summary>
-        private Boolean PropertyMatches(PropertyInfo property, String text)
+        private bool PropertyMatches(PropertyInfo property, string text)
         {
             if (property.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
             {
@@ -509,7 +509,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Test whether the name of the candidate member contains the specified partial name.
         /// </summary>
-        public Boolean PartialName(MemberInfo candidate, Object part)
+        public bool PartialName(MemberInfo candidate, object part)
         {
             return candidate.Name.Contains(part.ToString());
         }
@@ -517,12 +517,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When setting value has changed, dispatch event
         /// </summary>
-        private void PropertyValueChanged(Object sender, PropertyValueChangedEventArgs e)
+        private void PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
                 GridItem changedItem = e.ChangedItem;
-                String settingId = this.nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
+                string settingId = this.nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
                 TextEvent te = new TextEvent(EventType.SettingChanged, settingId);
                 EventManager.DispatchEvent(Globals.MainForm, te);
 
@@ -572,10 +572,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void MoveInfoControls()
         {
-            Int32 dcbY = this.disableCheckBox.Location.Y;
-            Int32 dcbX = this.nameLabel.Location.X + this.nameLabel.Width + 13;
-            Int32 hlX = dcbX + this.disableCheckBox.Width;
-            Int32 hlY = this.helpLabel.Location.Y;
+            int dcbY = this.disableCheckBox.Location.Y;
+            int dcbX = this.nameLabel.Location.X + this.nameLabel.Width + 13;
+            int hlX = dcbX + this.disableCheckBox.Width;
+            int hlY = this.helpLabel.Location.Y;
             this.disableCheckBox.Location = new Point(dcbX, dcbY);
             this.helpLabel.Location = new Point(hlX, hlY);
         }
@@ -583,7 +583,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows or hides the info controls
         /// </summary>
-        private void ShowInfoControls(Boolean value)
+        private void ShowInfoControls(bool value)
         {
             this.disableCheckBox.Visible = value;
             this.helpLabel.Visible = value;
@@ -592,9 +592,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Toggles the enabled state and saves it to settings
         /// </summary>
-        private void DisableCheckBoxCheck(Object sender, EventArgs e)
+        private void DisableCheckBoxCheck(object sender, EventArgs e)
         {
-            Int32 selectedIndex = this.itemListView.SelectedIndices[0];
+            int selectedIndex = this.itemListView.SelectedIndices[0];
             if (selectedIndex != 0)
             {
                 IPlugin plugin = PluginServices.AvailablePlugins[selectedIndex - 1].Instance;
@@ -616,7 +616,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Populate plugin list before dialog is shown
         /// </summary>
-        private void DialogLoad(Object sender, EventArgs e)
+        private void DialogLoad(object sender, EventArgs e)
         {
             this.PopulatePluginList();
         }
@@ -624,9 +624,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Restore the selected index - only if an item id hasn't been provided
         /// </summary>
-        private void DialogShown(Object sender, EventArgs e)
+        private void DialogShown(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(this.itemName) || this.itemName == DistroConfig.DISTRIBUTION_NAME)
+            if (string.IsNullOrEmpty(this.itemName) || this.itemName == DistroConfig.DISTRIBUTION_NAME)
             {
                 this.itemListView.SelectedIndices.Add(lastItemIndex);
                 this.itemListView.EnsureVisible(lastItemIndex);
@@ -637,7 +637,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Save the last selected index to a static var
         /// </summary>
-        private void DialogClosing(Object sender, FormClosingEventArgs e)
+        private void DialogClosing(object sender, FormClosingEventArgs e)
         {
             lastItemIndex = itemListView.SelectedIndices.Count > 0 ? itemListView.SelectedIndices[0] : 0;
         }
@@ -645,10 +645,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When the form is closed applies settings
         /// </summary>
-        private void DialogClosed(Object sender, FormClosedEventArgs e)
+        private void DialogClosed(object sender, FormClosedEventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;  // Enough for our sync code
-            if (sdkContext != null) sdkContext.Dispose();
+            sdkContext?.Dispose();
             Globals.MainForm.ApplyAllSettings();
             Globals.MainForm.SaveSettings();
             if (requireRestart.Count > 0 && !Globals.MainForm.RequiresRestart) Globals.MainForm.RestartRequired();
@@ -657,7 +657,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Event for changing the filter text
         /// </summary>
-        private void FilterTextTextChanged(Object sender, EventArgs e)
+        private void FilterTextTextChanged(object sender, EventArgs e)
         {
             this.PopulatePluginList();
             this.FilterPropertySheet();
@@ -666,7 +666,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Event for pressing the filter clear button
         /// </summary>
-        private void ClearFilterButtonClick(Object sender, EventArgs e)
+        private void ClearFilterButtonClick(object sender, EventArgs e)
         {
             this.filterText.Text = "";
         }
@@ -674,7 +674,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Browses to the specified help url
         /// </summary>
-        private void HelpLabelClick(Object sender, LinkLabelLinkClickedEventArgs e)
+        private void HelpLabelClick(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (this.helpUrl != null)
             {
@@ -685,7 +685,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the setting dialog
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
+        private void CloseButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -693,13 +693,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the settings dialog
         /// </summary>
-        public static void Show(String itemName, String filter)
+        public static void Show(string itemName, string filter)
         {
-            using (SettingDialog settingDialog = new SettingDialog(itemName, filter))
-            {
-                settingDialog.closeButton.Select();
-                settingDialog.ShowDialog();
-            }
+            using SettingDialog settingDialog = new SettingDialog(itemName, filter);
+            settingDialog.closeButton.Select();
+            settingDialog.ShowDialog();
         }
 
         #endregion

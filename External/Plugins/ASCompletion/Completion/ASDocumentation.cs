@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
@@ -20,22 +19,23 @@ namespace ASCompletion.Completion
         public string InfoTip;
         public string Return;
         public bool IsFunctionWithArguments;
-        public ArrayList ParamName; // TODO: change ArrayList for List<string>
-        public ArrayList ParamDesc;
-        public ArrayList TagName;
-        public ArrayList TagDesc;
+        public List<string> ParamName;
+        public List<string> ParamDesc;
+        public List<string> TagName;
+        public List<string> TagDesc;
     }
     
     public class ASDocumentation
     {
-        private static List<ICompletionListItem> docVariables;
+        static List<ICompletionListItem> docVariables;
         
         #region regular_expressions
-        private static readonly Regex re_tags = new Regex("<[/]?(p|br)[/]?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        static readonly Regex re_tags = new Regex("<[/]?(p|br)[/]?>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         #endregion
         
         #region Comment generation
-        static public bool OnChar(ScintillaControl sci, int value, int position, int style)
+        public static bool OnChar(ScintillaControl sci, int value, int position, int style)
         {
             if (style == 3 || style == 124)
             {
@@ -51,17 +51,16 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static private bool HandleDocTagCompletion(ScintillaControl sci)
+        static bool HandleDocTagCompletion(ScintillaControl sci)
         {
-            if (ASContext.CommonSettings.JavadocTags == null || ASContext.CommonSettings.JavadocTags.Length == 0)
-                return false;
+            if (ASContext.CommonSettings.JavadocTags.IsNullOrEmpty()) return false;
 
             string txt = sci.GetLine(sci.CurrentLine).TrimStart();
             if (!Regex.IsMatch(txt, "^\\*[\\s]*\\@"))
                 return false;
             
             // build tag list
-            if (docVariables == null)
+            if (docVariables is null)
             {
                 docVariables = new List<ICompletionListItem>();
                 foreach (string tag in ASContext.CommonSettings.JavadocTags)
@@ -78,42 +77,35 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Documentation tag template completion list item
         /// </summary>
-        private class TagItem : ICompletionListItem
+        class TagItem : ICompletionListItem
         {
-            private string label;
+            readonly string label;
             
             public TagItem(string label) 
             {
                 this.label = label;
             }
             
-            public string Label { 
-                get { return label; }
-            }
-            public string Description {
-                get { return TextHelper.GetString("Label.DocTagTemplate"); }
-            }
-            
-            public Bitmap Icon {
-                get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
-            }
-            
-            public string Value { 
-                get { return label; }
-            }
+            public string Label => label;
+
+            public string Description => TextHelper.GetString("Label.DocTagTemplate");
+
+            public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION);
+
+            public string Value => label;
         }
         #endregion
         
         #region Tooltips
 
-        private static readonly Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
-        private static readonly Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
+        static readonly Regex reNewLine = new Regex("[\r\n]+", RegexOptions.Compiled);
+        static readonly Regex reKeepTags = new Regex("<([/]?(b|i|s|u))>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSpecialTags = new Regex("<([/]?)(code|small|strong|em)>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reStripTags = new Regex("<[/]?[a-z]+[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reDocTags = new Regex("\n@(?<tag>[a-z]+)\\s", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSplitParams = new Regex("(?<var>[\\w$]+)\\s", RegexOptions.Compiled);
 
-        static public CommentBlock ParseComment(string comment)
+        public static CommentBlock ParseComment(string comment)
         {
             // cleanup
             comment = comment.Replace("&lt;", "<").Replace("&gt;", ">").Replace("&nbsp;", " ");
@@ -122,14 +114,14 @@ namespace ASCompletion.Completion
             {
                 string tag = match.Groups[2].Value;
                 bool open = match.Groups[1].Length == 0;
-                switch (tag)
+                return tag switch
                 {
-                    case "small": return open ? "[size=-2]" : "[/size]";
-                    case "code": return open ? "[font=Courier New]" : "[/font]";
-                    case "strong": return open ? "[b]" : "[/b]";
-                    case "em": return open ? "[i]" : "[/i]";
-                }
-                return "";
+                    "small" => open ? "[size=-2]" : "[/size]",
+                    "code" => open ? "[font=Courier New]" : "[/font]",
+                    "strong" => open ? "[b]" : "[/b]",
+                    "em" => open ? "[i]" : "[/i]",
+                    _ => "",
+                };
             });
             comment = reStripTags.Replace(comment, "");
             string[] lines = reNewLine.Split(comment);
@@ -156,10 +148,11 @@ namespace ASCompletion.Completion
                 return cb;
             }
             
-            if (tags[0].Index > 0) cb.Description = comment.Substring(0, tags[0].Index).Trim();
-            else cb.Description = "";
-            cb.TagName = new ArrayList();
-            cb.TagDesc = new ArrayList();
+            cb.Description = tags[0].Index > 0
+                ? comment.Substring(0, tags[0].Index).Trim()
+                : string.Empty;
+            cb.TagName = new List<string>();
+            cb.TagDesc = new List<string>();
 
             for(int i = 0; i < tags.Count; i++)
             {
@@ -174,9 +167,9 @@ namespace ASCompletion.Completion
                     if (mParam.Success)
                     {
                         Group mVar = mParam.Groups["var"];
-                        if (cb.ParamName == null) {
-                            cb.ParamName = new ArrayList();
-                            cb.ParamDesc = new ArrayList();
+                        if (cb.ParamName is null) {
+                            cb.ParamName = new List<string>();
+                            cb.ParamDesc = new List<string>();
                         }
                         cb.ParamName.Add(mVar.Value);
                         cb.ParamDesc.Add(desc.Substring(mVar.Index + mVar.Length).TrimStart());
@@ -198,7 +191,7 @@ namespace ASCompletion.Completion
             
         }
         
-        static public string GetTipDetails(MemberModel member, string highlightParam)
+        public static string GetTipDetails(MemberModel member, string highlightParam)
         {
             try
             {
@@ -213,7 +206,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public string RemoveHTMLTags(string tip) => re_tags.Replace(tip, "");
+        public static string RemoveHTMLTags(string tip) => re_tags.Replace(tip, "");
 
         /// <summary>
         /// Short contextual details to display in tips
@@ -221,9 +214,9 @@ namespace ASCompletion.Completion
         /// <param name="member">Member data</param>
         /// <param name="highlightParam">Parameter to detail</param>
         /// <returns></returns>
-        static public string GetTipShortDetails(MemberModel member, string highlightParam)
+        public static string GetTipShortDetails(MemberModel member, string highlightParam)
         {
-            if (member == null || member.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
+            if (member?.Comments is null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return " \u2026" + GetTipShortDetails(cb, highlightParam);
@@ -232,7 +225,7 @@ namespace ASCompletion.Completion
         static bool IsFunctionWithArguments(MemberModel member)
         {
             return member != null && (member.Flags & FlagType.Function) > 0
-                && member.Parameters != null && member.Parameters.Count > 0;
+                && !member.Parameters.IsNullOrEmpty();
         }
 
         /// <summary>
@@ -240,7 +233,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="cb">Parsed comments</param>
         /// <returns>Formated comments</returns>
-        static public string GetTipShortDetails(CommentBlock cb, string highlightParam)
+        public static string GetTipShortDetails(CommentBlock cb, string highlightParam)
         {
             string details = "";
             
@@ -249,10 +242,10 @@ namespace ASCompletion.Completion
             {
                 for(int i=0; i<cb.ParamName.Count; i++)
                 {
-                    if (highlightParam == (string)cb.ParamName[i])
+                    if (highlightParam == cb.ParamName[i])
                     {
                         details += "\n" + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd 
-                                + " " + Get2LinesOf((string)cb.ParamDesc[i], true).TrimStart();
+                                + " " + Get2LinesOf(cb.ParamDesc[i], true).TrimStart();
                         return details;
                     }
                 }
@@ -269,7 +262,7 @@ namespace ASCompletion.Completion
             return details;
         }
 
-        static private string GetShortcutDocs()
+        static string GetShortcutDocs()
         {
             Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
             string foreColorString = themeForeColor != Color.Empty ? DataConverter.ColorToHex(themeForeColor).Replace("0x", "#") : "#666666:MULTIPLY";
@@ -279,9 +272,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Split multiline text and return 2 lines or less of text
         /// </summary>
-        static public string Get2LinesOf(string text) => Get2LinesOf(text, false);
+        public static string Get2LinesOf(string text) => Get2LinesOf(text, false);
 
-        static public string Get2LinesOf(string text, bool alwaysAddShortcutDocs)
+        public static string Get2LinesOf(string text, bool alwaysAddShortcutDocs)
         {
             string[] lines = text.Split('\n');
             text = "";
@@ -299,7 +292,7 @@ namespace ASCompletion.Completion
         /// <returns>Formatted comments</returns>
         public static string GetTipFullDetails(MemberModel member, string highlightParam)
         {
-            if (member?.Comments == null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
+            if (member?.Comments is null || !ASContext.CommonSettings.SmartTipsEnabled) return "";
             CommentBlock cb = ParseComment(member.Comments);
             cb.IsFunctionWithArguments = IsFunctionWithArguments(member);
             return GetTipFullDetails(cb, highlightParam);
@@ -310,7 +303,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="cb">Parsed comments</param>
         /// <returns>Formated comments</returns>
-        static public string GetTipFullDetails(CommentBlock cb, string highlightParam)
+        public static string GetTipFullDetails(CommentBlock cb, string highlightParam)
         {
             string details = "";
             if (cb.Description.Length > 0) 
@@ -326,38 +319,38 @@ namespace ASCompletion.Completion
             {
                 bool hasUsage = false;
                 for(int i=0; i<cb.TagName.Count; i++)
-                if ((string)cb.TagName[i] == "usage") 
-                {
-                    hasUsage = true;
-                    details += "\n    "+(string)cb.TagDesc[i];
-                }
+                    if (cb.TagName[i] == "usage") 
+                    {
+                        hasUsage = true;
+                        details += "\n    "+cb.TagDesc[i];
+                    }
                 if (hasUsage) details += "\n";
             }
             
             // @param
-            if (cb.ParamName != null && cb.ParamName.Count > 0)
+            if (!cb.ParamName.IsNullOrEmpty())
             {
                 details += "\nParam:";
                 for(int i=0; i<cb.ParamName.Count; i++)
                 {
                     details += "\n    ";
-                    if (highlightParam == (string)cb.ParamName[i])
+                    if (highlightParam == cb.ParamName[i])
                     {
                         details += MethodCallTip.HLBgStyleBeg 
                                 + MethodCallTip.HLTextStyleBeg + highlightParam + ":" + MethodCallTip.HLTextStyleEnd + " "
-                                + (string)cb.ParamDesc[i] 
+                                + cb.ParamDesc[i] 
                                 + MethodCallTip.HLBgStyleEnd;
                     }
-                    else details += cb.ParamName[i] + ": " + (string)cb.ParamDesc[i];
+                    else details += cb.ParamName[i] + ": " + cb.ParamDesc[i];
                 }
             }
             
             // @return
             if (cb.Return != null)
             {
-                details += "\n\nReturn:\n    "+cb.Return;
+                details += "\n\nReturn:\n    " + cb.Return;
             }
-            return "\n\n"+details.Trim();
+            return "\n\n" + details.Trim();
         }
         #endregion
     }

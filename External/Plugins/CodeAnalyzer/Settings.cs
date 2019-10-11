@@ -9,7 +9,7 @@ namespace CodeAnalyzer
     [Serializable]
     public class Settings
     {
-        private String pmdRuleset = String.Empty;
+        private string pmdRuleset = string.Empty;
         
         /// <summary>
         /// Get and sets the ruleset file
@@ -17,10 +17,10 @@ namespace CodeAnalyzer
         [DisplayName("Default Ruleset File")]
         [LocalizedDescription("CodeAnalyzer.Description.PMDRuleset"), DefaultValue("")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
-        public String PMDRuleset
+        public string PMDRuleset
         {
-            get { return pmdRuleset; }
-            set { pmdRuleset = value; }
+            get => pmdRuleset;
+            set => pmdRuleset = value;
         }
 
     }

@@ -19,15 +19,15 @@ namespace AS3Context
 {
     class MxmlComplete
     {
-        static public bool IsDirty;
-        static public Context context;
-        static public MxmlFilterContext mxmlContext;
+        public static bool IsDirty;
+        public static Context context;
+        public static MxmlFilterContext mxmlContext;
 
         #region shortcuts
         public static bool GotoDeclaration()
         {
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci == null) return false;
+            if (sci is null) return false;
             if (sci.ConfigurationLanguage != "xml") return false;
 
             int pos = sci.CurrentPos;
@@ -39,7 +39,7 @@ namespace AS3Context
                 pos ++;
             }
             XMLContextTag ctag = XMLComplete.GetXMLContextTag(sci, pos);
-            if (ctag.Name == null) return true;
+            if (ctag.Name is null) return true;
             string word = sci.GetWordFromPosition(sci.CurrentPos);
 
             string type = ResolveType(mxmlContext, ctag.Name);
@@ -75,21 +75,23 @@ namespace AS3Context
         #endregion
 
         #region tag completion
-        static private XMLContextTag tagContext;
-        static private XMLContextTag parentTag;
-        static private string tokenContext;
-        static private string checksum;
-        static private Dictionary<string, List<string>> allTags;
+
+        static XMLContextTag tagContext;
+        static XMLContextTag parentTag;
+        static string tokenContext;
+        static string checksum;
+
+        static Dictionary<string, List<string>> allTags;
         //static private Regex reIncPath = new Regex("[\"']([^\"']+)", RegexOptions.Compiled);
-        static private Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
-        static private Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
+        static readonly Regex reIncPath = new Regex("(\"|')([^\r\n]+)(\\1)", RegexOptions.Compiled);
+        static readonly Dictionary<string, FileModel> includesCache = new Dictionary<string,FileModel>();
 
         /// <summary>
         /// Called 
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        static public bool HandleElement(object data)
+        public static bool HandleElement(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -102,19 +104,19 @@ namespace AS3Context
             bool isContainer = AddParentAttributes(mix, excludes); // current tag attributes
 
             if (isContainer) // container children tag
-            foreach (string ns in mxmlContext.namespaces.Keys)
-            {
-                string uri = mxmlContext.namespaces[ns];
-                if (ns != "*") mix.Add(new NamespaceItem(ns, uri));
-
-                if (!allTags.ContainsKey(ns)) 
-                    continue;
-                foreach (string tag in allTags[ns])
+                foreach (string ns in mxmlContext.namespaces.Keys)
                 {
-                    if (ns == "*") mix.Add(new HtmlTagItem(tag, tag));
-                    else mix.Add(new HtmlTagItem(tag, ns + ":" + tag, uri));
+                    string uri = mxmlContext.namespaces[ns];
+                    if (ns != "*") mix.Add(new NamespaceItem(ns, uri));
+
+                    if (!allTags.ContainsKey(ns)) 
+                        continue;
+                    foreach (string tag in allTags[ns])
+                    {
+                        if (ns == "*") mix.Add(new HtmlTagItem(tag, tag));
+                        else mix.Add(new HtmlTagItem(tag, ns + ":" + tag, uri));
+                    }
                 }
-            }
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());
@@ -135,7 +137,7 @@ namespace AS3Context
             return true;
         }
 
-        private static bool AddParentAttributes(List<ICompletionListItem> mix, List<string> excludes)
+        static bool AddParentAttributes(List<ICompletionListItem> mix, List<string> excludes)
         {
             bool isContainer = true;
             if (parentTag.Name != null) // add parent tag members
@@ -159,7 +161,7 @@ namespace AS3Context
             return isContainer;
         }
 
-        static public bool HandleNamespace(object data)
+        public static bool HandleNamespace(object data)
         {
             if (!GetContext(data) || string.IsNullOrEmpty(tagContext.Name)) 
                 return false;
@@ -198,7 +200,7 @@ namespace AS3Context
             return true;
         }
 
-        static public bool HandleElementClose(object data)
+        public static bool HandleElementClose(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -222,7 +224,7 @@ namespace AS3Context
                     {
                         string uri = mxmlContext.namespaces[ns];
                         if (ns != "fx")
-                            snip += String.Format("\n\t@namespace {0} \"{1}\";", ns, uri);
+                            snip += $"\n\t@namespace {ns} \"{uri}\";";
                     }
                     snip += "\n\t$(EntryPoint)\n</" + tagContext.Name + ">";
                     SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snip);
@@ -232,7 +234,7 @@ namespace AS3Context
             return false;
         }
 
-        static public bool HandleAttribute(object data)
+        public static bool HandleAttribute(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -264,7 +266,7 @@ namespace AS3Context
             return true;
         }
 
-        static public bool HandleAttributeValue(object data)
+        public static bool HandleAttributeValue(object data)
         {
             if (!GetContext(data)) return false;
 
@@ -284,12 +286,12 @@ namespace AS3Context
                 }
                 else if (startFound)
                 {
-                    if (Char.IsWhiteSpace(currChar))
+                    if (char.IsWhiteSpace(currChar))
                         break;
 
                     caBuilder.Insert(0, currChar);
                 }
-                else if (possibleStartFound && !Char.IsWhiteSpace(currChar))
+                else if (possibleStartFound && !char.IsWhiteSpace(currChar))
                 {
                     startFound = true;
                     caBuilder.Insert(0, currChar);
@@ -298,9 +300,8 @@ namespace AS3Context
 
             var currentAttribute = caBuilder.ToString();
 
-            List<ICompletionListItem> mix = GetTagAttributeValues(tagClass, null, currentAttribute);
-
-            if (mix == null || mix.Count == 0) return true;
+            var mix = GetTagAttributeValues(tagClass, null, currentAttribute);
+            if (mix.IsNullOrEmpty()) return true;
 
             // cleanup and show list
             mix.Sort(new MXMLListItemComparer());
@@ -320,7 +321,7 @@ namespace AS3Context
             return true;
         }
 
-        private static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
+        static bool GetTagAttributes(ClassModel tagClass, List<ICompletionListItem> mix, List<string> excludes, string ns)
         {
             ClassModel curClass = mxmlContext.model.GetPublicClass();
             ClassModel tmpClass = tagClass;
@@ -355,9 +356,7 @@ namespace AS3Context
 
                         if ((member.Flags & FlagType.Setter) > 0)
                         {
-                            if (member.Parameters != null && member.Parameters.Count > 0)
-                                mtype = member.Parameters[0].Type;
-                            else mtype = null;
+                            mtype = !member.Parameters.IsNullOrEmpty() ? member.Parameters[0].Type : null;
                         }
                         mix.Add(new HtmlAttributeItem(member.Name, mtype, className, ns));
                     }
@@ -374,7 +373,7 @@ namespace AS3Context
             return isContainer;
         }
 
-        private static List<ICompletionListItem> GetTagAttributeValues(ClassModel tagClass, string ns, string attribute)
+        static List<ICompletionListItem> GetTagAttributeValues(ClassModel tagClass, string ns, string attribute)
         {
             ClassModel curClass = mxmlContext.model.GetPublicClass();
             ClassModel tmpClass = tagClass;
@@ -401,10 +400,7 @@ namespace AS3Context
                             
                             if ((member.Flags & FlagType.Setter) > 0)
                             {
-                                if (member.Parameters != null && member.Parameters.Count > 0)
-                                    mtype = member.Parameters[0].Type;
-                                else mtype = null;
-
+                                mtype = !member.Parameters.IsNullOrEmpty() ? member.Parameters[0].Type : null;
                                 if (!hasGetterSetter)
                                 {
                                     hasGetterSetter = true;
@@ -413,7 +409,8 @@ namespace AS3Context
                                 }
                                 return GetAutoCompletionValuesFromInspectable(mtype, metas);
                             }
-                            else if ((member.Flags & FlagType.Getter) > 0)
+
+                            if ((member.Flags & FlagType.Getter) > 0)
                             {
                                 if (!hasGetterSetter)
                                 {
@@ -446,11 +443,9 @@ namespace AS3Context
             return null;
         }
 
-        private static List<ICompletionListItem> GetAutoCompletionValuesFromInspectable(string type, List<ASMetaData> metas)
+        static List<ICompletionListItem> GetAutoCompletionValuesFromInspectable(string type, List<ASMetaData> metas)
         {
-            if (metas == null || metas.Count == 0)
-                return GetAutoCompletionValuesFromType(type);
-
+            if (metas.IsNullOrEmpty()) return GetAutoCompletionValuesFromType(type);
             foreach (var meta in metas)
             {
                 if (meta.Name != "Inspectable") continue;
@@ -472,26 +467,23 @@ namespace AS3Context
             return GetAutoCompletionValuesFromType(type);
         }
 
-        private static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
+        static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
         {
-            if (model != null && model.MetaDatas != null)
+            if (model?.MetaDatas != null)
             {
                 foreach (ASMetaData meta in model.MetaDatas)
                 {
-                    string name = null;
-                    if (!meta.Params.TryGetValue("name", out name) || name != attribute) continue;
+                    if (!meta.Params.TryGetValue("name", out var name) || name != attribute) continue;
 
                     string type = null;
                     switch (meta.Kind)
                     {
                         case ASMetaKind.Event:
-                            string eventType;
-                            if (!meta.Params.TryGetValue("type", out eventType)) eventType = "flash.events.Event";
+                            if (!meta.Params.TryGetValue("type", out var eventType)) eventType = "flash.events.Event";
                             result = GetAutoCompletionValuesFromEventType(eventType);
                             return true;
                         case ASMetaKind.Style:
-                            string inherit;
-                            if (meta.Params.TryGetValue("inherit", out inherit) && inherit == "no" && tagClass != tmpClass)
+                            if (meta.Params.TryGetValue("inherit", out var inherit) && inherit == "no" && tagClass != tmpClass)
                                 continue;
                             meta.Params.TryGetValue("type", out type);
                             break;
@@ -528,7 +520,7 @@ namespace AS3Context
             return false;
         }
 
-        private static List<ICompletionListItem> GetAutoCompletionValuesFromEventType(string type)
+        static List<ICompletionListItem> GetAutoCompletionValuesFromEventType(string type)
         {
             ClassModel tmpClass = mxmlContext.model.GetPublicClass();
             ClassModel eventClass = context.ResolveType(type, mxmlContext.model);
@@ -542,7 +534,7 @@ namespace AS3Context
             while (!tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
-                    if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && member.Parameters != null && member.Parameters.Count > 0)
+                    if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && !member.Parameters.IsNullOrEmpty())
                     {
                         bool validFunction = true;
                         var argType = member.Parameters[0].Type;
@@ -571,7 +563,7 @@ namespace AS3Context
 
                         if (!validFunction) continue;
 
-                        if (result == null) result = new List<ICompletionListItem>();
+                        if (result is null) result = new List<ICompletionListItem>();
                         result.Add(new MxmlEventHandlerItem(member));
                     }
 
@@ -586,7 +578,7 @@ namespace AS3Context
             return result;
         }
 
-        private static List<ICompletionListItem> GetAutoCompletionValuesFromType(string type)
+        static List<ICompletionListItem> GetAutoCompletionValuesFromType(string type)
         {
             if (type == "Boolean")
             {
@@ -596,10 +588,11 @@ namespace AS3Context
                     new HtmlAttributeItem("false")
                 };
             }
-            else if (type == "Class")
+
+            if (type == "Class")
             {
                 ASComplete.HandleAllClassesCompletion(PluginBase.MainForm.CurrentDocument.SciControl, tokenContext,
-                                                      true, false);
+                    true, false);
             }
             else if (type == "Function")
             {
@@ -612,7 +605,7 @@ namespace AS3Context
                     foreach (MemberModel member in tmpClass.Members)
                         if ((member.Flags & FlagType.Function) > 0 && (member.Access & access) > 0)
                         {
-                            if (result == null) result = new List<ICompletionListItem>();
+                            if (result is null) result = new List<ICompletionListItem>();
                             result.Add(new MemberItem(member));
                         }
 
@@ -628,10 +621,9 @@ namespace AS3Context
             return null;
         }
 
-        private static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
+        static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
-            if (model == null || model.MetaDatas == null) 
-                return;
+            if (model?.MetaDatas is null) return;
             string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;
             foreach (ASMetaData meta in model.MetaDatas)
             {
@@ -641,11 +633,10 @@ namespace AS3Context
                 {
                     case ASMetaKind.Event: add = ":e"; break;
                     case ASMetaKind.Style:
-                        string inherit;
-                        if (meta.Params == null || !meta.Params.TryGetValue("inherit", out inherit) || inherit != "no" || isCurrentModel)
+                        if (meta.Params is null || !meta.Params.TryGetValue("inherit", out var inherit) || inherit != "no" || isCurrentModel)
                         {
                             add = ":s";
-                            if (meta.Params == null || !meta.Params.TryGetValue("type", out type)) type = "Object";
+                            if (meta.Params is null || !meta.Params.TryGetValue("type", out type)) type = "Object";
                         }
                         break;
                     case ASMetaKind.Effect: 
@@ -665,7 +656,7 @@ namespace AS3Context
             }
         }
 
-        private static FileModel ParseInclude(FileModel fileModel, ASMetaData meta)
+        static FileModel ParseInclude(FileModel fileModel, ASMetaData meta)
         {
             Match m = reIncPath.Match(meta.RawParams);
             if (m.Success)
@@ -703,13 +694,13 @@ namespace AS3Context
         #endregion
 
         #region context detection
-        private static bool GetContext(object data)
-        {
-            if (mxmlContext == null || mxmlContext.model == null) 
-                return false;
 
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            if (sci == null) return false;
+        static bool GetContext(object data)
+        {
+            if (mxmlContext?.model is null) return false;
+
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (sci is null) return false;
 
             // XmlComplete context
             try
@@ -745,7 +736,8 @@ namespace AS3Context
         #endregion
 
         #region tag resolution
-        private static void GetAllTags()
+
+        static void GetAllTags()
         {
             Dictionary<string, string> nss = mxmlContext.namespaces;
             MemberList allClasses = context.GetAllProjectClasses();
@@ -791,7 +783,7 @@ namespace AS3Context
 
         public static string ResolveType(MxmlFilterContext ctx, string tag)
         {
-            if (tag == null || ctx == null) return "void";
+            if (tag is null || ctx is null) return "void";
             int p = tag.IndexOf(':');
             if (p < 0) return ResolveType(ctx, "*", tag);
             return ResolveType(ctx, tag.Substring(0, p), tag.Substring(p + 1));
@@ -819,7 +811,7 @@ namespace AS3Context
             return name;
         }
 
-        private static ASResult ResolveAttribute(ClassModel model, string word)
+        static ASResult ResolveAttribute(ClassModel model, string word)
         {
             var result = new ASResult();
             var curClass = mxmlContext.model.GetPublicClass();
@@ -871,16 +863,16 @@ namespace AS3Context
                 if (a is HtmlAttributeItem && b is HtmlTagItem) return 1;
                 if (b is HtmlAttributeItem && a is HtmlTagItem) return -1;
             }
-            if (a is IHtmlCompletionListItem)
+            if (a is IHtmlCompletionListItem aItem)
             {
-                a1 = ((IHtmlCompletionListItem)a).Name;
-                if (a.Value.StartsWithOrdinal("mx:")) a1 += "z"; // push down mx: tags
+                a1 = aItem.Name;
+                if (aItem.Value.StartsWithOrdinal("mx:")) a1 += "z"; // push down mx: tags
             }
             else a1 = a.Label;
-            if (b is IHtmlCompletionListItem)
+            if (b is IHtmlCompletionListItem bItem)
             {
-                b1 = ((IHtmlCompletionListItem)b).Name;
-                if (b.Value.StartsWithOrdinal("mx:")) b1 += "z"; // push down mx: tags
+                b1 = bItem.Name;
+                if (bItem.Value.StartsWithOrdinal("mx:")) b1 += "z"; // push down mx: tags
             }
             else b1 = b.Label;
             return string.Compare(a1, b1);
@@ -894,8 +886,8 @@ namespace AS3Context
     /// </summary>
     public class MxmlEventHandlerItem : ICompletionListItem
     {
-        private MemberModel member;
-        private int icon;
+        readonly MemberModel member;
+        readonly int icon;
 
         public MxmlEventHandlerItem(MemberModel oMember)
         {
@@ -903,31 +895,13 @@ namespace AS3Context
             icon = PluginUI.GetIcon(member.Flags, member.Access);
         }
 
-        public string Label
-        {
-            get { return member.FullName; }
-        }
+        public string Label => member.FullName;
 
-        public string Description
-        {
-            get
-            {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
-            }
-        }
+        public string Description => ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
 
-        public Bitmap Icon
-        {
-            get { return (Bitmap)ASContext.Panel.GetIcon(icon); }
-        }
+        public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(icon);
 
-        public string Value
-        {
-            get
-            {
-                return member.Name + "(event)";
-            }
-        }
+        public string Value => member.Name + "(event)";
     }
     #endregion
 

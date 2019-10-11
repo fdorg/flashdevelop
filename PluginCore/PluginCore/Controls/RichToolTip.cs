@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
@@ -25,38 +24,30 @@ namespace PluginCore.Controls
         protected readonly Panel toolTip;
         protected readonly RichTextBox toolTipRTB;
         protected string rawText;
-        protected string lastRawText;
-        protected string cachedRtf;
         protected readonly Dictionary<string, string> rtfCache;
         protected readonly List<string> rtfCacheList;
         protected Point mousePos;
 
         #region Public Properties
         
-        public bool Visible 
-        {
-            get { return toolTip.Visible; }
-        }
+        public bool Visible => toolTip.Visible;
 
         public Size Size
         {
-            get { return toolTip.Size; }
-            set { toolTip.Size = value; }
+            get => toolTip.Size;
+            set => toolTip.Size = value;
         }
 
         public Point Location
         {
-            get { return toolTip.Location;  }
-            set { toolTip.Location = value; }
+            get => toolTip.Location;
+            set => toolTip.Location = value;
         }
 
         public string Text 
         {
-            get { return toolTipRTB.Text; }
-            set 
-            {
-                SetText(value, true);
-            }
+            get => toolTipRTB.Text;
+            set => SetText(value, true);
         }
                 
         #endregion
@@ -93,7 +84,7 @@ namespace PluginCore.Controls
             rtfCacheList = new List<string>();
         }
 
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme)
             {
@@ -111,6 +102,7 @@ namespace PluginCore.Controls
         #region Tip Methods
 
         public bool AutoSize() => AutoSize(0);
+
         public bool AutoSize(int availableWidth) => AutoSize(availableWidth, 1024);
 
         public bool AutoSize(int availableWidth, int maxWidth)

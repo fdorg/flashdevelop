@@ -21,7 +21,7 @@ namespace ProjectManager.Controls
             Index = index;
         }
 
-        public Icon Icon { get { return Icon.FromHandle((Img as Bitmap).GetHicon()); } }
+        public Icon Icon => Icon.FromHandle((Img as Bitmap).GetHicon());
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace ProjectManager.Controls
     public class Icons
     {
         // store all extension icons we've pulled from the file system
-        static Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
+        static readonly Dictionary<string, FDImage> extensionIcons = new Dictionary<string, FDImage>();
 
         private static IMainForm mainForm;
         private static FDImageList imageList;
@@ -96,7 +96,7 @@ namespace ProjectManager.Controls
         public static FDImage CommandPrompt;
         public static FDImage CollapseAll;
 
-        public static ImageList ImageList { get { return imageList; } }
+        public static ImageList ImageList => imageList;
 
         public static void Initialize(IMainForm mainForm)
         {
@@ -220,28 +220,27 @@ namespace ProjectManager.Controls
             string ext = Path.GetExtension(file).ToLower();
             if (FileInspector.IsActionScript(file, ext))
                 return ActionScript;
-            else if (FileInspector.IsHaxeFile(file, ext))
+            if (FileInspector.IsHaxeFile(file, ext))
                 return HaxeFile;
-            else if (FileInspector.IsMxml(file, ext))
+            if (FileInspector.IsMxml(file, ext))
                 return MxmlFile;
-            else if (FileInspector.IsFont(file, ext))
+            if (FileInspector.IsFont(file, ext))
                 return Font;
-            else if (FileInspector.IsImage(file, ext) || ext == ".ico")
+            if (FileInspector.IsImage(file, ext) || ext == ".ico")
                 return ImageResource;
-            else if (FileInspector.IsSwf(file, ext))
+            if (FileInspector.IsSwf(file, ext))
                 return SwfFile;
-            else if (FileInspector.IsSwc(file, ext))
+            if (FileInspector.IsSwc(file, ext))
                 return SwcFile;
-            else if (FileInspector.IsHtml(file, ext))
+            if (FileInspector.IsHtml(file, ext))
                 return HtmlFile;
-            else if (FileInspector.IsXml(file, ext))
+            if (FileInspector.IsXml(file, ext))
                 return XmlFile;
-            else if (FileInspector.IsText(file, ext))
+            if (FileInspector.IsText(file, ext))
                 return TextFile;
-            else if (FileInspector.IsFLA(file, ext))
+            if (FileInspector.IsFLA(file, ext))
                 return FlashCS3;
-            else
-                return ExtractIconIfNecessary(file);
+            return ExtractIconIfNecessary(file);
         }
 
         public static FDImage ExtractIconIfNecessary(string file)
@@ -251,28 +250,24 @@ namespace ProjectManager.Controls
             {
                 return extensionIcons[extension];
             }
-            else
-            {
-                Icon icon = IconExtractor.GetFileIcon(file, true);
-                Image image = ScaleHelper.Scale(icon.ToBitmap());
-                image = (Bitmap) PluginBase.MainForm.GetAutoAdjustedImage(image);
-                icon.Dispose();
-                imageList.Images.Add(image);
-                int index = imageList.Images.Count - 1; // of the icon we just added
-                FDImage fdImage = new FDImage(image, index);
-                extensionIcons.Add(extension, fdImage);
-                return fdImage;
-            }
+
+            Icon icon = IconExtractor.GetFileIcon(file, true);
+            Image image = ScaleHelper.Scale(icon.ToBitmap());
+            image = (Bitmap) PluginBase.MainForm.GetAutoAdjustedImage(image);
+            icon.Dispose();
+            imageList.Images.Add(image);
+            int index = imageList.Images.Count - 1; // of the icon we just added
+            FDImage fdImage = new FDImage(image, index);
+            extensionIcons.Add(extension, fdImage);
+            return fdImage;
         }
 
         public static Image Overlay(Image image, Image overlay, int x, int y)
         {
-            Bitmap composed = image.Clone() as Bitmap;
-            using (Graphics destination = Graphics.FromImage(composed))
-            {
-                Rectangle dest = new Rectangle(ScaleHelper.Scale(x), ScaleHelper.Scale(y), overlay.Width, overlay.Height);
-                destination.DrawImage(overlay, dest, new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
-            }
+            var composed = (Bitmap) image.Clone();
+            using var destination = Graphics.FromImage(composed);
+            var dest = new Rectangle(ScaleHelper.Scale(x), ScaleHelper.Scale(y), overlay.Width, overlay.Height);
+            destination.DrawImage(overlay, dest, new Rectangle(0, 0, overlay.Width, overlay.Height), GraphicsUnit.Pixel);
             return composed;
         }
 
@@ -348,7 +343,7 @@ namespace ProjectManager.Controls
                 // Add external icons...
                 for (var i = 0; i < temp.Length; i++)
                 {
-                    if (temp[i] == null) temp[i] = Images[i];
+                    if (temp[i] is null) temp[i] = Images[i];
                 }
                 Images.Clear();
                 Images.AddRange(temp);

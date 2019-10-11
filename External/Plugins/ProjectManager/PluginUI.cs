@@ -17,12 +17,12 @@ namespace ProjectManager
     public class PluginUI : DockPanelControl
     {
         public FDMenus menus;
-        TreeBar treeBar;
+        readonly TreeBar treeBar;
         Project project;
-        LinkLabel help;
-        ProjectTreeView tree;
-        ProjectContextMenu menu;
-        Boolean isEditingLabel;
+        readonly LinkLabel help;
+        readonly ProjectTreeView tree;
+        readonly ProjectContextMenu menu;
+        bool isEditingLabel;
 
         public event EventHandler NewProject;
         public event EventHandler OpenProject;
@@ -70,7 +70,7 @@ namespace ProjectManager
             #region Instructions
 
             help = new LinkLabel();
-            string[] helpParts = String.Format(TextHelper.GetString("Info.NoProjectsOpenLink"), "\n").Split('|');
+            string[] helpParts = string.Format(TextHelper.GetString("Info.NoProjectsOpenLink"), "\n").Split('|');
             string[] helpActions = { "create", "open", "import|FlashBuilder", "import|hxml" };
             var helpActionsLength = helpActions.Length;
             int[] linkStart = new int[helpActionsLength];
@@ -135,7 +135,7 @@ namespace ProjectManager
             tree.Project = project;
             tree_AfterSelect(tree, null);
 
-            help.Visible = (project == null);
+            help.Visible = (project is null);
 
             if (project != null)
             {
@@ -146,13 +146,13 @@ namespace ProjectManager
 
         #region Public Properties
 
-        public ProjectTreeView Tree  { get { return this.tree; }  }
-        public ProjectContextMenu Menu  { get { return this.menu; }  }
-        public TreeBar TreeBar  { get { return this.treeBar; } }
+        public ProjectTreeView Tree => this.tree;
+        public ProjectContextMenu Menu => this.menu;
+        public TreeBar TreeBar => this.treeBar;
 
         public bool IsTraceDisabled
         {
-            get { return menus.ConfigurationSelector.SelectedIndex == 1; }
+            get => menus.ConfigurationSelector.SelectedIndex == 1;
             set
             {
                 menus.ConfigurationSelector.SelectedIndex = (value) ? 1 : 0;
@@ -163,10 +163,10 @@ namespace ProjectManager
         /// <summary>
         /// A label of the project tree is currently beeing edited
         /// </summary> 
-        public Boolean IsEditingLabel
+        public bool IsEditingLabel
         {
-            get { return this.isEditingLabel; }
-            set { this.isEditingLabel = value; }
+            get => this.isEditingLabel;
+            set => this.isEditingLabel = value;
         }
 
         #endregion
@@ -176,11 +176,11 @@ namespace ProjectManager
         /// <summary>
         /// Instructions panel link clicked
         /// </summary>
-        private void link_LinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
+        private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             string action = e.Link.LinkData as string;
-            if (action == "create" && NewProject != null) NewProject(sender, e);
-            else if (action == "open" && OpenProject != null) OpenProject(sender, e);
+            if (action == "create" && NewProject is { } newProject) newProject(sender, e);
+            else if (action == "open" && OpenProject is { } openProject) openProject(sender, e);
             else if (action != null && action.StartsWith("import|")) ImportProject?.Invoke(sender, e);
         }
 
@@ -189,13 +189,13 @@ namespace ProjectManager
         /// ask it to refresh.  This is necessary because filesystemwatcher 
         /// doesn't always work over network shares.
         /// </summary>
-        public void WatchParentOf(String path)
+        public void WatchParentOf(string path)
         {
             try
             {
-                String parent = Path.GetDirectoryName(path);
+                string parent = Path.GetDirectoryName(path);
                 WatcherNode node = tree.NodeMap[parent] as WatcherNode;
-                if (node != null) node.UpdateLater();
+                node?.UpdateLater();
             }
             catch { }
         }
@@ -203,7 +203,7 @@ namespace ProjectManager
         /// <summary>
         /// We don't want to trigger these while editing
         /// </summary>
-        private void tree_BeforeLabelEdit(Object sender, NodeLabelEditEventArgs e)
+        private void tree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (!e.CancelEdit)
             {
@@ -217,18 +217,19 @@ namespace ProjectManager
         /// <summary>
         /// Happens if you back out
         /// </summary>
-        private void tree_AfterLabelEdit(Object sender, NodeLabelEditEventArgs e)
+        private void tree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             string languageDisplayName = "(" + project.LanguageDisplayName + ")";
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
             {
+                var rename = Rename;
                 if (e.Node is ProjectNode)
                 {
                     var oldName = project.ProjectPath;
                     string label = e.Label;
                     int index = label.IndexOf(languageDisplayName);
                     if (index != -1) label = label.Remove(index).Trim();
-                    string newName = string.Empty;
+                    string newName;
                     try
                     {
                         newName = Path.Combine(project.Directory, label);
@@ -240,7 +241,7 @@ namespace ProjectManager
                         isEditingLabel = false;
                         return;
                     }
-                    if (Rename(oldName, newName))
+                    if (rename(oldName, newName))
                     {
                         PluginBase.MainForm.OpenEditableDocument(newName);
                         try
@@ -254,7 +255,7 @@ namespace ProjectManager
                     }
                     else e.CancelEdit = true;
                 }
-                else if (!Rename(((GenericNode) e.Node).BackingPath, e.Label))
+                else if (!rename(((GenericNode) e.Node).BackingPath, e.Label))
                     e.CancelEdit = true;
             }
             else e.CancelEdit = true;
@@ -275,7 +276,7 @@ namespace ProjectManager
         /// <summary>
         /// Customize the context menu
         /// </summary>
-        private void tree_AfterSelect(Object sender, TreeViewEventArgs e)
+        private void tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (tree.SelectedNodes.Count == 0) return;
             Project project = Tree.ProjectOf(tree.SelectedNodes[0] as GenericNode);
@@ -289,7 +290,7 @@ namespace ProjectManager
         /// A new file was created and we want it to be selected after
         /// the filesystemwatcher finds it and makes us refresh
         /// </summary>
-        private void NewFileCreated(String path)
+        private void NewFileCreated(string path)
         {
             tree.PathToSelect = path;
             WatchParentOf(path);
@@ -298,7 +299,7 @@ namespace ProjectManager
         /// <summary>
         /// 
         /// </summary>
-        private void RenameNode(Object sender, EventArgs e)
+        private void RenameNode(object sender, EventArgs e)
         {
             if (tree.SelectedNode is ProjectNode)
             {
@@ -312,7 +313,7 @@ namespace ProjectManager
         /// <summary>
         /// The project has changed, so refresh the tree
         /// </summary>
-        private void ProjectModified(String[] paths)
+        private void ProjectModified(string[] paths)
         {
             tree.RefreshTree(paths);
         }
@@ -324,6 +325,6 @@ namespace ProjectManager
     /// <summary>
     ///  Event delegates of the class
     /// </summary>
-    public delegate bool RenameEventHandler(String path, String newName);
+    public delegate bool RenameEventHandler(string path, string newName);
 
 }

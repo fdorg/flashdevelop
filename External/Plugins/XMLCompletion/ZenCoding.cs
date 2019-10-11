@@ -22,7 +22,7 @@ namespace XMLCompletion
 
         public ZenElementTypes(Hashtable def)
         {
-            if (def == null) return;
+            if (def is null) return;
             if (def.ContainsKey("empty")) ParseSet(empty, (string)def["empty"]);
             if (def.ContainsKey("block_level")) ParseSet(block_level, (string)def["block_level"]);
             if (def.ContainsKey("inline_level")) ParseSet(inline_level, (string)def["inline_level"]);
@@ -102,7 +102,7 @@ namespace XMLCompletion
         {
             MergeHashtable(ref lang.abbreviations, ref lang2.abbreviations);
             MergeHashtable(ref lang.snippets, ref lang2.snippets);
-            if (lang.element_types == null) lang.element_types = lang2.element_types;
+            if (lang.element_types is null) lang.element_types = lang2.element_types;
             else if (lang2.element_types != null)
             {
                 MergeHashtable(ref lang.element_types.empty, ref lang2.element_types.empty);
@@ -113,7 +113,7 @@ namespace XMLCompletion
 
         private static void MergeHashtable(ref Hashtable t1, ref Hashtable t2)
         {
-            if (t1 == null) t1 = t2.Clone() as Hashtable;
+            if (t1 is null) t1 = t2.Clone() as Hashtable;
             else if (t2 != null)
                 foreach (string key in t2.Keys)
                     if (!t1.ContainsKey(key)) t1[key] = t2[key];
@@ -178,15 +178,15 @@ namespace XMLCompletion
 
     public class ZenCoding
     {
-        static private ZenLang lang;
-        static private bool inited;
-        static private ZenSettings settings;
-        static private Timer delayOpenConfig;
-        static private FileSystemWatcher watcherConfig;
-        static private Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
+        private static ZenLang lang;
+        private static bool inited;
+        private static ZenSettings settings;
+        private static Timer delayOpenConfig;
+        private static FileSystemWatcher watcherConfig;
+        private static readonly Regex reVariable = new Regex("\\${([-_a-z0-9]+)}", RegexOptions.IgnoreCase);
 
         #region initialization
-        static private void init()
+        private static void init()
         {
             if (!inited)
             {
@@ -194,22 +194,22 @@ namespace XMLCompletion
 
                 LoadResource("zen_settings.js");
 
-                if (delayOpenConfig == null) // timer for opening config files
+                if (delayOpenConfig is null) // timer for opening config files
                 {
                     delayOpenConfig = new Timer();
                     delayOpenConfig.Interval = 100;
-                    delayOpenConfig.Tick += new EventHandler(delayOpenConfig_Tick);
+                    delayOpenConfig.Tick += delayOpenConfig_Tick;
                 }
-                if (watcherConfig == null) // watching config files changes
+                if (watcherConfig is null) // watching config files changes
                 {
                     watcherConfig = new FileSystemWatcher(Path.Combine(PathHelper.DataDir, "XMLCompletion"), "zen*");
-                    watcherConfig.Changed += new FileSystemEventHandler(watcherConfig_Changed);
-                    watcherConfig.Created += new FileSystemEventHandler(watcherConfig_Changed);
+                    watcherConfig.Changed += watcherConfig_Changed;
+                    watcherConfig.Created += watcherConfig_Changed;
                     watcherConfig.EnableRaisingEvents = true;
                 }
             }
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            string docType = sci != null ? sci.ConfigurationLanguage.ToLower() : null;
+            string docType = sci?.ConfigurationLanguage.ToLower();
             lang = null;
             if (docType != null)
             {
@@ -249,23 +249,17 @@ namespace XMLCompletion
         {
             try
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
-                if (src == null)
-                    return false;
+                var assembly = Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
+                if (src is null) return false;
 
-                String content;
-                using (StreamReader sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                using var reader = new StreamReader(src);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                using (StreamWriter sw = File.CreateText(filePath))
-                {
-                    sw.Write(content);
-                    sw.Close();
-                }
+                using var writer = File.CreateText(filePath);
+                writer.Write(content);
+                writer.Close();
                 return true;
             }
             catch
@@ -276,19 +270,18 @@ namespace XMLCompletion
         #endregion
 
         #region expansion
-        static public bool expandSnippet(Hashtable data)
+        public static bool expandSnippet(Hashtable data)
         {
-            if (data["snippet"] == null)
+            if (data["snippet"] is null)
             {
                 ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (sci == null) return false;
+                if (sci is null) return false;
                 // extract zen expression
                 int pos = sci.CurrentPos - 1;
                 int lastValid = sci.CurrentPos;
-                char c = ' ';
                 while (pos >= 0)
                 {
-                    c = (char)sci.CharAt(pos);
+                    var c = (char)sci.CharAt(pos);
                     if (c <= 32)
                     {
                         lastValid = pos + 1;
@@ -299,7 +292,7 @@ namespace XMLCompletion
                         if (lastValid - 1 <= pos) break;
                         lastValid = pos + 1;
                     }
-                    else if (!Char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
+                    else if (!char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
                     pos--;
                     if (pos < 0) lastValid = 0;
                 }
@@ -310,7 +303,7 @@ namespace XMLCompletion
                     try
                     {
                         string expr = expandExpression(sci.SelText);
-                        if (expr == null) return false;
+                        if (expr is null) return false;
                         if (!expr.Contains("$(EntryPoint)")) expr += "$(EntryPoint)";
                         data["snippet"] = expr;
                     }
@@ -327,17 +320,18 @@ namespace XMLCompletion
             return false;
         }
 
-        static public string expandExpression(string expr)
+        public static string expandExpression(string expr)
         {
             init(); // load config
-            if (lang == null) return null;
+            if (lang is null) return null;
 
             if (expr == "zen") // show config
             {
                 delayOpenConfig.Start();
                 return "";
             }
-            else if (expr.EndsWith('+'))
+
+            if (expr.EndsWith('+'))
             {
                 if (lang.abbreviations.ContainsKey(expr))
                     expr = (string)lang.abbreviations[expr]; // expandos
@@ -350,7 +344,7 @@ namespace XMLCompletion
             int p = src.IndexOf('|');
             src = src.Replace("|", "");
             if (p < 0) return src;
-            else return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
+            return src.Substring(0, p) + "$(EntryPoint)" + src.Substring(p);
         }
 
         private static string expandZen(string expr)
@@ -362,7 +356,6 @@ namespace XMLCompletion
             string[] parts = expr.Split('>');
             Array.Reverse(parts);
             bool inline = true;
-            int index = 1;
             foreach (string part in parts)
             {
                 if (part.Length == 0)
@@ -515,7 +508,7 @@ namespace XMLCompletion
                     {
                         if (multiply > 1)
                         {
-                            index = i;
+                            var index = i;
                             src += master.Replace("$", index.ToString());
                         }
                         else src += master;
@@ -536,7 +529,7 @@ namespace XMLCompletion
             string name = m.Groups[1].Value;
             if (name != "child" && settings.variables.ContainsKey(name)) 
                 return (string)settings.variables[name];
-            else return m.Value;
+            return m.Value;
         }
 
         private static string addIndent(string res)
@@ -557,7 +550,7 @@ namespace XMLCompletion
             if (tag.Length > 3 && tag[0] == '<') 
             {
                 // extract tag name
-                tag = tag.Substring(1).Split(new char[] { ' ', '"', '\'', '/', '|', '>' }, 2)[0];
+                tag = tag.Substring(1).Split(new[] { ' ', '"', '\'', '/', '|', '>' }, 2)[0];
             }
             return lang.element_types.inline_level.ContainsKey(tag);
         }

@@ -13,8 +13,8 @@ namespace SourceControl.Sources.Mercurial
 {
     class BaseCommand
     {
-        static private string resolvedCmd;
-        static private string qualifiedCmd;
+        private static string resolvedCmd;
+        private static string qualifiedCmd;
 
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
@@ -29,14 +29,14 @@ namespace SourceControl.Sources.Mercurial
                 runner = new ProcessRunner();
                 runner.WorkingDirectory = workingDirectory;
                 runner.Run(cmd, args, !File.Exists(cmd));
-                runner.Output += new LineOutputHandler(Runner_Output);
-                runner.Error += new LineOutputHandler(Runner_Error);
-                runner.ProcessEnded += new ProcessEndedHandler(Runner_ProcessEnded);
+                runner.Output += Runner_Output;
+                runner.Error += Runner_Error;
+                runner.ProcessEnded += Runner_ProcessEnded;
             }
             catch (Exception ex)
             {
                 runner = null;
-                String label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
+                string label = TextHelper.GetString("SourceControl.Info.UnableToStartCommand");
                 TraceManager.AddAsync(label + "\n" + ex.Message);
             }
         }
@@ -44,12 +44,12 @@ namespace SourceControl.Sources.Mercurial
         protected virtual string GetHGCmd()
         {
             string cmd = PluginMain.SCSettings.HGPath;
-            if (cmd == null) cmd = "hg";
+            if (cmd is null) cmd = "hg";
             string resolve = PathHelper.ResolvePath(cmd);
             return resolve ?? ResolveHGPath(cmd);
         }
 
-        static private string ResolveHGPath(string cmd)
+        private static string ResolveHGPath(string cmd)
         {
             if (resolvedCmd == cmd || Path.IsPathRooted(cmd))
                 return qualifiedCmd;
@@ -84,7 +84,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate
                 {
-                    ErrorManager.ShowInfo(String.Join("\n", errors.ToArray()));
+                    ErrorManager.ShowInfo(string.Join("\n", errors.ToArray()));
                 });
             }
         }

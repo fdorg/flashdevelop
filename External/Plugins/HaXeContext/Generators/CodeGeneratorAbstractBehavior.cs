@@ -26,7 +26,7 @@ namespace HaXeContext.Generators
             options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
         }
 
-        protected override void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
+        protected override void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             MemberModel inMember;
             if (found.Member != null)

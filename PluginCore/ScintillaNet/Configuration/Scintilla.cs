@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
@@ -32,11 +31,8 @@ namespace ScintillaNet.Configuration
         [XmlArray("character-classes")]
         public CharacterClass[] characterclasses;
 
-        protected override Scintilla ChildScintilla
-        {
-            get { return this; }
-        }
-        
+        protected override Scintilla ChildScintilla => this;
+
         public bool IsKnownFile(string file)
         {
             string filemask = Path.GetExtension(file).ToLower().Substring(1);
@@ -76,7 +72,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (_languages == null)
+                if (_languages is null)
                 {
                     Hashtable result = new Hashtable();
                     if (MasterScintilla == this)
@@ -217,30 +213,30 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (languages == null) languages = new Language[0];
-            if (styleclasses == null)  styleclasses = new StyleClass[0];
-            if (keywordclass == null) keywordclass = new KeywordClass[0];
-            if (globals == null) globals = new Value[0];
-            for (int i2 = 0; i2<languages.Length; i2++)
+            if (languages is null) languages = new Language[0];
+            if (styleclasses is null)  styleclasses = new StyleClass[0];
+            if (keywordclass is null) keywordclass = new KeywordClass[0];
+            if (globals is null) globals = new Value[0];
+            foreach (var it in languages)
             {
-                languages[i2].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int k = 0; k<styleclasses.Length; k++)
+            foreach (var it in styleclasses)
             {
-                styleclasses[k].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int j = 0; j<keywordclass.Length; j++)
+            foreach (var it in keywordclass)
             {
-                keywordclass[j].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            for (int i1 = 0; i1<globals.Length; i1++)
+            foreach (var it in globals)
             {
-                globals[i1].init(utility, _parent);
+                it.init(utility, _parent);
             }
-            if (characterclasses == null) characterclasses = new CharacterClass[0];
-            for (int k = 0; k<characterclasses.Length; k++)
+            if (characterclasses is null) characterclasses = new CharacterClass[0];
+            foreach (var it in characterclasses)
             {
-                characterclasses[k].init(utility, _parent);
+                it.init(utility, _parent);
             }
         }
         

@@ -12,7 +12,7 @@ namespace FlashDebugger.Helpers
 {
     public class DefaultDataTreeExporter : IDataTreeExporter
     {
-        private readonly static string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
+        private static readonly string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
         public int CopyTreeMaxRecursion { get; set; }
 
@@ -89,7 +89,7 @@ namespace FlashDebugger.Helpers
                         {
                             // error
                             AppendTimes(sb, levelSep, level + 1);
-                            sb.AppendLine(String.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
+                            sb.AppendLine(string.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
                         }
                         else if (level > CopyTreeMaxRecursion)
                         {
@@ -124,7 +124,7 @@ namespace FlashDebugger.Helpers
             }
         }
 
-        private static bool IsWantedParent(DataNode parent)
+        private static bool IsWantedParent(Node parent)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace FlashDebugger.Helpers
                 {
                     if (parent is ValueNode pNode && pNode.ClassPath == "Array")
                     {
-                        DataNode child1 = (DataNode)parent.Nodes[0];
+                        var child1 = (DataNode)parent.Nodes[0];
                         if (child1.Text == "[static]" || child1.Text == "length")
                         {
                             return false;

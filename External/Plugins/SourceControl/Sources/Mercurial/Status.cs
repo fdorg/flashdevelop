@@ -17,7 +17,7 @@ namespace SourceControl.Sources.Mercurial
         StatusNode temp;
         string dirty;
         string updatingPath;
-        Ignores ignores;
+        readonly Ignores ignores;
 
         public Status(string path)
         {
@@ -28,7 +28,7 @@ namespace SourceControl.Sources.Mercurial
         public StatusNode Get(string path)
         {
             StatusNode found = root.FindPath(path);
-            if (found == null)
+            if (found is null)
             {
                 foreach (IgnoreEntry ignore in ignores)
                 {
@@ -57,7 +57,7 @@ namespace SourceControl.Sources.Mercurial
 
         public bool SetPathDirty(string path)
         {
-            if (path == null) return false;
+            if (path is null) return false;
             if (string.IsNullOrEmpty(dirty))
             {
                 dirty = path;
@@ -79,20 +79,20 @@ namespace SourceControl.Sources.Mercurial
             return true;
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;
             if (exitCode != 0)
             {
-                String label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
+                string label = TextHelper.GetString("SourceControl.Label.UnableToGetRepoStatus");
                 TraceManager.AddAsync(label + " (" + exitCode + ")");
             }
 
             if (updatingPath == RootPath) root = temp;
-            if (OnResult != null) OnResult(this);
+            OnResult?.Invoke(this);
         }
 
-        override protected void Runner_Output(object sender, string line)
+        protected override void Runner_Output(object sender, string line)
         {
             int fileIndex = 0;
             if (line.Length < 3) return;
@@ -120,7 +120,7 @@ namespace SourceControl.Sources.Mercurial
 
     class StatusNode
     {
-        static public StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
+        public static StatusNode UNKNOWN = new StatusNode("*", VCItemStatus.Unknown);
 
         public bool HasChildren;
         public string Name;
@@ -149,7 +149,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 StatusNode child = Children[childName];
                 if (p > 0) return child.FindPath(path.Substring(p + 1));
-                else return child;
+                return child;
             }
             return null;
         }
@@ -162,8 +162,8 @@ namespace SourceControl.Sources.Mercurial
         {
             int p = path.IndexOf(Path.DirectorySeparatorChar);
             if (p < 0) return AddChild(path, status, true);
-            else if (p == path.Length - 1) return AddChild(path.Substring(0, path.Length - 1), status, true);
-            else return AddChild(path.Substring(0, p), status, false)
+            if (p == path.Length - 1) return AddChild(path.Substring(0, path.Length - 1), status, true);
+            return AddChild(path.Substring(0, p), status, false)
                 .MapPath(path.Substring(p + 1), status);
         }
 

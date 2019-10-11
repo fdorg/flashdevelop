@@ -8,7 +8,7 @@ namespace PluginCore.Controls
 {
     public class MessageBar : UserControl
     {
-        static public bool Locked;
+        public static bool Locked;
 
         const string WarningIcon = "196";
         const string QuestionIcon = "222";
@@ -17,7 +17,7 @@ namespace PluginCore.Controls
         private Label label;
         private InertButton buttonClose;
         InertButton[] optionButtons;
-        private String currentMessage;
+        private string currentMessage;
 
         public MessageBar() : this(WarningIcon) //warning
         {
@@ -65,13 +65,13 @@ namespace PluginCore.Controls
             bar.Visible = true;
         }
         
-        static public void ShowWarning(String message)
+        public static void ShowWarning(string message)
         {
             if (Locked) return;
             CreateBar(PluginBase.MainForm.CurrentDocument, message, WarningIcon);
         }
 
-        static public void HideWarning()
+        public static void HideWarning()
         {
             HideBar(PluginBase.MainForm.CurrentDocument);
         }
@@ -119,7 +119,7 @@ namespace PluginCore.Controls
             };
         }
 
-        static public void HideBar(ITabbedDocument target)
+        public static void HideBar(ITabbedDocument target)
         {
             foreach (Control ctrl in target.Controls)
             {
@@ -141,7 +141,7 @@ namespace PluginCore.Controls
             // 
             // buttonClose
             // 
-            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.buttonClose.BorderWidth = 1;
             this.buttonClose.ImageDisabled = null;
             this.buttonClose.ImageIndexDisabled = -1;
@@ -156,12 +156,12 @@ namespace PluginCore.Controls
             this.buttonClose.Size = new System.Drawing.Size(16, 14);
             this.buttonClose.TabIndex = 2;
             this.buttonClose.ToolTipText = "";
-            this.buttonClose.Click += new System.EventHandler(this.MessageBarClick);
+            this.buttonClose.Click += this.MessageBarClick;
             // 
             // label
             // 
-            this.label.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+                                | System.Windows.Forms.AnchorStyles.Right;
             this.label.ForeColor = System.Drawing.SystemColors.InfoText;
             this.label.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label.Location = new System.Drawing.Point(2, 0);
@@ -169,9 +169,9 @@ namespace PluginCore.Controls
             this.label.Size = new System.Drawing.Size(494, 22);
             this.label.TabIndex = 0;
             this.label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label.Click += new System.EventHandler(this.MessageBarClick);
-            this.label.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
-            this.label.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
+            this.label.Click += this.MessageBarClick;
+            this.label.MouseEnter += this.LabelMouseEnter;
+            this.label.MouseLeave += this.LabelMouseLeave;
             // 
             // MessageBar
             // 
@@ -183,7 +183,7 @@ namespace PluginCore.Controls
             this.ForeColor = System.Drawing.SystemColors.InfoText;
             this.Name = "MessageBar";
             this.Size = new System.Drawing.Size(496, 24);
-            this.Click += new System.EventHandler(this.MessageBarClick);
+            this.Click += this.MessageBarClick;
             this.ResumeLayout(false);
 
         }
@@ -204,10 +204,10 @@ namespace PluginCore.Controls
             label.Image = PluginBase.MainForm.FindImage16(icon);
         }
 
-        public void Update(String message)
+        public void Update(string message)
         {
             currentMessage = message;
-            Int32 p = message.IndexOf('\r');
+            int p = message.IndexOf('\r');
             if (p < 0) p = message.IndexOf('\n');
             if (p >= 0) message = message.Substring(0, p) + " ...";
             label.Text = "      " + message;
@@ -218,20 +218,20 @@ namespace PluginCore.Controls
             this.BackColor = back == Color.Empty ? System.Drawing.SystemColors.Info : back;
         }
         
-        public void ButtonCloseClick(Object sender, System.EventArgs e)
+        public void ButtonCloseClick(object sender, System.EventArgs e)
         {
             MessageBarClick(null, null);
         }
         
-        public void MessageBarClick(Object sender, System.EventArgs e)
+        public void MessageBarClick(object sender, System.EventArgs e)
         {
             currentMessage = "";
             Hide();
         }
         
-        public void LabelMouseEnter(Object sender, System.EventArgs e)
+        public void LabelMouseEnter(object sender, System.EventArgs e)
         {
-            if (tip == null)
+            if (tip is null)
             {
                 tip = new ToolTip();
                 tip.ShowAlways = true;
@@ -240,9 +240,9 @@ namespace PluginCore.Controls
             tip.SetToolTip(label, currentMessage);
         }
         
-        public void LabelMouseLeave(Object sender, System.EventArgs e)
+        public void LabelMouseLeave(object sender, System.EventArgs e)
         {
-            if (tip != null) tip.SetToolTip(label, "");
+            tip?.SetToolTip(label, "");
         }
         
         protected override void OnPaint(PaintEventArgs e)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -31,7 +30,7 @@ namespace ProjectManager.Controls.TreeView
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
 
-            if (References != null && References.Parent == null)
+            if (References != null && References.Parent is null)
             {
                 if (recursive)
                 {
@@ -57,7 +56,7 @@ namespace ProjectManager.Controls.TreeView
 
         private void RefreshReferences(bool recursive)
         {
-            if (References != null && References.Parent == null)
+            if (References != null && References.Parent is null)
             {
                 Nodes.Insert(0, References);
                 References.Refresh(recursive);
@@ -70,14 +69,11 @@ namespace ProjectManager.Controls.TreeView
                 Nodes.Remove(References);
         }
 
-        public Project ProjectRef
-        {
-            get { return project; }
-        }
+        public Project ProjectRef => project;
 
         public ReferencesNode References
         {
-            get { return references; }
+            get => references;
             set
             {
                 references = value;
@@ -88,7 +84,7 @@ namespace ProjectManager.Controls.TreeView
 
         public bool IsActive 
         {
-            get { return isActive; }
+            get => isActive;
             set 
             {
                 if (isActive == value) return;
@@ -123,10 +119,10 @@ namespace ProjectManager.Controls.TreeView
             {
                 for (int i = parts.Length - 1; i > 0; --i)
                 {
-                    String part = parts[i];
+                    string part = parts[i];
                     if (part != "" && part != "." && part != ".." && !excludes.Contains(part.ToLower()))
                     {
-                        if (Char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
+                        if (char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
                         else if (part.Length == 40 && reSHAHash.IsMatch(part)) label.Add(part);
                         else
                         {
@@ -138,7 +134,7 @@ namespace ProjectManager.Controls.TreeView
                 }
             }
             label.Reverse();
-            Text = String.Join("/", label.ToArray());
+            Text = string.Join("/", label.ToArray());
             ToolTipText = classpath;
         }
 

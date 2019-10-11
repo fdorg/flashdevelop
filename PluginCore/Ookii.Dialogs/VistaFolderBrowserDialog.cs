@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.IO;
 using Ookii.Dialogs.Interop;
+using PluginCore.Collections;
 
 namespace Ookii.Dialogs
 {
@@ -20,7 +21,7 @@ namespace Ookii.Dialogs
     [DefaultEvent("HelpRequest"), Designer("System.Windows.Forms.Design.FolderBrowserDialogDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"), DefaultProperty("SelectedPath"), Description("Prompts the user to select a folder.")]
     public sealed class VistaFolderBrowserDialog : CommonDialog
     {
-        private FolderBrowserDialog _downlevelDialog;
+        private readonly FolderBrowserDialog _downlevelDialog;
         private string _description;
         private bool _useDescriptionForTitle;
         private string[] _selectedPaths;
@@ -33,14 +34,8 @@ namespace Ookii.Dialogs
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public new event EventHandler HelpRequest
         {
-            add
-            {
-                base.HelpRequest += value;
-            }
-            remove
-            {
-                base.HelpRequest -= value;
-            }
+            add => base.HelpRequest += value;
+            remove => base.HelpRequest -= value;
         }
 
         /// <summary>
@@ -63,13 +58,7 @@ namespace Ookii.Dialogs
         /// <see langword="true" /> on Windows Vista or newer operating systems; otherwise, <see langword="false" />.
         /// </value>
         [Browsable(false)]
-        public static bool IsVistaFolderDialogSupported
-        {
-            get
-            {
-                return NativeMethods.IsWindowsVistaOrLater;
-            }
-        }
+        public static bool IsVistaFolderDialogSupported => NativeMethods.IsWindowsVistaOrLater;
 
         /// <summary>
         /// Gets or sets the descriptive text displayed above the tree view control in the dialog box, or below the list view control
@@ -92,7 +81,7 @@ namespace Ookii.Dialogs
                 if( _downlevelDialog != null )
                     _downlevelDialog.Description = value;
                 else
-                    _description = value ?? String.Empty;
+                    _description = value ?? string.Empty;
             }
         }
 
@@ -151,7 +140,7 @@ namespace Ookii.Dialogs
             get
             {
                 if (_downlevelDialog != null)
-                    return new string[] {_downlevelDialog.SelectedPath };
+                    return new[] {_downlevelDialog.SelectedPath };
                 return SelectedPathsInternal;
             }
         }
@@ -166,7 +155,7 @@ namespace Ookii.Dialogs
             }
             set
             {
-                if (_downlevelDialog == null)
+                if (_downlevelDialog is null)
                     _multiselect = value;
             }
         }
@@ -208,8 +197,8 @@ namespace Ookii.Dialogs
         [Category("Folder Browsing"), DefaultValue(false), Description("A value that indicates whether to use the value of the Description property as the dialog title for Vista style dialogs. This property has no effect on old style dialogs.")]
         public bool UseDescriptionForTitle
         {
-            get { return _useDescriptionForTitle; }
-            set { _useDescriptionForTitle = value; }
+            get => _useDescriptionForTitle;
+            set => _useDescriptionForTitle = value;
         }   
 
         #endregion
@@ -220,9 +209,9 @@ namespace Ookii.Dialogs
         {
             private get
             {
-                if (_selectedPaths == null)
+                if (_selectedPaths is null)
                 {
-                    return new string[0];
+                    return EmptyArray<string>.Instance;
                 }
                 return (string[])_selectedPaths.Clone();
             }
@@ -243,7 +232,7 @@ namespace Ookii.Dialogs
         {
             _description = string.Empty;
             _useDescriptionForTitle = false;
-            _selectedPaths = new string[] { string.Empty };
+            _selectedPaths = new[] { string.Empty };
             _rootFolder = Environment.SpecialFolder.Desktop;
             _showNewFolderButton = true;
             _multiselect = false;
@@ -294,8 +283,8 @@ namespace Ookii.Dialogs
         {
             try
             {
-                if( disposing && _downlevelDialog != null )
-                    _downlevelDialog.Dispose();
+                if( disposing )
+                    _downlevelDialog?.Dispose();
             }
             finally
             {
@@ -331,7 +320,7 @@ namespace Ookii.Dialogs
             if( !string.IsNullOrEmpty(_selectedPaths[0]) )
             {
                 string parent = Path.GetDirectoryName(_selectedPaths[0]);
-                if( parent == null || !Directory.Exists(parent) )
+                if( parent is null || !Directory.Exists(parent) )
                 {
                     dialog.SetFileName(_selectedPaths[0]);
                 }

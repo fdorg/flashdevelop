@@ -9,52 +9,38 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the value of the specified XmlNode.
         /// </summary>
-        public static String GetValue(XmlNode node)
-        {
-            if (node != null && node.FirstChild != null) return node.FirstChild.Value;
-            else return null;
-        }
+        public static string GetValue(XmlNode node) => node?.FirstChild?.Value;
 
         /// <summary>
         /// Gets the specified attribute from the specified XmlNode.
         /// </summary>
-        public static String GetAttribute(XmlNode node, String attName)
+        public static string GetAttribute(XmlNode node, string attName)
         {
-            if (node != null && node.Attributes[attName] != null) return node.Attributes[attName].Value;
-            else return null;
+            return node?.Attributes?[attName] != null ? node.Attributes[attName].Value : null;
         }
         
         /// <summary>
         /// Checks that if the XmlNode has a value.
         /// </summary>
-        public static Boolean HasValue(XmlNode node)
-        {
-            return (node != null && node.FirstChild != null && node.FirstChild.Value != null);
-        }
+        public static bool HasValue(XmlNode node) => node?.FirstChild?.Value != null;
 
         /// <summary>
         /// Checks if the XmlNode has the specified attribute.
         /// </summary>
-        public static Boolean HasAttribute(XmlNode node, String attName)
-        {
-            return (node != null && node.Attributes[attName] != null);
-        }
-        
+        public static bool HasAttribute(XmlNode node, string attName) => node?.Attributes?[attName] != null;
+
         /// <summary>
         /// Reads a xml file and returns it as a XmlNode. Returns null on failure.
         /// </summary>
-        public static XmlNode LoadXmlDocument(String file)
+        public static XmlNode LoadXmlDocument(string file)
         {
             try
             {
-                XmlDocument document = new XmlDocument();
-                document.PreserveWhitespace = false;
+                var document = new XmlDocument {PreserveWhitespace = false};
                 document.Load(file); 
                 try
                 {
-                    XmlNode declNode = document.FirstChild;
-                    XmlNode rootNode = declNode.NextSibling;
-                    return rootNode;
+                    return document.FirstChild.NextSibling;
                 }
                 catch (Exception ex1)
                 {

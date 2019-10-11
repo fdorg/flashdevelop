@@ -1,6 +1,5 @@
 using ASCompletion.Completion;
 using PluginCore;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -10,20 +9,20 @@ namespace CodeRefactor.Commands
 
         public ExtractMethodCommand(string newName)
         {
-            this.NewName = newName;
+            NewName = newName;
         }
 
         public void Execute()
         {
-            ScintillaControl Sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Sci.BeginUndoAction();
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            sci.BeginUndoAction();
             try
             {
-                ASGenerator.GenerateExtractMethod(Sci, NewName);
+                ASGenerator.GenerateExtractMethod(sci, NewName);
             }
             finally
             {
-                Sci.EndUndoAction();
+                sci.EndUndoAction();
             }
         }
 

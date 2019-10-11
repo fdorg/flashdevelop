@@ -6,6 +6,6 @@
 		}
 
 		private static const A:String = "a";
-		static private const NEW_CONST:Number = 12;
+		private static const NEW_CONST:Number = 12;
 	}
 }

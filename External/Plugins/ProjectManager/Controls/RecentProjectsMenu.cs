@@ -10,10 +10,10 @@ namespace ProjectManager.Controls
 
     public class RecentProjectsMenu : ToolStripMenuItem
     {
-        private ToolStripMenuItem cleanItemMenu;
-        private ToolStripMenuItem cleanItemToolbar;
-        private ToolStripMenuItem clearItemMenu;
-        private ToolStripMenuItem clearItemToolbar;
+        private readonly ToolStripMenuItem cleanItemMenu;
+        private readonly ToolStripMenuItem cleanItemToolbar;
+        private readonly ToolStripMenuItem clearItemMenu;
+        private readonly ToolStripMenuItem clearItemToolbar;
         public event ProjectEventHandler ProjectSelected;
         public ToolStripDropDownButton ToolbarSelector;
 
@@ -132,7 +132,8 @@ namespace ProjectManager.Controls
                 RemoveOpenedProject(projectPath);
                 return;
             }
-            if (ProjectSelected != null) ProjectSelected(projectPath);
+
+            ProjectSelected?.Invoke(projectPath);
         }
 
     }

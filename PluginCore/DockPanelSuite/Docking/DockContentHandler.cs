@@ -18,14 +18,14 @@ namespace WeifenLuo.WinFormsUI.Docking
         public DockContentHandler(Form form, GetPersistStringCallback getPersistStringCallback)
         {
             if (!(form is IDockContent))
-                throw new ArgumentException(Strings.DockContent_Constructor_InvalidForm, "form");
+                throw new ArgumentException(Strings.DockContent_Constructor_InvalidForm, nameof(form));
 
             m_form = form;
             m_getPersistStringCallback = getPersistStringCallback;
 
             m_events = new EventHandlerList();
-            Form.Disposed +=new EventHandler(Form_Disposed);
-            Form.TextChanged += new EventHandler(Form_TextChanged);
+            Form.Disposed +=Form_Disposed;
+            Form.TextChanged += Form_TextChanged;
         }
 
         public void Dispose()
@@ -41,60 +41,49 @@ namespace WeifenLuo.WinFormsUI.Docking
                 lock(this)
                 {
                     DockPanel = null;
-                    if (m_autoHideTab != null)
-                        m_autoHideTab.Dispose();
-                    if (m_tab != null)
-                        m_tab.Dispose();
+                    m_autoHideTab?.Dispose();
+                    m_tab?.Dispose();
 
-                    Form.Disposed -= new EventHandler(Form_Disposed);
-                    Form.TextChanged -= new EventHandler(Form_TextChanged);
+                    Form.Disposed -= Form_Disposed;
+                    Form.TextChanged -= Form_TextChanged;
                     m_events.Dispose();
                 }
             }
         }
 
-        private Form m_form;
-        public Form Form
-        {
-            get {   return m_form;  }
-        }
+        private readonly Form m_form;
+        public Form Form => m_form;
 
-        public IDockContent Content
-        {
-            get {   return Form as IDockContent;    }
-        }
+        public IDockContent Content => Form as IDockContent;
 
         private IDockContent m_previousActive = null;
         public IDockContent PreviousActive
         {
-            get { return m_previousActive; }
-            internal set { m_previousActive = value; }
+            get => m_previousActive;
+            internal set => m_previousActive = value;
         }
 
         private IDockContent m_nextActive = null;
         public IDockContent NextActive
         {
-            get { return m_nextActive; }
-            internal set { m_nextActive = value; }
+            get => m_nextActive;
+            internal set => m_nextActive = value;
         }
 
-        private EventHandlerList m_events;
-        private EventHandlerList Events
-        {
-            get {   return m_events;    }
-        }
+        private readonly EventHandlerList m_events;
+        private EventHandlerList Events => m_events;
 
         private bool m_allowEndUserDocking = true;
         public bool AllowEndUserDocking
         {
-            get {   return m_allowEndUserDocking;   }
-            set {   m_allowEndUserDocking = value;  }
+            get => m_allowEndUserDocking;
+            set => m_allowEndUserDocking = value;
         }
 
         private double m_autoHidePortion = 0.25;
         public double AutoHidePortion
         {
-            get {   return m_autoHidePortion;   }
+            get => m_autoHidePortion;
             set
             {
                 if (value <= 0)
@@ -105,7 +94,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 m_autoHidePortion = value;
 
-                if (DockPanel == null)
+                if (DockPanel is null)
                     return;
 
                 if (DockPanel.ActiveAutoHideContent == Content)
@@ -116,7 +105,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private bool m_closeButton = true;
         public bool CloseButton
         {
-            get {   return m_closeButton;   }
+            get => m_closeButton;
             set
             {
                 if (m_closeButton == value)
@@ -178,7 +167,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private DockAreas m_allowedAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom | DockAreas.Document | DockAreas.Float;
         public DockAreas DockAreas
         {
-            get {   return m_allowedAreas;  }
+            get => m_allowedAreas;
             set
             {
                 if (m_allowedAreas == value)
@@ -197,7 +186,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private DockState m_dockState = DockState.Unknown;
         public DockState DockState
         {
-            get {   return m_dockState; }
+            get => m_dockState;
             set
             {
                 if (m_dockState == value)
@@ -217,7 +206,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private DockPanel m_dockPanel = null;
         public DockPanel DockPanel
         {
-            get { return m_dockPanel; }
+            get => m_dockPanel;
             set
             {
                 if (m_dockPanel == value)
@@ -225,8 +214,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 Pane = null;
 
-                if (m_dockPanel != null)
-                    m_dockPanel.RemoveContent(Content);
+                m_dockPanel?.RemoveContent(Content);
 
                 if (m_tab != null)
                 {
@@ -263,14 +251,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        public Icon Icon
-        {
-            get {   return Form.Icon;   }
-        }
+        public Icon Icon => Form.Icon;
 
         public DockPane Pane
         {
-            get {   return IsFloat ? FloatPane : PanelPane; }
+            get => IsFloat ? FloatPane : PanelPane;
             set
             {
                 if (Pane == value)
@@ -281,9 +266,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DockPane oldPane = Pane;
 
                 SuspendSetDockState();
-                FloatPane = (value == null ? null : (value.IsFloat ? value : FloatPane));
-                PanelPane = (value == null ? null : (value.IsFloat ? PanelPane : value));
-                ResumeSetDockState(IsHidden, value != null ? value.DockState : DockState.Unknown, oldPane);
+                FloatPane = (value is null ? null : (value.IsFloat ? value : FloatPane));
+                PanelPane = (value is null ? null : (value.IsFloat ? PanelPane : value));
+                ResumeSetDockState(IsHidden, value?.DockState ?? DockState.Unknown, oldPane);
 
                 DockPanel.ResumeLayout(true, true);
             }
@@ -292,7 +277,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private bool m_isHidden = true;
         public bool IsHidden
         {
-            get {   return m_isHidden;  }
+            get => m_isHidden;
             set
             {
                 if (m_isHidden == value)
@@ -305,37 +290,35 @@ namespace WeifenLuo.WinFormsUI.Docking
         private string m_tabText = null;
         public string TabText
         {
-            get {   return m_tabText==null ? Form.Text : m_tabText; }
+            get => m_tabText ?? Form.Text;
             set
             {
                 if (m_tabText == value)
                     return;
 
                 m_tabText = value;
-                if (Pane != null)
-                    Pane.RefreshChanges();
+                Pane?.RefreshChanges();
             }
         }
 
         private Color m_tabColor = Color.Transparent;
         public Color TabColor
         {
-            get { return m_tabColor == Color.Transparent ? Color.Transparent : m_tabColor; }
+            get => m_tabColor == Color.Transparent ? Color.Transparent : m_tabColor;
             set
             {
                 if (m_tabColor == value)
                     return;
 
                 m_tabColor = value;
-                if (Pane != null)
-                    Pane.RefreshChanges();
+                Pane?.RefreshChanges();
             }
         }
 
         private DockState m_visibleState = DockState.Unknown;
         public DockState VisibleState
         {
-            get {   return m_visibleState;  }
+            get => m_visibleState;
             set
             {
                 if (m_visibleState == value)
@@ -348,7 +331,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private bool m_isFloat = false;
         public bool IsFloat
         {
-            get {   return m_isFloat;   }
+            get => m_isFloat;
             set
             {
                 if (m_isFloat == value)
@@ -377,7 +360,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             else
             {
-                dockState = (PanelPane != null) ? PanelPane.DockState : DefaultDockState;
+                dockState = PanelPane?.DockState ?? DefaultDockState;
                 if (dockState != DockState.Unknown && !IsDockStateValid(dockState))
                 {
                     dockState = DockState.Unknown;
@@ -389,7 +372,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private DockPane m_panelPane = null;
         public DockPane PanelPane
         {
-            get {   return m_panelPane; }
+            get => m_panelPane;
             set
             {
                 if (m_panelPane == value)
@@ -427,7 +410,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private DockPane m_floatPane = null;
         public DockPane FloatPane
         {
-            get {   return m_floatPane; }
+            get => m_floatPane;
             set
             {
                 if (m_floatPane == value)
@@ -467,10 +450,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 m_countSetDockState = 0;
         }
 
-        internal bool IsSuspendSetDockState
-        {
-            get {   return m_countSetDockState != 0;    }
-        }
+        internal bool IsSuspendSetDockState => m_countSetDockState != 0;
 
         private void ResumeSetDockState(bool isHidden, DockState visibleState, DockPane oldPane)
         {
@@ -483,15 +463,14 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (IsSuspendSetDockState)
                 return;
 
-            if (DockPanel == null && visibleState != DockState.Unknown)
+            if (DockPanel is null && visibleState != DockState.Unknown)
                 throw new InvalidOperationException(Strings.DockContentHandler_SetDockState_NullPanel);
 
             if (visibleState == DockState.Hidden || (visibleState != DockState.Unknown && !IsDockStateValid(visibleState)))
                 throw new InvalidOperationException(Strings.DockContentHandler_SetDockState_InvalidState);
 
             DockPanel dockPanel = DockPanel;
-            if (dockPanel != null)
-                dockPanel.SuspendLayout(true);
+            dockPanel?.SuspendLayout(true);
 
             SuspendSetDockState();
 
@@ -510,7 +489,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 m_isFloat = (m_visibleState == DockState.Float);
 
-                if (Pane == null)
+                if (Pane is null)
                     Pane = DockPanel.DockPaneFactory.CreateDockPane(Content, visibleState, true);
                 else if (Pane.DockState != visibleState)
                 {
@@ -560,7 +539,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
             ResumeSetDockState();
 
-            if (dockPanel != null) dockPanel.ResumeLayout(true, true);
+            dockPanel?.ResumeLayout(true, true);
         }
 
         private static void RefreshDockPane(DockPane pane)
@@ -569,30 +548,27 @@ namespace WeifenLuo.WinFormsUI.Docking
             pane.ValidateActiveContent();
         }
 
-        internal string PersistString
-        {
-            get {   return GetPersistStringCallback == null ? Form.GetType().ToString() : GetPersistStringCallback();   }
-        }
+        internal string PersistString => GetPersistStringCallback is null ? Form.GetType().ToString() : GetPersistStringCallback();
 
         private GetPersistStringCallback m_getPersistStringCallback = null;
         public GetPersistStringCallback GetPersistStringCallback
         {
-            get {   return m_getPersistStringCallback;  }
-            set {   m_getPersistStringCallback = value; }
+            get => m_getPersistStringCallback;
+            set => m_getPersistStringCallback = value;
         }
 
 
         private bool m_hideOnClose = false;
         public bool HideOnClose
         {
-            get {   return m_hideOnClose;   }
-            set {   m_hideOnClose = value;  }
+            get => m_hideOnClose;
+            set => m_hideOnClose = value;
         }
 
         private DockState m_showHint = DockState.Unknown;
         public DockState ShowHint
         {
-            get {   return m_showHint;  }
+            get => m_showHint;
             set
             {   
                 if (!DockHelper.IsDockStateValid(value, DockAreas))
@@ -606,10 +582,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private bool m_isActivated = false;
-        public bool IsActivated
-        {
-            get {   return m_isActivated;   }
-        }
+        public bool IsActivated => m_isActivated;
+
         internal void SetIsActivated(bool value)
         {
             if (m_isActivated == value)
@@ -623,28 +597,27 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             if (DockPanel != null && dockState == DockState.Document && DockPanel.DocumentStyle == DocumentStyle.SystemMdi)
                 return false;
-            else
-                return DockHelper.IsDockStateValid(dockState, DockAreas);
+            return DockHelper.IsDockStateValid(dockState, DockAreas);
         }
 
         private ContextMenu m_tabPageContextMenu = null;
         public ContextMenu TabPageContextMenu
         {
-            get {   return m_tabPageContextMenu;    }
-            set {   m_tabPageContextMenu = value;   }
+            get => m_tabPageContextMenu;
+            set => m_tabPageContextMenu = value;
         }
 
         private string m_toolTipText = null;
         public string ToolTipText
         {
-            get {   return m_toolTipText;   }
-            set {   m_toolTipText = value;  }
+            get => m_toolTipText;
+            set => m_toolTipText = value;
         }
 
         public void Activate()
         {
-            if (DockPanel == null) Form.Activate();
-            else if (Pane == null) Show(DockPanel);
+            if (DockPanel is null) Form.Activate();
+            else if (Pane is null) Show(DockPanel);
             else
             {
                 IsHidden = false;
@@ -654,7 +627,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     Form.Activate();
                     return;
                 }
-                else if (DockHelper.IsDockStateAutoHide(DockState)) DockPanel.ActiveAutoHideContent = Content;
+
+                if (DockHelper.IsDockStateAutoHide(DockState)) DockPanel.ActiveAutoHideContent = Content;
 
                 if (!Form.ContainsFocus)
                 {
@@ -671,8 +645,8 @@ namespace WeifenLuo.WinFormsUI.Docking
         private IntPtr m_activeWindowHandle = IntPtr.Zero;
         internal IntPtr ActiveWindowHandle
         {
-            get {   return m_activeWindowHandle;    }
-            set {   m_activeWindowHandle = value;   }
+            get => m_activeWindowHandle;
+            set => m_activeWindowHandle = value;
         }
 
         public void Hide()
@@ -742,7 +716,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (Form.ContainsFocus)
             {
                 // Suggested as a fix for a memory leak by bugreports
-                if (value == null && !IsFloat)
+                if (value is null && !IsFloat)
                 {
                     if (NativeMethods.ShouldUseWin32())
                     {
@@ -771,7 +745,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void Show()
         {
-            if (DockPanel == null)
+            if (DockPanel is null)
                 Form.Show();
             else
                 Show(DockPanel);
@@ -779,7 +753,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void Show(DockPanel dockPanel)
         {
-            if (dockPanel == null)
+            if (dockPanel is null)
                 throw(new ArgumentNullException(Strings.DockContentHandler_Show_NullDockPanel));
 
             if (DockState == DockState.Unknown) Show(dockPanel, DefaultShowState);
@@ -788,7 +762,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void Show(DockPanel dockPanel, DockState dockState)
         {
-            if (dockPanel == null)
+            if (dockPanel is null)
                 throw(new ArgumentNullException(Strings.DockContentHandler_Show_NullDockPanel));
 
             if (dockState == DockState.Unknown || dockState == DockState.Hidden)
@@ -798,9 +772,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             DockPanel = dockPanel;
 
-            if (dockState == DockState.Float && FloatPane == null)
+            if (dockState == DockState.Float && FloatPane is null)
                 Pane = DockPanel.DockPaneFactory.CreateDockPane(Content, DockState.Float, true);
-            else if (PanelPane == null)
+            else if (PanelPane is null)
             {
                 DockPane paneExisting = null;
                 foreach (DockPane pane in DockPanel.Panes)
@@ -810,7 +784,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                         break;
                     }
 
-                if (paneExisting == null)
+                if (paneExisting is null)
                     Pane = DockPanel.DockPaneFactory.CreateDockPane(Content, dockState, true);
                 else
                     Pane = paneExisting;
@@ -825,13 +799,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters")]
         public void Show(DockPanel dockPanel, Rectangle floatWindowBounds)
         {
-            if (dockPanel == null)
+            if (dockPanel is null)
                 throw(new ArgumentNullException(Strings.DockContentHandler_Show_NullDockPanel));
 
             dockPanel.SuspendLayout(true);
 
             DockPanel = dockPanel;
-            if (FloatPane == null)
+            if (FloatPane is null)
             {
                 IsHidden = true;    // to reduce the screen flicker
                 FloatPane = DockPanel.DockPaneFactory.CreateDockPane(Content, DockState.Float, false);
@@ -848,7 +822,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void Show(DockPane pane, IDockContent beforeContent)
         {
-            if (pane == null)
+            if (pane is null)
                 throw(new ArgumentNullException(Strings.DockContentHandler_Show_NullPane));
 
             if (beforeContent != null && pane.Contents.IndexOf(beforeContent) == -1)
@@ -866,7 +840,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void Show(DockPane previousPane, DockAlignment alignment, double proportion)
         {
-            if (previousPane == null)
+            if (previousPane is null)
                 throw(new ArgumentException(Strings.DockContentHandler_Show_InvalidPrevPane));
 
             if (DockHelper.IsDockStateAutoHide(previousPane.DockState))
@@ -884,18 +858,16 @@ namespace WeifenLuo.WinFormsUI.Docking
         public void Close()
         {
             DockPanel dockPanel = DockPanel;
-            if (dockPanel != null)
-                dockPanel.SuspendLayout(true);
+            dockPanel?.SuspendLayout(true);
             Form.Close();
-            if (dockPanel != null)
-                dockPanel.ResumeLayout(true, true);
+            dockPanel?.ResumeLayout(true, true);
 
         }
 
         private DockPaneStripBase.Tab m_tab = null;
         internal DockPaneStripBase.Tab GetTab(DockPaneStripBase dockPaneStrip)
         {
-            if (m_tab == null)
+            if (m_tab is null)
                 m_tab = dockPaneStrip.CreateTab(Content);
 
             return m_tab;
@@ -904,35 +876,33 @@ namespace WeifenLuo.WinFormsUI.Docking
         private IDisposable m_autoHideTab = null;
         internal IDisposable AutoHideTab
         {
-            get { return m_autoHideTab; }
-            set { m_autoHideTab = value; }
+            get => m_autoHideTab;
+            set => m_autoHideTab = value;
         }
 
         #region Events
         private static readonly object DockStateChangedEvent = new object();
         public event EventHandler DockStateChanged
         {
-            add {   Events.AddHandler(DockStateChangedEvent, value);    }
-            remove  {   Events.RemoveHandler(DockStateChangedEvent, value); }
+            add => Events.AddHandler(DockStateChangedEvent, value);
+            remove => Events.RemoveHandler(DockStateChangedEvent, value);
         }
         protected virtual void OnDockStateChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[DockStateChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object IsActivatedChangedEvent = new object();
         public event EventHandler IsActivatedChanged
         {
-            add { Events.AddHandler(IsActivatedChangedEvent, value); }
-            remove { Events.RemoveHandler(IsActivatedChangedEvent, value); }
+            add => Events.AddHandler(IsActivatedChangedEvent, value);
+            remove => Events.RemoveHandler(IsActivatedChangedEvent, value);
         }
         protected virtual void OnIsActivatedChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler) Events[IsActivatedChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
         #endregion
 
@@ -947,8 +917,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 DockPanel.RefreshAutoHideStrip();
             else if (Pane != null)
             {
-                if (Pane.FloatWindow != null)
-                    Pane.FloatWindow.SetText();
+                Pane.FloatWindow?.SetText();
                 Pane.RefreshChanges();
             }
         }
@@ -956,7 +925,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private bool m_flagClipWindow = false;
         internal bool FlagClipWindow
         {
-            get {   return m_flagClipWindow;    }
+            get => m_flagClipWindow;
             set
             {
                 if (m_flagClipWindow == value)
@@ -973,16 +942,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         private ContextMenuStrip m_tabPageContextMenuStrip = null;
         public ContextMenuStrip TabPageContextMenuStrip
         {
-            get { return m_tabPageContextMenuStrip; }
-            set { m_tabPageContextMenuStrip = value; }
+            get => m_tabPageContextMenuStrip;
+            set => m_tabPageContextMenuStrip = value;
         }
 
         #region IDockDragSource Members
 
-        Control IDragSource.DragControl
-        {
-            get { return Form; }
-        }
+        Control IDragSource.DragControl => Form;
 
         bool IDockDragSource.CanDockTo(DockPane pane)
         {
@@ -999,7 +965,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             Size size;
             DockPane floatPane = this.FloatPane;
-            if (DockState == DockState.Float || floatPane == null || floatPane.FloatWindow.NestedPanes.Count != 1)
+            if (DockState == DockState.Float || floatPane is null || floatPane.FloatWindow.NestedPanes.Count != 1)
                 size = DockPanel.DefaultFloatWindowSize;
             else
                 size = floatPane.FloatWindow.Size;
@@ -1075,7 +1041,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         public void DockTo(DockPanel panel, DockStyle dockStyle)
         {
             if (panel != DockPanel)
-                throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, "panel");
+                throw new ArgumentException(Strings.IDockDragSource_DockTo_InvalidPanel, nameof(panel));
 
             DockPane pane;
 

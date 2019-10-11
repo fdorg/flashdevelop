@@ -17,74 +17,42 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         private Rectangle m_oldFloatWindowBounds;
-        protected Rectangle OldFloatWindowBounds
-        {
-            get { return m_oldFloatWindowBounds; }
-        }
+        protected Rectangle OldFloatWindowBounds => m_oldFloatWindowBounds;
 
         private Control m_oldDockTo;
-        protected Control OldDockTo
-        {
-            get { return m_oldDockTo; }
-        }
+        protected Control OldDockTo => m_oldDockTo;
 
         private DockStyle m_oldDock;
-        protected DockStyle OldDock
-        {
-            get { return m_oldDock; }
-        }
+        protected DockStyle OldDock => m_oldDock;
 
         private int m_oldContentIndex;
-        protected int OldContentIndex
-        {
-            get { return m_oldContentIndex; }
-        }
+        protected int OldContentIndex => m_oldContentIndex;
 
-        protected bool SameAsOldValue
-        {
-            get
-            {
-                return FloatWindowBounds == OldFloatWindowBounds &&
-                    DockTo == OldDockTo &&
-                    Dock == OldDock &&
-                    ContentIndex == OldContentIndex;
-            }
-        }
+        protected bool SameAsOldValue =>
+            FloatWindowBounds == OldFloatWindowBounds &&
+            DockTo == OldDockTo &&
+            Dock == OldDock &&
+            ContentIndex == OldContentIndex;
 
         private Rectangle m_floatWindowBounds;
-        public Rectangle FloatWindowBounds
-        {
-            get { return m_floatWindowBounds; }
-        }
+        public Rectangle FloatWindowBounds => m_floatWindowBounds;
 
         private Control m_dockTo;
-        public Control DockTo
-        {
-            get { return m_dockTo; }
-        }
+        public Control DockTo => m_dockTo;
 
         private DockStyle m_dock;
-        public DockStyle Dock
-        {
-            get { return m_dock; }
-        }
+        public DockStyle Dock => m_dock;
 
         private int m_contentIndex;
-        public int ContentIndex
-        {
-            get { return m_contentIndex; }
-        }
+        public int ContentIndex => m_contentIndex;
 
-        public bool FlagFullEdge
-        {
-            get { return m_contentIndex != 0; }
-        }
+        public bool FlagFullEdge => m_contentIndex != 0;
 
         private bool m_flagTestDrop = false;
         public bool FlagTestDrop
         {
-            get { return m_flagTestDrop; }
-            set { m_flagTestDrop = value; }
+            get => m_flagTestDrop;
+            set => m_flagTestDrop = value;
         }
 
         private void SaveOldValues()

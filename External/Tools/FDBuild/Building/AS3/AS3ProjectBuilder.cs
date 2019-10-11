@@ -13,15 +13,15 @@ namespace ProjectManager.Building.AS3
 {
     public class AS3ProjectBuilder : ProjectBuilder
     {
-        AS3Project project;
-        FlexCompilerShell fcsh;
+        readonly AS3Project project;
+        readonly FlexCompilerShell fcsh;
         string VMARGS = "-Xmx384m -Xmx1024m -Dsun.io.useCanonCaches=false -Duser.language=en";
         string sdkPath;
         string mxmlcPath;
         string asc2Path;
         string fcshPath;
         string ascshPath;
-        bool asc2Mode;
+        readonly bool asc2Mode;
         Dictionary<string, string> jvmConfig;
 
         public AS3ProjectBuilder(AS3Project project, string compilerPath, string ipcName)
@@ -37,7 +37,7 @@ namespace ProjectManager.Building.AS3
             bool asc2Exixts = File.Exists(asc2Path);
             asc2Mode = !fcshExists && (ascshExists || asc2Exixts);
  
-            bool hostedInFD = (fcshExists || ascshExists) && ipcName != null && ipcName != "";
+            bool hostedInFD = (fcshExists || ascshExists) && !string.IsNullOrEmpty(ipcName);
 
             if (hostedInFD)
             {
@@ -48,7 +48,7 @@ namespace ProjectManager.Building.AS3
             if (project.OutputType == OutputType.Application || project.OutputType == OutputType.Library)
             {
                 if (fcsh != null && !fcshExists && !ascshExists) throw new Exception("Could not locate lib\\fcsh.jar or lib\\ascsh.jar in Flex SDK.");
-                if (fcsh == null && !mxmlcExists && !asc2Mode) 
+                if (fcsh is null && !mxmlcExists && !asc2Mode) 
                     throw new Exception("Could not locate lib\\mxmlc.jar or lib\\mxmlc-cli.jar in Flex SDK.");
             }
         }
@@ -91,7 +91,7 @@ namespace ProjectManager.Building.AS3
                 }
             }
 
-            jvmConfig = PluginCore.Helpers.JvmConfigHelper.ReadConfig(flexsdkPath);
+            jvmConfig = JvmConfigHelper.ReadConfig(flexsdkPath);
             if (jvmConfig.ContainsKey("java.args") && jvmConfig["java.args"].Trim().Length > 0)
                 VMARGS = jvmConfig["java.args"];
         }
@@ -134,10 +134,8 @@ namespace ProjectManager.Building.AS3
 
             if (File.Exists(fdbuildHints))
             {
-                using (StreamReader reader = File.OpenText(fdbuildHints))
-                {
-                    flexsdkPath = reader.ReadLine();
-                }
+                using var reader = File.OpenText(fdbuildHints);
+                flexsdkPath = reader.ReadLine();
                 if (!Directory.Exists(flexsdkPath)) Console.WriteLine("Compiler path configured in FDBuildHints.txt doesn't exist:\n" + flexsdkPath);
                 else
                 {
@@ -169,7 +167,7 @@ namespace ProjectManager.Building.AS3
             Environment.CurrentDirectory = project.Directory;
             try
             {
-                string objDir = "obj";
+                const string objDir = "obj";
                 if (!Directory.Exists(objDir)) Directory.CreateDirectory(objDir);
                 tempFile = GetTempProjectFile(project);
 
@@ -242,11 +240,9 @@ namespace ProjectManager.Building.AS3
         {
             string[] p = version.Split('.');
             if (p.Length == 0) return 0;
-            double major = 0;
-            double.TryParse(p[0], out major);
+            double.TryParse(p[0], out var major);
             if (p.Length == 1) return major;
-            double minor = 0;
-            double.TryParse(p[1], out minor);
+            double.TryParse(p[1], out var minor);
             return major + (minor < 10 ? minor / 10 : minor / 100);
         }
 
@@ -254,14 +250,11 @@ namespace ProjectManager.Building.AS3
         {
             if (fcsh != null)
             {
-                string output;
-                string[] errors;
-                string[] warnings;
-                string jar = ascshPath != null ? ascshPath : fcshPath;
+                string jar = ascshPath ?? fcshPath;
                 string jvmarg = VMARGS + " -Dapplication.home=\"" + sdkPath 
                     //+ "\" -Dflexlib=\"" + Path.Combine(sdkPath, "frameworks")
                     + "\" -jar \"" + jar + "\"";
-                fcsh.Compile(workingdir, configChanged, arguments, out output, out errors, out warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
+                fcsh.Compile(workingdir, configChanged, arguments, out var output, out var errors, out var warnings, jvmarg, JvmConfigHelper.GetJavaEXE(jvmConfig, sdkPath));
 
                 string[] lines = output.Split('\n');
                 foreach (string line in lines)

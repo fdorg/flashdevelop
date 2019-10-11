@@ -12,22 +12,22 @@ namespace ProjectManager.Projects.Generic
             movieOptions = new GenericMovieOptions();
         }
 
-        public override string Language { get { return "*"; } }
-        public override string LanguageDisplayName { get { return "*"; } }
-        public override bool IsCompilable { get { return false; } }
+        public override string Language => "*";
+        public override string LanguageDisplayName => "*";
+        public override bool IsCompilable => false;
 
         public override string DefaultSearchFilter
         {
             get
             {
                 if (OutputType == OutputType.Website) return "*.html;*.css;*.js";
-                else return "*.*";
+                return "*.*";
             }
         }
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
         {
-            String inPath = Path.GetDirectoryName(inFile);
+            string inPath = Path.GetDirectoryName(inFile);
             return ProjectPaths.GetRelativePath(inPath, path);
         }
 
@@ -42,16 +42,14 @@ namespace ProjectManager.Projects.Generic
             }
             catch (XmlException exception)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.", exception.LineNumber, exception.LinePosition);
+                string format =
+                    $"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.";
                 throw new Exception(format, exception);
             }
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {
@@ -70,8 +68,5 @@ namespace ProjectManager.Projects.Generic
         }
 
         #endregion
-    
     }
-
 }
-

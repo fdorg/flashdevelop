@@ -18,7 +18,7 @@ namespace ProjectManager.Controls
     public class NewProjectDialog : SmartForm, IThemeHandler
     {
         static string lastTemplate;
-        string defaultProjectImage;
+        readonly string defaultProjectImage;
 
         #region Windows Form Designer
 
@@ -68,7 +68,7 @@ namespace ProjectManager.Controls
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(573, 388);
@@ -79,7 +79,7 @@ namespace ProjectManager.Controls
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.okButton.Enabled = false;
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.okButton.Location = new System.Drawing.Point(475, 388);
@@ -87,11 +87,11 @@ namespace ProjectManager.Controls
             this.okButton.Size = new System.Drawing.Size(90, 23);
             this.okButton.TabIndex = 10;
             this.okButton.Text = "&OK";
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += this.okButton_Click;
             // 
             // previewBox
             // 
-            this.previewBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right)));
+            this.previewBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right;
             this.previewBox.BackColor = System.Drawing.Color.White;
             this.previewBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.previewBox.Location = new System.Drawing.Point(469, 12);
@@ -102,10 +102,10 @@ namespace ProjectManager.Controls
             // 
             // projectListView
             // 
-            this.projectListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.projectListView.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.projectListView.BackColor = System.Drawing.SystemColors.Window;
             this.projectListView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.projectListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.columnHeader1});
+            this.projectListView.Columns.AddRange(new[] {this.columnHeader1});
             this.projectListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.projectListView.HideSelection = false;
             this.projectListView.LargeImageList = this.imageList;
@@ -118,7 +118,7 @@ namespace ProjectManager.Controls
             this.projectListView.TileSize = new System.Drawing.Size(170, 22);
             this.projectListView.UseCompatibleStateImageBehavior = false;
             this.projectListView.View = System.Windows.Forms.View.Tile;
-            this.projectListView.SelectedIndexChanged += new System.EventHandler(this.projectListView_SelectedIndexChanged);
+            this.projectListView.SelectedIndexChanged += this.projectListView_SelectedIndexChanged;
             // 
             // columnHeader1
             // 
@@ -131,17 +131,17 @@ namespace ProjectManager.Controls
             // 
             // locationTextBox
             // 
-            this.locationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.locationTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.locationTextBox.Location = new System.Drawing.Point(77, 328);
             this.locationTextBox.Name = "locationTextBox";
             this.locationTextBox.Size = new System.Drawing.Size(485, 21);
             this.locationTextBox.TabIndex = 5;
             this.locationTextBox.Text = "C:\\Documents and Settings\\Nick\\My Documents";
-            this.locationTextBox.TextChanged += new System.EventHandler(this.locationTextBox_TextChanged);
+            this.locationTextBox.TextChanged += this.locationTextBox_TextChanged;
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label1.Location = new System.Drawing.Point(13, 330);
             this.label1.Name = "label1";
@@ -152,7 +152,7 @@ namespace ProjectManager.Controls
             // 
             // descriptionLabel
             // 
-            this.descriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.descriptionLabel.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.descriptionLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.descriptionLabel.Location = new System.Drawing.Point(11, 265);
             this.descriptionLabel.Name = "descriptionLabel";
@@ -163,18 +163,18 @@ namespace ProjectManager.Controls
             // 
             // browseButton
             // 
-            this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.browseButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.browseButton.Location = new System.Drawing.Point(573, 326);
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(90, 23);
             this.browseButton.TabIndex = 6;
             this.browseButton.Text = "&Browse...";
-            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
+            this.browseButton.Click += this.browseButton_Click;
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label2.Location = new System.Drawing.Point(13, 299);
             this.label2.Name = "label2";
@@ -185,24 +185,24 @@ namespace ProjectManager.Controls
             // 
             // nameTextBox
             // 
-            this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.nameTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.nameTextBox.Location = new System.Drawing.Point(77, 297);
             this.nameTextBox.Name = "nameTextBox";
             this.nameTextBox.Size = new System.Drawing.Size(585, 21);
             this.nameTextBox.TabIndex = 3;
             this.nameTextBox.Text = "New Project";
-            this.nameTextBox.TextChanged += new System.EventHandler(this.nameTextBox_TextChanged);
+            this.nameTextBox.TextChanged += this.nameTextBox_TextChanged;
             // 
             // createDirectoryBox
             // 
-            this.createDirectoryBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.createDirectoryBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.createDirectoryBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.createDirectoryBox.Location = new System.Drawing.Point(78, 389);
             this.createDirectoryBox.Name = "createDirectoryBox";
             this.createDirectoryBox.Size = new System.Drawing.Size(249, 16);
             this.createDirectoryBox.TabIndex = 9;
             this.createDirectoryBox.Text = " Create &directory for project";
-            this.createDirectoryBox.CheckedChanged += new System.EventHandler(this.createDirectoryBox_CheckedChanged);
+            this.createDirectoryBox.CheckedChanged += this.createDirectoryBox_CheckedChanged;
             // 
             // statusBar
             // 
@@ -214,7 +214,7 @@ namespace ProjectManager.Controls
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.label3.Location = new System.Drawing.Point(10, 361);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(71, 15);
@@ -224,12 +224,12 @@ namespace ProjectManager.Controls
             // 
             // packageTextBox
             // 
-            this.packageTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.packageTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.packageTextBox.Location = new System.Drawing.Point(77, 359);
             this.packageTextBox.Name = "packageTextBox";
             this.packageTextBox.Size = new System.Drawing.Size(585, 21);
             this.packageTextBox.TabIndex = 8;
-            this.packageTextBox.TextChanged += new System.EventHandler(this.textPackage_TextChanged);
+            this.packageTextBox.TextChanged += this.textPackage_TextChanged;
             // 
             // NewProjectDialog
             // 
@@ -296,10 +296,10 @@ namespace ProjectManager.Controls
             }
 
             ListViewGroup group = null;
-            List<String> templateDirs = ProjectPaths.GetAllProjectDirs();
+            List<string> templateDirs = ProjectPaths.GetAllProjectDirs();
             templateDirs.Sort(CompareFolderNames);
             ListViewItem lastItem = null;
-            String lastTemplate = null;
+            string lastTemplate = null;
 
             foreach (string templateDir in templateDirs)
             {
@@ -316,7 +316,7 @@ namespace ProjectManager.Controls
 
                 if (parts[0].Length > 0)
                 {
-                    if (group == null || group.Header != parts[0])
+                    if (group is null || group.Header != parts[0])
                     {
                         group = new ListViewGroup(parts[0]);
                         projectListView.Groups.Add(group);
@@ -330,7 +330,7 @@ namespace ProjectManager.Controls
                 lastTemplate = templateName;
                 projectListView.Items.Add(item);
             }
-            this.Load += new EventHandler(NewProjectDialog_Load);
+            this.Load += NewProjectDialog_Load;
         }
 
         int CompareFolderNames(string pathA, string pathB)
@@ -340,7 +340,7 @@ namespace ProjectManager.Controls
 
         void NewProjectDialog_Load(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(lastTemplate))
+            if (!string.IsNullOrEmpty(lastTemplate))
             {
                 foreach (ListViewItem item in projectListView.Items)
                 {
@@ -371,15 +371,15 @@ namespace ProjectManager.Controls
 
         public string ProjectName
         {
-            get { return nameTextBox.Text; }
-            set { nameTextBox.Text = value; }
+            get => nameTextBox.Text;
+            set => nameTextBox.Text = value;
         }
 
         public string PackageName
         {
-            get { return packageTextBox.Text; }
+            get => packageTextBox.Text;
 
-            set { packageTextBox.Text = value; }
+            set => packageTextBox.Text = value;
         }
 
         public string ProjectExt
@@ -402,10 +402,9 @@ namespace ProjectManager.Controls
             {
                 if (createDirectoryBox.Checked)
                     return Path.Combine(locationTextBox.Text,ProjectName);
-                else
-                    return locationTextBox.Text;
+                return locationTextBox.Text;
             }
-            set { locationTextBox.Text = value; }
+            set => locationTextBox.Text = value;
         }
 
         public string TemplateDirectory
@@ -414,8 +413,7 @@ namespace ProjectManager.Controls
             {
                 if (projectListView.SelectedItems.Count > 0)
                     return projectListView.SelectedItems[0].Tag as string;
-                else
-                    return null;
+                return null;
             }
         }
 
@@ -425,8 +423,7 @@ namespace ProjectManager.Controls
             {
                 if (projectListView.SelectedItems.Count > 0)
                     return projectListView.SelectedItems[0].Text;
-                else
-                    return null;
+                return null;
             }
         }
 
@@ -491,7 +488,7 @@ namespace ProjectManager.Controls
             {
                 lastTemplate = TemplateDirectory;
 
-                if (previewBox.Image != null) previewBox.Image.Dispose();
+                previewBox.Image?.Dispose();
 
                 string projectImage = Path.Combine(TemplateDirectory,"Project.png");
                 if (File.Exists(projectImage)) SetProjectImage(projectImage);
@@ -501,10 +498,8 @@ namespace ProjectManager.Controls
                 string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
                 if (File.Exists(projectDescription))
                 {
-                    using (StreamReader reader = File.OpenText(projectDescription))
-                    {
-                        descriptionLabel.Text = reader.ReadToEnd();
-                    }
+                    using StreamReader reader = File.OpenText(projectDescription);
+                    descriptionLabel.Text = reader.ReadToEnd();
                 }
                 else descriptionLabel.Text = "";
                 okButton.Enabled = true;
@@ -513,7 +508,7 @@ namespace ProjectManager.Controls
             UpdateStatusBar();
         }
 
-        private void SetProjectImage(String projectImage)
+        private void SetProjectImage(string projectImage)
         {
             Image image = Image.FromFile(projectImage);
             Bitmap empty = new Bitmap(this.previewBox.Width, this.previewBox.Height);
@@ -526,40 +521,38 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, System.EventArgs e)
         {
-            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
+
+            string selectedPath = locationTextBox.Text;
+            // try to get as close as we can to the directory you typed in
+            try
             {
-                dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                dialog.UseDescriptionForTitle = true;
-                dialog.Description = TextHelper.GetString("Info.SelectProjectDirectory");
-
-                string selectedPath = locationTextBox.Text;
-                // try to get as close as we can to the directory you typed in
-                try
+                while (!Directory.Exists(selectedPath))
                 {
-                    while (!Directory.Exists(selectedPath))
-                    {
-                        selectedPath = Path.GetDirectoryName(selectedPath);
-                    }
+                    selectedPath = Path.GetDirectoryName(selectedPath);
                 }
-                catch
-                {
-                    selectedPath = ProjectPaths.DefaultProjectsDirectory;
-                }
-                dialog.SelectedPath = selectedPath;
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    locationTextBox.Text = dialog.SelectedPath;
-                    locationTextBox.SelectionStart = locationTextBox.Text.Length;
+            }
+            catch
+            {
+                selectedPath = ProjectPaths.DefaultProjectsDirectory;
+            }
+            dialog.SelectedPath = selectedPath;
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                locationTextBox.Text = dialog.SelectedPath;
+                locationTextBox.SelectionStart = locationTextBox.Text.Length;
 
-                    // smart project naming
-                    if (!this.createDirectoryBox.Checked
-                        && this.nameTextBox.Text == TextHelper.GetString("Info.NewProject"))
+                // smart project naming
+                if (!this.createDirectoryBox.Checked
+                    && this.nameTextBox.Text == TextHelper.GetString("Info.NewProject"))
+                {
+                    string name = Path.GetFileName(dialog.SelectedPath);
+                    if (name.Length > 5)
                     {
-                        string name = Path.GetFileName(dialog.SelectedPath);
-                        if (name.Length > 5)
-                        {
-                            this.nameTextBox.Text = name.Substring(0, 1).ToUpper() + name.Substring(1);
-                        }
+                        this.nameTextBox.Text = name.Substring(0, 1).ToUpper() + name.Substring(1);
                     }
                 }
             }

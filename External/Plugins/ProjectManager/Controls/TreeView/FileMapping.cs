@@ -24,14 +24,14 @@ namespace ProjectManager.Controls.TreeView
 
         public string[] Files
         {
-            get { return files; }
-            set { files = value; }
+            get => files;
+            set => files = value;
         }
 
         public FileMapping Mapping
         {
-            get { return mapping; }
-            set { mapping = value; }
+            get => mapping;
+            set => mapping = value;
         }
     }
 }

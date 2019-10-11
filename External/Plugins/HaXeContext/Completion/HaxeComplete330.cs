@@ -17,14 +17,14 @@ namespace HaXeContext
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
-                if(document.FileName != Sci.FileName && document.IsModified) document.Save();
+                if(document.IsModified) document.Save(document.FileName, nameof(HaxeComplete));
             }
         }
 
         protected override List<string> BuildHxmlArgs()
         {
             var result = base.BuildHxmlArgs();
-            if (result == null) return null;
+            if (result is null) return null;
             if ((ASContext.GetLanguageContext("haxe") as Context)?.Settings is HaXeSettings settings
                 && (settings.EnabledFeatures & CompletionFeatures.DisplayStdIn) != 0
                 && settings.CompletionMode == HaxeCompletionModeEnum.CompletionServer)

@@ -10,7 +10,7 @@ namespace LayoutManager
     public class Settings
     {
         private static Settings instance;
-        private String customLayoutPath = String.Empty;
+        private string customLayoutPath = string.Empty;
         
         public Settings()
         {
@@ -22,8 +22,8 @@ namespace LayoutManager
         /// </summary>
         public static Settings Instance
         {
-            get { return instance; }
-            set { instance = value; }
+            get => instance;
+            set => instance = value;
         }
 
         /// <summary> 
@@ -32,12 +32,10 @@ namespace LayoutManager
         [DisplayName("Custom Layout File Directory")]
         [LocalizedDescription("LayoutManager.Description.CustomLayoutPath"), DefaultValue("")]
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
-        public String CustomLayoutPath
+        public string CustomLayoutPath
         {
-            get { return this.customLayoutPath; }
-            set { this.customLayoutPath = value; }
+            get => customLayoutPath;
+            set => customLayoutPath = value;
         }
-
     }
-
 }

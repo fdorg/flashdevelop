@@ -20,6 +20,7 @@ using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
 using HaXeContext.Model;
+using PluginCore.Collections;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -28,26 +29,26 @@ namespace HaXeContext
     public class Context : AS2Context.Context
     {
         #region initialization
-        new static readonly protected Regex re_CMD_BuildCommand =
+        protected new static readonly Regex re_CMD_BuildCommand =
             new Regex("@haxe[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
 
-        static readonly protected Regex re_genericType =
+        protected static readonly Regex re_genericType =
             new Regex("(?<gen>[^<]+)<(?<type>.+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        static readonly protected Regex re_Template =
+        protected static readonly Regex re_Template =
             new Regex("<(?<name>[a-z]+)>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        static public string FLASH_OLD = "flash";
-        static public string FLASH_NEW = "flash9";
-        static private string currentEnv;
-        static private string currentSDK;
-        
-        private readonly HaXeSettings haxeSettings;
-        private readonly Func<string, InstalledSDK> getCustomSDK;
-        private Dictionary<string, List<string>> haxelibsCache;
-        private string haxeTarget;
-        private bool resolvingDot;
-        private bool resolvingFunction;
+        public static string FLASH_OLD = "flash";
+        public static string FLASH_NEW = "flash9";
+        static string currentEnv;
+        static string currentSDK;
+
+        readonly HaXeSettings haxeSettings;
+        readonly Func<string, InstalledSDK> getCustomSDK;
+        Dictionary<string, List<string>> haxelibsCache;
+        string haxeTarget;
+        bool resolvingDot;
+        bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
 
         internal static readonly ClassModel StubFunctionClass = new ClassModel
@@ -135,6 +136,7 @@ namespace HaXeContext
             features.hasTryCatch = true;
             features.hasInference = true;
             features.hasStringInterpolation = true;
+            features.HasMultilineString = true;
             features.checkFileName = false;
 
             // haxe directives
@@ -193,7 +195,8 @@ namespace HaXeContext
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
-            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "=="};
+            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!"};
+            features.TernaryOperators = new[] {"?", ":"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -214,7 +217,7 @@ namespace HaXeContext
 
         #region classpath management
 
-        private List<string> LookupLibrary(string lib)
+        List<string> LookupLibrary(string lib)
         {
             try
             {
@@ -226,7 +229,7 @@ namespace HaXeContext
             }
         }
 
-        private List<string> LookupHaxeLibLibrary(string lib)
+        List<string> LookupHaxeLibLibrary(string lib)
         {
             if (haxelibsCache.ContainsKey(lib))
                 return haxelibsCache[lib];
@@ -241,12 +244,12 @@ namespace HaXeContext
 
             Process p = StartHiddenProcess(haxePath, "path " + lib);
 
-            List<string> paths = new List<string>();
+            var paths = new List<string>();
             do
             {
-                string line = p.StandardOutput.ReadLine();
+                var line = p.StandardOutput.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
-                if (line.IndexOfOrdinal("not installed") > 0)
+                if (line.Contains("not installed"))
                 {
                     TraceManager.Add(line, (int)TraceType.Error);
                 }
@@ -257,7 +260,10 @@ namespace HaXeContext
                         if (Directory.Exists(line))
                             paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
                     }
-                    catch (Exception) { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
             while (!p.StandardOutput.EndOfStream);
@@ -265,20 +271,17 @@ namespace HaXeContext
             p.WaitForExit();
             p.Close();
 
-            if (paths.Count > 0)
-            {
-                haxelibsCache.Add(lib, paths);
-                return paths;
-            }
-            return null;
+            if (paths.Count == 0) return null;
+            haxelibsCache.Add(lib, paths);
+            return paths;
         }
 
-        private List<string> LookupLixLibrary(string lib)
+        List<string> LookupLixLibrary(string lib)
         {
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (Directory.Exists(haxePath))
             {
-                string path = haxePath;
+                var path = haxePath;
                 haxePath = Path.Combine(path, "haxe.exe");
                 if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
             }
@@ -288,11 +291,11 @@ namespace HaXeContext
                 return null;
             }
 
-            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
-            Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
+            var projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            var p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
 
-            List<string> paths = new List<string>();
-            bool isPathExpected = false;
+            var paths = new List<string>();
+            var isPathExpected = false;
             do
             {
                 string line = p.StandardOutput.ReadLine();
@@ -310,8 +313,8 @@ namespace HaXeContext
             }
             while (!p.StandardOutput.EndOfStream);
 
-            string error = p.StandardError.ReadToEnd();
-            if (error != "") TraceManager.Add(error, (int)TraceType.Error);
+            var error = p.StandardError.ReadToEnd();
+            if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
 
             p.WaitForExit();
             p.Close();
@@ -319,7 +322,7 @@ namespace HaXeContext
             return paths.Count > 0 ? paths : null;
         }
 
-        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
+        Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
             string hxPath = currentSDK;
             if (hxPath != null && Path.IsPathRooted(hxPath))
@@ -329,7 +332,7 @@ namespace HaXeContext
                 if (File.Exists(fileName + ".exe")) fileName += ".exe";
             }
 
-            ProcessStartInfo pi = new ProcessStartInfo();
+            var pi = new ProcessStartInfo();
             pi.FileName = fileName;
             pi.Arguments = arguments;
             pi.WorkingDirectory = workingDirectory;
@@ -377,13 +380,14 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
-            else features.SpecialPostfixOperators = new char[0];
+            features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
+                ? new[] {'!'}
+                : EmptyArray<char>.Instance;
 
             UseGenericsShortNotationChange();
         }
 
-        private void UseGenericsShortNotationChange()
+        void UseGenericsShortNotationChange()
         {
             // We may want to create 2 different feature flags for this, but atm it's enough this way
             features.HasGenericsShortNotation = GetCurrentSDKVersion() >= "3" && haxeSettings.UseGenericsShortNotation;
@@ -393,20 +397,17 @@ namespace HaXeContext
         {
             features.metadata = new Dictionary<string, string>();
 
-            ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
-            if (processInfo == null) return;
-            string metaList;
-            using (var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true})
-            {
-                process.Start();
+            var processInfo = CreateHaxeProcessInfo("--help-metas");
+            if (processInfo is null) return;
+            using var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true};
+            process.Start();
 
-                metaList = process.StandardOutput.ReadToEnd();
-            }
+            var metaList = process.StandardOutput.ReadToEnd();
 
-            Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
+            var regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");
 
-            MatchCollection matches = regex.Matches(metaList);
+            var matches = regex.Matches(metaList);
 
             foreach (Match m in matches)
             {
@@ -421,7 +422,7 @@ namespace HaXeContext
         {
             ReleaseClasspath();
             started = true;
-            if (contextSetup == null)
+            if (contextSetup is null)
             {
                 contextSetup = new ContextSetupInfos();
                 contextSetup.Classpath = new[] { Environment.CurrentDirectory };
@@ -437,31 +438,21 @@ namespace HaXeContext
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
 
             // NOTE: version > 10 for non-Flash platforms
-            string lang = GetHaxeTarget(platform);
-            features.Directives = new List<string>();
-
-            if (lang == null)
+            var lang = GetHaxeTarget(platform);
+            if (lang is null)
             {
-                if (contextSetup.Platform == "hxml")
-                {
+                if (contextSetup.Platform == "hxml" || contextSetup.Platform.EndsWith("multitarget", StringComparison.OrdinalIgnoreCase))
                     lang = contextSetup.TargetBuild ?? "";
-                }
                 else // assume game-related toolchain
                 {
                     lang = "cpp";
-                    if (contextSetup.TargetBuild == null || contextSetup.TargetBuild.StartsWithOrdinal("flash"))
-                        lang = "";
-                    else if (contextSetup.TargetBuild.StartsWithOrdinal("html5"))
-                        lang = "js";
-                    else if (contextSetup.TargetBuild.Contains("neko"))
-                        lang = "neko";
+                    if (contextSetup.TargetBuild is null || contextSetup.TargetBuild.StartsWithOrdinal("flash")) lang = "";
+                    else if (contextSetup.TargetBuild.StartsWithOrdinal("html5")) lang = "js";
+                    else if (contextSetup.TargetBuild.Contains("neko")) lang = "neko";
                 }
             }
-            else if (lang == "swf")
-            {
-                lang = "flash";
-            }
-            features.Directives.Add(lang);
+            else if (lang == "swf") lang = "flash";
+            features.Directives = new List<string> {lang};
             haxeTarget = lang;
 
             //
@@ -507,7 +498,7 @@ namespace HaXeContext
                     {
                         var hide = new List<string>();
                         foreach (var dir in Directory.GetDirectories(haxeCP))
-                            if (Path.GetFileName(dir) is string dirName
+                            if (Path.GetFileName(dir) is { } dirName
                                 && dirName != "sys"
                                 && dirName != "haxe"
                                 && dirName != "libs")
@@ -520,7 +511,7 @@ namespace HaXeContext
 
                     if (!string.IsNullOrEmpty(lang))
                     {
-                        PathModel specific = PathModel.GetModel(Path.Combine(haxeCP, lang), this);
+                        var specific = PathModel.GetModel(Path.Combine(haxeCP, lang), this);
                         if (!specific.WasExplored && !Settings.LazyClasspathExploration)
                         {
                             ManualExploration(specific, null);
@@ -535,19 +526,33 @@ namespace HaXeContext
             }
 
             // swf-libs
-            if (project != null && haxeTarget == "flash" && majorVersion >= 9)
+            if (project != null && haxeTarget == "flash")
             {
-                foreach(LibraryAsset asset in project.LibraryAssets)
-                    if (asset.IsSwc)
-                    {
-                        string path = project.GetAbsolutePath(asset.Path);
-                        if (File.Exists(path)) AddPath(path);
-                    }
-                foreach(string p in project.CompilerOptions.Additional)
-                    if (p.IndexOfOrdinal("-swf-lib ") == 0) {
-                        string path = project.GetAbsolutePath(p.Substring(9));
-                        if (File.Exists(path)) AddPath(path);
-                    }
+                if (majorVersion < 9)
+                {
+                    // for example: HXML MultipTarget
+                    var value = project.CompilerOptions.Additional.FirstOrDefault(it => it.StartsWithOrdinal("-swf-version "));
+                    if (value != null) ParseVersion(value.Substring("-swf-version ".Length), ref majorVersion, ref minorVersion);
+                }
+                if (majorVersion >= 9)
+                {
+                    foreach(LibraryAsset asset in project.LibraryAssets)
+                        if (asset.IsSwc)
+                        {
+                            var path = project.GetAbsolutePath(asset.Path);
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                    foreach(var line in project.CompilerOptions.Additional)
+                        if (line.StartsWithOrdinal("-swf-lib ")) {
+                            var path = project.GetAbsolutePath(line.Substring(9/*"-swf-lib ".Length*/));
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                        else if (line.StartsWithOrdinal("-swf-lib-extern "))
+                        {
+                            var path = project.GetAbsolutePath(line.Substring(16/*"-swf-lib-extern ".Length*/));
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                }
             }
 
             // add haxe libraries
@@ -575,7 +580,7 @@ namespace HaXeContext
             }
 
             // add external pathes
-            List<PathModel> initCP = classPath;
+            var initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
             {
@@ -584,7 +589,7 @@ namespace HaXeContext
             }
 
             // add user pathes from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
@@ -595,7 +600,7 @@ namespace HaXeContext
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
 
-            // add current temporaty path
+            // add current temporary path
             if (temporaryPath != null)
             {
                 string tempPath = temporaryPath;
@@ -606,26 +611,26 @@ namespace HaXeContext
 
             resolvingDot = false;
             resolvingFunction = false;
-            if (completionModeHandler == null) 
+            if (completionModeHandler is null) 
                 OnCompletionModeChange();
         }
 
-        private string GetHaxeTarget(string platformName)
+        string GetHaxeTarget(string platformName)
         {
             if (!PlatformData.SupportedLanguages.ContainsKey("haxe")) return null;
             var haxeLang = PlatformData.SupportedLanguages["haxe"];
-            if (haxeLang == null) return null;
+            if (haxeLang is null) return null;
             foreach (var platform in haxeLang.Platforms.Values)
                 if (platform.Name == platformName) return platform.HaxeTarget;
             return null;
         }
 
-        private void AppendPath(ContextSetupInfos contextSetup, string path)
+        void AppendPath(ContextSetupInfos contextSetup, string path)
         {
             foreach(string cp in contextSetup.Classpath) 
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
                     return;
-            if (contextSetup.AdditionalPaths == null) contextSetup.AdditionalPaths = new List<string>();
+            if (contextSetup.AdditionalPaths is null) contextSetup.AdditionalPaths = new List<string>();
             foreach (string cp in contextSetup.AdditionalPaths)
                 if (path.Equals(cp, StringComparison.OrdinalIgnoreCase))
                     return;
@@ -694,7 +699,7 @@ namespace HaXeContext
         {
             if (!pathModel.ValidatePackage) return true;
             var path = Path.GetDirectoryName(aFile.FileName);
-            if (path == null || !path.StartsWith(pathModel.Path, StringComparison.OrdinalIgnoreCase)) return false;
+            if (path is null || !path.StartsWith(pathModel.Path, StringComparison.OrdinalIgnoreCase)) return false;
             var package = path.Length <= pathModel.Path.Length ? "" : path.Substring(pathModel.Path.Length + 1).Replace('/', '.').Replace('\\', '.');
             return (aFile.Package == package);
         }
@@ -704,7 +709,7 @@ namespace HaXeContext
         {
             result.haXe = true;
             base.GetCodeModel(result, src, scriptMode);
-            if (result.Members != null)
+            // members
             {
                 for (var i = 0; i < result.Members.Count; i++)
                 {
@@ -720,38 +725,95 @@ namespace HaXeContext
                     }
                 }
             }
-            if (result.Classes != null)
+            // classes
             {
-                for (int i = 0, length = result.Classes.Count; i < length; i++)
+                var isHaxe4 = GetCurrentSDKVersion() >= "4.0.0";
+                for (var i = 0; i < result.Classes.Count; i++)
                 {
                     var @class = result.Classes[i];
                     var flags = @class.Flags;
                     if ((flags & FlagType.Abstract) != 0)
                     {
                         var meta = @class.MetaDatas;
-                        if (meta != null && meta.Any(it => it.Name == ":enum"))
+                        if (meta is null || meta.All(it => it.Name != ":enum")) continue;
+                        /**
+                         * transform
+                         * @:enum abstract AType(T) {
+                         *     var Value;
+                         * }
+                         * to
+                         * @:enum abstract AType(T) {
+                         *     public static var Value;
+                         * }
+                         */
+                        for (int index = 0, count = @class.Members.Count; index < count; index++)
                         {
-                            /**
-                             * transform
-                             * @:enum abstract AType(T) {
-                             *     var Value;
-                             * }
-                             * to
-                             * @:enum abstract AType(T) {
-                             *     public static var Value;
-                             * }
-                             */
-                            for (int index = 0, count = @class.Members.Count; index < count; index++)
+                            var member = @class.Members[index];
+                            if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                            member.Flags = FlagType.Enum | FlagType.Static | (FlagType) HaxeFlagType.Inline | FlagType.Variable;
+                            member.Access = Visibility.Public;
+                            if (string.IsNullOrEmpty(member.Type)) member.Type = @class.Type;
+                            member.InFile = @class.InFile;
+                            if (isHaxe4 && member.Value is null)
                             {
-                                var member = @class.Members[index];
-                                if (!member.Flags.HasFlag(FlagType.Variable)) continue;
-                                member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
-                                member.Access = Visibility.Public;
-                                if (string.IsNullOrEmpty(member.Type)) member.Type = @class.Type;
-                                member.InFile = @class.InFile;
+                                @class.ResolveExtends();
+                                var extends = @class;
+                                while (!extends.IsVoid())
+                                {
+                                    switch (extends.Name)
+                                    {
+                                        case "String":
+                                            /**
+                                             * for example:
+                                             * transform
+                                             * enum abstract AString(String) {
+                                             *     var A;
+                                             * }
+                                             * to
+                                             * enum abstract AString(String) {
+                                             *     var A = "A";
+                                             * }
+                                             */
+                                            member.Value = $"\"{member.Name}\"";
+                                            extends = ClassModel.VoidClass;
+                                            break;
+                                        case "Int":
+                                            /**
+                                             * for example:
+                                             * transform
+                                             * enum abstract AString(Int) {
+                                             *     var A;
+                                             *     var B;
+                                             *     var C = 5;
+                                             *     var D;
+                                             * }
+                                             * to
+                                             * enum abstract AString(Int) {
+                                             *     var A = 0;
+                                             *     var B = 1;
+                                             *     var C = 5;
+                                             *     var D = 6;
+                                             * }
+                                             */
+                                            var prevIndex = index;
+                                            while (--prevIndex >= 0)
+                                            {
+                                                var prevMember = @class.Members[prevIndex];
+                                                if (!prevMember.Flags.HasFlag(FlagType.Variable)) continue;
+                                                if (int.TryParse(prevMember.Value, out var value))
+                                                    member.Value = (value + 1).ToString();
+                                                break;
+                                            }
+                                            if (member.Value is null) member.Value = "0";
+                                            extends = ClassModel.VoidClass;
+                                            break;
+                                    }
+                                    extends = extends.Extends;
+                                }
                             }
                         }
                     }
+                    else if ((flags & FlagType.Enum) != 0) @class.ExtendsType = "EnumValue";
                     else if (flags == FlagType.Class && @class.Members.Count > 0)
                     {
                         /**
@@ -804,13 +866,11 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => haxeSettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
-        public SemVer GetCurrentSDKVersion()
-        {
-            var sdk = GetCurrentSDK();
-            return sdk != null ? new SemVer(sdk.Version) : SemVer.Zero;
-        }
+        InstalledSDK GetCurrentSDK() => (context.Settings ?? settings).InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
+
+        public SemVer GetCurrentSDKVersion() => GetCurrentSDK() is { } sdk ? new SemVer(sdk.Version) : SemVer.Zero;
+
         #endregion
 
         #region class resolution
@@ -830,8 +890,7 @@ namespace HaXeContext
             var tmp = inClass;
             while (!tmp.IsVoid())
             {
-                if (tmp == withClass)
-                    return Visibility.Public | Visibility.Private;
+                if (tmp == withClass) return Visibility.Public | Visibility.Private;
                 tmp = tmp.Extends;
             }
             return Visibility.Public;
@@ -861,7 +920,7 @@ namespace HaXeContext
                     if (aFile.Classes.Count > 0 && !aFile.Classes[0].IsVoid())
                         foreach (ClassModel aClass in aFile.Classes)
                         {
-                            if (aClass.IndexType == null
+                            if (aClass.IndexType is null
                                 && (aClass.Access == Visibility.Public
                                     || (aClass.Access == Visibility.Internal && aClass.InFile.Package == package)))
                             {
@@ -874,21 +933,17 @@ namespace HaXeContext
                         }
                     // HX files correspond to a "module" which should appear in code completion
                     // (you don't import classes defined in modules but the module itself)
-                    if (needModule)
+                    if (needModule && aFile.FullPackage is { } qmodule)
                     {
-                        string qmodule = aFile.FullPackage;
-                        if (qmodule != null)
-                        {
-                            item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
-                            fullList.Add(item);
-                        }
+                        item = new MemberModel(qmodule, qmodule, FlagType.Class | FlagType.Module, Visibility.Public);
+                        fullList.Add(item);
                     }
                     return true;
                 });
             }
             // display imported classes and classes declared in imported modules
-            MemberList imports = ResolveImports(cFile);
-            FlagType mask = FlagType.Class | FlagType.Enum;
+            var imports = ResolveImports(cFile);
+            const FlagType mask = FlagType.Class | FlagType.Enum;
             foreach (MemberModel import in imports)
             {
                 if ((import.Flags & mask) > 0)
@@ -904,7 +959,7 @@ namespace HaXeContext
             }
 
             if (cFile != null)
-                foreach(ClassModel aClass in cFile.Classes)
+                foreach(var aClass in cFile.Classes)
                     fullList.Add(aClass.ToMemberModel());
 
             // in cache
@@ -942,7 +997,7 @@ namespace HaXeContext
                         }
                     }
                 }
-                if (insert == null) return false;
+                if (insert is null) return false;
                 if (trigger == '.')
                 {
                     sci.InsertText(position + text.Length, insert.Substring(1));
@@ -970,36 +1025,14 @@ namespace HaXeContext
                 return completionCache.Imports;
 
             var imports = new MemberList();
-            if (inFile == null) return imports;
+            if (inFile is null) return imports;
             foreach (MemberModel item in inFile.Imports)
             {
                 if (item.Name != "*") ResolveImport(item, imports);
                 else
                 {
-                    var cname = item.Type.Substring(0, item.Type.Length - 2);
-                    // classes matching wildcard
-                    var matches = ResolvePackage(cname, false);
-                    if (matches != null)
-                    {
-                        imports.Add(matches.Imports);
-                        imports.Add(matches.Members);
-                    }
-                    else
-                    {
-                        var model = ResolveType(cname, null);
-                        if (!model.IsVoid())
-                        {
-                            var access = TypesAffinity(model, Context.CurrentClass);
-                            foreach (MemberModel member in model.Members)
-                            {
-                                if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
-                                {
-                                    member.InFile = model.InFile;
-                                    imports.Add(member);
-                                }
-                            }
-                        }
-                    }
+                    var package = item.Type.Substring(0, item.Type.Length - 2);
+                    ResolveImports(package, imports);
                 }
             }
 
@@ -1024,7 +1057,7 @@ namespace HaXeContext
                     for (var i = 0; i < imports.Count; i++)
                     {
                         var import = imports[i].Type;
-                        if (import == null) continue;
+                        if (import is null) continue;
                         var p1 = import.LastIndexOf('.');
                         if (p1 == -1) continue;
                         var lpart = import.Substring(0, p1);
@@ -1032,10 +1065,10 @@ namespace HaXeContext
                         if (p2 != -1) lpart = import.Substring(p2 + 1);
                         if (char.IsLower(lpart[0])) continue;
                         var type = ResolveType(lpart, Context.CurrentModel);
-                        if (type.IsVoid() || type.Members.Count <= 0) continue;
+                        if (type.IsVoid() || type.Members.Count == 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
-                        if (member == null) continue;
+                        if (member is null) continue;
                         member = (MemberModel) member.Clone();
                         member.InFile = type.InFile;
                         imports[i] = member;
@@ -1045,7 +1078,31 @@ namespace HaXeContext
             return imports;
         }
 
-        private void ResolveImport(MemberModel item, MemberList imports)
+        void ResolveImports(string package, MemberList result)
+        {
+            var matches = ResolvePackage(package, false);
+            if (matches != null)
+            {
+                result.Add(matches.Imports);
+                result.Add(matches.Members);
+            }
+            else
+            {
+                var model = ResolveType(package, null);
+                if (model.IsVoid()) return;
+                var access = TypesAffinity(model, Context.CurrentClass);
+                foreach (MemberModel member in model.Members)
+                {
+                    if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
+                    {
+                        member.InFile = model.InFile;
+                        result.Add(member);
+                    }
+                }
+            }
+        }
+
+        void ResolveImport(MemberModel item, MemberList imports)
         {
             if (settings.LazyClasspathExploration)
             {
@@ -1053,8 +1110,7 @@ namespace HaXeContext
                 return;
             }
             // HX files are "modules": when imported all the classes contained are available
-            string fileName = item.Type.Replace(".", dirSeparator) + ".hx";
-
+            var fileName = item.Type.Replace(".", dirSeparator) + ".hx";
             if (fileName.StartsWithOrdinal("flash" + dirSeparator))
             {
                 if (haxeTarget != "flash" || majorVersion > 8) // flash9 remap
@@ -1062,32 +1118,40 @@ namespace HaXeContext
                 else
                     fileName = FLASH_OLD + fileName.Substring(5);
             }
-
-            bool matched = false;
-            foreach (PathModel aPath in classPath)
+            var isUsing = item.Flags.HasFlag(FlagType.Using);
+            var matched = false;
+            foreach (var aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
                     var path = aPath.Path + dirSeparator + fileName;
 
                     // cached file
-                    if (aPath.TryGetFile(path, out var file))
+                    if (!aPath.TryGetFile(path, out var file)) continue;
+                    if (file.Context != this)
                     {
-                        if (file.Context != this)
-                        {
-                            // not associated with this context -> refresh
-                            file.OutOfDate = true;
-                            file.Context = this;
-                        }
-
-                        // add all public classes of Haxe modules
-                        foreach (ClassModel c in file.Classes)
-                            if (c.IndexType == null && c.Access == Visibility.Public)
-                                imports.Add(c);
-                        matched = true;
+                        // not associated with this context -> refresh
+                        file.OutOfDate = true;
+                        file.Context = this;
                     }
+
+                    // add all public classes of Haxe modules
+                    for (var i = 0; i < file.Classes.Count; i++)
+                    {
+                        var c = file.Classes[i];
+                        if (c.IndexType is null && c.Access == Visibility.Public)
+                        {
+                            if (isUsing)
+                            {
+                                c = (ClassModel) c.Clone();
+                                c.Flags |= FlagType.Using;
+                            }
+                            imports.Add(c);
+                        }
+                    }
+                    matched = true;
                 }
 
-            if (!matched) imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+            if (!matched) imports.Add(item);
         }
 
         /// <summary>
@@ -1100,14 +1164,14 @@ namespace HaXeContext
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
-            if (member.InFile?.Package == CurrentModel.Package) return true;
+            if (member.InFile?.BasePath == CurrentModel.BasePath) return true;
             var name = member.Name;
             var p = name.IndexOf('#');
             if (p > 0) name = name.Substring(0, p);
             var type = member.Type;
             var isShortType = name == type;
             var curFile = Context.CurrentModel;
-            var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
+            var imports = curFile.Imports.Concat(ResolveDefaults(curFile.Package)).ToArray();
             foreach (var import in imports)
             {
                 if ((isShortType && import.Name == name) || import.Type == type) return true;
@@ -1126,9 +1190,40 @@ namespace HaXeContext
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // unknown type
-            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
+            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath is null)
                 return ClassModel.VoidClass;
-            
+            // for example: {x:Int}
+            if (cname.StartsWith('{'))
+            {
+                var genCount = 0;
+                var isEmpty = true;
+                // transform {x:Int} to class AnonymousType { public var x:Int; }
+                var sb = new StringBuilder("class AnonymousStructure {public var ");
+                for (var i = 1; i < cname.Length - 1; i++)
+                {
+                    var c = cname[i];
+                    sb.Append(c);
+                    if (c == '<')
+                    {
+                        genCount++;
+                        isEmpty = false;
+                    }
+                    else if (c == '>') genCount--;
+                    else if (c == ',' && genCount == 0)
+                    {
+                        sb.Append(" public var");
+                        isEmpty = false;
+                    }
+                    else if (char.IsLetterOrDigit(c)) isEmpty = false;
+                }
+                if (isEmpty) return ResolveType(features.dynamicKey, null);
+                sb.Append('}');
+                var model = GetCodeModel(sb.ToString());
+                var result = model.Classes.First();
+                result.Type = cname;
+                result.Flags = FlagType.Struct;
+                return result;
+            }
             // handle generic types
             if (cname.Contains('<'))
             {
@@ -1222,10 +1317,7 @@ namespace HaXeContext
                     return ResolveType(features.arrayKey, inFile);
                 }
                 if (first == '{' && last == '}')
-                {
-                    //TODO: parse anonymous type
-                    return ResolveType(features.dynamicKey, inFile);
-                }
+                    return ResolveType(features.dynamicKey, null);
                 if (first == '(' && last == ')')
                 {
                     if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
@@ -1307,7 +1399,7 @@ namespace HaXeContext
         /// <summary>
         /// Retrieve/build typed copies of generic types
         /// </summary>
-        private ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
+        ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
         {
             ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
@@ -1376,7 +1468,7 @@ namespace HaXeContext
         /// </summary>
         protected override void InitTopLevelElements()
         {
-            string filename = "toplevel.hx";
+            var filename = "toplevel.hx";
             topLevel = new FileModel(filename);
 
             // search top-level declaration
@@ -1394,7 +1486,7 @@ namespace HaXeContext
             if (File.Exists(filename))
             {
                 // copy declarations as file-level
-                ClassModel tlClass = topLevel.GetPublicClass();
+                var tlClass = topLevel.GetPublicClass();
                 if (!tlClass.IsVoid())
                 {
                     topLevel.Members = tlClass.Members;
@@ -1403,13 +1495,9 @@ namespace HaXeContext
                 }
             }
             // not found
-            else
-            {
-                //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-            }
 
-            topLevel.Members.Add(new MemberModel("this", "", FlagType.Variable, Visibility.Public));
-            topLevel.Members.Add(new MemberModel("super", "", FlagType.Variable, Visibility.Public));
+            topLevel.Members.Add(new MemberModel(features.ThisKey, "", FlagType.Variable, Visibility.Public));
+            topLevel.Members.Add(new MemberModel(features.BaseKey, "", FlagType.Variable, Visibility.Public));
             //topLevel.Members.Add(new MemberModel("Void", "", FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
@@ -1435,7 +1523,7 @@ namespace HaXeContext
         /// </summary>
         /// <param name="package">Package path</param>
         /// <returns>Imported classes list (not null)</returns>
-        private MemberList ResolveDefaults(string package)
+        MemberList ResolveDefaults(string package)
         {
             var result = new MemberList();
             if (GetCurrentSDKVersion() < "3.3.0") return result;
@@ -1447,7 +1535,32 @@ namespace HaXeContext
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
                     if (!it.TryGetFile(path, out var model)) continue;
-                    result.Add(model.Imports);
+                    foreach (MemberModel import in model.Imports)
+                    {
+                        // for example: using package.Type;
+                        if ((import.Flags & FlagType.Using) != 0)
+                        {
+                            /**
+                             * The static extension keyword using implies the effect of import.
+                             * https://haxe.org/manual/type-system-import.html
+                             */
+                            it.ForeachFile(file =>
+                            {
+                                if (file.FullPackage != import.Type) return true;
+                                foreach (var @class in file.Classes)
+                                {
+                                    var type = (ClassModel) @class.Clone();
+                                    type.Flags |= FlagType.Using;
+                                    result.Merge(type);
+                                }
+                                return false;
+                            });
+                        }
+                        // for example: import package.Type;
+                        else if (import.Name != "*") result.Add(import);
+                        // for example: import package.*;
+                        else ResolveImports(import.Type.Substring(0, import.Type.Length - 2), result);
+                    }
                     break;
                 }
                 if (string.IsNullOrEmpty(packagePath)) break;
@@ -1456,17 +1569,150 @@ namespace HaXeContext
             return result;
         }
 
+        /// <summary>
+        /// https://haxe.org/manual/lf-static-extension.html
+        /// </summary>
+        /// <param name="type">Type for which need to find extension methods</param>
+        /// <param name="inFile">Current file</param>
+        /// <param name="result">A new ClassModel with extension methods or the original ClassModel if no extension are found</param>
+        /// <returns>True if extension are found</returns>
+        internal static bool TryResolveStaticExtensions(ClassModel type, FileModel inFile, out ClassModel result)
+        {
+            result = type;
+            var imports = Context.ResolveImports(inFile);
+            if ((type.Flags & FlagType.Enum) != 0 && (type.Flags & FlagType.Abstract) == 0
+                && Context.ResolveType("haxe.EnumTools.EnumValueTools", null) is { } @using && !@using.IsVoid())
+            {
+                @using = (ClassModel)@using.Clone();
+                @using.Flags |= FlagType.Using;
+                imports.Add(@using);
+            }
+            if (imports.Count == 0) return false;
+            var extensions = new MemberList();
+            for (var i = imports.Count - 1; i >= 0; i--)
+            {
+                {
+                    if (imports[i] is { } import && !(import is ClassModel) && (import.Flags & FlagType.Using) != 0)
+                    {
+                        imports[i] = Context.ResolveType(import.Type, Context.CurrentModel);
+                        imports[i].Flags |= FlagType.Using;
+                    }
+                }
+                {
+                    if (imports[i] is ClassModel import && (import.Flags & FlagType.Using) != 0 && import.Members.Count > 0)
+                    {
+                        var access = Context.TypesAffinity(type, import);
+                        var extends = type;
+                        extends.ResolveExtends();
+                        while (!extends.IsVoid())
+                        {
+                            foreach (MemberModel member in import.Members)
+                            {
+                                if ((member.Access & access) == 0
+                                    || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
+                                    || member.Parameters.IsNullOrEmpty()
+                                    || extensions.Contains(member.Name, 0, 0)
+                                    || !CanBeExtended(extends, member, access)) continue;
+                                // transform `extensionMethod(target:Type, ...params)` to `extensionMethod(...params)`
+                                var extension = (MemberModel)member.Clone();
+                                extension.Parameters.RemoveAt(0);
+                                extension.Flags = FlagType.Dynamic | FlagType.Function | FlagType.Using;
+                                extension.InFile = import.InFile;
+                                extensions.Add(extension);
+                            }
+                            extends = extends.Extends;
+                        }
+                    }
+                }
+            }
+            if (extensions.Count == 0) return false;
+            result = (ClassModel) type.Clone();
+            result.Members.Merge(extensions);
+            return true;
+            // Utils
+            bool CanBeExtended(ClassModel target, MemberModel extension, Visibility access)
+            {
+                var firstParamType = extension.Parameters[0].Type;
+                if (string.IsNullOrEmpty(firstParamType)) return false;
+                if (!string.IsNullOrEmpty(extension.Template) && Context.ResolveType(firstParamType, null).IsVoid())
+                {
+                    // transform methodName<T:ConcreteType>(a:T, b) to methodName<T:ConcreteType>(a:ConcreteType, b)
+                    var template = extension.Template.Substring(1, extension.Template.Length - 2);
+                    var parts = Context is Context ctx && ctx.GetCurrentSDKVersion() >= "4.0.0"
+                        ? template.Split(new[] {'&'}, StringSplitOptions.RemoveEmptyEntries)
+                        : template.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var part in parts)
+                    {
+                        if (!part.Contains(':')) continue;
+                        var templateToType = part.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries);
+                        if (templateToType[0] != firstParamType) continue;
+                        if (templateToType.Length == 2) firstParamType = templateToType[1];
+                        break;
+                    }
+                }
+                if ((target.Flags & FlagType.Enum) != 0 && (target.Flags & FlagType.Abstract) == 0 && firstParamType == "EnumValue")
+                {
+                }
+                else if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
+                {
+                    var targetType = type.Type;
+                    var index = targetType.IndexOf('<');
+                    if (index != -1) targetType = targetType.Remove(index);
+                    index = firstParamType.IndexOf('<');
+                    if (index != -1) firstParamType = firstParamType.Remove(index);
+                    if (firstParamType != targetType)
+                    {
+                        /**
+                         * for example:
+                         * typedef Typedef = {
+                         *     x:Int,
+                         *     y:Int,
+                         * }
+                         *
+                         * class Point {
+                         *     var x:Int = 0;
+                         *     var x:Int = 0;
+                         * }
+                         *
+                         * ...
+                         * using Example;
+                         * class Example {
+                         *     static function extensionMethod(to:Typedef, ...args) {}
+                         *
+                         *     function f(p:Point) {
+                         *         p.extensionMethod();
+                         *     }
+                         * }
+                         */
+                        var paramType = Context.ResolveType(firstParamType, null);
+                        if (!paramType.Flags.HasFlag(FlagType.TypeDef)) return false;
+                        foreach (MemberModel typedefMember in paramType.Members)
+                        {
+                            if (!type.Members.Contains(typedefMember.Name, typedefMember.Flags, 0)) return false;
+                        }
+                    }
+                }
+                while (!target.IsVoid())
+                {
+                    var model = target.Members.Search(extension.Name, 0, access);
+                    if (model != null && (model.Flags & FlagType.Static) == 0) return false;
+                    target = target.Extends;
+                }
+                return true;
+            }
+        }
+
         public override string GetDefaultValue(string type)
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
-            switch (type)
+            return type switch
             {
-                case "Int":
-                case "UInt": return "0";
-                case "Float": return "Math.NaN";
-                case "Bool": return "false";
-                default: return "null";
-            }
+                "Int" => "0",
+                "UInt" => "0",
+                "Float" => "Math.NaN",
+                "Bool" => "false",
+                _ => "null",
+            };
         }
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
@@ -1577,7 +1823,7 @@ namespace HaXeContext
         /// <summary>
         /// Checks completion mode changes to start/restart/stop the haXe completion server if needed.
         /// </summary>
-        private void OnCompletionModeChange()
+        void OnCompletionModeChange()
         {
             if (completionModeHandler != null)
             {
@@ -1622,9 +1868,9 @@ namespace HaXeContext
             completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
         }
 
-        /**
-         * Gets the needed information to create a haxe.exe process with the given arguments.
-         */
+        /// <summary>
+        /// Gets the needed information to create a haxe.exe process with the given arguments.
+        /// </summary>
         internal ProcessStartInfo CreateHaxeProcessInfo(string args)
         {
             // compiler path
@@ -1632,8 +1878,7 @@ namespace HaXeContext
             var process = Path.Combine(hxPath, "haxe.exe");
             if (!File.Exists(process) && (GetCurrentSDK()?.IsHaxeShim ?? false))
                 process = Path.Combine(hxPath, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
-            if (!File.Exists(process))
-                return null;
+            if (!File.Exists(process)) return null;
 
             // Prepare process information
             var procInfo = new ProcessStartInfo();
@@ -1696,7 +1941,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.MEMBERS:
-                    if (result.Members != null && result.Members.Count > 0)
+                    if (!result.Members.IsNullOrEmpty())
                         ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
                     break;
 
@@ -1708,12 +1953,13 @@ namespace HaXeContext
 
         public override void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
-            if (expression.IsStatic && expression.Type is ClassModel type)
+            if (expression.IsStatic && expression.Type is { } type)
             {
+                // Attempt to add callback `new` into `result`
                 if (type.Flags == FlagType.Class)
                 {
                     var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
-                    if (member == null)
+                    if (member is null)
                     {
                         type.ResolveExtends();
                         while (!(type = type.Extends).IsVoid())
@@ -1729,7 +1975,7 @@ namespace HaXeContext
                         result.Add(member);
                     }
                 }
-                if (type.InFile is FileModel file && file.Classes.Count > 1 && type == GetPublicClass(file))
+                if (type.InFile is { } file && file.Classes.Count > 1 && type == GetPublicClass(file))
                 {
                     // add sub-types
                     foreach (var it in file.Classes)
@@ -1774,7 +2020,7 @@ namespace HaXeContext
         public override MemberList GetTopLevelElements()
         {
             GetVisibleExternalElements(); // update cache if needed
-            if (topLevel == null) return hxCompletionCache.OtherElements;
+            if (topLevel is null) return hxCompletionCache.OtherElements;
             var items = new MemberList();
             if (topLevel.OutOfDate) InitTopLevelElements();
             items.Add(topLevel.Members);
@@ -1786,13 +2032,13 @@ namespace HaXeContext
         public override void ResolveTopLevelElement(string token, ASResult result)
         {
             var list = GetTopLevelElements();
-            if (list != null && list.Count > 0)
+            if (!list.IsNullOrEmpty())
             {
                 var items = list.MultipleSearch(token, 0, 0);
                 if (items.Count == 1)
                 {
                     var item = items[0];
-                    result.InClass = ClassModel.VoidClass;
+                    result.RelClass = result.InClass = Context.CurrentClass ?? ClassModel.VoidClass;
                     result.InFile = item.InFile;
                     result.Member = item;
                     result.Type = ResolveType(item.Type, item.InFile);
@@ -1884,7 +2130,7 @@ namespace HaXeContext
                 completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is ScintillaControl sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
                 {
                     try
                     {
@@ -1904,13 +2150,13 @@ namespace HaXeContext
         /// <param name="result"></param>
         static void TryAddEnums(ClassModel model, MemberList result)
         {
-            if (model == null || model.IsVoid()) return;
-            if (model.IsEnum())
+            if (model is null || model.IsVoid()) return;
+            if (model.Flags.HasFlag(FlagType.Enum))
             {
                 for (var i = 0; i < model.Members.Count; i++)
                 {
                     var member = model.Members[i];
-                    if (member.Type == null || model.InFile == null)
+                    if (member.Type is null || model.InFile is null)
                     {
                         member = (MemberModel) member.Clone();
                         member.Type = model.Type;
@@ -1922,7 +2168,7 @@ namespace HaXeContext
             else if (model.Flags.HasFlag(FlagType.Abstract))
             {
                 var meta = model.MetaDatas;
-                if (meta == null || meta.All(it => it.Name != ":enum")) return;
+                if (meta is null || meta.All(it => it.Name != ":enum")) return;
                 foreach (MemberModel member in model.Members)
                 {
                     if (member.Flags.HasFlag(FlagType.Variable)) result.Add(member);
@@ -1930,12 +2176,7 @@ namespace HaXeContext
             }
         }
 
-        /// <summary>
-        /// Let contexts handle code completion
-        /// </summary>
-        /// <param name="sci">Scintilla control</param>
-        /// <param name="expression">Completion context</param>
-        /// <returns>Null (not handled) or function signature</returns>
+        /// <inheritdoc />
         public override MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
             if (resolvingFunction || haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
@@ -1983,9 +2224,26 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
+            var position = ASComplete.ExpressionEndPosition(sci, expression.Position);
+            if (position != expression.Position) expression = ASComplete.GetExpressionType(sci, position, false, true).Context;
+            if (classPath != null && expression.Value is { } fullPackage)
+            {
+                foreach (var pathModel in classPath)
+                {
+                    if (!pathModel.IsValid || pathModel.Updating) continue;
+                    var isFound = false;
+                    pathModel.ForeachFile(model =>
+                    {
+                        if (model.FullPackage != fullPackage) return true;
+                        PluginBase.MainForm.OpenEditableDocument(model.FileName);
+                        isFound = true;
+                        return false;
+                    });
+                    if (isFound) return true;
+                }
+            }
             if (haxeSettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion() < "3.2.0")
                 return false;
-
             var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
             hc.GetPosition(OnPositionResult);
             return true;
@@ -1995,15 +2253,12 @@ namespace HaXeContext
         {
             if (hc.Sci.InvokeRequired)
             {
-                hc.Sci.BeginInvoke((MethodInvoker)delegate
-                {
-                    HandlePositionResult(hc, result, status); 
-                });
+                hc.Sci.BeginInvoke((MethodInvoker)(() => HandlePositionResult(hc, result, status)));
             }
             else HandlePositionResult(hc, result, status); 
         }
 
-        private void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
+        static void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
@@ -2012,7 +2267,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.POSITION:
-                    if (result == null) return;
+                    if (result is null || string.IsNullOrEmpty(result.Path)) return;
 
                     ASComplete.SaveLastLookupPosition(hc.Sci);
 
@@ -2030,9 +2285,7 @@ namespace HaXeContext
 
         public static string TemporaryOutputFile;
 
-        /// <summary>
-        /// Retrieve the context's default compiler path
-        /// </summary>
+        /// <inheritdoc />
         public override string GetCompilerPath() => GetCurrentSDK()?.Path ?? haxeSettings.GetDefaultSDK().Path;
 
         /// <summary>
@@ -2068,10 +2321,8 @@ namespace HaXeContext
         /// <param name="append">Additional comiler switches</param>
         public override void RunCMD(string append)
         {
-            if (!IsFileValid || !File.Exists(CurrentFile))
-                return;
-
-            string haxePath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
+            if (!IsFileValid || !File.Exists(CurrentFile)) return;
+            var haxePath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
             if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
@@ -2083,26 +2334,26 @@ namespace HaXeContext
             try
             {
                 // save modified files if needed
-                if (outputFile != null) MainForm.CallCommand("SaveAllModified", null);
-                else MainForm.CallCommand("SaveAllModified", ".hx");
+                if (outputFile is null) MainForm.CallCommand("SaveAllModified", ".hx");
+                else MainForm.CallCommand("SaveAllModified", null);
 
                 // change current directory
-                string currentPath = Directory.GetCurrentDirectory();
-                string filePath = temporaryPath ?? Path.GetDirectoryName(cFile.FileName);
+                var currentPath = Directory.GetCurrentDirectory();
+                var filePath = temporaryPath ?? Path.GetDirectoryName(cFile.FileName);
                 filePath = NormalizePath(filePath);
                 Directory.SetCurrentDirectory(filePath);
                 
                 // prepare command
-                string command = haxePath;
+                var command = haxePath;
                 if (Path.GetExtension(command) == "") command = Path.Combine(command, "haxe.exe");
 
                 command += ";";
                 if (cFile.Package.Length > 0) command += cFile.Package + ".";
-                string cname = cFile.GetPublicClass().Name;
+                var cname = cFile.GetPublicClass().Name;
                 if (cname.IndexOf('<') is var p && p > 0) cname = cname.Substring(0, p);
                 command += cname;
 
-                if (haxeTarget == "flash" && (append == null || !append.Contains("-swf-version")))
+                if (haxeTarget == "flash" && (append is null || !append.Contains("-swf-version")))
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(haxeSettings.GetDefaultSDK().Path);
@@ -2128,20 +2379,17 @@ namespace HaXeContext
         /// </summary>
         public override bool BuildCMD(bool failSilently)
         {
-            if (!File.Exists(CurrentFile))
-                return false;
+            if (!File.Exists(CurrentFile)) return false;
             // check if @haxe is defined
             Match mCmd = null;
             if (IsFileValid)
             {
-                var cClass = cFile.GetPublicClass();
-                if (cFile.Comments != null)
-                    mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
-                if ((mCmd == null || !mCmd.Success) && cClass.Comments != null)
+                if (cFile.Comments != null) mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
+                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is { } cClass && cClass.Comments != null)
                     mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             }
 
-            if (mCmd == null || !mCmd.Success)
+            if (mCmd is null || !mCmd.Success)
             {
                 if (!failSilently)
                 {
@@ -2177,7 +2425,7 @@ namespace HaXeContext
                         var op = mPar[i].Groups["switch"].Value;
                         int start = mPar[i].Index + mPar[i].Length;
                         int end = (mPar.Count > i + 1) ? mPar[i + 1].Index : start;
-                        if ((op == "-swf") && (outputFile == null) && (mPlayIndex < 0))
+                        if ((op == "-swf") && (outputFile is null) && (mPlayIndex < 0))
                         {
                             if (end > start)
                                 outputFile = command.Substring(start, end - start).Trim();
@@ -2279,11 +2527,158 @@ namespace HaXeContext
                 var p = StartHiddenProcess(lixPath, "install haxelib:" + item.Key, projectDir);
                 var output = p.StandardOutput.ReadToEnd();
                 var error = p.StandardError.ReadToEnd();
-                if (output != "") TraceManager.Add(output, (int)TraceType.Info);
-                else if (error != "") TraceManager.Add(error, (int)TraceType.Error);
+                if (output.Length != 0) TraceManager.Add(output, (int)TraceType.Info);
+                else if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
                 p.WaitForExit();
                 p.Close();
             }
+        }
+
+        #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <inheritdoc cref="ASContext.OnBraceMatch"/>
+        public override void OnBraceMatch(ScintillaControl sci)
+        {
+            if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
+            var position = sci.CurrentPos - 1;
+            var character = (char)sci.CharAt(position);
+            if (character != '<' && character != '>')
+            {
+                position = sci.CurrentPos;
+                character = (char)sci.CharAt(position);
+            }
+            if (character == '<' || character == '>')
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(sci, position);
+                    if (bracePosEnd != -1) sci.BraceHighlight(bracePosStart, bracePosEnd);
+                    if (sci.UseHighlightGuides)
+                    {
+                        var line = sci.LineFromPosition(position);
+                        sci.HighlightGuide = sci.GetLineIndentation(line);
+                    }
+                }
+                else
+                {
+                    sci.BraceHighlight(-1, -1);
+                    sci.HighlightGuide = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
+        /// </summary>
+        protected internal int BraceMatch(ScintillaControl sci, int position)
+        {
+            if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position)) return -1;
+            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var sub = 0;
+            var genCount = 0;
+            var parCount = 0;
+            switch (sci.CharAt(position))
+            {
+                case '<':
+                    var length = sci.TextLength;
+                    if (position == length) return -1;
+                    switch (sci.CharAt(position + 1))
+                    {
+                        case '=': // a $(EntryPoint)<= b
+                        case '<': // a $(EntryPoint)<< b
+                            return -1;
+                    }
+                    // a <$(EntryPoint)< b
+                    if (sci.CharAt(position - 1) == '<') return -1;
+                    while (position < length)
+                    {
+                        position++;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var c = sci.CharAt(position);
+                        if (c == ';') return -1;
+                        if (c <= ' ') continue;
+                        if (c == '<') sub++;
+                        else if (c == '>')
+                        {
+                            // TParameter-$(EntryPoint)>TReturn
+                            if (sci.CharAt(position - 1) == '-') continue;
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        // Map<Int$(EntryPoint), String>
+                        else if (c == ',') continue;
+                        // Array<Int->$(EntryPoint)?String>
+                        else if (c == '?') continue;
+                        else if (c == '-'
+                            && position < length
+                            // $(EntryPoint)->
+                            && sci.CharAt(position + 1) == '>')
+                            position++;
+                        else if (// a < b $(EntryPoint)||
+                                 c == '|'      
+                                 // a < b $(EntryPoint)&&
+                                 || c == '&'
+                                 // a <$(EntryPoint)= b
+                                 || c == '='
+                                 // a < b$(EntryPoint);
+                                 || c == ';')
+                            return -1;
+                        // Array<Int->$(EntryPoint){v:Type}>
+                        else if (parCount == 0 && c == '{') genCount++;
+                        else if (parCount == 0 && c == '}' && genCount > 0) genCount--;
+                        // Array<$(EntryPoint)(Int->{v:Type})>
+                        else if (genCount == 0 && c == '(') parCount++;
+                        else if (genCount == 0 && c == ')' && parCount > 0) parCount--;
+                        else if (genCount == 0 && parCount == 0 && !characters.Contains((char)c)) return -1;
+                    }
+                    break;
+                case '>':
+                    // -$(EntryPoint)>
+                    if (sci.CharAt(position - 1) == '-') return -1;
+                    // $(EntryPoint)>=
+                    if (sci.CharAt(position + 1) == '=') return -1; 
+                    while (position > 0)
+                    {
+                        position--;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var c = sci.CharAt(position);
+                        if (c == ';') return -1;
+                        if (c <= ' ') continue;
+                        if (c == '>')
+                        {
+                            if (// TParameter->$(EntryPoint)TReturn
+                                sci.CharAt(position - 1) == '-')
+                            {
+                                position--;
+                                continue;
+                            }
+                            sub++;
+                        }
+                        else if (c == '<')
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        // Map<Int,$(EntryPoint) String>
+                        else if (c == ',') continue;
+                        // Array<Int->$(EntryPoint)?String>
+                        else if (c == '?') continue;
+                        // $(EntryPoint)->
+                        else if (c == '-' && sci.CharAt(position + 1) == '>') {}
+                        // Array<Int->{v:Type}$(EntryPoint)>
+                        else if (parCount == 0 && c == '}') genCount++;
+                        else if (parCount == 0 && c == '{' && genCount > 0) genCount--;
+                        // Array<(Int->{v:Type})$(EntryPoint)>
+                        else if (genCount == 0 && c == ')') parCount++;
+                        else if (genCount == 0 && c == '(' && parCount > 0) parCount--;
+                        else if (genCount == 0 && parCount == 0 && !characters.Contains((char)c)) return -1;
+                    }
+                    break;
+            }
+            return -1;
         }
 
         #endregion

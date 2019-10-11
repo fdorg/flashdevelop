@@ -8,8 +8,8 @@ namespace SourceControl.Sources
 {
     class Ignores: List<IgnoreEntry>
     {
-        string root;
-        string ignoreFile;
+        readonly string root;
+        readonly string ignoreFile;
         DateTime lastWrite;
 
         public Ignores(string path, string name)

@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using System.Windows.Forms;
 using PluginCore;
@@ -10,23 +9,17 @@ namespace ProjectManager.Actions
 {
     public class FlashDevelopActions
     {
-        static private bool nameAsked;
-        private IMainForm mainForm;
+        private static bool nameAsked;
+        private readonly IMainForm mainForm;
 
         public FlashDevelopActions(IMainForm mainForm)
         {
             this.mainForm = mainForm;
         }
         
-        public Encoding GetDefaultEncoding()
-        {
-            return Encoding.GetEncoding((Int32)mainForm.Settings.DefaultCodePage);
-        }
+        public Encoding GetDefaultEncoding() => Encoding.GetEncoding((int)mainForm.Settings.DefaultCodePage);
 
-        public string GetDefaultEOLMarker()
-        {
-            return LineEndDetector.GetNewLineMarker((Int32)mainForm.Settings.EOLMode);
-        }
+        public string GetDefaultEOLMarker() => LineEndDetector.GetNewLineMarker((int)mainForm.Settings.EOLMode);
 
         public static void CheckAuthorName()
         {
@@ -36,18 +29,14 @@ namespace ProjectManager.Actions
             {
                 if (arg.Key == "DefaultUser" && arg.Value == "...")
                 {
-                    String caption = TextHelper.GetString("Title.AuthorName");
-                    using (LineEntryDialog prompt = new LineEntryDialog(caption, "Author", ""))
+                    var caption = TextHelper.GetString("Title.AuthorName");
+                    using var prompt = new LineEntryDialog(caption, "Author", "");
+                    if (prompt.ShowDialog() == DialogResult.OK)
                     {
-                        if (prompt.ShowDialog() == DialogResult.OK)
-                        {
-                            arg.Value = prompt.Line;
-                        }
+                        arg.Value = prompt.Line;
                     }
                 }
             }
         }
-
     }
-
 }

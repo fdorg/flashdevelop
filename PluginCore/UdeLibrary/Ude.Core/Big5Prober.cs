@@ -41,9 +41,9 @@ namespace Ude.Core
     public class Big5Prober : CharsetProber
     {
         //void GetDistribution(PRUint32 aCharLen, const char* aStr);
-        private CodingStateMachine codingSM;
-        private BIG5DistributionAnalyser distributionAnalyser;
-        private byte[] lastChar = new byte[2];
+        private readonly CodingStateMachine codingSM;
+        private readonly BIG5DistributionAnalyser distributionAnalyser;
+        private readonly byte[] lastChar = new byte[2];
         
         public Big5Prober()
         {

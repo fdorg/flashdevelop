@@ -4,66 +4,45 @@ using System.Xml;
 
 namespace FlashConnect
 {
-    public delegate void XmlReceivedEventHandler(Object sender, XmlReceivedEventArgs e);
-    public delegate void DataReceivedEventHandler(Object sender, DataReceivedEventArgs e);
+    public delegate void XmlReceivedEventHandler(object sender, XmlReceivedEventArgs e);
+    public delegate void DataReceivedEventHandler(object sender, DataReceivedEventArgs e);
     
     public class DataReceivedEventArgs : EventArgs
     {
-        private String text;
-        private Socket socket;
-
-        public DataReceivedEventArgs(String text, Socket socket) 
+        public DataReceivedEventArgs(string text, Socket socket) 
         {
-            this.text = text;
-            this.socket = socket;
+            Text = text;
+            Socket = socket;
         }
 
         /// <summary>
         /// The message as text
         /// </summary>
-        public String Text 
-        {
-            get { return this.text; }
-        }
+        public string Text { get; }
 
         /// <summary>
         /// The sender of the message
         /// </summary>
-        public Socket Socket
-        {
-            get { return this.socket; }
-        }
-        
+        public Socket Socket { get; }
     }
     
     public class XmlReceivedEventArgs : EventArgs
-    {      
-        private XmlDocument document;
-        private Socket socket;
-
-        public XmlReceivedEventArgs(String text, Socket socket) 
+    {
+        public XmlReceivedEventArgs(string text, Socket socket) 
         {
-            this.socket = socket;
-            this.document = new XmlDocument();
-            this.document.LoadXml(text);
+            Socket = socket;
+            XmlDocument = new XmlDocument();
+            XmlDocument.LoadXml(text);
         }
 
         /// <summary>
         /// The message as xml document
         /// </summary>
-        public XmlDocument XmlDocument 
-        {
-            get { return this.document; }
-        }
-        
+        public XmlDocument XmlDocument { get; }
+
         /// <summary>
         /// The sender of the message
         /// </summary> 
-        public Socket Socket
-        {
-            get { return this.socket; }
-        }
-        
+        public Socket Socket { get; }
     }
-    
 }

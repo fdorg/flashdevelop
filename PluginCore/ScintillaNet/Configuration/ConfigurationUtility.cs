@@ -12,17 +12,15 @@ namespace ScintillaNet.Configuration
     {
         protected Assembly _assembly;
 
-        private const String coloringStart = "<!-- COLORING_START -->";
-        private const String coloringEnd = "<!-- COLORING_END -->";
+        private const string coloringStart = "<!-- COLORING_START -->";
+        private const string coloringEnd = "<!-- COLORING_END -->";
 
         protected virtual byte[] LoadFile(string filename, ConfigFile parent)
         {
-            Stream res;
-            byte[] buf;
-            res = OpenFile(filename, parent);
+            var res = OpenFile(filename, parent);
             if (res != null)
             {
-                buf = new byte[res.Length];
+                var buf = new byte[res.Length];
                 res.Read(buf ,0 ,buf.Length);
                 return buf;
             }
@@ -37,7 +35,7 @@ namespace ScintillaNet.Configuration
             filename = filename.Replace("$(BaseDir)", PathHelper.BaseDir);
             if (File.Exists(filename)) res = new FileStream(filename, FileMode.Open, FileAccess.Read);
             else res = _assembly.GetManifestResourceStream($"{_assembly.GetName().Name}.{filename.Replace("\\", ".")}");
-            if (res == null && parent?.filename != null)
+            if (res is null && parent?.filename != null)
             {
                 int p = parent.filename.LastIndexOf('\\');
                 if (p > 0) return OpenFile($"{parent.filename.Substring(0, p)}\\{filename}", null);
@@ -76,7 +74,6 @@ namespace ScintillaNet.Configuration
         public virtual object LoadConfiguration(Type configType, string filename, ConfigFile parent)
         {
             ConfigFile configFile = null;
-            TextReader textReader = null;
             filename = filename.Replace("$(AppDir)", PathHelper.AppDir);
             filename = filename.Replace("$(UserAppDir)", PathHelper.UserAppDir);
             filename = filename.Replace("$(BaseDir)", PathHelper.BaseDir);
@@ -86,22 +83,22 @@ namespace ScintillaNet.Configuration
                 {
                     try
                     {
-                        String original = File.ReadAllText(filename);
-                        String overriding = File.ReadAllText(filename + ".override");
-                        String tabContent = overriding.Replace("\n", "\n\t\t\t");
-                        Int32 indexStart = original.IndexOfOrdinal(coloringStart);
-                        Int32 indexEnd = original.IndexOfOrdinal(coloringEnd);
+                        string original = File.ReadAllText(filename);
+                        string overriding = File.ReadAllText(filename + ".override");
+                        string tabContent = overriding.Replace("\n", "\n\t\t\t");
+                        int indexStart = original.IndexOfOrdinal(coloringStart);
+                        int indexEnd = original.IndexOfOrdinal(coloringEnd);
                         if (indexStart > -1)
                         {
-                            String replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
-                            String finalContent = original.Replace(replaceTarget, tabContent);
+                            string replaceTarget = original.Substring(indexStart, indexEnd - indexStart + coloringEnd.Length);
+                            string finalContent = original.Replace(replaceTarget, tabContent);
                             File.WriteAllText(filename, finalContent);
                             File.Delete(filename + ".override");
                         }
                     }
                     catch { /* NO ERRORS... */ }
                 }
-                textReader = new StreamReader(filename);
+                TextReader textReader = new StreamReader(filename);
                 configFile = Deserialize(textReader, configType) as ConfigFile;
                 configFile.filename = filename;
                 configFile.init(this, parent);
@@ -133,10 +130,10 @@ namespace ScintillaNet.Configuration
         {
             Scintilla configFile = new Scintilla();
             List<include> includes = new List<include>();
-            for (Int32 i = 0; i < files.Length; i++)
+            foreach (var file in files)
             {
                 include inc = new include();
-                inc.file = files[i];
+                inc.file = file;
                 includes.Add(inc);
             }
             configFile.includes = includes.ToArray();

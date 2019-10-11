@@ -67,7 +67,7 @@ namespace System.Windows.Forms
 			//	This Method replaces the User32 method SendMessage, but will only work for sending
 			//	messages to Managed controls.
 			Control control = Control.FromHandle(hWnd);
-			if (control == null){
+			if (control is null){
 				return IntPtr.Zero;
 			}
 			
@@ -106,11 +106,11 @@ namespace System.Windows.Forms
             return dWord.ToInt32() & 0xffff;
         }
 
-        public static int HiWord(IntPtr dWord){
+        public static int HiWord(IntPtr dWord)
+        {
             if ((dWord.ToInt32() & 0x80000000) == 0x80000000)
                 return (dWord.ToInt32() >> 16);
-            else
-                return (dWord.ToInt32() >> 16) & 0xffff;
+            return (dWord.ToInt32() >> 16) & 0xffff;
         }
  
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts")]
@@ -190,12 +190,8 @@ namespace System.Windows.Forms
 		    	return rect;
 		    }
 		    
-		    public Size Size{
-		        get{
-		            return new Size(this.right - this.left, this.bottom - this.top);
-		        }
-		    }
-		}
+		    public Size Size => new Size(this.right - this.left, this.bottom - this.top);
+        }
 		
 
 #endregion

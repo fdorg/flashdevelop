@@ -9,30 +9,23 @@ namespace AirProperties
 {
     class AndroidManifestManager
     {
-        private const string AndroidNamespace = "http://schemas.android.com/apk/res/android";
+        const string AndroidNamespace = "http://schemas.android.com/apk/res/android";
+        readonly XmlDocument backDoc;
+        XmlNode usesSdkNode;
+        readonly bool removeNamespace;
 
-        private XmlDocument backDoc;
-        private XmlNode usesSdkNode;
-        private UsesPermissionCollection _usesPermissions;
-
-        private bool removeNamespace;
-
-        public UsesPermissionCollection UsesPermissions
-        {
-            get { return _usesPermissions; }
-        }
+        public UsesPermissionCollection UsesPermissions { get; }
 
         public UsesSdkElement UsesSdk { get; set; }
 
-        public AndroidManifestManager()
-            : this(string.Empty)
+        public AndroidManifestManager() : this(string.Empty)
         {
         }
 
         public AndroidManifestManager(string manifest)
         {
 
-            _usesPermissions = new UsesPermissionCollection(this);
+            UsesPermissions = new UsesPermissionCollection(this);
             backDoc = new XmlDocument();
 
             if (!string.IsNullOrEmpty(manifest))
@@ -60,7 +53,7 @@ namespace AirProperties
                             if (maxSdkAttribute != null)
                                 usesPermission.MaxSdkVersion = int.Parse(maxSdkAttribute.Value);
 
-                            _usesPermissions.Add(usesPermission, (XmlElement)node);
+                            UsesPermissions.Add(usesPermission, (XmlElement)node);
 
                             break;
 
@@ -88,8 +81,8 @@ namespace AirProperties
             }
             else
             {
-                XmlElement rootNode = backDoc.CreateElement("manifest");
-                XmlAttribute installLocation = backDoc.CreateAttribute("android", "installLocation", "http://schemas.android.com/apk/res/android");
+                var rootNode = backDoc.CreateElement("manifest");
+                var installLocation = backDoc.CreateAttribute("android", "installLocation", "http://schemas.android.com/apk/res/android");
                 installLocation.Value = "auto";
                 rootNode.Attributes.Append(installLocation);
                 backDoc.AppendChild(rootNode);
@@ -97,63 +90,61 @@ namespace AirProperties
 
         }
 
-        private void SetUsesSdk()
+        void SetUsesSdk()
         {
-            if (usesSdkNode == null && UsesSdk != null)
+            if (usesSdkNode is null && UsesSdk != null)
             {
                 usesSdkNode = backDoc.CreateElement("uses-sdk");
                 backDoc.FirstChild.PrependChild(usesSdkNode);
             }
-            if (usesSdkNode != null)
+            if (usesSdkNode is null) return;
+            if (UsesSdk is null)
             {
-                if (UsesSdk == null)
-                {
-                    backDoc.FirstChild.RemoveChild(usesSdkNode);
-                    usesSdkNode = null;
+                backDoc.FirstChild.RemoveChild(usesSdkNode);
+                usesSdkNode = null;
 
-                    return;
-                }
-
-                var minSdkAttribute = usesSdkNode.Attributes.GetNamedItem("minSdkVersion", AndroidNamespace);
-                var targetSdkAttribute = usesSdkNode.Attributes.GetNamedItem("targetSdkVersion", AndroidNamespace);
-                var maxSdkAttribute = usesSdkNode.Attributes.GetNamedItem("maxSdkVersion", AndroidNamespace);
-
-                if (UsesSdk.MaxSdkVersion > 0)
-                {
-                    if (maxSdkAttribute == null)
-                    {
-                        maxSdkAttribute = backDoc.CreateAttribute("maxSdkVersion", AndroidNamespace);
-                        usesSdkNode.Attributes.Append((XmlAttribute)maxSdkAttribute);
-                    }
-                    maxSdkAttribute.Value = UsesSdk.MaxSdkVersion.ToString();
-                }
-                else if (maxSdkAttribute != null)
-                    usesSdkNode.Attributes.Remove((XmlAttribute) maxSdkAttribute);
-
-                if (UsesSdk.MinSdkVersion > 0)
-                {
-                    if (minSdkAttribute == null)
-                    {
-                        minSdkAttribute = backDoc.CreateAttribute("minSdkVersion", AndroidNamespace);
-                        usesSdkNode.Attributes.Append((XmlAttribute)minSdkAttribute);
-                    }
-                    minSdkAttribute.Value = UsesSdk.MinSdkVersion.ToString();
-                }
-                else if (minSdkAttribute != null)
-                    usesSdkNode.Attributes.Remove((XmlAttribute)minSdkAttribute);
-
-                if (UsesSdk.TargetSdkVersion > 0)
-                {
-                    if (targetSdkAttribute == null)
-                    {
-                        targetSdkAttribute = backDoc.CreateAttribute("targetSdkVersion", AndroidNamespace);
-                        usesSdkNode.Attributes.Append((XmlAttribute)targetSdkAttribute);
-                    }
-                    targetSdkAttribute.Value = UsesSdk.TargetSdkVersion.ToString();
-                }
-                else if (targetSdkAttribute != null)
-                    usesSdkNode.Attributes.Remove((XmlAttribute)targetSdkAttribute);
+                return;
             }
+
+            var minSdkAttribute = usesSdkNode.Attributes.GetNamedItem("minSdkVersion", AndroidNamespace);
+            var targetSdkAttribute = usesSdkNode.Attributes.GetNamedItem("targetSdkVersion", AndroidNamespace);
+            var maxSdkAttribute = usesSdkNode.Attributes.GetNamedItem("maxSdkVersion", AndroidNamespace);
+
+            if (UsesSdk.MaxSdkVersion > 0)
+            {
+                if (maxSdkAttribute is null)
+                {
+                    maxSdkAttribute = backDoc.CreateAttribute("maxSdkVersion", AndroidNamespace);
+                    usesSdkNode.Attributes.Append((XmlAttribute)maxSdkAttribute);
+                }
+                maxSdkAttribute.Value = UsesSdk.MaxSdkVersion.ToString();
+            }
+            else if (maxSdkAttribute != null)
+                usesSdkNode.Attributes.Remove((XmlAttribute) maxSdkAttribute);
+
+            if (UsesSdk.MinSdkVersion > 0)
+            {
+                if (minSdkAttribute is null)
+                {
+                    minSdkAttribute = backDoc.CreateAttribute("minSdkVersion", AndroidNamespace);
+                    usesSdkNode.Attributes.Append((XmlAttribute)minSdkAttribute);
+                }
+                minSdkAttribute.Value = UsesSdk.MinSdkVersion.ToString();
+            }
+            else if (minSdkAttribute != null)
+                usesSdkNode.Attributes.Remove((XmlAttribute)minSdkAttribute);
+
+            if (UsesSdk.TargetSdkVersion > 0)
+            {
+                if (targetSdkAttribute is null)
+                {
+                    targetSdkAttribute = backDoc.CreateAttribute("targetSdkVersion", AndroidNamespace);
+                    usesSdkNode.Attributes.Append((XmlAttribute)targetSdkAttribute);
+                }
+                targetSdkAttribute.Value = UsesSdk.TargetSdkVersion.ToString();
+            }
+            else if (targetSdkAttribute != null)
+                usesSdkNode.Attributes.Remove((XmlAttribute)targetSdkAttribute);
         }
 
         public string GetManifestXml()
@@ -161,18 +152,15 @@ namespace AirProperties
             SetUsesSdk();
 
             var builder = new StringBuilder();
-            var settings = new XmlWriterSettings()
+            var settings = new XmlWriterSettings
             {
                 Encoding = Encoding.UTF8,
                 Indent = true,
                 OmitXmlDeclaration = true,
                 IndentChars = "\x09" //tab
             };
-            using (XmlWriter xw = XmlWriter.Create(builder, settings))
-            {
-                backDoc.Save(xw);
-            }
-
+            using var xw = XmlWriter.Create(builder, settings);
+            backDoc.Save(xw);
             if (removeNamespace) builder.Remove(9, 17 + AndroidNamespace.Length);
             return builder.ToString();
         }
@@ -185,38 +173,29 @@ namespace AirProperties
 
         public class UsesPermissionCollection : ICollection<UsesPermissionElement>
         {
-
-            private Dictionary<string, UsesPermissionElement> backData = new Dictionary<string, UsesPermissionElement>();
-            private Dictionary<string, XmlElement> mapping = new Dictionary<string, XmlElement>();
-            private AndroidManifestManager owner;
+            readonly Dictionary<string, UsesPermissionElement> backData = new Dictionary<string, UsesPermissionElement>();
+            readonly Dictionary<string, XmlElement> mapping = new Dictionary<string, XmlElement>();
+            readonly AndroidManifestManager owner;
 
             internal UsesPermissionCollection(AndroidManifestManager owner)
             {
                 this.owner = owner;
             }
 
-            public int Count
-            {
-                get { return backData.Count; }
-            }
+            public int Count => backData.Count;
 
-            public bool IsReadOnly
-            {
-                get { return false; }
-            }
+            public bool IsReadOnly => false;
 
             public void Add(UsesPermissionElement item)
             {
-                UsesPermissionElement prevItem = null;
                 XmlElement node;
-
-                if (backData.TryGetValue(item.Name, out prevItem))
+                if (backData.TryGetValue(item.Name, out _))
                 {
                     node = mapping[item.Name];
                     var sdkAttribute = node.GetAttributeNode("maxSdkVersion", AndroidNamespace);
                     if (item.MaxSdkVersion > 0)
                     {
-                        if (sdkAttribute == null)
+                        if (sdkAttribute is null)
                         {
                             sdkAttribute = owner.backDoc.CreateAttribute("maxSdkVersion", AndroidNamespace);
                             node.Attributes.Append(sdkAttribute);
@@ -265,62 +244,33 @@ namespace AirProperties
                 mapping.Clear();
             }
 
-            public bool Contains(UsesPermissionElement item)
-            {
-                return backData.ContainsKey(item.Name);
-            }
+            public bool Contains(UsesPermissionElement item) => backData.ContainsKey(item.Name);
 
-            public bool ContainsName(string permissionName)
-            {
-                return backData.ContainsKey(permissionName);
-            }
+            public bool ContainsName(string permissionName) => backData.ContainsKey(permissionName);
 
-            public void CopyTo(UsesPermissionElement[] array, int arrayIndex)
-            {
-                backData.Values.CopyTo(array, arrayIndex);
-            }
+            public void CopyTo(UsesPermissionElement[] array, int arrayIndex) => backData.Values.CopyTo(array, arrayIndex);
 
             public bool Remove(UsesPermissionElement item)
             {
-                if (backData.Remove(item.Name))
-                {
-                    owner.backDoc.FirstChild.RemoveChild(mapping[item.Name]);
-                    mapping.Remove(item.Name);
-
-                    return true;
-                }
-
-                return false;
+                if (!backData.Remove(item.Name)) return false;
+                owner.backDoc.FirstChild.RemoveChild(mapping[item.Name]);
+                mapping.Remove(item.Name);
+                return true;
             }
 
             public bool RemoveByName(string permissionName)
             {
-                if (backData.Remove(permissionName))
-                {
-                    owner.backDoc.FirstChild.RemoveChild(mapping[permissionName]);
-                    mapping.Remove(permissionName);
-
-                    return true;
-                }
-
-                return false;
+                if (!backData.Remove(permissionName)) return false;
+                owner.backDoc.FirstChild.RemoveChild(mapping[permissionName]);
+                mapping.Remove(permissionName);
+                return true;
             }
 
-            public UsesPermissionElement Get(string permissionName)
-            {
-                return backData[permissionName];
-            }
+            public UsesPermissionElement Get(string permissionName) => backData[permissionName];
 
-            public IEnumerator<UsesPermissionElement> GetEnumerator()
-            {
-                return backData.Values.GetEnumerator();
-            }
+            public IEnumerator<UsesPermissionElement> GetEnumerator() => backData.Values.GetEnumerator();
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return backData.Values.GetEnumerator();
-            }
-
+            IEnumerator IEnumerable.GetEnumerator() => backData.Values.GetEnumerator();
         }
 
         public class UsesSdkElement
@@ -329,6 +279,5 @@ namespace AirProperties
             public int MaxSdkVersion { get; set; }
             public int TargetSdkVersion { get; set; }
         }
-
     }
 }

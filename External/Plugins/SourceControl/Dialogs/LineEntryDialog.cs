@@ -10,39 +10,34 @@ namespace SourceControl.Dialogs
     /// </summary>
     public class LineEntryDialog : Form
     {
-        string line;
-
         #region Form Designer Components
 
-        private System.Windows.Forms.TextBox lineBox;
-        private System.Windows.Forms.Button btnYes;
-        private System.Windows.Forms.Button btnNo;
+        private TextBox lineBox;
+        private Button btnYes;
+        private Button btnNo;
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.Container components = null;
+        private readonly Container components = null;
         private Button btnNever;
-        private System.Windows.Forms.Label titleLabel;
+        private Label titleLabel;
 
         #endregion
 
         /// <summary>
         /// Gets the line entered by the user.
         /// </summary>
-        public string Line
-        {
-            get { return line; }
-        }
+        public string Line { get; private set; }
 
         public LineEntryDialog(string captionText, string labelText, string defaultLine)
         {
             InitializeComponent();
             InititalizeLocalization();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.Text = " " + captionText;
+            Font = PluginBase.Settings.DefaultFont;
+            Text = " " + captionText;
             titleLabel.Text = labelText;
             lineBox.KeyDown += OnLineBoxOnKeyDown;
-            lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
+            lineBox.Text = defaultLine ?? string.Empty;
             lineBox.SelectAll();
             lineBox.Focus();
         }
@@ -52,14 +47,11 @@ namespace SourceControl.Dialogs
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
-        protected override void Dispose( bool disposing )
+        protected override void Dispose(bool disposing)
         {
-            if( disposing )
+            if (disposing)
             {
-                if(components != null)
-                {
-                    components.Dispose();
-                }
+                components?.Dispose();
             }
             base.Dispose( disposing );
         }
@@ -74,81 +66,81 @@ namespace SourceControl.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.titleLabel = new System.Windows.Forms.Label();
-            this.lineBox = new System.Windows.Forms.TextBox();
-            this.btnYes = new System.Windows.Forms.Button();
-            this.btnNo = new System.Windows.Forms.Button();
-            this.btnNever = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            titleLabel = new Label();
+            lineBox = new TextBox();
+            btnYes = new Button();
+            btnNo = new Button();
+            btnNever = new Button();
+            SuspendLayout();
             // 
             // titleLabel
             // 
-            this.titleLabel.Location = new System.Drawing.Point(8, 8);
-            this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(266, 16);
-            this.titleLabel.TabIndex = 3;
-            this.titleLabel.Text = "Enter text:";
+            titleLabel.Location = new System.Drawing.Point(8, 8);
+            titleLabel.Name = "titleLabel";
+            titleLabel.Size = new System.Drawing.Size(266, 16);
+            titleLabel.TabIndex = 3;
+            titleLabel.Text = "Enter text:";
             // 
             // lineBox
             // 
-            this.lineBox.Location = new System.Drawing.Point(10, 24);
-            this.lineBox.Name = "lineBox";
-            this.lineBox.Size = new System.Drawing.Size(260, 20);
-            this.lineBox.TabIndex = 0;
+            lineBox.Location = new System.Drawing.Point(10, 24);
+            lineBox.Name = "lineBox";
+            lineBox.Size = new System.Drawing.Size(260, 20);
+            lineBox.TabIndex = 0;
             // 
             // btnYes
             // 
-            this.btnYes.DialogResult = System.Windows.Forms.DialogResult.Yes;
-            this.btnYes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnYes.Location = new System.Drawing.Point(25, 50);
-            this.btnYes.Name = "btnYes";
-            this.btnYes.Size = new System.Drawing.Size(72, 21);
-            this.btnYes.TabIndex = 1;
-            this.btnYes.Text = "Yes";
-            this.btnYes.Click += new System.EventHandler(this.btnYes_Click);
+            btnYes.DialogResult = DialogResult.Yes;
+            btnYes.FlatStyle = FlatStyle.System;
+            btnYes.Location = new System.Drawing.Point(25, 50);
+            btnYes.Name = "btnYes";
+            btnYes.Size = new System.Drawing.Size(72, 21);
+            btnYes.TabIndex = 1;
+            btnYes.Text = "Yes";
+            btnYes.Click += btnYes_Click;
             // 
             // btnNo
             // 
-            this.btnNo.DialogResult = System.Windows.Forms.DialogResult.No;
-            this.btnNo.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNo.Location = new System.Drawing.Point(103, 50);
-            this.btnNo.Name = "btnNo";
-            this.btnNo.Size = new System.Drawing.Size(72, 21);
-            this.btnNo.TabIndex = 2;
-            this.btnNo.Text = "No";
-            this.btnNo.Click += new System.EventHandler(this.btnNo_Click);
+            btnNo.DialogResult = DialogResult.No;
+            btnNo.FlatStyle = FlatStyle.System;
+            btnNo.Location = new System.Drawing.Point(103, 50);
+            btnNo.Name = "btnNo";
+            btnNo.Size = new System.Drawing.Size(72, 21);
+            btnNo.TabIndex = 2;
+            btnNo.Text = "No";
+            btnNo.Click += btnNo_Click;
             // 
             // btnNever
             // 
-            this.btnNever.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNever.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNever.Location = new System.Drawing.Point(181, 50);
-            this.btnNever.Name = "btnNever";
-            this.btnNever.Size = new System.Drawing.Size(72, 21);
-            this.btnNever.TabIndex = 4;
-            this.btnNever.Text = "Never";
-            this.btnNever.Click += new System.EventHandler(this.btnNever_Click);
+            btnNever.DialogResult = DialogResult.Cancel;
+            btnNever.FlatStyle = FlatStyle.System;
+            btnNever.Location = new System.Drawing.Point(181, 50);
+            btnNever.Name = "btnNever";
+            btnNever.Size = new System.Drawing.Size(72, 21);
+            btnNever.TabIndex = 4;
+            btnNever.Text = "Never";
+            btnNever.Click += btnNever_Click;
             // 
             // LineEntryDialog
             // 
-            this.AcceptButton = this.btnYes;
-            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.CancelButton = this.btnNo;
-            this.ClientSize = new System.Drawing.Size(282, 81);
-            this.Controls.Add(this.btnNever);
-            this.Controls.Add(this.btnNo);
-            this.Controls.Add(this.btnYes);
-            this.Controls.Add(this.lineBox);
-            this.Controls.Add(this.titleLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "LineEntryDialog";
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Enter Text";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = btnYes;
+            AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            CancelButton = btnNo;
+            ClientSize = new System.Drawing.Size(282, 81);
+            Controls.Add(btnNever);
+            Controls.Add(btnNo);
+            Controls.Add(btnYes);
+            Controls.Add(lineBox);
+            Controls.Add(titleLabel);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "LineEntryDialog";
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Enter Text";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -156,35 +148,35 @@ namespace SourceControl.Dialogs
 
         private void InititalizeLocalization()
         {
-            this.btnYes.Text = TextHelper.GetString("Label.Yes");
-            this.btnNo.Text = TextHelper.GetString("Label.No");
-            this.btnNever.Text = TextHelper.GetString("Label.Never");
-            this.titleLabel.Text = TextHelper.GetString("Info.EnterText");
-            this.Text = " " + TextHelper.GetString("Title.EnterText");
+            btnYes.Text = TextHelper.GetString("Label.Yes");
+            btnNo.Text = TextHelper.GetString("Label.No");
+            btnNever.Text = TextHelper.GetString("Label.Never");
+            titleLabel.Text = TextHelper.GetString("Info.EnterText");
+            Text = " " + TextHelper.GetString("Title.EnterText");
         }
 
         private void btnYes_Click(object sender, System.EventArgs e)
         {
-            this.line = lineBox.Text;
+            Line = lineBox.Text;
             CancelEventArgs cancelArgs = new CancelEventArgs(false);
             OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)
             {
-                this.DialogResult = DialogResult.Yes;
-                this.Close();
+                DialogResult = DialogResult.Yes;
+                Close();
             }
         }
 
         private void btnNo_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.No;
-            this.Close();
+            DialogResult = DialogResult.No;
+            Close();
         }
 
         private void btnNever_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)

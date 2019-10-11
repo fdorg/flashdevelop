@@ -26,8 +26,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             private Point m_startMousePosition = Point.Empty;
             protected Point StartMousePosition
             {
-                get { return m_startMousePosition; }
-                private set { m_startMousePosition = value; }
+                get => m_startMousePosition;
+                private set => m_startMousePosition = value;
             }
 
             protected bool BeginDrag()
@@ -35,7 +35,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 // Avoid re-entrance;
                 lock (this)
                 {
-                    if (DragControl == null)
+                    if (DragControl is null)
                         return false;
 
                     StartMousePosition = Control.MousePosition;
@@ -94,29 +94,23 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private abstract class DragHandler : DragHandlerBase
         {
-            private DockPanel m_dockPanel;
+            private readonly DockPanel m_dockPanel;
 
             protected DragHandler(DockPanel dockPanel)
             {
                 m_dockPanel = dockPanel;
             }
 
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            public DockPanel DockPanel => m_dockPanel;
 
             private IDragSource m_dragSource;
             protected IDragSource DragSource
             {
-                get { return m_dragSource; }
-                set { m_dragSource = value; }
+                get => m_dragSource;
+                set => m_dragSource = value;
             }
 
-            protected sealed override Control DragControl
-            {
-                get { return DragSource == null ? null : DragSource.DragControl; }
-            }
+            protected sealed override Control DragControl => DragSource is null ? null : DragSource.DragControl;
 
             protected sealed override bool OnPreFilterMessage(ref Message m)
             {

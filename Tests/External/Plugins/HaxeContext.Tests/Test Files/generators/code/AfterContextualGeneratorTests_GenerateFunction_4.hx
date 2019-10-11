@@ -4,7 +4,7 @@ class EFoo {
 		foo(this.bar().x);
 	}
 	
-	function foo(dynamicValue:Dynamic) {
+	function foo(dynamicValue:Dynamic):Void {
 		
 	}
 	function bar() {

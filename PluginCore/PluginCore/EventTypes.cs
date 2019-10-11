@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Forms;
 
 namespace PluginCore
@@ -8,24 +7,14 @@ namespace PluginCore
     /// </summary>
     public class NotifyEvent
     {
-        private EventType type;
-        private Boolean handled;
+        public EventType Type { get; }
 
-        public EventType Type
-        {
-            get { return this.type; }
-        }
-
-        public Boolean Handled
-        {
-            get { return this.handled; }
-            set { this.handled = value; }
-        }
+        public bool Handled { get; set; }
 
         public NotifyEvent(EventType type)
         {
-            this.handled = false;
-            this.type = type;
+            Handled = false;
+            Type = type;
         }
     }
 
@@ -34,17 +23,11 @@ namespace PluginCore
     /// </summary>
     public class TextEvent : NotifyEvent
     {
-        private String value;
+        public string Value { get; set; }
 
-        public String Value
+        public TextEvent(EventType type, string value) : base(type)
         {
-            get { return this.value; }
-            set { this.value = value; }
-        }
-
-        public TextEvent(EventType type, String value) : base(type)
-        {
-            this.value = value;
+            Value = value;
         }
     }
 
@@ -53,19 +36,12 @@ namespace PluginCore
     /// </summary>
     public class NumberEvent : NotifyEvent
     {
-        private Int32 value;
+        public int Value { get; set; }
 
-        public Int32 Value
+        public NumberEvent(EventType type, int value) : base(type)
         {
-            get { return this.value; }
-            set { this.value = value; }
+            Value = value;
         }
-
-        public NumberEvent(EventType type, Int32 value) : base(type)
-        {
-            this.value = value;
-        }
-
     }
 
     /// <summary>
@@ -73,26 +49,14 @@ namespace PluginCore
     /// </summary>
     public class KeyEvent : NotifyEvent
     {
-        private Keys value;
-        private Boolean processKey;
+        public Keys Value { get; set; }
 
-        public Keys Value
-        {
-            get { return this.value; }
-            set { this.value = value; }
-        }
-
-        public Boolean ProcessKey
-        {
-            get { return this.processKey; }
-            set { this.processKey = value; }
-        }
+        public bool ProcessKey { get; set; }
 
         public KeyEvent(EventType type, Keys value) : base(type)
         {
-            this.value = value;
+            Value = value;
         }
-
     }
 
     /// <summary>
@@ -100,26 +64,15 @@ namespace PluginCore
     /// </summary>
     public class DataEvent : NotifyEvent
     {
-        private Object data;
-        private String action;
+        public string Action { get; }
 
-        public String Action
+        public object Data { get; set; }
+
+        public DataEvent(EventType type, string action, object data) : base(type)
         {
-            get { return this.action; }
+            Action = action;
+            Data = data;
         }
-
-        public Object Data
-        {
-            get { return this.data; }
-            set { this.data = value; }
-        }
-
-        public DataEvent(EventType type, String action, Object data) : base(type)
-        {
-            this.action = action;
-            this.data = data;
-        }
-
     }
 
     public class TextDataEvent : TextEvent
@@ -131,5 +84,4 @@ namespace PluginCore
             Data = data;
         }
     }
-
 }

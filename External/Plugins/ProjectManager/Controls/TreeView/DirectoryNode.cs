@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -62,14 +62,14 @@ namespace ProjectManager.Controls.TreeView
             {
                 if (project.IsPathHidden(BackingPath))
                     ImageIndex = Icons.HiddenFolder.Index;
-                else if (InsideClasspath == null && project.IsClassPath(BackingPath))
+                else if (InsideClasspath is null && project.IsClassPath(BackingPath))
                 {
                     InsideClasspath = this;
                     ImageIndex = Icons.ClasspathFolder.Index;
                 }
                 else if (InsideClasspath != null && project.IsCompileTarget(BackingPath))
                     ImageIndex = Icons.FolderCompile.Index;
-                else if (InsideLibrarypath == null && project.IsLibraryAsset(BackingPath))
+                else if (InsideLibrarypath is null && project.IsLibraryAsset(BackingPath))
                 {
                     LibraryAsset asset = project.GetAsset(BackingPath);
                     if (asset.SwfMode == SwfAssetMode.ExternalLibrary)
@@ -229,7 +229,7 @@ namespace ProjectManager.Controls.TreeView
             }
 
             FileMapping mapping = GetFileMapping(files);
-            if (mapping == null) return;
+            if (mapping is null) return;
 
             foreach (string file in files)
             {
@@ -303,13 +303,13 @@ namespace ProjectManager.Controls.TreeView
             if (Tree.PathToSelect == node.BackingPath)
             {
                 // use SelectedNode so multiselect treeview can handle painting
-                Tree.SelectedNodes = new ArrayList(new object[]{node});
+                Tree.SelectedNodes = new List<TreeNode> {node};
             }
         }
 
         bool IsDirectoryExcluded(string path)
         {
-            if (project == null) return false;
+            if (project is null) return false;
 
             string dirName = Path.GetFileName(path);
             foreach (string excludedDir in PluginMain.Settings.ExcludedDirectories)
@@ -321,7 +321,7 @@ namespace ProjectManager.Controls.TreeView
 
         bool IsFileExcluded(string path)
         {
-            if (project == null) return false;
+            if (project is null) return false;
 
             if (path == project.ProjectPath) return true;
 

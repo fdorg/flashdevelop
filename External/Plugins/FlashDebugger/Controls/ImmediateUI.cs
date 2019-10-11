@@ -11,42 +11,42 @@ namespace FlashDebugger.Controls
 {
     public partial class ImmediateUI : DockPanelControl
     {
-        private List<string> history;
+        private readonly List<string> history;
         private int historyPos;
 
         public ImmediateUI()
         {
-            this.AutoKeyHandling = true;
-            this.InitializeComponent();
-            this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
-            this.history = new List<string>();
+            AutoKeyHandling = true;
+            InitializeComponent();
+            contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
+            history = new List<string>();
             ScrollBarEx.Attach(textBox);
         }
 
         private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Back && this.textBox.GetFirstCharIndexOfCurrentLine() == this.textBox.SelectionStart) e.SuppressKeyPress = true;
-            if (e.KeyCode == Keys.Up && this.historyPos > 0)
+            if (e.KeyCode == Keys.Back && textBox.GetFirstCharIndexOfCurrentLine() == textBox.SelectionStart) e.SuppressKeyPress = true;
+            if (e.KeyCode == Keys.Up && historyPos > 0)
             {
-                this.historyPos--;
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
+                historyPos--;
+                textBox.Select(textBox.Text.Length, 0);
+                textBox.Text = textBox.Text.Substring(0, textBox.GetFirstCharIndexOfCurrentLine()) + history[historyPos];
                 try
                 {
-                    this.textBox.Select(this.textBox.TextLength, 0);
-                    this.textBox.ScrollToCaret();
+                    textBox.Select(textBox.TextLength, 0);
+                    textBox.ScrollToCaret();
                 }
                 catch { /* WineMod: not supported */ }
             }
-            if (e.KeyCode == Keys.Down && this.historyPos + 1 < this.history.Count)
+            if (e.KeyCode == Keys.Down && historyPos + 1 < history.Count)
             {
-                this.historyPos++;
-                this.textBox.Select(this.textBox.Text.Length, 0);
-                this.textBox.Text = this.textBox.Text.Substring(0, this.textBox.GetFirstCharIndexOfCurrentLine()) + this.history[this.historyPos];
+                historyPos++;
+                textBox.Select(textBox.Text.Length, 0);
+                textBox.Text = textBox.Text.Substring(0, textBox.GetFirstCharIndexOfCurrentLine()) + history[historyPos];
                 try
                 {
-                    this.textBox.Select(this.textBox.TextLength, 0);
-                    this.textBox.ScrollToCaret();
+                    textBox.Select(textBox.TextLength, 0);
+                    textBox.ScrollToCaret();
                 }
                 catch { /* WineMod: not supported */ }
             }
@@ -54,7 +54,7 @@ namespace FlashDebugger.Controls
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-                int curLine = this.textBox.GetLineFromCharIndex(this.textBox.SelectionStart);
+                int curLine = textBox.GetLineFromCharIndex(textBox.SelectionStart);
                 //int curLine = 0;
                 //int tmp = 0;
                 //while (true)
@@ -64,50 +64,50 @@ namespace FlashDebugger.Controls
                 //    curLine++;
                 //}
                 string line = "";
-                if (curLine<this.textBox.Lines.Length) line = this.textBox.Lines[curLine];
-                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
+                if (curLine<textBox.Lines.Length) line = textBox.Lines[curLine];
+                if (textBox.Lines.Length > 0 && !textBox.Lines[textBox.Lines.Length - 1].Trim().Equals("")) textBox.AppendText(Environment.NewLine);
                 try
                 {
-                    this.history.Add(line);
-                    this.historyPos = this.history.Count;
+                    history.Add(line);
+                    historyPos = history.Count;
                     if (line == "swfs")
                     {
-                        this.textBox.AppendText(processSwfs());
+                        textBox.AppendText(processSwfs());
                     }
                     else if (line.StartsWithOrdinal("p "))
                     {
-                        this.textBox.AppendText(processExpr(line.Substring(2)));
+                        textBox.AppendText(processExpr(line.Substring(2)));
                     }
                     else if (line.StartsWithOrdinal("g "))
                     {
-                        this.textBox.AppendText(processGlobal(line.Substring(2)));
+                        textBox.AppendText(processGlobal(line.Substring(2)));
                     }
                     else
                     {
-                        this.textBox.AppendText("Commands: swfs, p <exptr>, g <value id>");
+                        textBox.AppendText("Commands: swfs, p <exptr>, g <value id>");
                     }
                 }
                 catch (NoSuchVariableException ex)
                 {
-                    this.textBox.AppendText(ex.ToString());
+                    textBox.AppendText(ex.ToString());
                 }
                 catch (PlayerDebugException ex)
                 {
-                    this.textBox.AppendText(ex.ToString());
+                    textBox.AppendText(ex.ToString());
                 }
                 catch (PlayerFaultException ex)
                 {
-                    this.textBox.AppendText(ex.ToString());
+                    textBox.AppendText(ex.ToString());
                 }
                 catch (Exception ex)
                 {
-                    this.textBox.AppendText(!string.IsNullOrEmpty(ex.Message) ? ex.GetType().FullName + ": " + ex.Message : ex.ToString());
+                    textBox.AppendText(!string.IsNullOrEmpty(ex.Message) ? ex.GetType().FullName + ": " + ex.Message : ex.ToString());
                 }
-                if (this.textBox.Lines.Length > 0 && !this.textBox.Lines[this.textBox.Lines.Length - 1].Trim().Equals("")) this.textBox.AppendText(Environment.NewLine);
+                if (textBox.Lines.Length > 0 && !textBox.Lines[textBox.Lines.Length - 1].Trim().Equals("")) textBox.AppendText(Environment.NewLine);
                 try
                 {
-                    this.textBox.Select(this.textBox.TextLength, 0);
-                    this.textBox.ScrollToCaret();
+                    textBox.Select(textBox.TextLength, 0);
+                    textBox.ScrollToCaret();
                 }
                 catch { /* WineMod: not supported */ }
             }
@@ -119,7 +119,7 @@ namespace FlashDebugger.Controls
 
                 foreach (SwfInfo info in PluginMain.debugManager.FlashInterface.Session.getSwfs())
                 {
-                    if (info == null) continue;
+                    if (info is null) continue;
                     ret.Append(info.getPath()).Append("\tswfsize ").Append(info.getSwfSize()).Append("\tprocesscomplete ").Append(info.isProcessingComplete())
                         .Append("\tunloaded ").Append(info.isUnloaded()).Append("\turl ").Append(info.getUrl()).Append("\tsourcecount ")
                         .Append(info.getSourceCount(PluginMain.debugManager.FlashInterface.Session)).AppendLine();
@@ -148,24 +148,24 @@ namespace FlashDebugger.Controls
 
         private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.textBox.Clear();
-            this.history.Clear();
-            this.historyPos = 0;
+            textBox.Clear();
+            history.Clear();
+            historyPos = 0;
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.textBox.Cut();
+            textBox.Cut();
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.textBox.Copy();
+            textBox.Copy();
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.textBox.Paste();
+            textBox.Paste();
         }
 
     }

@@ -65,9 +65,9 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="blockFactor">blocking factor</param>
         public TarOutputStream(Stream outputStream, int blockFactor)
         {
-            if ( outputStream == null )
+            if ( outputStream is null )
             {
-                throw new ArgumentNullException("outputStream");
+                throw new ArgumentNullException(nameof(outputStream));
             }
 
             this.outputStream = outputStream;
@@ -84,67 +84,37 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return buffer.IsStreamOwner; }
-            set { buffer.IsStreamOwner = value; }
+            get => buffer.IsStreamOwner;
+            set => buffer.IsStreamOwner = value;
         }
 
         /// <summary>
         /// true if the stream supports reading; otherwise, false.
         /// </summary>
-        public override bool CanRead 
-        {
-            get 
-            {
-                return outputStream.CanRead;
-            }
-        }
-        
+        public override bool CanRead => outputStream.CanRead;
+
         /// <summary>
         /// true if the stream supports seeking; otherwise, false.
         /// </summary>
-        public override bool CanSeek 
-        {
-            get 
-            {
-                return outputStream.CanSeek;
-            }
-        }
-        
+        public override bool CanSeek => outputStream.CanSeek;
+
         /// <summary>
         /// true if stream supports writing; otherwise, false.
         /// </summary>
-        public override bool CanWrite 
-        {
-            get 
-            {
-                return outputStream.CanWrite;
-            }
-        }
-        
+        public override bool CanWrite => outputStream.CanWrite;
+
         /// <summary>
         /// length of stream in bytes
         /// </summary>
-        public override long Length 
-        {
-            get 
-            {
-                return outputStream.Length;
-            }
-        }
-        
+        public override long Length => outputStream.Length;
+
         /// <summary>
         /// gets or sets the position within the current stream.
         /// </summary>
         public override long Position 
         {
-            get 
-            {
-                return outputStream.Position;
-            }
-            set 
-            {
-                outputStream.Position = value;
-            }
+            get => outputStream.Position;
+            set => outputStream.Position = value;
         }
         
         /// <summary>
@@ -231,10 +201,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <summary>
         /// Get the record size being used by this stream's TarBuffer.
         /// </summary>
-        public int RecordSize
-        {
-            get { return buffer.RecordSize; }
-        }
+        public int RecordSize => buffer.RecordSize;
 
         /// <summary>
         /// Get the record size being used by this stream's TarBuffer.
@@ -251,11 +218,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <summary>
         /// Get a value indicating wether an entry is open, requiring more data to be written.
         /// </summary>
-        bool IsEntryOpen
-        {
-            get { return (currBytes < currSize); }
-
-        }
+        bool IsEntryOpen => (currBytes < currSize);
 
         /// <summary>
         /// Put an entry on the output stream. This writes the entry's
@@ -271,14 +234,14 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public void PutNextEntry(TarEntry entry)
         {
-            if ( entry == null ) {
-                throw new ArgumentNullException("entry");
+            if ( entry is null ) {
+                throw new ArgumentNullException(nameof(entry));
             }
 
             if (entry.TarHeader.Name.Length >= TarHeader.NAMELEN) {
                 TarHeader longHeader = new TarHeader();
                 longHeader.TypeFlag = TarHeader.LF_GNU_LONGNAME;
-                longHeader.Name = longHeader.Name + "././@LongLink";
+                longHeader.Name += "././@LongLink";
                 longHeader.UserId = 0;
                 longHeader.GroupId = 0;
                 longHeader.GroupName = "";
@@ -328,9 +291,8 @@ namespace ICSharpCode.SharpZipLib.Tar
             }
             
             if (currBytes < currSize) {
-                string errorText = string.Format(
-                    "Entry closed at '{0}' before the '{1}' bytes specified in the header were written",
-                    currBytes, currSize);
+                string errorText =
+                    $"Entry closed at '{currBytes}' before the '{currSize}' bytes specified in the header were written";
                 throw new TarException(errorText);
             }
         }
@@ -344,7 +306,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public override void WriteByte(byte value)
         {
-            Write(new byte[] { value }, 0, 1);
+            Write(new[] { value }, 0, 1);
         }
         
         /// <summary>
@@ -367,8 +329,8 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+            if ( buffer is null ) {
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if ( offset < 0 )
@@ -376,7 +338,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "Cannot be negative");
 #endif              
             }
 
@@ -390,17 +352,17 @@ namespace ICSharpCode.SharpZipLib.Tar
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "Cannot be negative");
 #endif
             }
 
             if ( (currBytes + count) > currSize ) {
-                string errorText = string.Format("request to write '{0}' bytes exceeds size in header of '{1}' bytes",
-                    count, this.currSize);
+                string errorText =
+                    $"request to write '{count}' bytes exceeds size in header of '{this.currSize}' bytes";
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", errorText);
+                throw new ArgumentOutOfRangeException(nameof(count), errorText);
 #endif              
             }
             

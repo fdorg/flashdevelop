@@ -7,7 +7,7 @@ namespace FDBuild.Building
 {
     class SwfmillLibraryBuilder
     {
-        static public string ExecutablePath;
+        public static string ExecutablePath;
 
         public int Frame;
 

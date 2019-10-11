@@ -106,20 +106,20 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </exception>
         public DeflaterOutputStream(Stream baseOutputStream, Deflater deflater, int bufferSize)
         {
-            if ( baseOutputStream == null ) {
-                throw new ArgumentNullException("baseOutputStream");
+            if ( baseOutputStream is null ) {
+                throw new ArgumentNullException(nameof(baseOutputStream));
             }
 
             if (!baseOutputStream.CanWrite) {
-                throw new ArgumentException("Must support writing", "baseOutputStream");
+                throw new ArgumentException("Must support writing", nameof(baseOutputStream));
             }
 
-            if (deflater == null) {
-                throw new ArgumentNullException("deflater");
+            if (deflater is null) {
+                throw new ArgumentNullException(nameof(deflater));
             }
             
             if (bufferSize < 512) {
-                throw new ArgumentOutOfRangeException("bufferSize");
+                throw new ArgumentOutOfRangeException(nameof(bufferSize));
             }
             
             baseOutputStream_ = baseOutputStream;
@@ -184,19 +184,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner_; }
-            set { isStreamOwner_ = value; }
+            get => isStreamOwner_;
+            set => isStreamOwner_ = value;
         }
         
         /// <summary>
         /// Allows client to determine if an entry can be patched after its added
         /// </summary>
-        public bool CanPatchEntries {
-            get { 
-                return baseOutputStream_.CanSeek; 
-            }
-        }
-        
+        public bool CanPatchEntries => baseOutputStream_.CanSeek;
+
         #endregion
         
         #region Encryption
@@ -219,9 +215,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </summary>
         /// <remarks>When set to null or if the password is empty no encryption is performed</remarks>
         public string Password {
-            get { 
-                return password; 
-            }
+            get => password;
             set {
                 if ( (value != null) && (value.Length == 0) ) {
                     password = null;
@@ -290,7 +284,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
                                             out byte[] salt, out byte[] pwdVerifier) {
             salt = new byte[entry.AESSaltLen];
             // Salt needs to be cryptographically random, and unique per file
-            if (_aesRnd == null)
+            if (_aesRnd is null)
                 _aesRnd = new RNGCryptoServiceProvider();
             _aesRnd.GetBytes(salt);
             int blockSize = entry.AESKeySize / 8;   // bits to bytes
@@ -365,52 +359,31 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Gets value indicating stream can be read from
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanRead => false;
+
         /// <summary>
         /// Gets a value indicating if seeking is supported for this stream
         /// This property always returns false
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanSeek => false;
+
         /// <summary>
         /// Get value indicating if this stream supports writing
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return baseOutputStream_.CanWrite;
-            }
-        }
-        
+        public override bool CanWrite => baseOutputStream_.CanWrite;
+
         /// <summary>
         /// Get current length of stream
         /// </summary>
-        public override long Length {
-            get {
-                return baseOutputStream_.Length;
-            }
-        }
-        
+        public override long Length => baseOutputStream_.Length;
+
         /// <summary>
         /// Gets the current position within the stream.
         /// </summary>
         /// <exception cref="NotSupportedException">Any attempt to set position</exception>
         public override long Position {
-            get {
-                return baseOutputStream_.Position;
-            }
-            set {
-                throw new NotSupportedException("Position property not supported");
-            }
+            get => baseOutputStream_.Position;
+            set => throw new NotSupportedException("Position property not supported");
         }
         
         /// <summary>
@@ -573,7 +546,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// This buffer is used temporarily to retrieve the bytes from the
         /// deflater and write them to the underlying output stream.
         /// </summary>
-        byte[] buffer_;
+        readonly byte[] buffer_;
         
         /// <summary>
         /// The deflater which is used to deflate the stream.
