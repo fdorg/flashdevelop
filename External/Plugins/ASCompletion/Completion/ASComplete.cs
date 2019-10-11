@@ -3331,6 +3331,15 @@ namespace ASCompletion.Completion
             result.Member = null;
         }
 
+        public static MemberModel FindMember(string name, ClassModel inClass)
+        {
+            var list = inClass == ClassModel.VoidClass
+                ? ASContext.Context.CurrentModel.Members
+                : inClass.Members;
+
+            return list.FirstOrDefault(member => member.Name == name);
+        }
+
         public static T FindMember<T>(int line, IEnumerable<T> list) where T : MemberModel
         {
             return list.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
