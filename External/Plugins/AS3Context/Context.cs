@@ -1163,7 +1163,9 @@ namespace AS3Context
         protected internal int BraceMatch(ScintillaControl sci, int position)
         {
             if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position)) return -1;
-            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var language = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
+            if (language is null) return -1;
+            var characters = language.characterclass.Characters;
             var sub = 0;
             switch (sci.CharAt(position))
             {
