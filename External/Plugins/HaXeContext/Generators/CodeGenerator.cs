@@ -338,8 +338,8 @@ namespace HaXeContext.Generators
                 {
                     latest = job switch
                     {
-                        GeneratorJobType.Setter => FindMember("get_" + member.Name, inClass),
-                        GeneratorJobType.Getter => FindMember("set_" + member.Name, inClass),
+                        GeneratorJobType.Setter => ASComplete.FindMember("get_" + member.Name, inClass),
+                        GeneratorJobType.Getter => ASComplete.FindMember("set_" + member.Name, inClass),
                         _ => null
                     } ?? FindLatest(FlagType.Function, 0, inClass, false, false);
                 }
