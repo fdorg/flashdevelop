@@ -1443,20 +1443,19 @@ namespace ASCompletion.Completion
             }
         }
 
-        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass,
-            MemberModel member)
+        protected virtual void GenerateProperty(GeneratorJobType job, ScintillaControl sci, ClassModel inClass, MemberModel member)
         {
-            var ctx = ASContext.Context;
             var name = GetPropertyNameFor(member);
-            var location = ASContext.CommonSettings.PropertiesGenerationLocation;
+            PropertiesGenerationLocations location;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
             if (latest != null) location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
             else
             {
+                location = ASContext.CommonSettings.PropertiesGenerationLocation;
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
                     if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter)
-                        latest = FindMember(name ?? member.Name, inClass);
+                        latest = ASComplete.FindMember(name ?? member.Name, inClass);
                     if (latest is null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
                 }
                 else latest = member;
@@ -1490,7 +1489,7 @@ namespace ASCompletion.Completion
                 if ((member.Flags & FlagType.Function) != 0)
                 {
                     member = (MemberModel) member.Clone();
-                    member.Type = ctx.CodeComplete.ToFunctionDeclarationString(member);
+                    member.Type = ASContext.Context.CodeComplete.ToFunctionDeclarationString(member);
                 }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
                 else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
@@ -3818,24 +3817,6 @@ namespace ASCompletion.Completion
                 }
             }
             return latest ?? FindLatest(FlagType.Variable, access, inClass, false, false);
-        }
-
-        protected static MemberModel FindMember(string name, ClassModel inClass)
-        {
-            var list = inClass == ClassModel.VoidClass
-                ? ASContext.Context.CurrentModel.Members
-                : inClass.Members;
-
-            MemberModel found = null;
-            foreach (MemberModel member in list)
-            {
-                if (member.Name == name)
-                {
-                    found = member;
-                    break;
-                }
-            }
-            return found;
         }
 
         static MemberModel FindLatest(FlagType match, ClassModel inClass) => FindLatest(match, 0, inClass);
