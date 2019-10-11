@@ -11,14 +11,11 @@ namespace HaXeContext.Generators
     class CodeGeneratorAbstractBehavior : ASCompletion.Generators.CodeGeneratorDefaultBehavior
     {
         protected override bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
-        {
-            return sci.GetWordFromPosition(position) is { } token
-                   && token.Length > 0
-                   && char.IsUpper(token[0])
-                   && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
-                   && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
-                   //&& (expr.Context.WordBefore is string word && (word == "from" || word == "to"));
-        }
+            => sci.GetWordFromPosition(position) is { } token
+               && token.Length > 0
+               && char.IsUpper(token[0])
+               && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
+               && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
 
         protected override void ShowGenerateExtends(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
@@ -32,11 +29,18 @@ namespace HaXeContext.Generators
         {
             var member = (MemberModel) found.Member?.Clone() ?? new MemberModel();
             member.Flags |= FlagType.Static;
-            var label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
+            var label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateStaticVar");
             options.Add(new GeneratorItem(label, GeneratorJobType.Variable, member, found.InClass));
-            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
+            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicStaticVar");
             options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, member, found.InClass));
         }
+
+        protected override bool CanShowGenerateProperty(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) 
+            => sci.GetWordFromPosition(position) is { } token
+               && token.Length > 0
+               && expr.Member != null
+               && expr.Member.Flags.HasFlag(FlagType.Variable)
+               && !expr.Member.Flags.HasFlag(FlagType.Enum);
 
         protected override void ShowGenerateMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {

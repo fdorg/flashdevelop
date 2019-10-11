@@ -6334,4 +6334,12 @@ AND - 모든 조건을 만족할때.</value>
     <value>Match case</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="ASCompletion.Label.GeneratePrivateStaticVar" xml:space="preserve">
+    <value>Declare private static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GeneratePublicStaticVar" xml:space="preserve">
+    <value>Declare public static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

@@ -23,10 +23,18 @@ namespace ASCompletion.Generators
             }
             // TODO: CanShowGenerateImplements
             // TODO: CanShowGenerateType
-            if (CanShowGenerateMember(sci, position, expr, found))
+            if (CanShowGenerateField(sci, position, expr, found))
             {
                 ShowGenerateField(sci, expr, found, options);
+                result = true;
+            }
+            if (CanShowGenerateProperty(sci, position, expr, found))
+            {
                 ShowGenerateProperty(sci, expr, found, options);
+                result = true;
+            }
+            if (CanShowGenerateMethod(sci, position, expr, found))
+            {
                 ShowGenerateMethod(sci, expr, found, options);
                 result = true;
             }
@@ -39,7 +47,7 @@ namespace ASCompletion.Generators
         {
         }
 
-        static bool CanShowGenerateMember(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected virtual bool CanShowGenerateField(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
@@ -51,9 +59,12 @@ namespace ASCompletion.Generators
         {
         }
 
+        protected virtual bool CanShowGenerateProperty(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+            => CanShowGenerateField(sci, position, expr, found);
+
         static void ShowGenerateProperty(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            var member = new MemberModel {Name = expr.Context.Value};
+            var member = found.Member ?? new MemberModel {Name = expr.Context.Value};
             var label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
             options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, member, found.InClass));
             label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
@@ -61,6 +72,9 @@ namespace ASCompletion.Generators
             label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
             options.Add(new GeneratorItem(label, GeneratorJobType.Setter, member, found.InClass));
         }
+
+        protected virtual bool CanShowGenerateMethod(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+            => CanShowGenerateField(sci, position, expr, found);
 
         protected virtual void ShowGenerateMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
