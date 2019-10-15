@@ -32,7 +32,7 @@ namespace ProjectManager.Controls.TreeView
         {
             Instance = this;
             MultiSelect = true;
-            nodeMap = new Dictionary<string, GenericNode>();
+            nodeMap = new Dictionary<string, GenericNode>(StringComparer.OrdinalIgnoreCase);
             ShowNodeToolTips = true;
 
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
