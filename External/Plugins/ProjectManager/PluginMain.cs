@@ -225,7 +225,7 @@ namespace ProjectManager
 
             projectActions = new ProjectActions(pluginUI);
 
-            pluginUI = new PluginUI(this, menus, fileActions, projectActions);
+            pluginUI = new PluginUI(menus, fileActions, projectActions);
             pluginUI.NewProject += delegate { NewProject(); };
             pluginUI.OpenProject += delegate { OpenProject(); };
             pluginUI.ImportProject += ImportProject;
@@ -568,8 +568,7 @@ namespace ProjectManager
         {
             if (activeProject is null) return false;
 
-            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
-
+            var shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
             if (shortcutId == "ProjectMenu.ConfigurationSelector")
             {
                 pluginUI.menus.ConfigurationSelector.Focus();
@@ -584,9 +583,9 @@ namespace ProjectManager
             }
             else if (shortcutId == "ProjectTree.LocateActiveFile")
             {
+                pluginPanel.Show();
                 TreeSyncToCurrentFile();
             }
-
             // Handle tree-level simple shortcuts like copy/paste/del
             else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
             {
@@ -1575,15 +1574,13 @@ namespace ProjectManager
         {
             var doc = PluginBase.MainForm.CurrentDocument;
             if (activeProject is null || doc is null || !doc.IsEditable || doc.IsUntitled) return;
-            string path = doc.FileName;
-
+            var path = doc.FileName;
             if (Tree.SelectedNode != null && Tree.SelectedNode.BackingPath == path)
             {
                 Tree.SelectedNode.EnsureVisible();
                 Tree.PathToSelect = null;
                 return;
             }
-
             Tree.Select(path);
             if (Tree.SelectedNode.BackingPath == path)
             {
