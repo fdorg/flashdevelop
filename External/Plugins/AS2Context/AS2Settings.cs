@@ -260,9 +260,9 @@ namespace AS2Context
         #endregion
 
         [Browsable(false)]
-        void FireChanged()
-        {
-            OnClasspathChanged?.Invoke();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
+
+        [Browsable(false)]
+        public string AddSpaceAfter { get; set; }
     }
 }

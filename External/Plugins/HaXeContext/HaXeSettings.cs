@@ -358,6 +358,16 @@ namespace HaXeContext
 
         [Browsable(false)]
         public void Init() => HaxeProject.saveHXML = exportHXML;
+
+        const string DefaultAddSpaceAfter = "if for while do catch switch";
+
+        [
+            DisplayName("Always Add Space After"),
+            LocalizedCategory("ASCompletion.Category.Helpers"),
+            LocalizedDescription("ASCompletion.Description.AddSpaceAfter"),
+            DefaultValue(DefaultAddSpaceAfter),
+        ]
+        public string AddSpaceAfter { get; set; } = DefaultAddSpaceAfter;
     }
 
     public enum HaxeCompletionModeEnum
