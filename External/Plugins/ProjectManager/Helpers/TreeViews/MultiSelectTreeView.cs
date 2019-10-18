@@ -35,7 +35,6 @@ namespace System.Windows.Forms
             set
             {
                 multiSelect = value;
-                
                 if (!multiSelect)
                     foreach (var node in selectedNodes)
                         UnpaintNode(node);
