@@ -46,12 +46,10 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void RefreshColors()
+        void RefreshColors()
         {
             BeginUpdate();
-
             RefreshNodeColors(Nodes, true);
-
             EndUpdate();
         }
 
@@ -87,10 +85,7 @@ namespace ProjectManager.Controls.TreeView
 
         public void Select(string path)
         {
-            if (nodeMap.ContainsKey(path))
-            {
-                SelectedNode = nodeMap[path];
-            }
+            if (nodeMap.ContainsKey(path)) SelectedNode = nodeMap[path];
             else
             {
                 var index = 0;
@@ -103,10 +98,7 @@ namespace ProjectManager.Controls.TreeView
                     if (nodeMap.ContainsKey(subPath)) nodeMap[subPath].Expand();
                     index++;
                 }
-                if (nodeMap.ContainsKey(path))
-                {
-                    SelectedNode = nodeMap[path];
-                }
+                if (nodeMap.ContainsKey(path)) SelectedNode = nodeMap[path];
             }
         }
 
@@ -281,7 +273,7 @@ namespace ProjectManager.Controls.TreeView
             }
         }
 
-        private void AddExpanded(IEnumerable nodes, ICollection<string> list)
+        void AddExpanded(IEnumerable nodes, ICollection<string> list)
         {
             foreach (GenericNode node in nodes)
                 if (node.IsExpanded)
@@ -348,7 +340,7 @@ namespace ProjectManager.Controls.TreeView
                 RebuildProjectNode(project);
         }
 
-        private void RebuildProjectNode(Project project)
+        void RebuildProjectNode(Project project)
         {
             activeProject = project;
 
