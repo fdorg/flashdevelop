@@ -178,9 +178,12 @@ namespace ASCompletion.Settings
             set => spacedChars = value;
         }
 
-        [DisplayName("Always Add Space After")]
-        [LocalizedCategory("ASCompletion.Category.Helpers"), LocalizedDescription("ASCompletion.Description.AddSpaceAfter"),
-        DefaultValue(DEFAULT_ADDSPACEAFTER)]
+        [
+            DisplayName("Always Add Space After"),
+            LocalizedCategory("ASCompletion.Category.Helpers"),
+            LocalizedDescription("ASCompletion.Description.AddSpaceAfter"),
+            DefaultValue(DEFAULT_ADDSPACEAFTER)
+        ]
         public string AddSpaceAfter
         {
             get => addSpaceAfter ?? DEFAULT_ADDSPACEAFTER;

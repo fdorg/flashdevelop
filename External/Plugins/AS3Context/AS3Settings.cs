@@ -280,5 +280,8 @@ namespace AS3Context
         #endregion
 
         void FireChanged() => OnClasspathChanged?.Invoke();
+
+        [Browsable(false)]
+        public string AddSpaceAfter { get; set; }
     }
 }

@@ -1180,7 +1180,9 @@ namespace ASCompletion.Completion
             options.CompactChars = ASContext.CommonSettings.CompactChars;
             options.SpacedChars = ASContext.CommonSettings.SpacedChars;
             options.SpaceBeforeFunctionCall = ASContext.CommonSettings.SpaceBeforeFunctionCall;
-            options.AddSpaceAfter = ASContext.CommonSettings.AddSpaceAfter.Split(' ');
+            options.AddSpaceAfter = !string.IsNullOrEmpty(ASContext.Context.Settings.AddSpaceAfter)
+                ? ASContext.Context.Settings.AddSpaceAfter.Split(' ')
+                : ASContext.CommonSettings.AddSpaceAfter.Split(' ');
             options.IsPhp = ASContext.Context.Settings.LanguageId == "PHP";
             options.IsHaXe = ASContext.Context.Settings.LanguageId == "HAXE";
 
