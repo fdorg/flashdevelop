@@ -100,18 +100,7 @@ namespace ASCompletion.Completion
                 if ((resolve.Type is null || resolve.Type.IsVoid() || !ctx.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type is null)
                 {
-                    var @break = false;
-                    if (CanShowGenerateClass(sci, position, resolve, found))
-                    {
-                        ShowGenerateClassList(found, resolve.Context, options);
-                        @break = true;
-                    }
-                    if (CanShowGenerateInterface(sci, position, resolve, found))
-                    {
-                        ShowGenerateInterfaceList(resolve, found, options);
-                        @break = true;
-                    }
-                    if (@break) return;
+                    if (TryShowGenerateType(sci, position, resolve, found, options)) return;
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
@@ -626,6 +615,33 @@ namespace ASCompletion.Completion
                    && !found.InClass.IsVoid()
                    && found.InClass.Implements != null
                    && found.InClass.Implements.Count > 0;
+        }
+
+
+
+        /// <summary>
+        /// TODO slavara: дописать документация
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        protected virtual bool TryShowGenerateType(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
+        {
+            var result = false;
+            if (CanShowGenerateClass(sci, position, expr, found))
+            {
+                ShowGenerateClassList(found, expr.Context, options);
+                result = true;
+            }
+            if (CanShowGenerateInterface(sci, position, expr, found))
+            {
+                ShowGenerateInterfaceList(expr, found, options);
+                result = true;
+            }
+            return result;
         }
 
         /// <summary>
@@ -3340,7 +3356,7 @@ namespace ASCompletion.Completion
             var flags = (FlagType.Function | FlagType.Getter | FlagType.Setter);
             if (isHaxe) flags |= FlagType.Variable;
 
-            iType.ResolveExtends(); // resolve inheritance chain
+            iType.ResolveExtends(); // expr inheritance chain
             while (!iType.IsVoid() && iType.QualifiedName != "Object")
             {
                 foreach (var method in iType.Members)

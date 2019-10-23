@@ -3594,6 +3594,10 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="ASCompletion.Label.GenerateClass" xml:space="preserve">
     <value>Create new class</value>
   </data>
+  <data name="ASCompletion.Label.GenerateEnum" xml:space="preserve">
+    <value>Create new enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="ASCompletion.Label.ConstName" xml:space="preserve">
     <value>Constant name:</value>
   </data>

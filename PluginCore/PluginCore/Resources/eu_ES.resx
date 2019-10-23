@@ -6320,4 +6320,8 @@ AND - All conditions are met.</value>
     <value>Declare public static variable</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="ASCompletion.Label.GenerateEnum" xml:space="preserve">
+    <value>Create new enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>
