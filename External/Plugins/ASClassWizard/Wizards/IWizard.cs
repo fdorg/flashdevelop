@@ -3,7 +3,7 @@ using ProjectManager.Projects;
 
 namespace ASClassWizard.Wizards
 {
-    interface IWizard
+    public interface IWizard
     {
         Project Project { set; }
         string Directory { set; }

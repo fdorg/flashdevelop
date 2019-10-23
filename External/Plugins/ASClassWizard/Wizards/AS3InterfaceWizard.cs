@@ -40,7 +40,7 @@ namespace ASClassWizard.Wizards
 
         private void LocalizeText()
         {
-            this.classLabel.Text = TextHelper.GetString("Wizard.Label.Name");
+            this.typeLabel.Text = TextHelper.GetString("Wizard.Label.Name");
             this.baseLabel.Text = TextHelper.GetString("Wizard.Label.ExtendsInterface");
             this.packageLabel.Text = TextHelper.GetString("Wizard.Label.Package");
             this.packageBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");

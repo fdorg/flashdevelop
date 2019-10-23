@@ -96,14 +96,13 @@ namespace ASClassWizard
                             var templateFile = table["templatePath"] as string;
                             if (IsWizardTemplate(templateFile))
                             {
-                                de.Handled = true;
                                 var fileName = Path.GetFileName(templateFile);
                                 var templateType = !string.IsNullOrEmpty(fileName) && fileName.IndexOf('.') is int p && p != -1
                                                  ? fileName.Substring(0, p)
                                                  : "class";
                                 if (templateType.Equals("class", StringComparison.OrdinalIgnoreCase))
                                 {
-
+                                    de.Handled = true;
                                     var inDirectory = (string)table["inDirectory"];
                                     var typeTemplate = table["GenericTemplate"] as string;
                                     var name = table["className"] as string ?? TextHelper.GetString("Wizard.Label.NewClass");
@@ -113,6 +112,7 @@ namespace ASClassWizard
                                 }
                                 else if (templateType.Equals("interface", StringComparison.OrdinalIgnoreCase))
                                 {
+                                    de.Handled = true;
                                     var inDirectory = (string) table["inDirectory"];
                                     var typeTemplate = table["GenericTemplate"] as string;
                                     var name = table["interfaceName"] as string ?? TextHelper.GetString("Wizard.Label.NewInterface");
@@ -297,34 +297,32 @@ namespace ASClassWizard
             }
         }
 
-        string GetPackage(string classpath, string path)
+        static string GetPackage(string classpath, string path)
         {
-            if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase)) return "";
+            if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase)) return string.Empty;
             var subPath = path.Substring(classpath.Length).Trim('/', '\\', ' ', '.');
             return subPath.Replace(Path.DirectorySeparatorChar, '.');
         }
 
         string ProcessArgs(string args)
         {
-            if (lastFileFromTemplate != null)
+            if (lastFileFromTemplate == null) return args;
+            var package = lastFileOptions != null ? lastFileOptions.Package : "";
+            var fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
+            args = args.Replace("$(FileName)", fileName);
+            if (args.Contains("$(FileNameWithPackage)") || args.Contains("$(Package)"))
             {
-                string package = lastFileOptions != null ? lastFileOptions.Package : "";
-                string fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
-                args = args.Replace("$(FileName)", fileName);
-                if (args.Contains("$(FileNameWithPackage)") || args.Contains("$(Package)"))
+                args = args.Replace("$(Package)", package);
+                args = package.Length != 0
+                    ? args.Replace("$(FileNameWithPackage)", package + "." + fileName)
+                    : args.Replace("$(FileNameWithPackage)", fileName);
+                if (lastFileOptions != null)
                 {
-                    if (package == "") args = args.Replace(" $(Package)", "");
-                    args = args.Replace("$(Package)", package);
-                    if (package != "") args = args.Replace("$(FileNameWithPackage)", package + "." + fileName);
-                    else args = args.Replace("$(FileNameWithPackage)", fileName);
-                    if (lastFileOptions != null)
-                    {
-                        args = ProcessFileTemplate(args);
-                        if (processOnSwitch is null) lastFileOptions = null;
-                    }
+                    args = ProcessFileTemplate(args);
+                    if (processOnSwitch is null) lastFileOptions = null;
                 }
-                lastFileFromTemplate = null;
             }
+            lastFileFromTemplate = null;
             return args;
         }
 
