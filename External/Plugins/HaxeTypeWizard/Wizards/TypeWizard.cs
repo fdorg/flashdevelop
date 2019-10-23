@@ -3,36 +3,34 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ASClassWizard.Wizards;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Localization;
 using ProjectManager.Projects;
 
-namespace ASClassWizard.Wizards
+namespace HaxeTypeWizard.Wizards
 {
-    public partial class AS3InterfaceWizard : SmartForm, IThemeHandler, IWizard
+    public partial class TypeWizard : Form
     {
         Project project;
-        public const string REG_IDENTIFIER_AS = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
-        // $ is not a valid char in haxe class names
-        public const string REG_IDENTIFIER_HAXE = "^[a-zA-Z_][a-zA-Z0-9_]*$";
+        public const string REG_IDENTIFIER = "^[a-zA-Z_][a-zA-Z0-9_]*$";
 
-        public AS3InterfaceWizard()
+        public TypeWizard()
         {
             InitializeComponent();
             LocalizeText();
             CenterToParent();
-            FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
+            //this.FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
             Font = PluginBase.Settings.DefaultFont;
             errorIcon.Image = PluginBase.MainForm.FindImage("197");
         }
 
         public void AfterTheming()
         {
-            Color color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
-            Color color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
+            var color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
+            var color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
             flowLayoutPanel1.BackColor = color1;
             flowLayoutPanel9.BackColor = color;
             titleLabel.BackColor = color;
@@ -64,37 +62,24 @@ namespace ASClassWizard.Wizards
         public Project Project
         {
             get => project;
-            set 
-            { 
+            set
+            {
                 project = value;
-                if (project.Language == "as2")
-                {
-                    var label = TextHelper.GetString("Wizard.Label.NewAs2Interface");
-                    titleLabel.Text = label;
-                    Text = label;
-                }
-                else if (project.Language == "haxe")
+                if (project.Language == "haxe")
                 {
                     var label = TextHelper.GetString("Wizard.Label.NewHaxeInterface");
-                    titleLabel.Text = label;
-                    Text = label;
-                }
-                else
-                {
-                    var label = TextHelper.GetString("Wizard.Label.NewAs3Interface");
                     titleLabel.Text = label;
                     Text = label;
                 }
             }
         }
 
-        void ValidateClass()
+        void ValidateType()
         {
             string errorMessage = "";
-            string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
             if (GetName() == "")
                 errorMessage = TextHelper.GetString("Wizard.Error.EmptyInterfaceName");
-            else if (!Regex.Match(GetName(), regex, RegexOptions.Singleline).Success)
+            else if (!Regex.Match(GetName(), REG_IDENTIFIER, RegexOptions.Singleline).Success)
                 errorMessage = TextHelper.GetString("Wizard.Error.InvalidInterfaceName");
             else if (project.Language == "haxe" && char.IsLower(GetName()[0]))
                 errorMessage = TextHelper.GetString("Wizard.Error.LowercaseInterfaceName");
@@ -149,7 +134,7 @@ namespace ASClassWizard.Wizards
         void AS3ClassWizard_Load(object sender, EventArgs e)
         {
             classBox.Select();
-            ValidateClass();
+            ValidateType();
         }
 
         void baseBrowse_Click(object sender, EventArgs e)
@@ -170,20 +155,11 @@ namespace ASClassWizard.Wizards
             okButton.Focus();
         }
 
-        void packageBox_TextChanged(object sender, EventArgs e)
-        {
-            ValidateClass();
-        }
+        void packageBox_TextChanged(object sender, EventArgs e) => ValidateType();
 
-        void classBox_TextChanged(object sender, EventArgs e)
-        {
-            ValidateClass();
-        }
+        void classBox_TextChanged(object sender, EventArgs e) => ValidateType();
 
-        void baseBox_TextChanged(object sender, EventArgs e)
-        {
-            ValidateClass();
-        }
+        void baseBox_TextChanged(object sender, EventArgs e) => ValidateType();
 
         #endregion
 
