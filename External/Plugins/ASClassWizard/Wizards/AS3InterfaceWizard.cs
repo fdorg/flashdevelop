@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -31,8 +32,8 @@ namespace ASClassWizard.Wizards
 
         public void AfterTheming()
         {
-            Color color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
-            Color color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
+            var color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
+            var color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
             flowLayoutPanel1.BackColor = color1;
             flowLayoutPanel9.BackColor = color;
             titleLabel.BackColor = color;
@@ -197,5 +198,16 @@ namespace ASClassWizard.Wizards
 
         #endregion
 
+        public List<string> GetInterfaces() => null;
+
+        public bool IsPublic() => true;
+
+        public bool IsDynamic() => false;
+
+        public bool IsFinal() => false;
+
+        public bool GetGenerateInheritedMethods() => false;
+
+        public bool GetGenerateConstructor() => false;
     }
 }

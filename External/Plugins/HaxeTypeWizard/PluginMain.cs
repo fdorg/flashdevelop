@@ -9,6 +9,9 @@ using PluginCore;
 using ProjectManager.Projects;
 using ASClassWizard.Resources;
 using System.Collections.Generic;
+using ASClassWizard.Helpers;
+using ASClassWizard.Wizards;
+using HaxeTypeWizard.Wizards;
 
 namespace HaxeTypeWizard
 {
@@ -92,7 +95,18 @@ namespace HaxeTypeWizard
                             if (templateType.Equals("enum", StringComparison.OrdinalIgnoreCase))
                             {
                                 de.Handled = true;
-
+                                var inDirectory = (string)table["inDirectory"];
+                                var typeTemplate = table["GenericTemplate"] as string;
+                                var name = table["className"] as string ?? TextHelper.GetString("Wizard.Label.NewEnum");
+                                DisplayEnumWizard(inDirectory, templateFile, typeTemplate, name);
+                            }
+                            else if (templateType.Equals("typedef", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // TODO slavara: implement me
+                            }
+                            else if (templateType.Equals("abstract", StringComparison.OrdinalIgnoreCase))
+                            {
+                                // TODO slavara: implement me
                             }
                         }
                     }
@@ -109,6 +123,37 @@ namespace HaxeTypeWizard
 
         static bool IsWizardTemplate(string templateFile) => templateFile != null && File.Exists(templateFile + ".wizard");
 
+        void DisplayEnumWizard(string inDirectory, string templateFile, string typeTemplate, string name)
+        {
+            var project = (Project)PluginBase.CurrentProject;
+            using var dialog = new EnumWizard();
+            if (WizardUtils.ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
+            lastFileFromTemplate = newFilePath;
+            constructorArgs = null;
+            constructorArgTypes = null;
+            lastFileOptions = new AS3ClassOptions(
+                    language: project.Language,
+                    package: dialog.GetPackage(),
+                    super_class: null,
+                    Interfaces: null,
+                    is_public: true,
+                    is_dynamic: false,
+                    is_final: false,
+                    create_inherited: false,
+                    create_constructor: false
+                )
+                {Template = typeTemplate};
+            try
+            {
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
+
         #endregion
 
         #region Custom Methods
@@ -116,7 +161,7 @@ namespace HaxeTypeWizard
         void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command | EventType.ProcessArgs);
 
         // TODO slavara: localize me
-        void InitLocalization() => Description = TextHelper.GetString($"{nameof(ASClassWizard)}.Info.Description");
+        void InitLocalization() => Description = TextHelper.GetString($"{nameof(HaxeTypeWizard)}.Info.Description");
 
         string ProcessArgs(string args)
         {
