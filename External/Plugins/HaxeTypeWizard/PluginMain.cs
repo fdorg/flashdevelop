@@ -6,8 +6,6 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore;
 using ProjectManager.Projects;
-using ASClassWizard.Resources;
-using System.Collections.Generic;
 using ASClassWizard;
 using HaxeTypeWizard.Wizards;
 
