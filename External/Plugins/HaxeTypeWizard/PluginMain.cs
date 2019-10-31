@@ -9,7 +9,7 @@ using PluginCore;
 using ProjectManager.Projects;
 using ASClassWizard.Resources;
 using System.Collections.Generic;
-using ASClassWizard;
+using ASClassWizard.Helpers;
 using ASClassWizard.Wizards;
 using HaxeTypeWizard.Wizards;
 
@@ -127,7 +127,7 @@ namespace HaxeTypeWizard
         {
             var project = (Project)PluginBase.CurrentProject;
             using var dialog = new EnumWizard();
-            if (WizardContext.ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
+            if (WizardUtils.ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
             lastFileFromTemplate = newFilePath;
             constructorArgs = null;
             constructorArgTypes = null;

@@ -84,7 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\TreeView\SimpleDirectoryNode.cs" />
-    <Compile Include="WizardContext.cs" />
+    <Compile Include="Helpers\WizardUtils.cs" />
     <Compile Include="Resources\ASClassOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />

@@ -14,6 +14,7 @@ using ASClassWizard.Wizards;
 using ASCompletion.Completion;
 using System.Collections.Generic;
 using System.Linq;
+using ASClassWizard.Helpers;
 
 namespace ASClassWizard
 {
@@ -92,7 +93,7 @@ namespace ASClassWizard
                         {
                             var table = (Hashtable) de.Data;
                             var templateFile = table["templatePath"] as string;
-                            if (WizardContext.IsWizardTemplate(templateFile))
+                            if (WizardUtils.IsWizardTemplate(templateFile))
                             {
                                 var fileName = Path.GetFileName(templateFile);
                                 var templateType = !string.IsNullOrEmpty(fileName) && fileName.IndexOf('.') is int p && p != -1
@@ -164,11 +165,11 @@ namespace ASClassWizard
         {
             var project = (Project) PluginBase.CurrentProject;
             using var dialog = new AS3ClassWizard();
-            if (WizardContext.ProcessWizard(inDirectory, className, project, dialog, out var path, out var newFilePath)) return;
+            if (WizardUtils.ProcessWizard(inDirectory, className, project, dialog, out var path, out var newFilePath)) return;
             lastFileFromTemplate = newFilePath;
             this.constructorArgs = constructorArgs;
             this.constructorArgTypes = constructorArgTypes;
-            lastFileOptions = WizardContext.GetWizardOptions(project, dialog, typeTemplate);
+            lastFileOptions = WizardUtils.GetWizardOptions(project, dialog, typeTemplate);
             try
             {
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -184,11 +185,11 @@ namespace ASClassWizard
         {
             var project = (Project) PluginBase.CurrentProject;
             using var dialog = new AS3InterfaceWizard();
-            if (WizardContext.ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
+            if (WizardUtils.ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
             lastFileFromTemplate = newFilePath;
             constructorArgs = null;
             constructorArgTypes = null;
-            lastFileOptions = WizardContext.GetWizardOptions(project, dialog, typeTemplate);
+            lastFileOptions = WizardUtils.GetWizardOptions(project, dialog, typeTemplate);
             try
             {
                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -294,7 +295,7 @@ namespace ASClassWizard
                         {
                             if (member.Name != cmodel.Constructor) continue;
                             paramString = member.ParametersString();
-                            WizardContext.AddImports(ctx, member, cmodel.InFile, imports);
+                            WizardUtils.AddImports(ctx, member, cmodel.InFile, imports);
                             superConstructor = "super(";
                             index = 0;
                             if (member.Parameters != null)
