@@ -9,7 +9,6 @@ using ProjectManager.Projects;
 using ASCompletion.Context;
 using ASCompletion.Completion;
 using System.Collections.Generic;
-using ASClassWizard.Helpers;
 using ASClassWizard.Wizards;
 
 namespace ASClassWizard
@@ -83,7 +82,7 @@ namespace ASClassWizard
                         {
                             var table = (Hashtable) de.Data;
                             var templateFile = table["templatePath"] as string;
-                            if (WizardUtils.IsWizardTemplate(templateFile))
+                            if (WizardContext.IsWizardTemplate(templateFile))
                             {
                                 var fileName = Path.GetFileName(templateFile);
                                 var templateType = !string.IsNullOrEmpty(fileName) && fileName.Contains('.', out var p)
@@ -98,7 +97,7 @@ namespace ASClassWizard
                                     var constructorArgs = table["constructorArgs"] as string;
                                     var constructorArgsTypes = table["constructorArgTypes"] as List<string>;
                                     using var dialog = new AS3ClassWizard();
-                                    WizardUtils.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, constructorArgs, constructorArgsTypes);
+                                    WizardContext.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, constructorArgs, constructorArgsTypes);
                                 }
                                 else if (templateType.Equals("interface", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -107,7 +106,7 @@ namespace ASClassWizard
                                     var typeTemplate = table["GenericTemplate"] as string;
                                     var name = table["interfaceName"] as string ?? TextHelper.GetString("Wizard.Label.NewInterface");
                                     using var dialog = new AS3InterfaceWizard();
-                                    WizardUtils.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, null, null);
+                                    WizardContext.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, null, null);
                                 }
                             }
                         }
@@ -115,27 +114,27 @@ namespace ASClassWizard
                     break;
 
                 case EventType.FileSwitch:
-                    if (PluginBase.MainForm.CurrentDocument.FileName == WizardUtils.processOnSwitch)
+                    if (PluginBase.MainForm.CurrentDocument.FileName == WizardContext.processOnSwitch)
                     {
-                        WizardUtils.processOnSwitch = null;
-                        if (WizardUtils.lastFileOptions?.interfaces is null) return;
-                        foreach (var cname in WizardUtils.lastFileOptions.interfaces)
+                        WizardContext.processOnSwitch = null;
+                        if (WizardContext.lastFileOptions?.interfaces is null) return;
+                        foreach (var cname in WizardContext.lastFileOptions.interfaces)
                         {
                             ASContext.Context.CurrentModel.Check();
                             var inClass = ASContext.Context.CurrentModel.GetPublicClass();
                             ASGenerator.SetJobContext(null, cname, null, null);
                             ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, inClass, null, null);
                         }
-                        WizardUtils.lastFileOptions = null;
+                        WizardContext.lastFileOptions = null;
                     }
                     break;
 
                 case EventType.ProcessArgs:
                     project = PluginBase.CurrentProject as Project;
-                    if (WizardUtils.lastFileFromTemplate != null && project != null && (project.Language.StartsWithOrdinal("as") || project.Language == "haxe"))
+                    if (WizardContext.lastFileFromTemplate != null && project != null && (project.Language.StartsWithOrdinal("as") || project.Language == "haxe"))
                     {
                         var te = (TextEvent) e;
-                        te.Value = WizardUtils.ProcessArgs(te.Value);
+                        te.Value = WizardContext.ProcessArgs(te.Value);
                     }
                     break;
             }

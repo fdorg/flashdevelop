@@ -8,7 +8,7 @@ using PluginCore;
 using ProjectManager.Projects;
 using ASClassWizard.Resources;
 using System.Collections.Generic;
-using ASClassWizard.Helpers;
+using ASClassWizard;
 using HaxeTypeWizard.Wizards;
 
 namespace HaxeTypeWizard
@@ -79,7 +79,7 @@ namespace HaxeTypeWizard
                     {
                         var table = (Hashtable) de.Data;
                         var templateFile = table["templatePath"] as string;
-                        if (WizardUtils.IsWizardTemplate(templateFile))
+                        if (WizardContext.IsWizardTemplate(templateFile))
                         {
                             var fileName = Path.GetFileName(templateFile);
                             if (string.IsNullOrEmpty(fileName) || !fileName.Contains('.', out var p)) return;
@@ -91,7 +91,7 @@ namespace HaxeTypeWizard
                                 var typeTemplate = table["GenericTemplate"] as string;
                                 var name = table["className"] as string ?? TextHelper.GetString("Wizard.Label.NewEnum");
                                 using var dialog = new EnumWizard();
-                                WizardUtils.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, null, null);
+                                WizardContext.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, null, null);
                             }
                             else if (templateType.Equals("typedef", StringComparison.OrdinalIgnoreCase))
                             {

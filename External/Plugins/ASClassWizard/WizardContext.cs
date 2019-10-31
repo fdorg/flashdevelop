@@ -15,9 +15,9 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using ProjectManager.Projects;
 
-namespace ASClassWizard.Helpers
+namespace ASClassWizard
 {
-    public static class WizardUtils
+    public static class WizardContext
     {
 
         internal static AS3ClassOptions lastFileOptions;
@@ -33,8 +33,8 @@ namespace ASClassWizard.Helpers
             var project = (Project) PluginBase.CurrentProject;
             if (ProcessWizard(dialog, inDirectory, name, project, out var path, out var newFilePath)) return;
             lastFileFromTemplate = newFilePath;
-            WizardUtils.constructorArgs = constructorArgs;
-            WizardUtils.constructorArgTypes = constructorArgTypes;
+            WizardContext.constructorArgs = constructorArgs;
+            WizardContext.constructorArgTypes = constructorArgTypes;
             lastFileOptions = GetWizardOptions(project, dialog, typeTemplate);
             FileFromTemplate(path, templateFile, newFilePath);
         }
