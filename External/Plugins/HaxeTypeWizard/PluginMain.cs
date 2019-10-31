@@ -3,26 +3,18 @@ using System.IO;
 using System.ComponentModel;
 using System.Collections;
 using PluginCore.Localization;
-using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore;
 using ProjectManager.Projects;
 using ASClassWizard.Resources;
 using System.Collections.Generic;
 using ASClassWizard.Helpers;
-using ASClassWizard.Wizards;
 using HaxeTypeWizard.Wizards;
 
 namespace HaxeTypeWizard
 {
     public class PluginMain : IPlugin
     {
-        AS3ClassOptions lastFileOptions;
-        string lastFileFromTemplate;
-        string processOnSwitch;
-        string constructorArgs;
-        List<string> constructorArgTypes;
-
         #region Required Properties
         
         /// <summary>
@@ -87,7 +79,7 @@ namespace HaxeTypeWizard
                     {
                         var table = (Hashtable) de.Data;
                         var templateFile = table["templatePath"] as string;
-                        if (IsWizardTemplate(templateFile))
+                        if (WizardUtils.IsWizardTemplate(templateFile))
                         {
                             var fileName = Path.GetFileName(templateFile);
                             if (string.IsNullOrEmpty(fileName) || !fileName.Contains('.', out var p)) return;
@@ -98,7 +90,8 @@ namespace HaxeTypeWizard
                                 var inDirectory = (string)table["inDirectory"];
                                 var typeTemplate = table["GenericTemplate"] as string;
                                 var name = table["className"] as string ?? TextHelper.GetString("Wizard.Label.NewEnum");
-                                DisplayEnumWizard(inDirectory, templateFile, typeTemplate, name);
+                                using var dialog = new EnumWizard();
+                                WizardUtils.DisplayWizard(dialog, inDirectory, templateFile, typeTemplate, name, null, null);
                             }
                             else if (templateType.Equals("typedef", StringComparison.OrdinalIgnoreCase))
                             {
@@ -111,46 +104,6 @@ namespace HaxeTypeWizard
                         }
                     }
                     break;
-                case EventType.ProcessArgs:
-                    if (lastFileFromTemplate != null)
-                    {
-                        var te = (TextEvent) e;
-                        te.Value = ProcessArgs(te.Value);
-                    }
-                    break;
-            }
-        }
-
-        static bool IsWizardTemplate(string templateFile) => templateFile != null && File.Exists(templateFile + ".wizard");
-
-        void DisplayEnumWizard(string inDirectory, string templateFile, string typeTemplate, string name)
-        {
-            var project = (Project)PluginBase.CurrentProject;
-            using var dialog = new EnumWizard();
-            if (WizardUtils.ProcessWizard(inDirectory, name, project, dialog, out var path, out var newFilePath)) return;
-            lastFileFromTemplate = newFilePath;
-            constructorArgs = null;
-            constructorArgTypes = null;
-            lastFileOptions = new AS3ClassOptions(
-                    language: project.Language,
-                    package: dialog.GetPackage(),
-                    super_class: null,
-                    Interfaces: null,
-                    is_public: true,
-                    is_dynamic: false,
-                    is_final: false,
-                    create_inherited: false,
-                    create_constructor: false
-                )
-                {Template = typeTemplate};
-            try
-            {
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                PluginBase.MainForm.FileFromTemplate(templateFile + ".wizard", newFilePath);
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
             }
         }
 
@@ -162,76 +115,6 @@ namespace HaxeTypeWizard
 
         // TODO slavara: localize me
         void InitLocalization() => Description = TextHelper.GetString($"{nameof(HaxeTypeWizard)}.Info.Description");
-
-        string ProcessArgs(string args)
-        {
-            if (lastFileFromTemplate is null) return args;
-            var package = lastFileOptions != null ? lastFileOptions.Package : "";
-            var fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
-            args = args.Replace("$(FileName)", fileName);
-            if (args.Contains("$(FileNameWithPackage)") || args.Contains("$(Package)"))
-            {
-                args = args.Replace("$(Package)", package);
-                args = package.Length != 0
-                    ? args.Replace("$(FileNameWithPackage)", package + "." + fileName)
-                    : args.Replace("$(FileNameWithPackage)", fileName);
-                if (lastFileOptions != null)
-                {
-                    args = ProcessFileTemplate(args);
-                    if (processOnSwitch is null) lastFileOptions = null;
-                }
-            }
-            lastFileFromTemplate = null;
-            return args;
-        }
-
-        string ProcessFileTemplate(string args)
-        {
-            var eolMode = (int)PluginBase.MainForm.Settings.EOLMode;
-            var lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            var imports = new List<string>();
-            var extends = "";
-            var implements = "";
-            var inheritedMethods = "";
-            var paramString = "";
-            var superConstructor = "";
-            if (constructorArgs != null)
-            {
-                paramString = constructorArgs;
-                foreach (string type in constructorArgTypes)
-                {
-                    if (!imports.Contains(type))
-                    {
-                        imports.Add(type);
-                    }
-                }
-            }
-            string classMetadata = "";
-            var access = lastFileOptions.isPublic ? "public " : "private ";
-            access += lastFileOptions.isDynamic ? "dynamic " : "";
-            if (lastFileOptions.isFinal) classMetadata += "@:final\n";
-            string importsSrc = "";
-            string prevImport = null;
-            imports.Sort();
-            foreach (string import in imports)
-            {
-                if (prevImport == import) continue;
-                prevImport = import;
-                if (import.LastIndexOf('.') is int p && (p == -1 || import.Substring(0, p) == lastFileOptions.Package)) continue;
-                importsSrc += "import " + import + ";" + lineBreak;
-            }
-            if (importsSrc.Length > 0) importsSrc += lineBreak;
-            args = args.Replace("$(Template)", lastFileOptions.Template ?? string.Empty);
-            args = args.Replace("$(Import)", importsSrc);
-            args = args.Replace("$(Extends)", extends);
-            args = args.Replace("$(Implements)", implements);
-            args = args.Replace("$(Access)", access);
-            args = args.Replace("$(InheritedMethods)", inheritedMethods);
-            args = args.Replace("$(ConstructorArguments)", paramString);
-            args = args.Replace("$(Super)", superConstructor);
-            args = args.Replace("$(ClassMetadata)", classMetadata);
-            return args;
-        }
 
         #endregion
     }
