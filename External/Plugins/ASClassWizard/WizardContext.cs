@@ -13,9 +13,9 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using ProjectManager.Projects;
 
-namespace ASClassWizard.Helpers
+namespace ASClassWizard
 {
-    public static class WizardUtils
+    public static class WizardContext
     {
         public static bool IsWizardTemplate(string templateFile) => templateFile != null && File.Exists(templateFile + ".wizard");
 
