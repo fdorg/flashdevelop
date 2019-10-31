@@ -6385,4 +6385,12 @@ AND - All conditions are met.</value>
     <value>Create new enum</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="HaxeTypeWizard.Wizard.Label.NewEnum" xml:space="preserve">
+    <value>New Haxe Enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Info.Description" xml:space="preserve">
+    <value>Adds a Haxe type wizard to FlashDevelop.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

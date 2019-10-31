@@ -112,7 +112,7 @@ namespace HaxeTypeWizard
         void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.Command | EventType.ProcessArgs);
 
         // TODO slavara: localize me
-        void InitLocalization() => Description = TextHelper.GetString($"{nameof(HaxeTypeWizard)}.Info.Description");
+        void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
         #endregion
     }

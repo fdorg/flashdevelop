@@ -6,12 +6,13 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASClassWizard.Wizards;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
 using ProjectManager.Projects;
 
 namespace HaxeTypeWizard.Wizards
 {
-    public partial class EnumWizard : Form, IWizard
+    public partial class EnumWizard : SmartForm, IThemeHandler, IWizard
     {
         public const string REG_IDENTIFIER = "^[a-zA-Z_][a-zA-Z0-9_]*$";
 
@@ -20,7 +21,7 @@ namespace HaxeTypeWizard.Wizards
             InitializeComponent();
             LocalizeText();
             CenterToParent();
-            //this.FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
+            FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
             Font = PluginBase.Settings.DefaultFont;
             errorIcon.Image = PluginBase.MainForm.FindImage("197");
         }
@@ -36,12 +37,12 @@ namespace HaxeTypeWizard.Wizards
 
         void LocalizeText()
         {
-            typeLabel.Text = TextHelper.GetString("Wizard.Label.Name");
-            packageLabel.Text = TextHelper.GetString("Wizard.Label.Package");
-            packageBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
-            okButton.Text = TextHelper.GetString("Wizard.Button.Ok");
-            cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
-            var label = TextHelper.GetString("Wizard.Label.NewHaxeEnum");
+            typeLabel.Text = TextHelper.GetString("ASClassWizard.Wizard.Label.Name");
+            packageLabel.Text = TextHelper.GetString("ASClassWizard.Wizard.Label.Package");
+            packageBrowse.Text = TextHelper.GetString("ASClassWizard.Wizard.Button.Browse");
+            okButton.Text = TextHelper.GetString("ASClassWizard.Wizard.Button.Ok");
+            cancelButton.Text = TextHelper.GetString("ASClassWizard.Wizard.Button.Cancel");
+            var label = TextHelper.GetString("Wizard.Label.NewEnum");
             titleLabel.Text = label;
             Text = label;
         }
