@@ -3415,8 +3415,6 @@ namespace HaXeContext.Generators
             return result;
         }
 
-
-
         static IEnumerable<TestCaseData> CanGenerateEnumTestCases
         {
             get
@@ -3436,9 +3434,20 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> CanGenerateClassTestCases_issue2891
+        {
+            get
+            {
+                yield return new TestCaseData("CanGenerateClass_issue2891_1", GeneratorJobType.Class)
+                    .Returns(true)
+                    .SetName("Can Generate Class. Issue 2891. Case 1");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(CanGenerateEnumTestCases)),
+            TestCaseSource(nameof(CanGenerateClassTestCases_issue2891)),
         ]
         public bool HasGenerator(string fileName, GeneratorJobType job)
         {
