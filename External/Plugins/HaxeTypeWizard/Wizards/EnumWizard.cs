@@ -29,8 +29,7 @@ namespace HaxeTypeWizard.Wizards
         public void AfterTheming()
         {
             var color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
-            var color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
-            flowLayoutPanel1.BackColor = color1;
+            flowLayoutPanel1.BackColor = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
             flowLayoutPanel9.BackColor = color;
             titleLabel.BackColor = color;
         }

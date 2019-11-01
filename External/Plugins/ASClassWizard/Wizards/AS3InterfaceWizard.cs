@@ -162,7 +162,6 @@ namespace ASClassWizard.Wizards
                 browser.ClassList = context.GetAllProjectClasses();
             }
             catch { }
-            //browser.ExcludeFlag = FlagType.Interface;
             browser.IncludeFlag = FlagType.Interface;
             if (browser.ShowDialog(this) == DialogResult.OK)
             {
