@@ -657,7 +657,14 @@ namespace ASCompletion.Completion
             // for example: public var foo : Foo<generator>
             return expr.Context.Separator == ":"
                    // for example, good: new Type()<generator>, bad: new Type().value<generator>
-                   || (expr.Context.WordBefore == "new" && !expr.Context.Value.Contains("~."));
+                   || (expr.Context.WordBefore == "new" && !expr.Context.Value.Contains("~."))
+                   // for example: class Foo extends Bar<generator>
+                   || (expr.Context.WordBefore == "extends"
+                       && ASContext.Context.CurrentClass.Flags is var flags 
+                       && flags.HasFlag(FlagType.Class)
+                       // for example: interface Foo extends Bar<generator>
+                       && !flags.HasFlag(FlagType.Interface)
+                       && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass));
         }
 
         /// <summary>
@@ -672,8 +679,8 @@ namespace ASCompletion.Completion
         {
             return contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
-                   // fox example: implements IFoo<generator>
-                   && ((expr.Context.WordBefore == "implements" && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass))
+                   // for example: implements IFoo<generator>
+                   && (expr.Context.WordBefore == "implements" && ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
                        // for example: public var foo : Fo|o
                        || (expr.Context.Separator == ":"));
         }
