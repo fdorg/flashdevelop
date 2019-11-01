@@ -10,6 +10,7 @@ using ProjectManager.Projects;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using System.Diagnostics;
+using System.Linq;
 using PluginCore.Controls;
 
 namespace ASClassWizard.Wizards
@@ -258,33 +259,28 @@ namespace ASClassWizard.Wizards
 
         #region user_options
 
-        public string GetPackage() => this.packageBox.Text;
+        public string GetPackage() => packageBox.Text;
 
-        public string GetName() => this.classBox.Text;
+        public string GetName() => classBox.Text;
 
-        public bool isDynamic() => this.dynamicCheck.Checked;
+        public bool IsDynamic() => dynamicCheck.Checked;
 
-        public bool isFinal() => this.finalCheck.Checked;
+        public bool IsFinal() => finalCheck.Checked;
 
-        public bool isPublic() => this.publicRadio.Checked;
+        public bool IsPublic() => publicRadio.Checked;
 
-        public string GetExtends() => this.baseBox.Text;
+        public string GetExtends() => baseBox.Text;
 
-        public List<string> getInterfaces()
+        public List<string> GetInterfaces()
         {
-            List<string> _interfaces = new List<string>(this.implementList.Items.Count);
-            foreach (string item in this.implementList.Items)
-            {
-                _interfaces.Add(item);
-            }
-            return _interfaces;
+            return implementList.Items.Cast<string>().ToList();
         }
 
-        public bool hasInterfaces() => this.implementList.Items.Count > 0;
+        public bool HasInterfaces() => implementList.Items.Count > 0;
 
-        public bool getGenerateConstructor() => this.constructorCheck.Checked;
+        public bool GetGenerateConstructor() => constructorCheck.Checked;
 
-        public bool getGenerateInheritedMethods() => this.superCheck.Checked;
+        public bool GetGenerateInheritedMethods() => superCheck.Checked;
 
         #endregion
 

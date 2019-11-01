@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,6 +14,7 @@ using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -24,6 +26,7 @@ namespace HaXeContext.Generators
         Switch = GeneratorJobType.User << 2,
         IVariable = GeneratorJobType.User << 3,
         ConvertStaticMethodCallToStaticExtensionCall = GeneratorJobType.User << 4,
+        Enum = GeneratorJobType.User << 5,
     }
 
     class CodeGenerator : ASGenerator
@@ -116,7 +119,31 @@ namespace HaXeContext.Generators
         /// <inheritdoc />
         protected override bool CanShowGenerateClass(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return !string.IsNullOrEmpty(contextToken) && char.IsUpper(contextToken[0]) && base.CanShowGenerateClass(sci, position, expr, found);
+            return !string.IsNullOrEmpty(contextToken)
+                   && char.IsUpper(contextToken[0])
+                   && base.CanShowGenerateClass(sci, position, expr, found);
+        }
+
+        static bool CanShowGenerateEnum(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return !string.IsNullOrEmpty(contextToken)
+                   && char.IsUpper(contextToken[0])
+                   // for example: public var foo : Foo<generator>
+                   && expr.Context.Separator == ":";
+        }
+
+        static void ShowGenerateEnumList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateEnum");
+            options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.Enum, () =>
+            {
+                sci.BeginUndoAction();
+                try
+                {
+                    GenerateEnum(sci, found.InClass, expr.Context);
+                }
+                finally { sci.EndUndoAction(); }
+            }));
         }
 
         /// <inheritdoc />
@@ -145,6 +172,16 @@ namespace HaXeContext.Generators
             return !flags.HasFlag(FlagType.Enum)
                 && !flags.HasFlag(FlagType.TypeDef)
                 && base.CanShowGenerateConstructorAndToString(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
+        protected override bool TryShowGenerateType(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, List<ICompletionListItem> options)
+        {
+            var result = base.TryShowGenerateType(sci, position, expr, found, options);
+            // TryShowGenerateAbstract
+            if (CanShowGenerateEnum(sci, position, expr, found)) ShowGenerateEnumList(sci, expr, found, options);
+            // TryShowGenerateTypedef
+            return result;
         }
 
         protected override bool HandleOverrideCompletion(bool autoHide)
@@ -802,7 +839,19 @@ namespace HaXeContext.Generators
             return sci.GetLine(line).Length;
         }
 
-        static void GenerateEnumConstructor(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        static void GenerateEnum(ScintillaControl sci, MemberModel inClass, ASExpr expr)
+        {
+            //ASGenerator.AddLookupPosition(); // remember last cursor position for Shift+F4
+            var info = new Hashtable();
+            info["GenericTemplate"] = GetGenericDeclaration(sci, sci.WordEndPosition(expr.PositionExpression, false));
+            info["className"] = string.IsNullOrEmpty(expr.Value) ? "Enum" : expr.Value;
+            info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", PluginBase.CurrentProject.GetType().Name, $"Enum{ASContext.Context.Settings.DefaultExtension}.fdt");
+            info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
+            var de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
+            EventManager.DispatchEvent(null, de);
+        }
+
+        static void GenerateEnumConstructor(ScintillaControl sci, ASResult expr, MemberModel inClass)
         {
             var end = sci.WordEndPosition(sci.CurrentPos, true);
             var parameters = ParseFunctionParameters(sci, end);

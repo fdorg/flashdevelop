@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -14,7 +15,7 @@ namespace ASClassWizard.Wizards
 {
     public partial class AS3InterfaceWizard : SmartForm, IThemeHandler, IWizard
     {
-        private Project project;
+        Project project;
         public const string REG_IDENTIFIER_AS = "^[a-zA-Z_$][a-zA-Z0-9_$]*$";
         // $ is not a valid char in haxe class names
         public const string REG_IDENTIFIER_HAXE = "^[a-zA-Z_][a-zA-Z0-9_]*$";
@@ -24,29 +25,29 @@ namespace ASClassWizard.Wizards
             InitializeComponent();
             LocalizeText();
             CenterToParent();
-            this.FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.errorIcon.Image = PluginBase.MainForm.FindImage("197");
+            FormGuid = "E1D36E71-BD39-4C58-A436-F46D01EC0590";
+            Font = PluginBase.Settings.DefaultFont;
+            errorIcon.Image = PluginBase.MainForm.FindImage("197");
         }
 
         public void AfterTheming()
         {
-            Color color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
-            Color color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
-            this.flowLayoutPanel1.BackColor = color1;
-            this.flowLayoutPanel9.BackColor = color;
-            this.titleLabel.BackColor = color;
+            var color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
+            var color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
+            flowLayoutPanel1.BackColor = color1;
+            flowLayoutPanel9.BackColor = color;
+            titleLabel.BackColor = color;
         }
 
-        private void LocalizeText()
+        void LocalizeText()
         {
-            this.classLabel.Text = TextHelper.GetString("Wizard.Label.Name");
-            this.baseLabel.Text = TextHelper.GetString("Wizard.Label.ExtendsInterface");
-            this.packageLabel.Text = TextHelper.GetString("Wizard.Label.Package");
-            this.packageBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
-            this.baseBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
-            this.okButton.Text = TextHelper.GetString("Wizard.Button.Ok");
-            this.cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
+            typeLabel.Text = TextHelper.GetString("Wizard.Label.Name");
+            baseLabel.Text = TextHelper.GetString("Wizard.Label.ExtendsInterface");
+            packageLabel.Text = TextHelper.GetString("Wizard.Label.Package");
+            packageBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
+            baseBrowse.Text = TextHelper.GetString("Wizard.Button.Browse");
+            okButton.Text = TextHelper.GetString("Wizard.Button.Ok");
+            cancelButton.Text = TextHelper.GetString("Wizard.Button.Cancel");
         }
 
         public string StartupPackage
@@ -66,29 +67,29 @@ namespace ASClassWizard.Wizards
             get => project;
             set 
             { 
-                this.project = value;
+                project = value;
                 if (project.Language == "as2")
                 {
                     var label = TextHelper.GetString("Wizard.Label.NewAs2Interface");
-                    this.titleLabel.Text = label;
-                    this.Text = label;
+                    titleLabel.Text = label;
+                    Text = label;
                 }
-                if (project.Language == "haxe")
+                else if (project.Language == "haxe")
                 {
                     var label = TextHelper.GetString("Wizard.Label.NewHaxeInterface");
-                    this.titleLabel.Text = label;
-                    this.Text = label;
+                    titleLabel.Text = label;
+                    Text = label;
                 }
                 else
                 {
                     var label = TextHelper.GetString("Wizard.Label.NewAs3Interface");
-                    this.titleLabel.Text = label;
-                    this.Text = label;
+                    titleLabel.Text = label;
+                    Text = label;
                 }
             }
         }
 
-        private void ValidateClass()
+        void ValidateClass()
         {
             string errorMessage = "";
             string regex = (project.Language == "haxe") ? REG_IDENTIFIER_HAXE : REG_IDENTIFIER_AS; 
@@ -109,7 +110,7 @@ namespace ASClassWizard.Wizards
                 okButton.Enabled = true;
                 errorIcon.Visible = false;
             }
-            this.errorLabel.Text = errorMessage;
+            errorLabel.Text = errorMessage;
         }
 
         #region EventHandlers
@@ -117,10 +118,10 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Browse project packages
         /// </summary>
-        private void packageBrowse_Click(object sender, EventArgs e)
+        void packageBrowse_Click(object sender, EventArgs e)
         {
             using PackageBrowser browser = new PackageBrowser();
-            browser.Project = this.Project;
+            browser.Project = Project;
 
             foreach (string item in Project.AbsoluteClasspaths)
                 browser.AddClassPath(item);
@@ -129,30 +130,30 @@ namespace ASClassWizard.Wizards
             {
                 if (browser.Package != null)
                 {
-                    string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
+                    string classpath = Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
                     string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
                     if (package != null)
                     {
                         Directory = browser.Package;
                         package = package.Replace(Path.DirectorySeparatorChar, '.');
-                        this.packageBox.Text = package;
+                        packageBox.Text = package;
                     }
                 }
                 else
                 {
-                    this.Directory = browser.Project.Directory;
-                    this.packageBox.Text = "";
+                    Directory = browser.Project.Directory;
+                    packageBox.Text = "";
                 }
             }
         }
 
-        private void AS3ClassWizard_Load(object sender, EventArgs e)
+        void AS3ClassWizard_Load(object sender, EventArgs e)
         {
-            this.classBox.Select();
-            this.ValidateClass();
+            classBox.Select();
+            ValidateClass();
         }
 
-        private void baseBrowse_Click(object sender, EventArgs e)
+        void baseBrowse_Click(object sender, EventArgs e)
         {
             using var browser = new ClassBrowser();
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
@@ -161,26 +162,25 @@ namespace ASClassWizard.Wizards
                 browser.ClassList = context.GetAllProjectClasses();
             }
             catch { }
-            //browser.ExcludeFlag = FlagType.Interface;
             browser.IncludeFlag = FlagType.Interface;
             if (browser.ShowDialog(this) == DialogResult.OK)
             {
-                this.baseBox.Text = browser.SelectedClass;
+                baseBox.Text = browser.SelectedClass;
             }
-            this.okButton.Focus();
+            okButton.Focus();
         }
 
-        private void packageBox_TextChanged(object sender, EventArgs e)
+        void packageBox_TextChanged(object sender, EventArgs e)
         {
             ValidateClass();
         }
 
-        private void classBox_TextChanged(object sender, EventArgs e)
+        void classBox_TextChanged(object sender, EventArgs e)
         {
             ValidateClass();
         }
 
-        private void baseBox_TextChanged(object sender, EventArgs e)
+        void baseBox_TextChanged(object sender, EventArgs e)
         {
             ValidateClass();
         }
@@ -197,5 +197,16 @@ namespace ASClassWizard.Wizards
 
         #endregion
 
+        public List<string> GetInterfaces() => null;
+
+        public bool IsPublic() => true;
+
+        public bool IsDynamic() => false;
+
+        public bool IsFinal() => false;
+
+        public bool GetGenerateInheritedMethods() => false;
+
+        public bool GetGenerateConstructor() => false;
     }
 }

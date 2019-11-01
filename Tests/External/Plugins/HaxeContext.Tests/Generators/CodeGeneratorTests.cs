@@ -3414,5 +3414,40 @@ namespace HaXeContext.Generators
             ASContext.CommonSettings.GenerateDefaultModifierDeclaration = false;
             return result;
         }
+
+
+
+        static IEnumerable<TestCaseData> CanGenerateEnumTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CanGenerateEnum_1", GeneratorJob.Enum)
+                    .Returns(true)
+                    .SetName("Can Generate Enum. Case 1");
+                yield return new TestCaseData("CanGenerateEnum_2", GeneratorJob.Enum)
+                    .Returns(false)
+                    .SetName("Can Generate Enum. Case 2");
+                yield return new TestCaseData("CanGenerateEnum_3", GeneratorJob.Enum)
+                    .Returns(false)
+                    .SetName("Can Generate Enum. Case 3");
+                yield return new TestCaseData("CanGenerateEnum_4", GeneratorJob.Enum)
+                    .Returns(false)
+                    .SetName("Can Generate Enum. Case 4");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(CanGenerateEnumTestCases)),
+        ]
+        public bool HasGenerator(string fileName, GeneratorJobType job)
+        {
+
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFileName(GetFullPath(fileName));
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            return options.Any(it => ((GeneratorItem) it).Job == job);
+        }
     }
 }

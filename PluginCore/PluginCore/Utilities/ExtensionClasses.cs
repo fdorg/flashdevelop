@@ -9,6 +9,12 @@ namespace PluginCore
     {
         public static bool Contains(this string @this, char value) => @this.IndexOf(value) >= 0;
 
+        public static bool Contains(this string @this, char value, out int position)
+        {
+            position = @this.IndexOf(value);
+            return position >= 0;
+        }
+
         /// <summary>
         /// Determines whether the beginning of this <see cref="string"/> instance matches the specified Unicode character.
         /// <para/>
@@ -39,7 +45,7 @@ namespace PluginCore
         /// <returns></returns>
         public static bool EndsWith(this string @this, char value)
         {
-            int length = @this.Length;
+            var length = @this.Length;
             return length != 0 && @this[length - 1] == value;
         }
 

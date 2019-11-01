@@ -9,10 +9,7 @@ namespace AirProperties.Forms
 
         public static void SetControlValue(string value, TextBox field)
         {
-            if (value is null)
-                field.Text = string.Empty;
-            else
-                field.Text = value;
+            field.Text = value ?? string.Empty;
         }
 
         public static void SetControlValue(string value, CheckBox field)

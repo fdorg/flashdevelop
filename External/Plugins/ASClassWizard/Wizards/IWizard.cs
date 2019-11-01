@@ -1,9 +1,10 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using ProjectManager.Projects;
 
 namespace ASClassWizard.Wizards
 {
-    interface IWizard
+    public interface IWizard
     {
         Project Project { set; }
         string Directory { set; }
@@ -11,6 +12,13 @@ namespace ASClassWizard.Wizards
         string StartupPackage { set; }
         string GetPackage();
         string GetName();
+        string GetExtends();
+        List<string> GetInterfaces();
+        bool IsPublic();
+        bool IsDynamic();
+        bool IsFinal();
+        bool GetGenerateInheritedMethods();
+        bool GetGenerateConstructor();
         DialogResult ShowDialog();
     }
 }

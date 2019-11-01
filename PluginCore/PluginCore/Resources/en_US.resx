@@ -3594,6 +3594,10 @@ Please note that with injection enabled, you will not be able to use many projec
   <data name="ASCompletion.Label.GenerateClass" xml:space="preserve">
     <value>Create new class</value>
   </data>
+  <data name="ASCompletion.Label.GenerateEnum" xml:space="preserve">
+    <value>Create new enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="ASCompletion.Label.ConstName" xml:space="preserve">
     <value>Constant name:</value>
   </data>
@@ -6337,6 +6341,26 @@ AND - All conditions are met.</value>
   </data>
   <data name="ASCompletion.Label.GeneratePublicStaticVar" xml:space="preserve">
     <value>Declare public static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Label.NewEnum" xml:space="preserve">
+    <value>New Haxe Enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Info.Description" xml:space="preserve">
+    <value>Adds a Haxe type wizard to FlashDevelop.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.EmptyEnumName" xml:space="preserve">
+    <value>Enum name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.InvalidEnumName" xml:space="preserve">
+    <value>Enum name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.LowercaseEnumName" xml:space="preserve">
+    <value>Enum name must start with an uppercase letter.</value>
     <comment>Added after 5.3.3</comment>
   </data>
 </root>
