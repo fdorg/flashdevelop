@@ -6356,4 +6356,8 @@ AND - All conditions are met.</value>
     <value>Enum name must start with an uppercase letter.</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="HaxeCompletion.Label.GenerateConstructorWithInitializer" xml:space="preserve">
+    <value>Generate constructor with initializer</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

@@ -25,6 +25,44 @@ namespace HaXeContext.Generators
             options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
         }
 
+        protected override bool CanShowGenerateConstructor(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+            => sci.GetWordFromPosition(position) is null
+               && found.Member is null
+               && found.InClass.Flags.HasFlag(FlagType.Abstract)
+               && !found.InClass.Members.Contains(found.InClass.Name, FlagType.Function | FlagType.Constructor, 0)
+               && position < sci.LineEndPosition(found.InClass.LineTo)
+               && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
+
+        protected override void ShowGenerateConstructor(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.Member, found.InClass));
+            label = TextHelper.GetString("HaxeCompletion.Label.GenerateConstructorWithInitializer");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, () => GenerateConstructorWithInitializer(sci, found)));
+        }
+
+        static void GenerateConstructorWithInitializer(ScintillaControl sci, FoundDeclaration found)
+        {
+            sci.BeginUndoAction();
+            try
+            {
+                var inClass = found.InClass;
+                var template = TemplateUtils.GetTemplate("AbstractConstructorWithInitializer");
+                template = TemplateUtils.ReplaceTemplateVariable(template, "ExtendsType", inClass.ExtendsType);
+                template = TemplateUtils.ToDeclarationWithModifiersString(new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Function | FlagType.Constructor, Visibility.Public), template);
+                template = TemplateUtils.ReplaceTemplateVariable(template, "EntryPoint", string.Empty);
+                template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", string.Empty);
+                template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ASContext.Context.Features.voidKey);
+                var position = ASGenerator.GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
+                sci.SetSel(position, position);
+                ASGenerator.InsertCode(position, template, sci);
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
+        }
+
         protected override void ShowGenerateField(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var member = (MemberModel) found.Member?.Clone() ?? new MemberModel();

@@ -2754,7 +2754,7 @@ namespace ASCompletion.Completion
 
         static void GenerateConstructorJob(ScintillaControl sci, ClassModel inClass)
         {
-            const FlagType flags = FlagType.Constructor | FlagType.Function;
+            const FlagType flags = FlagType.Function | FlagType.Constructor;
             var member = new MemberModel(inClass.Name, inClass.QualifiedName, flags, Visibility.Public)
             {
                 Parameters = inClass.GetMembers(flags, true)?[0].Parameters
@@ -2934,9 +2934,7 @@ namespace ASCompletion.Completion
             generator.GenerateFunction(sci, position, inClass, newMember, detach);
         }
 
-        protected virtual void GenerateFunction(ScintillaControl sci, int position,
-            ClassModel inClass, MemberModel member,
-            bool detach)
+        protected virtual void GenerateFunction(ScintillaControl sci, int position, ClassModel inClass, MemberModel member, bool detach)
         {
             string template;
             if ((inClass.Flags & FlagType.Interface) > 0)
