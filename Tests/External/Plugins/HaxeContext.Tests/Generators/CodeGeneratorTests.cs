@@ -1940,6 +1940,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateConstructorWithInitializerIssue2872TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateConstructor_issue2872_1", GeneratorJob.ConstructorWithInitializer, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue2872_1"))
+                    .SetName("Generate constructor with initializer. Issue 2872. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2872");
+            }
+        }
+
         static IEnumerable<TestCaseData> NewClassIssue2585TestCases
         {
             get
@@ -2143,6 +2154,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateGetterSetter2838TestCases)),
             TestCaseSource(nameof(GenerateGetterSetter2477TestCases)),
             TestCaseSource(nameof(GenerateConstructorIssue2845TestCases)),
+            TestCaseSource(nameof(GenerateConstructorWithInitializerIssue2872TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
             TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),

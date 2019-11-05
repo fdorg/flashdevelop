@@ -23,6 +23,11 @@ namespace ASCompletion.Generators
             }
             // TODO: CanShowGenerateImplements
             // TODO: CanShowGenerateType
+            if (CanShowGenerateConstructor(sci, position, expr, found))
+            {
+                ShowGenerateConstructor(sci, expr, found, options);
+                result = true;
+            }
             if (CanShowGenerateField(sci, position, expr, found))
             {
                 ShowGenerateField(sci, expr, found, options);
@@ -44,6 +49,12 @@ namespace ASCompletion.Generators
         protected virtual bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => false;
 
         protected virtual void ShowGenerateExtends(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+        }
+
+        protected virtual bool CanShowGenerateConstructor(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => false;
+
+        protected virtual void ShowGenerateConstructor(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
         }
 
