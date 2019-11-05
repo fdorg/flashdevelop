@@ -38,7 +38,7 @@ namespace HaXeContext.Generators
             var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
             options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.Member, found.InClass));
             label = TextHelper.GetString("HaxeCompletion.Label.GenerateConstructorWithInitializer");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, () => GenerateConstructorWithInitializer(sci, found)));
+            options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.ConstructorWithInitializer, () => GenerateConstructorWithInitializer(sci, found)));
         }
 
         static void GenerateConstructorWithInitializer(ScintillaControl sci, FoundDeclaration found)

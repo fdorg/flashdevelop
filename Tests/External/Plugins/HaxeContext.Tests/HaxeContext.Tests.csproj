@@ -1786,6 +1786,8 @@
     <EmbeddedResource Include="Test Files\generators\code\CanGenerateEnum_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\CanGenerateEnum_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\CanGenerateClass_issue2891_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2872_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue2872_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

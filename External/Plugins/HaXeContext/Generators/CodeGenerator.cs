@@ -27,6 +27,7 @@ namespace HaXeContext.Generators
         IVariable = GeneratorJobType.User << 3,
         ConvertStaticMethodCallToStaticExtensionCall = GeneratorJobType.User << 4,
         Enum = GeneratorJobType.User << 5,
+        ConstructorWithInitializer = GeneratorJobType.User << 6,
     }
 
     class CodeGenerator : ASGenerator
