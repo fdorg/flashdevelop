@@ -30,7 +30,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.ColumnHeader fileHeader;
         private System.Windows.Forms.ColumnHeader pathHeader;
         private System.Windows.Forms.ColumnHeader replacedHeader;
-        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.ProgressBarEx progressBar;
         private System.Windows.Forms.GroupBox optionsGroupBox;
         private System.Windows.Forms.ComboBox folderComboBox;
         private System.Windows.Forms.ComboBox extensionComboBox;
