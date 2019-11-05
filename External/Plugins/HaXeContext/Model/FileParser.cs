@@ -2170,6 +2170,7 @@ namespace HaXeContext.Model
                             member.Namespace = curNamespace;
                             member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             member.LineTo = curToken.Line;
+                            member.StartPosition = curToken.Position;
                             //
                             // method parameter
                             if (inParams && curMethod != null)
