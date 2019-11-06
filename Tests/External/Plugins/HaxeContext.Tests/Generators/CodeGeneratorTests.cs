@@ -2103,6 +2103,14 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("for (v<generator> in 0...1) Issue 2762. Case 5")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_6", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("function(v<generator>) Issue 2762. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_7", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("case v<generator> Issue 2762. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
             }
         }
 
