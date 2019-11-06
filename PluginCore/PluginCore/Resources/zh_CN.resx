@@ -6360,4 +6360,8 @@ AND - All conditions are met.</value>
     <value>Generate constructor with initializer</value>
     <comment>Added after 5.3.3</comment>
   </data>
+  <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
+    <value>Initialize {0}</value>
+    <comment>Added After 5.3.3</comment>
+  </data>
 </root>

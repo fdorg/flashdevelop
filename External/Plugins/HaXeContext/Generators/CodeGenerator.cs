@@ -9,6 +9,7 @@ using ASCompletion.Context;
 using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -69,7 +70,7 @@ namespace HaXeContext.Generators
             }
             if (CanShowInitializeLocalVariable(expr))
             {
-                var label = TextHelper.GetString("Label.InitializeLocalVariable");
+                var label = string.Format(TextHelper.GetString("Label.InitializeLocalVariable"), expr.Member.Name);
                 options.Add(new GeneratorItem(label, (GeneratorJobType)GeneratorJob.InitializeLocalVariable, () => Generate(GeneratorJob.InitializeLocalVariable, sci, expr)));
             }
             base.ContextualGenerator(sci, position, expr, options);
@@ -719,7 +720,7 @@ namespace HaXeContext.Generators
                         GenerateEnumConstructor(sci, expr.RelClass);
                         break;
                     case GeneratorJob.Switch:
-                        GenerateSwitch(sci, expr, ASContext.Context.ResolveType(expr.Member.Type, ASContext.Context.CurrentModel));
+                        GenerateSwitch(sci, expr);
                         break;
                     case GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall:
                         ConvertStaticMethodCallToStaticExtensionCall(sci, expr);
@@ -887,7 +888,7 @@ namespace HaXeContext.Generators
             InsertCode(position, declaration, sci);
         }
 
-        static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        static void GenerateSwitch(ScintillaControl sci, ASResult expr)
         {
             var start = expr.Context.PositionExpression;
             int end;
@@ -899,6 +900,7 @@ namespace HaXeContext.Generators
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
             template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
             var sb = new StringBuilder();
+            var inClass = ASContext.Context.ResolveType(expr.Member.Type, ASContext.Context.CurrentModel);
             for (var i = 0; i < inClass.Members.Count; i++)
             {
                 var it = inClass.Members[i];
@@ -955,7 +957,17 @@ namespace HaXeContext.Generators
             var model = expr.Context.ContextFunction;
             var position = GetBodyStart(model.LineFrom, model.LineTo, sci, false);
             position += expr.Member.StartPosition - 1;
-
+            position += expr.Context.Value.Length;
+            var c = ASComplete.GetCharRight(sci, true, ref position);
+            if (c == ':')
+            {
+                position = ASComplete.ExpressionEndPosition(sci, position + 1, true);
+                var value = ASContext.Context.GetDefaultValue(expr.Member.Type);
+                sci.InsertText(position, " ");
+                position++;
+                sci.SetSel(position, position);
+                InsertCode(position, $" = $(EntryPoint){value}$(ExitPoint)", sci);
+            }
         }
     }
 }
