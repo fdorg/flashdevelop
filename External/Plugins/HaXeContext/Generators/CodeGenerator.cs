@@ -959,15 +959,12 @@ namespace HaXeContext.Generators
             position += expr.Member.StartPosition - 1;
             position += expr.Context.Value.Length;
             var c = ASComplete.GetCharRight(sci, true, ref position);
-            if (c == ':')
-            {
-                position = ASComplete.ExpressionEndPosition(sci, position + 1, true);
-                var value = ASContext.Context.GetDefaultValue(expr.Member.Type);
-                sci.InsertText(position, " ");
-                position++;
-                sci.SetSel(position, position);
-                InsertCode(position, $" = $(EntryPoint){value}$(ExitPoint)", sci);
-            }
+            if (c == ':') position = ASComplete.ExpressionEndPosition(sci, position + 1, true);
+            sci.InsertText(position, " ");
+            position++;
+            sci.SetSel(position, position);
+            var value = ASContext.Context.GetDefaultValue(expr.Member.Type);
+            InsertCode(position, $" = $(EntryPoint){value}$(ExitPoint)", sci);
         }
     }
 }
