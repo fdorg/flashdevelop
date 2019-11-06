@@ -1791,6 +1791,10 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterInitializeLocalVariable_issue2762_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterInitializeLocalVariable_issue2762_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_5.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -706,6 +706,7 @@ namespace HaXeContext.Generators
         {
             return expr.Member is { } member
                    && member.Flags.HasFlag(FlagType.LocalVar)
+                   && !member.Flags.HasFlag(FlagType.Inferred)
                    && member.Value is null;
         }
 
