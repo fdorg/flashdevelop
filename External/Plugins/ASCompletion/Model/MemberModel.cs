@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using PluginCore;
 
 namespace ASCompletion.Model
@@ -33,6 +34,7 @@ namespace ASCompletion.Model
         public int LineFrom;
         public int LineTo;
         public List<ASMetaData> MetaDatas;
+        public int StartPosition = -1;
 
         public MemberModel()
         {
@@ -66,18 +68,14 @@ namespace ASCompletion.Model
             result.Namespace = Namespace;
             result.InFile = InFile;
             result.IsPackageLevel = IsPackageLevel;
-            if (Parameters != null)
-            {
-                result.Parameters = new List<MemberModel>();
-                foreach (var param in Parameters)
-                    result.Parameters.Add((MemberModel) param.Clone());
-            }
+            result.Parameters = Parameters?.Select(it => (MemberModel) it.Clone()).ToList();
             result.Type = Type;
             result.Comments = Comments;
             result.Value = Value;
             result.ValueEndPosition = ValueEndPosition;
             result.LineFrom = LineFrom;
             result.LineTo = LineTo;
+            result.StartPosition = StartPosition;
             return result;
         }
         

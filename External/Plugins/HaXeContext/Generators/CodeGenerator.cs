@@ -9,6 +9,7 @@ using ASCompletion.Context;
 using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using HaXeContext.Completion;
 using HaXeContext.Model;
 using PluginCore;
 using PluginCore.Controls;
@@ -28,6 +29,7 @@ namespace HaXeContext.Generators
         ConvertStaticMethodCallToStaticExtensionCall = GeneratorJobType.User << 4,
         Enum = GeneratorJobType.User << 5,
         ConstructorWithInitializer = GeneratorJobType.User << 6,
+        InitializeLocalVariable = GeneratorJobType.User << 7,
     }
 
     class CodeGenerator : ASGenerator
@@ -61,10 +63,15 @@ namespace HaXeContext.Generators
                 var label = TextHelper.GetString("Info.GenerateSwitch");
                 options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
             }
-            if (CanShowConvertStaticMethodCallToStaticExtensionCall(sci, position, expr))
+            if (CanShowConvertStaticMethodCallToStaticExtensionCall(sci, expr))
             {
                 var label = TextHelper.GetString("Label.ConvertStaticMethodCallToStaticExtensionCall");
                 options.Add(new GeneratorItem(label, (GeneratorJobType) GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, () => Generate(GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall, sci, expr)));
+            }
+            if (CanShowInitializeLocalVariable(expr))
+            {
+                var label = string.Format(TextHelper.GetString("Label.InitializeLocalVariable"), expr.Member.Name);
+                options.Add(new GeneratorItem(label, (GeneratorJobType)GeneratorJob.InitializeLocalVariable, () => Generate(GeneratorJob.InitializeLocalVariable, sci, expr)));
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
@@ -687,7 +694,7 @@ namespace HaXeContext.Generators
                        && type.Members.Any(it => it.Flags.HasFlag(FlagType.Variable)));
         }
 
-        static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, int position, ASResult expr)
+        static bool CanShowConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, ASResult expr)
         {
             return expr.Member is { } member
                    && member.Parameters?.Count > 0
@@ -695,35 +702,36 @@ namespace HaXeContext.Generators
                    && member.Flags.HasFlag(FlagType.Static | FlagType.Function);
         }
 
+        static bool CanShowInitializeLocalVariable(ASResult expr)
+        {
+            return expr.Member is { } member
+                   && member.Flags.HasFlag(FlagType.LocalVar)
+                   && !member.Flags.HasFlag(FlagType.Inferred)
+                   && member.Value is null;
+        }
+
         static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)
         {
-            switch (job)
+            sci.BeginUndoAction();
+            try
             {
-                case GeneratorJob.EnumConstructor:
-                    sci.BeginUndoAction();
-                    try
-                    {
-                        GenerateEnumConstructor(sci, expr, expr.RelClass);
-                    }
-                    finally { sci.EndUndoAction(); }
-                    break;
-                case GeneratorJob.Switch:
-                    sci.BeginUndoAction();
-                    try
-                    {
-                        GenerateSwitch(sci, expr, ASContext.Context.ResolveType(expr.Member.Type, ASContext.Context.CurrentModel));
-                    }
-                    finally { sci.EndUndoAction(); }
-                    break;
-                case GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall:
-                    sci.BeginUndoAction();
-                    try
-                    {
+                switch (job)
+                {
+                    case GeneratorJob.EnumConstructor:
+                        GenerateEnumConstructor(sci, expr.RelClass);
+                        break;
+                    case GeneratorJob.Switch:
+                        GenerateSwitch(sci, expr);
+                        break;
+                    case GeneratorJob.ConvertStaticMethodCallToStaticExtensionCall:
                         ConvertStaticMethodCallToStaticExtensionCall(sci, expr);
-                    }
-                    finally { sci.EndUndoAction(); }
-                    break;
+                        break;
+                    case GeneratorJob.InitializeLocalVariable:
+                        InitializeLocalVariable(sci, expr);
+                        break;
+                }
             }
+            finally { sci.EndUndoAction(); }
         }
 
         internal static void ConvertStaticMethodCallToStaticExtensionCall(ScintillaControl sci, ASResult expr)
@@ -852,7 +860,7 @@ namespace HaXeContext.Generators
             EventManager.DispatchEvent(null, de);
         }
 
-        static void GenerateEnumConstructor(ScintillaControl sci, ASResult expr, MemberModel inClass)
+        static void GenerateEnumConstructor(ScintillaControl sci, MemberModel inClass)
         {
             var end = sci.WordEndPosition(sci.CurrentPos, true);
             var parameters = ParseFunctionParameters(sci, end);
@@ -881,7 +889,7 @@ namespace HaXeContext.Generators
             InsertCode(position, declaration, sci);
         }
 
-        static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        static void GenerateSwitch(ScintillaControl sci, ASResult expr)
         {
             var start = expr.Context.PositionExpression;
             int end;
@@ -893,6 +901,7 @@ namespace HaXeContext.Generators
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
             template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
             var sb = new StringBuilder();
+            var inClass = ASContext.Context.ResolveType(expr.Member.Type, ASContext.Context.CurrentModel);
             for (var i = 0; i < inClass.Members.Count; i++)
             {
                 var it = inClass.Members[i];
@@ -942,6 +951,21 @@ namespace HaXeContext.Generators
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
             sci.SelectWord();
             InsertCode(sci.CurrentPos, template);
+        }
+
+        static void InitializeLocalVariable(ScintillaControl sci, ASResult expr)
+        {
+            var model = expr.Context.ContextFunction;
+            var position = GetBodyStart(model.LineFrom, model.LineTo, sci, false);
+            position += expr.Member.StartPosition - 1;
+            position += expr.Context.Value.Length;
+            var c = ASComplete.GetCharRight(sci, true, ref position);
+            if (c == ':') position = ASComplete.ExpressionEndPosition(sci, position + 1, true);
+            sci.InsertText(position, " ");
+            position++;
+            sci.SetSel(position, position);
+            var value = ASContext.Context.GetDefaultValue(expr.Member.Type);
+            InsertCode(position, $" = $(EntryPoint){value}$(ExitPoint)", sci);
         }
     }
 }

@@ -2079,6 +2079,41 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> InitializeLocalVariable2762TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_1", GeneratorJob.InitializeLocalVariable, true)
+                    .Returns(ReadAllText("AfterInitializeLocalVariable_issue2762_1"))
+                    .SetName("var v<generator>:String; -> var v:String = null; Issue 2762. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_2", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("var v<generator>:String = null; Issue 2762. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_3", GeneratorJob.InitializeLocalVariable, true)
+                    .Returns(ReadAllText("AfterInitializeLocalVariable_issue2762_3"))
+                    .SetName("if (v<generator>); Issue 2762. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_4", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("for (v<generator> in 0...1) Issue 2762. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_5", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("for (v<generator> in 0...1) Issue 2762. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_6", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("function(v<generator>) Issue 2762. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_7", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("case v<generator> Issue 2762. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -2159,6 +2194,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
             TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),
             TestCaseSource(nameof(ConvertStaticMethodCallToStaticExtensionCallIssue1565TestCases)),
+            TestCaseSource(nameof(InitializeLocalVariable2762TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
