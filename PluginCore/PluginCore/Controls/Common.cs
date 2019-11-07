@@ -584,21 +584,28 @@ namespace System.Windows.Forms
 
         public ProgressBarEx()
         {
-            this.SetStyle(ControlStyles.UserPaint, true);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void WndProc(ref Message message)
         {
-            if (this.UseTheme)
+            base.WndProc(ref message);
+            switch (message.Msg)
             {
-                Rectangle rec = new Rectangle(0, 0, this.Width, this.Height);
-                double scaleFactor = ((Value - (double)Minimum) / (Maximum - (double)Minimum));
-                rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
-                e.Graphics.FillRectangle(new SolidBrush(this.BackColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
-                e.Graphics.FillRectangle(new SolidBrush(this.ForeColor), 1, 1, rec.Width, rec.Height);
-                e.Graphics.DrawRectangle(new Pen(this.BorderColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
+                case Win32.WM_PAINT:
+                    if (this.UseTheme)
+                    {
+                        Rectangle rec = new Rectangle(0, 0, this.Width, this.Height);
+                        double scaleFactor = (((double)Value - (double)Minimum) / ((double)Maximum - (double)Minimum));
+                        rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
+                        using (Graphics g = this.CreateGraphics())
+                        {
+                            g.FillRectangle(new SolidBrush(this.BackColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
+                            g.FillRectangle(new SolidBrush(this.ForeColor), 1, 1, rec.Width, rec.Height);
+                            g.DrawRectangle(new Pen(this.BorderColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
+                        }
+                    }
+                    break;
             }
-            else base.OnPaint(e);
         }
     }
 
