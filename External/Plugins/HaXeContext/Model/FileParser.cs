@@ -736,6 +736,12 @@ namespace HaXeContext.Model
                     if ((valueError || (!stopParser && paramBraceCount == 0 && paramParCount == 0 && paramSqCount == 0 && paramTempCount == 0))
                         && (c1 == ',' || c1 == ';' || c1 == '}' || c1 == '\r' || c1 == '\n' || (inParams && c1 == ')') || inType))
                     {
+                        // for example: v:Type = value<position>;
+                        if (inValue && c1 == ';' && curMember != null && length != 0)
+                        {
+                            curMember.Value = new string(buffer, 0, length);
+                            curMember.ValueEndPosition = i;
+                        }
                         if (!inType && (!inValue || c1 != ','))
                         {
                             length = 0;
@@ -2170,6 +2176,7 @@ namespace HaXeContext.Model
                             member.Namespace = curNamespace;
                             member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
                             member.LineTo = curToken.Line;
+                            member.StartPosition = curToken.Position;
                             //
                             // method parameter
                             if (inParams && curMethod != null)
@@ -2204,10 +2211,8 @@ namespace HaXeContext.Model
 
                             if (carriedMetaData != null)
                             {
-                                if (member.MetaDatas is null)
-                                    member.MetaDatas = carriedMetaData;
+                                if (member.MetaDatas is null) member.MetaDatas = carriedMetaData;
                                 else member.MetaDatas.AddRange(carriedMetaData);
-
                                 carriedMetaData = null;
                             }
                         }
