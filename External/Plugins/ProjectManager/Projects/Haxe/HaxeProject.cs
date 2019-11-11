@@ -102,18 +102,16 @@ namespace ProjectManager.Projects.Haxe
             else 
             {
                 SetCompileTarget(path, false);
-                CompilerOptions.MainClass = "";
+                CompilerOptions.MainClass = string.Empty;
             }
         }
 
         void ClearDocumentClass()
         {
-            if (string.IsNullOrEmpty(CompilerOptions.MainClass)) 
-                return;
-
-            string docFile = CompilerOptions.MainClass.Replace('.', Path.DirectorySeparatorChar) + ".hx";
-            CompilerOptions.MainClass = "";
-            foreach (string cp in AbsoluteClasspaths)
+            if (string.IsNullOrEmpty(CompilerOptions.MainClass)) return;
+            var docFile = CompilerOptions.MainClass.Replace('.', Path.DirectorySeparatorChar) + ".hx";
+            CompilerOptions.MainClass = string.Empty;
+            foreach (var cp in AbsoluteClasspaths)
             {
                 var path = Path.Combine(cp, docFile);
                 if (File.Exists(path))
@@ -141,7 +139,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        string Quote(string s)
+        static string Quote(string s)
         {
             if (s.IndexOf(' ') >= 0)
                 return "\"" + s + "\"";
@@ -201,7 +199,7 @@ namespace ProjectManager.Projects.Haxe
                     if (htmlColor.Length > 0)
                         htmlColor = ":" + htmlColor;
 
-                    pr.Add("-swf-header " + $"{MovieOptions.Width}:{MovieOptions.Height}:{MovieOptions.Fps}{htmlColor}");
+                    pr.Add($"-swf-header {MovieOptions.Width}:{MovieOptions.Height}:{MovieOptions.Fps}{htmlColor}");
 
                     if (!UsesInjection && LibraryAssets.Count > 0)
                         pr.Add("-swf-lib " + Quote(LibrarySWFPath));
@@ -235,13 +233,13 @@ namespace ProjectManager.Projects.Haxe
                 // add main class
                 if (!string.IsNullOrEmpty(CompilerOptions.MainClass))
                     pr.Add("-main " + CompilerOptions.MainClass);
-                
+
                 // extra options
+                char[] space = { ' ' };
                 foreach (var opt in CompilerOptions.Additional)
                 {
                     var p = opt.Trim();
-                    if (p == "" || p[0] == '#') continue;
-                    char[] space = { ' ' };
+                    if (p.Length == 0 || p[0] == '#') continue;
                     var parts = p.Split(space, 2);
                     if (parts.Length == 1) pr.Add(p);
                     else pr.Add(parts[0] + ' ' + Quote(parts[1]));
@@ -264,12 +262,12 @@ namespace ProjectManager.Projects.Haxe
             return pr.ToArray();
         }
 
-        string GetClassName(string absTarget, string cp)
+        static string GetClassName(string absTarget, string cp)
         {
             var className = absTarget.Substring(cp.Length);
             className = className.Substring(0, className.LastIndexOf('.'));
             className = Regex.Replace(className, "[\\\\/]+", ".");
-            if (className.StartsWith(".", StringComparison.Ordinal)) className = className.Substring(1);
+            if (className.StartsWith(".")) className = className.Substring(1);
             return className;
         }
 
@@ -284,7 +282,6 @@ namespace ProjectManager.Projects.Haxe
             }
 
             var reader = new HaxeProjectReader(path);
-
             try
             {
                 return reader.ReadProject();
@@ -341,15 +338,15 @@ namespace ProjectManager.Projects.Haxe
             var add = new List<string>();
             var target = PlatformData.JAVASCRIPT_PLATFORM;
             var haxeTarget = "js";
-            var output = "";
+            var output = string.Empty;
             if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ".");
 
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
             CompilerOptions.Additional = add.ToArray();
-            if (cps.Count == 0) cps.Add(".");
             Classpaths.Clear();
-            Classpaths.AddRange(cps);
+            if (cps.Count == 0) Classpaths.Add(".");
+            else Classpaths.AddRange(cps);
 
             if (MovieOptions.HasPlatformSupport)
             {
@@ -357,10 +354,9 @@ namespace ProjectManager.Projects.Haxe
                 MovieOptions.TargetBuildTypes = platform.Targets;
 
                 if (platform.Name == "hxml" && string.IsNullOrEmpty(TargetBuild))
-                    TargetBuild = haxeTarget ?? "";
+                    TargetBuild = haxeTarget ?? string.Empty;
             }
             else MovieOptions.TargetBuildTypes = null;
-
             if (MovieOptions.TargetBuildTypes is null)
             {
                 OutputPath = output;
@@ -372,7 +368,7 @@ namespace ProjectManager.Projects.Haxe
         void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
         {
             var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
-            foreach (string line in lines)
+            foreach (var line in lines)
             {
                 if (line is null) break;
                 var trimmedLine = line.Trim();
@@ -386,17 +382,46 @@ namespace ProjectManager.Projects.Haxe
                     var value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
-                        case "D": defs.Add(value); break;
-                        case "cp": cps.Add(CleanPath(value, cwd)); break;
-                        case "lib": libs.Add(value); break;
-                        case "main": CompilerOptions.MainClass = value; break;
+                        // Haxe 3
+                        case "D":
+                        // Haxe 4
+                        case "-define":
+                            defs.Add(value);
+                            break;
+                        // Haxe 3
+                        case "cp":
+                        // Haxe 4
+                        case "p":
+                        case "-class-path":
+                            cps.Add(CleanPath(value, cwd));
+                            break;
+                        // Haxe 3
+                        case "lib":
+                        // Haxe 4
+                        case "L":
+                        case "-library":
+                            libs.Add(value);
+                            break;
+                        // Haxe 3
+                        case "main":
+                        // Haxe 4
+                        case "m":
+                        case "-main":
+                            CompilerOptions.MainClass = value;
+                            break;
+                        // Haxe 3
                         case "swf":
                         case "swf9":
+                        // Haxe 4
+                        case "-swf":
                             target = PlatformData.FLASHPLAYER_PLATFORM;
                             haxeTarget = "flash";
                             output = value;
                             break;
+                        // Haxe 3
                         case "swf-header":
+                        // Haxe 4
+                        case "-swf-header":
                             var header = value.Split(':');
                             int.TryParse(header[0], out MovieOptions.Width);
                             int.TryParse(header[1], out MovieOptions.Height);
@@ -444,7 +469,7 @@ namespace ProjectManager.Projects.Haxe
 
         string CleanPath(string path, string cwd)
         {
-            path = path.Replace("\"", string.Empty);
+            path = path.Replace('"', ' ');
             path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
             // handle if NME/OpenFL config file is not at the root of the project directory
             if (Path.IsPathRooted(path)) return path;
