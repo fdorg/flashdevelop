@@ -10,13 +10,13 @@ namespace PluginCore.Managers
     /// </summary>
     public static class EventManager
     {
-        private static readonly List<EventObject> highObjects;
-        private static readonly List<EventObject> normalObjects;
-        private static readonly List<EventObject> lowObjects;
-        private static EventObject[] eventObjectsSnapshot;
-        private static bool snapshotInvalid;
+        static readonly List<EventObject> highObjects;
+        static readonly List<EventObject> normalObjects;
+        static readonly List<EventObject> lowObjects;
+        static EventObject[] eventObjectsSnapshot;
+        static bool snapshotInvalid;
 
-        private static readonly object eventLock = new object();
+        static readonly object eventLock = new object();
 
         static EventManager()
         {
@@ -148,7 +148,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Gets the list of event objects with the specified priority.
         /// </summary>
-        private static List<EventObject> GetEventObjects(HandlingPriority priority)
+        static List<EventObject> GetEventObjects(HandlingPriority priority)
         {
             return priority switch
             {
@@ -159,7 +159,7 @@ namespace PluginCore.Managers
             };
         }
 
-        private sealed class EventObject
+        sealed class EventObject
         {
             internal readonly IEventHandler Handler;
             internal readonly HandlingPriority Priority;

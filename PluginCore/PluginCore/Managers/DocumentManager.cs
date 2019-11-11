@@ -6,7 +6,7 @@ namespace PluginCore.Managers
 {
     public class DocumentManager
     {
-        private static int DocumentCount;
+        static int DocumentCount;
         
         static DocumentManager()
         {
@@ -21,7 +21,7 @@ namespace PluginCore.Managers
             if (string.IsNullOrEmpty(extension))
             {
                 var setting = PluginBase.MainForm.Settings.DefaultFileExtension;
-                extension = setting.Trim() != string.Empty ? setting : "as";
+                extension = setting.Trim().Length > 0 ? setting : "as";
             }
             var count = DocumentCount++;
             if (!extension.StartsWith('.')) extension = "." + extension;

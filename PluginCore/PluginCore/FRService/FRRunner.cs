@@ -27,7 +27,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Properties of the class
         /// </summary>
-        private BackgroundWorker backgroundWorker;
+        BackgroundWorker backgroundWorker;
 
         /// <summary>
         /// Events of the class
@@ -135,17 +135,14 @@ namespace PluginCore.FRService
         /// <summary>
         /// Cancel the background operation
         /// </summary>
-        public void CancelAsync()
-        {
-            backgroundWorker?.CancelAsync();
-        }
+        public void CancelAsync() => backgroundWorker?.CancelAsync();
 
         #region Background Work
 
         /// <summary>
         /// Initialize background thread
         /// </summary>
-        private void CreateWorker()
+        void CreateWorker()
         {
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.WorkerReportsProgress = true;
@@ -158,7 +155,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Event: background work finished or cancelled
         /// </summary>
-        private void BackgroundDone(object sender, RunWorkerCompletedEventArgs e)
+        void BackgroundDone(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
@@ -173,7 +170,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Event: report background work status
         /// </summary>
-        private void BackgroundReport(object sender, ProgressChangedEventArgs e)
+        void BackgroundReport(object sender, ProgressChangedEventArgs e)
         {
             try
             {
@@ -188,7 +185,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Background work main loop
         /// </summary>
-        private void BackgroundWork(object sender, DoWorkEventArgs e)
+        void BackgroundWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -260,5 +257,4 @@ namespace PluginCore.FRService
         #endregion
 
     }
-
 }

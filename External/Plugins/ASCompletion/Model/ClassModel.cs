@@ -49,7 +49,7 @@ namespace ASCompletion.Model
             get
             {
                 if (InFile.Package == "") return Name;
-                if (InFile.Module == "" || InFile.Module == Name || (Name.Contains("<") && InFile.Module == BaseType)) return InFile.Package + "." + Name;
+                if (InFile.Module == "" || InFile.Module == Name || (Name.Contains('<') && InFile.Module == BaseType)) return InFile.Package + "." + Name;
                 return InFile.Package + "." + InFile.Module + "." + Name;
             }
         }

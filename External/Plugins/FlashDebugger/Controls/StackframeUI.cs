@@ -15,29 +15,29 @@ using System.Drawing;
 
 namespace FlashDebugger
 {
-    class StackframeUI : DockPanelControl
+    internal class StackframeUI : DockPanelControl
     {
-        private ListViewEx lv;
-        private ColumnHeader imageColumnHeader;
-        private ColumnHeader frameColumnHeader;
-        private PluginMain pluginMain;
-        private int currentImageIndex;
-        private ToolStripLabel toolStripLabelFilter;
-        private ToolStripSpringTextBox toolStripTextBoxFilter;
-        private ToolStripButton clearFilterButton;
-        private ToolStripDropDownButton toolStripDropDownOptions;
-        private ToolStripMenuItem toolStripItemMatchCase;
-        private ToolStripMenuItem toolStripItemRegEx;
-        private ToolStripMenuItem toolStripItemNegate;
-        private ToolStripEx toolStripFilters;
-        private ToolStripMenuItem copyContextMenuItem;
-        private ToolStripMenuItem copyAllContextMenuItem;
-        private ToolStripMenuItem setFrameContextMenuItem;
-        private ToolStripMenuItem gotoSourceContextMenuItem;
-        private ToolStripMenuItem justMyCodeContextMenuItem;
-        private readonly List<ListViewItem> wholeFrameStack;
-        private int lastSelected;
-        private bool justMyCode;
+        ListViewEx lv;
+        ColumnHeader imageColumnHeader;
+        ColumnHeader frameColumnHeader;
+        PluginMain pluginMain;
+        int currentImageIndex;
+        ToolStripLabel toolStripLabelFilter;
+        ToolStripSpringTextBox toolStripTextBoxFilter;
+        ToolStripButton clearFilterButton;
+        ToolStripDropDownButton toolStripDropDownOptions;
+        ToolStripMenuItem toolStripItemMatchCase;
+        ToolStripMenuItem toolStripItemRegEx;
+        ToolStripMenuItem toolStripItemNegate;
+        ToolStripEx toolStripFilters;
+        ToolStripMenuItem copyContextMenuItem;
+        ToolStripMenuItem copyAllContextMenuItem;
+        ToolStripMenuItem setFrameContextMenuItem;
+        ToolStripMenuItem gotoSourceContextMenuItem;
+        ToolStripMenuItem justMyCodeContextMenuItem;
+        readonly List<ListViewItem> wholeFrameStack;
+        int lastSelected;
+        bool justMyCode;
 
         public StackframeUI(PluginMain pluginMain, ImageList imageList)
         {
@@ -50,7 +50,7 @@ namespace FlashDebugger
             ScrollBarEx.Attach(lv);
         }
 
-        private void InitializeComponents(ImageList imageList)
+        void InitializeComponents(ImageList imageList)
         {
             toolStripLabelFilter = new ToolStripLabel();
             toolStripTextBoxFilter = new ToolStripSpringTextBox();
@@ -187,7 +187,7 @@ namespace FlashDebugger
             menu.Opening += ContextMenuOpening;
         }
 
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             toolStripLabelFilter.Text = TextHelper.GetString("Label.Filter");
             toolStripItemMatchCase.Text = TextHelper.GetString("Label.MatchCase");
@@ -295,7 +295,7 @@ namespace FlashDebugger
             }
         }
 
-        private void Lv_KeyDown(object sender, KeyEventArgs e)
+        void Lv_KeyDown(object sender, KeyEventArgs e)
         {
             if (lv.SelectedIndices.Count == 0) return;
             if (e.KeyCode == Keys.Return)
@@ -314,7 +314,7 @@ namespace FlashDebugger
             if (lv.SelectedIndices.Count > 0) SetCurrentFrameClick(sender, e);
         }
 
-        private void Lv_SizeChanged(object sender, EventArgs e)
+        void Lv_SizeChanged(object sender, EventArgs e)
         {
             frameColumnHeader.Width = lv.Width - imageColumnHeader.Width;
         }
@@ -322,7 +322,7 @@ namespace FlashDebugger
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButton_Click(object sender, EventArgs e)
+        void ClearFilterButton_Click(object sender, EventArgs e)
         {
             clearFilterButton.Enabled = false;
             toolStripTextBoxFilter.Clear();
@@ -331,29 +331,29 @@ namespace FlashDebugger
         /// <summary>
         /// Filter the result on check change
         /// </summary>
-        private void ToolStripTextFieldFilter_Changed(object sender, EventArgs e)
+        void ToolStripTextFieldFilter_Changed(object sender, EventArgs e)
         {
-            clearFilterButton.Enabled = toolStripTextBoxFilter.Text.Trim() != string.Empty;
+            clearFilterButton.Enabled = toolStripTextBoxFilter.Text.Trim().Length > 0;
             FilterResults();
         }
 
-        private void FilterOption_Click(object sender, EventArgs e)
+        void FilterOption_Click(object sender, EventArgs e)
         {
             if (clearFilterButton.Enabled) FilterResults();
         }
 
-        private void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
+        void ContextMenuOpening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             copyContextMenuItem.Enabled = setFrameContextMenuItem.Enabled = gotoSourceContextMenuItem.Enabled = lv.SelectedItems.Count > 0;
             copyAllContextMenuItem.Enabled = lv.Items.Count > 0;
         }
 
-        private void CopyTextClick(object sender, EventArgs e)
+        void CopyTextClick(object sender, EventArgs e)
         {
             Clipboard.SetText(lv.SelectedItems[0].SubItems[1].Text);
         }
 
-        private void CopyAllTextClick(object sender, EventArgs e)
+        void CopyAllTextClick(object sender, EventArgs e)
         {
             var sb = new StringBuilder();
             string filter = toolStripTextBoxFilter.Text.Trim();
@@ -368,7 +368,7 @@ namespace FlashDebugger
             Clipboard.SetText(sb.ToString());
         }
 
-        private void SetCurrentFrameClick(object sender, EventArgs e)
+        void SetCurrentFrameClick(object sender, EventArgs e)
         {
             int index = ((ListItemData)lv.SelectedItems[0].Tag).Index;
             if (index == -1) return;
@@ -382,7 +382,7 @@ namespace FlashDebugger
             ActiveItem();
         }
 
-        private void GotoSourceClick(object sender, EventArgs e)
+        void GotoSourceClick(object sender, EventArgs e)
         {
             var frame = ((ListItemData)lv.SelectedItems[0].Tag).Frame;
             if (frame is null) return;
@@ -391,7 +391,7 @@ namespace FlashDebugger
             ScintillaHelper.ActivateDocument(file, frame.getLocation().getLine() - 1, false);
         }
 
-        private void JustMyCodeClick(object sender, EventArgs e)
+        void JustMyCodeClick(object sender, EventArgs e)
         {
             justMyCode = justMyCodeContextMenuItem.Checked;
             FilterResults();
@@ -400,7 +400,7 @@ namespace FlashDebugger
         /// <summary>
         /// Filters the results...
         /// </summary>
-        private void FilterResults()
+        void FilterResults()
         {
             lv.BeginUpdate();
             string filterText = toolStripTextBoxFilter.Text.Trim();
@@ -478,7 +478,7 @@ namespace FlashDebugger
             lv.EndUpdate();
         }
 
-        private class ListItemData
+        class ListItemData
         {
             public Frame Frame;
             public int Index;
