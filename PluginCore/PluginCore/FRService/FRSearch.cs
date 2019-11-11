@@ -123,7 +123,7 @@ namespace PluginCore.FRService
                 }
         }
 
-        private static int CountNewLines(string src)
+        static int CountNewLines(string src)
         {
             int lines = 0;
             char c2 = ' ';
@@ -203,11 +203,7 @@ namespace PluginCore.FRService
         /// <param name="replacement">Replacement pattern</param>
         /// <param name="match">Search result to replace</param>
         /// <returns>Updated text</returns>
-        public string Replace(string input, string replacement, SearchMatch match)
-        {
-            var matches = new List<SearchMatch> {match};
-            return ReplaceOneMatch(input, replacement, matches, 0);
-        }
+        public string Replace(string input, string replacement, SearchMatch match) => ReplaceOneMatch(input, replacement, new List<SearchMatch> {match}, 0);
 
         /// <summary>
         /// Replace one search result - updates other matches indexes accordingly
@@ -217,10 +213,7 @@ namespace PluginCore.FRService
         /// <param name="matches">Search results</param>
         /// <param name="matchIndex">Index of the search result to replace</param>
         /// <returns>Updated text</returns>
-        public string Replace(string input, string replacement, List<SearchMatch> matches, int matchIndex)
-        {
-            return ReplaceOneMatch(input, replacement, matches, matchIndex);
-        }
+        public string Replace(string input, string replacement, List<SearchMatch> matches, int matchIndex) => ReplaceOneMatch(input, replacement, matches, matchIndex);
 
         /// <summary>
         /// Replace one search result
@@ -229,10 +222,7 @@ namespace PluginCore.FRService
         /// <param name="replacement">Replacement pattern</param>
         /// <param name="matches">Search results to replace</param>
         /// <returns>Updated text</returns>
-        public string ReplaceAll(string input, string replacement, List<SearchMatch> matches)
-        {
-            return ReplaceAllMatches(input, replacement, matches);
-        }
+        public string ReplaceAll(string input, string replacement, List<SearchMatch> matches) => ReplaceAllMatches(input, replacement, matches);
 
         #endregion
 
@@ -325,11 +315,10 @@ namespace PluginCore.FRService
                 needParsePattern = true;
             }
         }
-        public bool CopyFullLineContext { get; set; } = true;
 
-        private bool hasRegexLiterals;
-        private bool isHaxeFile;
-        private string sourceFile;
+        bool hasRegexLiterals;
+        bool isHaxeFile;
+        string sourceFile;
         public string SourceFile
         {
             get => sourceFile;
@@ -415,20 +404,20 @@ namespace PluginCore.FRService
 
         #region Internal Parser Configuration
 
-        private bool needParsePattern = true;
-        private Regex operation;
-        private string pattern;
-        private bool noCase;
-        private bool wholeWord;
-        private bool isRegex;
-        private bool isEscaped;
-        private bool returnAllMatches;
+        bool needParsePattern = true;
+        Regex operation;
+        string pattern;
+        bool noCase;
+        bool wholeWord;
+        bool isRegex;
+        bool isEscaped;
+        bool returnAllMatches;
 
         #endregion
 
         #region Internal Search Methods
 
-        private void BuildRegex(string pattern)
+        void BuildRegex(string pattern)
         {
             if (isEscaped) pattern = Unescape(pattern);
             if (!isRegex) pattern = Regex.Escape(pattern);
@@ -438,7 +427,7 @@ namespace PluginCore.FRService
                 else pattern = "\\b" + pattern + "\\b";
             }
             
-            RegexOptions options = RegexOptions.None;
+            var options = RegexOptions.None;
             if (!SingleLine) options |= RegexOptions.Multiline;
             if (noCase) options |= RegexOptions.IgnoreCase;
 
@@ -452,7 +441,7 @@ namespace PluginCore.FRService
             }
         }
 
-        private List<SearchMatch> SearchSource(string src, int startIndex, int startLine)
+        List<SearchMatch> SearchSource(string src, int startIndex, int startLine)
         {
             List<SearchMatch> results = new List<SearchMatch>();
 
@@ -611,22 +600,19 @@ namespace PluginCore.FRService
             return results;
         }
 
-        private bool LookupRegex(string ba, ref int i)
+        void LookupRegex(string ba, ref int i)
         {
-            if (!hasRegexLiterals)
-                return false;
+            if (!hasRegexLiterals) return;
 
             int len = ba.Length;
             int i0;
             char c;
             // regex in valid context
 
-            if (!isHaxeFile)
-                i0 = i - 2;
+            if (!isHaxeFile) i0 = i - 2;
             else
             {
-                if (ba[i - 2] != '~')
-                    return false;
+                if (ba[i - 2] != '~') return;
                 i0 = i - 3;
             }
 
@@ -634,8 +620,8 @@ namespace PluginCore.FRService
             {
                 c = ba[i0--];
                 if ("=(,[{;:".Contains(c)) break; // ok
-                if (" \t".Contains(c)) continue;
-                return false; // anything else isn't expected before a regex
+                if (c == ' ' || c == '\t') continue;
+                return;
             }
             i0 = i;
             while (i0 < len)
@@ -643,7 +629,7 @@ namespace PluginCore.FRService
                 c = ba[i0++];
                 if (c == '\\') { i0++; continue; } // escape next
                 if (c == '/') break; // end of regex
-                if ("\r\n".Contains(c)) return false;
+                if (c == '\r' || c== '\n') return;
             }
             while (i0 < len)
             {
@@ -655,7 +641,6 @@ namespace PluginCore.FRService
                 }
             }
             i = i0; // ok, skip this regex
-            return true;
         }
 
         #endregion

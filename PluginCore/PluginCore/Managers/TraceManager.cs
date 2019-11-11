@@ -10,13 +10,13 @@ namespace PluginCore.Managers
 {
     public class TraceManager
     {
-        private static bool synchronizing;
-        private static int maxQueue = 1000;
-        private static readonly List<TraceItem> traceLog;
-        private static readonly List<TraceItem> asyncQueue;
-        private static readonly Dictionary<string, TraceGroup> traceGroups;
-        private static readonly Timer asyncTimer;
-        private static int uniqueToken;
+        static bool synchronizing;
+        static int maxQueue = 1000;
+        static readonly List<TraceItem> traceLog;
+        static readonly List<TraceItem> asyncQueue;
+        static readonly Dictionary<string, TraceGroup> traceGroups;
+        static readonly Timer asyncTimer;
+        static int uniqueToken;
 
         static TraceManager()
         {
@@ -166,7 +166,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
-        private static void AsyncTimer_Elapsed(object sender, ElapsedEventArgs e)
+        static void AsyncTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             lock (asyncQueue)
             {
@@ -187,7 +187,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Processes the trace queue
         /// </summary>
-        private static void ProcessQueue()
+        static void ProcessQueue()
         {
             lock (asyncQueue)
             {
