@@ -176,9 +176,9 @@ namespace FlashDebugger.Controls
         {
             if (addingNewExpression)
             {
-                NodeTextBox box = sender as NodeTextBox;
-                var node = box.Parent.CurrentNode.Tag as Node;
-                if (node.Text.Trim() == "") node.Text = TextHelper.GetString("Label.AddExpression");
+                var box = (NodeTextBox) sender;
+                var node = (Node) box.Parent.CurrentNode.Tag;
+                if (node.Text.Trim().Length == 0) node.Text = TextHelper.GetString("Label.AddExpression");
                 addingNewExpression = false;
             }
             // We need to update the tree to avoid some draw problems
@@ -187,8 +187,8 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_EditorShowing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
-            var node = box.Parent.CurrentNode.Tag as Node;
+            var box = (NodeTextBox) sender;
+            var node = (Node) box.Parent.CurrentNode.Tag;
             if (box.Parent.CurrentNode.NextNode is null)
             {
                 addingNewExpression = true;
@@ -204,10 +204,10 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
+            var box = (NodeTextBox) sender;
             if (box.Parent.CurrentNode is null) return;
-            DataNode node = box.Parent.CurrentNode.Tag as DataNode;
-            if (e.NewLabel.Trim() == "" || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
+            var node = (DataNode) box.Parent.CurrentNode.Tag;
+            if (e.NewLabel.Trim().Length == 0 || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
             {
                 node.Text = e.OldLabel != "" ? e.OldLabel : TextHelper.GetString("Label.AddExpression");
                 return;

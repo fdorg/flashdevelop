@@ -62,12 +62,12 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes some extra error logging
         /// </summary>
-        private void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        void InitializeErrorLog() => AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
         /// <summary>
         /// Handles the catched unhandled exception and logs it
         /// </summary>
-        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception exception = new Exception(e.ExceptionObject.ToString());
             ErrorManager.AddToLog("Unhandled exception: ", exception);
@@ -76,40 +76,40 @@ namespace FlashDevelop
         /// <summary>
         /// Exit nicely after the form has been loaded
         /// </summary>
-        private void MainFormLoaded(object sender, EventArgs e) => Close();
+        void MainFormLoaded(object sender, EventArgs e) => Close();
 
         #endregion
 
         #region Private Properties
 
         /* AppMan */
-        private FileSystemWatcher amWatcher;
+        FileSystemWatcher amWatcher;
 
         /* Components */
-        private QuickFind quickFind;
-        private ToolStripProgressBarEx toolStripProgressBar;
-        private ToolStripButton restartButton;
-        private ProcessRunner processRunner;
+        QuickFind quickFind;
+        ToolStripProgressBarEx toolStripProgressBar;
+        ToolStripButton restartButton;
+        ProcessRunner processRunner;
 
         /* Dialogs */
-        private PrintDialog printDialog;
-        private ColorDialog colorDialog;
-        private OpenFileDialog openFileDialog;
-        private SaveFileDialog saveFileDialog;
-        private PrintPreviewDialog printPreviewDialog;
-        private FRInFilesDialog frInFilesDialog;
-        private FRInDocDialog frInDocDialog;
-        private GoToDialog gotoDialog;
+        PrintDialog printDialog;
+        ColorDialog colorDialog;
+        OpenFileDialog openFileDialog;
+        SaveFileDialog saveFileDialog;
+        PrintPreviewDialog printPreviewDialog;
+        FRInFilesDialog frInFilesDialog;
+        FRInDocDialog frInDocDialog;
+        GoToDialog gotoDialog;
 
         /* Working Dir */
-        private string workingDirectory = string.Empty;
+        string workingDirectory = string.Empty;
 
         /* Form State */
-        private FormState formState;
-        private Hashtable fullScreenDocks;
-        private bool notifyOpenFile;
-        private bool closingForOpenFile;
-        private bool closingAll;
+        FormState formState;
+        Hashtable fullScreenDocks;
+        bool notifyOpenFile;
+        bool closingForOpenFile;
+        bool closingAll;
         
         /* Singleton */
         public static bool Silent;
@@ -562,7 +562,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the graphics
         /// </summary>
-        private void InitializeGraphics()
+        void InitializeGraphics()
         {
             Icon icon = new Icon(ResourceHelper.GetStream("FlashDevelopIcon.ico"));
             Icon = printPreviewDialog.Icon = icon;
@@ -571,7 +571,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the theme and config detection
         /// </summary>
-        private void InitializeConfig()
+        void InitializeConfig()
         {
             try
             {
@@ -612,7 +612,7 @@ namespace FlashDevelop
         /// <summary>
         /// When AppMan installs something it notifies of changes. Forward notifications.
         /// </summary>
-        private void AppManUpdate(object sender, FileSystemEventArgs e)
+        void AppManUpdate(object sender, FileSystemEventArgs e)
         {
             try
             {
@@ -631,7 +631,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the restart button
         /// </summary>
-        private void InitializeRestartButton()
+        void InitializeRestartButton()
         {
             restartButton = new ToolStripButton();
             restartButton.Image = FindImage("73|6|3|3");
@@ -657,7 +657,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the First Run dialog
         /// </summary>
-        private DialogResult InitializeFirstRun()
+        DialogResult InitializeFirstRun()
         {
             if (!StandaloneMode && IsFirst && FirstRunDialog.ShouldProcessCommands())
             {
@@ -669,7 +669,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the UI rendering
         /// </summary>
-        private void InitializeRendering()
+        void InitializeRendering()
         {
             if (Globals.Settings.RenderMode == UiRenderMode.System)
             {
@@ -686,7 +686,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the application settings
         /// </summary>
-        private void InitializeSettings()
+        void InitializeSettings()
         {
             AppSettings = SettingObject.GetDefaultSettings();
             if (File.Exists(FileNameHelper.SettingData))
@@ -701,7 +701,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the localization from .locale file
         /// </summary>
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
             try
             {
@@ -817,7 +817,7 @@ namespace FlashDevelop
         /// <summary>
         /// Initializes the form components
         /// </summary>
-        private void InitializeComponents()
+        void InitializeComponents()
         {
             quickFind = new QuickFind();
             DockPanel = new DockPanel();
@@ -955,7 +955,7 @@ namespace FlashDevelop
         /// <summary>
         /// Checks the file changes and activates
         /// </summary>
-        private void OnMainFormActivate(object sender, EventArgs e)
+        void OnMainFormActivate(object sender, EventArgs e)
         {
             if (CurrentDocument is null) return;
             CurrentDocument.Activate(); // Activate the current document
@@ -965,7 +965,7 @@ namespace FlashDevelop
         /// <summary>
         /// Checks the file changes when recieving focus
         /// </summary>
-        private void OnMainFormGotFocus(object sender, EventArgs e)
+        void OnMainFormGotFocus(object sender, EventArgs e)
         {
             if (CurrentDocument is null) return;
             ButtonManager.UpdateFlaggedButtons();
@@ -975,7 +975,7 @@ namespace FlashDevelop
         /// Initalizes the windows state after show is called and
         /// check if we need to notify user for recovery files
         /// </summary>
-        private void OnMainFormShow(object sender, EventArgs e)
+        void OnMainFormShow(object sender, EventArgs e)
         {
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
         }
@@ -983,7 +983,7 @@ namespace FlashDevelop
         /// <summary>
         /// Saves the window size as it's being resized
         /// </summary>
-        private void OnMainFormResize(object sender, EventArgs e)
+        void OnMainFormResize(object sender, EventArgs e)
         {
             if (WindowState != FormWindowState.Maximized && WindowState != FormWindowState.Minimized)
             {
@@ -994,7 +994,7 @@ namespace FlashDevelop
         /// <summary>
         /// Saves the window location as it's being moved
         /// </summary>
-        private void OnMainFormLocationChange(object sender, EventArgs e)
+        void OnMainFormLocationChange(object sender, EventArgs e)
         {
             if (WindowState != FormWindowState.Maximized && WindowState != FormWindowState.Minimized)
             {
@@ -1006,7 +1006,7 @@ namespace FlashDevelop
         /// <summary>
         /// Setups misc stuff when MainForm is loaded
         /// </summary>
-        private void OnMainFormLoad(object sender, EventArgs e)
+        void OnMainFormLoad(object sender, EventArgs e)
         {
             /**
             * DockPanel events
@@ -1143,7 +1143,7 @@ namespace FlashDevelop
         /// <summary>
         /// When dock changes, applies the padding to documents
         /// </summary>
-        private void OnActivePaneChanged(object sender, EventArgs e) => quickFind.ApplyFixedDocumentPadding();
+        void OnActivePaneChanged(object sender, EventArgs e) => quickFind.ApplyFixedDocumentPadding();
 
         /// <summary>
         /// When document is removed update tab texts
@@ -1153,7 +1153,7 @@ namespace FlashDevelop
         /// <summary>
         /// Dispatch UIRefresh event and focus scintilla control
         /// </summary>
-        private void OnActiveContentChanged(object sender, EventArgs e)
+        void OnActiveContentChanged(object sender, EventArgs e)
         {
             if (DockPanel.ActiveContent is null) return;
             if (DockPanel.ActiveContent.GetType() == typeof(TabbedDocument))
@@ -1881,7 +1881,7 @@ namespace FlashDevelop
         /// <summary>
         /// 
         /// </summary>
-        private void OpenDocumentFromParameters(string file)
+        void OpenDocumentFromParameters(string file)
         {
             Match openParams = Regex.Match(file, "@([0-9]+)($|:([0-9]+)$)"); // path@line:col
             if (openParams.Success)
@@ -1905,7 +1905,7 @@ namespace FlashDevelop
         /// <summary>
         /// 
         /// </summary>        
-        private void ApplyOpenParams(Match openParams, ScintillaControl sci)
+        void ApplyOpenParams(Match openParams, ScintillaControl sci)
         {
             if (sci is null) return;
             int col = 0;
@@ -2967,8 +2967,8 @@ namespace FlashDevelop
                 ErrorManager.ShowError(ex);
             }
         }
-        
-        private bool DirIsImportant(string dir)
+
+        bool DirIsImportant(string dir)
         {
             var full = Path.GetDirectoryName(dir);
             return full == PathHelper.UserPluginDir
@@ -2984,10 +2984,10 @@ namespace FlashDevelop
             var browser = new Browser {Dock = DockStyle.Fill};
             if (sender != null)
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                string url = ProcessArgString(((ItemData)button.Tag).Tag);
+                var button = (ToolStripItem)sender;
+                var url = ProcessArgString(((ItemData)button.Tag).Tag);
                 CreateCustomDocument(browser);
-                if (url.Trim() != "") browser.WebBrowser.Navigate(url);
+                if (url.Trim().Length > 0) browser.WebBrowser.Navigate(url);
                 else browser.WebBrowser.GoHome();
             }
             else browser.WebBrowser.GoHome();
@@ -3406,8 +3406,8 @@ namespace FlashDevelop
             lineLists.Add(curList);
             for (int line = curLine; line < endLine + 1; ++line)
             {
-                string lineText = sci.GetLine(line);
-                if (lineText.Trim() == "")
+                var lineText = sci.GetLine(line);
+                if (lineText.Trim().Length == 0)
                 {
                     curList.Sort(CompareLines);
                     curList.Add(lineText);
@@ -3431,7 +3431,8 @@ namespace FlashDevelop
             sci.SetSel(selStart, selEnd);
             sci.ReplaceSel(result.ToString());
         }
-        private static int CompareLines(string a, string b)
+
+        static int CompareLines(string a, string b)
         {
             char[] whitespace = {'\t', ' '};
             a = a.TrimStart(whitespace);
@@ -3546,7 +3547,7 @@ namespace FlashDevelop
         /// </summary>
         public void CommentSelection(object sender, EventArgs e) => CommentSelection();
 
-        private bool? CommentSelection()
+        bool? CommentSelection()
         {
             ScintillaControl sci = CurrentDocument.SciControl;
             int selEnd = sci.SelectionEnd;
@@ -3672,7 +3673,8 @@ namespace FlashDevelop
             if (containsCodeLine) CommentLine(null, null);
             else UncommentLine(null, null);
         }
-        private void ToggleBlockOnCurrentLine(ScintillaControl sci)
+
+        void ToggleBlockOnCurrentLine(ScintillaControl sci)
         {
             int selStart = sci.SelectionStart;
             int indentPos = sci.LineIndentPosition(sci.CurrentLine);
@@ -3898,17 +3900,17 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the incoming info output
         /// </summary>
-        private void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.Info);
+        void ProcessOutput(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.Info);
 
         /// <summary>
         /// Handles the incoming error output
         /// </summary> 
-        private void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.ProcessError);
+        void ProcessError(object sender, string line) => TraceManager.AddAsync(line, (int)TraceType.ProcessError);
 
         /// <summary>
         /// Handles the ending of a process
         /// </summary>
-        private void ProcessEnded(object sender, int exitCode)
+        void ProcessEnded(object sender, int exitCode)
         {
             if (InvokeRequired) BeginInvoke((MethodInvoker)delegate { ProcessEnded(sender, exitCode); });
             else
