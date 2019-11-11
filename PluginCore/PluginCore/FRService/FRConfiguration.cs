@@ -133,7 +133,7 @@ namespace PluginCore.FRService
         protected void CacheOpenDocuments()
         {
             openDocuments = new Dictionary<string, ITabbedDocument>();
-            foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+            foreach (var document in PluginBase.MainForm.Documents)
             {
                 if (document.IsEditable)
                 {
@@ -154,9 +154,9 @@ namespace PluginCore.FRService
                     break;
 
                 default:
-                    EncodingFileInfo info = FileHelper.GetEncodingFileInfo(file);
                     if (updateSourceFile || !IsDocumentCached(file))
                     {
+                        var info = FileHelper.GetEncodingFileInfo(file);
                         FileHelper.WriteFile(file, src, Encoding.GetEncoding(info.CodePage), info.ContainsBOM);
                     }
                     else 
@@ -178,28 +178,14 @@ namespace PluginCore.FRService
         /// </summary>
         public List<string> GetFiles()
         {
-            switch (type)
+            return type switch
             {
-                case OperationType.FindInRange:
-                    return files;
-
-                case OperationType.FindInSource:
-                    return files ??= new List<string> {path};
-
-                case OperationType.FindInFile:
-                    return files ??= new List<string> {path};
-
-                case OperationType.FindInPath:
-                    if (files is null)
-                    {
-                        var walker = new PathWalker(path, mask, recursive);
-                        files = walker.GetFiles();
-                    }
-                    return files;
-            }
-            return null;
+                OperationType.FindInRange => files,
+                OperationType.FindInSource => (files ??= new List<string> {path}),
+                OperationType.FindInFile => (files ??= new List<string> {path}),
+                OperationType.FindInPath => (files ??= new PathWalker(path, mask, recursive).GetFiles()),
+                _ => null
+            };
         }
-
     }
-
 }
