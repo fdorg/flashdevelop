@@ -328,10 +328,8 @@ namespace ProjectManager.Projects.Haxe
 
         void ParseHXML(string[] raw)
         {
-            if (raw != null && (raw.Length == 0 || raw[0] is null))
-                raw = null;
+            if (raw != null && (raw.Length == 0 || raw[0] is null)) raw = null;
             rawHXML = raw;
-
             var libs = new List<string>();
             var defs = new List<string>();
             var cps = new List<string>();
@@ -432,6 +430,14 @@ namespace ProjectManager.Projects.Haxe
                         case "-each": break; // ignore
                         case "-cwd":
                             cwd = CleanPath(value, cwd);
+                            break;
+                        // Haxe 3
+                        case "as3":
+                        // Haxe 4
+                        case "-as3":
+                            target = PlatformData.CUSTOM_PLATFORM;
+                            haxeTarget = "flash";
+                            output = "as3";
                             break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
