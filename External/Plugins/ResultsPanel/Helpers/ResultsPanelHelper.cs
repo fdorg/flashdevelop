@@ -24,7 +24,6 @@ namespace ResultsPanel.Helpers
             MainUI = pluginUI;
             pluginUIs = new List<PluginUI>();
             ActiveUI = MainUI;
-
             MainUI.ParentPanel.Tag = MainUI;
             MainUI.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
         }
@@ -34,7 +33,7 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void ClearResults(string groupData)
         {
-            if (groupData == null)
+            if (groupData is null)
             {
                 MainUI.ClearOutput();
                 return;
@@ -51,9 +50,7 @@ namespace ResultsPanel.Helpers
                     return;
                 }
             }
-
-            var newUI = AddResultsPanel(groupData, groupId, args);
-            //newUI.ClearOutput();
+            AddResultsPanel(groupData, groupId, args);
         }
 
         /// <summary>
@@ -61,7 +58,7 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void ShowResults(string groupData)
         {
-            if (groupData == null)
+            if (groupData is null)
             {
                 MainUI.AddLogEntries();
                 MainUI.DisplayOutput();

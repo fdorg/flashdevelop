@@ -18,26 +18,21 @@ namespace SourceControl.Actions
 {
     public static class ProjectWatcher
     {
-        private static bool initialized = false;
-
         internal static readonly List<IVCManager> VCManagers = new List<IVCManager>();
-        static VCManager vcManager;
         static FSWatchers fsWatchers;
         static OverlayManager ovManager;
-        static Project currentProject;
         static readonly HashSet<string> addBuffer = new HashSet<string>();
 
-        public static bool Initialized => initialized;
+        public static bool Initialized { get; private set; }
+
         public static Image Skin { get; set; }
-        public static Project CurrentProject => currentProject;
-        public static VCManager VCManager => vcManager;
+        public static Project CurrentProject { get; private set; }
+        public static VCManager VCManager { get; private set; }
 
         public static void Init()
         {
-            if (initialized)
-                return;
-
-            if (Skin == null)
+            if (Initialized) return;
+            if (Skin is null)
             {
                 try
                 {
@@ -52,27 +47,25 @@ namespace SourceControl.Actions
             
             fsWatchers = new FSWatchers();
             ovManager = new OverlayManager(fsWatchers);
-            vcManager = new VCManager(ovManager);
+            VCManager = new VCManager(ovManager);
 
             SetProject(PluginBase.CurrentProject as Project);
 
-            initialized = true;
+            Initialized = true;
         }
 
         internal static void Dispose()
         {
-            if (vcManager != null)
-            {
-                vcManager.Dispose();
-                fsWatchers.Dispose();
-                ovManager.Dispose();
-                currentProject = null;
-            }
+            if (VCManager is null) return;
+            VCManager.Dispose();
+            fsWatchers.Dispose();
+            ovManager.Dispose();
+            CurrentProject = null;
         }
 
         internal static void SetProject(Project project)
         {
-            currentProject = project;
+            CurrentProject = project;
 
             fsWatchers.SetProject(project);
             ovManager.Reset();
@@ -81,15 +74,9 @@ namespace SourceControl.Actions
                 if (document.IsEditable) HandleFileReload(document.FileName);
         }
 
-        internal static void SelectionChanged()
-        {
-            ovManager.SelectionChanged();
-        }
+        internal static void SelectionChanged() => ovManager.SelectionChanged();
 
-        internal static void ForceRefresh()
-        {
-            fsWatchers.ForceRefresh();
-        }
+        internal static void ForceRefresh() => fsWatchers.ForceRefresh();
 
 
         #region file actions
@@ -97,7 +84,7 @@ namespace SourceControl.Actions
         internal static bool HandleFileBeforeRename(string path)
         {
             WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.FileBeforeRename(path);
@@ -106,7 +93,7 @@ namespace SourceControl.Actions
         internal static bool HandleFileRename(string[] paths)
         {
             var result = fsWatchers.ResolveVC(paths[0], true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.FileRename(paths[0], paths[1]);
@@ -114,9 +101,9 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileDelete(string[] paths, bool confirm)
         {
-            if (paths == null || paths.Length == 0) return false;
+            if (paths.IsNullOrEmpty()) return false;
             WatcherVCResult result = fsWatchers.ResolveVC(Path.GetDirectoryName(paths[0]));
-            if (result == null) return false;
+            if (result is null) return false;
 
             List<string> svnRemove = new List<string>();
             List<string> regularRemove = new List<string>();
@@ -127,7 +114,7 @@ namespace SourceControl.Actions
                 foreach (string path in paths)
                 {
                     result = fsWatchers.ResolveVC(path, true);
-                    if (result == null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
+                    if (result is null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
                     {
                         regularRemove.Add(path);
                     }
@@ -204,7 +191,7 @@ namespace SourceControl.Actions
         public static void HandleFilesDeleted(string[] files)
         {
             var result = fsWatchers.ResolveVC(files[0], true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return;
 
             var msg = "Deleted";
@@ -280,8 +267,8 @@ namespace SourceControl.Actions
 
         internal static bool HandleBuildProject()
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(currentProject.OutputPathAbsolute, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            WatcherVCResult result = fsWatchers.ResolveVC(CurrentProject.OutputPathAbsolute, true);
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.BuildProject();
@@ -289,8 +276,8 @@ namespace SourceControl.Actions
 
         internal static bool HandleTestProject()
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(currentProject.OutputPathAbsolute, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            WatcherVCResult result = fsWatchers.ResolveVC(CurrentProject.OutputPathAbsolute, true);
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.TestProject();
@@ -299,7 +286,7 @@ namespace SourceControl.Actions
         internal static bool HandleSaveProject(string fileName)
         {
             WatcherVCResult result = fsWatchers.ResolveVC(fileName, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.SaveProject();
@@ -307,11 +294,11 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileNew(string path)
         {
-            if (!initialized)
+            if (!Initialized)
                 return false;
 
             WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
+            if (result is null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
                 return false;
 
             addBuffer.Add(path); //at this point there is not yet an ITabbedDocument for the file
@@ -321,11 +308,11 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileOpen(string path)
         {
-            if (!initialized)
+            if (!Initialized)
                 return false;
 
             var result = fsWatchers.ResolveVC(path, true);
-            if (result == null)
+            if (result is null)
                 return false;
 
             if (addBuffer.Remove(path) || result.Status == VCItemStatus.Unknown)
@@ -376,11 +363,11 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileReload(string path)
         {
-            if (!initialized)
+            if (!Initialized)
                 return false;
 
-            WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            var result = fsWatchers.ResolveVC(path, true);
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.FileReload(path);
@@ -388,11 +375,11 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileModifyRO(string path)
         {
-            if (!initialized)
+            if (!Initialized)
                 return false;
 
-            WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            var result = fsWatchers.ResolveVC(path, true);
+            if (result is null || result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.FileModifyRO(path);
@@ -418,25 +405,20 @@ namespace SourceControl.Actions
 
         static string AskForCommit(string message)
         {
-            if (PluginMain.SCSettings.NeverCommit)
-                return null;
+            if (PluginMain.SCSettings.NeverCommit) return null;
 
             var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             var msg = TextHelper.GetString("Info.CreateCommit");
 
-            using (LineEntryDialog led = new LineEntryDialog(title, msg, message))
+            using var led = new LineEntryDialog(title, msg, message);
+            var result = led.ShowDialog();
+            if (result == DialogResult.Cancel) //Never
             {
-                var result = led.ShowDialog();
-                if (result == DialogResult.Cancel) //Never
-                {
-                    PluginMain.SCSettings.NeverCommit = true;
-                    return null;
-                }
-                if (result != DialogResult.Yes || led.Line == "")
-                    return null;
-
-                return led.Line;
+                PluginMain.SCSettings.NeverCommit = true;
+                return null;
             }
+            if (result != DialogResult.Yes || led.Line == "") return null;
+            return led.Line;
         }
     }
     

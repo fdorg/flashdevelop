@@ -337,7 +337,7 @@ namespace CodeRefactor.Commands
             public static string Rename(ScintillaControl sci, string sourceText, string newName)
             {
                 var context = SynchronizationContext.Current;
-                if (context == null) Assert.Ignore("SynchronizationContext.Current is null");
+                if (context is null) Assert.Ignore("SynchronizationContext.Current is null");
                 SetSrc(sci, sourceText);
                 var waitHandle = new AutoResetEvent(false);
                 CommandFactoryProvider.GetFactory(sci)

@@ -22,10 +22,7 @@ namespace PluginCore.Localization
         /// <see cref="String.Empty"/> is returned if the key does not exist.
         /// </summary>
         /// <param name="key">The key used to retrieve the localized string.</param>
-        public static string GetString(string key)
-        {
-            return GetStringInternal(key, Assembly.GetCallingAssembly());
-        }
+        public static string GetString(string key) => GetStringInternal(key, Assembly.GetCallingAssembly());
 
         /// <summary>
         /// Gets the specified localized string with ampersand (&amp;) characters removed.
@@ -119,10 +116,10 @@ namespace PluginCore.Localization
             // On different distro we need to use FlashDevelop prefix
             if (prefix == DistroConfig.DISTRIBUTION_NAME) prefix = "FlashDevelop";
             string result = resourceManager.GetString(prefix + "." + key);
-            if (result == null)
+            if (result is null)
             {
                 result = resourceManager.GetString(key);
-                if (result == null)
+                if (result is null)
                 {
                     TraceManager.Add("No localized string found: " + key);
                     return string.Empty;
@@ -146,7 +143,7 @@ namespace PluginCore.Localization
         {
             if (storedLocale == LocaleVersion.Invalid)
             {
-                if (PluginBase.MainForm == null || PluginBase.MainForm.Settings == null) return false;
+                if (PluginBase.MainForm?.Settings is null) return false;
                 storedLocale = PluginBase.MainForm.Settings.LocaleVersion;
                 string path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());

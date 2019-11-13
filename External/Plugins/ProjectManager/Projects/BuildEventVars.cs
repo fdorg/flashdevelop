@@ -32,14 +32,11 @@ namespace ProjectManager.Projects
             this.project = project;
         }
 
-        public void AddVar(string name, string value)
-        {
-            additional.Add(new BuildEventInfo(name, value));
-        }
+        public void AddVar(string name, string value) => additional.Add(new BuildEventInfo(name, value));
 
         public BuildEventInfo[] GetVars()
         {
-            List<BuildEventInfo> infos = new List<BuildEventInfo>
+            var infos = new List<BuildEventInfo>
             {
                 new BuildEventInfo("BaseDir", BaseDir),
                 new BuildEventInfo("FDBuild", FDBuild),
@@ -66,6 +63,7 @@ namespace ProjectManager.Projects
         }
 
         public string FDBuildDir => Path.GetDirectoryName(FDBuild);
+
         public string ToolsDir => Path.GetDirectoryName(FDBuildDir);
 
         public string BaseDir
@@ -103,5 +101,4 @@ namespace ProjectManager.Projects
         }
 
     }
-
 }

@@ -13,6 +13,7 @@ using ProjectManager.Actions;
 using System.Collections.Generic;
 using System.Linq;
 using Ookii.Dialogs;
+using PluginCore.Collections;
 
 namespace ProjectManager.Controls
 {
@@ -814,7 +815,7 @@ namespace ProjectManager.Controls
         {
             this.classpathControl = new ProjectManager.Controls.ClasspathControl();
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
-            this.classpathControl.Classpaths = new string[0];
+            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
             this.classpathControl.Language = null;
             this.classpathControl.Location = new System.Drawing.Point(17, 22);
             this.classpathControl.Name = "classpathControl";
@@ -974,7 +975,7 @@ namespace ProjectManager.Controls
 
             // retrieve SDK list
             InstalledSDK[] sdks = BuildActions.GetInstalledSDKs(BaseProject);
-            if (sdks != null && sdks.Length > 0)
+            if (!sdks.IsNullOrEmpty())
             {
                 sdkComboBox.Items.Add(TextHelper.GetString("Label.SDKComboDefault") + " (" + sdks[0].Name + ")");
                 sdkComboBox.Items.AddRange(sdks);
@@ -999,7 +1000,7 @@ namespace ProjectManager.Controls
             }
 
             sdkComboBox.SelectedIndex = select;
-            if (sdk != InstalledSDK.INVALID_SDK && (sdks == null || !sdks.Contains(sdk)))
+            if (sdk != InstalledSDK.INVALID_SDK && (sdks is null || !sdks.Contains(sdk)))
                 customTextBox.Text = sdk.Path;
             sdkChanged = false;
         }
@@ -1296,22 +1297,20 @@ namespace ProjectManager.Controls
 
         private void outputBrowseButton_Click(object sender, EventArgs e)
         {
-            using (SaveFileDialog dialog = new SaveFileDialog())
+            using SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
+            dialog.OverwritePrompt = false;
+            dialog.InitialDirectory = BaseProject.Directory;
+            // try pre-setting the current output path
+            try
             {
-                dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
-                dialog.OverwritePrompt = false;
-                dialog.InitialDirectory = BaseProject.Directory;
-                // try pre-setting the current output path
-                try
-                {
-                    string path = BaseProject.GetAbsolutePath(outputSwfBox.Text);
-                    if (File.Exists(path)) dialog.FileName = path;
-                }
-                catch { }
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    outputSwfBox.Text = BaseProject.GetRelativePath(dialog.FileName);
-                }
+                string path = BaseProject.GetAbsolutePath(outputSwfBox.Text);
+                if (File.Exists(path)) dialog.FileName = path;
+            }
+            catch { }
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                outputSwfBox.Text = BaseProject.GetRelativePath(dialog.FileName);
             }
         }
 
@@ -1329,14 +1328,13 @@ namespace ProjectManager.Controls
                 caption = TextHelper.GetString("Title.CustomTestMovieCommand");
                 label = TextHelper.GetString("Label.CustomTestMovieCommand");
             }
-            using (LineEntryDialog dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? ""))
+
+            using LineEntryDialog dialog = new LineEntryDialog(caption, label, BaseProject.TestMovieCommand ?? "");
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    BaseProject.TestMovieCommand = dialog.Line;
-                    Modified();
-                    btnOK.Focus();
-                }
+                BaseProject.TestMovieCommand = dialog.Line;
+                Modified();
+                btnOK.Focus();
             }
         }
 
@@ -1418,7 +1416,7 @@ namespace ProjectManager.Controls
             SelectItem(testMovieCombo, TestMovieBehavior.Custom);
             BaseProject.TestMovieCommand = "";
 
-            if (langPlatform.DefaultProjectFile == null) return;
+            if (langPlatform.DefaultProjectFile is null) return;
 
             foreach (string fileName in langPlatform.DefaultProjectFile)
                 if (File.Exists(BaseProject.GetAbsolutePath(fileName)))
@@ -1430,8 +1428,8 @@ namespace ProjectManager.Controls
 
         private bool IsExternalConfiguration()
         {
-            string selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
-            PlatformVersion version = langPlatform?.GetVersion(selectedVersion);
+            var selectedVersion = versionCombo.Text == "" ? "1.0" : versionCombo.Text;
+            var version = langPlatform?.GetVersion(selectedVersion);
             return version?.Commands != null && version.Commands.ContainsKey("display");
         }
 
@@ -1441,7 +1439,7 @@ namespace ProjectManager.Controls
         {
             if (PlatformData.SupportedLanguages.ContainsKey(BaseProject.Language))
             {
-                SupportedLanguage lang = PlatformData.SupportedLanguages[BaseProject.Language];
+                var lang = PlatformData.SupportedLanguages[BaseProject.Language];
                 if (lang.Platforms.ContainsKey(platformName))
                     return lang.Platforms[platformName];
             }

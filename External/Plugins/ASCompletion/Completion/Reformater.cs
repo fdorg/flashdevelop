@@ -12,7 +12,7 @@ namespace ASCompletion.Completion
         public bool SpaceBeforeFunctionCall = false;
         public string CompactChars = "";
         public string SpacedChars = "";
-        public string[] AddSpaceAfter = new string[] {};
+        public string[] AddSpaceAfter = {};
         public string Operators = "=+-*/%<>&|^";
         public bool IsPhp = false;
         public bool IsHaXe = false;
@@ -34,7 +34,6 @@ namespace ASCompletion.Completion
             StringBuilder sb = new StringBuilder(txt.Length);
             int i = 0;
             int n = txt.Length;
-            char c = ' ';
             char c2 = ' ';
 
             // copy indentation
@@ -44,7 +43,7 @@ namespace ASCompletion.Completion
             // first char
             if (i < n && txt[i] != '/' && txt[i] != '"' && txt[i] != '\'' && txt[i] != '<' && txt[i] != ']' && txt[i] != '?') 
             {
-                c = c2 = txt[i++];
+                var c = c2 = txt[i++];
                 sb.Append(c);
                 if (options.SpacedChars.Contains(c))
                     while (i < n && options.SpacedChars.Contains(txt[i])) sb.Append(txt[i++]);
@@ -62,7 +61,7 @@ namespace ASCompletion.Completion
                     fixedOffset = true;
                     offset = sb.Length + 1;
                 }
-                c = txt[i++];
+                char c = txt[i++];
                 if (c == '\r') 
                 {
                     sb.Append(c);
@@ -193,12 +192,12 @@ namespace ASCompletion.Completion
                     {
                         string word = GetLastWord(sb, options.WordCharacters);
                         if (word.Length > 0)
-                        foreach (string token in options.AddSpaceAfter)
-                            if (token == word)
-                            {
-                                needSpace = true;
-                                break;
-                            }
+                            foreach (string token in options.AddSpaceAfter)
+                                if (token == word)
+                                {
+                                    needSpace = true;
+                                    break;
+                                }
                     }
                 }
                 else if (options.SpacedChars.Contains(c))
@@ -383,11 +382,10 @@ namespace ASCompletion.Completion
 
             int i = index;
             int n = txt.Length;
-            char c = '<';
             char c2 = '<';
             while (i < n)
             {
-                c = txt[i++];
+                var c = txt[i++];
 
                 // AS expression
                 if (inExpr)
@@ -542,10 +540,9 @@ namespace ASCompletion.Completion
         {
             int n = txt.Length;
             int i = index - 2;
-            char c = '/';
             while (i > 0)
             {
-                c = txt[i--];
+                var c = txt[i--];
                 if (c == ' ' || c == '\t') continue;
                 if (c == '\r' || c == '\n') break;
                 if (char.IsLetterOrDigit(c) || "_$])".Contains(c)) return false;
@@ -554,7 +551,7 @@ namespace ASCompletion.Completion
             i = index;
             while (i < n)
             {
-                c = txt[i++];
+                var c = txt[i++];
                 if (c == '\\')
                 {
                     i++;

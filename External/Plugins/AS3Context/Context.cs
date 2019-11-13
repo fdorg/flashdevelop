@@ -34,12 +34,13 @@ namespace AS3Context
             new Regex("[/\\\\](playerglobal|airglobal|builtin)\\.swc", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         #region initialization
-        private readonly AS3Settings as3settings;
-        private bool hasAIRSupport;
-        private bool hasMobileSupport;
-        private MxmlFilterContext mxmlFilterContext; // extract inlined AS3 ranges & MXML tags
-        private readonly Timer timerCheck;
-        private string fileWithSquiggles;
+
+        readonly AS3Settings as3settings;
+        bool hasAIRSupport;
+        bool hasMobileSupport;
+        MxmlFilterContext mxmlFilterContext; // extract inlined AS3 ranges & MXML tags
+        readonly Timer timerCheck;
+        string fileWithSquiggles;
         protected bool mxmlEnabled;
 
         /// <summary>
@@ -163,8 +164,8 @@ namespace AS3Context
         {
             ReleaseClasspath();
             started = true;
-            if (as3settings == null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup == null)
+            if (as3settings is null) throw new Exception("BuildClassPath() must be overridden");
+            if (contextSetup is null)
             {
                 contextSetup = new ContextSetupInfos();
                 contextSetup.Lang = settings.LanguageId;
@@ -200,7 +201,7 @@ namespace AS3Context
                 : as3settings.GetDefaultSDK().Path;
 
             char S = Path.DirectorySeparatorChar;
-            if (compiler == null) 
+            if (compiler is null) 
                 compiler = Path.Combine(PathHelper.ToolDir, "flexlibs");
             string frameworks = compiler + S + "frameworks";
             string sdkLibs = frameworks + S + "libs";
@@ -231,8 +232,8 @@ namespace AS3Context
                         string playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, sdkLibs);
                         if (playerglobal != null) swcPresent = true;
                         else playerglobal = MatchPlayerGlobalExact(majorVersion, minorVersion, fallbackLibs);
-                        if (playerglobal == null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs);
-                        if (playerglobal == null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, sdkLibs);
+                        if (playerglobal is null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, fallbackLibs);
+                        if (playerglobal is null) playerglobal = MatchPlayerGlobalAny(ref majorVersion, ref minorVersion, sdkLibs);
                         if (playerglobal != null)
                         {
                             // add missing SWC in new SDKs
@@ -364,7 +365,7 @@ namespace AS3Context
             // add library
             AddPath(PathHelper.LibraryDir + S + "AS3" + S + "classes");
             // add user paths from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
@@ -389,7 +390,7 @@ namespace AS3Context
         /// <summary>
         /// Find any playerglobal.swc
         /// </summary>
-        private string MatchPlayerGlobalAny(ref int majorVersion, ref int minorVersion, string sdkLibs)
+        string MatchPlayerGlobalAny(ref int majorVersion, ref int minorVersion, string sdkLibs)
         {
             char S = Path.DirectorySeparatorChar;
             string libPlayer = sdkLibs + S + "player";
@@ -406,7 +407,7 @@ namespace AS3Context
             if (Directory.Exists(libPlayer + S + majorVersion))
                 playerglobal = "player" + S + majorVersion + S + "playerglobal.swc";
 
-            if (playerglobal == null && majorVersion > 9)
+            if (playerglobal is null && majorVersion > 9)
             {
                 int tempMajor = majorVersion - 1;
                 int tempMinor = 9;
@@ -425,7 +426,7 @@ namespace AS3Context
         /// <summary>
         /// Find version-matching playerglobal.swc
         /// </summary>
-        private string MatchPlayerGlobalExact(int majorVersion, int minorVersion, string sdkLibs)
+        string MatchPlayerGlobalExact(int majorVersion, int minorVersion, string sdkLibs)
         {
             string playerglobal = null;
             char S = Path.DirectorySeparatorChar;
@@ -442,8 +443,8 @@ namespace AS3Context
         /// </summary>
         public override string[] GetExplorerMask()
         {
-            string[] mask = as3settings.AS3FileTypes;
-            if (mask == null || mask.Length == 0 || (mask.Length == 1 && mask[0] == ""))
+            var mask = as3settings.AS3FileTypes;
+            if (mask.IsNullOrEmpty() || (mask.Length == 1 && mask[0] == ""))
             {
                 as3settings.AS3FileTypes = mask = new[] { "*.as", "*.mxml" };
                 return mask;
@@ -534,7 +535,7 @@ namespace AS3Context
             return base.CreateFileModel(fileName);
         }
 
-        private void GuessPackage(string fileName, FileModel nFile)
+        void GuessPackage(string fileName, FileModel nFile)
         {
             foreach(PathModel aPath in classPath)
                 if (fileName.StartsWith(aPath.Path, StringComparison.OrdinalIgnoreCase))
@@ -609,17 +610,17 @@ namespace AS3Context
             }
         }
 
-        private void timerCheck_Elapsed(object sender, ElapsedEventArgs e) => BackgroundSyntaxCheck();
+        void timerCheck_Elapsed(object sender, ElapsedEventArgs e) => BackgroundSyntaxCheck();
 
         /// <summary>
         /// Checking syntax of current file
         /// </summary>
-        private void BackgroundSyntaxCheck()
+        void BackgroundSyntaxCheck()
         {
             if (!IsFileValid) return;
 
             var sci = CurSciControl;
-            if (sci == null) return;
+            if (sci is null) return;
             ClearSquiggles(sci);
 
             var sdk = PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3"
@@ -628,17 +629,17 @@ namespace AS3Context
             FlexShells.Instance.CheckAS3(CurrentFile, sdk, sci.Text);
         }
 
-        private void AddSquiggles(ScintillaControl sci, int line, int start, int end)
+        void AddSquiggles(ScintillaControl sci, int line, int start, int end)
         {
-            if (sci == null) return;
+            if (sci is null) return;
             fileWithSquiggles = CurrentFile;
             int position = sci.PositionFromLine(line) + start;
             sci.AddHighlight(2, (int)IndicatorStyle.Squiggle, 0x000000ff, position, end - start);
         }
 
-        private void ClearSquiggles(ScintillaControl sci)
+        void ClearSquiggles(ScintillaControl sci)
         {
-            if (sci == null) return;
+            if (sci is null) return;
             try
             {
                 sci.RemoveHighlights(2);
@@ -649,11 +650,11 @@ namespace AS3Context
             }
         }
 
-        private void FlexShell_SyntaxError(string error)
+        void FlexShell_SyntaxError(string error)
         {
             if (!IsFileValid) return;
             var document = PluginBase.MainForm.CurrentDocument;
-            if (document == null || !document.IsEditable) return;
+            if (document is null || !document.IsEditable) return;
             var m = re_syntaxError.Match(error);
             if (!m.Success) return;
 
@@ -676,7 +677,7 @@ namespace AS3Context
         /// <summary>
         /// Convert multibyte column to byte length
         /// </summary>
-        private int MBSafeColumn(ScintillaControl sci, int line, int length)
+        int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
             var text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
@@ -695,7 +696,7 @@ namespace AS3Context
         /// <returns>Completion visibility</returns>
         public override Visibility TypesAffinity(ClassModel inClass, ClassModel withClass)
         {
-            if (inClass == null || withClass == null) return Visibility.Public;
+            if (inClass is null || withClass is null) return Visibility.Public;
             // same file
             if (inClass.InFile == withClass.InFile)
                 return Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
@@ -728,48 +729,49 @@ namespace AS3Context
             if (!completionCache.IsDirty && completionCache.AllTypes != null)
                 return completionCache.AllTypes;
 
-            MemberList fullList = new MemberList();
+            var fullList = new MemberList();
             ClassModel aClass;
             MemberModel item;
             // public & internal classes
             string package = CurrentModel?.Package;
-            foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
-            {
-                aPath.ForeachFile((aFile) =>
+            foreach (var aPath in classPath)
+                if (aPath.IsValid && !aPath.Updating)
                 {
-                    if (!aFile.HasPackage)
-                        return true; // skip
+                    aPath.ForeachFile((aFile) =>
+                    {
+                        if (!aFile.HasPackage)
+                            return true; // skip
 
-                    aClass = aFile.GetPublicClass();
-                    if (!aClass.IsVoid() && aClass.IndexType == null)
-                    {
-                        if (aClass.Access == Visibility.Public
-                            || (aClass.Access == Visibility.Internal && aFile.Package == package))
+                        aClass = aFile.GetPublicClass();
+                        if (!aClass.IsVoid() && aClass.IndexType is null)
                         {
-                            item = aClass.ToMemberModel();
-                            item.Name = item.Type;
-                            fullList.Add(item);
+                            if (aClass.Access == Visibility.Public
+                                || (aClass.Access == Visibility.Internal && aFile.Package == package))
+                            {
+                                item = aClass.ToMemberModel();
+                                item.Name = item.Type;
+                                fullList.Add(item);
+                            }
                         }
-                    }
-                    if (aFile.Package.Length > 0 && aFile.Members.Count > 0)
-                    {
-                        foreach (MemberModel member in aFile.Members)
+                        if (aFile.Package.Length > 0 && aFile.Members.Count > 0)
                         {
-                            item = (MemberModel) member.Clone();
-                            item.Name = aFile.Package + "." + item.Name;
-                            fullList.Add(item);
+                            foreach (var member in aFile.Members)
+                            {
+                                item = (MemberModel) member.Clone();
+                                item.Name = aFile.Package + "." + item.Name;
+                                fullList.Add(item);
+                            }
                         }
-                    }
-                    else if (aFile.Members.Count > 0)
-                    {
-                        foreach (MemberModel member in aFile.Members)
+                        else if (aFile.Members.Count > 0)
                         {
-                            fullList.Add((MemberModel) member.Clone());
+                            foreach (var member in aFile.Members)
+                            {
+                                fullList.Add((MemberModel) member.Clone());
+                            }
                         }
-                    }
-                    return true;
-                });
-            }
+                        return true;
+                    });
+                }
             // void
             fullList.Add(new MemberModel(features.voidKey, features.voidKey, FlagType.Class | FlagType.Intrinsic, 0));
             // private classes
@@ -797,7 +799,7 @@ namespace AS3Context
                         if (m.Success) insert = $".<{m.Value}>";
                     }
                 }
-                if (insert == null)
+                if (insert is null)
                 {
                     if (trigger == '.' || trigger == '(') return true;
                     insert = ".<>";
@@ -834,12 +836,10 @@ namespace AS3Context
         {
             if (member == ClassModel.VoidClass) return false;
             // same package is auto-imported
-            var package = member.InFile?.Package;
-            if (package == null) {
-                package = member.Type.Length > member.Name.Length
-                        ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
-                        : string.Empty;
-            }
+            var package = member.InFile?.Package
+                          ?? (member.Type.Length > member.Name.Length
+                              ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
+                              : string.Empty);
             return package == Context.CurrentModel.Package || base.IsImported(member, atLine);
         }
 
@@ -866,8 +866,9 @@ namespace AS3Context
                     // transform Vector<T> to Vector.<T>
                     if (cname.Contains("Vector<")) cname = cname.Replace("Vector<", "Vector.<");
                     var genType = re_genericType.Match(cname);
-                    if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                    return ClassModel.VoidClass;
+                    return genType.Success
+                        ? ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile)
+                        : ClassModel.VoidClass;
                 }
             }
             return base.ResolveType(cname, inFile);
@@ -878,7 +879,7 @@ namespace AS3Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            var tokenLength = token != null ? token.Length : 0;
+            var tokenLength = token?.Length ?? 0;
             if (tokenLength > 0)
             {
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
@@ -924,9 +925,9 @@ namespace AS3Context
         /// <summary>
         /// Retrieve/build typed copies of generic types
         /// </summary>
-        private ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
+        ClassModel ResolveGenericType(string baseType, string indexType, FileModel inFile)
         {
-            ClassModel originalClass = base.ResolveType(baseType, inFile);
+            var originalClass = base.ResolveType(baseType, inFile);
             if (originalClass.IsVoid()) return originalClass;
             if (indexType == "*")
             {
@@ -934,13 +935,13 @@ namespace AS3Context
                 return originalClass;
             }
 
-            ClassModel indexClass = ResolveType(indexType, inFile);
+            var indexClass = ResolveType(indexType, inFile);
             if (indexClass.IsVoid()) return originalClass;
             indexType = indexClass.QualifiedName;
 
             FileModel aFile = originalClass.InFile;
             // is the type already cloned?
-            foreach (ClassModel otherClass in aFile.Classes)
+            foreach (var otherClass in aFile.Classes)
                 if (otherClass.IndexType == indexType) return otherClass;
 
             // clone the type
@@ -950,7 +951,7 @@ namespace AS3Context
             aClass.IndexType = indexType;
 
             string typed = "<" + indexType + ">";
-            foreach (MemberModel member in aClass.Members)
+            foreach (var member in aClass.Members)
             {
                 if (member.Name == baseType) member.Name = baseType.Replace("<T>", typed);
                 if (member.Type != null && member.Type.Contains('T'))
@@ -961,7 +962,7 @@ namespace AS3Context
                 }
                 if (member.Parameters != null)
                 {
-                    foreach (MemberModel param in member.Parameters)
+                    foreach (var param in member.Parameters)
                     {
                         if (param.Type != null && param.Type.Contains('T'))
                         {
@@ -979,20 +980,20 @@ namespace AS3Context
 
         protected MemberList GetPrivateClasses()
         {
-            MemberList list = new MemberList();
+            var list = new MemberList();
             // private classes
             if (cFile != null)
-                foreach (ClassModel model in cFile.Classes)
+                foreach (var model in cFile.Classes)
                     if (model.Access == Visibility.Private)
                     {
-                        MemberModel item = model.ToMemberModel();
+                        var item = model.ToMemberModel();
                         item.Type = item.Name;
                         item.Access = Visibility.Private;
                         list.Add(item);
                     }
             // 'Class' members
             if (cClass != null)
-                foreach (MemberModel member in cClass.Members)
+                foreach (var member in cClass.Members)
                     if (member.Type == "Class") list.Add(member);
             return list;
         }
@@ -1002,7 +1003,7 @@ namespace AS3Context
         /// </summary>
         protected override void InitTopLevelElements()
         {
-            string filename = "toplevel.as";
+            const string filename = "toplevel.as";
             topLevel = new FileModel(filename);
 
             if (!topLevel.Members.Contains(features.ThisKey, 0, 0))
@@ -1018,14 +1019,14 @@ namespace AS3Context
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
             if (type == features.dynamicKey) return "undefined";
-            switch (type)
+            return type switch
             {
-                case "int":
-                case "uint": return "0";
-                case "Number": return "NaN";
-                case "Boolean": return "false";
-                default: return "null";
-            }
+                "int" => "0",
+                "uint" => "0",
+                "Number" => "NaN",
+                "Boolean" => "false",
+                _ => "null",
+            };
         }
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
@@ -1099,7 +1100,7 @@ namespace AS3Context
             FlexShells.Instance.RunMxmlc(command, as3settings.GetDefaultSDK().Path);
         }
 
-        private bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
+        bool IsCompilationTarget() => (!MainForm.CurrentDocument.IsUntitled && CurrentModel.Version >= 3);
 
         /// <summary>
         /// Calls RunCMD with additional parameters taken from the classes @mxmlc doc tag
@@ -1120,6 +1121,101 @@ namespace AS3Context
             FlexShells.Instance.QuickBuild(CurrentModel, sdk, failSilently, as3settings.PlayAfterBuild);
             return true;
         }
+        #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <inheritdoc cref="ASContext.OnBraceMatch"/>
+        public override void OnBraceMatch(ScintillaControl sci)
+        {
+            if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
+            var position = sci.CurrentPos - 1;
+            var character = (char) sci.CharAt(position);
+            if (character != '<' && character != '>')
+            {
+                position = sci.CurrentPos;
+                character = (char) sci.CharAt(position);
+            }
+            if (character == '<' || character == '>')
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(sci, position);
+                    if (bracePosEnd != -1) sci.BraceHighlight(bracePosStart, bracePosEnd);
+                    if (sci.UseHighlightGuides)
+                    {
+                        var line = sci.LineFromPosition(position);
+                        sci.HighlightGuide = sci.GetLineIndentation(line);
+                    }
+                }
+                else
+                {
+                    sci.BraceHighlight(-1, -1);
+                    sci.HighlightGuide = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
+        /// </summary>
+        protected internal int BraceMatch(ScintillaControl sci, int position)
+        {
+            if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position)) return -1;
+            var language = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
+            if (language is null) return -1;
+            var characters = language.characterclass.Characters;
+            var sub = 0;
+            switch (sci.CharAt(position))
+            {
+                case '<':
+                    var length = sci.TextLength;
+                    while (position < length)
+                    {
+                        position++;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var c = sci.CharAt(position);
+                        if (c == ' ') continue;
+                        if (c == '<') sub++;
+                        else if (c == '>')
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        else if (c != '.'
+                                 // Vector<Vector.<>>
+                                 && !characters.Contains((char) c))
+                        {
+                            return -1;
+                        }
+                    }
+                    break;
+                case '>':
+                    while (position >= 0)
+                    {
+                        position--;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var c = sci.CharAt(position);
+                        if (c == ' ') continue;
+                        if (c == '>') sub++;
+                        else if (c == '<')
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        else if (c != '.'
+                                 // Vector<Vector.<>>
+                                 && !characters.Contains((char) c))
+                        {
+                            return -1;
+                        }
+                    }
+                    break;
+            }
+            return -1;
+        }
+
         #endregion
     }
 }

@@ -69,7 +69,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                if (m_autoHideStripControl == null)
+                if (m_autoHideStripControl is null)
                 {
                     m_autoHideStripControl = AutoHideStripFactory.CreateAutoHideStrip(this);
                     Controls.Add(m_autoHideStripControl);
@@ -629,7 +629,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         internal void AddContent(IDockContent content)
         {
-            if (content == null)
+            if (content is null)
                 throw(new ArgumentNullException());
 
             if (!Contents.Contains(content))
@@ -673,7 +673,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         internal void RemoveContent(IDockContent content)
         {
-            if (content == null)
+            if (content is null)
                 throw(new ArgumentNullException());
             
             if (Contents.Contains(content))
@@ -834,7 +834,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (DesignMode)
                 return;
 
-            if (m_dummyControlPaintEventHandler == null)
+            if (m_dummyControlPaintEventHandler is null)
                 m_dummyControlPaintEventHandler = DummyControl_Paint;
 
             DummyControl.Paint += m_dummyControlPaintEventHandler;
@@ -908,7 +908,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             m_clipRects = clipRects;
 
-            if (m_clipRects == null || m_clipRects.GetLength(0) == 0)
+            if (m_clipRects is null || m_clipRects.GetLength(0) == 0)
                 Region = null;
             else
             {
@@ -921,9 +921,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         private bool IsClipRectsChanged(Rectangle[] clipRects)
         {
-            if (clipRects == null && m_clipRects == null)
+            if (clipRects is null && m_clipRects is null)
                 return false;
-            if ((clipRects == null) != (m_clipRects == null))
+            if ((clipRects is null) != (m_clipRects is null))
                 return true;
 
             foreach (Rectangle rect in clipRects)

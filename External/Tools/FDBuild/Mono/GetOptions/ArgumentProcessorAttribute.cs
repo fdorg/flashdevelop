@@ -5,11 +5,5 @@ namespace Mono.GetOptions
     [AttributeUsage(AttributeTargets.Method)]
     public class ArgumentProcessorAttribute : Attribute
     {
-        // Methods
-        public ArgumentProcessorAttribute()
-        {
-        }
-
     }
 }
-

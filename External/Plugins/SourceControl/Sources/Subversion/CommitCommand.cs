@@ -7,7 +7,7 @@ namespace SourceControl.Sources.Subversion
     {
         public CommitCommand(string[] files, string message, string workingDir)
         {
-            if (workingDir == null) return;
+            if (workingDir is null) return;
 
             var args = "commit";
 

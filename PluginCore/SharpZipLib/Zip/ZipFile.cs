@@ -400,7 +400,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public ZipFile(string name)
         {
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException(nameof(name));
             }
             
@@ -431,7 +431,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public ZipFile(FileStream file)
         {
-            if ( file == null ) {
+            if ( file is null ) {
                 throw new ArgumentNullException(nameof(file));
             }
 
@@ -470,7 +470,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public ZipFile(Stream stream)
         {
-            if ( stream == null ) {
+            if ( stream is null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
 
@@ -539,7 +539,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ArgumentNullException"><paramref name="fileName"></paramref> is null</exception>
         public static ZipFile Create(string fileName)
         {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException(nameof(fileName));
             }
 
@@ -561,7 +561,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ArgumentException"><paramref name="outStream"> doesnt support writing.</paramref></exception>
         public static ZipFile Create(Stream outStream)
         {
-            if ( outStream == null ) {
+            if ( outStream is null ) {
                 throw new ArgumentNullException(nameof(outStream));
             }
 
@@ -718,7 +718,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public Stream GetInputStream(ZipEntry entry)
         {
-            if ( entry == null ) {
+            if ( entry is null ) {
                 throw new ArgumentNullException(nameof(entry));
             }
 
@@ -767,7 +767,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 throw new ZipException("decryption not supported for Compact Framework 1.0");
 #else
                 result = CreateAndInitDecryptionStream(result, entries_[entryIndex]);
-                if (result == null) {
+                if (result is null) {
                     throw new ZipException("Unable to decrypt this entry");
                 }
 #endif              
@@ -1247,7 +1247,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             get => updateEntryFactory_;
 
             set {
-                if (value == null) {
+                if (value is null) {
                     updateEntryFactory_ = new ZipEntryFactory();
                 }
                 else {
@@ -1317,11 +1317,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ObjectDisposedException">ZipFile has been closed.</exception>
         public void BeginUpdate(IArchiveStorage archiveStorage, IDynamicDataSource dataSource)
         {
-            if ( archiveStorage == null ) {
+            if ( archiveStorage is null ) {
                 throw new ArgumentNullException(nameof(archiveStorage));
             }
 
-            if ( dataSource == null ) {
+            if ( dataSource is null ) {
                 throw new ArgumentNullException(nameof(dataSource));
             }
             
@@ -1382,7 +1382,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="AbortUpdate"></seealso>
         public void BeginUpdate()
         {
-            if ( Name == null ) {
+            if ( Name is null ) {
                 BeginUpdate(new MemoryArchiveStorage(), new DynamicDiskDataSource());
             }
             else {
@@ -1418,9 +1418,8 @@ namespace ICSharpCode.SharpZipLib.Zip
                     // Create an empty archive if none existed originally.
                     if( entries_.Length==0 ) {
                         byte[] theComment=(newComment_!=null)?newComment_.RawComment:ZipConstants.ConvertToArray(comment_);
-                        using( ZipHelperStream zhs=new ZipHelperStream(baseStream_) ) {
-                            zhs.WriteEndOfCentralDirectory(0, 0, 0, theComment);
-                        }
+                        using ZipHelperStream zhs=new ZipHelperStream(baseStream_);
+                        zhs.WriteEndOfCentralDirectory(0, 0, 0, theComment);
                     }
                 }
 
@@ -1476,7 +1475,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             int index = FindExistingUpdate(update.Entry.Name);
 
             if (index >= 0) {
-                if ( updates_[index] == null ) {
+                if ( updates_[index] is null ) {
                     updateCount_ += 1;
                 }
 
@@ -1501,7 +1500,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ArgumentOutOfRangeException">Compression method is not supported.</exception>
         public void Add(string fileName, CompressionMethod compressionMethod, bool useUnicodeText )
         {
-            if (fileName == null) {
+            if (fileName is null) {
                 throw new ArgumentNullException(nameof(fileName));
             }
 
@@ -1532,7 +1531,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ArgumentOutOfRangeException">The compression method is not supported.</exception>
         public void Add(string fileName, CompressionMethod compressionMethod)
         {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException(nameof(fileName));
             }
 
@@ -1555,7 +1554,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ArgumentNullException">Argument supplied is null.</exception>
         public void Add(string fileName)
         {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException(nameof(fileName));
             }
 
@@ -1571,11 +1570,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="ArgumentNullException">Argument supplied is null.</exception>
         public void Add(string fileName, string entryName)
         {
-            if (fileName == null) {
+            if (fileName is null) {
                 throw new ArgumentNullException(nameof(fileName));
             }
 
-            if ( entryName == null ) {
+            if ( entryName is null ) {
                 throw new ArgumentNullException(nameof(entryName));
             }
             
@@ -1591,11 +1590,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="entryName">The name to give to the entry.</param>
         public void Add(IStaticDataSource dataSource, string entryName)
         {
-            if ( dataSource == null ) {
+            if ( dataSource is null ) {
                 throw new ArgumentNullException(nameof(dataSource));
             }
 
-            if ( entryName == null ) {
+            if ( entryName is null ) {
                 throw new ArgumentNullException(nameof(entryName));
             }
 
@@ -1611,11 +1610,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="compressionMethod">The compression method to use.</param>
         public void Add(IStaticDataSource dataSource, string entryName, CompressionMethod compressionMethod)
         {
-            if ( dataSource == null ) {
+            if ( dataSource is null ) {
                 throw new ArgumentNullException(nameof(dataSource));
             }
 
-            if ( entryName == null ) {
+            if ( entryName is null ) {
                 throw new ArgumentNullException(nameof(entryName));
             }
 
@@ -1636,11 +1635,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="useUnicodeText">Ensure Unicode text is used for name and comments for this entry.</param>
         public void Add(IStaticDataSource dataSource, string entryName, CompressionMethod compressionMethod, bool useUnicodeText)
         {
-            if (dataSource == null) {
+            if (dataSource is null) {
                 throw new ArgumentNullException(nameof(dataSource));
             }
 
-            if ( entryName == null ) {
+            if ( entryName is null ) {
                 throw new ArgumentNullException(nameof(entryName));
             }
 
@@ -1660,7 +1659,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <remarks>This can be used to add directories, volume labels, or empty file entries.</remarks>
         public void Add(ZipEntry entry)
         {
-            if ( entry == null ) {
+            if ( entry is null ) {
                 throw new ArgumentNullException(nameof(entry));
             }
 
@@ -1679,7 +1678,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="directoryName">The directory to add.</param>
         public void AddDirectory(string directoryName)
         {
-            if ( directoryName == null ) {
+            if ( directoryName is null ) {
                 throw new ArgumentNullException(nameof(directoryName));
             }
 
@@ -1697,11 +1696,11 @@ namespace ICSharpCode.SharpZipLib.Zip
    Safe mode is trivial in this sense.
         public void Modify(ZipEntry original, ZipEntry updated)
         {
-            if ( original == null ) {
+            if ( original is null ) {
                 throw new ArgumentNullException("original");
             }
 
-            if ( updated == null ) {
+            if ( updated is null ) {
                 throw new ArgumentNullException("updated");
             }
 
@@ -1720,7 +1719,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>True if the entry was found and deleted; false otherwise.</returns>
         public bool Delete(string fileName)
         {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException(nameof(fileName));
             }
             
@@ -1746,7 +1745,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="entry">The entry to delete.</param>
         public void Delete(ZipEntry entry)
         {
-            if ( entry == null ) {
+            if ( entry is null ) {
                 throw new ArgumentNullException(nameof(entry));
             }
             
@@ -2100,7 +2099,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>Returns a raw memory buffer.</returns>
         byte[] GetBuffer()
         {
-            if ( copyBuffer_ == null ) {
+            if ( copyBuffer_ is null ) {
                 copyBuffer_ = new byte[bufferSize_];
             }
             return copyBuffer_;
@@ -2347,7 +2346,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             if ( update.Entry.IsFile ) {
                 source = update.GetSource();
                 
-                if ( source == null ) {
+                if ( source is null ) {
                     source = updateDataSource_.GetSource(update.Entry, update.Filename);
                 }
             }
@@ -2396,12 +2395,11 @@ namespace ICSharpCode.SharpZipLib.Zip
             long dataStart = workFile.baseStream_.Position;
 
             // TODO: This is slow if the changes don't effect the data!!
-            if ( update.Entry.IsFile && (update.Filename != null) ) {
-                using ( Stream output = workFile.GetOutputStream(update.OutEntry) ) {
-                    using ( Stream source = this.GetInputStream(update.Entry) ) {
-                        CopyBytes(update, output, source, source.Length, true);
-                    }
-                }
+            if ( update.Entry.IsFile && (update.Filename != null) )
+            {
+                using Stream output = workFile.GetOutputStream(update.OutEntry);
+                using Stream source = this.GetInputStream(update.Entry);
+                CopyBytes(update, output, source, source.Length, true);
             }
 
             long dataEnd = workFile.baseStream_.Position;
@@ -2480,7 +2478,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void Reopen(Stream source)
         {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ZipException("Failed to reopen archive - no source");
             }
 
@@ -2491,7 +2489,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void Reopen()
         {
-            if (Name == null) {
+            if (Name is null) {
                 throw new InvalidOperationException("Name is not known cannot Reopen");
             }
 
@@ -2578,15 +2576,15 @@ namespace ICSharpCode.SharpZipLib.Zip
 
                 int result;
 
-                if (zx == null) {
-                    if (zy == null) { 
+                if (zx is null) {
+                    if (zy is null) { 
                         result = 0; 
                     }
                     else {
                         result = -1;
                     }
                 }
-                else if (zy == null) {
+                else if (zy is null) {
                     result = 1;
                 }
                 else {
@@ -2742,7 +2740,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void CheckUpdating()
         {
-            if ( updates_ == null ) {
+            if ( updates_ is null ) {
                 throw new InvalidOperationException("BeginUpdate has not been called");
             }
         }
@@ -2835,7 +2833,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             public ZipEntry OutEntry
             {
                 get {
-                    if ( outEntry_ == null ) {
+                    if ( outEntry_ is null ) {
                         outEntry_ = (ZipEntry)entry_.Clone();
                     }
 
@@ -2995,9 +2993,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         // NOTE this returns the offset of the first byte after the signature.
         long LocateBlockWithSignature(int signature, long endLocation, int minimumBlockSize, int maximumVariableData)
         {
-            using ( ZipHelperStream les = new ZipHelperStream(baseStream_) ) {
-                return les.LocateBlockWithSignature(signature, endLocation, minimumBlockSize, maximumVariableData);
-            }
+            using ZipHelperStream les = new ZipHelperStream(baseStream_);
+            return les.LocateBlockWithSignature(signature, endLocation, minimumBlockSize, maximumVariableData);
         }
         
         /// <summary>
@@ -3393,14 +3390,14 @@ namespace ICSharpCode.SharpZipLib.Zip
 
             void MakeTextAvailable() 
             {
-                if ( comment_ == null ) {
+                if ( comment_ is null ) {
                     comment_ = ZipConstants.ConvertToString(rawComment_);
                 }
             }
 
             void MakeBytesAvailable()
             {
-                if ( rawComment_ == null ) {
+                if ( rawComment_ is null ) {
                     rawComment_ = ZipConstants.ConvertToArray(comment_);
                 }
             }
@@ -4064,7 +4061,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public DiskArchiveStorage(ZipFile file, FileUpdateMode updateMode)
             : base(updateMode)
         {
-            if ( file.Name == null ) {
+            if ( file.Name is null ) {
                 throw new ZipException("Cant handle non file archives");
             }
 
@@ -4110,11 +4107,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// the final storage for the archive.</returns>
         public override Stream ConvertTemporaryToFinal()
         {
-            if ( temporaryStream_ == null ) {
+            if ( temporaryStream_ is null ) {
                 throw new ZipException("No temporary stream has been created");
             }
 
-            Stream result = null;
+            Stream result;
 
             string moveTempName = GetTempFileName(fileName_, false);
             bool newFileCreated = false;
@@ -4128,7 +4125,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 
                 result = File.Open(fileName_, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
-            catch(Exception) {
+            catch
+            {
                 result  = null;
 
                 // Try to roll back changes...
@@ -4170,7 +4168,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public override Stream OpenForDirectUpdate(Stream stream)
         {
             Stream result;
-            if ((stream == null) || !stream.CanWrite)
+            if ((stream is null) || !stream.CanWrite)
             {
                 stream?.Close();
 
@@ -4201,14 +4199,14 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             string result = null;
                 
-            if ( original == null ) {
+            if ( original is null ) {
                 result = Path.GetTempFileName();
             }
             else {
                 int counter = 0;
                 int suffixSeed = DateTime.Now.Second;
 
-                while ( result == null ) {
+                while ( result is null ) {
                     counter += 1;
                     string newName = $"{original}.{suffixSeed}{counter}.tmp";
                     if ( !File.Exists(newName) ) {
@@ -4293,7 +4291,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// the final storage for the archive.</returns>
         public override Stream ConvertTemporaryToFinal()
         {
-            if ( temporaryStream_ == null ) {
+            if ( temporaryStream_ is null ) {
                 throw new ZipException("No temporary stream has been created");
             }
 
@@ -4324,7 +4322,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         public override Stream OpenForDirectUpdate(Stream stream)
         {
             Stream result;
-            if ((stream == null) || !stream.CanWrite) {
+            if ((stream is null) || !stream.CanWrite) {
 
                 result = new MemoryStream();
 

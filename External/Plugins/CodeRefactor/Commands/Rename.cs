@@ -33,8 +33,8 @@ namespace CodeRefactor.Commands
 
         public string OldName { get; private set; }
         public string NewName { get; private set; }
-        public ASResult Target { get; private set; }
-        public string TargetName { get; private set; }
+        public ASResult Target { get; }
+        public string TargetName { get; }
 
         /// <summary>
         /// A new Rename refactoring command.
@@ -42,8 +42,7 @@ namespace CodeRefactor.Commands
         /// Outputs found results.
         /// Uses the current text location as the declaration target.
         /// </summary>
-        public Rename()
-            : this(true) { }
+        public Rename() : this(true) { }
         
         /// <summary>
         /// A new Rename refactoring command.
@@ -291,9 +290,8 @@ namespace CodeRefactor.Commands
         private void RenameFile(IDictionary<string, List<SearchMatch>> results)
         {
             // We close previous files to avoid unwanted "file modified" dialogs
-            ITabbedDocument doc;
             var reopen = false;
-            if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldFileName, out doc))
+            if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldFileName, out var doc))
             {
                 doc.Close();
                 reopen = true;
@@ -307,7 +305,7 @@ namespace CodeRefactor.Commands
             // name casing changed
             if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
             {
-                var tmpPath = oldFileName + "$renaming$";
+                var tmpPath = $"{oldFileName}$renaming$";
                 File.Move(oldFileName, tmpPath);
                 RefactoringHelper.Move(tmpPath, newFileName, true, oldFileName);
             }
@@ -365,7 +363,7 @@ namespace CodeRefactor.Commands
                     // stores the line entry in our report set
                     if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
                     // the data we store matches the TraceManager.Add's formatting.  We insert the {0} at the end so that we can insert the final line state later
-                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
+                    reportableLines[lineNumber].Add($"{entry.Key}:{match.Line}: chars {column}-{(column + newNameLength)} : {{0}}");
                 }
                 // report all the lines
                 foreach (var lineSetsToReport in reportableLines)

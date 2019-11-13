@@ -33,8 +33,8 @@ namespace ProjectManager.Helpers
         {
             InitializeComponent();
             InititalizeLocalization();
-            this.Font = PluginBase.Settings.DefaultFont;
-            this.Text = " " + captionText;
+            Font = PluginBase.Settings.DefaultFont;
+            Text = " " + captionText;
             titleLabel.Text = labelText;
             lineBox.KeyDown += OnLineBoxOnKeyDown;
             lineBox.Text = defaultLine ?? string.Empty;
@@ -178,11 +178,6 @@ namespace ProjectManager.Helpers
             }
         }
 
-        public void SelectRange(int start, int length)
-        {
-            lineBox.Select(start, length);
-        }
-
+        public void SelectRange(int start, int length) => lineBox.Select(start, length);
     }
-
 }

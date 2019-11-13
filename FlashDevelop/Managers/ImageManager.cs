@@ -55,24 +55,22 @@ namespace FlashDevelop.Managers
                 var srcRect = new Rectangle(0, 0, Size, Size);
                 var destRect = new Rectangle(Padding, Padding, Size - (Padding * 2), Size - (Padding * 2));
 
-                using (var graphics = Graphics.FromImage(original))
-                {
-                    graphics.Clear(Color.Transparent);
+                using var graphics = Graphics.FromImage(original);
+                graphics.Clear(Color.Transparent);
 
-                    if (c.Icon >= 0)
-                    {
-                        srcRect.X = (c.Icon % Size16) * Size;
-                        srcRect.Y = (c.Icon / Size16) * Size;
-                        graphics.DrawImage(Source, destRect, srcRect, GraphicsUnit.Pixel);
-                    }
-                    if (c.Bullet >= 0)
-                    {
-                        srcRect.X = (c.Bullet % Size16) * Size;
-                        srcRect.Y = (c.Bullet / Size16) * Size;
-                        destRect.X += (Size == Size32) ? c.X * 2 : c.X;
-                        destRect.Y += (Size == Size32) ? c.Y * 2 : c.Y;
-                        graphics.DrawImage(Source, destRect, srcRect, GraphicsUnit.Pixel);
-                    }
+                if (c.Icon >= 0)
+                {
+                    srcRect.X = (c.Icon % Size16) * Size;
+                    srcRect.Y = (c.Icon / Size16) * Size;
+                    graphics.DrawImage(Source, destRect, srcRect, GraphicsUnit.Pixel);
+                }
+                if (c.Bullet >= 0)
+                {
+                    srcRect.X = (c.Bullet % Size16) * Size;
+                    srcRect.Y = (c.Bullet / Size16) * Size;
+                    destRect.X += (Size == Size32) ? c.X * 2 : c.X;
+                    destRect.Y += (Size == Size32) ? c.Y * 2 : c.Y;
+                    graphics.DrawImage(Source, destRect, srcRect, GraphicsUnit.Pixel);
                 }
 
                 original = ScaleHelper.Scale(original);
@@ -101,13 +99,11 @@ namespace FlashDevelop.Managers
                 int size = ScaleHelper.Scale(Size16);
                 var image16 = new Bitmap(size, size);
 
-                using (var graphics = Graphics.FromImage(image16))
-                {
-                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    graphics.SmoothingMode = SmoothingMode.HighQuality;
-                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    graphics.DrawImage(image32, 0, 0, image16.Width, image16.Height);
-                }
+                using var graphics = Graphics.FromImage(image16);
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                graphics.DrawImage(image32, 0, 0, image16.Width, image16.Height);
 
                 Cache[key] = new ImagePair(image16);
             }
@@ -144,7 +140,7 @@ namespace FlashDevelop.Managers
                 {
                     return imagePair.Adjusted ?? (imagePair.Adjusted = SetImageAdjustment(imagePair.Original));
                 }
-                if (imagePair.Adjusted == null)
+                if (imagePair.Adjusted is null)
                 {
                     AutoAdjusted.RemoveAt(i--);
                     length--;
@@ -163,7 +159,7 @@ namespace FlashDevelop.Managers
             {
                 var imagePair = AutoAdjusted[i];
                 var adjusted = imagePair.Adjusted;
-                if (adjusted == null)
+                if (adjusted is null)
                 {
                     AutoAdjusted.RemoveAt(i--);
                     length--;
@@ -217,10 +213,7 @@ namespace FlashDevelop.Managers
             /// <summary>
             /// Parses an image data string with default size.
             /// </summary>
-            public static Components Parse(string value)
-            {
-                return Parse(value, ImageManager.Size);
-            }
+            public static Components Parse(string value) => Parse(value, ImageManager.Size);
 
             /// <summary>
             /// Parses an image data string with the specified size.
@@ -273,7 +266,7 @@ namespace FlashDevelop.Managers
             /// <param name="adjusted"><see cref="Adjusted"/></param>
             public ImagePair(Image original, Image adjusted)
             {
-                this.Original = original;
+                Original = original;
                 this.adjusted = new WeakReference(adjusted);
             }
 

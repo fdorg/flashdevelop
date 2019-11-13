@@ -11,7 +11,7 @@ namespace CodeRefactor.Controls
     {
         private Label labelStatus;
         private Button closeButton;
-        private ProgressBar progressBar;
+        private ProgressBarEx progressBar;
 
         public ProgressDialog()
         {

@@ -10,6 +10,7 @@ using ProjectManager.Projects;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using System.Diagnostics;
+using System.Linq;
 using PluginCore.Controls;
 
 namespace ASClassWizard.Wizards
@@ -133,32 +134,29 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void packageBrowse_Click(object sender, EventArgs e)
         {
+            using PackageBrowser browser = new PackageBrowser();
+            browser.Project = this.Project;
 
-            using (PackageBrowser browser = new PackageBrowser())
+            foreach (string item in Project.AbsoluteClasspaths)
+                browser.AddClassPath(item);
+
+            if (browser.ShowDialog(this) == DialogResult.OK)
             {
-                browser.Project = this.Project;
-
-                foreach (string item in Project.AbsoluteClasspaths)
-                    browser.AddClassPath(item);
-
-                if (browser.ShowDialog(this) == DialogResult.OK)
+                if (browser.Package != null)
                 {
-                    if (browser.Package != null)
+                    string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
+                    string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
+                    if (package != null)
                     {
-                        string classpath = this.Project.AbsoluteClasspaths.GetClosestParent(browser.Package);
-                        string package = Path.GetDirectoryName(ProjectPaths.GetRelativePath(classpath, Path.Combine(browser.Package, "foo")));
-                        if (package != null)
-                        {
-                            Directory = browser.Package;
-                            package = package.Replace(Path.DirectorySeparatorChar, '.');
-                            this.packageBox.Text = package;
-                        }
+                        Directory = browser.Package;
+                        package = package.Replace(Path.DirectorySeparatorChar, '.');
+                        this.packageBox.Text = package;
                     }
-                    else
-                    {
-                        this.Directory = browser.Project.Directory;
-                        this.packageBox.Text = "";
-                    }
+                }
+                else
+                {
+                    this.Directory = browser.Project.Directory;
+                    this.packageBox.Text = "";
                 }
             }
         }
@@ -171,22 +169,20 @@ namespace ASClassWizard.Wizards
 
         private void baseBrowse_Click(object sender, EventArgs e)
         {
-            using (ClassBrowser browser = new ClassBrowser())
+            using ClassBrowser browser = new ClassBrowser();
+            IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            try
             {
-                IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    browser.ClassList = context.GetAllProjectClasses();
-                }
-                catch { }
-                browser.ExcludeFlag = FlagType.Interface;
-                browser.IncludeFlag = FlagType.Class;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    this.baseBox.Text = browser.SelectedClass;
-                }
-                this.okButton.Focus();
+                browser.ClassList = context.GetAllProjectClasses();
             }
+            catch { }
+            browser.ExcludeFlag = FlagType.Interface;
+            browser.IncludeFlag = FlagType.Class;
+            if (browser.ShowDialog(this) == DialogResult.OK)
+            {
+                this.baseBox.Text = browser.SelectedClass;
+            }
+            this.okButton.Focus();
         }
 
         /// <summary>
@@ -194,37 +190,35 @@ namespace ASClassWizard.Wizards
         /// </summary>
         private void implementBrowse_Click(object sender, EventArgs e)
         {
-            using (var browser = new ClassBrowser())
+            using var browser = new ClassBrowser();
+            MemberList known = null;
+            browser.IncludeFlag = FlagType.Interface;
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            try
             {
-                MemberList known = null;
-                browser.IncludeFlag = FlagType.Interface;
-                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                try
-                {
-                    known = context.GetAllProjectClasses();
-                    known.Merge(ASContext.Context.GetVisibleExternalElements());
-                }
-                catch (Exception error)
-                {
-                    Debug.WriteLine(error.StackTrace);
-                }
-                browser.ClassList = known;
-                if (browser.ShowDialog(this) == DialogResult.OK)
-                {
-                    if (browser.SelectedClass != null)
-                    {
-                        foreach (string item in this.implementList.Items)
-                        {
-                            if (item == browser.SelectedClass) return;
-                        }
-                        this.implementList.Items.Add(browser.SelectedClass);
-                    }
-                }
-                this.implementRemove.Enabled = this.implementList.Items.Count > 0;
-                this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
-                this.superCheck.Enabled = this.implementList.Items.Count > 0;
-                ValidateClass();
+                known = context.GetAllProjectClasses();
+                known.Merge(ASContext.Context.GetVisibleExternalElements());
             }
+            catch (Exception error)
+            {
+                Debug.WriteLine(error.StackTrace);
+            }
+            browser.ClassList = known;
+            if (browser.ShowDialog(this) == DialogResult.OK)
+            {
+                if (browser.SelectedClass != null)
+                {
+                    foreach (string item in this.implementList.Items)
+                    {
+                        if (item == browser.SelectedClass) return;
+                    }
+                    this.implementList.Items.Add(browser.SelectedClass);
+                }
+            }
+            this.implementRemove.Enabled = this.implementList.Items.Count > 0;
+            this.implementList.SelectedIndex = this.implementList.Items.Count - 1;
+            this.superCheck.Enabled = this.implementList.Items.Count > 0;
+            ValidateClass();
         }
 
         /// <summary>
@@ -265,33 +259,28 @@ namespace ASClassWizard.Wizards
 
         #region user_options
 
-        public string GetPackage() => this.packageBox.Text;
+        public string GetPackage() => packageBox.Text;
 
-        public string GetName() => this.classBox.Text;
+        public string GetName() => classBox.Text;
 
-        public bool isDynamic() => this.dynamicCheck.Checked;
+        public bool IsDynamic() => dynamicCheck.Checked;
 
-        public bool isFinal() => this.finalCheck.Checked;
+        public bool IsFinal() => finalCheck.Checked;
 
-        public bool isPublic() => this.publicRadio.Checked;
+        public bool IsPublic() => publicRadio.Checked;
 
-        public string GetExtends() => this.baseBox.Text;
+        public string GetExtends() => baseBox.Text;
 
-        public List<string> getInterfaces()
+        public List<string> GetInterfaces()
         {
-            List<string> _interfaces = new List<string>(this.implementList.Items.Count);
-            foreach (string item in this.implementList.Items)
-            {
-                _interfaces.Add(item);
-            }
-            return _interfaces;
+            return implementList.Items.Cast<string>().ToList();
         }
 
-        public bool hasInterfaces() => this.implementList.Items.Count > 0;
+        public bool HasInterfaces() => implementList.Items.Count > 0;
 
-        public bool getGenerateConstructor() => this.constructorCheck.Checked;
+        public bool GetGenerateConstructor() => constructorCheck.Checked;
 
-        public bool getGenerateInheritedMethods() => this.superCheck.Checked;
+        public bool GetGenerateInheritedMethods() => superCheck.Checked;
 
         #endregion
 

@@ -140,10 +140,9 @@ namespace FlashDebugger.Controls
             SaveState();
             foreach (var node in _model.Root.Nodes)
             {
-                var valueNode = node as ValueNode;
-                if (valueNode != null)
+                if (node is ValueNode valueNode)
                 {
-                    if (node.Nodes != null && node.Nodes.Count > 0)
+                    if (!node.Nodes.IsNullOrEmpty())
                     {
                         // Needed because of static and inherited members.
                         // If we add a different event or check against a previous value we could avoid removing and reevaluating members.
@@ -177,9 +176,9 @@ namespace FlashDebugger.Controls
         {
             if (addingNewExpression)
             {
-                NodeTextBox box = sender as NodeTextBox;
-                var node = box.Parent.CurrentNode.Tag as Node;
-                if (node.Text.Trim() == "") node.Text = TextHelper.GetString("Label.AddExpression");
+                var box = (NodeTextBox) sender;
+                var node = (Node) box.Parent.CurrentNode.Tag;
+                if (node.Text.Trim().Length == 0) node.Text = TextHelper.GetString("Label.AddExpression");
                 addingNewExpression = false;
             }
             // We need to update the tree to avoid some draw problems
@@ -188,9 +187,9 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_EditorShowing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
-            var node = box.Parent.CurrentNode.Tag as Node;
-            if (box.Parent.CurrentNode.NextNode == null)
+            var box = (NodeTextBox) sender;
+            var node = (Node) box.Parent.CurrentNode.Tag;
+            if (box.Parent.CurrentNode.NextNode is null)
             {
                 addingNewExpression = true;
                 node.Text = "";
@@ -205,16 +204,16 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
-            if (box.Parent.CurrentNode == null) return;
-            DataNode node = box.Parent.CurrentNode.Tag as DataNode;
-            if (e.NewLabel.Trim() == "" || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
+            var box = (NodeTextBox) sender;
+            if (box.Parent.CurrentNode is null) return;
+            var node = (DataNode) box.Parent.CurrentNode.Tag;
+            if (e.NewLabel.Trim().Length == 0 || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
             {
                 node.Text = e.OldLabel != "" ? e.OldLabel : TextHelper.GetString("Label.AddExpression");
                 return;
             }
             bool newExp;
-            if (node.NextNode == null) newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
+            if (node.NextNode is null) newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
             else newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
             if (!newExp) node.Text = e.OldLabel;
         }
@@ -233,7 +232,7 @@ namespace FlashDebugger.Controls
 
         void Tree_NameNodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand && (Tree.SelectedNode == null || Tree.SelectedNode == e.Node))
+            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand && (Tree.SelectedNode is null || Tree.SelectedNode == e.Node))
             {
                 NameNodeTextBox.BeginEdit();
                 e.Handled = true;
@@ -243,7 +242,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
-            if (box.Parent.CurrentNode == null) return;
+            if (box.Parent.CurrentNode is null) return;
             VariableNode node = box.Parent.CurrentNode.Tag as VariableNode;
             node.IsEditing = false;
             try
@@ -280,7 +279,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
             VariableNode node = e.Node.Tag as VariableNode;
-            if (node?.Variable == null)
+            if (node?.Variable is null)
             {
                 e.Value = false;
                 return;
@@ -344,7 +343,7 @@ namespace FlashDebugger.Controls
         }
         private void ViewerItemClick(object sender, EventArgs e)
         {
-            if (viewerForm == null)
+            if (viewerForm is null)
             {
                 viewerForm = new ViewerForm();
                 viewerForm.StartPosition = FormStartPosition.Manual;
@@ -528,7 +527,7 @@ namespace FlashDebugger.Controls
             {
                 e.Handled = true;
                 _tree.BeginUpdate();
-                (node.Parent as ValueNode).ChildrenShowLimit += 500;
+                ((ValueNode) node.Parent).ChildrenShowLimit += 500;
                 TreeNodeAdv parent = e.Node.Parent;
                 int ind = e.Node.Index;
                 parent.Collapse(true);
@@ -541,14 +540,14 @@ namespace FlashDebugger.Controls
 
         public void SaveState()
         {
-            if (state == null) state = new DataTreeState();
-            state.Selected = _tree.SelectedNode == null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
+            if (state is null) state = new DataTreeState();
+            state.Selected = _tree.SelectedNode is null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
-            if (Nodes != null && Nodes.Count > 0) SaveExpanded(Nodes);
+            if (!Nodes.IsNullOrEmpty()) SaveExpanded(Nodes);
             SaveScrollState();
         }
 
-        private void SaveExpanded(Collection<Node> nodes)
+        private void SaveExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -562,7 +561,7 @@ namespace FlashDebugger.Controls
 
         private void SaveScrollState()
         {
-            if (Nodes.Count < 1)
+            if (Nodes.Count == 0)
             {
                 state.TopPath = state.BottomPath = null;
                 return;
@@ -575,13 +574,13 @@ namespace FlashDebugger.Controls
 
         public void RestoreState()
         {
-            if (state == null) return;
-            if (state.Expanded != null && state.Expanded.Count > 0) RestoreExpanded(Nodes);
+            if (state is null) return;
+            if (!state.Expanded.IsNullOrEmpty()) RestoreExpanded(Nodes);
             if (state.Selected != null) _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
             RestoreScrollState();
         }
 
-        private void RestoreExpanded(Collection<Node> nodes)
+        private void RestoreExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -595,7 +594,7 @@ namespace FlashDebugger.Controls
 
         private void RestoreScrollState()
         {
-            if (Nodes.Count < 1) return;
+            if (Nodes.Count == 0) return;
 
             if (state.BottomPath != null)
             {

@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.DockPanelSuite;
 using PluginCore.Helpers;
-using static WeifenLuo.WinFormsUI.Docking.VS2005DockPaneStrip;
 
 namespace WeifenLuo.WinFormsUI.Docking
 {
@@ -36,7 +35,6 @@ namespace WeifenLuo.WinFormsUI.Docking
             private readonly Bitmap m_image1;
 
             public InertButton(Bitmap image0, Bitmap image1)
-                : base()
             {
                 m_image0 = image0;
                 m_image1 = image1;
@@ -107,7 +105,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonClose == null)
+                if (_imageButtonClose is null)
                     _imageButtonClose = ScaleHelper.Scale(Resources.DockPane_Close);
 
                 return _imageButtonClose;
@@ -119,7 +117,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_buttonClose == null)
+                if (m_buttonClose is null)
                 {
                     m_buttonClose = new InertButton(ImageButtonClose, ImageButtonClose);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
@@ -136,7 +134,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonWindowList == null)
+                if (_imageButtonWindowList is null)
                     _imageButtonWindowList = ScaleHelper.Scale(Resources.DockPane_Option);
 
                 return _imageButtonWindowList;
@@ -148,7 +146,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (_imageButtonWindowListOverflow == null)
+                if (_imageButtonWindowListOverflow is null)
                     _imageButtonWindowListOverflow = ScaleHelper.Scale(Resources.DockPane_OptionOverflow);
 
                 return _imageButtonWindowListOverflow;
@@ -160,7 +158,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_buttonWindowList == null)
+                if (m_buttonWindowList is null)
                 {
                     m_buttonWindowList = new InertButton(ImageButtonWindowList, ImageButtonWindowListOverflow);
                     m_toolTip.SetToolTip(m_buttonWindowList, ToolTipSelect);
@@ -209,7 +207,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                if (_toolTipClose == null)
+                if (_toolTipClose is null)
                     // HACK: _toolTipClose = Strings.DockPaneStrip_ToolTipClose;
                     _toolTipClose = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipClose");
                 return _toolTipClose;
@@ -221,7 +219,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                if (_toolTipSelect == null)
+                if (_toolTipSelect is null)
                     // HACK: _toolTipSelect = Strings.DockPaneStrip_ToolTipWindowList;
                     _toolTipSelect = PluginCore.Localization.TextHelper.GetString("PluginCore.Docking.ToolTipWindowList");
                 return _toolTipSelect;
@@ -467,7 +465,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {
-                if (m_boldFont == null)
+                if (m_boldFont is null)
                     m_boldFont = new Font(Font, FontStyle.Bold);
 
                 return m_boldFont;

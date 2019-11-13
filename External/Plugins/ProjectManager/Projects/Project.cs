@@ -87,15 +87,9 @@ namespace ProjectManager.Projects
             return BeforeSave is { } saveHandler && saveHandler(this, fileName);
         }
 
-        public virtual void PropertiesChanged() 
-        {
-            OnClasspathChanged();
-        }
+        public virtual void PropertiesChanged() => OnClasspathChanged();
 
-        public virtual PropertiesDialog CreatePropertiesDialog()
-        {
-            return new PropertiesDialog();
-        }
+        public virtual PropertiesDialog CreatePropertiesDialog() => new PropertiesDialog();
 
         public void OnClasspathChanged()
         {
@@ -105,7 +99,7 @@ namespace ProjectManager.Projects
 
         #region Simple Properties
 
-        public string ProjectPath { get; private set; }
+        public string ProjectPath { get; }
         public virtual string Name => Path.GetFileNameWithoutExtension(ProjectPath);
         public string Directory => Path.GetDirectoryName(ProjectPath);
         public bool TraceEnabled { set; get; }
@@ -115,10 +109,10 @@ namespace ProjectManager.Projects
         
         // we only provide getters for these to preserve the original pointer
         public MovieOptions MovieOptions => movieOptions;
-        public PathCollection Classpaths { get; private set; }
-        public PathCollection CompileTargets { get; private set; }
-        public HiddenPathCollection HiddenPaths { get; private set; }
-        public AssetCollection LibraryAssets { get; private set; }
+        public PathCollection Classpaths { get; }
+        public PathCollection CompileTargets { get; }
+        public HiddenPathCollection HiddenPaths { get; }
+        public AssetCollection LibraryAssets { get; }
         public virtual string LibrarySWFPath => OutputPath;
         public Dictionary<string, string> Storage => storage;
         public List<string> ExternalLibraries { get; } = new List<string>();
@@ -189,11 +183,8 @@ namespace ProjectManager.Projects
             else HiddenPaths.Remove(path);
         }
 
-        public bool IsPathHidden(string path)
-        {
-            return HiddenPaths.IsHidden(GetRelativePath(path));
-        }
-        
+        public bool IsPathHidden(string path) => HiddenPaths.IsHidden(GetRelativePath(path));
+
         public virtual void SetCompileTarget(string path, bool isCompileTarget)
         {
             string relPath = Path.IsPathRooted(path) ? GetRelativePath(path) : path;
@@ -302,15 +293,9 @@ namespace ProjectManager.Projects
 
         #region Path Helpers
 
-        public string[] GetHiddenPaths()
-        {
-            return HiddenPaths.ToArray();
-        }
+        public string[] GetHiddenPaths() => HiddenPaths.ToArray();
 
-        public string GetRelativePath(string path)
-        {
-            return ProjectPaths.GetRelativePath(Directory, path);
-        }
+        public string GetRelativePath(string path) => ProjectPaths.GetRelativePath(Directory, path);
 
         public void UpdateVars(bool silent)
         {

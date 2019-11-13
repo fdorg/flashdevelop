@@ -62,7 +62,7 @@ namespace ASCompletion.Model
         /// <returns></returns>
         public static PathModel GetModel(string path, IASContext context)
         {
-            if (context?.Settings == null) return null;
+            if (context?.Settings is null) return null;
 
             string modelName = context.Settings.LanguageId + "|" + path.ToUpper();
             PathModel aPath;
@@ -259,7 +259,7 @@ namespace ASCompletion.Model
                     {
                         string path = e.OldFullPath;
                         // add to known removed paths
-                        List<string> newSchedule = new List<string>();
+                        var newSchedule = new List<string>();
                         foreach (string scheduled in toRemove)
                             if (path.StartsWithOrdinal(scheduled)) return;
                             else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
@@ -296,7 +296,7 @@ namespace ASCompletion.Model
                 {
                     string path = e.FullPath;
                     // add path for exploration if not already scheduled
-                    List<string> newSchedule = new List<string>();
+                    var newSchedule = new List<string>();
                     foreach (string scheduled in toExplore)
                         if (path.StartsWithOrdinal(scheduled)) return;
                         else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
@@ -336,7 +336,7 @@ namespace ASCompletion.Model
                 {
                     string path = e.FullPath;
                     // add to known removed paths
-                    List<string> newSchedule = new List<string>();
+                    var newSchedule = new List<string>();
                     foreach (string scheduled in toRemove)
                         if (path.StartsWithOrdinal(scheduled)) return;
                         else if (!scheduled.StartsWithOrdinal(path)) newSchedule.Add(scheduled);
@@ -359,24 +359,19 @@ namespace ASCompletion.Model
 
         private void ParseNewFile(string fileName)
         {
-            if (Owner != null && !Owner.Settings.LazyClasspathExploration && File.Exists(fileName))
-            {
-                FileModel newModel = Owner.CreateFileModel(fileName);
-                newModel.OutOfDate = true;
-                files[fileName.ToUpper()] = newModel;
-                SetTimer();
-            }
+            if (Owner is null || Owner.Settings.LazyClasspathExploration || !File.Exists(fileName)) return;
+            var newModel = Owner.CreateFileModel(fileName);
+            newModel.OutOfDate = true;
+            files[fileName.ToUpper()] = newModel;
+            SetTimer();
         }
 
         private void DoScheduledOperations()
         {
-            // copy scheduled paths
             if (toExplore.Count == 0) return;
-            var _toCheck = new string[toExplore.Count];
             var _toExplore = new string[toExplore.Count];
             for (int i = 0; i < _toExplore.Length; i++)
             {
-                _toCheck[i] = toExplore[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
                 _toExplore[i] = toExplore[i];
             }
             toExplore.Clear();
@@ -386,7 +381,7 @@ namespace ASCompletion.Model
                 _toRemove[i] = toRemove[i].ToUpper() + System.IO.Path.DirectorySeparatorChar;
             toRemove.Clear();
 
-            Dictionary<string, FileModel> newFiles = new Dictionary<string, FileModel>();
+            var newFiles = new Dictionary<string, FileModel>();
             // cleanup files
             foreach (string file in files.Keys)
             {
@@ -401,18 +396,16 @@ namespace ASCompletion.Model
                 if (drop) continue;
 
                 FileModel model = files[file];
-                foreach (string checkPath in _toCheck)
+                if (!File.Exists(model.FileName))
                 {
-                    if (File.Exists(model.FileName)) continue;
                     var directoryName = System.IO.Path.GetDirectoryName(model.FileName);
                     if (!Directory.Exists(directoryName))
                     {
-                        var newRemPath = directoryName.ToUpper() + System.IO.Path.DirectorySeparatorChar;
+                        string newRemPath = directoryName.ToUpper() + System.IO.Path.DirectorySeparatorChar;
                         _toRemove.Add(newRemPath);
                     }
                     //TraceManager.Add("drop2: " + files[file].FileName);
                     drop = true;
-                    break;
                 }
                 if (drop) continue;
                 newFiles[file] = model;
@@ -590,7 +583,7 @@ namespace ASCompletion.Model
                 }
                 catch (Exception)
                 {
-                    TraceManager.AddAsync("Failed to serialize: " + path);
+                    TraceManager.AddAsync($"Failed to serialize: {path}");
                 }
             }
         }
@@ -617,7 +610,7 @@ namespace ASCompletion.Model
             }
             catch (Exception)
             {
-                TraceManager.AddAsync("Failed to deserialize: " + path);
+                TraceManager.AddAsync($"Failed to deserialize: {path}");
                 return false;
             }
         }

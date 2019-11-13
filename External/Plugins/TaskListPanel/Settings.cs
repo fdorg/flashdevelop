@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using PluginCore.Collections;
 using PluginCore.Localization;
 
 namespace TaskListPanel
@@ -14,11 +15,11 @@ namespace TaskListPanel
     [Serializable]
     public class Settings
     {
-        private ExploringMode exploringMode = ExploringMode.Light;
-        private int[] images = new[] { 229, 197, 197 };
-        private string[] extensions = new[] { ".txt" };
-        private string[] groups = new[] { "TODO", "FIXME", "BUG" };
-        private string[] excluded = new string[0] {};
+        ExploringMode exploringMode = ExploringMode.Light;
+        int[] images = new[] { 229, 197, 197 };
+        string[] extensions = new[] { ".txt" };
+        string[] groups = new[] { "TODO", "FIXME", "BUG" };
+        string[] excluded = EmptyArray<string>.Instance;
 
         /// <summary> 
         /// Exploring mode, the way we should operate
@@ -28,8 +29,8 @@ namespace TaskListPanel
         [DefaultValue(ExploringMode.Light)]
         public ExploringMode ExploringMode
         {
-            get => this.exploringMode;
-            set => this.exploringMode = value;
+            get => exploringMode;
+            set => exploringMode = value;
         }
 
         /// <summary> 
@@ -37,11 +38,11 @@ namespace TaskListPanel
         /// </summary>
         [DisplayName("Excluded Paths")]
         [LocalizedDescription("TaskListPanel.Description.ExcludedPaths")]
-        [DefaultValue(new string[0] {})]
+        [DefaultValue(new string[] {})]
         public string[] ExcludedPaths
         {
-            get => this.excluded;
-            set => this.excluded = value;
+            get => excluded;
+            set => excluded = value;
         }
 
         /// <summary> 
@@ -52,8 +53,8 @@ namespace TaskListPanel
         [DefaultValue(new[] { ".txt" })]
         public string[] FileExtensions
         {
-            get => this.extensions;
-            set => this.extensions = value;
+            get => extensions;
+            set => extensions = value;
         }
 
         /// <summary> 
@@ -64,8 +65,8 @@ namespace TaskListPanel
         [DefaultValue(new[] { "TODO", "FIXME", "BUG" })]
         public string[] GroupValues
         {
-            get => this.groups;
-            set => this.groups = value;
+            get => groups;
+            set => groups = value;
         }
 
         /// <summary> 
@@ -76,8 +77,8 @@ namespace TaskListPanel
         [DefaultValue(new[] { 229, 197, 197 })]
         public int[] ImageIndexes
         {
-            get => this.images;
-            set => this.images = value;
+            get => images;
+            set => images = value;
         }
 
     }

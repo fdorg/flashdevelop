@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PluginCore;
+using PluginCore.Collections;
 
 namespace ASCompletion.Completion
 {
@@ -49,7 +51,7 @@ namespace ASCompletion.Completion
         public Rule[] Rules
         {
             get => rules;
-            set => rules = value ?? new Rule[0];
+            set => rules = value ?? EmptyArray<Rule>.Instance;
         }
         
         /// <summary>
@@ -70,9 +72,9 @@ namespace ASCompletion.Completion
         /// </summary>
         public bool ShouldOpen(char charBefore, byte styleBefore, char charAfter, byte styleAfter)
         {
-            for (int i = 0; i < rules.Length; i++)
+            foreach (var it in rules)
             {
-                if (rules[i].Matches(charBefore, styleBefore, charAfter, styleAfter))
+                if (it.Matches(charBefore, styleBefore, charAfter, styleAfter))
                 {
                     return true;
                 }
@@ -163,8 +165,8 @@ namespace ASCompletion.Completion
 
             public Style[] AfterStyles
             {
-                get => afterStyles ?? new Style[0];
-                set => afterStyles = value == null || value.Length == 0 ? null : value;
+                get => afterStyles ?? EmptyArray<Style>.Instance;
+                set => afterStyles = value.IsNullOrEmpty() ? null : value;
             }
             
             public bool NotBeforeChars
@@ -187,8 +189,8 @@ namespace ASCompletion.Completion
 
             public Style[] BeforeStyles
             {
-                get => beforeStyles ?? new Style[0];
-                set => beforeStyles = value == null || value.Length == 0 ? null : value;
+                get => beforeStyles ?? EmptyArray<Style>.Instance;
+                set => beforeStyles = value.IsNullOrEmpty() ? null : value;
             }
 
             public Logic Logic
@@ -208,7 +210,7 @@ namespace ASCompletion.Completion
 
             private static string FromRegex(Regex value)
             {
-                if (value == null)
+                if (value is null)
                 {
                     return string.Empty;
                 }
@@ -228,7 +230,7 @@ namespace ASCompletion.Completion
 
             private static bool RegexCheck(Regex regex, char c, bool exclude)
             {
-                if (regex == null)
+                if (regex is null)
                 {
                     return exclude;
                 }
@@ -237,7 +239,7 @@ namespace ASCompletion.Completion
 
             private static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
-                if (array == null)
+                if (array is null)
                 {
                     return exclude;
                 }

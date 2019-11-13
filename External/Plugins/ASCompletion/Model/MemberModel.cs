@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using PluginCore;
 
 namespace ASCompletion.Model
@@ -33,6 +34,7 @@ namespace ASCompletion.Model
         public int LineFrom;
         public int LineTo;
         public List<ASMetaData> MetaDatas;
+        public int StartPosition = -1;
 
         public MemberModel()
         {
@@ -66,18 +68,14 @@ namespace ASCompletion.Model
             result.Namespace = Namespace;
             result.InFile = InFile;
             result.IsPackageLevel = IsPackageLevel;
-            if (Parameters != null)
-            {
-                result.Parameters = new List<MemberModel>();
-                foreach (var param in Parameters)
-                    result.Parameters.Add((MemberModel) param.Clone());
-            }
+            result.Parameters = Parameters?.Select(it => (MemberModel) it.Clone()).ToList();
             result.Type = Type;
             result.Comments = Comments;
             result.Value = Value;
             result.ValueEndPosition = ValueEndPosition;
             result.LineFrom = LineFrom;
             result.LineTo = LineTo;
+            result.StartPosition = StartPosition;
             return result;
         }
         
@@ -100,7 +98,7 @@ namespace ASCompletion.Model
             {
                 if ((Flags & FlagType.Setter) > 0)
                 {
-                    if (Parameters != null && Parameters.Count > 0 && !string.IsNullOrEmpty(Parameters[0].Type))
+                    if (!Parameters.IsNullOrEmpty() && !string.IsNullOrEmpty(Parameters[0].Type))
                         return result + " : " + FormatType(Parameters[0].Type);
                 }
             }
@@ -125,7 +123,7 @@ namespace ASCompletion.Model
                         res += "()";
 
                     type = "Function";
-                    if (Parameters != null && Parameters.Count > 0)
+                    if (!Parameters.IsNullOrEmpty())
                     {
                         comment = "/*(" + ParametersString(true) + ")";
                         if (!string.IsNullOrEmpty(Type))
@@ -158,22 +156,14 @@ namespace ASCompletion.Model
         public string ParametersString(bool formatted)
         {
             var res = "";
-            if (Parameters != null && Parameters.Count > 0)
+            if (!Parameters.IsNullOrEmpty())
             {
                 var addSep = false;
-                foreach (MemberModel param in Parameters)
+                foreach (var param in Parameters)
                 {
                     if (addSep) res += ", ";
                     else addSep = true;
-
                     res += param.ToDeclarationString(false, true);
-                    /*
-                    res += param.Name;
-                    if (param.Type != null && param.Type.Length > 0)
-                        res += ":" + (formated ? FormatType(param.Type) : param.Type);
-                    if (param.Value != null)
-                        res += " = " + param.Value.Trim();
-                    */
                 }
             }
             return res;
@@ -210,11 +200,13 @@ namespace ASCompletion.Model
     /// Strong-typed MemberModel list with special merging/searching methods
     /// </summary>
     [Serializable]
-    public class MemberList: IEnumerable
+    public class MemberList: IEnumerable<MemberModel>
     {
-        private bool sorted;
-        
-        public IEnumerator GetEnumerator() => items.GetEnumerator();
+        bool sorted;
+
+        public IEnumerator<MemberModel> GetEnumerator() => items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
 
         readonly List<MemberModel> items = new List<MemberModel>();
 
@@ -224,6 +216,11 @@ namespace ASCompletion.Model
 
         public MemberList()
         {
+        }
+
+        public MemberList(IEnumerable<MemberModel> list)
+        {
+            Items.AddRange(list);
         }
         
         public MemberModel this[int index]
@@ -246,7 +243,7 @@ namespace ASCompletion.Model
         public int Add(MemberList list)
         {
             sorted = false;
-            items.AddRange(list.Items);
+            items.AddRange(list);
             return items.Count;
         }
 
@@ -303,7 +300,7 @@ namespace ASCompletion.Model
         {
             var result = new MemberList();
             foreach (var m in items)
-                if (((m.Flags & mask) == mask)
+                if ((m.Flags & mask) == mask
                     && (access == 0 || (m.Access & access) > 0)
                     && m.Name == name) result.Add(m);
             return result;
@@ -325,15 +322,6 @@ namespace ASCompletion.Model
         public void Merge(MemberModel item)
         {
             if (item != null) Merge(new MemberList {item});
-        }
-        
-        /// <summary>
-        /// Merge SORTED lists without duplicate values
-        /// </summary>
-        /// <param name="list">Items to merge</param>
-        public void Merge(MemberList list)
-        {
-            if (list != null) Merge(list.Items);
         }
         
         /// <summary>
@@ -449,9 +437,9 @@ namespace ASCompletion.Model
 
     public class ByKindMemberComparer : IComparer<MemberModel>
     {
-        public int Compare(MemberModel a, MemberModel b) => getPriority(a.Flags).CompareTo(getPriority(b.Flags));
+        public int Compare(MemberModel a, MemberModel b) => GetPriority(a.Flags).CompareTo(GetPriority(b.Flags));
 
-        private uint getPriority(FlagType flag)
+        static uint GetPriority(FlagType flag)
         {
             if ((flag & FlagType.Constant) > 0) return 4;
             if ((flag & FlagType.Variable) > 0) return 3;
@@ -464,11 +452,11 @@ namespace ASCompletion.Model
     {
         public int Compare(MemberModel a, MemberModel b)
         {
-            int cmp = GetPriority(a).CompareTo(GetPriority(b));
+            var cmp = GetPriority(a).CompareTo(GetPriority(b));
             return cmp != 0 ? cmp : StringComparer.Ordinal.Compare(a.Name,b.Name);
         }
 
-        private uint GetPriority(MemberModel m)
+        static uint GetPriority(MemberModel m)
         {
             uint visibility_pri;
             if ((m.Access & Visibility.Public) > 0) visibility_pri = 1;

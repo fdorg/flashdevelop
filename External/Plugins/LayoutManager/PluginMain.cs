@@ -14,11 +14,11 @@ namespace LayoutManager
 {
     public class PluginMain : IPlugin
     {
-        private string settingFilename;
-        private Settings settingObject;
-        private DockContent pluginPanel;
-        private PluginUI pluginUI;
-        private Image pluginImage;
+        string settingFilename;
+        Settings settingObject;
+        DockContent pluginPanel;
+        PluginUI pluginUI;
+        Image pluginImage;
 
         #region Required Properties
 

@@ -180,7 +180,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (foundMember == null)
+            if (foundMember is null)
             {
                 access.AddRange(members);
             }

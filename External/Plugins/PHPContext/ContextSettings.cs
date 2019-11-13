@@ -41,7 +41,7 @@ namespace PHPContext
         const bool DEFAULT_FIXPACKAGEAUTOMATICALLY = true;
 
         protected bool checkSyntaxOnSave = DEFAULT_CHECKSYNTAX;
-        private bool lazyClasspathExploration = DEFAULT_LAZYMODE;
+        bool lazyClasspathExploration = DEFAULT_LAZYMODE;
         protected bool completionListAllTypes = DEFAULT_LISTALL;
         protected bool completionShowQualifiedTypes = DEFAULT_QUALIFY;
         protected bool completionEnabled = DEFAULT_COMPLETIONENABLED;
@@ -151,7 +151,7 @@ namespace PHPContext
 
         #region Language specific members
 
-        private string intrinsicPath;
+        string intrinsicPath;
 
         [DisplayName("Intrinsic Definitions")]
         [DefaultValue("Library\\PHP\\intrinsic")]
@@ -185,7 +185,14 @@ namespace PHPContext
         #endregion
         
         [Browsable(false)]
-        private void FireChanged() => OnClasspathChanged?.Invoke();
-    }
+        void FireChanged() => OnClasspathChanged?.Invoke();
 
+        [
+            DisplayName("Always Add Space After"),
+            LocalizedCategory("ASCompletion.Category.Helpers"),
+            LocalizedDescription("ASCompletion.Description.AddSpaceAfter"),
+            DefaultValue(""),
+        ]
+        public string AddSpaceAfter { get; set; } = string.Empty;
+    }
 }

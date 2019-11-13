@@ -252,7 +252,7 @@ namespace FlashDevelop.Dialogs
         private string ProcessArguments(string text)
         {
             string result = text;
-            if (result == null) return string.Empty;
+            if (result is null) return string.Empty;
             result = result.Replace("$(AppDir)", PathHelper.AppDir);
             result = result.Replace("$(UserAppDir)", PathHelper.UserAppDir);
             result = result.Replace("$(BaseDir)", PathHelper.BaseDir);
@@ -281,8 +281,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public new static DialogResult Show()
         {
-            using (FirstRunDialog firstRunDialog = new FirstRunDialog())
-                return firstRunDialog.ShowDialog();
+            using FirstRunDialog firstRunDialog = new FirstRunDialog();
+            return firstRunDialog.ShowDialog();
         }
 
         #endregion

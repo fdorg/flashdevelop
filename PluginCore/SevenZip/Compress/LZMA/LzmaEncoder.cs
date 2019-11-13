@@ -363,7 +363,7 @@ namespace SevenZip.Compression.LZMA
 
         void Create()
         {
-            if (_matchFinder == null)
+            if (_matchFinder is null)
             {
                 BinTree bt = new BinTree();
                 int numHashBytes = 4;

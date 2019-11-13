@@ -303,7 +303,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             get => name;
             set { 
-                if ( value == null ) {
+                if ( value is null ) {
                     throw new ArgumentNullException(nameof(value));
                 }
                 name = value;   
@@ -432,7 +432,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             get => linkName;
             set {
-                if ( value == null ) {
+                if ( value is null ) {
                     throw new ArgumentNullException(nameof(value));
                 }
                 linkName = value; 
@@ -448,7 +448,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             get => magic;
             set { 
-                if ( value == null ) {
+                if ( value is null ) {
                     throw new ArgumentNullException(nameof(value));
                 }
                 magic = value; 
@@ -465,7 +465,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             get => version;
 
             set { 
-                if ( value == null ) {
+                if ( value is null ) {
                     throw new ArgumentNullException(nameof(value));
                 }
                 version = value; 
@@ -508,7 +508,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             get => groupName;
             set { 
-                if ( value == null ) {
+                if ( value is null ) {
                     groupName = "None";
                 }
                 else {
@@ -558,7 +558,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public void ParseBuffer(byte[] header)
         {
-            if ( header == null ) 
+            if ( header is null ) 
             {
                 throw new ArgumentNullException(nameof(header));
             }
@@ -619,7 +619,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="outBuffer">output buffer for header information</param>
         public void WriteHeader(byte[] outBuffer)
         {
-            if ( outBuffer == null ) 
+            if ( outBuffer is null ) 
             {
                 throw new ArgumentNullException(nameof(outBuffer));
             }
@@ -741,7 +741,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>The long equivalent of the octal string.</returns>
         public static long ParseOctal(byte[] header, int offset, int length)
         {
-            if ( header == null ) {
+            if ( header is null ) {
                 throw new ArgumentNullException(nameof(header));
             }
 
@@ -789,7 +789,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public static StringBuilder ParseName(byte[] header, int offset, int length)
         {
-            if ( header == null ) {
+            if ( header is null ) {
                 throw new ArgumentNullException(nameof(header));
             }
 
@@ -838,11 +838,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>The next free index in the <paramref name="buffer"/></returns>
         public static int GetNameBytes(StringBuilder name, int nameOffset, byte[] buffer, int bufferOffset, int length)
         {
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -860,12 +860,12 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>The next free index in the <paramref name="buffer"/></returns>
         public static int GetNameBytes(string name, int nameOffset, byte[] buffer, int bufferOffset, int length)
         {
-            if ( name == null ) 
+            if ( name is null ) 
             {
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if ( buffer == null )
+            if ( buffer is null )
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -904,11 +904,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         public static int GetNameBytes(StringBuilder name, byte[] buffer, int offset, int length)
         {
 
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -926,11 +926,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         public static int GetNameBytes(string name, byte[] buffer, int offset, int length)
         {
 
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if ( buffer == null ) 
+            if ( buffer is null ) 
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -949,11 +949,11 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>The next free index in the buffer.</returns>
         public static int GetAsciiBytes(string toAdd, int nameOffset, byte[] buffer, int bufferOffset, int length )
         {
-            if ( toAdd == null ) {
+            if ( toAdd is null ) {
                 throw new ArgumentNullException(nameof(toAdd));
             }
 
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -984,7 +984,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public static int GetOctalBytes(long value, byte[] buffer, int offset, int length)
         {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -1088,10 +1088,12 @@ namespace ICSharpCode.SharpZipLib.Tar
         {
             DateTime result;
             
-            try {
+            try
+            {
                 result = new DateTime(dateTime1970.Ticks + ticks * timeConversionFactor);
             }
-            catch(ArgumentOutOfRangeException) {
+            catch(ArgumentOutOfRangeException)
+            {
                 result = dateTime1970;
             }
             return result;

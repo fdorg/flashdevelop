@@ -69,7 +69,7 @@ namespace AS2Context
         const bool DEFAULT_FIXPACKAGEAUTOMATICALLY = true;
 
         protected bool checkSyntaxOnSave = DEFAULT_CHECKSYNTAX;
-        private bool lazyClasspathExploration = DEFAULT_LAZYMODE;
+        bool lazyClasspathExploration = DEFAULT_LAZYMODE;
         protected bool completionListAllTypes = DEFAULT_LISTALL;
         protected bool completionShowQualifiedTypes = DEFAULT_QUALIFY;
         protected bool completionEnabled = DEFAULT_COMPLETIONENABLED;
@@ -125,9 +125,7 @@ namespace AS2Context
 
         public InstalledSDK GetDefaultSDK()
         {
-            if (installedSDKs == null || installedSDKs.Length == 0)
-                return InstalledSDK.INVALID_SDK;
-
+            if (installedSDKs.IsNullOrEmpty()) return InstalledSDK.INVALID_SDK;
             foreach (InstalledSDK sdk in installedSDKs)
                 if (sdk.IsValid) return sdk;
             return InstalledSDK.INVALID_SDK;
@@ -206,10 +204,10 @@ namespace AS2Context
         const int DEFAULT_FLASHVERSION = 9; // Flash CS3 has a specific FP9 support for AS2
         const string DEFAULT_MTASCCHECKPARAMS = "-mx -wimp";
 
-        private int flashVersion = 9;
-        private string mmClassPath;
-        private bool useMtascIntrinsic = DEFAULT_USEMTASC;
-        private string mtascCheckParameters = DEFAULT_MTASCCHECKPARAMS;
+        int flashVersion = 9;
+        string mmClassPath;
+        bool useMtascIntrinsic = DEFAULT_USEMTASC;
+        string mtascCheckParameters = DEFAULT_MTASCCHECKPARAMS;
 
         [DisplayName("Use MTASC Intrinsics")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.UseMtascIntrinsic"), DefaultValue(DEFAULT_USEMTASC)]
@@ -262,9 +260,9 @@ namespace AS2Context
         #endregion
 
         [Browsable(false)]
-        private void FireChanged()
-        {
-            OnClasspathChanged?.Invoke();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
+
+        [Browsable(false)]
+        public string AddSpaceAfter { get; set; }
     }
 }

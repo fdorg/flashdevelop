@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
+using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
@@ -455,10 +456,10 @@ namespace FlashDevelop.Dialogs
         {
             this.currentMatch = null;
             if (update) this.UpdateFindText();
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             var sci = Globals.SciControl;
             var matches = this.GetResults(sci, simple);
-            if (matches != null && matches.Count != 0)
+            if (!matches.IsNullOrEmpty())
             {
                 FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
                 var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, fixedPosition);
@@ -502,7 +503,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BookmarkAllButtonClick(object sender, EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
             if (matches != null && this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0)
@@ -511,7 +512,7 @@ namespace FlashDevelop.Dialogs
                 int start = sci.MBSafeCharPosition(sci.SelectionStart);
                 matches = FRDialogGenerics.FilterMatches(matches, start, end);
             }
-            if (matches != null && matches.Count != 0)
+            if (!matches.IsNullOrEmpty())
             {
                 FRDialogGenerics.BookmarkMatches(sci, matches);
                 string message = TextHelper.GetString("Info.MatchesBookmarked");
@@ -529,17 +530,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceButtonClick(object sender, EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             var sci = Globals.SciControl;
             if (sci.SelText.Length == 0)
             {
                 FindNext(true);
                 return;
             }
-            if (useRegexCheckBox.Enabled && currentMatch == null)
+            if (useRegexCheckBox.Enabled && currentMatch is null)
             {
                 FindNext(true, false, false, true);
-                if (currentMatch == null) return;
+                if (currentMatch is null) return;
             }
             var replaceWith = GetReplaceText(currentMatch);
             sci.ReplaceSel(replaceWith);
@@ -556,7 +557,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ReplaceAllButtonClick(object sender, EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
             bool selectionOnly = this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0;

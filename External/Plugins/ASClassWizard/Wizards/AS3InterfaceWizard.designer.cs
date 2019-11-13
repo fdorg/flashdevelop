@@ -32,7 +32,7 @@ namespace ASClassWizard.Wizards
             this.baseBox = new System.Windows.Forms.TextBoxEx();
             this.classBox = new System.Windows.Forms.TextBoxEx();
             this.packageBox = new System.Windows.Forms.TextBoxEx();
-            this.classLabel = new System.Windows.Forms.Label();
+            this.typeLabel = new System.Windows.Forms.Label();
             this.baseLabel = new System.Windows.Forms.Label();
             this.packageLabel = new System.Windows.Forms.Label();
             this.packageBrowse = new System.Windows.Forms.ButtonEx();
@@ -90,15 +90,15 @@ namespace ASClassWizard.Wizards
             this.packageBox.UseTheme = true;
             this.packageBox.TextChanged += new System.EventHandler(this.packageBox_TextChanged);
             // 
-            // classLabel
+            // typeLabel
             // 
-            this.classLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.classLabel.AutoSize = true;
-            this.classLabel.Location = new System.Drawing.Point(3, 37);
-            this.classLabel.Name = "classLabel";
-            this.classLabel.Size = new System.Drawing.Size(49, 13);
-            this.classLabel.TabIndex = 6;
-            this.classLabel.Text = "Interface";
+            this.typeLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.typeLabel.AutoSize = true;
+            this.typeLabel.Location = new System.Drawing.Point(3, 37);
+            this.typeLabel.Name = "typeLabel";
+            this.typeLabel.Size = new System.Drawing.Size(49, 13);
+            this.typeLabel.TabIndex = 6;
+            this.typeLabel.Text = "Interface";
             // 
             // baseLabel
             // 
@@ -232,7 +232,7 @@ namespace ASClassWizard.Wizards
             this.tableLayoutPanel2.Controls.Add(this.packageBox, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.baseBox, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.baseLabel, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.classLabel, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.typeLabel, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.classBox, 1, 1);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 12);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -323,7 +323,7 @@ namespace ASClassWizard.Wizards
         #endregion
 
         private System.Windows.Forms.Label packageLabel;
-        private System.Windows.Forms.Label classLabel;
+        private System.Windows.Forms.Label typeLabel;
         private System.Windows.Forms.Label baseLabel;
         private System.Windows.Forms.Label errorLabel;
         private System.Windows.Forms.PictureBox errorIcon;

@@ -48,7 +48,6 @@ namespace AirProperties.Controls
         // Constructor.  Create and populate an image list
         // </summary>
         public TriStateTreeView()
-            : base()
         {
             StateImageList = new System.Windows.Forms.ImageList();
 
@@ -161,7 +160,7 @@ namespace AirProperties.Controls
         protected void UpdateParentState(System.Windows.Forms.TreeNode tn)
         {
             // Node needs to check all of it's children to see if any of them are ticked or mixed
-            if (tn == null)
+            if (tn is null)
                 return;
 
             int OrigStateImageIndex = tn.StateImageIndex;
@@ -272,7 +271,7 @@ namespace AirProperties.Controls
 
             // is the click on the checkbox?  If not, discard it
             System.Windows.Forms.TreeViewHitTestInfo info = HitTest(e.X, e.Y);
-            if (info == null || info.Location != System.Windows.Forms.TreeViewHitTestLocations.StateImage)
+            if (info is null || info.Location != System.Windows.Forms.TreeViewHitTestLocations.StateImage)
             {
                 return;
             }

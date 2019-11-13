@@ -12,6 +12,7 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Collections;
 using PluginCore.Managers;
 using ScintillaNet;
 
@@ -143,7 +144,7 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2305");
                 yield return new TestCaseData("BeforeGenerateConstructor_issue1738_2", GeneratorJobType.Constructor, true)
                     .Returns(ReadAllText("AfterGenerateConstructor_issue1738_2"))
-                    .SetName("Generate constructor with parameters")
+                    .SetName("Generate constructor with parameters. Issue 1738. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
                 yield return new TestCaseData("BeforeGenerateConstructor_issue1738_3", GeneratorJobType.ChangeConstructorDecl, true)
                     .Returns(ReadAllText("AfterGenerateConstructor_issue1738_3"))
@@ -1086,6 +1087,28 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2830TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2830_1", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("var v2 = $(EntryPoint)v1 + 1$(ExitPoint)<generator>. Issue 2830. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2830");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2825TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2825_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2825_1"))
+                    .SetName("(function foo() {return foo();})()<generator>. Issue 2825. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2825");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue220TestCases
         {
             get
@@ -1705,6 +1728,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateVariableIssue2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateVariable_issue2477_1", GeneratorJobType.VariablePublic, true)
+                    .Returns(ReadAllText("AfterGenerateVariable_issue2477_1"))
+                    .SetName("Issue2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateVariable_issue2477_2", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterGenerateVariable_issue2477_2"))
+                    .SetName("Issue2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
         static IEnumerable<TestCaseData> ImplementInterfaceTestCases
         {
             get
@@ -1853,6 +1891,66 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateGetterSetter2838TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2838_1", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2838_1"))
+                    .SetName("Generate getter and setter. Issue 2838. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2838");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateGetterSetter2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_1", GeneratorJobType.Getter, false)
+                    .Returns(null)
+                    .SetName("Generate getter. Issue 2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_1", GeneratorJobType.Setter, false)
+                    .Returns(null)
+                    .SetName("Generate setter. Issue 2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_1", GeneratorJobType.GetterSetter, false)
+                    .Returns(null)
+                    .SetName("Generate getter and setter. Issue 2477. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateGetterSetter_issue2477_4", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterGenerateGetterSetter_issue2477_4"))
+                    .SetName("Generate getter and setter. Issue 2477. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateConstructorIssue2845TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateConstructor_issue2845_1", GeneratorJobType.Constructor, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue2845_1"))
+                    .SetName("Generate constructor. Issue 2845. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2845");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue2845_2", GeneratorJobType.Constructor, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue2845_2"))
+                    .SetName("Generate constructor. Issue 2845. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2845");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateConstructorWithInitializerIssue2872TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateConstructor_issue2872_1", GeneratorJob.ConstructorWithInitializer, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue2872_1"))
+                    .SetName("Generate constructor with initializer. Issue 2872. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2872");
+            }
+        }
+
         static IEnumerable<TestCaseData> NewClassIssue2585TestCases
         {
             get
@@ -1981,6 +2079,41 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> InitializeLocalVariable2762TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_1", GeneratorJob.InitializeLocalVariable, true)
+                    .Returns(ReadAllText("AfterInitializeLocalVariable_issue2762_1"))
+                    .SetName("var v<generator>:String; -> var v:String = null; Issue 2762. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_2", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("var v<generator>:String = null; Issue 2762. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_3", GeneratorJob.InitializeLocalVariable, true)
+                    .Returns(ReadAllText("AfterInitializeLocalVariable_issue2762_3"))
+                    .SetName("if (v<generator>); Issue 2762. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_4", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("for (v<generator> in 0...1) Issue 2762. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_5", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("for (v<generator> in 0...1) Issue 2762. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_6", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("function(v<generator>) Issue 2762. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+                yield return new TestCaseData("BeforeInitializeLocalVariable_issue2762_7", GeneratorJob.InitializeLocalVariable, false)
+                    .Returns(null)
+                    .SetName("case v<generator> Issue 2762. Case 7")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2762");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -2030,6 +2163,8 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue2725TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2734TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2743TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2830TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2825TestCases)),
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(AddToInterfaceIssue1733TestCases)),
@@ -2041,6 +2176,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateVariableTestCases)),
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(GenerateVariableIssue1734TestCases)),
+            TestCaseSource(nameof(GenerateVariableIssue2477TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2531TestCases)),
@@ -2050,10 +2186,15 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateGetterSetterTestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInAbstractIssue2403TestCases)),
             TestCaseSource(nameof(GenerateGetterSetterInferVar2456TestCases)),
+            TestCaseSource(nameof(GenerateGetterSetter2838TestCases)),
+            TestCaseSource(nameof(GenerateGetterSetter2477TestCases)),
+            TestCaseSource(nameof(GenerateConstructorIssue2845TestCases)),
+            TestCaseSource(nameof(GenerateConstructorWithInitializerIssue2872TestCases)),
             TestCaseSource(nameof(InterfaceContextualGeneratorTestCases)),
             TestCaseSource(nameof(NewClassIssue2585TestCases)),
             TestCaseSource(nameof(NewInterfaceIssue2587TestCases)),
             TestCaseSource(nameof(ConvertStaticMethodCallToStaticExtensionCallIssue1565TestCases)),
+            TestCaseSource(nameof(InitializeLocalVariable2762TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
@@ -2414,6 +2555,7 @@ namespace HaXeContext.Generators
             ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, new Hashtable {["scope"] = scope});
             return sci.Text;
         }
+
         static IEnumerable<TestCaseData> GenerateClassTestCases
         {
             get
@@ -2460,6 +2602,103 @@ namespace HaXeContext.Generators
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
+            var value = item.Value;
+        }
+
+        static IEnumerable<TestCaseData> GenerateClassIssue2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_1", GeneratorJobType.Class, "<T>")
+                    .SetName("abstract A(NewClass$(EntryPoint)<String>). Issue2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_2", GeneratorJobType.Class, "<T>")
+                    .SetName("abstract A() from NewClass$(EntryPoint)<String>. Issue2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_3", GeneratorJobType.Class, "<T>")
+                    .SetName("abstract A() to NewClass$(EntryPoint)<String>. Issue2477. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateClassIssue2589TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_1", GeneratorJobType.Class, "<T>")
+                    .SetName("new NewClass$(EntryPoint)<String>. Issue2589. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_2", GeneratorJobType.Class, "<T1, T2>")
+                    .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int>. Issue2589. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_3", GeneratorJobType.Class, "<T1, T2, T3>")
+                    .SetName("new NewClass$(EntryPoint)<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2589_4", GeneratorJobType.Class, "<T1, T2, T3>")
+                    .SetName("new NewClass$(EntryPoint)/*<Int>*/<Map<Int, String>, Int, /*, Int>*/ Array<{x:Int, y:Int}->String>>. Issue2589. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2589");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateInterfaceIssue2477TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_1", GeneratorJobType.Interface, "<T>")
+                    .SetName("abstract A(NewInterface$(EntryPoint)<String>). Issue2477. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_2", GeneratorJobType.Interface, "<T>")
+                    .SetName("abstract A() from NewInterface$(EntryPoint)<String>. Issue2477. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+                yield return new TestCaseData("BeforeGenerateClassTest_issue2477_3", GeneratorJobType.Interface, "<T>")
+                    .SetName("abstract A() to NewInterface$(EntryPoint)<String>. Issue2477. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2477");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateInterfaceIssue2870TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateInterfaceTest_issue2870_1", GeneratorJobType.Interface, "<T>")
+                    .SetName("var v:INewInterface$(EntryPoint)<String>. Issue2870. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2870");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(GenerateClassIssue2477TestCases)),
+            TestCaseSource(nameof(GenerateClassIssue2589TestCases)),
+            TestCaseSource(nameof(GenerateInterfaceIssue2477TestCases)),
+            TestCaseSource(nameof(GenerateInterfaceIssue2870TestCases)),
+        ]
+        public void GenerateNewType(string fileName, GeneratorJobType job, string classTemplate)
+        {
+            var handler = Substitute.For<IEventHandler>();
+            handler
+                .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                .Do(it =>
+                {
+                    var e = it.ArgAt<NotifyEvent>(1);
+                    switch (e.Type)
+                    {
+                        case EventType.Command:
+                            EventManager.RemoveEventHandler(handler);
+                            e.Handled = true;
+                            var de = (DataEvent)e;
+                            var info = (Hashtable)de.Data;
+                            var actualArgs = (string)info[nameof(classTemplate)];
+                            Assert.AreEqual(classTemplate, actualArgs);
+                            break;
+                    }
+                });
+            EventManager.AddEventHandler(handler, EventType.Command);
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFileName(GetFullPath(fileName));
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            var item = options.Find(it => ((GeneratorItem)it).Job == job);
             var value = item.Value;
         }
 
@@ -2523,7 +2762,7 @@ namespace HaXeContext.Generators
             SetCurrentFileName(GetFullPath(fileName));
             SetSrc(sci, ReadAllText(fileName));
             var type = ASContext.Context.ResolveType(ASContext.Context.CurrentMember.Type, ASContext.Context.CurrentModel);
-            var selectedMembers = type.Members.Items.ToDictionary(it => it, it => ASContext.Context.ResolveType(it.Type, it.InFile));
+            var selectedMembers = type.Members.ToDictionary(it => it, it => ASContext.Context.ResolveType(it.Type, it.InFile));
             ASGenerator.GenerateDelegateMethods(sci, ASContext.Context.CurrentMember, selectedMembers, type, ASContext.Context.CurrentClass);
             return sci.Text;
         }
@@ -2935,7 +3174,7 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return new TestCaseData("BeforeGenerateEventHandler", new string[0])
+                yield return new TestCaseData("BeforeGenerateEventHandler", EmptyArray<string>.Instance)
                     .Returns(ReadAllText("AfterGenerateEventHandler_withoutAutoRemove"))
                     .SetName("Generate event handler without auto remove");
                 yield return new TestCaseData("BeforeGenerateEventHandler", new[] { "Event.ADDED", "Event.REMOVED" })
@@ -2983,7 +3222,7 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateEventHandler", new[] { "Event.ADDED", "Event.REMOVED" })
                     .Returns(ReadAllText("AfterGeneratePrivateEventHandlerWithDefaultModifier"))
                     .SetName("Generate private event handler with default modifier declaration");
-                yield return new TestCaseData("BeforeGeneratePrivateStaticEventHandler", new string[0])
+                yield return new TestCaseData("BeforeGeneratePrivateStaticEventHandler", EmptyArray<string>.Instance)
                     .Returns(ReadAllText("AfterGeneratePrivateStaticEventHandlerWithDefaultModifier"))
                     .SetName("Generate private static event handler with default modifier declaration");
             }
@@ -3126,7 +3365,7 @@ namespace HaXeContext.Generators
         {
             SetSrc(sci, ReadAllText(fileName));
             var ofClass = ASContext.Context.CurrentModel.Classes.Find(model => model.Name == ofClassName);
-            if (ofClass == null)
+            if (ofClass is null)
             {
                 foreach (var classpath in ASContext.Context.Classpath)
                 {
@@ -3222,6 +3461,50 @@ namespace HaXeContext.Generators
             var result = ContextualGenerator(sci, fileName, job, true);
             ASContext.CommonSettings.GenerateDefaultModifierDeclaration = false;
             return result;
+        }
+
+        static IEnumerable<TestCaseData> CanGenerateEnumTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("CanGenerateEnum_1", GeneratorJob.Enum)
+                    .Returns(true)
+                    .SetName("Can Generate Enum. Case 1");
+                yield return new TestCaseData("CanGenerateEnum_2", GeneratorJob.Enum)
+                    .Returns(false)
+                    .SetName("Can Generate Enum. Case 2");
+                yield return new TestCaseData("CanGenerateEnum_3", GeneratorJob.Enum)
+                    .Returns(false)
+                    .SetName("Can Generate Enum. Case 3");
+                yield return new TestCaseData("CanGenerateEnum_4", GeneratorJob.Enum)
+                    .Returns(false)
+                    .SetName("Can Generate Enum. Case 4");
+            }
+        }
+
+        static IEnumerable<TestCaseData> CanGenerateClassTestCases_issue2891
+        {
+            get
+            {
+                yield return new TestCaseData("CanGenerateClass_issue2891_1", GeneratorJobType.Class)
+                    .Returns(true)
+                    .SetName("Can Generate Class. Issue 2891. Case 1");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(CanGenerateEnumTestCases)),
+            TestCaseSource(nameof(CanGenerateClassTestCases_issue2891)),
+        ]
+        public bool HasGenerator(string fileName, GeneratorJobType job)
+        {
+
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFileName(GetFullPath(fileName));
+            var options = new List<ICompletionListItem>();
+            ASGenerator.ContextualGenerator(sci, options);
+            return options.Any(it => ((GeneratorItem) it).Job == job);
         }
     }
 }

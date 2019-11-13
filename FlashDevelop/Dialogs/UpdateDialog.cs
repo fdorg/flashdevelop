@@ -196,7 +196,7 @@ namespace FlashDevelop.Dialogs
         private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.updateInfo = (UpdateInfo)e.Result;
-            if (this.updateInfo == null)
+            if (this.updateInfo is null)
             {
                 string info = TextHelper.GetString("Info.UpdateCheckFailed");
                 string formatted = string.Format(info, "\n\n");
@@ -225,8 +225,8 @@ namespace FlashDevelop.Dialogs
         public static void Show(bool silent)
         {
             silentCheck = silent;
-            using (UpdateDialog updateDialog = new UpdateDialog())
-                if (!silentCheck) updateDialog.ShowDialog();
+            using UpdateDialog updateDialog = new UpdateDialog();
+            if (!silentCheck) updateDialog.ShowDialog();
         }
 
         #endregion

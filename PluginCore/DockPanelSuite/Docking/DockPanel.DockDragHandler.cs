@@ -233,7 +233,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     get
                     {
-                        if (m_paneDiamond == null)
+                        if (m_paneDiamond is null)
                             m_paneDiamond = new PaneIndicator();
 
                         return m_paneDiamond;
@@ -245,7 +245,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     get
                     {
-                        if (m_panelLeft == null)
+                        if (m_panelLeft is null)
                             m_panelLeft = new PanelIndicator(DockStyle.Left);
 
                         return m_panelLeft;
@@ -257,7 +257,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     get
                     {
-                        if (m_panelRight == null)
+                        if (m_panelRight is null)
                             m_panelRight = new PanelIndicator(DockStyle.Right);
 
                         return m_panelRight;
@@ -269,7 +269,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     get
                     {
-                        if (m_panelTop == null)
+                        if (m_panelTop is null)
                             m_panelTop = new PanelIndicator(DockStyle.Top);
 
                         return m_panelTop;
@@ -281,7 +281,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     get
                     {
-                        if (m_panelBottom == null)
+                        if (m_panelBottom is null)
                             m_panelBottom = new PanelIndicator(DockStyle.Bottom);
 
                         return m_panelBottom;
@@ -293,7 +293,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     get
                     {
-                        if (m_panelFill == null)
+                        if (m_panelFill is null)
                             m_panelFill = new PanelIndicator(DockStyle.Fill);
 
                         return m_panelFill;
@@ -409,20 +409,16 @@ namespace WeifenLuo.WinFormsUI.Docking
                         Rectangle rect = RectangleToClient(DockPane.RectangleToScreen(DockPane.ClientRectangle));
                         PaneDiamond.Location = new Point(rect.Left + (rect.Width - PaneDiamond.Width) / 2, rect.Top + (rect.Height - PaneDiamond.Height) / 2);
                         PaneDiamond.Visible = true;
-                        using (GraphicsPath graphicsPath = PaneIndicator.DisplayingGraphicsPath.Clone() as GraphicsPath)
-                        {
-                            Point[] pts = new[]
+                        using GraphicsPath graphicsPath = PaneIndicator.DisplayingGraphicsPath.Clone() as GraphicsPath;
+                        var pts = new[]
                         {
                             new Point(PaneDiamond.Left, PaneDiamond.Top),
                             new Point(PaneDiamond.Right, PaneDiamond.Top),
                             new Point(PaneDiamond.Left, PaneDiamond.Bottom)
                         };
-                            using (Matrix matrix = new Matrix(PaneDiamond.ClientRectangle, pts))
-                            {
-                                graphicsPath.Transform(matrix);
-                            }
-                            region.Union(graphicsPath);
-                        }
+                        using var matrix = new Matrix(PaneDiamond.ClientRectangle, pts);
+                        graphicsPath.Transform(matrix);
+                        region.Union(graphicsPath);
                     }
                     else
                         PaneDiamond.Visible = false;
@@ -443,7 +439,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 private bool ShouldPaneDiamondVisible()
                 {
-                    if (DockPane == null)
+                    if (DockPane is null)
                         return false;
 
                     if (!DockPanel.AllowEndUserNestedDocking)
@@ -626,17 +622,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                     }
                     else
                     {
-                        using (GraphicsPath path = pane.TabStripControl.GetOutline(contentIndex))
-                        {
-                            RectangleF rectF = path.GetBounds();
-                            Rectangle rect = new Rectangle((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
-                            using (Matrix matrix = new Matrix(rect, new[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) }))
-                            {
-                                path.Transform(matrix);
-                            }
-                            Region region = new Region(path);
-                            SetDragForm(rect, region);
-                        }
+                        using var path = pane.TabStripControl.GetOutline(contentIndex);
+                        var rectF = path.GetBounds();
+                        var rect = new Rectangle((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
+                        using var matrix = new Matrix(rect, new[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) });
+                        path.Transform(matrix);
+                        var region = new Region(path);
+                        SetDragForm(rect, region);
                     }
                 }
 
@@ -797,7 +789,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         private DockDragHandler m_dockDragHandler = null;
         private DockDragHandler GetDockDragHandler()
         {
-            if (m_dockDragHandler == null)
+            if (m_dockDragHandler is null)
                 m_dockDragHandler = new DockDragHandler(this);
             return m_dockDragHandler;
         }

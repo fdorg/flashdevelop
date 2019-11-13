@@ -265,7 +265,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         {
             get => entryFactory_;
             set {
-                if ( value == null ) {
+                if ( value is null ) {
                     entryFactory_ = new ZipEntryFactory();
                 }
                 else {
@@ -438,7 +438,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                        string fileFilter, string directoryFilter, bool restoreDateTime,
                        bool isStreamOwner)
         {
-            if ((overwrite == Overwrite.Prompt) && (confirmDelegate == null)) {
+            if ((overwrite == Overwrite.Prompt) && (confirmDelegate is null)) {
                 throw new ArgumentNullException(nameof(confirmDelegate));
             }
 
@@ -499,15 +499,15 @@ namespace ICSharpCode.SharpZipLib.Zip
             events_?.ProcessFile?.Invoke(sender, e);
 
             if ( e.ContinueRunning ) {
-                try {
+                try
+                {
                     // The open below is equivalent to OpenRead which gaurantees that if opened the 
                     // file will not be changed by subsequent openers, but precludes opening in some cases
                     // were it could succeed.
-                    using (FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                        ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
-                        outputStream_.PutNextEntry(entry);
-                        AddFileContents(e.Name, stream);
-                    }
+                    using FileStream stream = File.Open(e.Name, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
+                    outputStream_.PutNextEntry(entry);
+                    AddFileContents(e.Name, stream);
                 }
                 catch(Exception ex) {
                     if (events_ != null) {
@@ -523,11 +523,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 
         void AddFileContents(string name, Stream stream)
         {
-            if( stream==null ) {
+            if( stream is null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            if( buffer_==null ) {
+            if( buffer_ is null ) {
                 buffer_=new byte[4096];
             }
 
@@ -566,7 +566,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 if ( continueRunning_ ) {
                     try {
                         using ( FileStream outputStream = File.Create(targetName) ) {
-                            if ( buffer_ == null ) {
+                            if ( buffer_ is null ) {
                                 buffer_ = new byte[4096];
                             }
                             if (events_?.Progress != null)

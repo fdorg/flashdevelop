@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Collections;
 
 namespace ProjectManager.Controls
 {
@@ -54,7 +55,7 @@ namespace ProjectManager.Controls
             // classpathControl
             // 
             this.classpathControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.classpathControl.Classpaths = new string[0];
+            this.classpathControl.Classpaths = EmptyArray<string>.Instance;
             this.classpathControl.Location = new System.Drawing.Point(10, 19);
             this.classpathControl.Name = "classpathControl";
             this.classpathControl.Size = new System.Drawing.Size(357, 135);
@@ -151,7 +152,7 @@ namespace ProjectManager.Controls
         {
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 string label = TextHelper.GetString("Title.GlobalClasspathsBox");
                 groupBox1.Text = string.Format(label, value.ToUpper());
                 classpathControl.Language = value;

@@ -219,7 +219,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <param name="count">The number of bytes to write.</param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
@@ -1456,7 +1456,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
             zptr = new int[n];
             ftab = new int[65537];
             
-            if (block == null || quadrant == null || zptr == null  || ftab == null) {
+            if (block is null || quadrant is null || zptr is null  || ftab is null) {
                 //      int totalDraw = (n + 1 + NUM_OVERSHOOT_BYTES) + (n + NUM_OVERSHOOT_BYTES) + n + 65537;
                 //      compressOutOfMemory ( totalDraw, n );
             }

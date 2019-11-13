@@ -36,7 +36,6 @@ namespace ProjectManager.Actions
         readonly IMainForm mainForm;
         string storedDirectory;
         string lastFileFromTemplate;
-        FlashDevelopActions fdActions;
 
         public event FileNameHandler FileCreated;
         public event ProjectModifiedHandler ProjectModified;
@@ -48,16 +47,15 @@ namespace ProjectManager.Actions
         public FileActions(IMainForm mainForm, FlashDevelopActions fdActions)
         {
             this.mainForm = mainForm;
-            this.fdActions = fdActions;
         }
 
-        private void PushCurrentDirectory()
+        void PushCurrentDirectory()
         {
             storedDirectory = Environment.CurrentDirectory;
             Environment.CurrentDirectory = Application.StartupPath;
         }
 
-        private void PopCurrentDirectory()
+        void PopCurrentDirectory()
         {
             try { Environment.CurrentDirectory = storedDirectory; }
             catch { }
@@ -70,7 +68,7 @@ namespace ProjectManager.Actions
             try
             {
                 // the template could be named something like "MXML.fdt", or maybe "Class.as.fdt"
-                string extension = "";
+                string extension;
                 string fileName = Path.GetFileNameWithoutExtension(templatePath);
                 string caption = TextHelper.GetString("Label.AddNew") + " ";
 
@@ -98,33 +96,28 @@ namespace ProjectManager.Actions
                 }
 
                 // let plugins handle the file creation
-                Hashtable info = new Hashtable();
-                info["templatePath"] = templatePath;
-                info["inDirectory"] = inDirectory;
-                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
+                var info = new Hashtable {["templatePath"] = templatePath, ["inDirectory"] = inDirectory};
+                var de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
                 EventManager.DispatchEvent(this, de);
                 if (de.Handled) return;
 
-                using (LineEntryDialog dialog = new LineEntryDialog(caption, TextHelper.GetString("Label.FileName"),
-                        fileName + extension))
+                using var dialog = new LineEntryDialog(caption, TextHelper.GetString("Label.FileName"), fileName + extension);
+                dialog.SelectRange(0, fileName.Length);
+
+                if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    dialog.SelectRange(0, fileName.Length);
+                    FlashDevelopActions.CheckAuthorName();
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                    {
-                        FlashDevelopActions.CheckAuthorName();
+                    string newFilePath = Path.Combine(inDirectory, dialog.Line);
+                    if (!Path.HasExtension(newFilePath) && extension != ".ext")
+                        newFilePath = Path.ChangeExtension(newFilePath, extension);
 
-                        string newFilePath = Path.Combine(inDirectory, dialog.Line);
-                        if (!Path.HasExtension(newFilePath) && extension != ".ext")
-                            newFilePath = Path.ChangeExtension(newFilePath, extension);
+                    if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
 
-                        if (!FileHelper.ConfirmOverwrite(newFilePath)) return;
+                    // save this so when we are asked to process args, we know what file it's talking about
+                    lastFileFromTemplate = newFilePath;
 
-                        // save this so when we are asked to process args, we know what file it's talking about
-                        lastFileFromTemplate = newFilePath;
-
-                        mainForm.FileFromTemplate(templatePath, newFilePath);
-                    }
+                    mainForm.FileFromTemplate(templatePath, newFilePath);
                 }
             }
             catch (UserCancelException) { }
@@ -151,7 +144,7 @@ namespace ProjectManager.Actions
                     string classpath = project.AbsoluteClasspaths.GetClosestParent(path);
 
                     // Can't find parent, look in global classpaths
-                    if (classpath == null)
+                    if (classpath is null)
                     {
                         PathCollection globalPaths = new PathCollection();
                         foreach (string cp in PluginMain.Settings.GlobalClasspaths)
@@ -183,55 +176,51 @@ namespace ProjectManager.Actions
 
         public void AddLibraryAsset(Project project, string inDirectory)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using var dialog = new OpenFileDialog();
+            dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+            dialog.Multiselect = false;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                dialog.Title = TextHelper.GetString("Label.AddLibraryAsset");
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-                dialog.Multiselect = false;
+                string filePath = CopyFile(dialog.FileName, inDirectory);
 
-                if (dialog.ShowDialog() == DialogResult.OK)
+                // null means the user cancelled
+                if (filePath is null) return;
+
+                // add as an asset
+                project.SetLibraryAsset(filePath, true);
+
+                if (!FileInspector.IsSwc(filePath))
                 {
-                    string filePath = CopyFile(dialog.FileName, inDirectory);
+                    // ask if you want to keep this file updated
+                    string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    string message = TextHelper.GetString("Info.ConfirmFileUpdate");
 
-                    // null means the user cancelled
-                    if (filePath == null) return;
+                    DialogResult result = MessageBox.Show(mainForm, message, caption,
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                    // add as an asset
-                    project.SetLibraryAsset(filePath, true);
-
-                    if (!FileInspector.IsSwc(filePath))
+                    if (result == DialogResult.Yes)
                     {
-                        // ask if you want to keep this file updated
-                        string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                        string message = TextHelper.GetString("Info.ConfirmFileUpdate");
-
-                        DialogResult result = MessageBox.Show(mainForm, message, caption,
-                            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                        if (result == DialogResult.Yes)
-                        {
-                            LibraryAsset asset = project.GetAsset(filePath);
-                            asset.UpdatePath = project.GetRelativePath(dialog.FileName);
-                        }
+                        LibraryAsset asset = project.GetAsset(filePath);
+                        asset.UpdatePath = project.GetRelativePath(dialog.FileName);
                     }
-
-                    project.Save();
-                    OnProjectModified(new[] { filePath });
                 }
+
+                project.Save();
+                OnProjectModified(new[] { filePath });
             }
         }
 
         public void AddExistingFile(string inDirectory)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
-            {
-                dialog.Title = TextHelper.GetString("Label.AddExistingFile");
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-                dialog.Multiselect = false;
+            using var dialog = new OpenFileDialog();
+            dialog.Title = TextHelper.GetString("Label.AddExistingFile");
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+            dialog.Multiselect = false;
 
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    CopyFile(dialog.FileName, inDirectory);
-            }
+            if (dialog.ShowDialog() == DialogResult.OK)
+                CopyFile(dialog.FileName, inDirectory);
         }
 
         public void AddFolder(string inDirectory)
@@ -262,16 +251,16 @@ namespace ProjectManager.Actions
 
         #region Working With Existing Files
 
-        private bool cut;
+        bool cut;
 
         /// <summary>
         /// Notify of file action and allow plugins to handle the operation
         /// </summary>
-        private bool CancelAction(string name, object context)
+        bool CancelAction(string name, object context)
         {
-            DataEvent de = new DataEvent(EventType.Command, name, context);
-            EventManager.DispatchEvent(this, de);
-            return de.Handled;
+            var e = new DataEvent(EventType.Command, name, context);
+            EventManager.DispatchEvent(this, e);
+            return e.Handled;
         }
 
         public void CutToClipboard(string[] paths)
@@ -286,7 +275,7 @@ namespace ProjectManager.Actions
             if (CancelAction(ProjectFileActionsEvents.FileCopy, paths)) return;
 
             cut = false;
-            DataObject o = new DataObject(DataFormats.FileDrop, paths);
+            var o = new DataObject(DataFormats.FileDrop, paths);
             Clipboard.SetDataObject(o);
         }
 
@@ -297,12 +286,11 @@ namespace ProjectManager.Actions
             if (File.Exists(toPath)) 
                 toPath = Path.GetDirectoryName(toPath);
 
-            DataObject o = Clipboard.GetDataObject() as DataObject;
+            var o = (DataObject) Clipboard.GetDataObject();
             if (o.GetDataPresent(DataFormats.FileDrop))
             {
                 // the data is in the form of an array of paths
-                Array aFiledrop = (Array)o.GetData(DataFormats.FileDrop);
-
+                var aFiledrop = (Array)o.GetData(DataFormats.FileDrop);
                 try
                 {
                     foreach (string path in aFiledrop)
@@ -338,13 +326,8 @@ namespace ProjectManager.Actions
                 }
                 else message = $"\"{name}\" {message}";
 
-                DialogResult result = DialogResult.OK;
-
-                if (confirm)
-                    result = MessageBox.Show(mainForm, message, caption,
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning);
-
+                var result = DialogResult.OK;
+                if (confirm) result = MessageBox.Show(mainForm, message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (result == DialogResult.OK)
                 {
                     DisableWatchers();
@@ -370,8 +353,7 @@ namespace ProjectManager.Actions
 
         public void Delete(string[] paths)
         {
-            if (paths.Length == 1)
-                Delete(paths[0], true);
+            if (paths.Length == 1) Delete(paths[0], true);
             else
             {
                 if (CancelAction(ProjectFileActionsEvents.FileDelete, paths)) return;
@@ -586,18 +568,18 @@ namespace ProjectManager.Actions
                     }
 
                     // offer to choose the new name
-                    string label = TextHelper.GetString("Info.NewDuplicateName");
-                    string title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
-                    string suggestion = Path.GetFileNameWithoutExtension(copyPath);
-                    using (LineEntryDialog askName = new LineEntryDialog(title, label, suggestion))
+                    var label = TextHelper.GetString("Info.NewDuplicateName");
+                    var title = string.Format(TextHelper.GetString("Info.DuplicatingFile"), Path.GetFileName(toPath));
+                    var suggestion = Path.GetFileName(copyPath);
+                    using var dialog = new LineEntryDialog(title, label, suggestion);
+                    dialog.SelectRange(0, Path.GetFileNameWithoutExtension(copyPath).Length);
+                    var choice = dialog.ShowDialog();
+                    if (choice == DialogResult.OK && dialog.Line.Trim().Length > 0)
                     {
-                        DialogResult choice = askName.ShowDialog();
-                        if (choice == DialogResult.OK && askName.Line.Trim().Length > 0)
-                        {
-                            copyPath = Path.Combine(Path.GetDirectoryName(toPath), askName.Line.Trim()) + Path.GetExtension(toPath);
-                        }
-                        else throw new UserCancelException();
+                        copyPath = Path.Combine(Path.GetDirectoryName(toPath), dialog.Line.Trim());
                     }
+                    else throw new UserCancelException();
+
                     toPath = copyPath;
                 }
 
@@ -610,9 +592,9 @@ namespace ProjectManager.Actions
 
                 OnFilePasted(fromPath, toPath);
             }
-            catch (UserCancelException uex)
+            catch (UserCancelException)
             {
-                throw uex;
+                throw;
             }
             catch (Exception exception)
             {
@@ -620,17 +602,17 @@ namespace ProjectManager.Actions
             }
         }
 
-        private string CopyFile(string file, string toDirectory)
+        string CopyFile(string file, string toDirectory)
         {
-            string fileName = Path.GetFileName(file);
-            string filePath = Path.Combine(toDirectory, fileName);
+            var fileName = Path.GetFileName(file);
+            var filePath = Path.Combine(toDirectory, fileName);
 
             if (File.Exists(filePath))
             {
-                string caption = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                string message = TextHelper.GetString("Info.FileAlreadyExistsInProject");
+                var caption = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.FileAlreadyExistsInProject");
 
-                DialogResult result = MessageBox.Show(mainForm, string.Format(message, filePath), 
+                var result = MessageBox.Show(mainForm, string.Format(message, filePath), 
                    caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Cancel) return null;
@@ -639,33 +621,33 @@ namespace ProjectManager.Actions
             return filePath;
         }
 
-        private void DisableWatchers()
+        void DisableWatchers()
         {
-            DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
-            EventManager.DispatchEvent(this, disableWatchers);
+            var e = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
+            EventManager.DispatchEvent(this, e);
         }
 
-        private void EnableWatchers()
+        void EnableWatchers()
         {
-            DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
-            EventManager.DispatchEvent(this, enableWatchers);
+            var e = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
+            EventManager.DispatchEvent(this, e);
         }
 
         #endregion
 
         #region Event Helpers
 
-        private void OnFileCreated(string path) => FileCreated?.Invoke(path);
+        void OnFileCreated(string path) => FileCreated?.Invoke(path);
 
-        private void OnFileMoved(string fromPath, string toPath) => FileMoved?.Invoke(fromPath, toPath);
+        void OnFileMoved(string fromPath, string toPath) => FileMoved?.Invoke(fromPath, toPath);
 
-        private void OnFilePasted(string fromPath, string toPath) => FileCopied?.Invoke(fromPath, toPath);
+        void OnFilePasted(string fromPath, string toPath) => FileCopied?.Invoke(fromPath, toPath);
 
-        private void OnFileDeleted(string path) => FileDeleted?.Invoke(path);
+        void OnFileDeleted(string path) => FileDeleted?.Invoke(path);
 
-        private void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
+        void OnProjectModified(string[] paths) => ProjectModified?.Invoke(paths);
 
-        private void OnOpenFile(string path) => OpenFile?.Invoke(path);
+        void OnOpenFile(string path) => OpenFile?.Invoke(path);
 
         #endregion
 

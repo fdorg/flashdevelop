@@ -40,7 +40,7 @@ namespace FlashDevelop.Managers
             {
                 Session session = new Session();
                 session = (Session)ObjectSerializer.Deserialize(file, session);
-                if (session.Files == null) session.Files = new List<string>();
+                if (session.Files is null) session.Files = new List<string>();
                 session.Type = type; // set the type here...
                 RestoreSession(file, session);
             }
@@ -61,9 +61,8 @@ namespace FlashDevelop.Managers
                     EventManager.DispatchEvent(Globals.MainForm, te);
                     if (!te.Handled)
                     {
-                        for (int i = 0; i < session.Files.Count; i++)
+                        foreach (var fileToOpen in session.Files)
                         {
-                            string fileToOpen = session.Files[i];
                             if (File.Exists(fileToOpen)) Globals.MainForm.OpenEditableDocument(fileToOpen);
                         }
                         RestoreDocks(session);
@@ -121,8 +120,8 @@ namespace FlashDevelop.Managers
         /// </summary> 
         public static Session GetCurrentSession()
         {
-            Session session = new Session();
-            ITabbedDocument[] documents = Globals.MainForm.Documents;
+            var session = new Session();
+            var documents = Globals.MainForm.Documents;
             for (int i = 0; i < documents.Length; i++)
             {
                 ITabbedDocument document = documents[i];
@@ -147,7 +146,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                DockContent content = document as DockContent;
+                DockContent content = (DockContent) document;
                 double prop = content.Pane.NestedDockingStatus.Proportion;
                 DockAlignment align = content.Pane.NestedDockingStatus.Alignment;
                 int paneIndex = content.DockPanel.Panes.IndexOf(content.Pane);

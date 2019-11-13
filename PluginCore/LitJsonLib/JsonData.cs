@@ -666,7 +666,7 @@ namespace LitJson
 
         private JsonData ToJsonData (object obj)
         {
-            if (obj == null)
+            if (obj is null)
                 return null;
 
             if (obj is JsonData)
@@ -750,39 +750,20 @@ namespace LitJson
 
         public bool Equals (JsonData x)
         {
-            if (x == null)
-                return false;
-
-            if (x.type != this.type)
-                return false;
-
-            switch (this.type) {
-            case JsonType.None:
-                return true;
-
-            case JsonType.Object:
-                return this.inst_object.Equals (x.inst_object);
-
-            case JsonType.Array:
-                return this.inst_array.Equals (x.inst_array);
-
-            case JsonType.String:
-                return this.inst_string.Equals (x.inst_string);
-
-            case JsonType.Int:
-                return this.inst_int.Equals (x.inst_int);
-
-            case JsonType.Long:
-                return this.inst_long.Equals (x.inst_long);
-
-            case JsonType.Double:
-                return this.inst_double.Equals (x.inst_double);
-
-            case JsonType.Boolean:
-                return this.inst_boolean.Equals (x.inst_boolean);
-            }
-
-            return false;
+            if (x is null) return false;
+            if (x.type != this.type) return false;
+            return this.type switch
+            {
+                JsonType.None => true,
+                JsonType.Object => this.inst_object.Equals(x.inst_object),
+                JsonType.Array => this.inst_array.Equals(x.inst_array),
+                JsonType.String => this.inst_string.Equals(x.inst_string),
+                JsonType.Int => this.inst_int.Equals(x.inst_int),
+                JsonType.Long => this.inst_long.Equals(x.inst_long),
+                JsonType.Double => this.inst_double.Equals(x.inst_double),
+                JsonType.Boolean => this.inst_boolean.Equals(x.inst_boolean),
+                _ => false,
+            };
         }
 
         public JsonType GetJsonType ()
@@ -860,30 +841,17 @@ namespace LitJson
 
         public override string ToString ()
         {
-            switch (type) {
-            case JsonType.Array:
-                return "JsonData array";
-
-            case JsonType.Boolean:
-                return inst_boolean.ToString ();
-
-            case JsonType.Double:
-                return inst_double.ToString ();
-
-            case JsonType.Int:
-                return inst_int.ToString ();
-
-            case JsonType.Long:
-                return inst_long.ToString ();
-
-            case JsonType.Object:
-                return "JsonData object";
-
-            case JsonType.String:
-                return inst_string;
-            }
-
-            return "Uninitialized JsonData";
+            return type switch
+            {
+                JsonType.Array => "JsonData array",
+                JsonType.Boolean => inst_boolean.ToString(),
+                JsonType.Double => inst_double.ToString(),
+                JsonType.Int => inst_int.ToString(),
+                JsonType.Long => inst_long.ToString(),
+                JsonType.Object => "JsonData object",
+                JsonType.String => inst_string,
+                _ => "Uninitialized JsonData",
+            };
         }
     }
 

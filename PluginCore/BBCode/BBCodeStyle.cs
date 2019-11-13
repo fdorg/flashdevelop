@@ -9,10 +9,10 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle fuseStyles(BBCodeStyle child, BBCodeStyle parent)
         {
-            if (parent == null)
+            if (parent is null)
                 return child?.clone();
 
-            if (child == null)
+            if (child is null)
                 return parent.clone();
 
             BBCodeStyle outStyle = child.clone();
@@ -51,12 +51,12 @@ namespace PluginCore.BBCode
             if (string.IsNullOrEmpty(outStyle.fontName))
                 outStyle.fontName = parent.fontName;
 
-            if (outStyle.backColor == null)
+            if (outStyle.backColor is null)
                 outStyle.backColor = parent.backColor;
             else
                 outStyle.backColor = Color.Mix(parent.backColor, outStyle.backColor);
 
-            if (outStyle.foreColor == null)
+            if (outStyle.foreColor is null)
                 outStyle.foreColor = parent.foreColor;
             else
                 outStyle.foreColor = Color.Mix(outStyle.backColor, outStyle.foreColor);
@@ -66,7 +66,7 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle fuseStyleHierarchy(List<BBCodeStyle> parentToChildHierarchy)
         {
-            if (parentToChildHierarchy == null || parentToChildHierarchy.Count < 1)
+            if (parentToChildHierarchy.IsNullOrEmpty())
                 return null;
 
             if (parentToChildHierarchy.Count == 1)
@@ -74,8 +74,8 @@ namespace PluginCore.BBCode
 
             BBCodeStyle t = parentToChildHierarchy[0].clone();
 
-            if (t.foreColor == null) t.foreColor = new Color(0x000000, Mode.NORMAL);
-            if (t.backColor == null) t.backColor = new Color(0xCC99CC, Mode.NORMAL);
+            if (t.foreColor is null) t.foreColor = new Color(0x000000, Mode.NORMAL);
+            if (t.backColor is null) t.backColor = new Color(0xCC99CC, Mode.NORMAL);
 
             if (t.isBold == StateMode.DEFAULT) t.isBold = StateMode.OFF;
             if (t.isItalic == StateMode.DEFAULT) t.isItalic = StateMode.OFF;
@@ -142,8 +142,8 @@ namespace PluginCore.BBCode
                    + " fontName='" + (fontName ?? "null") + "'"
                    + " fontSize='" + fontSize + "'"
                    + " isAbsFontSize='" + isAbsFontSize + "'"
-                   + " foreColor='" + (foreColor == null ? "null" : foreColor.ToString()) + "'"
-                   + " backColor='" + (backColor == null ? "null" : backColor.ToString()) + "'"
+                   + " foreColor='" + (foreColor is null ? "null" : foreColor.ToString()) + "'"
+                   + " backColor='" + (backColor is null ? "null" : backColor.ToString()) + "'"
                    + "]";
         }
 
@@ -159,7 +159,7 @@ namespace PluginCore.BBCode
 
             public static Color Mix(Color back, Color fore)
             {
-                if (back == null || fore == null)
+                if (back is null || fore is null)
                     return null;
 
                 float backR = (((back.color >> 16) & 0xFF) / 255.0f);

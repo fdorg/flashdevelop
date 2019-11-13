@@ -26,26 +26,17 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Registers a shortcut item
         /// </summary>
-        public static void RegisterItem(string key, Keys keys)
-        {
-            RegisteredItems.Add(key, new ShortcutItem(key, keys));
-        }
+        public static void RegisterItem(string key, Keys keys) => RegisteredItems.Add(key, new ShortcutItem(key, keys));
 
         /// <summary>
         /// Registers a shortcut item
         /// </summary>
-        public static void RegisterItem(string key, ToolStripMenuItem item)
-        {
-            RegisteredItems.Add(key, new ShortcutItem(key, item));
-        }
+        public static void RegisterItem(string key, ToolStripMenuItem item) => RegisteredItems.Add(key, new ShortcutItem(key, item));
 
         /// <summary>
         /// Registers a secondary item
         /// </summary>
-        public static void RegisterSecondaryItem(ToolStripItem item)
-        {
-            SecondaryItems.Add(item);
-        }
+        public static void RegisterSecondaryItem(ToolStripItem item) => SecondaryItems.Add(item);
 
         /// <summary>
         /// Registers a secondary item
@@ -59,10 +50,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the specified registered shortcut item
         /// </summary>
-        public static ShortcutItem GetRegisteredItem(string id)
-        {
-            return RegisteredItems.TryGetValue(id, out var item) ? item : null;
-        }
+        public static ShortcutItem GetRegisteredItem(string id) => RegisteredItems.TryGetValue(id, out var item) ? item : null;
 
         /// <summary>
         /// Gets the specified registered shortcut item
@@ -139,35 +127,28 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ApplySecondaryShortcut(ToolStripItem item)
         {
+            if (item?.Tag is null) return;
+            string id;
+            var ids = ((ItemData) item.Tag).Id.Split(';');
+            if (ids.Length == 2) id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+            else return; // No work for us here...
             bool view = Globals.Settings.ViewShortcuts;
-            if (item?.Tag != null)
+            Keys keys = Globals.MainForm.GetShortcutItemKeys(id);
+            if (keys == Keys.None) return;
+            if (item is ToolStripMenuItem casted)
             {
-                string id;
-                string[] ids = ((ItemData) item.Tag).Id.Split(';');
-                if (ids.Length == 2)
+                if (casted.ShortcutKeys == Keys.None)
                 {
-                    id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+                    string keytext = DataConverter.KeysToString(keys);
+                    casted.ShortcutKeyDisplayString = view ? keytext : "";
                 }
-                else return; // No work for us here...
-                Keys keys = Globals.MainForm.GetShortcutItemKeys(id);
-                if (keys != Keys.None)
-                {
-                    if (item is ToolStripMenuItem casted)
-                    {
-                        if (casted.ShortcutKeys == Keys.None)
-                        {
-                            string keytext = DataConverter.KeysToString(keys);
-                            casted.ShortcutKeyDisplayString = view ? keytext : "";
-                        }
-                    }
-                    else
-                    {
-                        int end = item.ToolTipText.IndexOfOrdinal(" (");
-                        string keytext = view ? " (" + DataConverter.KeysToString(keys) + ")" : "";
-                        if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
-                        else item.ToolTipText += keytext;
-                    }
-                }
+            }
+            else
+            {
+                int end = item.ToolTipText.IndexOfOrdinal(" (");
+                string keytext = view ? " (" + DataConverter.KeysToString(keys) + ")" : "";
+                if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
+                else item.ToolTipText += keytext;
             }
         }
 
@@ -177,16 +158,14 @@ namespace FlashDevelop.Managers
         public static void LoadCustomShortcuts()
         {
             ScintillaControl.InitShortcuts();
-            string file = FileNameHelper.ShortcutData;
-            if (File.Exists(file))
+            var file = FileNameHelper.ShortcutData;
+            if (!File.Exists(file)) return;
+            var shortcuts = new List<Argument>();
+            shortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, shortcuts, false);
+            foreach (Argument arg in shortcuts)
             {
-                List<Argument> shortcuts = new List<Argument>();
-                shortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, shortcuts, false);
-                foreach (Argument arg in shortcuts)
-                {
-                    ShortcutItem item = GetRegisteredItem(arg.Key);
-                    if (item != null) item.Custom = (Keys) Enum.Parse(typeof(Keys), arg.Value);
-                }
+                ShortcutItem item = GetRegisteredItem(arg.Key);
+                if (item != null) item.Custom = (Keys) Enum.Parse(typeof(Keys), arg.Value);
             }
         }
 
@@ -212,35 +191,32 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void LoadCustomShortcuts(string file, IEnumerable<IShortcutItem> items)
         {
-            if (File.Exists(file))
+            if (!File.Exists(file)) return;
+            try
             {
-                try
+                List<Argument> customShortcuts = new List<Argument>();
+                customShortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, customShortcuts, false);
+                int count = customShortcuts.Count;
+                foreach (IShortcutItem item in items)
                 {
-                    List<Argument> customShortcuts = new List<Argument>();
-                    customShortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, customShortcuts, false);
-                    int count = customShortcuts.Count;
-
-                    foreach (IShortcutItem item in items)
+                    Keys newShortcut = item.Default;
+                    for (int i = 0; i < count; i++)
                     {
-                        Keys newShortcut = item.Default;
-                        for (int i = 0; i < count; i++)
+                        Argument arg = customShortcuts[i];
+                        if (arg.Key == item.Id)
                         {
-                            Argument arg = customShortcuts[i];
-                            if (arg.Key == item.Id)
-                            {
-                                newShortcut = (Keys) Enum.Parse(typeof(Keys), arg.Value);
-                                customShortcuts.RemoveAt(i);
-                                count--;
-                                break;
-                            }
+                            newShortcut = (Keys) Enum.Parse(typeof(Keys), arg.Value);
+                            customShortcuts.RemoveAt(i);
+                            count--;
+                            break;
                         }
-                        item.Custom = newShortcut;
                     }
+                    item.Custom = newShortcut;
                 }
-                catch (Exception e)
-                {
-                    ErrorManager.ShowError(e);
-                }
+            }
+            catch (Exception e)
+            {
+                ErrorManager.ShowError(e);
             }
         }
 
@@ -251,7 +227,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                List<Argument> shortcuts = new List<Argument>();
+                var shortcuts = new List<Argument>();
                 foreach (IShortcutItem item in items)
                 {
                     if (item.IsModified) shortcuts.Add(new Argument(item.Id, item.Custom.ToString()));
@@ -277,21 +253,18 @@ namespace FlashDevelop.Managers
 
         public ShortcutItem(string id, Keys keys)
         {
-            this.Id = id;
-            this.Default = this.Custom = keys;
+            Id = id;
+            Default = Custom = keys;
         }
 
         public ShortcutItem(string id, ToolStripMenuItem item)
         {
-            this.Id = id;
-            this.Item = item;
-            this.Default = this.Custom = item.ShortcutKeys;
+            Id = id;
+            Item = item;
+            Default = Custom = item.ShortcutKeys;
         }
 
-        public override string ToString()
-        {
-            return Id;
-        }
+        public override string ToString() => Id;
     }
 
     public interface IShortcutItem

@@ -97,7 +97,7 @@ namespace FlashDebugger
         /// </summary>
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
-            if (debugManager == null) return;
+            if (debugManager is null) return;
             switch (e.Type)
             {
                 case EventType.FileOpen:

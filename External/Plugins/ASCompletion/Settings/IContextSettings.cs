@@ -86,5 +86,9 @@ namespace ASCompletion.Settings
         /// </summary>
         string CheckSyntaxDone { get; }
 
+        /// <summary>
+        /// When reformating, always keep a space character after these words.
+        /// </summary>
+        string AddSpaceAfter { get; set; }
     }
 }

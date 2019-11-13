@@ -185,7 +185,7 @@ namespace FileExplorer
             if (paths is null) return;
             var pathsList = new List<string>(paths);
             pathsList.RemoveAll(p => !Directory.Exists(p));
-            if (pathsList.Count <= 0) return;
+            if (pathsList.Count == 0) return;
             string path = string.Join(";", pathsList.ToArray());
             PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
         }
@@ -239,7 +239,7 @@ namespace FileExplorer
         /// </summary> 
         public void AddEventHandlers()
         {
-            var eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
+            const EventType eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
             EventManager.AddEventHandler(this, eventMask, HandlingPriority.Low);
         }
 

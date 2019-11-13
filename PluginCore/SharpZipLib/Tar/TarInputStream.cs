@@ -204,7 +204,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) 
+            if ( buffer is null ) 
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -249,7 +249,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             while (numToRead > 0) 
             {
                 byte[] rec = tarBuffer.ReadBlock();
-                if (rec == null) 
+                if (rec is null) 
                 {
                     // Unexpected EOF!
                     throw new TarException("unexpected EOF with " + numToRead + " bytes unread");
@@ -406,7 +406,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             
             byte[] headerBuf = tarBuffer.ReadBlock();
             
-            if (headerBuf == null) {
+            if (headerBuf is null) {
                 hasHitEOF = true;
             } else if (TarBuffer.IsEndOfArchiveBlock(headerBuf)) {
                 hasHitEOF = true;
@@ -467,7 +467,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                         headerBuf = tarBuffer.ReadBlock();
                     }
                     
-                    if (entryFactory == null) {
+                    if (entryFactory is null) {
                         currentEntry = new TarEntry(headerBuf);
                         if (longName != null) {
                             currentEntry.Name = longName.ToString();

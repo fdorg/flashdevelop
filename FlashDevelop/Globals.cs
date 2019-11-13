@@ -10,10 +10,7 @@ namespace FlashDevelop
         /// <summary>
         /// Quick reference to MainForm 
         /// </summary> 
-        public static MainForm MainForm
-        {
-            get; internal set;
-        }
+        public static MainForm MainForm { get; internal set; }
 
         /// <summary>
         /// Quick reference to CurrentDocument 

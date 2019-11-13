@@ -7,21 +7,14 @@ namespace FlashDevelop.Managers
 {
     class PrintingManager
     {
-        public static int PrintPageNumber = 0;
-        public static int PrintPageLastChar = 0;
-        public static PrinterSettings PrinterSettings = null;
+        public static int PrintPageNumber;
+        public static int PrintPageLastChar;
+        public static PrinterSettings PrinterSettings;
 
         /// <summary>
         /// Gets the global printer settings
         /// </summary> 
-        public static PrinterSettings GetPrinterSettings()
-        {
-            if (PrinterSettings == null)
-            {
-                PrinterSettings = new PrinterSettings();
-            }
-            return PrinterSettings;
-        }
+        public static PrinterSettings GetPrinterSettings() => PrinterSettings ??= new PrinterSettings();
 
         /// <summary>
         /// Creates a new print document

@@ -437,7 +437,7 @@ namespace ProjectManager.Controls.AS2
 
             #region Setup Form
 
-            autoIDBox.Checked = asset.ManualID == null;
+            autoIDBox.Checked = asset.ManualID is null;
             idTextBox.Text = asset.ID;
             keepUpdatedBox.Checked = (asset.UpdatePath != null);
             updatedTextBox.Text = asset.UpdatePath;
@@ -446,7 +446,7 @@ namespace ProjectManager.Controls.AS2
             sharedLibraryButton.Checked = (asset.SwfMode == SwfAssetMode.Shared);
             specifySharepointBox.Checked = asset.Sharepoint != null;
             sharepointTextBox.Text = asset.Sharepoint;
-            embedAllButton.Checked = (asset.FontGlyphs == null);
+            embedAllButton.Checked = (asset.FontGlyphs is null);
             embedTheseButton.Checked = (asset.FontGlyphs != null);
             charactersTextBox.Text = asset.FontGlyphs;
             bitmapLinkageBox.Checked = asset.BitmapLinkage;

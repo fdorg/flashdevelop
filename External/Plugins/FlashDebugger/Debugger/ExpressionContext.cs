@@ -31,12 +31,11 @@ namespace FlashDebugger
 
         public void assign(Object par0, Value par1)
         {
-            Variable var = lookup(par0) as Variable;
-            if (var != null)
+            if (lookup(par0) is Variable variable)
             {
-                int type = var.getValue().getType();
+                int type = variable.getValue().getType();
                 if (type == VariableType_.BOOLEAN || type == VariableType_.NUMBER || type == VariableType_.STRING)
-                    var.setValue(session, par1.getType(), par1.getValueAsString());
+                    variable.setValue(session, par1.getType(), par1.getValueAsString());
                 else
                     throw new NotSupportedException(TextHelper.GetString("Error.NoScalar"));
             } 
@@ -46,65 +45,58 @@ namespace FlashDebugger
 
         public Context createContext(Object par0)
         {
-            Value val;
-            if (par0 is Variable) val = ((Variable)par0).getValue();
-            else if (par0 is Value) val = (Value)par0;
-            else if (par0 is String) val = DValue.forPrimitive(par0, getIsolateId());
-            else throw new NotImplementedException();
+            var val = par0 switch
+            {
+                Variable variable => variable.getValue(),
+                Value value => value,
+                String _ => DValue.forPrimitive(par0, getIsolateId()),
+                _ => throw new NotImplementedException(),
+            };
             return new ExpressionContext(session, frame, val);
         }
 
-        public void createPseudoVariables(bool par0)
-        {
-            throw new NotImplementedException();
-        }
+        public void createPseudoVariables(bool par0) => throw new NotImplementedException();
 
-        public Session getSession()
-        {
-            return session;
-        }
+        public Session getSession() => session;
 
         public Object lookup(Object par0)
         {
-            if (par0 is String)
+            if (!(par0 is String s)) throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+            if (contextVal != null)
             {
-                if (null != contextVal)
-                {
-                    foreach (Variable v in contextVal.getMembers(session))
-                    {
-                        if (v.getName().Equals(par0)) return (Object)v;
-                    }
-                    throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
-                }
-
-                if ((String)par0 == "this")
-                {
-                    return (Object)frame.getThis(session);
-                }
-                foreach (Variable v in frame.getArguments(session))
+                foreach (Variable v in contextVal.getMembers(session))
                 {
                     if (v.getName().Equals(par0)) return (Object)v;
                 }
-                foreach (Variable v in frame.getLocals(session))
+                throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
+            }
+            if (s == "this")
+            {
+                return (Object)frame.getThis(session);
+            }
+            foreach (Variable v in frame.getArguments(session))
+            {
+                if (v.getName().Equals(par0)) return (Object)v;
+            }
+            foreach (Variable v in frame.getLocals(session))
+            {
+                if (v.getName().Equals(par0)) return (Object)v;
+            }
+            foreach (Variable v in frame.getThis(session).getValue().getMembers(session))
+            {
+                if (v.getName().Equals(par0)) return (Object)v;
+            }
+            foreach (Variable scope in frame.getScopeChain(session))
+            {
+                foreach (Variable v in scope.getValue().getMembers(session))
                 {
                     if (v.getName().Equals(par0)) return (Object)v;
                 }
-                foreach (Variable v in frame.getThis(session).getValue().getMembers(session))
-                {
-                    if (v.getName().Equals(par0)) return (Object)v;
-                }
-                foreach (Variable scope in frame.getScopeChain(session))
-                {
-                    foreach (Variable v in scope.getValue().getMembers(session))
-                    {
-                        if (v.getName().Equals(par0)) return (Object)v;
-                    }
-                }
-                var fullClassName = findClassName((String)par0);
-                if (null != fullClassName)
-                {
-                    return (Object)session.getGlobal(new String(fullClassName));
-                }
+            }
+            var fullClassName = findClassName(s);
+            if (null != fullClassName)
+            {
+                return (Object)session.getGlobal(new String(fullClassName));
             }
             throw new NoSuchVariableException(string.Format(TextHelper.GetString("Error.NoSuchVariable"), par0));
             //Value_.UNDEFINED;
@@ -139,14 +131,13 @@ namespace FlashDebugger
             String name = "?";
             Value val = null;
 
-            if (par0 is Value)
+            if (par0 is Value value)
             {
-                val = (Value)par0;
+                val = value;
             }
             
-            if (par0 is Variable)
+            if (par0 is Variable var0)
             {
-                Variable var0 = (Variable)par0;
                 name = var0.getName();
                 val = var0.getValue();
             }
@@ -173,39 +164,28 @@ namespace FlashDebugger
 
         public String FormatValue(Value val)
         {
-            String ret = "";
-            if (val == null) return "null";
+            if (val is null) return "null";
             int type = val.getType();
             if (type == VariableType_.MOVIECLIP || type == VariableType_.OBJECT)
             {
-                ret = val.getTypeName();
+                return val.getTypeName();
             }
-            else
-            {
-                ret = val.getValueAsString();
-            }
-            return ret;
+            return val.getValueAsString();
         }
 
         public Value toValue(Object par0)
         {
-            if (par0 is Value) return (Value)par0;
-            if (par0 is Variable) return ((Variable)par0).getValue();
-            var val = DValue.forPrimitive(par0, getIsolateId());
-            return val;
+            return par0 switch
+            {
+                Value value => value,
+                Variable variable => variable.getValue(),
+                _ => DValue.forPrimitive(par0, getIsolateId()),
+            };
         }
 
-        public Value toValue()
-        {
-            return contextVal;
-        }
-
-
-        public int getIsolateId()
-        {
-            if (contextVal == null) return frame.getIsolateId();
-            return contextVal.getIsolateId();
-        }
+        public Value toValue() => contextVal;
+        
+        public int getIsolateId() => contextVal?.getIsolateId() ?? frame.getIsolateId();
     }
 }
 #else
@@ -325,7 +305,7 @@ namespace FlashDebugger
             try
             {
                 Variable var = resolveToVariable(o);
-                if (var == null) throw new NoSuchVariableException((java.lang.Object)m_current);
+                if (var is null) throw new NoSuchVariableException((java.lang.Object)m_current);
                 // set the value, for the case of a variable that does not exist it will not have a type
                 // so we try to glean one from v.
                 int type = determineType(var, v);
@@ -440,7 +420,7 @@ namespace FlashDebugger
         internal virtual int determineType(Variable var, Object value)
         {
             int type = VariableType.UNKNOWN;
-            if (var is VariableFacade && ((VariableFacade) var).Variable == null)
+            if (var is VariableFacade && ((VariableFacade) var).Variable is null)
             {
                 if (value is ValueType) type = VariableType.NUMBER;
                 else if (value is Boolean) type = VariableType.BOOLEAN;
@@ -481,7 +461,7 @@ namespace FlashDebugger
                     id = determineContext(name);
                     v = locateForNamed((int) id, name, true);
                     if (v != null) v = new VariableFacade(v, id);
-                    else if (v == null && m_createIfMissing && name[0] != '$')
+                    else if (v is null && m_createIfMissing && name[0] != '$')
                     {
                         v = new VariableFacade(id, name);
                     }
@@ -544,7 +524,7 @@ namespace FlashDebugger
         {
             Variable v = null;
             Value parent = Session.getValue((int) id);
-            if (parent == null) throw new NoSuchVariableException(name);
+            if (parent is null) throw new NoSuchVariableException(name);
             /* got a variable now return the member if any */
             v = parent.getMemberNamed(Session, name);
             return v;
@@ -580,7 +560,7 @@ namespace FlashDebugger
                 }
             }
             // nothing to go on, so we're done
-            else if (name == null)
+            else if (name is null)
             {
 
             }
@@ -654,17 +634,17 @@ namespace FlashDebugger
             {
                 var = memberNamed(id, name);
                 // see if we need to traverse the proto chain
-                while (var == null && traverseProto)
+                while (var is null && traverseProto)
                 {
                     // first attempt to get __proto__, then resolve name
                     Variable proto = memberNamed(id, "__proto__"); //$NON-NLS-1$
                     sb.Append("__proto__"); //$NON-NLS-1$
-                    if (proto == null) traverseProto = false;
+                    if (proto is null) traverseProto = false;
                     else
                     {
                         id = proto.getValue().getId();
                         var = memberNamed(id, name);
-                        if (var == null) sb.Append('.');
+                        if (var is null) sb.Append('.');
                     }
                 }
             }
@@ -709,7 +689,7 @@ namespace FlashDebugger
         /// </summary>
         internal virtual Value locate(int startingId, String dottedName, bool traverseProto)
         {
-            if (dottedName == null) return null;
+            if (dottedName is null) return null;
             // first rip apart the dottedName
             SupportClass.Tokenizer names = new SupportClass.Tokenizer(dottedName, "."); //$NON-NLS-1$
             Value val = Session.getValue(startingId);

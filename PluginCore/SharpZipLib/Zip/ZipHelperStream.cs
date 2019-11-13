@@ -538,7 +538,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>Returns the number of descriptor bytes written.</returns>
         public int WriteDataDescriptor(ZipEntry entry)
         {
-            if (entry == null) {
+            if (entry is null) {
                 throw new ArgumentNullException(nameof(entry));
             }
 

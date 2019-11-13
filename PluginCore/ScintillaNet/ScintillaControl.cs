@@ -2775,570 +2775,357 @@ namespace ScintillaNet
         /// <summary>
         /// Make the target range start and end be the same as the selection range start and end.
         /// </summary>
-        public void TargetFromSelection()
-        {
-            SPerform(2287, 0, 0);
-        }
+        public void TargetFromSelection() => SPerform(2287, 0, 0);
 
         /// <summary>
         /// Join the lines in the target.
         /// </summary>
-        public void LinesJoin()
-        {
-            SPerform(2288, 0, 0);
-        }
+        public void LinesJoin() => SPerform(2288, 0, 0);
 
         /// <summary>
         /// Split the lines in the target into lines that are less wide than pixelWidth
         /// where possible.
         /// </summary>
-        public void LinesSplit(int pixelWidth)
-        {
-            SPerform(2289, pixelWidth, 0);
-        }
+        public void LinesSplit(int pixelWidth) => SPerform(2289, pixelWidth, 0);
 
         /// <summary>
         /// Set the colours used as a chequerboard pattern in the fold margin
         /// </summary>
-        public void SetFoldMarginColour(bool useSetting, int back)
-        {
-            SPerform(2290, useSetting ? 1 : 0, back);
-        }
+        public void SetFoldMarginColour(bool useSetting, int back) => SPerform(2290, useSetting ? 1 : 0, back);
 
         /// <summary>
         /// Set the colours used as a chequerboard pattern in the fold margin
         /// </summary>
-        public void SetFoldMarginHiColour(bool useSetting, int fore)
-        {
-            SPerform(2291, useSetting ? 1 : 0, fore);
-        }
+        public void SetFoldMarginHiColour(bool useSetting, int fore) => SPerform(2291, useSetting ? 1 : 0, fore);
 
         /// <summary>
         /// Move caret down one line.
         /// </summary>
-        public void LineDown()
-        {
-            SPerform(2300, 0, 0);
-        }
+        public void LineDown() => SPerform(2300, 0, 0);
 
         /// <summary>
         /// Move caret down one line extending selection to new caret position.
         /// </summary>
-        public void LineDownExtend()
-        {
-            SPerform(2301, 0, 0);
-        }
+        public void LineDownExtend() => SPerform(2301, 0, 0);
 
         /// <summary>
         /// Move caret up one line.
         /// </summary>
-        public void LineUp()
-        {
-            SPerform(2302, 0, 0);
-        }
+        public void LineUp() => SPerform(2302, 0, 0);
 
         /// <summary>
         /// Move caret up one line extending selection to new caret position.
         /// </summary>
-        public void LineUpExtend()
-        {
-            SPerform(2303, 0, 0);
-        }
+        public void LineUpExtend() => SPerform(2303, 0, 0);
 
         /// <summary>
         /// Move caret left one character.
         /// </summary>
-        public void CharLeft()
-        {
-            SPerform(2304, 0, 0);
-        }
+        public void CharLeft() => SPerform(2304, 0, 0);
 
         /// <summary>
         /// Move caret left one character extending selection to new caret position.
         /// </summary>
-        public void CharLeftExtend()
-        {
-            SPerform(2305, 0, 0);
-        }
+        public void CharLeftExtend() => SPerform(2305, 0, 0);
 
         /// <summary>
         /// Move caret right one character.
         /// </summary>
-        public void CharRight()
-        {
-            SPerform(2306, 0, 0);
-        }
+        public void CharRight() => SPerform(2306, 0, 0);
 
         /// <summary>
         /// Move caret right one character extending selection to new caret position.
         /// </summary>
-        public void CharRightExtend()
-        {
-            SPerform(2307, 0, 0);
-        }
+        public void CharRightExtend() => SPerform(2307, 0, 0);
 
         /// <summary>
         /// Move caret left one word.
         /// </summary>
-        public void WordLeft()
-        {
-            SPerform(2308, 0, 0);
-        }
+        public void WordLeft() => SPerform(2308, 0, 0);
 
         /// <summary>
         /// Move caret left one word extending selection to new caret position.
         /// </summary>
-        public void WordLeftExtend()
-        {
-            SPerform(2309, 0, 0);
-        }
+        public void WordLeftExtend() => SPerform(2309, 0, 0);
 
         /// <summary>
         /// Move caret right one word.
         /// </summary>
-        public void WordRight()
-        {
-            SPerform(2310, 0, 0);
-        }
+        public void WordRight() => SPerform(2310, 0, 0);
 
         /// <summary>
         /// Move caret right one word extending selection to new caret position.
         /// </summary>
-        public void WordRightExtend()
-        {
-            SPerform(2311, 0, 0);
-        }
+        public void WordRightExtend() => SPerform(2311, 0, 0);
 
         /// <summary>
         /// Move caret to first position on line.
         /// </summary>
-        public void Home()
-        {
-            SPerform(2312, 0, 0);
-        }
+        public void Home() => SPerform(2312, 0, 0);
 
         /// <summary>
         /// Move caret to first position on line extending selection to new caret position.
         /// </summary>
-        public void HomeExtend()
-        {
-            SPerform(2313, 0, 0);
-        }
+        public void HomeExtend() => SPerform(2313, 0, 0);
 
         /// <summary>
         /// Move caret to last position on line.
         /// </summary>
-        public void LineEnd()
-        {
-            SPerform(2314, 0, 0);
-        }
+        public void LineEnd() => SPerform(2314, 0, 0);
 
         /// <summary>
         /// Move caret to last position on line extending selection to new caret position.
         /// </summary>
-        public void LineEndExtend()
-        {
-            SPerform(2315, 0, 0);
-        }
+        public void LineEndExtend() => SPerform(2315, 0, 0);
 
         /// <summary>
         /// Move caret to first position in document.
         /// </summary>
-        public void DocumentStart()
-        {
-            SPerform(2316, 0, 0);
-        }
+        public void DocumentStart() => SPerform(2316, 0, 0);
 
         /// <summary>
         /// Move caret to first position in document extending selection to new caret position.
         /// </summary>
-        public void DocumentStartExtend()
-        {
-            SPerform(2317, 0, 0);
-        }
+        public void DocumentStartExtend() => SPerform(2317, 0, 0);
 
         /// <summary>
         /// Move caret to last position in document.
         /// </summary>
-        public void DocumentEnd()
-        {
-            SPerform(2318, 0, 0);
-        }
+        public void DocumentEnd() => SPerform(2318, 0, 0);
 
         /// <summary>
         /// Move caret to last position in document extending selection to new caret position.
         /// </summary>
-        public void DocumentEndExtend()
-        {
-            SPerform(2319, 0, 0);
-        }
+        public void DocumentEndExtend() => SPerform(2319, 0, 0);
 
         /// <summary>
         /// Move caret one page up.
         /// </summary>
-        public void PageUp()
-        {
-            SPerform(2320, 0, 0);
-        }
+        public void PageUp() => SPerform(2320, 0, 0);
 
         /// <summary>
         /// Move caret one page up extending selection to new caret position.
         /// </summary>
-        public void PageUpExtend()
-        {
-            SPerform(2321, 0, 0);
-        }
+        public void PageUpExtend() => SPerform(2321, 0, 0);
 
         /// <summary>
         /// Move caret one page down.
         /// </summary>
-        public void PageDown()
-        {
-            SPerform(2322, 0, 0);
-        }
+        public void PageDown() => SPerform(2322, 0, 0);
 
         /// <summary>
         /// Move caret one page down extending selection to new caret position.
         /// </summary>
-        public void PageDownExtend()
-        {
-            SPerform(2323, 0, 0);
-        }
+        public void PageDownExtend() => SPerform(2323, 0, 0);
 
         /// <summary>
         /// Switch from insert to overtype mode or the reverse.
         /// </summary>
-        public void EditToggleOvertype()
-        {
-            SPerform(2324, 0, 0);
-        }
+        public void EditToggleOvertype() => SPerform(2324, 0, 0);
 
         /// <summary>
         /// Cancel any modes such as call tip or auto-completion list display.
         /// </summary>
-        public void Cancel()
-        {
-            SPerform(2325, 0, 0);
-        }
+        public void Cancel() => SPerform(2325, 0, 0);
 
         /// <summary>
         /// Delete the selection or if no selection, the character before the caret.
         /// </summary>
-        public void DeleteBack()
-        {
-            SPerform(2326, 0, 0);
-        }
+        public void DeleteBack() => SPerform(2326, 0, 0);
 
         /// <summary>
         /// Delete the character after the caret.
         /// </summary>
-        public void DeleteForward()
-        {
-            Clear();
-        }
+        public void DeleteForward() => Clear();
 
         /// <summary>
         /// Delete a range of text in the document.
         /// </summary>
-        public void DeleteRange(int start, int lengthDelete)
-        {
-            SPerform(2645, start, lengthDelete);
-        }
+        public void DeleteRange(int start, int lengthDelete) => SPerform(2645, start, lengthDelete);
 
         /// <summary>
         /// If selection is empty or all on one line replace the selection with a tab character.
         /// If more than one line selected, indent the lines.
         /// </summary>
-        public void Tab()
-        {
-            SPerform(2327, 0, 0);
-        }
+        public void Tab() => SPerform(2327, 0, 0);
 
         /// <summary>
         /// Dedent the selected lines.
         /// </summary>
-        public void BackTab()
-        {
-            SPerform(2328, 0, 0);
-        }
+        public void BackTab() => SPerform(2328, 0, 0);
 
         /// <summary>
         /// Insert a new line, may use a CRLF, CR or LF depending on EOL mode.
         /// </summary>
-        public void NewLine()
-        {
-            SPerform(2329, 0, 0);
-        }
+        public void NewLine() => SPerform(2329, 0, 0);
 
         /// <summary>
         /// Insert a Form Feed character.
         /// </summary>
-        public void FormFeed()
-        {
-            SPerform(2330, 0, 0);
-        }
+        public void FormFeed() => SPerform(2330, 0, 0);
 
         /// <summary>
         /// Move caret to before first visible character on line.
         /// If already there move to first character on line.
         /// </summary>
-        public void VCHome()
-        {
-            SPerform(2331, 0, 0);
-        }
+        public void VCHome() => SPerform(2331, 0, 0);
 
         /// <summary>
         /// Like VCHome but extending selection to new caret position.
         /// </summary>
-        public void VCHomeExtend()
-        {
-            SPerform(2332, 0, 0);
-        }
+        public void VCHomeExtend() => SPerform(2332, 0, 0);
 
         /// <summary>
         /// Magnify the displayed text by increasing the sizes by 1 point.
         /// </summary>
-        public void ZoomIn()
-        {
-            SPerform(2333, 0, 0);
-        }
+        public void ZoomIn() => SPerform(2333, 0, 0);
 
         /// <summary>
         /// Make the displayed text smaller by decreasing the sizes by 1 point.
         /// </summary>
-        public void ZoomOut()
-        {
-            SPerform(2334, 0, 0);
-        }
+        public void ZoomOut() => SPerform(2334, 0, 0);
 
         /// <summary>
         /// Reset the text zooming by setting zoom level to 0.
         /// </summary>
-        public void ResetZoom()
-        {
-            SPerform(2373, 0, 0);
-        }
+        public void ResetZoom() => SPerform(2373, 0, 0);
 
         /// <summary>
         /// Delete the word to the left of the caret.
         /// </summary>
-        public void DelWordLeft()
-        {
-            SPerform(2335, 0, 0);
-        }
+        public void DelWordLeft() => SPerform(2335, 0, 0);
 
         /// <summary>
         /// Delete the word to the right of the caret.
         /// </summary>
-        public void DelWordRight()
-        {
-            SPerform(2336, 0, 0);
-        }
+        public void DelWordRight() => SPerform(2336, 0, 0);
 
         /// <summary>
         /// Cut the line containing the caret.
         /// </summary>
-        public void LineCut()
-        {
-            SPerform(2337, 0, 0);
-        }
+        public void LineCut() => SPerform(2337, 0, 0);
 
         /// <summary>
         /// Delete the line containing the caret.
         /// </summary>
-        public void LineDelete()
-        {
-            SPerform(2338, 0, 0);
-        }
+        public void LineDelete() => SPerform(2338, 0, 0);
 
         /// <summary>
         /// Switch the current line with the previous.
         /// </summary>
-        public void LineTranspose()
-        {
-            SPerform(2339, 0, 0);
-        }
+        public void LineTranspose() => SPerform(2339, 0, 0);
 
         /// <summary>
         /// Duplicate the current line.
         /// </summary>
-        public void LineDuplicate()
-        {
-            SPerform(2404, 0, 0);
-        }
+        public void LineDuplicate() => SPerform(2404, 0, 0);
 
         /// <summary>
         /// Transform the selection to lower case.
         /// </summary>
-        public void LowerCase()
-        {
-            SPerform(2340, 0, 0);
-        }
+        public void LowerCase() => SPerform(2340, 0, 0);
 
         /// <summary>
         /// Transform the selection to upper case.
         /// </summary>
-        public void UpperCase()
-        {
-            SPerform(2341, 0, 0);
-        }
+        public void UpperCase() => SPerform(2341, 0, 0);
 
         /// <summary>
         /// Scroll the document down, keeping the caret visible.
         /// </summary>
-        public void LineScrollDown()
-        {
-            SPerform(2342, 0, 0);
-        }
+        public void LineScrollDown() => SPerform(2342, 0, 0);
 
         /// <summary>
         /// Scroll the document up, keeping the caret visible.
         /// </summary>
-        public void LineScrollUp()
-        {
-            SPerform(2343, 0, 0);
-        }
+        public void LineScrollUp() => SPerform(2343, 0, 0);
 
         /// <summary>
         /// Delete the selection or if no selection, the character before the caret.
         /// Will not delete the character before at the start of a line.
         /// </summary>
-        public void DeleteBackNotLine()
-        {
-            SPerform(2344, 0, 0);
-        }
+        public void DeleteBackNotLine() => SPerform(2344, 0, 0);
 
         /// <summary>
         /// Move caret to first position on display line.
         /// </summary>
-        public void HomeDisplay()
-        {
-            SPerform(2345, 0, 0);
-        }
+        public void HomeDisplay() => SPerform(2345, 0, 0);
 
         /// <summary>
         /// Move caret to first position on display line extending selection to
         /// new caret position.
         /// </summary>
-        public void HomeDisplayExtend()
-        {
-            SPerform(2346, 0, 0);
-        }
+        public void HomeDisplayExtend() => SPerform(2346, 0, 0);
 
         /// <summary>
         /// Move caret to last position on display line.
         /// </summary>
-        public void LineEndDisplay()
-        {
-            SPerform(2347, 0, 0);
-        }
+        public void LineEndDisplay() => SPerform(2347, 0, 0);
 
         /// <summary>
         /// Move caret to last position on display line extending selection to new
         /// caret position.
         /// </summary>
-        public void LineEndDisplayExtend()
-        {
-            SPerform(2348, 0, 0);
-        }
+        public void LineEndDisplayExtend() => SPerform(2348, 0, 0);
 
         /// <summary>
         /// </summary>
-        public void HomeWrap()
-        {
-            SPerform(2349, 0, 0);
-        }
+        public void HomeWrap() => SPerform(2349, 0, 0);
 
         /// <summary>
         /// </summary>
-        public void HomeWrapExtend()
-        {
-            SPerform(2450, 0, 0);
-        }
+        public void HomeWrapExtend() => SPerform(2450, 0, 0);
 
         /// <summary>
         /// </summary>
-        public void LineEndWrap()
-        {
-            SPerform(2451, 0, 0);
-        }
+        public void LineEndWrap() => SPerform(2451, 0, 0);
 
         /// <summary>
         /// </summary>
-        public void LineEndWrapExtend()
-        {
-            SPerform(2452, 0, 0);
-        }
+        public void LineEndWrapExtend() => SPerform(2452, 0, 0);
 
         /// <summary>
         /// </summary>
-        public void VCHomeWrap()
-        {
-            SPerform(2453, 0, 0);
-        }
+        public void VCHomeWrap() => SPerform(2453, 0, 0);
 
         /// <summary>
         /// </summary>
-        public void VCHomeWrapExtend()
-        {
-            SPerform(2454, 0, 0);
-        }
+        public void VCHomeWrapExtend() => SPerform(2454, 0, 0);
 
         /// <summary>
         /// Copy the line containing the caret.
         /// </summary>
-        public void LineCopy()
-        {
-            SPerform(2455, 0, 0);
-        }
+        public void LineCopy() => SPerform(2455, 0, 0);
 
         /// <summary>
         /// Move the caret inside current view if it's not there already.
         /// </summary>
-        public void MoveCaretInsideView()
-        {
-            SPerform(2401, 0, 0);
-        }
+        public void MoveCaretInsideView() => SPerform(2401, 0, 0);
 
         /// <summary>
         /// How many characters are on a line, not including end of line characters?
         /// </summary>
-        public int LineLength(int line)
-        {
-            return SPerform(2350, line, 0);
-        }
+        public int LineLength(int line) => SPerform(2350, line, 0);
 
         /// <summary>
         /// Highlight the characters at two positions.
         /// </summary>
-        public void BraceHighlight(int pos1, int pos2)
-        {
-            SPerform(2351, pos1, pos2);
-        }
+        public void BraceHighlight(int pos1, int pos2) => SPerform(2351, pos1, pos2);
 
         /// <summary>
         /// Highlight the character at a position indicating there is no matching brace.
         /// </summary>
-        public void BraceBadLight(int pos)
-        {
-            SPerform(2352, pos, 0);
-        }
+        public void BraceBadLight(int pos) => SPerform(2352, pos, 0);
 
         /// <summary>
         /// Find the position of a matching brace or INVALID_POSITION if no match.
         /// </summary>
-        public int BraceMatch(int pos)
-        {
-            return SPerform(2353, pos, 0);
-        }
+        public int BraceMatch(int pos) => SPerform(2353, pos, 0);
 
         /// <summary>
         /// Sets the current caret position to be the search anchor.
         /// </summary>
-        public void SearchAnchor()
-        {
-            SPerform(2366, 0, 0);
-        }
+        public void SearchAnchor() => SPerform(2366, 0, 0);
 
         /// <summary>
         /// Find some text starting at the search anchor.
@@ -3370,181 +3157,118 @@ namespace ScintillaNet
         /// Set whether a pop up menu is displayed automatically when the user presses
         /// the wrong mouse button.
         /// </summary>
-        public void UsePopUp(bool allowPopUp)
-        {
-            SPerform(2371, allowPopUp ? 1 : 0, 0);
-        }
+        public void UsePopUp(bool allowPopUp) => SPerform(2371, allowPopUp ? 1 : 0, 0);
 
         /// <summary>
         /// Create a new document object.
         /// Starts with reference count of 1 and not selected into editor.
         /// Extend life of document.
         /// </summary>
-        public void AddRefDocument(int doc)
-        {
-            SPerform(2376, 0, doc);
-        }
+        public void AddRefDocument(int doc) => SPerform(2376, 0, doc);
 
         /// <summary>
         /// Release a reference to the document, deleting document if it fades to black.
         /// </summary>
-        public void ReleaseDocument(int doc)
-        {
-            SPerform(2377, 0, doc);
-        }
+        public void ReleaseDocument(int doc) => SPerform(2377, 0, doc);
 
         /// <summary>
         /// Move to the previous change in capitalisation.
         /// </summary>
-        public void WordPartLeft()
-        {
-            SPerform(2390, 0, 0);
-        }
+        public void WordPartLeft() => SPerform(2390, 0, 0);
 
         /// <summary>
         /// Move to the previous change in capitalisation extending selection
         /// to new caret position.
         /// </summary>
-        public void WordPartLeftExtend()
-        {
-            SPerform(2391, 0, 0);
-        }
+        public void WordPartLeftExtend() => SPerform(2391, 0, 0);
 
         /// <summary>
         /// Move to the change next in capitalisation.
         /// </summary>
-        public void WordPartRight()
-        {
-            SPerform(2392, 0, 0);
-        }
+        public void WordPartRight() => SPerform(2392, 0, 0);
 
         /// <summary>
         /// Move to the next change in capitalisation extending selection
         /// to new caret position.
         /// </summary>
-        public void WordPartRightExtend()
-        {
-            SPerform(2393, 0, 0);
-        }
+        public void WordPartRightExtend() => SPerform(2393, 0, 0);
 
         /// <summary>
         /// Constants for use with SetVisiblePolicy, similar to SetCaretPolicy.
         /// Set the way the display area is determined when a particular line
         /// is to be moved to by Find, FindNext, GotoLine, etc.
         /// </summary>
-        public void SetVisiblePolicy(int visiblePolicy, int visibleSlop)
-        {
-            SPerform(2394, visiblePolicy, visibleSlop);
-        }
+        public void SetVisiblePolicy(int visiblePolicy, int visibleSlop) => SPerform(2394, visiblePolicy, visibleSlop);
 
         /// <summary>
         /// Delete back from the current position to the start of the line.
         /// </summary>
-        public void DelLineLeft()
-        {
-            SPerform(2395, 0, 0);
-        }
+        public void DelLineLeft() => SPerform(2395, 0, 0);
 
         /// <summary>
         /// Delete forwards from the current position to the end of the line.
         /// </summary>
-        public void DelLineRight()
-        {
-            SPerform(2396, 0, 0);
-        }
+        public void DelLineRight() => SPerform(2396, 0, 0);
 
         /// <summary>
         /// Set the last x chosen value to be the caret x position.
         /// </summary>
-        public void ChooseCaretX()
-        {
-            SPerform(2399, 0, 0);
-        }
+        public void ChooseCaretX() => SPerform(2399, 0, 0);
 
         /// <summary>
         /// Set the focus to this Scintilla widget.
         /// GTK+ Specific.
         /// </summary>
-        public void GrabFocus()
-        {
-            SPerform(2400, 0, 0);
-        }
+        public void GrabFocus() => SPerform(2400, 0, 0);
 
         /// <summary>
         /// Set the way the caret is kept visible when going sideway.
         /// The exclusion zone is given in pixels.
         /// </summary>
-        public void SetXCaretPolicy(int caretPolicy, int caretSlop)
-        {
-            SPerform(2402, caretPolicy, caretSlop);
-        }
+        public void SetXCaretPolicy(int caretPolicy, int caretSlop) => SPerform(2402, caretPolicy, caretSlop);
 
         /// <summary>
         /// Set the way the line the caret is on is kept visible.
         /// The exclusion zone is given in lines.
         /// </summary>
-        public void SetYCaretPolicy(int caretPolicy, int caretSlop)
-        {
-            SPerform(2403, caretPolicy, caretSlop);
-        }
+        public void SetYCaretPolicy(int caretPolicy, int caretSlop) => SPerform(2403, caretPolicy, caretSlop);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaDown()
-        {
-            SPerform(2413, 0, 0);
-        }
+        public void ParaDown() => SPerform(2413, 0, 0);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaDownExtend()
-        {
-            SPerform(2414, 0, 0);
-        }
+        public void ParaDownExtend() => SPerform(2414, 0, 0);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaUp()
-        {
-            SPerform(2415, 0, 0);
-        }
+        public void ParaUp() => SPerform(2415, 0, 0);
 
         /// <summary>
         /// Move caret between paragraphs (delimited by empty lines).
         /// </summary>
-        public void ParaUpExtend()
-        {
-            SPerform(2416, 0, 0);
-        }
+        public void ParaUpExtend() => SPerform(2416, 0, 0);
 
         /// <summary>
         /// Given a valid document position, return the previous position taking code
         /// page into account. Returns 0 if passed 0.
         /// </summary>
-        public int PositionBefore(int pos)
-        {
-            return SPerform(2417, pos, 0);
-        }
+        public int PositionBefore(int pos) => SPerform(2417, pos, 0);
 
         /// <summary>
         /// Given a valid document position, return the next position taking code
         /// page into account. Maximum value returned is the last position in the document.
         /// </summary>
-        public int PositionAfter(int pos)
-        {
-            return SPerform(2418, pos, 0);
-        }
+        public int PositionAfter(int pos) => SPerform(2418, pos, 0);
 
         /// <summary>
         /// Copy a range of text to the clipboard. Positions are clipped into the document.
         /// </summary>
-        public void CopyRange(int start, int end)
-        {
-            SPerform(2419, start, end);
-        }
+        public void CopyRange(int start, int end) => SPerform(2419, start, end);
 
         /// <summary>
         /// Copy argument text to the clipboard.
@@ -3561,156 +3285,99 @@ namespace ScintillaNet
         /// <summary>
         /// Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
         /// </summary>
-        public int GetLineSelStartPosition(int line)
-        {
-            return SPerform(2424, line, 0);
-        }
+        public int GetLineSelStartPosition(int line) => SPerform(2424, line, 0);
 
         /// <summary>
         /// Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line).
         /// </summary>
-        public int GetLineSelEndPosition(int line)
-        {
-            return SPerform(2425, line, 0);
-        }
+        public int GetLineSelEndPosition(int line) => SPerform(2425, line, 0);
 
         /// <summary>
         /// Move caret down one line, extending rectangular selection to new caret position.
         /// </summary>
-        public void LineDownRectExtend()
-        {
-            SPerform(2426, 0, 0);
-        }
+        public void LineDownRectExtend() => SPerform(2426, 0, 0);
 
         /// <summary>
         /// Move caret up one line, extending rectangular selection to new caret position. 
         /// </summary>
-        public void LineUpRectExtend()
-        {
-            SPerform(2427, 0, 0);
-        }
+        public void LineUpRectExtend() => SPerform(2427, 0, 0);
 
         /// <summary>
         /// Move caret left one character, extending rectangular selection to new caret position.
         /// </summary>
-        public void CharLeftRectExtend()
-        {
-            SPerform(2428, 0, 0);
-        }
+        public void CharLeftRectExtend() => SPerform(2428, 0, 0);
 
         /// <summary>
         /// Move caret right one character, extending rectangular selection to new caret position.
         /// </summary>
-        public void CharRightRectExtend()
-        {
-            SPerform(2429, 0, 0);
-        }
+        public void CharRightRectExtend() => SPerform(2429, 0, 0);
 
         /// <summary>
         /// Move caret to first position on line, extending rectangular selection to new caret position.
         /// </summary>
-        public void HomeRectExtend()
-        {
-            SPerform(2430, 0, 0);
-        }
+        public void HomeRectExtend() => SPerform(2430, 0, 0);
 
         /// <summary>
         /// Move caret to before first visible character on line.
         /// If already there move to first character on line.
         /// In either case, extend rectangular selection to new caret position.
         /// </summary>
-        public void VCHomeRectExtend()
-        {
-            SPerform(2431, 0, 0);
-        }
+        public void VCHomeRectExtend() => SPerform(2431, 0, 0);
 
         /// <summary>
         /// Move caret to last position on line, extending rectangular selection to new caret position.
         /// </summary>
-        public void LineEndRectExtend()
-        {
-            SPerform(2432, 0, 0);
-        }
+        public void LineEndRectExtend() => SPerform(2432, 0, 0);
 
         /// <summary>
         /// Move caret one page up, extending rectangular selection to new caret position.
         /// </summary>
-        public void PageUpRectExtend()
-        {
-            SPerform(2433, 0, 0);
-        }
+        public void PageUpRectExtend() => SPerform(2433, 0, 0);
 
         /// <summary>
         /// Move caret one page down, extending rectangular selection to new caret position.
         /// </summary>
-        public void PageDownRectExtend()
-        {
-            SPerform(2434, 0, 0);
-        }
+        public void PageDownRectExtend() => SPerform(2434, 0, 0);
 
         /// <summary>
         /// Move caret to top of page, or one page up if already at top of page.
         /// </summary>
-        public void StutteredPageUp()
-        {
-            SPerform(2435, 0, 0);
-        }
+        public void StutteredPageUp() => SPerform(2435, 0, 0);
 
         /// <summary>
         /// Move caret to top of page, or one page up if already at top of page, extending selection to new caret position.
         /// </summary>
-        public void StutteredPageUpExtend()
-        {
-            SPerform(2436, 0, 0);
-        }
+        public void StutteredPageUpExtend() => SPerform(2436, 0, 0);
 
         /// <summary>
         /// Move caret to bottom of page, or one page down if already at bottom of page.
         /// </summary>
-        public void StutteredPageDown()
-        {
-            SPerform(2437, 0, 0);
-        }
+        public void StutteredPageDown() => SPerform(2437, 0, 0);
 
         /// <summary>
         /// Move caret to bottom of page, or one page down if already at bottom of page, extending selection to new caret position.
         /// </summary>
-        public void StutteredPageDownExtend()
-        {
-            SPerform(2438, 0, 0);
-        }
+        public void StutteredPageDownExtend() => SPerform(2438, 0, 0);
 
         /// <summary>
         /// Move caret left one word, position cursor at end of word.
         /// </summary>
-        public void WordLeftEnd()
-        {
-            SPerform(2439, 0, 0);
-        }
+        public void WordLeftEnd() => SPerform(2439, 0, 0);
 
         /// <summary>
         /// Move caret left one word, position cursor at end of word, extending selection to new caret position.
         /// </summary>
-        public void WordLeftEndExtend()
-        {
-            SPerform(2440, 0, 0);
-        }
+        public void WordLeftEndExtend() => SPerform(2440, 0, 0);
 
         /// <summary>
         /// Move caret right one word, position cursor at end of word.
         /// </summary>
-        public void WordRightEnd()
-        {
-            SPerform(2441, 0, 0);
-        }
+        public void WordRightEnd() => SPerform(2441, 0, 0);
 
         /// <summary>
         /// Move caret right one word, position cursor at end of word, extending selection to new caret position.
         /// </summary>
-        public void WordRightEndExtend()
-        {
-            SPerform(2442, 0, 0);
-        }
+        public void WordRightEndExtend() => SPerform(2442, 0, 0);
 
         /// <summary>
         /// Set the set of characters making up whitespace for when moving or selecting by word. Should be called after WordChars.
@@ -3727,42 +3394,27 @@ namespace ScintillaNet
         /// <summary>
         /// Reset the set of characters for whitespace and word characters to the defaults.
         /// </summary>
-        public void SetCharsDefault()
-        {
-            SPerform(2444, 0, 0);
-        }
+        public void SetCharsDefault() => SPerform(2444, 0, 0);
 
         /// <summary>
         /// Enlarge the document to a particular size of text bytes.
         /// </summary>
-        public void Allocate(int bytes)
-        {
-            SPerform(2446, bytes, 0);
-        }
+        public void Allocate(int bytes) => SPerform(2446, bytes, 0);
 
         /// <summary>
         /// Start notifying the container of all key presses and commands.
         /// </summary>
-        public void StartRecord()
-        {
-            SPerform(3001, 0, 0);
-        }
+        public void StartRecord() => SPerform(3001, 0, 0);
 
         /// <summary>
         /// Stop notifying the container of all key presses and commands.
         /// </summary>
-        public void StopRecord()
-        {
-            SPerform(3002, 0, 0);
-        }
+        public void StopRecord() => SPerform(3002, 0, 0);
 
         /// <summary>
         /// Colourise a segment of the document using the current lexing language.
         /// </summary>
-        public void Colourise(int start, int end)
-        {
-            SPerform(4003, start, end);
-        }
+        public void Colourise(int start, int end) => SPerform(4003, start, end);
 
         /// <summary>
         /// Load a lexer library (dll / so).
@@ -3780,58 +3432,37 @@ namespace ScintillaNet
         /// Find the position of a column on a line taking into account tabs and
         /// multi-byte characters. If beyond end of line, return line end position.
         /// </summary>
-        public int FindColumn(int line, int column)
-        {
-            return SPerform(2456, line, column);
-        }
+        public int FindColumn(int line, int column) => SPerform(2456, line, column);
 
         /// <summary>
         /// Turn a indicator on over a range.
         /// </summary>
-        public void IndicatorFillRange(int position, int fillLength)
-        {
-            SPerform(2504, position, fillLength);
-        }
+        public void IndicatorFillRange(int position, int fillLength) => SPerform(2504, position, fillLength);
 
         /// <summary>
         /// Turn a indicator off over a range.
         /// </summary>
-        public void IndicatorClearRange(int position, int clearLength)
-        {
-            SPerform(2505, position, clearLength);
-        }
+        public void IndicatorClearRange(int position, int clearLength) => SPerform(2505, position, clearLength);
 
         /// <summary>
         /// Are any indicators present at position?
         /// </summary>
-        public int IndicatorAllOnFor(int position)
-        {
-            return SPerform(2506, position, 0);
-        }
+        public int IndicatorAllOnFor(int position) => SPerform(2506, position, 0);
 
         /// <summary>
         /// What value does a particular indicator have at at a position?
         /// </summary>
-        public int IndicatorValueAt(int indicator, int position)
-        {
-            return SPerform(2507, indicator, position);
-        }
+        public int IndicatorValueAt(int indicator, int position) => SPerform(2507, indicator, position);
 
         /// <summary>
         /// Where does a particular indicator start?
         /// </summary>
-        public int IndicatorStart(int indicator, int position)
-        {
-            return SPerform(2508, indicator, position);
-        }
+        public int IndicatorStart(int indicator, int position) => SPerform(2508, indicator, position);
 
         /// <summary>
         /// Where does a particular indicator end?
         /// </summary>
-        public int IndicatorEnd(int indicator, int position)
-        {
-            return SPerform(2509, indicator, position);
-        }
+        public int IndicatorEnd(int indicator, int position) => SPerform(2509, indicator, position);
 
         /// <summary>
         /// Copy the selection, if selection empty copy the line with the caret
@@ -3846,106 +3477,67 @@ namespace ScintillaNet
         /// <summary>
         /// Set the alpha fill colour of the given indicator.
         /// </summary>
-        public void SetIndicSetAlpha(int indicator, int alpha)
-        {
-            SPerform(2523, indicator, alpha);
-        }
+        public void SetIndicSetAlpha(int indicator, int alpha) => SPerform(2523, indicator, alpha);
 
         /// <summary>
         /// Set the alpha fill colour of the given indicator.
         /// </summary>
-        public void GetIndicSetAlpha(int indicator)
-        {
-            SPerform(2524, indicator, 0);
-        }
+        public void GetIndicSetAlpha(int indicator) => SPerform(2524, indicator, 0);
 
         /// <summary>
         /// Which symbol was defined for markerNumber with MarkerDefine
         /// </summary>
-        public int GetMarkerSymbolDefined(int markerNumber)
-        {
-            return SPerform(2529, markerNumber, 0);
-        }
+        public int GetMarkerSymbolDefined(int markerNumber) => SPerform(2529, markerNumber, 0);
 
         /// <summary>
         /// Set the text in the text margin for a line
         /// </summary>
-        public void SetMarginStyle(int line, int style)
-        {
-            SPerform(2532, line, style);
-        }
+        public void SetMarginStyle(int line, int style) => SPerform(2532, line, style);
 
         /// <summary>
         /// Get the style number for the text margin for a line
         /// </summary>
-        public int GetMarginStyle(int line)
-        {
-            return SPerform(2533, line, 0);
-        }
+        public int GetMarginStyle(int line) => SPerform(2533, line, 0);
 
         /// <summary>
         /// Clear the margin text on all lines
         /// </summary>
-        public void MarginTextClearAll()
-        {
-            SPerform(2536, 0, 0);
-        }
+        public void MarginTextClearAll() => SPerform(2536, 0, 0);
 
         /// <summary>
         /// Find the position of a character from a point within the window.
         /// </summary>
-        public int GetCharPositionFromPoint(int x, int y)
-        {
-            return SPerform(2561, x, y);
-        }
+        public int GetCharPositionFromPoint(int x, int y) => SPerform(2561, x, y);
 
         /// <summary>
         /// Find the position of a character from a point within the window. Return INVALID_POSITION if not close to text.
         /// </summary>
-        public int GetCharPositionFromPointClose(int x, int y)
-        {
-            return SPerform(2562, x, y);
-        }
+        public int GetCharPositionFromPointClose(int x, int y) => SPerform(2562, x, y);
 
         /// <summary>
         /// Add a container action to the undo stack
         /// </summary>
-        public void AddUndoAction(int token, int flags)
-        {
-            SPerform(2560, token, flags);
-        }
+        public void AddUndoAction(int token, int flags) => SPerform(2560, token, flags);
 
         /// <summary>
         /// Set the style number for the annotations for a line
         /// </summary>
-        public void SetAnnotationStyle(int line, int style)
-        {
-            SPerform(2542, line, style);
-        }
+        public void SetAnnotationStyle(int line, int style) => SPerform(2542, line, style);
 
         /// <summary>
         /// Get the style number for the annotations for a line
         /// </summary>
-        public int GetAnnotationStyle(int line)
-        {
-            return SPerform(2543, line, 0);
-        }
+        public int GetAnnotationStyle(int line) => SPerform(2543, line, 0);
 
         /// <summary>
         /// Clear the annotations from all lines
         /// </summary>
-        public void AnnotatioClearAll()
-        {
-            SPerform(2547, 0, 0);
-        }
+        public void AnnotatioClearAll() => SPerform(2547, 0, 0);
 
         /// <summary>
         /// Get the number of annotation lines for a line
         /// </summary>
-        public int GetAnnotationLines(int line)
-        {
-            return SPerform(2546, line, 0);
-        }
+        public int GetAnnotationLines(int line) => SPerform(2546, line, 0);
 
         /// <summary>
         /// Set the text in the text margin for a line
@@ -4000,8 +3592,8 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetMarginText(int line)
         {
-            int sz = SPerform(2531, line, 0);
-            byte[] buffer = new byte[sz + 1];
+            var sz = SPerform(2531, line, 0);
+            var buffer = new byte[sz + 1];
             fixed (byte* b = buffer) SPerform(2531, line + 1, (uint)b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
@@ -4011,8 +3603,8 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetMarginStyles(int line)
         {
-            int sz = SPerform(2535, line, 0);
-            byte[] buffer = new byte[sz + 1];
+            var sz = SPerform(2535, line, 0);
+            var buffer = new byte[sz + 1];
             fixed (byte* b = buffer) SPerform(2535, line + 1, (uint)b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
@@ -4022,8 +3614,8 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetAnnotationText(int line)
         {
-            int sz = SPerform(2541, line, 0);
-            byte[] buffer = new byte[sz + 1];
+            var sz = SPerform(2541, line, 0);
+            var buffer = new byte[sz + 1];
             fixed (byte* b = buffer) SPerform(2541, line + 1, (uint)b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
@@ -4033,8 +3625,8 @@ namespace ScintillaNet
         /// </summary>
         public unsafe string GetAnnotationStyles(int line)
         {
-            int sz = SPerform(2545, line, 0);
-            byte[] buffer = new byte[sz + 1];
+            var sz = SPerform(2545, line, 0);
+            var buffer = new byte[sz + 1];
             fixed (byte* b = buffer) SPerform(2545, line + 1, (uint)b);
             return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
         }
@@ -4042,18 +3634,12 @@ namespace ScintillaNet
         /// <summary>
         /// Set caret behavior in virtual space. (1 = allow rectangular selection, 2 = allow cursor movement, 3 = both)
         /// </summary>
-        public void SetVirtualSpaceOptions(int options)
-        {
-            SPerform(2596, options, 0);
-        }
+        public void SetVirtualSpaceOptions(int options) => SPerform(2596, options, 0);
 
         /// <summary>
         /// Returns caret behavior in virtual space. (1 = allow rectangular selection, 2 = allow cursor movement, 3 = both)
         /// </summary>
-        public int GetVirtualSpaceOptions()
-        {
-            return SPerform(2597, 0, 0);
-        }
+        public int GetVirtualSpaceOptions() => SPerform(2597, 0, 0);
 
         /// <summary>
         /// Set whether pasting, typing, backspace, and delete work on all lines of a multiple selection
@@ -4068,19 +3654,13 @@ namespace ScintillaNet
         /// <summary>
         /// Returns whether pasting, typing, backspace, and delete work on all lines of a multiple selection
         /// </summary>
-        public bool GetMultiSelectionTyping()
-        {
-            return SPerform(2566, 0, 0) != 0;
-        }
+        public bool GetMultiSelectionTyping() => SPerform(2566, 0, 0) != 0;
 
         /// <summary>
         /// Find the next line at or after lineStart that is a contracted fold header line.
         /// Return -1 when no more lines.
         /// </summary>
-        public int ContractedFoldNext(int lineStart)
-        {
-            return SPerform(2618, lineStart, 0);
-        }
+        public int ContractedFoldNext(int lineStart) => SPerform(2618, lineStart, 0);
 
         #endregion
 
@@ -4484,14 +4064,14 @@ namespace ScintillaNet
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
                     {
-                        StartHighlightSelectionTimer(sci);
+                        StartHighlightSelectionTimer();
                         break;
                     }
                     case Enums.HighlightMatchingWordsMode.SelectedWord:
                     {
                         if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
                         {
-                            StartHighlightSelectionTimer(sci);
+                            StartHighlightSelectionTimer();
                         }
                         break;
                     }
@@ -4505,7 +4085,7 @@ namespace ScintillaNet
         /// <summary>
         /// Use timer for aggressive selection highlighting
         /// </summary>
-        private void StartHighlightSelectionTimer(ScintillaControl sci)
+        private void StartHighlightSelectionTimer()
         {
             if (highlightDelay is null)
             {
@@ -4520,6 +4100,7 @@ namespace ScintillaNet
             }
             highlightDelay.Start();
         }
+
         void highlightDelay_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             highlightDelay.Stop();
@@ -4532,24 +4113,25 @@ namespace ScintillaNet
         private void HighlightWordsMatchingSelected()
         {
             if (TextLength == 0 || TextLength > 64 * 1024) return;
-            Language language = Configuration.GetLanguage(ConfigurationLanguage);
-            int color = language.editorstyle.HighlightWordBackColor;
-            string word = GetWordFromPosition(CurrentPos);
+            var word = GetWordFromPosition(CurrentPos);
             if (string.IsNullOrEmpty(word)) return;
             if (PositionIsOnComment(CurrentPos))
             {
                 RemoveHighlights(1);
                 return;
             }
-            string pattern = word.Trim();
-            FRSearch search = new FRSearch(pattern);
-            search.WholeWord = true;
-            search.NoCase = true;
-            search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
-            search.SourceFile = FileName;
+            var pattern = word.Trim();
+            var search = new FRSearch(pattern)
+            {
+                WholeWord = true,
+                NoCase = !PluginBase.MainForm.Settings.HighlightMatchingWordsCaseSensitive,
+                Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals,
+                SourceFile = FileName
+            };
             RemoveHighlights(1);
             var test = search.Matches(Text);
-            AddHighlights(1, test, color);
+            var language = Configuration.GetLanguage(ConfigurationLanguage);
+            AddHighlights(1, test, language.editorstyle.HighlightWordBackColor);
             hasHighlights = true;
         }
 
@@ -4585,32 +4167,25 @@ namespace ScintillaNet
         /// </summary>
         private void OnBraceMatch(ScintillaControl sci)
         {
-            if (isBraceMatching && sci.SelText.Length == 0)
+            if (!isBraceMatching || sci.SelText.Length != 0) return;
+            var position = CurrentPos - 1;
+            var character = (char)CharAt(position);
+            if (character != '{' && character != '}' && character != '(' && character != ')' && character != '[' && character != ']')
             {
-                int position = CurrentPos - 1;
-                char character = (char)CharAt(position);
-                if (character != '{' && character != '}' && character != '(' && character != ')' && character != '[' && character != ']')
+                position = CurrentPos;
+                character = (char)CharAt(position);
+            }
+            if (character == '{' || character == '}' || character == '(' || character == ')' || character == '[' || character == ']')
+            {
+                if (!PositionIsOnComment(position))
                 {
-                    position = CurrentPos;
-                    character = (char)CharAt(position);
-                }
-                if (character == '{' || character == '}' || character == '(' || character == ')' || character == '[' || character == ']')
-                {
-                    if (!PositionIsOnComment(position))
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(position);
+                    if (bracePosEnd != -1) BraceHighlight(bracePosStart, bracePosEnd);
+                    if (useHighlightGuides)
                     {
-                        int bracePosStart = position;
-                        int bracePosEnd = BraceMatch(position);
-                        if (bracePosEnd != -1) BraceHighlight(bracePosStart, bracePosEnd);
-                        if (useHighlightGuides)
-                        {
-                            int line = LineFromPosition(position);
-                            HighlightGuide = GetLineIndentation(line);
-                        }
-                    }
-                    else
-                    {
-                        BraceHighlight(-1, -1);
-                        HighlightGuide = 0;
+                        var line = LineFromPosition(position);
+                        HighlightGuide = GetLineIndentation(line);
                     }
                 }
                 else
@@ -4618,6 +4193,11 @@ namespace ScintillaNet
                     BraceHighlight(-1, -1);
                     HighlightGuide = 0;
                 }
+            }
+            else
+            {
+                BraceHighlight(-1, -1);
+                HighlightGuide = 0;
             }
         }
 
@@ -5600,10 +5180,7 @@ namespace ScintillaNet
         /// <summary>
         /// Returns the base style (without indicators) byte at the position.
         /// </summary>
-        public int BaseStyleAt(int pos)
-        {
-            return (SPerform(2010, pos, 0) & ((1 << StyleBits) - 1));
-        }
+        public int BaseStyleAt(int pos) => (SPerform(2010, pos, 0) & ((1 << StyleBits) - 1));
 
         /// <summary>
         /// Adds the specified highlight to the control
@@ -6169,7 +5746,5 @@ namespace ScintillaNet
         }
 
         #endregion
-
     }
-
 }

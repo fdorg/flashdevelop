@@ -30,11 +30,11 @@ namespace ASCompletion
 {
     public class PluginMain: IPlugin
     {
-        private string dataPath;
-        private string settingsFile;
-        private GeneralSettings settingObject;
-        private PluginUI pluginUI;
-        private Image pluginIcon;
+        string dataPath;
+        string settingsFile;
+        GeneralSettings settingObject;
+        PluginUI pluginUI;
+        Image pluginIcon;
         const EventType eventMask =
             EventType.FileOpen |
             EventType.FileSave |
@@ -49,19 +49,20 @@ namespace ASCompletion
             EventType.ProcessEnd |
             EventType.ApplySettings |
             EventType.ProcessArgs;
-        private List<ToolStripItem> menuItems;
-        private ToolStripItem quickBuildItem;
-        private int currentPos;
-        private string currentDoc;
-        private bool started;
-        private FlashErrorsWatcher flashErrorsWatcher;
-        private bool checking;
-        private Timer timerPosition;
-        private int lastHoverPosition;
 
-        private readonly Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
-        private readonly Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
-        private readonly Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
+        List<ToolStripItem> menuItems;
+        ToolStripItem quickBuildItem;
+        int currentPos;
+        string currentDoc;
+        bool started;
+        FlashErrorsWatcher flashErrorsWatcher;
+        bool checking;
+        Timer timerPosition;
+        int lastHoverPosition;
+
+        readonly Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
+        readonly Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
+        readonly Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
 
         const int Margin = 1;
         const int MarkerDown = 16;
@@ -175,6 +176,7 @@ namespace ASCompletion
                     // caret position in editor
                     case EventType.UIRefresh:
                         if (!doc.IsEditable) return;
+                        ASContext.Context.OnBraceMatch(sci);
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
                         return;
@@ -345,15 +347,12 @@ namespace ASCompletion
                                 var context = ASContext.GetLanguageContext(cmdData);
                                 if (context is null) return;
                                 const string filter = "SDK";
-                                var name = "";
-                                switch (cmdData.ToUpper())
+                                var name = cmdData.ToUpper() switch
                                 {
-                                    case "AS2": name = "AS2Context"; break;
-                                    case "AS3": name = "AS3Context"; break;
-                                    default: 
-                                        name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
-                                        break;
-                                }
+                                    "AS2" => "AS2Context",
+                                    "AS3" => "AS3Context",
+                                    _ => cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context",
+                                };
                                 PluginBase.MainForm.ShowSettingsDialog(name, filter);
                             }
                             // Open types explorer dialog
@@ -494,7 +493,7 @@ namespace ASCompletion
 
                         // menu commands
                         case EventType.Command:
-                            de = e as DataEvent;
+                            de = (DataEvent) e;
                             var command = de.Action ?? "";
                             if (command.StartsWithOrdinal("ASCompletion."))
                             {
@@ -599,12 +598,12 @@ namespace ASCompletion
 
         #region Initialization
 
-        private void InitSettings()
+        void InitSettings()
         {
             Description = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, nameof(ASCompletion));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            else if (PluginBase.MainForm.RefreshConfig) CleanData();
+            else if (PluginBase.MainForm.RefreshConfig) PathExplorer.ClearPersistentCache();
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
@@ -620,12 +619,7 @@ namespace ASCompletion
             }
         }
 
-        /// <summary>
-        /// FD has been updated, clean some app data
-        /// </summary>
-        private void CleanData() => PathExplorer.ClearPersistentCache();
-
-        private void SaveSettings() => ObjectSerializer.Serialize(settingsFile, settingObject);
+        void SaveSettings() => ObjectSerializer.Serialize(settingsFile, settingObject);
 
         void LoadBitmaps()
         {
@@ -637,14 +631,14 @@ namespace ASCompletion
             upArrow = new Bitmap(PluginBase.MainForm.FindImage16("8"));
         }
 
-        private void CreatePanel()
+        void CreatePanel()
         {
             pluginIcon = PluginBase.MainForm.FindImage("99");
             pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
             PluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginIcon, DockState.DockRight);
         }
 
-        private void CreateMenuItems()
+        void CreateMenuItems()
         {
             var mainForm = PluginBase.MainForm;
             menuItems = new List<ToolStripItem>();
@@ -775,7 +769,7 @@ namespace ASCompletion
             }
         }
 
-        private void AddEventHandlers()
+        void AddEventHandlers()
         {
             // scintilla controls listeners
             UITools.Manager.OnCharAdded += OnChar;
@@ -868,33 +862,33 @@ namespace ASCompletion
 
             var fileModel = context.GetCachedFileModel(sci.FileName);
 
-            foreach (var clas in fileModel.Classes)
+            foreach (var @class in fileModel.Classes)
             {
-                var cls = astCache.GetCachedModel(clas);
-                if (cls is null) return;
+                var model = astCache.GetCachedModel(@class);
+                if (model is null) return;
 
-                if (cls.ChildClassModels.Count > 0 || cls.ImplementorClassModels.Count > 0)
+                if (model.ChildClassModels.Count > 0 || model.ImplementorClassModels.Count > 0)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
-                    sci.MarkerAdd(clas.LineFrom, MarkerDown);
+                    sci.MarkerAdd(@class.LineFrom, MarkerDown);
                 }
 
-                foreach (var implementing in cls.Implementing)
+                foreach (var implementing in model.Implementing)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
                 }
-                foreach (var implementor in cls.Implementors)
+                foreach (var implementor in model.Implementors)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
                 }
-                foreach (var overriders in cls.Overriders)
+                foreach (var overriders in model.Overriders)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
                 }
-                foreach (var overrides in cls.Overriding)
+                foreach (var overrides in model.Overriding)
                 {
                     sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
@@ -922,7 +916,7 @@ namespace ASCompletion
         /// </summary>
         /// <param name="doc">Document to check</param>
         /// <returns>Detected language</returns>
-        private string DetectActionscriptVersion(ITabbedDocument doc)
+        string DetectActionscriptVersion(ITabbedDocument doc)
         {
             var parser = new ASFileParser();
             var model = new FileModel(doc.FileName);
@@ -930,8 +924,9 @@ namespace ASCompletion
             if (model.Version == 1 && PluginBase.CurrentProject != null)
             {
                 var lang = PluginBase.CurrentProject.Language;
-                if (lang == "*") return "as2";
-                return lang;
+                return lang == "*"
+                    ? "as2"
+                    : lang;
             }
             if (model.Version > 2) return "as3";
             if (model.Version > 1) return "as2";
@@ -945,12 +940,12 @@ namespace ASCompletion
         /// <summary>
         /// Clear and rebuild classpath models cache
         /// </summary>
-        private void RebuildClasspath(object sender, EventArgs e) => ASContext.RebuildClasspath();
+        static void RebuildClasspath(object sender, EventArgs e) => ASContext.RebuildClasspath();
 
         /// <summary>
         /// Open de types explorer dialog
         /// </summary>
-        private void TypesExplorer(object sender, EventArgs e)
+        static void TypesExplorer(object sender, EventArgs e)
         {
             ModelsExplorer.Instance.UpdateTree();
             ModelsExplorer.Open();
@@ -989,7 +984,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Peek Definition
         /// </summary>
-        void PeekDefinition(object sender, EventArgs e)
+        static void PeekDefinition(object sender, EventArgs e)
         {
             if (ASComplete.CurrentResolvedContext?.Result is { } result && !result.IsNull())
             {
@@ -1018,7 +1013,7 @@ namespace ASCompletion
         /// Sets the IsEnabled value of all the CommandBarItems
         /// </summary>
         /// <param name="enabled">Is the item enabled?</param>
-        private void SetItemsEnabled(bool enabled, bool canBuild)
+        void SetItemsEnabled(bool enabled, bool canBuild)
         {
             foreach (var item in menuItems) item.Enabled = enabled;
             quickBuildItem.Enabled = canBuild;
@@ -1139,13 +1134,13 @@ namespace ASCompletion
         /// <summary>
         /// Display completion list or calltip info
         /// </summary>
-        private void OnChar(ScintillaControl sci, int value)
+        static void OnChar(ScintillaControl sci, int value)
         {
             if (sci.Lexer == 3 || sci.Lexer == 4)
                 ASComplete.OnChar(sci, value, true);
         }
 
-        private void OnMouseHover(ScintillaControl sci, int position)
+        void OnMouseHover(ScintillaControl sci, int position)
         {
             var ctx = ASContext.Context;
             if (!ctx.IsFileValid) return;
@@ -1163,7 +1158,7 @@ namespace ASCompletion
             }
         }
 
-        private void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             ASContext.OnTextChanged(sender, position, length, linesAdded);
 
@@ -1186,10 +1181,9 @@ namespace ASCompletion
                     sender.MarkerDelete(i, MarkerUpDown);
                 }
             }
-            
         }
 
-        private void OnUpdateCallTip(ScintillaControl sci, int position)
+        static void OnUpdateCallTip(ScintillaControl sci, int position)
         {
             if (!ASComplete.HasCalltip()) return;
             var pos = sci.CurrentPos - 1;
@@ -1199,7 +1193,7 @@ namespace ASCompletion
             ASComplete.HandleFunctionCompletion(sci, false);
         }
 
-        private void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
+        void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
         {
             if (UITools.Tip.Visible)
                 OnMouseHover(sci, lastHoverPosition);
@@ -1215,7 +1209,7 @@ namespace ASCompletion
             ContextChanged();
         }
 
-        private void ContextChanged()
+        void ContextChanged()
         {
             var doc = PluginBase.MainForm.CurrentDocument;
             var isValid = false;

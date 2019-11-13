@@ -88,10 +88,8 @@ namespace CodeRefactor.Controls
         private static Image Overlay(Image source, string overlayData)
         {
             var image = new Bitmap(source);
-            using (var graphics = Graphics.FromImage(image))
-            {
-                graphics.DrawImage(PluginBase.MainForm.FindImage16(overlayData), 0, 0);
-            }
+            using var graphics = Graphics.FromImage(image);
+            graphics.DrawImage(PluginBase.MainForm.FindImage16(overlayData), 0, 0);
             return PluginBase.MainForm.GetAutoAdjustedImage(image);
         }
     }

@@ -72,7 +72,7 @@ namespace ScintillaNet.Configuration
         {
             get
             {
-                if (_languages == null)
+                if (_languages is null)
                 {
                     Hashtable result = new Hashtable();
                     if (MasterScintilla == this)
@@ -213,10 +213,10 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (languages == null) languages = new Language[0];
-            if (styleclasses == null)  styleclasses = new StyleClass[0];
-            if (keywordclass == null) keywordclass = new KeywordClass[0];
-            if (globals == null) globals = new Value[0];
+            if (languages is null) languages = new Language[0];
+            if (styleclasses is null)  styleclasses = new StyleClass[0];
+            if (keywordclass is null) keywordclass = new KeywordClass[0];
+            if (globals is null) globals = new Value[0];
             foreach (var it in languages)
             {
                 it.init(utility, _parent);
@@ -233,7 +233,7 @@ namespace ScintillaNet.Configuration
             {
                 it.init(utility, _parent);
             }
-            if (characterclasses == null) characterclasses = new CharacterClass[0];
+            if (characterclasses is null) characterclasses = new CharacterClass[0];
             foreach (var it in characterclasses)
             {
                 it.init(utility, _parent);

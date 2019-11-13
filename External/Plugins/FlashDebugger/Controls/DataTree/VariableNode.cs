@@ -15,7 +15,7 @@ namespace FlashDebugger.Controls.DataTree
             get => base.Value;
             set
             {
-                if (m_Variable == null)
+                if (m_Variable is null)
                     return;
 
                 var flashInterface = PluginMain.debugManager.FlashInterface;

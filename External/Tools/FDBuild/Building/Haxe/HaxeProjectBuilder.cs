@@ -63,7 +63,7 @@ namespace ProjectManager.Building.Haxe
             List<String> pr = new List<String>();
 
             string builder = HaxeProject.GetBuilder(output);
-            if (builder == null) builder = "openfl";
+            if (builder is null) builder = "openfl";
 
             pr.Add("run " + builder + " build");
             pr.Add(Quote(output));

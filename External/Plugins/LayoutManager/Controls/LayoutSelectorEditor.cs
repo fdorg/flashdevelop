@@ -8,21 +8,16 @@ namespace LayoutManager.Controls
 {
     public class LayoutSelectorEditor : ObjectSelectorEditor
     {
-        /// <summary>
-        /// 
-        /// </summary>
         protected override void FillTreeWithData(Selector selector, ITypeDescriptorContext context, IServiceProvider provider)
         {
             base.FillTreeWithData(selector, context, provider);
             selector.Nodes.Add(new SelectorNode("<None>", null));
-            string[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
-            for (int i = 0; i < layouts.Length; i++)
+            var layouts = Directory.GetFiles(GetLayoutsDir(), "*.fdl");
+            foreach (var layout in layouts)
             {
-                string label = Path.GetFileNameWithoutExtension(layouts[i]);
-                SelectorNode item = new SelectorNode(label, layouts[i]);
-                selector.Nodes.Add(item);
+                var label = Path.GetFileNameWithoutExtension(layout);
+                selector.Nodes.Add(new SelectorNode(label, layout));
             }
-
         }
 
         /// <summary>
@@ -30,23 +25,11 @@ namespace LayoutManager.Controls
         /// </summary>
         private string GetLayoutsDir()
         {
-            string userPath = Settings.Instance.CustomLayoutPath;
+            var userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
-            string path = Path.Combine(this.GetDataDir(), "Layouts");
+            var path = Path.Combine(Path.Combine(PathHelper.DataDir, nameof(LayoutManager)), "Layouts");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }
-
-        /// <summary>
-        /// Gets the plugin data directory
-        /// </summary>
-        private string GetDataDir()
-        {
-            return Path.Combine(PathHelper.DataDir, "LayoutManager");
-        }
-
-
     }
-
 }
-

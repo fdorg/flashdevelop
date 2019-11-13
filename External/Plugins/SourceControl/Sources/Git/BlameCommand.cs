@@ -176,12 +176,9 @@ namespace SourceControl.Sources.Git
 
         #region IBlameCommand
 
-        private bool disposed = false;
+        private bool disposed;
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
 
         protected virtual void Dispose(bool disposing)
         {

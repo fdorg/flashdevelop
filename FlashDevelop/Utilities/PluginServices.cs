@@ -30,7 +30,7 @@ namespace FlashDevelop.Utilities
             foreach (string fileOn in Directory.GetFiles(path, "*.dll"))
             {
                 string name = Path.GetFileNameWithoutExtension(fileOn);
-                if (name != "PluginCore" && !KnownDLLs.Contains(name))
+                if (name != nameof(PluginCore) && !KnownDLLs.Contains(name))
                 {
                     KnownDLLs.Add(name);
                     AddPlugin(fileOn);
@@ -96,28 +96,24 @@ namespace FlashDevelop.Utilities
                 Assembly pluginAssembly = Assembly.LoadFrom(fileName);
                 foreach (Type pluginType in pluginAssembly.GetTypes())
                 {
-                    if (pluginType.IsPublic && !pluginType.IsAbstract)
+                    if (!pluginType.IsPublic || pluginType.IsAbstract) continue;
+                    Type typeInterface = pluginType.GetInterface("PluginCore.IPlugin", true);
+                    if (typeInterface is null) continue;
+                    AvailablePlugin newPlugin = new AvailablePlugin(fileName);
+                    newPlugin.Instance = (IPlugin)Activator.CreateInstance(pluginAssembly.GetType(pluginType.ToString()));
+                    if (newPlugin.Instance.Api != REQUIRED_API_LEVEL)
                     {
-                        Type typeInterface = pluginType.GetInterface("PluginCore.IPlugin", true);
-                        if (typeInterface != null)
-                        {
-                            AvailablePlugin newPlugin = new AvailablePlugin(fileName);
-                            newPlugin.Instance = (IPlugin)Activator.CreateInstance(pluginAssembly.GetType(pluginType.ToString()));
-                            if (newPlugin.Instance.Api != REQUIRED_API_LEVEL)
-                            {
-                                // Invalid plugin, ignore...
-                                throw new Exception("Required API level does not match.");
-                            }
-                            if (!Globals.Settings.DisabledPlugins.Contains(newPlugin.Instance.Guid))
-                            {
-                                newPlugin.Instance.Initialize();
-                                newPlugin.IsActive = true;
-                            }
-                            if (!AvailablePlugins.Contains(newPlugin))
-                            {
-                                AvailablePlugins.Add(newPlugin);
-                            }
-                        }
+                        // Invalid plugin, ignore...
+                        throw new Exception("Required API level does not match.");
+                    }
+                    if (!Globals.Settings.DisabledPlugins.Contains(newPlugin.Instance.Guid))
+                    {
+                        newPlugin.Instance.Initialize();
+                        newPlugin.IsActive = true;
+                    }
+                    if (!AvailablePlugins.Contains(newPlugin))
+                    {
+                        AvailablePlugins.Add(newPlugin);
                     }
                 }
             }

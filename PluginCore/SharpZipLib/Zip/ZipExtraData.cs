@@ -100,7 +100,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="count">The number of bytes available.</param>
         public void SetData(byte[] data, int offset, int count)
         {
-            if( data==null )
+            if( data is null )
             {
                 throw new ArgumentNullException(nameof(data));
             }
@@ -182,37 +182,35 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="count">The number of bytes available.</param>
         public void SetData(byte[] data, int index, int count)
         {
-            using (MemoryStream ms = new MemoryStream(data, index, count, false))
-            using (ZipHelperStream helperStream = new ZipHelperStream(ms))
+            using MemoryStream ms = new MemoryStream(data, index, count, false);
+            using ZipHelperStream helperStream = new ZipHelperStream(ms);
+            // bit 0           if set, modification time is present
+            // bit 1           if set, access time is present
+            // bit 2           if set, creation time is present
+                
+            _flags = (Flags)helperStream.ReadByte();
+            if (((_flags & Flags.ModificationTime) != 0) && (count >= 5))
             {
-                // bit 0           if set, modification time is present
-                // bit 1           if set, access time is present
-                // bit 2           if set, creation time is present
+                int iTime = helperStream.ReadLEInt();
+
+                _modificationTime = (new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime() +
+                                     new TimeSpan(0, 0, 0, iTime, 0)).ToLocalTime();
+            }
+
+            if ((_flags & Flags.AccessTime) != 0)
+            {
+                int iTime = helperStream.ReadLEInt();
+
+                _lastAccessTime = (new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime() +
+                                   new TimeSpan(0, 0, 0, iTime, 0)).ToLocalTime();
+            }
                 
-                _flags = (Flags)helperStream.ReadByte();
-                if (((_flags & Flags.ModificationTime) != 0) && (count >= 5))
-                {
-                    int iTime = helperStream.ReadLEInt();
+            if ((_flags & Flags.CreateTime) != 0)
+            {
+                int iTime = helperStream.ReadLEInt();
 
-                    _modificationTime = (new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime() +
-                        new TimeSpan(0, 0, 0, iTime, 0)).ToLocalTime();
-                }
-
-                if ((_flags & Flags.AccessTime) != 0)
-                {
-                    int iTime = helperStream.ReadLEInt();
-
-                    _lastAccessTime = (new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime() +
-                        new TimeSpan(0, 0, 0, iTime, 0)).ToLocalTime();
-                }
-                
-                if ((_flags & Flags.CreateTime) != 0)
-                {
-                    int iTime = helperStream.ReadLEInt();
-
-                    _createTime = (new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime() +
-                        new TimeSpan(0, 0, 0, iTime, 0)).ToLocalTime();
-                }
+                _createTime = (new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime() +
+                               new TimeSpan(0, 0, 0, iTime, 0)).ToLocalTime();
             }
         }
 
@@ -222,28 +220,26 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>The raw binary data representing this instance.</returns>
         public byte[] GetData()
         {
-            using (MemoryStream ms = new MemoryStream())
-            using (ZipHelperStream helperStream = new ZipHelperStream(ms))
-            {
-                helperStream.IsStreamOwner = false;
-                helperStream.WriteByte((byte)_flags);     // Flags
-                if ( (_flags & Flags.ModificationTime) != 0) {
-                    TimeSpan span = _modificationTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime();
-                    int seconds = (int)span.TotalSeconds;
-                    helperStream.WriteLEInt(seconds);
-                }
-                if ( (_flags & Flags.AccessTime) != 0) {
-                    TimeSpan span = _lastAccessTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime();
-                    int seconds = (int)span.TotalSeconds;
-                    helperStream.WriteLEInt(seconds);
-                }
-                if ( (_flags & Flags.CreateTime) != 0) {
-                    TimeSpan span = _createTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime();
-                    int seconds = (int)span.TotalSeconds;
-                    helperStream.WriteLEInt(seconds);
-                }
-                return ms.ToArray();
+            using MemoryStream ms = new MemoryStream();
+            using ZipHelperStream helperStream = new ZipHelperStream(ms);
+            helperStream.IsStreamOwner = false;
+            helperStream.WriteByte((byte)_flags);     // Flags
+            if ( (_flags & Flags.ModificationTime) != 0) {
+                TimeSpan span = _modificationTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime();
+                int seconds = (int)span.TotalSeconds;
+                helperStream.WriteLEInt(seconds);
             }
+            if ( (_flags & Flags.AccessTime) != 0) {
+                TimeSpan span = _lastAccessTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime();
+                int seconds = (int)span.TotalSeconds;
+                helperStream.WriteLEInt(seconds);
+            }
+            if ( (_flags & Flags.CreateTime) != 0) {
+                TimeSpan span = _createTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0).ToUniversalTime();
+                int seconds = (int)span.TotalSeconds;
+                helperStream.WriteLEInt(seconds);
+            }
+            return ms.ToArray();
         }
 
         #endregion
@@ -355,33 +351,31 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="count">The number of bytes available.</param>
         public void SetData(byte[] data, int index, int count)
         {
-            using (MemoryStream ms = new MemoryStream(data, index, count, false)) 
-            using (ZipHelperStream helperStream = new ZipHelperStream(ms))
+            using MemoryStream ms = new MemoryStream(data, index, count, false);
+            using ZipHelperStream helperStream = new ZipHelperStream(ms);
+            helperStream.ReadLEInt(); // Reserved
+            while (helperStream.Position < helperStream.Length)
             {
-                helperStream.ReadLEInt(); // Reserved
-                while (helperStream.Position < helperStream.Length)
+                int ntfsTag = helperStream.ReadLEShort();
+                int ntfsLength = helperStream.ReadLEShort();
+                if (ntfsTag == 1)
                 {
-                    int ntfsTag = helperStream.ReadLEShort();
-                    int ntfsLength = helperStream.ReadLEShort();
-                    if (ntfsTag == 1)
+                    if (ntfsLength >= 24)
                     {
-                        if (ntfsLength >= 24)
-                        {
-                            long lastModificationTicks = helperStream.ReadLELong();
-                            _lastModificationTime = DateTime.FromFileTime(lastModificationTicks);
+                        long lastModificationTicks = helperStream.ReadLELong();
+                        _lastModificationTime = DateTime.FromFileTime(lastModificationTicks);
 
-                            long lastAccessTicks = helperStream.ReadLELong();
-                            _lastAccessTime = DateTime.FromFileTime(lastAccessTicks);
+                        long lastAccessTicks = helperStream.ReadLELong();
+                        _lastAccessTime = DateTime.FromFileTime(lastAccessTicks);
 
-                            long createTimeTicks = helperStream.ReadLELong();
-                            _createTime = DateTime.FromFileTime(createTimeTicks);
-                        }
-                        break;
+                        long createTimeTicks = helperStream.ReadLELong();
+                        _createTime = DateTime.FromFileTime(createTimeTicks);
                     }
-
-                    // An unknown NTFS tag so simply skip it.
-                    helperStream.Seek(ntfsLength, SeekOrigin.Current);
+                    break;
                 }
+
+                // An unknown NTFS tag so simply skip it.
+                helperStream.Seek(ntfsLength, SeekOrigin.Current);
             }
         }
 
@@ -391,18 +385,16 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <returns>The raw binary data representing this instance.</returns>
         public byte[] GetData()
         {
-            using (MemoryStream ms = new MemoryStream())
-            using (ZipHelperStream helperStream = new ZipHelperStream(ms))
-            {
-                helperStream.IsStreamOwner = false;
-                helperStream.WriteLEInt(0);       // Reserved
-                helperStream.WriteLEShort(1);     // Tag
-                helperStream.WriteLEShort(24);    // Length = 3 x 8.
-                helperStream.WriteLELong(_lastModificationTime.ToFileTime());
-                helperStream.WriteLELong(_lastAccessTime.ToFileTime());
-                helperStream.WriteLELong(_createTime.ToFileTime());
-                return ms.ToArray();
-            }
+            using MemoryStream ms = new MemoryStream();
+            using ZipHelperStream helperStream = new ZipHelperStream(ms);
+            helperStream.IsStreamOwner = false;
+            helperStream.WriteLEInt(0);       // Reserved
+            helperStream.WriteLEShort(1);     // Tag
+            helperStream.WriteLEShort(24);    // Length = 3 x 8.
+            helperStream.WriteLELong(_lastModificationTime.ToFileTime());
+            helperStream.WriteLELong(_lastAccessTime.ToFileTime());
+            helperStream.WriteLELong(_createTime.ToFileTime());
+            return ms.ToArray();
         }
 
         /// <summary>
@@ -524,7 +516,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="data">The extra data.</param>
         public ZipExtraData(byte[] data)
         {
-            if ( data == null )
+            if ( data is null )
             {
                 _data = new byte[0];
             }
@@ -553,7 +545,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </summary>
         public void Clear()
         {
-            if ( (_data == null) || (_data.Length != 0) ) {
+            if ( (_data is null) || (_data.Length != 0) ) {
                 _data = new byte[0];
             }
         }
@@ -681,7 +673,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <param name="taggedData">The <see cref="ITaggedData"/> value to add.</param>
         public void AddEntry(ITaggedData taggedData)
         {
-            if (taggedData == null)
+            if (taggedData is null)
             {
                 throw new ArgumentNullException(nameof(taggedData));
             }
@@ -700,7 +692,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 throw new ArgumentOutOfRangeException(nameof(headerID));
             }
 
-            int addLength = (fieldData == null) ? 0 : fieldData.Length;
+            int addLength = (fieldData is null) ? 0 : fieldData.Length;
 
             if ( addLength > ushort.MaxValue ) {
 #if NETCF_1_0
@@ -772,7 +764,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <seealso cref="StartNewEntry"/>
         public void AddData(byte[] data)
         {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException(nameof(data));
             }
 

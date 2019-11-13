@@ -10,7 +10,7 @@ namespace ScintillaNet.Configuration
 
         public virtual void init(ConfigurationUtility utility, ConfigFile theParent)
         {
-            if (theParent == null) _parent = (ConfigFile)this;
+            if (theParent is null) _parent = (ConfigFile)this;
             else _parent = theParent;
         }
         

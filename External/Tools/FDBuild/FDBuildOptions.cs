@@ -19,10 +19,7 @@ namespace FDBuild
         }
 
         [ArgumentProcessor]
-        public void SetProject(string file) 
-        {
-            ProjectFile = file;
-        }
+        public void SetProject(string file) => ProjectFile = file;
 
         [Option(99, "Add extra classpath", "cp")]
         public string ExtraClasspath
@@ -64,7 +61,7 @@ namespace FDBuild
         {
             set
             {
-                if (LibraryDir == null) return;
+                if (LibraryDir is null) return;
                 if (language != null) extraClasspaths.Remove(Path.Combine(LibraryDir, language, "classes"));
                 language = value;
                 var library = Path.Combine(LibraryDir, language, "classes");

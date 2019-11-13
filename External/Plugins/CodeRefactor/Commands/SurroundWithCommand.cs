@@ -3,7 +3,6 @@ using System.Text;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Utilities;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -16,20 +15,17 @@ namespace CodeRefactor.Commands
 
         public SurroundWithCommand(string snippet)
         {
-            this.SnippetCode = snippet;
+            SnippetCode = snippet;
         }
 
-        public void Execute()
-        {
-            ExecutionImplementation();
-        }
+        public void Execute() => ExecutionImplementation();
 
         /// <summary>
         /// The actual process implementation
         /// </summary>
         protected void ExecutionImplementation()
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             sci.BeginUndoAction();
             try
             {

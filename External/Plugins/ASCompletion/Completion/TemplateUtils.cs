@@ -16,7 +16,7 @@ namespace ASCompletion.Completion
 
         public static string GetStaticExternOverride(MemberModel member)
         {
-            var modifiers = "";
+            var modifiers = string.Empty;
             var flags = member.Flags;
             if ((flags & FlagType.Extern) > 0) modifiers += "extern ";
             if ((flags & FlagType.Static) > 0) modifiers += "static ";
@@ -32,7 +32,7 @@ namespace ASCompletion.Completion
             if ((access & Visibility.Public) > 0) return "public ";
             if ((access & Visibility.Protected) > 0) return "protected ";
             if ((access & Visibility.Internal) > 0) return "internal ";
-            return "";
+            return string.Empty;
         }
 
         public static string ToDeclarationWithModifiersString(MemberModel member, string template)
@@ -64,8 +64,7 @@ namespace ASCompletion.Completion
         public static string ToDeclarationString(MemberModel member, string template)
         {
             // Insert Name
-            if (member.Name is null) template = ReplaceTemplateVariable(template, "Name", null);
-            else template = ReplaceTemplateVariable(template, "Name", member.FullName);
+            template = ReplaceTemplateVariable(template, "Name", member.Name is null ? null : member.FullName);
 
             // If method, insert arguments
             template = ReplaceTemplateVariable(template, "Arguments", ParametersString(member, true));
@@ -83,70 +82,65 @@ namespace ASCompletion.Completion
 
         public static string ParametersString(MemberModel member, bool formatted)
         {
-            var result = "";
-            if (member.Parameters != null && member.Parameters.Count > 0)
+            if (member.Parameters.IsNullOrEmpty()) return string.Empty;
+            var result = string.Empty;
+            var template = GetTemplate("FunctionParameter");
+            for (int i = 0, count = member.Parameters.Count; i < count; i++)
             {
-                var template = GetTemplate("FunctionParameter");
-                for (int i = 0, count = member.Parameters.Count; i < count; i++)
-                {
-                    var param = member.Parameters[i];
-                    var one = template;
-                    if (i + 1 < count) one = ReplaceTemplateVariable(one, "PComma", ",");
-                    else one = ReplaceTemplateVariable(one, "PComma", null);
-                    one = ReplaceTemplateVariable(one, "PName", param.Name);
-                    if (string.IsNullOrEmpty(param.Type)) one = ReplaceTemplateVariable(one, "PType", null);
-                    else one = ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
-                    if (param.Value is null) one = ReplaceTemplateVariable(one, "PDefaultValue", null);
-                    else one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value.Trim());
-                    result += one;
-                }
+                var param = member.Parameters[i];
+                var one = template;
+                one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
+                one = ReplaceTemplateVariable(one, "PName", param.Name);
+                one = string.IsNullOrEmpty(param.Type)
+                    ? ReplaceTemplateVariable(one, "PType", null)
+                    : ReplaceTemplateVariable(one, "PType", formatted ? MemberModel.FormatType(param.Type) : param.Type);
+                one = ReplaceTemplateVariable(one, "PDefaultValue", param.Value?.Trim());
+                result += one;
             }
             return result;
         }
 
         public static string CallParametersString(MemberModel member)
         {
-            var result = "";
-            if (member.Parameters != null && member.Parameters.Count > 0)
+            if (member.Parameters.IsNullOrEmpty()) return string.Empty;
+            var result = string.Empty;
+            var template = GetTemplate("FunctionParameter");
+            for (int i = 0, count = member.Parameters.Count; i < count; i++)
             {
-                var template = GetTemplate("FunctionParameter");
-                for (int i = 0, count = member.Parameters.Count; i < count; i++)
-                {
-                    var param = member.Parameters[i];
-                    var one = template;
-                    one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
-                    one = ReplaceTemplateVariable(one, "PName", GetParamName(param));
-                    one = ReplaceTemplateVariable(one, "PType", null);
-                    one = ReplaceTemplateVariable(one, "PDefaultValue", null);
-                    result += one;
-                }
+                var param = member.Parameters[i];
+                var one = template;
+                one = ReplaceTemplateVariable(one, "PComma", i + 1 < count ? "," : null);
+                one = ReplaceTemplateVariable(one, "PName", GetParamName(param));
+                one = ReplaceTemplateVariable(one, "PType", null);
+                one = ReplaceTemplateVariable(one, "PDefaultValue", null);
+                result += one;
             }
             return result;
         }
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
         {
-            MatchCollection mc = Regex.Matches(template, string.Format(template_variable, var));
-            int mcCount = mc.Count;
+            var mc = Regex.Matches(template, string.Format(template_variable, var));
+            var mcCount = mc.Count;
             if (mcCount > 0)
             {
                 var sb = new System.Text.StringBuilder();
-                int pos = 0;
-                for (int i = 0; i < mcCount; i++)
+                var pos = 0;
+                for (var i = 0; i < mcCount; i++)
                 {
-                    Match m = mc[i];
-                    int endIndex = m.Index + m.Length;
+                    var m = mc[i];
+                    var endIndex = m.Index + m.Length;
                     sb.Append(template.Substring(pos, m.Index - pos));
                     if (replace != null)
                     {
-                        string val = m.Value;
+                        var val = m.Value;
                         val = val.Substring(2, val.Length - 4);
                         sb.Append(val);
                     }
                     if (i == mcCount - 1) sb.Append(template.Substring(endIndex));
                     else
                     {
-                        int next = mc[i + 1].Index;
+                        var next = mc[i + 1].Index;
                         sb.Append(template.Substring(endIndex, next - endIndex));
                         pos += next;
                     }
@@ -176,10 +170,7 @@ namespace ASCompletion.Completion
                 var funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
-                    var latest = new MemberModel();
-                    latest.LineFrom = lineNum;
-                    latest.LineTo = lineNum + lineCount;
-                    return latest;
+                    return new MemberModel {LineFrom = lineNum, LineTo = lineNum + lineCount};
                 }
                 lineNum++;
             }
@@ -189,7 +180,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Templates are stored in the plugin's Data folder
         /// </summary>
-        public static string GetTemplate(string name, string altName) => GetTemplate(name) is string tmp && tmp != "" ? tmp : GetTemplate(altName);
+        public static string GetTemplate(string name, string altName) => GetTemplate(name) is { } tmp && tmp.Length != 0
+            ? tmp
+            : GetTemplate(altName);
 
         /// <summary>
         /// Templates are stored in the plugin's Data folder
@@ -198,16 +191,11 @@ namespace ASCompletion.Completion
         {
             var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
             var path = Path.Combine(PathHelper.SnippetDir, lang, generators_folder, name + ".fds");
-            if (!File.Exists(path)) return "";
-            string content;
-            using (Stream src = File.OpenRead(path))
-            {
-                using (var sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
-            }
+            if (!File.Exists(path)) return string.Empty;
+            using Stream src = File.OpenRead(path);
+            using var sr = new StreamReader(src);
+            var content = sr.ReadToEnd();
+            sr.Close();
             return "$(Boundary)" + content.Replace("\r\n", "\n") + "$(Boundary)";
         }
 
@@ -215,19 +203,19 @@ namespace ASCompletion.Completion
         {
             var lang = PluginBase.MainForm.CurrentDocument.SciControl.ConfigurationLanguage.ToLower();
             var path = Path.Combine(PathHelper.SnippetDir, lang, boundaries_folder, name + ".fds");
-            if (!File.Exists(path)) return "";
-            string content;
-            using (Stream src = File.OpenRead(path))
-            {
-                using (var sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
-            }
+            if (!File.Exists(path)) return string.Empty;
+            using Stream src = File.OpenRead(path);
+            using var sr = new StreamReader(src);
+            var content = sr.ReadToEnd();
+            sr.Close();
             return content;
         }
 
-        public static string GetParamName(MemberModel param) => (param.Name ?? "").Replace("?", "");
+        public static string GetParamName(MemberModel parameter)
+        {
+            return string.IsNullOrEmpty(parameter.Name)
+                ? string.Empty
+                : parameter.Name.Replace("?", "");
+        }
     }
 }

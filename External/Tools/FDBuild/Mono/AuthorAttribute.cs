@@ -20,17 +20,15 @@ namespace Mono
 
         public override string ToString()
         {
-            if (SubProject == null)
+            if (SubProject is null)
             {
                 return Name;
             }
             return (Name + " (" + SubProject + ")");
         }
-
-
+        
         // Fields
         public string Name;
         public string SubProject;
     }
 }
-

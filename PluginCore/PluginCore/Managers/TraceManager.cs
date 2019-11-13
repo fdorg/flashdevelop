@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Timers;
 using System.Windows.Forms;
+using PluginCore.Collections;
 using Timer = System.Timers.Timer;
 
 namespace PluginCore.Managers
 {
     public class TraceManager
     {
-        private static bool synchronizing;
-        private static int maxQueue = 1000;
-        private static readonly List<TraceItem> traceLog;
-        private static readonly List<TraceItem> asyncQueue;
-        private static readonly Dictionary<string, TraceGroup> traceGroups;
-        private static readonly Timer asyncTimer;
-        private static int uniqueToken;
+        static bool synchronizing;
+        static int maxQueue = 1000;
+        static readonly List<TraceItem> traceLog;
+        static readonly List<TraceItem> asyncQueue;
+        static readonly Dictionary<string, TraceGroup> traceGroups;
+        static readonly Timer asyncTimer;
+        static int uniqueToken;
 
         static TraceManager()
         {
@@ -32,10 +33,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Apply the modified settings.
         /// </summary>
-        public static void ApplySettings(int maxTraceLines)
-        {
-            maxQueue = maxTraceLines;
-        }
+        public static void ApplySettings(int maxTraceLines) => maxQueue = maxTraceLines;
 
         /// <summary>
         /// Adds a new entry to the log
@@ -130,7 +128,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupData(string groupId, params string[] args)
         {
-            if (args is null || args.Length == 0) return groupId;
+            if (args.IsNullOrEmpty()) return groupId;
             return groupId + ":" + string.Join(",", args);
         }
 
@@ -141,7 +139,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static string CreateGroupDataUnique(string groupId, params string[] args)
         {
-            if (args is null || args.Length == 0)
+            if (args.IsNullOrEmpty())
             {
                 return CreateGroupData(groupId, uniqueToken++.ToString());
             }
@@ -161,29 +159,27 @@ namespace PluginCore.Managers
                 return true;
             }
             groupId = groupData;
-            args = new string[0];
+            args = EmptyArray<string>.Instance;
             return false;
         }
 
         /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
-        private static void AsyncTimer_Elapsed(object sender, ElapsedEventArgs e)
+        static void AsyncTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             lock (asyncQueue)
             {
                 if (PluginBase.MainForm.ClosingEntirely) return;
-                if (!synchronizing)
+                if (synchronizing) return;
+                synchronizing = true;
+                try
                 {
-                    synchronizing = true;
-                    try
-                    {
-                        ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
-                    }
-                    catch (Exception)
-                    {
-                        synchronizing = false;
-                    }
+                    ((Form) PluginBase.MainForm).BeginInvoke((MethodInvoker) ProcessQueue);
+                }
+                catch (Exception)
+                {
+                    synchronizing = false;
                 }
             }
         }
@@ -191,7 +187,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Processes the trace queue
         /// </summary>
-        private static void ProcessQueue()
+        static void ProcessQueue()
         {
             lock (asyncQueue)
             {
@@ -247,34 +243,21 @@ namespace PluginCore.Managers
         /// <summary>
         /// Gets the state (<see cref="TraceType"/> enum).
         /// </summary>
-        public int State
-        {
-            get;
-        }
+        public int State { get; }
 
         /// <summary>
         /// Gets the logged trace message.
         /// </summary>
-        public string Message
-        {
-            get;
-        }
+        public string Message { get; }
 
         /// <summary>
         /// Gets the timestamp of the trace.
         /// </summary>
-        public DateTime Timestamp
-        {
-            get;
-        }
+        public DateTime Timestamp { get; }
 
         /// <summary>
         /// Gets the group data.
         /// </summary>
-        public string GroupData
-        {
-            get;
-        }
+        public string GroupData { get; }
     }
-
 }

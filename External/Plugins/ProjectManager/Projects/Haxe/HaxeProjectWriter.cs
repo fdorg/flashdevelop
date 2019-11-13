@@ -4,7 +4,7 @@ namespace ProjectManager.Projects.Haxe
     {
         readonly HaxeProject project;
 
-        public HaxeProjectWriter(HaxeProject project, string filename)
+        public HaxeProjectWriter(Project project, string filename)
             : base(project, filename)
         {
             this.project = Project as HaxeProject;

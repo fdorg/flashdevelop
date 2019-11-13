@@ -23,7 +23,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         internal void Add(DockPane pane)
         {
-            if (pane == null)
+            if (pane is null)
                 return;
 
             NestedPaneCollection oldNestedPanes = pane.NestedPanesContainer?.NestedPanes;

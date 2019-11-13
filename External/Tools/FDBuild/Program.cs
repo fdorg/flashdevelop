@@ -34,7 +34,7 @@ namespace FDBuild
 
             // try and automagically figure out flashdevelop's library path
             // it should be at ..\..\Library
-            if (options.LibraryDir == null)
+            if (options.LibraryDir is null)
                 try
                 {
                     string libraryDir = Path.Combine(firstRunDir, "Library");
@@ -142,7 +142,7 @@ namespace FDBuild
         /// </summary>
         /// <param name="workingdir">the working directory for fsch, to have full optimization make this the same for all calls </param>
         /// <param name="arguments">the mxmlc arguments</param>
-        public static void BuildMXMLC( string workingdir, string arguments )
+        public static void BuildMXMLC(string workingdir, string arguments)
         {
             //Project project = ProjectLoader.Load(projectFile);
             //Program.BuildOptions.Language = project.Language.ToUpper();
@@ -157,7 +157,7 @@ namespace FDBuild
         /// </summary>
         /// <param name="workingdir">the working directory for fsch, to have full optimization make this the same for all calls </param>
         /// <param name="arguments">the compc arguments</param>
-        public static void BuildCOMPC( string workingdir, string arguments )
+        public static void BuildCOMPC(string workingdir, string arguments)
         {
             new AS3ProjectBuilder(null, BuildOptions.CompilerPath, BuildOptions.IpcName);
         }

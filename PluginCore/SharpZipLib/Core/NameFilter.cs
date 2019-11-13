@@ -97,7 +97,7 @@ namespace ICSharpCode.SharpZipLib.Core
         /// <returns>True if the expression is valid, false otherwise.</returns>
         public static bool IsValidFilterExpression(string toTest)
         {
-            if ( toTest == null ) {
+            if ( toTest is null ) {
                 throw new ArgumentNullException(nameof(toTest));
             }
 
@@ -249,7 +249,7 @@ namespace ICSharpCode.SharpZipLib.Core
         {
             // TODO: Check to see if combining RE's makes it faster/smaller.
             // simple scheme would be to have one RE for inclusion and one for exclusion.
-            if ( filter_ == null ) {
+            if ( filter_ is null ) {
                 return;
             }
 

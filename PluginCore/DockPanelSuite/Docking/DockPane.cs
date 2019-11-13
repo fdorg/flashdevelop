@@ -51,7 +51,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
         protected internal DockPane(IDockContent content, FloatWindow floatWindow, bool show)
         {
-            if (floatWindow == null)
+            if (floatWindow is null)
                 throw new ArgumentNullException(nameof(floatWindow));
 
             InternalConstruct(content, DockState.Float, false, Rectangle.Empty, floatWindow.NestedPanes.GetDefaultPreviousPane(this), DockAlignment.Right, 0.5, show);
@@ -59,7 +59,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         protected internal DockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion, bool show)
         {
-            if (previousPane == null)
+            if (previousPane is null)
                 throw(new ArgumentNullException(nameof(previousPane)));
             InternalConstruct(content, previousPane.DockState, false, Rectangle.Empty, previousPane, alignment, proportion, show);
         }
@@ -75,10 +75,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             if (dockState == DockState.Hidden || dockState == DockState.Unknown)
                 throw new ArgumentException(Strings.DockPane_SetDockState_InvalidState);
 
-            if (content == null)
+            if (content is null)
                 throw new ArgumentNullException(Strings.DockPane_Constructor_NullContent);
 
-            if (content.DockHandler.DockPanel == null)
+            if (content.DockHandler.DockPanel is null)
                 throw new ArgumentException(Strings.DockPane_Constructor_NullDockPanel);
 
 
@@ -232,7 +232,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 IDockContent content = ActiveContent;
 
-                if (content == null)
+                if (content is null)
                     return null;
 
                 if (content.DockHandler.TabPageContextMenuStrip != null)
@@ -247,7 +247,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             object menu = TabPageContextMenu;
 
-            if (menu == null)
+            if (menu is null)
                 return;
 
             ContextMenuStrip contextMenuStrip = menu as ContextMenuStrip;
@@ -348,7 +348,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        public virtual string CaptionText => ActiveContent == null ? string.Empty : ActiveContent.DockHandler.TabText;
+        public virtual string CaptionText => ActiveContent is null ? string.Empty : ActiveContent.DockHandler.TabText;
 
         private DockContentCollection m_contents;
         public DockContentCollection Contents => m_contents;
@@ -446,7 +446,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             DockPanel dockPanel = DockPanel;
             dockPanel.SuspendLayout(true);
 
-            if (content == null)
+            if (content is null)
                 return;
 
             if (!content.DockHandler.CloseButton)
@@ -667,7 +667,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         internal void ValidateActiveContent()
         {
-            if (ActiveContent == null)
+            if (ActiveContent is null)
             {
                 if (DisplayingContents.Count != 0)
                     ActiveContent = DisplayingContents[0];
@@ -802,7 +802,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     break;
                 }
             }
-            if (firstContent == null)
+            if (firstContent is null)
                 return null;
 
             firstContent.DockHandler.DockState = value;
@@ -836,7 +836,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (!IsFloat)
                 DockWindow = DockPanel.DockWindows[DockState];
-            else if (FloatWindow == null)
+            else if (FloatWindow is null)
                 FloatWindow = DockPanel.FloatWindowFactory.CreateFloatWindow(DockPanel, this);
 
             if (contentFocused != null)
@@ -946,7 +946,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public DockPane DockTo(INestedPanesContainer container)
         {
-            if (container == null)
+            if (container is null)
                 throw new InvalidOperationException(Strings.DockPane_DockTo_NullContainer);
 
             DockAlignment alignment;
@@ -960,7 +960,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public DockPane DockTo(INestedPanesContainer container, DockPane previousPane, DockAlignment alignment, double proportion)
         {
-            if (container == null)
+            if (container is null)
                 throw new InvalidOperationException(Strings.DockPane_DockTo_NullContainer);
 
             if (container.IsFloat == this.IsFloat)
@@ -970,7 +970,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             IDockContent firstContent = GetFirstContent(container.DockState);
-            if (firstContent == null)
+            if (firstContent is null)
                 return null;
 
             DockPane pane;
@@ -1016,7 +1016,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             int count = container.NestedPanes.Count;
             if (container.NestedPanes.Contains(this))
                 count --;
-            if (prevPane == null && count > 0)
+            if (prevPane is null && count > 0)
                 throw new InvalidOperationException(Strings.DockPane_DockTo_NullPrevPane);
 
             if (prevPane != null && !container.NestedPanes.Contains(prevPane))
@@ -1049,10 +1049,10 @@ namespace WeifenLuo.WinFormsUI.Docking
             IDockContent activeContent = ActiveContent;
 
             DockPane floatPane = GetFloatPaneFromContents();
-            if (floatPane == null)
+            if (floatPane is null)
             {
                 IDockContent firstContent = GetFirstContent(DockState.Float);
-                if (firstContent == null)
+                if (firstContent is null)
                 {
                     DockPanel.ResumeLayout(true, true);
                     return null;
@@ -1146,7 +1146,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             Size size;
 
             DockPane floatPane = ActiveContent.DockHandler.FloatPane;
-            if (DockState == DockState.Float || floatPane == null || floatPane.FloatWindow.NestedPanes.Count != 1)
+            if (DockState == DockState.Float || floatPane is null || floatPane.FloatWindow.NestedPanes.Count != 1)
                 size = DockPanel.DefaultFloatWindowSize;
             else
                 size = floatPane.FloatWindow.Size;
@@ -1159,7 +1159,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
         public void FloatAt(Rectangle floatWindowBounds)
         {
-            if (FloatWindow == null || FloatWindow.NestedPanes.Count != 1)
+            if (FloatWindow is null || FloatWindow.NestedPanes.Count != 1)
                 FloatWindow = DockPanel.FloatWindowFactory.CreateFloatWindow(DockPanel, this, floatWindowBounds);
             else
                 FloatWindow.Bounds = floatWindowBounds;

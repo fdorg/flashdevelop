@@ -22,7 +22,7 @@ namespace XMLCompletion
 
         public ZenElementTypes(Hashtable def)
         {
-            if (def == null) return;
+            if (def is null) return;
             if (def.ContainsKey("empty")) ParseSet(empty, (string)def["empty"]);
             if (def.ContainsKey("block_level")) ParseSet(block_level, (string)def["block_level"]);
             if (def.ContainsKey("inline_level")) ParseSet(inline_level, (string)def["inline_level"]);
@@ -102,7 +102,7 @@ namespace XMLCompletion
         {
             MergeHashtable(ref lang.abbreviations, ref lang2.abbreviations);
             MergeHashtable(ref lang.snippets, ref lang2.snippets);
-            if (lang.element_types == null) lang.element_types = lang2.element_types;
+            if (lang.element_types is null) lang.element_types = lang2.element_types;
             else if (lang2.element_types != null)
             {
                 MergeHashtable(ref lang.element_types.empty, ref lang2.element_types.empty);
@@ -113,7 +113,7 @@ namespace XMLCompletion
 
         private static void MergeHashtable(ref Hashtable t1, ref Hashtable t2)
         {
-            if (t1 == null) t1 = t2.Clone() as Hashtable;
+            if (t1 is null) t1 = t2.Clone() as Hashtable;
             else if (t2 != null)
                 foreach (string key in t2.Keys)
                     if (!t1.ContainsKey(key)) t1[key] = t2[key];
@@ -194,13 +194,13 @@ namespace XMLCompletion
 
                 LoadResource("zen_settings.js");
 
-                if (delayOpenConfig == null) // timer for opening config files
+                if (delayOpenConfig is null) // timer for opening config files
                 {
                     delayOpenConfig = new Timer();
                     delayOpenConfig.Interval = 100;
                     delayOpenConfig.Tick += delayOpenConfig_Tick;
                 }
-                if (watcherConfig == null) // watching config files changes
+                if (watcherConfig is null) // watching config files changes
                 {
                     watcherConfig = new FileSystemWatcher(Path.Combine(PathHelper.DataDir, "XMLCompletion"), "zen*");
                     watcherConfig.Changed += watcherConfig_Changed;
@@ -249,23 +249,17 @@ namespace XMLCompletion
         {
             try
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
-                if (src == null)
-                    return false;
+                var assembly = Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("XMLCompletion.Resources." + file);
+                if (src is null) return false;
 
-                string content;
-                using (StreamReader sr = new StreamReader(src))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                using var reader = new StreamReader(src);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                using (StreamWriter sw = File.CreateText(filePath))
-                {
-                    sw.Write(content);
-                    sw.Close();
-                }
+                using var writer = File.CreateText(filePath);
+                writer.Write(content);
+                writer.Close();
                 return true;
             }
             catch
@@ -278,10 +272,10 @@ namespace XMLCompletion
         #region expansion
         public static bool expandSnippet(Hashtable data)
         {
-            if (data["snippet"] == null)
+            if (data["snippet"] is null)
             {
                 ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (sci == null) return false;
+                if (sci is null) return false;
                 // extract zen expression
                 int pos = sci.CurrentPos - 1;
                 int lastValid = sci.CurrentPos;
@@ -309,7 +303,7 @@ namespace XMLCompletion
                     try
                     {
                         string expr = expandExpression(sci.SelText);
-                        if (expr == null) return false;
+                        if (expr is null) return false;
                         if (!expr.Contains("$(EntryPoint)")) expr += "$(EntryPoint)";
                         data["snippet"] = expr;
                     }
@@ -329,7 +323,7 @@ namespace XMLCompletion
         public static string expandExpression(string expr)
         {
             init(); // load config
-            if (lang == null) return null;
+            if (lang is null) return null;
 
             if (expr == "zen") // show config
             {

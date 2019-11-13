@@ -121,41 +121,36 @@ namespace ASCompletion.Helpers
                 }
             }
             
-            (PluginBase.MainForm as Form).Activate();
-            (PluginBase.MainForm as Form).Focus();
+            ((Form) PluginBase.MainForm).Activate();
+            ((Form) PluginBase.MainForm).Focus();
         }
 
         private void PlaySWF()
         {
-            if (File.Exists(docInfo) && File.Exists(publishInfo))
+            if (!File.Exists(docInfo) || !File.Exists(publishInfo)) return;
+            var fla = File.ReadAllText(docInfo);
+            if (!File.Exists(fla)) return;
+
+            try
             {
-                string fla = File.ReadAllText(docInfo);
-                if (!File.Exists(fla)) 
-                    return;
+                // don't let another FD instance handle it
+                // TODO Make multi-FD-instances friendly
+                File.Delete(docInfo); 
+            }
+            catch { }
 
-                try
-                {
-                    // don't let another FD instance handle it
-                    // TODO Make multi-FD-instances friendly
-                    File.Delete(docInfo); 
-                }
-                catch { }
-
-                string src = File.ReadAllText(publishInfo);
-                Match m = reFlashFile.Match(src);
-                if (m.Success)
-                {
-                    string output = m.Groups["output"].Value.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                    output = PathHelper.ResolvePath(output, Path.GetDirectoryName(fla));
-                    if (File.Exists(output))
-                    {
-                        FileInfo info = new FileInfo(output);
-                        CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
+            var src = File.ReadAllText(publishInfo);
+            var m = reFlashFile.Match(src);
+            if (!m.Success) return;
+            string output = m.Groups["output"].Value.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            output = PathHelper.ResolvePath(output, Path.GetDirectoryName(fla));
+            if (File.Exists(output))
+            {
+                FileInfo info = new FileInfo(output);
+                CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
                         
-                        DataEvent de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", output);
-                        EventManager.DispatchEvent(this, de);
-                    }
-                }
+                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", output);
+                EventManager.DispatchEvent(this, de);
             }
         }
 

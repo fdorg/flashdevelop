@@ -20,6 +20,7 @@ using AS3Context;
 using HaXeContext.Completion;
 using HaXeContext.Generators;
 using HaXeContext.Model;
+using PluginCore.Collections;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -259,7 +260,10 @@ namespace HaXeContext
                         if (Directory.Exists(line))
                             paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
                     }
-                    catch (Exception) { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
             while (!p.StandardOutput.EndOfStream);
@@ -277,7 +281,7 @@ namespace HaXeContext
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (Directory.Exists(haxePath))
             {
-                string path = haxePath;
+                var path = haxePath;
                 haxePath = Path.Combine(path, "haxe.exe");
                 if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
             }
@@ -287,8 +291,8 @@ namespace HaXeContext
                 return null;
             }
 
-            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
-            Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
+            var projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            var p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
 
             var paths = new List<string>();
             var isPathExpected = false;
@@ -310,7 +314,7 @@ namespace HaXeContext
             while (!p.StandardOutput.EndOfStream);
 
             var error = p.StandardError.ReadToEnd();
-            if (error != "") TraceManager.Add(error, (int)TraceType.Error);
+            if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
 
             p.WaitForExit();
             p.Close();
@@ -376,8 +380,9 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
-            else features.SpecialPostfixOperators = new char[0];
+            features.SpecialPostfixOperators = GetCurrentSDKVersion() >= "3.3.0"
+                ? new[] {'!'}
+                : EmptyArray<char>.Instance;
 
             UseGenericsShortNotationChange();
         }
@@ -392,15 +397,12 @@ namespace HaXeContext
         {
             features.metadata = new Dictionary<string, string>();
 
-            ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
+            var processInfo = CreateHaxeProcessInfo("--help-metas");
             if (processInfo is null) return;
-            string metaList;
-            using (var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true})
-            {
-                process.Start();
+            using var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true};
+            process.Start();
 
-                metaList = process.StandardOutput.ReadToEnd();
-            }
+            var metaList = process.StandardOutput.ReadToEnd();
 
             var regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");
@@ -587,7 +589,7 @@ namespace HaXeContext
             }
 
             // add user pathes from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
@@ -793,9 +795,16 @@ namespace HaXeContext
                                              *     var D = 6;
                                              * }
                                              */
-                                            member.Value = index == 0
-                                                ? "0"
-                                                : (int.Parse(@class.Members[index - 1].Value) + 1).ToString();
+                                            var prevIndex = index;
+                                            while (--prevIndex >= 0)
+                                            {
+                                                var prevMember = @class.Members[prevIndex];
+                                                if (!prevMember.Flags.HasFlag(FlagType.Variable)) continue;
+                                                if (int.TryParse(prevMember.Value, out var value))
+                                                    member.Value = (value + 1).ToString();
+                                                break;
+                                            }
+                                            if (member.Value is null) member.Value = "0";
                                             extends = ClassModel.VoidClass;
                                             break;
                                     }
@@ -1056,7 +1065,7 @@ namespace HaXeContext
                         if (p2 != -1) lpart = import.Substring(p2 + 1);
                         if (char.IsLower(lpart[0])) continue;
                         var type = ResolveType(lpart, Context.CurrentModel);
-                        if (type.IsVoid() || type.Members.Count <= 0) continue;
+                        if (type.IsVoid() || type.Members.Count == 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
                         if (member is null) continue;
@@ -1162,7 +1171,7 @@ namespace HaXeContext
             var type = member.Type;
             var isShortType = name == type;
             var curFile = Context.CurrentModel;
-            var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
+            var imports = curFile.Imports.Concat(ResolveDefaults(curFile.Package)).ToArray();
             foreach (var import in imports)
             {
                 if ((isShortType && import.Name == name) || import.Type == type) return true;
@@ -1601,7 +1610,7 @@ namespace HaXeContext
                             {
                                 if ((member.Access & access) == 0
                                     || (member.Flags & FlagType.Static) == 0 || (member.Flags & FlagType.Function) == 0
-                                    || member.Parameters is null || member.Parameters.Count == 0
+                                    || member.Parameters.IsNullOrEmpty()
                                     || extensions.Contains(member.Name, 0, 0)
                                     || !CanBeExtended(extends, member, access)) continue;
                                 // transform `extensionMethod(target:Type, ...params)` to `extensionMethod(...params)`
@@ -1616,7 +1625,7 @@ namespace HaXeContext
                     }
                 }
             }
-            if (extensions.Count <= 0) return false;
+            if (extensions.Count == 0) return false;
             result = (ClassModel) type.Clone();
             result.Members.Merge(extensions);
             return true;
@@ -1696,14 +1705,14 @@ namespace HaXeContext
         public override string GetDefaultValue(string type)
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
-            switch (type)
+            return type switch
             {
-                case "Int":
-                case "UInt": return "0";
-                case "Float": return "Math.NaN";
-                case "Bool": return "false";
-                default: return "null";
-            }
+                "Int" => "0",
+                "UInt" => "0",
+                "Float" => "Math.NaN",
+                "Bool" => "false",
+                _ => "null",
+            };
         }
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
@@ -1932,7 +1941,7 @@ namespace HaXeContext
                     break;
 
                 case HaxeCompleteStatus.MEMBERS:
-                    if (result.Members != null && result.Members.Count > 0)
+                    if (!result.Members.IsNullOrEmpty())
                         ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
                     break;
 
@@ -2023,7 +2032,7 @@ namespace HaXeContext
         public override void ResolveTopLevelElement(string token, ASResult result)
         {
             var list = GetTopLevelElements();
-            if (list != null && list.Count > 0)
+            if (!list.IsNullOrEmpty())
             {
                 var items = list.MultipleSearch(token, 0, 0);
                 if (items.Count == 1)
@@ -2121,7 +2130,7 @@ namespace HaXeContext
                 completionCache = hxCompletionCache = new HaxeCompletionCache(this, elements, other);
 
                 // known classes colorization
-                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is ScintillaControl sci)
+                if (!CommonSettings.DisableKnownTypesColoring && !settings.LazyClasspathExploration && CurSciControl is { } sci)
                 {
                     try
                     {
@@ -2376,7 +2385,7 @@ namespace HaXeContext
             if (IsFileValid)
             {
                 if (cFile.Comments != null) mCmd = re_CMD_BuildCommand.Match(cFile.Comments);
-                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is ClassModel cClass && cClass.Comments != null)
+                if ((mCmd is null || !mCmd.Success) && cFile.GetPublicClass() is { } cClass && cClass.Comments != null)
                     mCmd = re_CMD_BuildCommand.Match(cClass.Comments);
             }
 
@@ -2518,11 +2527,160 @@ namespace HaXeContext
                 var p = StartHiddenProcess(lixPath, "install haxelib:" + item.Key, projectDir);
                 var output = p.StandardOutput.ReadToEnd();
                 var error = p.StandardError.ReadToEnd();
-                if (output != "") TraceManager.Add(output, (int)TraceType.Info);
-                else if (error != "") TraceManager.Add(error, (int)TraceType.Error);
+                if (output.Length != 0) TraceManager.Add(output, (int)TraceType.Info);
+                else if (error.Length != 0) TraceManager.Add(error, (int)TraceType.Error);
                 p.WaitForExit();
                 p.Close();
             }
+        }
+
+        #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <inheritdoc cref="ASContext.OnBraceMatch"/>
+        public override void OnBraceMatch(ScintillaControl sci)
+        {
+            if (!sci.IsBraceMatching || sci.SelText.Length != 0) return;
+            var position = sci.CurrentPos - 1;
+            var character = (char)sci.CharAt(position);
+            if (character != '<' && character != '>')
+            {
+                position = sci.CurrentPos;
+                character = (char)sci.CharAt(position);
+            }
+            if (character == '<' || character == '>')
+            {
+                if (!sci.PositionIsOnComment(position))
+                {
+                    var bracePosStart = position;
+                    var bracePosEnd = BraceMatch(sci, position);
+                    if (bracePosEnd != -1) sci.BraceHighlight(bracePosStart, bracePosEnd);
+                    if (sci.UseHighlightGuides)
+                    {
+                        var line = sci.LineFromPosition(position);
+                        sci.HighlightGuide = sci.GetLineIndentation(line);
+                    }
+                }
+                else
+                {
+                    sci.BraceHighlight(-1, -1);
+                    sci.HighlightGuide = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find the position of a matching '<' and '>' or INVALID_POSITION if no match.
+        /// </summary>
+        protected internal int BraceMatch(ScintillaControl sci, int position)
+        {
+            if (sci.PositionIsOnComment(position) || sci.PositionIsInString(position)) return -1;
+            var language = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage);
+            if (language is null) return -1;
+            var characters = language.characterclass.Characters;
+            var sub = 0;
+            var genCount = 0;
+            var parCount = 0;
+            switch (sci.CharAt(position))
+            {
+                case '<':
+                    var length = sci.TextLength;
+                    if (position == length) return -1;
+                    switch (sci.CharAt(position + 1))
+                    {
+                        case '=': // a $(EntryPoint)<= b
+                        case '<': // a $(EntryPoint)<< b
+                            return -1;
+                    }
+                    // a <$(EntryPoint)< b
+                    if (sci.CharAt(position - 1) == '<') return -1;
+                    while (position < length)
+                    {
+                        position++;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var c = sci.CharAt(position);
+                        if (c == ';') return -1;
+                        if (c <= ' ') continue;
+                        if (c == '<') sub++;
+                        else if (c == '>')
+                        {
+                            // TParameter-$(EntryPoint)>TReturn
+                            if (sci.CharAt(position - 1) == '-') continue;
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        // Map<Int$(EntryPoint), String>
+                        else if (c == ',') continue;
+                        // Array<Int->$(EntryPoint)?String>
+                        else if (c == '?') continue;
+                        else if (c == '-'
+                            && position < length
+                            // $(EntryPoint)->
+                            && sci.CharAt(position + 1) == '>')
+                            position++;
+                        else if (// a < b $(EntryPoint)||
+                                 c == '|'      
+                                 // a < b $(EntryPoint)&&
+                                 || c == '&'
+                                 // a <$(EntryPoint)= b
+                                 || c == '='
+                                 // a < b$(EntryPoint);
+                                 || c == ';')
+                            return -1;
+                        // Array<Int->$(EntryPoint){v:Type}>
+                        else if (parCount == 0 && c == '{') genCount++;
+                        else if (parCount == 0 && c == '}' && genCount > 0) genCount--;
+                        // Array<$(EntryPoint)(Int->{v:Type})>
+                        else if (genCount == 0 && c == '(') parCount++;
+                        else if (genCount == 0 && c == ')' && parCount > 0) parCount--;
+                        else if (genCount == 0 && parCount == 0 && !characters.Contains((char)c)) return -1;
+                    }
+                    break;
+                case '>':
+                    // -$(EntryPoint)>
+                    if (sci.CharAt(position - 1) == '-') return -1;
+                    // $(EntryPoint)>=
+                    if (sci.CharAt(position + 1) == '=') return -1; 
+                    while (position > 0)
+                    {
+                        position--;
+                        if (sci.PositionIsOnComment(position)) continue;
+                        var c = sci.CharAt(position);
+                        if (c == ';') return -1;
+                        if (c <= ' ') continue;
+                        if (c == '>')
+                        {
+                            if (// TParameter->$(EntryPoint)TReturn
+                                sci.CharAt(position - 1) == '-')
+                            {
+                                position--;
+                                continue;
+                            }
+                            sub++;
+                        }
+                        else if (c == '<')
+                        {
+                            sub--;
+                            if (sub < 0) return position;
+                        }
+                        // Map<Int,$(EntryPoint) String>
+                        else if (c == ',') continue;
+                        // Array<Int->$(EntryPoint)?String>
+                        else if (c == '?') continue;
+                        // $(EntryPoint)->
+                        else if (c == '-' && sci.CharAt(position + 1) == '>') {}
+                        // Array<Int->{v:Type}$(EntryPoint)>
+                        else if (parCount == 0 && c == '}') genCount++;
+                        else if (parCount == 0 && c == '{' && genCount > 0) genCount--;
+                        // Array<(Int->{v:Type})$(EntryPoint)>
+                        else if (genCount == 0 && c == ')') parCount++;
+                        else if (genCount == 0 && c == '(' && parCount > 0) parCount--;
+                        else if (genCount == 0 && parCount == 0 && !characters.Contains((char)c)) return -1;
+                    }
+                    break;
+            }
+            return -1;
         }
 
         #endregion

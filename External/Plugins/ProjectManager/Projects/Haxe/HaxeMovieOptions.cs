@@ -27,9 +27,6 @@ namespace ProjectManager.Projects.Haxe
                 || (HasPlatformSupport && PlatformSupport.ExternalToolchain != null);
         }
 
-        public override OutputType DefaultOutput(string platform)
-        {
-            return OutputType.Application;
-        }
+        public override OutputType DefaultOutput(string platform) => OutputType.Application;
     }
 }

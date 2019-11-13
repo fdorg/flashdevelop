@@ -454,7 +454,7 @@ namespace CodeFormatter.Handlers
                         });
                         */
 
-                        if (mReplaceMap==null)
+                        if (mReplaceMap is null)
                             mReplaceMap=new Dictionary<Int32, ReplacementRange>();
 
                         int addedChars=0;
@@ -525,7 +525,7 @@ namespace CodeFormatter.Handlers
                             if (newEndLines>oldEndLines)
                             {
                                 resultText=resultText.Substring(0, resultText.Length-(newEndLines-oldEndLines));
-                                if (mOutputRange!=null && mOutputRange.Y>resultText.Length)
+                                if (mOutputRange != Point.Empty && mOutputRange.Y>resultText.Length)
                                 {
                                     mOutputRange.Y = resultText.Length;
                                 }
@@ -533,7 +533,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if we are trying to capture the output range but haven't captured it yet
-                        if (mOutputRange != null && mOutputRange.Y < 0)
+                        if (mOutputRange != Point.Empty && mOutputRange.Y < 0)
                         {
                             mOutputRange.Y = resultText.Length;
                             mReplaceRange.Y = mWorkingSource.Length;
@@ -548,7 +548,7 @@ namespace CodeFormatter.Handlers
                         }
                     
                         //if multiple passes are allowed and we would benefit from one and this is not a partial format
-                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange==null)
+                        if (mAllowMultiplePasses && needAnotherPass() && mOutputRange == Point.Empty)
                         {
                             mSourceData=resultText;
                             continue;
@@ -671,7 +671,7 @@ namespace CodeFormatter.Handlers
         //          throw new IllegalStateException("Bad tree type");
         //      
         //      Token t=((CommonTree)tree).getToken();
-        //      if (t==null)
+        //      if (t is null)
         //          throw new IllegalStateException("null token");
         //      
         //      if ((t instanceof CommonToken))
@@ -906,7 +906,7 @@ namespace CodeFormatter.Handlers
         {
             //This (the token having no text) might occur with an empty semicolon token (semic).  I think nothing needs to be done here and
             //no state needs to be saved.
-            if (tok.Text==null)
+            if (tok.Text is null)
                 return;
         
             //look at hidden tokens to see if the tag to turn off formatting is seen.  If so, then just emit all the hidden tokens and
@@ -994,9 +994,9 @@ namespace CodeFormatter.Handlers
             }
         
             //handle user selection range
-            if (mSelectedRange!=null && !mBindableMode)
+            if (mSelectedRange!= Point.Empty && !mBindableMode)
             {
-                if (mOutputRange==null)
+                if (mOutputRange == Point.Empty)
                 {
                     if (tok.Line>=mSelectedRange.X)
                     {
@@ -1171,7 +1171,7 @@ namespace CodeFormatter.Handlers
                                     mOutputBuffer.Append(generateIndent(commentIndent));
                                     int replaceOffset=((CommonToken)t).StartIndex+line.mOriginalStartOffset;
                                     ReplacementRange range=new ReplacementRange(new Point(mOutputBuffer.Length, mOutputBuffer.Length+2), new Point(replaceOffset, replaceOffset));
-                                    if (mReplaceMap==null)
+                                    if (mReplaceMap is null)
                                         mReplaceMap=new Dictionary<Int32, ReplacementRange>();
                                     range.setChangedText("//", "");
                                     mReplaceMap[mOutputBuffer.Length] = range;
@@ -1335,7 +1335,7 @@ namespace CodeFormatter.Handlers
                             replaceRange.setChangedText(mOutputBuffer.ToString().Substring(replaceArea.X), t.Text);
                             if (!ASFormatter.validateNonWhitespaceIdentical(replaceRange.getAddedText(), replaceRange.getDeletedText()))
                             {
-                                if (mReplaceMap==null)
+                                if (mReplaceMap is null)
                                     mReplaceMap=new Dictionary<Int32, ReplacementRange>();
                                 mReplaceMap[replaceArea.X] = replaceRange;
                             }
@@ -4017,7 +4017,7 @@ namespace CodeFormatter.Handlers
     //  {
     //      if (getFormatMode()!=FORMAT_INDENT && isAddBraces(braceCode) && (nextToken instanceof CommonToken))
     //      {
-    //          if (mReplaceMap==null)
+    //          if (mReplaceMap is null)
     //              mReplaceMap=new Dictionary<Int32, ReplacementRange>();
     //          CommonToken token=(CommonToken)nextToken;
     //          //for the replacement point, I want the next non-whitespace location in the original document.  This might
@@ -4268,10 +4268,7 @@ namespace CodeFormatter.Handlers
     
         public void popDeclEqualsBlock()
         {
-            if (mCurrentDeclEqualContext!=null)
-            {
-                mCurrentDeclEqualContext=mCurrentDeclEqualContext.getParent();
-            }
+            mCurrentDeclEqualContext=mCurrentDeclEqualContext?.getParent();
         }
 
         public void captureDeclEqualPosition()

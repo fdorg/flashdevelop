@@ -203,7 +203,7 @@ namespace HaXeContext.Completion
                         .Select(it => it.Trim()).ToArray();
                     if (names.Length != 0) list.Items.RemoveAll(it => names.Contains(it.Name));
                 }
-                if (list.Count > 0) CompletionList.Show(list.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
+                if (list.Count > 0) CompletionList.Show(list.Select(it => new MemberItem(it)).ToList<ICompletionListItem>(), autoHide);
                 return true;
             }
             return false;
@@ -265,7 +265,7 @@ namespace HaXeContext.Completion
                     if (IsBool(bLabel)) return 1;
                     return 0;
                     // Utils
-                    bool IsBool(string s) => s == "true" || s == "false";
+                    static bool IsBool(string s) => s == "true" || s == "false";
                 });
             }
             // for example: function(v:Type = <complete>
@@ -306,7 +306,7 @@ namespace HaXeContext.Completion
                 return HandleDotCompletion(sci, autoHide, list, null);
             }
             // for example: v = <complete>, v != <complete>, v == <complete>
-            if ((c == ' ' || c == '!' || c == '='))
+            if (c == ' ' || c == '!' || c == '=')
             {
                 if (IsEnum(type))
                     return HandleDotCompletion(sci, autoHide, null, (a, b) =>
@@ -326,7 +326,7 @@ namespace HaXeContext.Completion
                         return 0;
 
                         // Utils
-                        bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
+                        static bool IsEnumValue(FlagType flags) => (flags & FlagType.Static) != 0 && (flags & FlagType.Variable) != 0;
                     });
                 var orders = new Dictionary<string, int>
                 {
@@ -411,13 +411,13 @@ namespace HaXeContext.Completion
             }
             return false;
             // Utils
-            bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
-                                         || (t.Flags.HasFlag(FlagType.Abstract) && t.Members != null && t.Members.Count > 0
+            static bool IsEnum(ClassModel t) => t.Flags.HasFlag(FlagType.Enum)
+                                         || (t.Flags.HasFlag(FlagType.Abstract) && !t.Members.IsNullOrEmpty()
                                              && t.MetaDatas != null && t.MetaDatas.Any(it => it.Name == ":enum"));
 
-            bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
+            static bool IsFunction(MemberModel m) => m != null && m.Flags.HasFlag(FlagType.Function);
 
-            bool IsTypedef(ClassModel t, ref ClassModel realType)
+            static bool IsTypedef(ClassModel t, ref ClassModel realType)
             {
                 if (t.Flags.HasFlag(FlagType.TypeDef))
                 {
@@ -903,7 +903,7 @@ namespace HaXeContext.Completion
                         rvalueEnd = ExpressionEndPosition(sci, i, endPosition, true);
                     }
                     // Utils
-                    bool TryGetOperatorMaxLength(string[] operators, char firstChar, ref int result)
+                    static bool TryGetOperatorMaxLength(string[] operators, char firstChar, ref int result)
                     {
                         foreach (var it in operators)
                         {
@@ -1022,19 +1022,20 @@ namespace HaXeContext.Completion
                         if (!string.IsNullOrEmpty(wordBefore)) expr.WordBeforePosition = p;
                     }
                     var isUntyped = wordBefore == "untyped";
-                    if (isUntyped || wordBefore == "new")
-                    {
-                        var p = expr.WordBeforePosition - 1;
-                        wordBefore = GetWordLeft(sci, ref p);
-                    }
-                    else if (wordBefore != "return")
-                    {
-                        var p = expr.PositionExpression;
-                        wordBefore = GetWordLeft(sci, ref p);
-                    }
+                    if (isUntyped || wordBefore == "new") wordBefore = GetWordLeft(sci, expr.WordBeforePosition - 1);
+                    else if (wordBefore != "return") wordBefore = GetWordLeft(sci, expr.PositionExpression);
                     if (wordBefore == "return")
                     {
                         if (isUntyped) member.Type = ASContext.Context.Features.dynamicKey;
+                        /**
+                         * for example:
+                         * function foo() {
+                         *     ...
+                         *     return foo();
+                         * }
+                         */
+                        else if (GetWordRight(sci, expr.PositionExpression) == member.Name)
+                            member.Type = ASContext.Context.Features.dynamicKey;
                         else
                         {
                             var expressionType = GetExpressionType(sci, i, false, true);
@@ -1053,7 +1054,7 @@ namespace HaXeContext.Completion
         {
             var extends = new HashSet<string>();
             var list = new List<ICompletionListItem>();
-            foreach (var it in ASContext.Context.GetAllProjectClasses().Items.Distinct())
+            foreach (var it in ASContext.Context.GetAllProjectClasses().Distinct())
             {
                 extends.Clear();
                 var type = it as ClassModel ?? ClassModel.VoidClass;
@@ -1179,7 +1180,7 @@ namespace HaXeContext.Completion
                 }
                 // for example: ~/pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
-                else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
+                else if (!context.SubExpressions.IsNullOrEmpty())
                 {
                     var lastIndex = context.SubExpressions.Count - 1;
                     var pattern = "#" + lastIndex + "~";
@@ -1377,7 +1378,7 @@ namespace HaXeContext.Completion
             base.FindMemberEx(token, inFile, result, mask, access);
             if (result.Type != null && !result.Type.IsVoid()) return;
             var list = ASContext.Context.GetTopLevelElements();
-            if (list is null || list.Count == 0) return;
+            if (list.IsNullOrEmpty()) return;
             foreach (MemberModel it in list)
             {
                 if (it.Name != token || !it.Flags.HasFlag(FlagType.Enum)) continue;
@@ -1619,7 +1620,7 @@ namespace HaXeContext.Completion
             return result;
         }
 
-        protected override string ToFunctionDeclarationString(MemberModel member)
+        public override string ToFunctionDeclarationString(MemberModel member)
         {
             var voidKey = ASContext.Context.Features.voidKey;
             var dynamicTypeName = ResolveType(ASContext.Context.Features.dynamicKey, null).Name;
@@ -1705,11 +1706,11 @@ namespace HaXeContext.Completion
                     if (type.Members.Count == 0) return null;
                     if ((type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(tag => tag.Name == ":enum")))
                     {
-                        return type.Members.Items.Select(it => new MemberItem(it)).ToList<ICompletionListItem>();
+                        return type.Members.Select(it => new MemberItem(it)).ToList<ICompletionListItem>();
                     }
                     if (type.Flags.HasFlag(FlagType.Enum))
                     {
-                        return type.Members.Items.Select(it =>
+                        return type.Members.Select(it =>
                         {
                             var pattern = it.Name;
                             if (it.Parameters != null)
@@ -1728,7 +1729,7 @@ namespace HaXeContext.Completion
                 }
                 return null;
                 // Utils
-                string CleanNullableType(string s)
+                static string CleanNullableType(string s)
                 {
                     var startIndex = s.IndexOfOrdinal("Null<");
                     if (startIndex == -1) return s;
@@ -1798,12 +1799,12 @@ namespace HaXeContext.Completion
                 sci.EndUndoAction();
             }
             // Utils
-            void GetMembers(ClassModel t, List<MemberModel> result)
+            static void GetMembers(ClassModel t, List<MemberModel> result)
             {
                 t.ResolveExtends();
                 while (!t.IsVoid())
                 {
-                    result.AddRange(t.Members.Items);
+                    result.AddRange(t.Members);
                     if (t.ExtendsTypes != null)
                     {
                         for (int i = 0, count = t.ExtendsTypes.Count; i < count; i++)

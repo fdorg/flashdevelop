@@ -16,17 +16,15 @@ namespace ASCompletion.Model
     {
         public static readonly ClassModel VoidClass;
 
-        private static readonly Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         
         static ClassModel()
         {
-            VoidClass = new ClassModel();
-            VoidClass.Name = "void";
-            VoidClass.InFile = new FileModel("");
+            VoidClass = new ClassModel {Name = "void", InFile = new FileModel("")};
         }
 
         public string Constructor;
@@ -44,15 +42,14 @@ namespace ASCompletion.Model
 
         public string IndexType;
         public List<string> Implements;
-        [NonSerialized]
-        private WeakReference resolvedExtend;
+        [NonSerialized] WeakReference resolvedExtend;
 
         public string QualifiedName
         {
             get
             {
                 if (InFile.Package == "") return Name;
-                if (InFile.Module == "" || InFile.Module == Name || (Name.Contains("<") && InFile.Module == BaseType)) return InFile.Package + "." + Name;
+                if (InFile.Module == "" || InFile.Module == Name || (Name.Contains('<') && InFile.Module == BaseType)) return InFile.Package + "." + Name;
                 return InFile.Package + "." + InFile.Module + "." + Name;
             }
         }
@@ -115,7 +112,7 @@ namespace ASCompletion.Model
             }
         }
 
-        private ClassModel ResolveExtendedType(IList<ClassModel> extensionList)
+        ClassModel ResolveExtendedType(IList<ClassModel> extensionList)
         {
             if (InFile.Context is null)
             {
@@ -153,13 +150,11 @@ namespace ASCompletion.Model
                 {
                     foreach(ClassModel model in extensionList)
                     {
-                        if (model.QualifiedName == extends.QualifiedName)
-                        {
-                            var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                            MessageBar.ShowWarning(info);
-                            resolvedExtend = null;
-                            return VoidClass;
-                        }
+                        if (model.QualifiedName != extends.QualifiedName) continue;
+                        var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                        MessageBar.ShowWarning(info);
+                        resolvedExtend = null;
+                        return VoidClass;
                     }
                 }
                 extensionList.Add(extends);
@@ -271,11 +266,7 @@ namespace ASCompletion.Model
 
         public void Sort() => Members.Sort();
 
-        public override bool Equals(object obj)
-        {
-            if (!(obj is ClassModel)) return false;
-            return Name.Equals(((ClassModel)obj).Name);
-        }
+        public override bool Equals(object obj) => obj is ClassModel model && Name.Equals(model.Name);
 
         public override int GetHashCode() => Name.GetHashCode();
 
@@ -292,7 +283,7 @@ namespace ASCompletion.Model
             char semi = ';';
             string tab0 = (!caching && InFile.Version == 3) ? "\t" : "";
             string tab = (caching) ? "" : ((InFile.Version == 3) ? "\t\t" : "\t");
-            bool preventVis = (this.Flags & FlagType.Interface) > 0;
+            bool preventVis = (Flags & FlagType.Interface) > 0;
 
             // SPECIAL DELEGATE
             /*if ((Flags & FlagType.Delegate) > 0)
@@ -314,7 +305,7 @@ namespace ASCompletion.Model
             
             // CLASS
             sb.Append(CommentDeclaration(Comments, tab0)).Append(tab0);
-            if (!caching && InFile.Version != 3 && (this.Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)
+            if (!caching && InFile.Version != 3 && (Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)
             {
                 sb.Append((InFile.haXe) ? "extern " : "intrinsic ");
             }
@@ -322,7 +313,7 @@ namespace ASCompletion.Model
 
             if (ExtendsType != null)
             {
-                if ((this.Flags & FlagType.Abstract) > 0) sb.Append(" from ").Append(ExtendsType);
+                if ((Flags & FlagType.Abstract) > 0) sb.Append(" from ").Append(ExtendsType);
                 else sb.Append(" extends ").Append(ExtendsType);
             }
             if (Implements != null)
@@ -345,7 +336,7 @@ namespace ASCompletion.Model
                 {
                     ASMetaData.GenerateIntrinsic(var.MetaDatas, sb, nl, tab);
                     var comment = CommentDeclaration(var.Comments, tab);
-                    if (count == 0 || comment != "") sb.Append(nl);
+                    if (count == 0 || comment.Length != 0) sb.Append(nl);
                     sb.Append(comment);
                     sb.Append(tab).Append(MemberDeclaration(var, preventVis)).Append(semi).Append(nl);
                     count++;
@@ -563,14 +554,10 @@ namespace ASCompletion.Model
             string outComment = "";
 
             int j0 = 0;
-            int j1 = 0;
             int i, l = mc.Count;
             for (i = 0; i <= l; i++)
             {
-                if (i < l)
-                    j1 = mc[i].Index;
-                else
-                    j1 = comment.Length;
+                var j1 = i < l ? mc[i].Index : comment.Length;
 
                 var s = comment.Substring(j0, j1 - j0);
 
@@ -592,7 +579,7 @@ namespace ASCompletion.Model
             return outComment;
         }
 
-        private static bool MoreLines(string text, int count)
+        static bool MoreLines(string text, int count)
         {
             int p = text.IndexOf('\n');
             while (p > 0 && count >= 0)

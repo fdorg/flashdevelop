@@ -324,8 +324,7 @@ namespace FlashDevelop.Managers
                 * Adjust the print margin
                 */
                 sci.EdgeColumn = settings.PrintMarginColumn;
-                if (sci.EdgeColumn > 0) sci.EdgeMode = 1;
-                else sci.EdgeMode = 0;
+                sci.EdgeMode = sci.EdgeColumn > 0 ? 1 : 0;
                 /**
                 * Add missing ignored keys
                 */
@@ -357,7 +356,7 @@ namespace FlashDevelop.Managers
         {
             int value = ScaleHelper.Scale(size);
             Language lang = SciConfig.GetLanguage(sci.ConfigurationLanguage);
-            if (lang?.usestyles != null && lang.usestyles.Length > 0)
+            if (lang != null && !lang.usestyles.IsNullOrEmpty())
             {
                 // Only larger fonts need scaling...
                 if (lang.usestyles[0].FontSize < 11) return value;

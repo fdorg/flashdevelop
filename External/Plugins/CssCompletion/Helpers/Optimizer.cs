@@ -57,7 +57,7 @@ namespace CssCompletion
                 return;
             }
             string cmd = PathHelper.ResolvePath(parts[0], toolsDir);
-            if (cmd == null)
+            if (cmd is null)
             {
                 TraceManager.Add(parts[0] + " command not found");
                 return;

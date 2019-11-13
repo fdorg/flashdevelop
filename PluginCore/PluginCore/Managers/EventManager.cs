@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using PluginCore.Collections;
 
 namespace PluginCore.Managers
 {
@@ -9,20 +10,20 @@ namespace PluginCore.Managers
     /// </summary>
     public static class EventManager
     {
-        private static readonly List<EventObject> highObjects;
-        private static readonly List<EventObject> normalObjects;
-        private static readonly List<EventObject> lowObjects;
-        private static EventObject[] eventObjectsSnapshot;
-        private static bool snapshotInvalid;
+        static readonly List<EventObject> highObjects;
+        static readonly List<EventObject> normalObjects;
+        static readonly List<EventObject> lowObjects;
+        static EventObject[] eventObjectsSnapshot;
+        static bool snapshotInvalid;
 
-        private static readonly object eventLock = new object();
+        static readonly object eventLock = new object();
 
         static EventManager()
         {
             highObjects = new List<EventObject>();
             normalObjects = new List<EventObject>();
             lowObjects = new List<EventObject>();
-            eventObjectsSnapshot = new EventObject[0];
+            eventObjectsSnapshot = EmptyArray<EventObject>.Instance;
             snapshotInvalid = false;
         }
 
@@ -39,11 +40,7 @@ namespace PluginCore.Managers
         /// </summary>
         public static void AddEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
         {
-            if (handler is null)
-            {
-                throw new ArgumentNullException(nameof(handler));
-            }
-
+            if (handler is null) throw new ArgumentNullException(nameof(handler));
             lock (eventLock)
             {
                 snapshotInvalid = true;
@@ -132,20 +129,18 @@ namespace PluginCore.Managers
             for (var i = 0; i < length; i++)
             {
                 var obj = eventObjectsCopy[i];
-                if ((obj.Mask & e.Type) > 0)
+                if ((obj.Mask & e.Type) == 0) continue;
+                try
                 {
-                    try
-                    {
-                        obj.Handler.HandleEvent(sender, e, obj.Priority);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorManager.ShowError(ex);
-                    }
-                    if (e.Handled)
-                    {
-                        break;
-                    }
+                    obj.Handler.HandleEvent(sender, e, obj.Priority);
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                }
+                if (e.Handled)
+                {
+                    break;
                 }
             }
         }
@@ -153,7 +148,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Gets the list of event objects with the specified priority.
         /// </summary>
-        private static List<EventObject> GetEventObjects(HandlingPriority priority)
+        static List<EventObject> GetEventObjects(HandlingPriority priority)
         {
             return priority switch
             {
@@ -164,7 +159,7 @@ namespace PluginCore.Managers
             };
         }
 
-        private sealed class EventObject
+        sealed class EventObject
         {
             internal readonly IEventHandler Handler;
             internal readonly HandlingPriority Priority;

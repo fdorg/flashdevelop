@@ -171,7 +171,7 @@ namespace CodeFormatter.Handlers
                 while (true)
                 {
                     String line=br.readLine();
-                    if (line==null)
+                    if (line is null)
                         break;
                     buffer += line);
                     buffer += '\n');
@@ -217,7 +217,7 @@ namespace CodeFormatter.Handlers
             prettyPrint(lex.GetTokens(), buffer);
             if (!(ASFormatter.validateNonWhitespaceCharCounts(buffer + mRemovedText, mSource + mAddedText)))
             {
-                if (mParseErrors == null)
+                if (mParseErrors is null)
                     mParseErrors = new List<Exception>();
                 mParseErrors.Add(new Exception("Internal error: Formatted text doesn't match source. " + buffer + "!=" + mSource));
                 return null;
@@ -565,13 +565,13 @@ namespace CodeFormatter.Handlers
                 }
             }
 
-            if (mOutputRange != null && mOutputRange.Y < 0 && mReplaceRange != null)
+            if (mOutputRange != Point.Empty && mOutputRange.Y < 0 && mReplaceRange != Point.Empty)
             {
                 mOutputRange.Y = buffer.Length;
                 mReplaceRange.Y = mSource.Length;
             }
 
-            if (mOutputRange != null)
+            if (mOutputRange != Point.Empty)
             {
                 //set the output range to start at the previous line start
                 string bufferString = buffer.ToString();
@@ -705,13 +705,13 @@ namespace CodeFormatter.Handlers
                     //if we are attempting a partial format and we haven't already captured the boundaries
                     bool includesEndOfActionScript = false;
                     int lineCount = 0;
-                    if (mDoFormat && mSelectedRange != null && (mOutputRange == null || mOutputRange.Y < 0))
+                    if (mDoFormat && (mOutputRange.Y < 0))
                     {
                         //                              String[] lines=splitTextOnLineBreaks(text);
                         lineCount = countLines(text);
                         int startLine = token.Line;
                         int endLine = startLine + lineCount - 1; //lines.length-1;
-                        if (mOutputRange == null)
+                        if (mOutputRange == Point.Empty)
                         {
                             //if the selected lines start inside the script block
                             if (mSelectedRange.X >= startLine && mSelectedRange.X <= endLine)
@@ -752,7 +752,7 @@ namespace CodeFormatter.Handlers
                     bool changesMade = false;
                     
                     /*
-                    if (mRearrangeOnly || (mDoFormat && mASPrinter.getSelectedRange() == null && settings.Pref_AS_RearrangeAsPartOfFormat))
+                    if (mRearrangeOnly || (mDoFormat && mASPrinter.getSelectedRange() is null && settings.Pref_AS_RearrangeAsPartOfFormat))
                     {
                         ASRearranger rearranger = new ASRearranger(mStore);
                         IDocument doc = new Document(text);
@@ -785,7 +785,7 @@ namespace CodeFormatter.Handlers
                         mASPrinter.setDoFormat(mDoFormat);
                         mASPrinter.setData(text);
                         resultData = mASPrinter.print(codeStartIndent);
-                        if (resultData == null)
+                        if (resultData is null)
                         {
                             mParseErrors = mASPrinter.getParseErrors();
                             if (mParseErrors != null)
@@ -829,7 +829,7 @@ namespace CodeFormatter.Handlers
                             //                  Map<Integer, ReplacementRange> asRanges=mASPrinter.getReplaceMap();
                             //                  if (asRanges!=null)
                             //                  {
-                            //                      if (mReplaceMap==null)
+                            //                      if (mReplaceMap is null)
                             //                          mReplaceMap=new HashMap<Integer, ReplacementRange>();
                             //                      CommonToken ct=(CommonToken)token;
                             //                      for (Map.Entry<Integer, ReplacementRange> entry : asRanges.entrySet()) {
@@ -886,7 +886,7 @@ namespace CodeFormatter.Handlers
 
                     if (markBlockAsValidated && (AntlrUtilities.asTrim(addedText).Length > 0 || AntlrUtilities.asTrim(removedText).Length > 0 || changesMade))
                     {
-                        if (mReplaceMap == null)
+                        if (mReplaceMap is null)
                             mReplaceMap = new Dictionary<int, ReplacementRange>();
                         int replacementStartIndex = ((CommonToken)token).StartIndex;
                         if (startIndex >= 0)
@@ -904,42 +904,39 @@ namespace CodeFormatter.Handlers
                     buffer.Append(trimmedResult);
 
                     //now, patch up the partial format return boundaries if necessary
-                    if (mASPrinter.getSelectedRange() != null)
+                    if (mASPrinter.getSelectedRange() != Point.Empty)
                     {
                         Point outputRange = mASPrinter.getOutputRange();
                         Point replaceRange = mASPrinter.getReplaceRange();
-                        if (outputRange != null && replaceRange != null)
+                        if (mOutputRange == Point.Empty)
                         {
-                            if (mOutputRange == null)
+                            mOutputRange = new Point(0, -1);
+                            mReplaceRange = new Point(0, -1);
+
+                            //establish the beginning boundaries
+                            mOutputRange.X = oldLength + outputRange.X - leadingWhitespaceCount;
+                            //mReplaceRange.x=token.getLine()+replaceLines.x-1; //adjust for leading CRs and existing whitespace
+                            mReplaceRange.X = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.X; //-leadingWhitespaceCount;
+
+                            //selected range starts, possibly also ends inside actionscript block
+                            if (includesEndOfActionScript)
                             {
-                                mOutputRange = new Point(0, -1);
-                                mReplaceRange = new Point(0, -1);
-
-                                //establish the beginning boundaries
-                                mOutputRange.X = oldLength + outputRange.X - leadingWhitespaceCount;
-                                //mReplaceRange.x=token.getLine()+replaceLines.x-1; //adjust for leading CRs and existing whitespace
-                                mReplaceRange.X = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.X; //-leadingWhitespaceCount;
-
-                                //selected range starts, possibly also ends inside actionscript block
-                                if (includesEndOfActionScript)
-                                {
-                                    //goes to end of actionscript; don't need to do anything here
-                                }
-                                else
-                                {
-                                    //if it stops part way through the block; we need to finish output/replace boundaries here
-                                    mOutputRange.Y = oldLength + Math.Min(trimmedResult.Length, outputRange.Y - leadingWhitespaceCount); //outputRange.y-leadingWhitespaceCount;//-trailingWhitespaceCount;
-                                    //                                          mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
-                                    mReplaceRange.Y = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.Y;
-                                }
+                                //goes to end of actionscript; don't need to do anything here
                             }
                             else
                             {
-                                //it stops part way through the block; we need to finish output/replace boundaries here
-                                mOutputRange.Y = oldLength + Math.Min(trimmedResult.Length, outputRange.Y - leadingWhitespaceCount);
-                                //                                      mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
-                                mReplaceRange.Y = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.Y; //-leadingWhitespaceCount;
+                                //if it stops part way through the block; we need to finish output/replace boundaries here
+                                mOutputRange.Y = oldLength + Math.Min(trimmedResult.Length, outputRange.Y - leadingWhitespaceCount); //outputRange.y-leadingWhitespaceCount;//-trailingWhitespaceCount;
+                                //                                          mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
+                                mReplaceRange.Y = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.Y;
                             }
+                        }
+                        else
+                        {
+                            //it stops part way through the block; we need to finish output/replace boundaries here
+                            mOutputRange.Y = oldLength + Math.Min(trimmedResult.Length, outputRange.Y - leadingWhitespaceCount);
+                            //                                      mReplaceRange.y=token.getLine()+replaceLines.y-1; //adjust for leading CRs and existing whitespace
+                            mReplaceRange.Y = ((CommonToken)token).StartIndex + cdataOffset + replaceRange.Y; //-leadingWhitespaceCount;
                         }
                     }
 
@@ -971,13 +968,12 @@ namespace CodeFormatter.Handlers
 
                     //update the formatting boundary to catch the case where
                     //the start of the selection only catches the end of the code block.
-                    if (mDoFormat && mSelectedRange != null && mOutputRange == null)
+                    if (mDoFormat && mSelectedRange != Point.Empty && mOutputRange == Point.Empty)
                     {
                         if (token.Line + lineCount - 1 >= mSelectedRange.X)
                         {
                             mOutputRange = new Point(buffer.Length, -1);
-                            mReplaceRange = new Point(0, -1);
-                            mReplaceRange.X = ((CommonToken)token).StartIndex + endIndex;
+                            mReplaceRange = new Point(((CommonToken)token).StartIndex + endIndex, -1);
                         }
                     }
                     if (endIndex >= 0)
@@ -1081,9 +1077,9 @@ namespace CodeFormatter.Handlers
                 //if all whitespace but no carriage returns, then we don't want to go through the loop
                 else if (!token.Text.Contains('\n') && AntlrUtilities.asTrim(token.Text).Length == 0)
                     lines = new string[] { };
-                for (int k = 0; k < lines.Length; k++)
+                foreach (var line in lines)
                 {
-                    string lineData = lines[k];
+                    string lineData = line;
                     if (mDoFormat)
                     {
                         if (!ASFormatter.isOnlyWhitespaceOnLastLine(buffer))
@@ -1139,18 +1135,13 @@ namespace CodeFormatter.Handlers
 
         private void movePartialFormattingBoundaries(int position, int count)
         {
-            if (!mDoFormat)
-                return;
-
-            if (mSelectedRange != null)
+            if (!mDoFormat) return;
+            if (mSelectedRange != Point.Empty && mOutputRange != Point.Empty)
             {
-                if (mOutputRange != null)
-                {
-                    if (mOutputRange.X >= position)
-                        mOutputRange.X += count;
-                    if (mOutputRange.Y > position)
-                        mOutputRange.Y += count;
-                }
+                if (mOutputRange.X >= position)
+                    mOutputRange.X += count;
+                if (mOutputRange.Y > position)
+                    mOutputRange.Y += count;
             }
         }
 
@@ -1159,15 +1150,14 @@ namespace CodeFormatter.Handlers
             if (!mDoFormat)
                 return;
 
-            if (mSelectedRange != null)
+            if (mSelectedRange != Point.Empty)
             {
-                if (mOutputRange == null)
+                if (mOutputRange == Point.Empty)
                 {
                     if (endToken.Line >= mSelectedRange.X)
                     {
                         mOutputRange = new Point(buffer.Length, -1);
-                        mReplaceRange = new Point(0, -1);
-                        mReplaceRange.X = ((CommonToken)startToken).StartIndex;
+                        mReplaceRange = new Point(((CommonToken)startToken).StartIndex, -1);
                     }
                 }
                 else
@@ -1187,7 +1177,7 @@ namespace CodeFormatter.Handlers
         {
             CommonToken startToken = tokens[tokenIndex];
             bool attrOrderChanged = false;
-            if (mSelectedRange != null)
+            if (mSelectedRange != Point.Empty)
             {
                 //find end token, so I can determine whether I need to capture the formatting boundary at this point
                 CommonToken endToken2 = tokens[tokenIndex];
@@ -1291,7 +1281,7 @@ namespace CodeFormatter.Handlers
                 if (token.Type == stopType)
                 {
                     endToken = token;
-                    if (attrs == null)
+                    if (attrs is null)
                     {
                         addIndentIfAtStartOfLine(buffer, false);
                         buffer.Append(token.Text);
@@ -1308,7 +1298,7 @@ namespace CodeFormatter.Handlers
                             //ignore
                             break;
                         case MXMLLexer.EQ:
-                            if (attrs == null)
+                            if (attrs is null)
                             {
                                 buffer.Append(spaceString);
                                 buffer.Append(token.Text);
@@ -1317,13 +1307,13 @@ namespace CodeFormatter.Handlers
                             break;
                         case MXMLLexer.GENERIC_ID:
                         case MXMLLexer.XML:
-                            if (attrs == null)
+                            if (attrs is null)
                             {
                                 if (tagName != null) buffer.Append(' ');
                                 buffer.Append(token.Text);
                             }
 
-                            if (tagName == null)
+                            if (tagName is null)
                                 tagName = token.Text;
                             else
                             {
@@ -1357,7 +1347,7 @@ namespace CodeFormatter.Handlers
                             }
                             break;
                         default:
-                            if (attrs == null)
+                            if (attrs is null)
                             {
                                 buffer.Append(token.Text);
                             }
@@ -1384,7 +1374,7 @@ namespace CodeFormatter.Handlers
                             break;
                         default:
                             bool capturedTagName = false;
-                            if (tagName == null)
+                            if (tagName is null)
                             {
                                 tagName = token.Text;
                                 capturedTagName = true;
@@ -1462,7 +1452,7 @@ namespace CodeFormatter.Handlers
                                             //in this case, we want to find items in the tag and keep
                                             //them in that order
                                             List<string> groupAttrSet = mHashedGroupAttrs[group.getName()];
-                                            if (groupAttrSet != null && groupAttrSet.Count > 0)
+                                            if (!groupAttrSet.IsNullOrEmpty())
                                             {
                                                 for (int k = attrs.Count - 1; k >= 0; k--)
                                                 {
@@ -1540,20 +1530,20 @@ namespace CodeFormatter.Handlers
                                 string attrSpec2 = AntlrUtilities.asTrim(attrSpec);
                                 if (attrSpec2.Length == 0)
                                     continue;
-                                if (!(attrSpec2 == NewLineFlag))
+                                if (attrSpec2 != NewLineFlag)
                                 {
                                     bool found = false;
                                     string groupName = isGroupAttr(attrSpec);
                                     if (groupName != null)
                                     {
-                                        List<AttrMapping> cachedAttrs = groupMap[groupName];
-                                        if (cachedAttrs != null && cachedAttrs.Count > 0) //AttrMapping.hasAttr(cachedAttrs, attrSpec))
+                                        var cachedAttrs = groupMap[groupName];
+                                        if (!cachedAttrs.IsNullOrEmpty()) //AttrMapping.hasAttr(cachedAttrs, attrSpec))
                                             found = true;
                                     }
                                     else
                                     {
-                                        List<AttrMapping> cachedAttrs = literalMap[attrSpec];
-                                        found = (cachedAttrs != null && cachedAttrs.Count > 0);
+                                        var cachedAttrs = literalMap[attrSpec];
+                                        found = !cachedAttrs.IsNullOrEmpty();
                                     }
 
                                     if (!found)
@@ -1933,7 +1923,7 @@ namespace CodeFormatter.Handlers
 
                 if (attrOrderChanged)
                 {
-                    if (mReplaceMap == null)
+                    if (mReplaceMap is null)
                         mReplaceMap = new Dictionary<int, ReplacementRange>();
                     ReplacementRange range = new ReplacementRange(new Point(startOfTagInBuffer, buffer.Length), new Point(startToken.StartIndex, endToken.StopIndex + 1));
                     mReplaceMap[startOfTagInBuffer] = range;
@@ -1994,7 +1984,7 @@ namespace CodeFormatter.Handlers
         //      mainLoop: for (Attr attr : codeAttrs) {
         //          for (String groupName : hashedGroupAttrs.keySet()) {
         //              AttrGroup group=mAttrGroups.get(groupName);
-        //              if (group==null)
+        //              if (group is null)
         //                  continue;
         //              for (String groupAttrSpec : group.getAttrs()) {
         //                  bool isRegex=AttrGroup.isRegexString(groupAttrSpec);
@@ -2017,7 +2007,7 @@ namespace CodeFormatter.Handlers
             if (isPlainXML())
                 return;
 
-            if (a.mValue == null)
+            if (a.mValue is null)
                 return;
 
             //kick out quickly if we don't have any potential brace pairs at all
@@ -2065,7 +2055,7 @@ namespace CodeFormatter.Handlers
                                 mASPrinter.setDoFormat(mDoFormat);
                                 mASPrinter.setData(data);
                                 string newValue = mASPrinter.print(0);
-                                if ((mASPrinter.getParseErrors() == null || mASPrinter.getParseErrors().Count == 0) && newValue != null && newValue.Length > 0 && !newValue.Contains('\n')) //I don't really want to add carriage returns
+                                if ((mASPrinter.getParseErrors() is null || mASPrinter.getParseErrors().Count == 0) && !string.IsNullOrEmpty(newValue) && !newValue.Contains('\n')) //I don't really want to add carriage returns
                                 {
                                     data = AntlrUtilities.asTrim(newValue); //we don't want to keep any whitespace on the ends; only internal whitespace
                                 }
@@ -2246,7 +2236,7 @@ namespace CodeFormatter.Handlers
 
         public void setManualAttrSortData(List<string> attrOrder)
         {
-            if (attrOrder == null)
+            if (attrOrder is null)
                 mManualAttrSortOrder.Clear();
             else
                 mManualAttrSortOrder = attrOrder;

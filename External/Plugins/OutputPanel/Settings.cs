@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace OutputPanel
@@ -24,8 +25,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ShowOnOutput"), DefaultValue(false)]
         public bool ShowOnOutput 
         {
-            get => this.showOnOutput;
-            set => this.showOnOutput = value;
+            get => showOnOutput;
+            set => showOnOutput = value;
         }
 
         /// <summary> 
@@ -35,8 +36,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ShowOnProcessEnd"), DefaultValue(false)]
         public bool ShowOnProcessEnd 
         {
-            get => this.showOnProcessEnd;
-            set => this.showOnProcessEnd = value;
+            get => showOnProcessEnd;
+            set => showOnProcessEnd = value;
         }
 
         /// <summary> 
@@ -46,8 +47,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.WrapOutput"), DefaultValue(false)]
         public bool WrapOutput
         {
-            get => this.wrapOutput;
-            set => this.wrapOutput = value;
+            get => wrapOutput;
+            set => wrapOutput = value;
         }
 
         /// <summary> 
@@ -57,8 +58,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.UseLegacyColoring"), DefaultValue(false)]
         public bool UseLegacyColoring
         {
-            get => this.useLegacyColoring;
-            set => this.useLegacyColoring = value;
+            get => useLegacyColoring;
+            set => useLegacyColoring = value;
         }
 
         [DisplayName("Highlight Markers")]
@@ -68,18 +69,18 @@ namespace OutputPanel
         {
             get
             {
-                if (highlightMarkers == null || highlightMarkers.Count == 0)
+                if (highlightMarkers.IsNullOrEmpty())
                 {
-                    this.highlightMarkers = new List<HighlightMarker>();
-                    this.highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));
-                    this.highlightMarkers.Add(new HighlightMarker("Debug:", LogLevel.Debug));
-                    this.highlightMarkers.Add(new HighlightMarker("Warning:", LogLevel.Warning));
-                    this.highlightMarkers.Add(new HighlightMarker("Error:", LogLevel.Error));
-                    this.highlightMarkers.Add(new HighlightMarker("Fatal:", LogLevel.Fatal));
+                    highlightMarkers = new List<HighlightMarker>();
+                    highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));
+                    highlightMarkers.Add(new HighlightMarker("Debug:", LogLevel.Debug));
+                    highlightMarkers.Add(new HighlightMarker("Warning:", LogLevel.Warning));
+                    highlightMarkers.Add(new HighlightMarker("Error:", LogLevel.Error));
+                    highlightMarkers.Add(new HighlightMarker("Fatal:", LogLevel.Fatal));
                 }
                 return highlightMarkers;
             }
-            set => this.highlightMarkers = value;
+            set => highlightMarkers = value;
         }
 
         /// <summary> 
@@ -89,8 +90,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ClearMode"), DefaultValue(ClearModeAction.OnEveryProcess)]
         public ClearModeAction ClearMode
         {
-            get => this.clearMode;
-            set => this.clearMode = value;
+            get => clearMode;
+            set => clearMode = value;
         }
 
     }
@@ -118,15 +119,15 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.Marker")]
         public string Marker
         {
-            get => this.marker;
-            set => this.marker = value;
+            get => marker;
+            set => marker = value;
         }
 
         [LocalizedDescription("OutputPanel.Description.Level")]
         public LogLevel Level
         {
-            get => this.level;
-            set => this.level = value;
+            get => level;
+            set => level = value;
         }
 
         /// <summary>

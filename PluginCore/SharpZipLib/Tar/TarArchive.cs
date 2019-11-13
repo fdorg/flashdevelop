@@ -101,7 +101,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="stream">The <see cref="TarInputStream"/> to use for input.</param>
         protected TarArchive(TarInputStream stream)
         {
-            if ( stream == null ) {
+            if ( stream is null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
             
@@ -114,7 +114,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <param name="stream">The <see cref="TarOutputStream"/> to use for output.</param> 
         protected TarArchive(TarOutputStream stream)
         {
-            if ( stream == null ) {
+            if ( stream is null ) {
                 throw new ArgumentNullException(nameof(stream));
             }
             
@@ -133,7 +133,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>Returns a new <see cref="TarArchive"/> suitable for reading from.</returns>
         public static TarArchive CreateInputTarArchive(Stream inputStream)
         {
-            if ( inputStream == null ) {
+            if ( inputStream is null ) {
                 throw new ArgumentNullException(nameof(inputStream));
             }
 
@@ -157,7 +157,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>Returns a <see cref="TarArchive"/> suitable for reading.</returns>
         public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor)
         {
-            if ( inputStream == null ) {
+            if ( inputStream is null ) {
                 throw new ArgumentNullException(nameof(inputStream));
             }
 
@@ -175,7 +175,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>Returns a <see cref="TarArchive"/> suitable for writing.</returns>
         public static TarArchive CreateOutputTarArchive(Stream outputStream)
         {
-            if ( outputStream == null ) {
+            if ( outputStream is null ) {
                 throw new ArgumentNullException(nameof(outputStream));
             }
             
@@ -199,7 +199,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// <returns>Returns a <see cref="TarArchive"/> suitable for writing.</returns>
         public static TarArchive CreateOutputTarArchive(Stream outputStream, int blockFactor)
         {
-            if ( outputStream == null ) {
+            if ( outputStream is null ) {
                 throw new ArgumentNullException(nameof(outputStream));
             }
 
@@ -512,7 +512,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             while (true) {
                 TarEntry entry = tarIn.GetNextEntry();
                 
-                if (entry == null) {
+                if (entry is null) {
                     break;
                 }
                 OnProgressMessageEvent(entry, null);
@@ -534,7 +534,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             while (true) {
                 TarEntry entry = tarIn.GetNextEntry();
                 
-                if (entry == null) {
+                if (entry is null) {
                     break;
                 }
                 
@@ -645,7 +645,7 @@ namespace ICSharpCode.SharpZipLib.Tar
         /// </param>
         public void WriteEntry(TarEntry sourceEntry, bool recurse)
         {
-            if ( sourceEntry == null ) {
+            if ( sourceEntry is null ) {
                 throw new ArgumentNullException(nameof(sourceEntry));
             }
             
@@ -702,24 +702,22 @@ namespace ICSharpCode.SharpZipLib.Tar
 
                 if (!IsBinary(entryFilename)) {
                     tempFileName = Path.GetTempFileName();
-                    
-                    using (StreamReader inStream  = File.OpenText(entryFilename)) {
-                        using (Stream outStream = File.Create(tempFileName)) {
-                        
-                            while (true) {
-                                string line = inStream.ReadLine();
-                                if (line == null) {
-                                    break;
-                                }
-                                byte[] data = Encoding.ASCII.GetBytes(line);
-                                outStream.Write(data, 0, data.Length);
-                                outStream.WriteByte((byte)'\n');
-                            }
-                            
-                            outStream.Flush();
+
+                    using var input  = File.OpenText(entryFilename);
+                    using Stream outStream = File.Create(tempFileName);
+                    while (true)
+                    {
+                        string line = input.ReadLine();
+                        if (line is null) {
+                            break;
                         }
+                        byte[] data = Encoding.ASCII.GetBytes(line);
+                        outStream.Write(data, 0, data.Length);
+                        outStream.WriteByte((byte)'\n');
                     }
-                    
+                            
+                    outStream.Flush();
+
                     entry.Size = new FileInfo(tempFileName).Length;
                     entryFilename = tempFileName;
                 }
@@ -734,7 +732,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             }
             
             if (pathPrefix != null) {
-                newName = (newName == null) ? pathPrefix + "/" + entry.Name : pathPrefix + "/" + newName;
+                newName = (newName is null) ? pathPrefix + "/" + entry.Name : pathPrefix + "/" + newName;
             }
             
             if (newName != null) {

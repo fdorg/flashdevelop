@@ -9,22 +9,17 @@ namespace LayoutManager
     [Serializable]
     public class Settings
     {
-        private static Settings instance;
-        private string customLayoutPath = string.Empty;
+        string customLayoutPath = string.Empty;
         
         public Settings()
         {
-            instance = this;
+            Instance = this;
         }
 
         /// <summary> 
         /// Get the instance of the class
         /// </summary>
-        public static Settings Instance
-        {
-            get => instance;
-            set => instance = value;
-        }
+        public static Settings Instance { get; set; }
 
         /// <summary> 
         /// Get and sets the customLayoutPath
@@ -34,10 +29,8 @@ namespace LayoutManager
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string CustomLayoutPath
         {
-            get => this.customLayoutPath;
-            set => this.customLayoutPath = value;
+            get => customLayoutPath;
+            set => customLayoutPath = value;
         }
-
     }
-
 }

@@ -13,10 +13,7 @@ namespace ProjectManager.Projects.AS2
             project = Project as AS2Project;
         }
 
-        public new AS2Project ReadProject()
-        {
-            return base.ReadProject() as AS2Project;
-        }
+        public new AS2Project ReadProject() => base.ReadProject() as AS2Project;
 
         // process AS2-specific stuff
         protected override void ProcessNode(string name)
@@ -74,7 +71,7 @@ namespace ProjectManager.Projects.AS2
                 string path = OSPath(GetAttribute("path"));
                 string mode = GetAttribute("mode");
 
-                if (path == null)
+                if (path is null)
                     throw new Exception("All library assets must have a 'path' attribute.");
 
                 LibraryAsset asset = new LibraryAsset(project, path);

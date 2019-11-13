@@ -48,7 +48,7 @@ namespace ProjectManager.Building.AS3
             if (project.OutputType == OutputType.Application || project.OutputType == OutputType.Library)
             {
                 if (fcsh != null && !fcshExists && !ascshExists) throw new Exception("Could not locate lib\\fcsh.jar or lib\\ascsh.jar in Flex SDK.");
-                if (fcsh == null && !mxmlcExists && !asc2Mode) 
+                if (fcsh is null && !mxmlcExists && !asc2Mode) 
                     throw new Exception("Could not locate lib\\mxmlc.jar or lib\\mxmlc-cli.jar in Flex SDK.");
             }
         }
@@ -134,10 +134,8 @@ namespace ProjectManager.Building.AS3
 
             if (File.Exists(fdbuildHints))
             {
-                using (StreamReader reader = File.OpenText(fdbuildHints))
-                {
-                    flexsdkPath = reader.ReadLine();
-                }
+                using var reader = File.OpenText(fdbuildHints);
+                flexsdkPath = reader.ReadLine();
                 if (!Directory.Exists(flexsdkPath)) Console.WriteLine("Compiler path configured in FDBuildHints.txt doesn't exist:\n" + flexsdkPath);
                 else
                 {

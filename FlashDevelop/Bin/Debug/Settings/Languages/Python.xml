@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="python-primary-keywords">
@@ -76,8 +76,8 @@
 				<style name="string" fore="0xa31515" />
 				<style name="character" fore="0xa31515" />
 				<style name="word" fore="0x000099" />
-				<style name="triple" fore="0xa31515" />
-				<style name="tripledouble" fore="0xa31515" />
+				<style name="triple" />
+				<style name="tripledouble" />
 				<style name="classname" />
 				<style name="defname" />
 				<style name="operator" />
@@ -85,7 +85,7 @@
 				<style name="commentblock" fore="0x008000" />
 				<style name="stringeol" />
 				<style name="word2" fore="0x008080" />
-				<style name="decorator" fore="0xFF0080" />
+				<style name="decorator" />
 				<style name="gdefault" fore="0xefece9" />
 				<style name="linenumber" fore="0x666666" />
 				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />

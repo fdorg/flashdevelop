@@ -13,11 +13,12 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static Image GetImage(int img)
         {
-            Image image;
-            if (img == 1) image = Globals.MainForm.FindImage("196", false);
-            else if (img == 2) image = Globals.MainForm.FindImage("197", false);
-            else image = Globals.MainForm.FindImage("229", false);
-            return image;
+            return img switch
+            {
+                1 => Globals.MainForm.FindImage("196", false),
+                2 => Globals.MainForm.FindImage("197", false),
+                _ => Globals.MainForm.FindImage("229", false),
+            };
         }
 
         /// <summary>

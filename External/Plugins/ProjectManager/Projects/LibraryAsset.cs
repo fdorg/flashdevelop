@@ -78,20 +78,11 @@ namespace ProjectManager.Projects
             this.project = project;
         }
 
-        public void Add(LibraryAsset asset)
-        {
-            List.Add(asset);
-        }
+        public void Add(LibraryAsset asset) => List.Add(asset);
 
-        public void Add(string path)
-        {
-            Add(new LibraryAsset(project, path));
-        }
+        public void Add(string path) => Add(new LibraryAsset(project, path));
 
-        public bool Contains(string path)
-        {
-            return this[path] != null;
-        }
+        public bool Contains(string path) => this[path] != null;
 
         public LibraryAsset this[string path]
         {
@@ -121,20 +112,16 @@ namespace ProjectManager.Projects
         {
             for (int i = 0; i < List.Count; i++)
             {
-                LibraryAsset asset = List[i] as LibraryAsset;
-                
-                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
-                    asset.Path == path)
+                var asset = (LibraryAsset) List[i];
+                if (asset.Path.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal)
+                    || asset.Path == path)
                 {
                     List.RemoveAt(i--); // search this index again
                 }
             }
         }
 
-        public void Remove(LibraryAsset asset)
-        {
-            List.Remove(asset);
-        }
+        public void Remove(LibraryAsset asset) => List.Remove(asset);
 
         public void Remove(string path)
         {

@@ -51,7 +51,6 @@ namespace ResultsPanel
 
         public PluginUI(PluginMain pluginMain) : this(pluginMain, null, null, true, false)
         {
-
         }
 
         internal PluginUI(PluginMain pluginMain, string groupData, string groupId, bool showFilterButtons, bool allowMultiplePanels)
@@ -351,17 +350,14 @@ namespace ResultsPanel
         /// <summary>
         /// Initializes the context menu for entriesView
         /// </summary>
-        private void InitializeContextMenu()
-        {
-            this.EntriesView.ContextMenuStrip = this.pluginMain.contextMenuStrip;
-        }
+        private void InitializeContextMenu() => EntriesView.ContextMenuStrip = pluginMain.contextMenuStrip;
 
         /// <summary>
         /// Initializes the image list for entriesView
         /// </summary>
         private void InitializeGraphics()
         {
-            if (imageList == null)
+            if (imageList is null)
             {
                 imageList = new ImageListManager();
                 imageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -592,7 +588,7 @@ namespace ResultsPanel
                         if (project != null && filename[0] != '/' && filename[1] != ':') // relative to project root
                         {
                             filename = PathHelper.ResolvePath(filename, projectDir);
-                            if (filename == null) continue;
+                            if (filename is null) continue;
                         }
                         else if (!File.Exists(filename)) continue;
                         var fileInfo = new FileInfo(filename);
@@ -739,10 +735,7 @@ namespace ResultsPanel
         /// <summary>
         /// Clears the filter control text
         /// </summary>
-        private void ClearFilterButton_Click(object sender, EventArgs e)
-        {
-            this.toolStripTextBoxFilter.Text = "";
-        }
+        private void ClearFilterButton_Click(object sender, EventArgs e) => toolStripTextBoxFilter.Text = "";
 
         /// <summary>
         /// If the user presses Enter, dispatch double click
@@ -770,18 +763,13 @@ namespace ResultsPanel
 
                 if (this.lastColumn == e.Column)
                 {
-                    switch (this.sortOrder)
+                    sortOrder = sortOrder switch
                     {
-                        case SortOrder.None:
-                            this.sortOrder = SortOrder.Ascending;
-                            break;
-                        case SortOrder.Ascending:
-                            this.sortOrder = SortOrder.Descending;
-                            break;
-                        case SortOrder.Descending:
-                            this.sortOrder = SortOrder.None;
-                            break;
-                    }
+                        SortOrder.None => SortOrder.Ascending,
+                        SortOrder.Ascending => SortOrder.Descending,
+                        SortOrder.Descending => SortOrder.None,
+                        _ => sortOrder,
+                    };
                 }
                 else
                 {
@@ -796,10 +784,7 @@ namespace ResultsPanel
         /// <summary>
         /// Update the buttons when the panel resizes
         /// </summary>
-        private void PluginUI_Resize(object sender, EventArgs e)
-        {
-            this.UpdateButtons();
-        }
+        private void PluginUI_Resize(object sender, EventArgs e) => UpdateButtons();
 
         /// <summary>
         /// Opens the file and goes to the match
@@ -1114,7 +1099,7 @@ namespace ResultsPanel
         private void AddSquiggle(ListViewItem item)
         {
             var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
-            if (sci == null)
+            if (sci is null)
             {
                 return;
             }
@@ -1309,7 +1294,7 @@ namespace ResultsPanel
         {
             if (this.EntriesView.SelectedItems.Count == 0) return;
             var item = this.EntriesView.SelectedItems[0];
-            if (item == null) return;
+            if (item is null) return;
             string file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
             file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             file = PathHelper.GetLongPathName(file);

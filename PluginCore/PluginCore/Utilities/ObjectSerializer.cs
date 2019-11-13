@@ -80,7 +80,7 @@ namespace PluginCore.Utilities
                     foreach (PropertyInfo property in properties)
                     {
                         object current = GetValue(settings, property.Name);
-                        if (current == null || (current is Color && (Color)current == Color.Empty))
+                        if (current is null || (current is Color && (Color)current == Color.Empty))
                         {
                             object value = GetValue(defaults, property.Name);
                             SetValue(settings, property.Name, value);
@@ -116,10 +116,9 @@ namespace PluginCore.Utilities
                 info.Delete();
                 return Activator.CreateInstance(type);
             }
-            using (FileStream stream = info.Open(FileMode.Open, FileAccess.Read))
-            {
-                return formatter.Deserialize(stream);
-            }
+
+            using FileStream stream = info.Open(FileMode.Open, FileAccess.Read);
+            return formatter.Deserialize(stream);
         }
 
         /// <summary>
@@ -131,7 +130,7 @@ namespace PluginCore.Utilities
             {
                 Type type = obj.GetType();
                 PropertyInfo info = type.GetProperty(name);
-                if (info == null) return;
+                if (info is null) return;
                 info.SetValue(obj, value, null);
             }
             catch (Exception ex)
@@ -149,7 +148,7 @@ namespace PluginCore.Utilities
             {
                 Type type = obj.GetType();
                 PropertyInfo info = type.GetProperty(name);
-                if (info == null) return null;
+                if (info is null) return null;
                 return info.GetValue(obj, null);
             }
             catch (Exception ex)

@@ -1,10 +1,19 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PluginCore
 {
     public static class StringExtensions
     {
         public static bool Contains(this string @this, char value) => @this.IndexOf(value) >= 0;
+
+        public static bool Contains(this string @this, char value, out int position)
+        {
+            position = @this.IndexOf(value);
+            return position >= 0;
+        }
 
         /// <summary>
         /// Determines whether the beginning of this <see cref="string"/> instance matches the specified Unicode character.
@@ -36,7 +45,7 @@ namespace PluginCore
         /// <returns></returns>
         public static bool EndsWith(this string @this, char value)
         {
-            int length = @this.Length;
+            var length = @this.Length;
             return length != 0 && @this[length - 1] == value;
         }
 
@@ -115,5 +124,40 @@ namespace PluginCore
         /// <param name="count">The number of character positions to examine.</param>
         /// <returns>The zero-based starting index position of <code>value</code> if that string is found, or <code>-1</code> if it is not found or if the current instance equals <see cref="string.Empty"/>. If <code>value</code> is <see cref="string.Empty"/>, the return value is the smaller of <code>startIndex</code> and the last index position in this instance.</returns>
         public static int LastIndexOfOrdinal(this string @this, string value, int startIndex, int count) => @this.LastIndexOf(value, startIndex, count, StringComparison.Ordinal);
+    }
+
+    public static class CollectionExtensions
+    {
+        /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>
+        /// <param name="value">The collection to test.</param>
+        /// <returns>
+        /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
+        public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> value)
+        {
+            if (value is null) return true;
+            if (value is IList<TSource> list) return list.Count == 0;
+            using var enumerator = value.GetEnumerator();
+            return !enumerator.MoveNext();
+        }
+
+        /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>
+        /// <param name="value">The collection to test.</param>
+        /// <returns>
+        /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
+        public static bool IsNullOrEmpty(this IEnumerable value)
+        {
+            return value switch
+            {
+                null => true,
+                IList list => list.Count == 0,
+                _ => !value.GetEnumerator().MoveNext(),
+            };
+        }
+
+        /// <summary>Indicates whether the specified collection is <see langword="null" /> or an empty collection ([], {}, etc...).</summary>
+        /// <param name="value">The collection to test.</param>
+        /// <returns>
+        /// <see langword="true" /> if the <paramref name="value" /> parameter is <see langword="null" /> or an empty collection ([], {}, etc...); otherwise, <see langword="false" />.</returns>
+        public static bool IsNullOrEmpty(this PropertyDescriptorCollection value) => value is null || value.Count == 0;
     }
 }

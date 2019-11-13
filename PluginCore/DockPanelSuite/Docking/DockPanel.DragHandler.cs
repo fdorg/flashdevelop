@@ -35,7 +35,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 // Avoid re-entrance;
                 lock (this)
                 {
-                    if (DragControl == null)
+                    if (DragControl is null)
                         return false;
 
                     StartMousePosition = Control.MousePosition;
@@ -110,7 +110,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 set => m_dragSource = value;
             }
 
-            protected sealed override Control DragControl => DragSource == null ? null : DragSource.DragControl;
+            protected sealed override Control DragControl => DragSource is null ? null : DragSource.DragControl;
 
             protected sealed override bool OnPreFilterMessage(ref Message m)
             {

@@ -230,7 +230,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <param name="count">number of bytes of input to add.</param>
         public void SetInput(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 

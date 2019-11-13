@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PluginCore;
 
 namespace FlashDevelop.Controls
 {
@@ -115,7 +116,7 @@ namespace FlashDevelop.Controls
             {
                 if (value != null)
                 {
-                    if (m_Wrapper == null) 
+                    if (m_Wrapper is null) 
                     {
                         m_Wrapper = new ObjectWrapper(value);
                         RefreshProperties();
@@ -144,7 +145,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void OnBrowsablePropertiesChanged() 
         {
-            if(m_Wrapper == null) return;
+            if(m_Wrapper is null) return;
         }
 
         /// <summary>
@@ -152,11 +153,11 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void RefreshProperties() 
         {
-            if (m_Wrapper == null) return;
+            if (m_Wrapper is null) return;
             // Clear the list of properties to be displayed.
             m_PropertyDescriptors.Clear();
             // Check whether the list is filtered 
-            if (m_BrowsableAttributes != null && m_BrowsableAttributes.Count > 0) 
+            if (!m_BrowsableAttributes.IsNullOrEmpty())
             {
                 // Add to the list the attributes that need to be displayed.
                 foreach(Attribute attribute in m_BrowsableAttributes) ShowAttribute(attribute);
@@ -172,10 +173,10 @@ namespace FlashDevelop.Controls
             // Get all the properties of the SelectedObject
             PropertyDescriptorCollection allproperties = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
             // Hide if necessary, some properties
-            if (m_HiddenProperties != null && m_HiddenProperties.Length > 0) 
+            if (!m_HiddenProperties.IsNullOrEmpty()) 
             {
                 // Remove from the list the properties that mustn't be displayed.
-                foreach(string propertyname in m_HiddenProperties) 
+                foreach(string propertyname in m_HiddenProperties)
                 {
                     try 
                     {
@@ -189,7 +190,7 @@ namespace FlashDevelop.Controls
                     }
                 }
             }
-            if (m_BrowsableProperties != null && m_BrowsableProperties.Length > 0) 
+            if (!m_BrowsableProperties.IsNullOrEmpty())
             {
                 // Clear properties to filter the list from scratch BY IAP
                 m_PropertyDescriptors.Clear();
@@ -213,8 +214,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private static int CompareDescriptors(PropertyDescriptor a, PropertyDescriptor b)
         {
-            if (a == null) return b == null ? 0 : -1;
-            if (b == null) return 1;
+            if (a is null) return b is null ? 0 : -1;
+            if (b is null) return 1;
             int value = string.Compare(a.Category, b.Category);
             return value == 0 ? string.Compare(a.DisplayName, b.DisplayName) : value;
         }
@@ -225,7 +226,7 @@ namespace FlashDevelop.Controls
         private void HideAttribute(Attribute attribute) 
         {
             PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new[] { attribute });
-            if(filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            if(filteredoriginalpropertydescriptors.IsNullOrEmpty()) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) HideProperty(propertydescriptor);
         }
 
@@ -235,7 +236,7 @@ namespace FlashDevelop.Controls
         private void ShowAttribute(Attribute attribute) 
         {
             PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new[] { attribute });
-            if (filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            if (filteredoriginalpropertydescriptors.IsNullOrEmpty()) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) ShowProperty(propertydescriptor);
         }
 

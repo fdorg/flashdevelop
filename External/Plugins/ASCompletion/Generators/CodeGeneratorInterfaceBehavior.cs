@@ -8,22 +8,15 @@ using ScintillaNet;
 
 namespace ASCompletion.Generators
 {
-    public class CodeGeneratorInterfaceBehavior : ICodeGeneratorBehavior
+    public class CodeGeneratorInterfaceBehavior : CodeGeneratorDefaultBehavior
     {
-        public void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
+        public override bool ContextualGenerator(ScintillaControl sci, int position, ASResult expr, ICollection<ICompletionListItem> options)
         {
-            var line = sci.LineFromPosition(position);
-            var found = ((ASGenerator) ASContext.Context.CodeGenerator).GetDeclarationAtLine(line);
-            if (CanShowNewInterfaceList(sci, position, expr, found)) ShowNewInterfaceList(sci, expr, found, options);
-            if (CanShowNewMemberList(sci, position, expr, found))
-            {
-                ShowNewVariableList(sci, expr, found, options);
-                ShowNewPropertyList(sci, expr, found, options);
-                ShowNewMethodList(sci, expr, found, options);
-            }
+            base.ContextualGenerator(sci, position, expr, options);
+            return true;
         }
 
-        protected virtual bool CanShowNewInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected override bool CanShowGenerateExtends(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return ASGenerator.contextToken != null
                    && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
@@ -31,42 +24,19 @@ namespace ASCompletion.Generators
                    && (expr.Context.WordBefore == "extends" || expr.Context.Separator == ":");
         }
 
-        static void ShowNewInterfaceList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected override void ShowGenerateExtends(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.Interface, found.Member, found.InClass, expr));
         }
 
-        static bool CanShowNewMemberList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
-        {
-            return ASGenerator.contextToken != null
-                   && ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1))
-                   && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass)
-                   && expr.IsNull() && expr.Context.ContextFunction == null && expr.Context.ContextMember == null;
-        }
-
-        protected virtual void ShowNewVariableList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-        }
-
-        static void ShowNewPropertyList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
-        {
-            var member = new MemberModel {Name = expr.Context.Value};
-            var label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, member, found.InClass));
-            label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, member, found.InClass));
-            label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, member, found.InClass));
-        }
-
-        static void ShowNewMethodList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected override void ShowGenerateMethod(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
         }
 
-        public void GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
+        public override bool GenerateProperty(GeneratorJobType job, ScintillaControl sci, MemberModel member, ClassModel inClass)
         {
             sci.BeginUndoAction();
             try
@@ -79,6 +49,7 @@ namespace ASCompletion.Generators
             {
                 sci.EndUndoAction();
             }
+            return true;
         }
 
         static void GenerateGetterSetter(ScintillaControl sci, MemberModel member, string template)

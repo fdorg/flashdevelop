@@ -160,7 +160,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void LineButtonClick(object sender, System.EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             try
             {
                 int line = Convert.ToInt32(this.lineTextBox.Text) - 1;
@@ -180,7 +180,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PositionButtonClick(object sender, System.EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             try
             {
                 int pos = Convert.ToInt32(this.lineTextBox.Text) - 1;

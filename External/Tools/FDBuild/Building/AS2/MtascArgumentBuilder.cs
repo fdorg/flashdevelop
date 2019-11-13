@@ -62,11 +62,8 @@ namespace ProjectManager.Building.AS2
                 Add("-swf", "\"" + path + "\"");
         }
 
-        public void AddFrame(int frame)
-        {
-            Add("-frame",frame.ToString());
-        }
-        
+        public void AddFrame(int frame) => Add("-frame",frame.ToString());
+
         public void AddKeep()
         {
             // always keep existing source - if you add .swf files to the library, expected
@@ -116,7 +113,7 @@ namespace ProjectManager.Building.AS2
                 {
                     string cp = project.Classpaths.GetClosestParent(target);
                     
-                    if (cp == null)
+                    if (cp is null)
                         throw new Exception("Could not determine the closest classpath off which to compile the directory '" + target + "'.");
                     
                     string relTarget = (cp == ".") ? target : target.Substring(cp.Length + 1);

@@ -159,11 +159,8 @@ namespace FlashDevelop.Utilities
         /// <summary>
         /// Gets the working directory
         /// </summary>
-        public static string GetWorkingDir()
-        {
-            return Globals.MainForm.WorkingDirectory;
-        }
-        
+        public static string GetWorkingDir() => Globals.MainForm.WorkingDirectory;
+
         /// <summary>
         /// Gets the user selected file for opening
         /// </summary>
@@ -248,7 +245,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static string ProcessCodeStyleLineBreaks(string text)
         {
-            string CSLB = "$(CSLB)";
+            const string CSLB = "$(CSLB)";
             int nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
             CodingStyle cs = PluginBase.Settings.CodingStyle;
@@ -301,7 +298,7 @@ namespace FlashDevelop.Utilities
             try
             {
                 string result = args;
-                if (result == null) return string.Empty;
+                if (result is null) return string.Empty;
                 result = ProcessCodeStyleLineBreaks(result);
                 if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, ReplaceTabs);
                 result = reArgs.Replace(result, ReplaceVars);

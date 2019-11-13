@@ -20,10 +20,8 @@ namespace MacroManager
         [Editor(typeof(DescriptiveCollectionEditor), typeof(UITypeEditor))]
         public List<Macro> UserMacros
         {
-            get => this.userMacros;
-            set => this.userMacros = value;
+            get => userMacros;
+            set => userMacros = value;
         }
-
     }
-
 }

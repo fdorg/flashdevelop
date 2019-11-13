@@ -231,7 +231,7 @@ namespace PluginCore.Controls
         
         public void LabelMouseEnter(object sender, System.EventArgs e)
         {
-            if (tip == null)
+            if (tip is null)
             {
                 tip = new ToolTip();
                 tip.ShowAlways = true;

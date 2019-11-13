@@ -4,7 +4,6 @@ using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
-using ProjectManager.Controls.TreeView;
 
 namespace ProjectManager.Controls
 {
@@ -22,11 +21,8 @@ namespace ProjectManager.Controls
         public ToolStripButton CollapseAll;
         public ToolStripSeparator Separator;
 
-        private ProjectContextMenu treeMenu;
-
-        public TreeBar(FDMenus menus, ProjectContextMenu treeMenu)
+        public TreeBar()
         {
-            this.treeMenu = treeMenu;
             this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.Size = new Size(200, 26);
             this.Renderer = new DockPanelStripRenderer();

@@ -185,7 +185,7 @@ namespace ProjectManager.Controls
             get => this.language;
             set 
             {
-                if (value == null) return;
+                if (value is null) return;
                 for(int i=0; i<langComboBox.Items.Count; i++)
                     if (value.Equals(langComboBox.Items[i] as string, StringComparison.OrdinalIgnoreCase))
                     {
@@ -235,35 +235,33 @@ namespace ProjectManager.Controls
 
         private void btnNewClasspath_Click(object sender, EventArgs e)
         {
-            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
+
+            if (project != null) dialog.SelectedPath = project.Directory;
+            if (lastBrowserPath != null && Directory.Exists(lastBrowserPath)) dialog.SelectedPath = lastBrowserPath;
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                dialog.UseDescriptionForTitle = true;
-                dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
-
-                if (project != null) dialog.SelectedPath = project.Directory;
-                if (lastBrowserPath != null && Directory.Exists(lastBrowserPath)) dialog.SelectedPath = lastBrowserPath;
-
-                if (dialog.ShowDialog(this) == DialogResult.OK)
+                string path = dialog.SelectedPath;
+                if (project != null)
                 {
-                    string path = dialog.SelectedPath;
-                    if (project != null)
+                    if (CanBeRelative(path))
                     {
-                        if (CanBeRelative(path))
-                        {
-                            path = project.GetRelativePath(path);
-                            // remove default classpath if you add a subfolder in the classpath
-                            if (!path.StartsWithOrdinal("..") && listBox.Items.Count == 1 
-                                && (listBox.Items[0] as ClasspathEntry).Classpath == ".")
-                                listBox.Items.Clear();
-                        }
+                        path = project.GetRelativePath(path);
+                        // remove default classpath if you add a subfolder in the classpath
+                        if (!path.StartsWithOrdinal("..") && listBox.Items.Count == 1 
+                                                          && (listBox.Items[0] as ClasspathEntry).Classpath == ".")
+                            listBox.Items.Clear();
                     }
-                    if (listBox.Items.Count > 0 && !WarnConflictingPath(path)) return;
-                    ClasspathEntry entry = new ClasspathEntry(path);
-                    if (!listBox.Items.Contains(entry)) listBox.Items.Add(entry);
-                    OnChanged();
-                    lastBrowserPath = dialog.SelectedPath;
                 }
+                if (listBox.Items.Count > 0 && !WarnConflictingPath(path)) return;
+                ClasspathEntry entry = new ClasspathEntry(path);
+                if (!listBox.Items.Contains(entry)) listBox.Items.Add(entry);
+                OnChanged();
+                lastBrowserPath = dialog.SelectedPath;
             }
         }
 
@@ -290,31 +288,29 @@ namespace ProjectManager.Controls
         private void listBox_DoubleClick(object sender, System.EventArgs e)
         {
             ClasspathEntry entry = listBox.SelectedItem as ClasspathEntry;
-            if (entry == null) return; // you could have double-clicked on whitespace
-            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            if (entry is null) return; // you could have double-clicked on whitespace
+            using VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.RootFolder = Environment.SpecialFolder.Desktop;
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
+            if (project != null)
             {
-                dialog.RootFolder = Environment.SpecialFolder.Desktop;
-                dialog.UseDescriptionForTitle = true;
-                dialog.Description = TextHelper.GetString("Info.SelectClasspathDirectory");
+                dialog.SelectedPath = project.GetAbsolutePath(entry.Classpath);
+                if (!Directory.Exists(dialog.SelectedPath)) dialog.SelectedPath = project.Directory;
+            }
+            else dialog.SelectedPath = entry.Classpath;
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                string selectedPath = dialog.SelectedPath;
                 if (project != null)
                 {
-                    dialog.SelectedPath = project.GetAbsolutePath(entry.Classpath);
-                    if (!Directory.Exists(dialog.SelectedPath)) dialog.SelectedPath = project.Directory;
+                    if (CanBeRelative(selectedPath)) 
+                        selectedPath = project.GetRelativePath(selectedPath);
                 }
-                else dialog.SelectedPath = entry.Classpath;
-
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    string selectedPath = dialog.SelectedPath;
-                    if (project != null)
-                    {
-                        if (CanBeRelative(selectedPath)) 
-                            selectedPath = project.GetRelativePath(selectedPath);
-                    }
-                    if (selectedPath == entry.Classpath) return; // nothing to do!
-                    listBox.Items[listBox.SelectedIndex] = new ClasspathEntry(selectedPath);
-                    OnChanged();
-                }
+                if (selectedPath == entry.Classpath) return; // nothing to do!
+                listBox.Items[listBox.SelectedIndex] = new ClasspathEntry(selectedPath);
+                OnChanged();
             }
         }
 

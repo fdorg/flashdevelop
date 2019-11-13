@@ -64,7 +64,7 @@ namespace System.Windows.Forms
         /*protected override void OnMouseMove(MouseEventArgs e)
         {
             // create tooltip
-            if (tip == null) {
+            if (tip is null) {
                 tip = new ToolTip();
                 tip.ShowAlways = true;
                 tip.AutoPopDelay = 10000;

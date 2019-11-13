@@ -73,7 +73,7 @@ namespace SourceControl.Managers
         internal void SetProject(Project project)
         {
             Clear();
-            if (project == null) return;
+            if (project is null) return;
 
             CreateWatchers(project.Directory);
 
@@ -179,7 +179,7 @@ namespace SourceControl.Managers
 
         public void Changed(IVCManager manager)
         {
-            if (disposing || updateTimer == null) return;
+            if (disposing || updateTimer is null) return;
 
             lock (dirtyVC)
             {

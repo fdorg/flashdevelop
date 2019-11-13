@@ -133,7 +133,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             get => nameTransform_;
             set 
             {
-                if (value == null) {
+                if (value is null) {
                     nameTransform_ = new ZipNameTransform();
                 }
                 else {

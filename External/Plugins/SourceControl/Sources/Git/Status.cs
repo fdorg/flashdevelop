@@ -28,7 +28,7 @@ namespace SourceControl.Sources.Git
         public StatusNode Get(string path)
         {
             StatusNode found = root.FindPath(path);
-            if (found == null)
+            if (found is null)
             {
                 foreach (IgnoreEntry ignore in ignores)
                 {
@@ -57,7 +57,7 @@ namespace SourceControl.Sources.Git
 
         public bool SetPathDirty(string path)
         {
-            if (path == null) return false;
+            if (path is null) return false;
             if (string.IsNullOrEmpty(dirty))
             {
                 dirty = path;
@@ -195,8 +195,7 @@ namespace SourceControl.Sources.Git
             if (!HasChildren)
             {
                 HasChildren = true;
-                Children = new Dictionary<string, StatusNode>();
-                Children.Add(name, node);
+                Children = new Dictionary<string, StatusNode> {{name, node}};
             }
             else if (Children.ContainsKey(name))
             {

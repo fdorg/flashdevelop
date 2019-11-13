@@ -87,7 +87,7 @@ namespace System.Windows.Forms
         {
             bool isOnlyTab;
             DockContent dock = this.Parent as DockContent;
-            if (dock?.Pane == null) return;
+            if (dock?.Pane is null) return;
             if (dock.IsFloat)
             {
                 DockBorders local;

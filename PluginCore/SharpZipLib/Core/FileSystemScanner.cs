@@ -483,7 +483,7 @@ namespace ICSharpCode.SharpZipLib.Core
                 try {
                     string[] names = Directory.GetDirectories(directory);
                     foreach (string fulldir in names) {
-                        if ((directoryFilter_ == null) || (directoryFilter_.IsMatch(fulldir))) {
+                        if ((directoryFilter_ is null) || (directoryFilter_.IsMatch(fulldir))) {
                             ScanDir(fulldir, true);
                             if ( !alive_ ) {
                                 break;

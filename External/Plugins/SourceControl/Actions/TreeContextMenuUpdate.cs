@@ -61,13 +61,13 @@ namespace SourceControl.Actions
             }
 
             if (items.Count > minLen) items.Insert(minLen, menuItems.MidSeparator);
-            items.RemoveAll(item => item == null);
+            items.RemoveAll(item => item is null);
             scItem.DropDownItems.AddRange(items.ToArray());
         }
 
-        private static void AddSCMainItem(ProjectTreeView tree)
+        private static void AddSCMainItem(MultiSelectTreeView tree)
         {
-            if (scItem == null)
+            if (scItem is null)
             {
                 scItem = new ToolStripMenuItem();
                 scItem.Text = TextHelper.GetString("Label.SourceControl");

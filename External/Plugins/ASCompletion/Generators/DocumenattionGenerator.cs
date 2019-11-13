@@ -82,7 +82,7 @@ namespace ASCompletion.Generators
             return true;
         }
 
-        private static bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
+        static bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
         {
             var escaped = false;
             for (var i = position - 1; i >= 0; i--)
@@ -93,7 +93,7 @@ namespace ASCompletion.Generators
             return escaped;
         }
 
-        private void GenerateJob(DocumentationGeneratorJobType job, string context)
+        void GenerateJob(DocumentationGeneratorJobType job, string context)
         {
             switch (job)
             {
@@ -117,7 +117,7 @@ namespace ASCompletion.Generators
         {
             // get indentation
             var sci = ASContext.CurSciControl;
-            if (sci == null) return;
+            if (sci is null) return;
             var position = sci.CurrentPos;
             var line = sci.LineFromPosition(position);
             var indent = sci.LineIndentPosition(line) - sci.PositionFromLine(line);
@@ -130,7 +130,7 @@ namespace ASCompletion.Generators
             if (!PluginBase.MainForm.Settings.UseTabs) parInd = " ";
 
             // empty box
-            if (context == null)
+            if (context is null)
             {
                 sci.ReplaceSel(newline + tab + star + " " + newline + tab + star + "/");
                 position += newline.Length + tab.Length + 1 + star.Length;
@@ -164,10 +164,10 @@ namespace ASCompletion.Generators
         /// </summary>
         /// <param name="parameters">Method parameters</param>
         /// <returns>Member list</returns>
-        private static IEnumerable<MemberModel> ParseMethodParameters(string parameters)
+        static IEnumerable<MemberModel> ParseMethodParameters(string parameters)
         {
             var list = new List<MemberModel>();
-            if (parameters == null) return list;
+            if (parameters is null) return list;
             var p = parameters.IndexOf('(');
             if (p >= 0) parameters = parameters.Substring(p + 1, parameters.IndexOf(')') - p - 1);
             parameters = parameters.Trim();
@@ -178,8 +178,9 @@ namespace ASCompletion.Generators
                 var parType = parameter.Split(':');
                 var param = new MemberModel {Name = parType[0].Trim(toClean)};
                 if (param.Name.Length == 0) continue;
-                if (parType.Length == 2) param.Type = parType[1].Trim();
-                else param.Type = ASContext.Context.Features.objectKey;
+                param.Type = parType.Length == 2
+                    ? parType[1].Trim()
+                    : ASContext.Context.Features.objectKey;
                 param.Flags = FlagType.Variable | FlagType.Dynamic;
                 list.Add(param);
             }

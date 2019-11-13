@@ -75,7 +75,7 @@ namespace ASCompletion.Model
 
         internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
         {
-            if (src == null) return;
+            if (src is null) return;
 
             foreach (var meta in src)
             {
@@ -192,8 +192,7 @@ namespace ASCompletion.Model
 
         public void Check()
         {
-            if (this == Ignore) return;
-            if (!OutOfDate) return;
+            if (this == Ignore || !OutOfDate) return;
             OutOfDate = false;
             if (FileName == "" || !File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
             try

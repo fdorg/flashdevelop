@@ -30,21 +30,20 @@ namespace PluginCore.Controls
         public static IDisposable Attach(object obj, bool childrenToo)
         {
             if (!Win32.ShouldUseWin32() && !PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false)) return null;
-            if (obj is Control && childrenToo)
+            if (obj is Control parent && childrenToo)
             {
-                Control parent = obj as Control;
-                foreach (Control ctrl in parent.Controls) ScrollBarEx.Attach(ctrl);
+                foreach (Control ctrl in parent.Controls) Attach(ctrl);
                 return null;
             }
-            if (obj is ListBox) return new ListBoxScroller(obj as ListBox);
-            if (obj is ListView) return new ListViewScroller(obj as ListView);
-            if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
-            if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
-            if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
-            if (obj is PropertyGrid) return new PropertyGridScroller(obj as PropertyGrid);
-            if (obj is TextBox && (obj as TextBox).Multiline && (obj as TextBox).WordWrap)
+            if (obj is ListBox listBox) return new ListBoxScroller(listBox);
+            if (obj is ListView listView) return new ListViewScroller(listView);
+            if (obj is TreeView treeView) return new TreeViewScroller(treeView);
+            if (obj is RichTextBox richTextBox) return new RichTextBoxScroller(richTextBox);
+            if (obj is DataGridView dataGridView) return new DataGridViewScroller(dataGridView);
+            if (obj is PropertyGrid propertyGrid) return new PropertyGridScroller(propertyGrid);
+            if (obj is TextBox textBox && textBox.Multiline && textBox.WordWrap)
             {
-                return new TextBoxScroller(obj as TextBoxEx);
+                return new TextBoxScroller(textBox as TextBoxEx);
             }
             return null;
         }
@@ -95,7 +94,7 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawBackground(Graphics g, Rectangle rect, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
@@ -120,25 +119,16 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawThumb(Graphics g, Rectangle rect, ScrollBarState state, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect) || state == ScrollBarState.Disabled)
                 return;
-
-            Color color;
-            switch (state)
+            var color = state switch
             {
-                case ScrollBarState.Hot:
-                    color = foreColorHot;
-                    break;
-                case ScrollBarState.Pressed:
-                    color = foreColorPressed;
-                    break;
-                default:
-                    color = foreColor;
-                    break;
-            }
-
+                ScrollBarState.Hot => foreColorHot,
+                ScrollBarState.Pressed => foreColorPressed,
+                _ => foreColor,
+            };
             switch (orientation)
             {
                 case ScrollBarOrientation.Vertical:
@@ -160,28 +150,19 @@ namespace PluginCore.Controls
         /// <param name="orientation">The <see cref="ScrollBarOrientation"/>.</param>
         private void DrawArrowButton(Graphics g, Rectangle rect, ScrollBarArrowButtonState state, bool arrowUp, ScrollBarOrientation orientation)
         {
-            if (g == null) throw new ArgumentNullException(nameof(g));
+            if (g is null) throw new ArgumentNullException(nameof(g));
 
             if (rect.IsEmpty || g.IsVisibleClipEmpty || !g.VisibleClipBounds.IntersectsWith(rect))
                 return;
 
-            Color color;
-
-            switch (state)
+            var color = state switch
             {
-                case ScrollBarArrowButtonState.UpHot:
-                case ScrollBarArrowButtonState.DownHot:
-                    color = arrowColorHot;
-                    break;
-                case ScrollBarArrowButtonState.UpPressed:
-                case ScrollBarArrowButtonState.DownPressed:
-                    color = arrowColorPressed;
-                    break;
-                default:
-                    color = arrowColor;
-                    break;
-            }
-
+                ScrollBarArrowButtonState.UpHot => arrowColorHot,
+                ScrollBarArrowButtonState.DownHot => arrowColorHot,
+                ScrollBarArrowButtonState.UpPressed => arrowColorPressed,
+                ScrollBarArrowButtonState.DownPressed => arrowColorPressed,
+                _ => arrowColor,
+            };
             switch (orientation)
             {
                 case ScrollBarOrientation.Vertical:
@@ -200,11 +181,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundVertical(Graphics g, Rectangle rect)
         {
-            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -214,11 +193,9 @@ namespace PluginCore.Controls
         /// <param name="rect">The rectangle in which to paint.</param>
         private void DrawBackgroundHorizontal(Graphics g, Rectangle rect)
         {
-            using (Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(this.Enabled ? backColor : backColorDisabled);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -229,11 +206,9 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
-            using (Brush brush = new SolidBrush(color))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -244,11 +219,9 @@ namespace PluginCore.Controls
         /// <param name="color">The color to draw the thumb with.</param>
         private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
-            using (Brush brush = new SolidBrush(color))
-            {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                g.FillRectangle(brush, rect);
-            }
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            g.FillRectangle(brush, rect);
         }
 
         /// <summary>
@@ -260,20 +233,17 @@ namespace PluginCore.Controls
         /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
         private static void DrawArrowButtonVertical(Graphics g, Rectangle rect, Color color, bool arrowUp)
         {
-            using (Brush brush = new SolidBrush(color))
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
+            PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
+            float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
+            g.FillPolygon(brush, new[]
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-                PointF headPoint = new PointF(rect.Left + rect.Width / 2, (arrowUp ? rect.Top : rect.Bottom) - 0.5f);
-                float baseY = (arrowUp ? rect.Bottom : rect.Top) - 0.5f;
-                g.FillPolygon(brush, new[]
-                    {
-                        new PointF(rect.Left - 0.5f, baseY),
-                        new PointF(rect.Right - 0.5f, baseY),
-                        headPoint
-                    });
-
-            }
+                new PointF(rect.Left - 0.5f, baseY),
+                new PointF(rect.Right - 0.5f, baseY),
+                headPoint
+            });
         }
 
         /// <summary>
@@ -285,19 +255,17 @@ namespace PluginCore.Controls
         /// <param name="arrowLeft">true for a left arrow, false otherwise.</param>
         private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowLeft)
         {
-            using (Brush brush = new SolidBrush(color))
+            using Brush brush = new SolidBrush(color);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
+            PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
+            float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
+            g.FillPolygon(brush, new[]
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                // When using anti-aliased drawing mode, a point has zero size and lies in the center of a pixel. To align with the pixel grid, use coordinates that are integers + 0.5f.
-                PointF headPoint = new PointF((arrowLeft ? rect.Left : rect.Right) - 0.5f, rect.Top + rect.Height / 2);
-                float baseX = (arrowLeft ? rect.Right : rect.Left) - 0.5f;
-                g.FillPolygon(brush, new[]
-                    {
-                        new PointF(baseX, rect.Top - 0.5f),
-                        new PointF(baseX, rect.Bottom - 0.5f),
-                        headPoint
-                    });
-            }
+                new PointF(baseX, rect.Top - 0.5f),
+                new PointF(baseX, rect.Bottom - 0.5f),
+                headPoint
+            });
         }
 
         #endregion
@@ -1106,19 +1074,15 @@ namespace PluginCore.Controls
             // draw current line
             if (this.curPos > -1 && this.orientation == ScrollBarOrientation.Vertical)
             {
-                using (SolidBrush brush = new SolidBrush(this.curPosColor))
-                {
-                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                    e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
-                }
+                using SolidBrush brush = new SolidBrush(this.curPosColor);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                e.Graphics.FillRectangle(brush, 0, GetCurPosition() - ScaleHelper.Scale(2f) / 2, this.Width, ScaleHelper.Scale(2f));
             }
 
             // draw border
-            using (Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled)))
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
-            }
+            using Pen pen = new Pen((this.Enabled ? this.borderColor : this.borderColorDisabled));
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 1, this.Height - 1);
         }
 
         /// <summary>
@@ -1954,7 +1918,7 @@ namespace PluginCore.Controls
             if (e.Type == EventType.ApplyTheme)
             {
                 bool enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
-                if (control.Parent == null) return;
+                if (control.Parent is null) return;
                 if (enabled)
                 {
                     if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();

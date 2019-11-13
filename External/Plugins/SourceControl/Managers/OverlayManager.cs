@@ -99,17 +99,15 @@ namespace SourceControl.Managers
 
         bool UpdateNodeStatus(GenericNode node)
         {
-            if (node.Meta == null)
+            if (node.Meta is null)
                 node.Meta = new Dictionary<string, object>();
 
             if (!node.Meta.ContainsKey(META_VC))
                 LocateVC(node);
 
-            IVCManager currentVC = node.Meta[META_VC] as IVCManager;
-            string root = (string)node.Meta[META_ROOT];
-
-            if (currentVC != null && currentTree != null)
+            if (node.Meta[META_VC] is IVCManager currentVC && currentTree != null)
             {
+                string root = (string)node.Meta[META_ROOT];
                 VCItemStatus status = currentVC.GetOverlay(node.BackingPath, root);
                 node.Meta[META_STATUS] = status;
                 OverlayMap.SetOverlay(status, node, currentTree);
@@ -193,15 +191,13 @@ namespace SourceControl.Managers
             if (tree.ImageList.Images.Count <= node.ImageIndex)
                 return;
 
-            Image original = tree.ImageList.Images[node.ImageIndex];
-            Bitmap composed = original.Clone() as Bitmap;
-            int curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
-            using (Graphics destination = Graphics.FromImage(composed))
-            {
-                destination.DrawImage(iconSkin, 
-                    new Rectangle(0, 0, composed.Width, composed.Height), 
-                    new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
-            }
+            var original = tree.ImageList.Images[node.ImageIndex];
+            var composed = original.Clone() as Bitmap;
+            var curSize = ScaleHelper.GetScale() > 1.5 ? 32 : 16;
+            using var destination = Graphics.FromImage(composed);
+            destination.DrawImage(iconSkin, 
+                new Rectangle(0, 0, composed.Width, composed.Height), 
+                new Rectangle((int)status * curSize, 0, curSize, curSize), GraphicsUnit.Pixel);
             int index = tree.ImageList.Images.Count;
             tree.ImageList.Images.Add(composed);
             map[node.ImageIndex] = index;
@@ -235,7 +231,7 @@ namespace SourceControl.Managers
 
         public ProjectSelectionState(MultiSelectTreeView tree)
         {
-            if (tree == null || tree.SelectedNodes.Count == 0)
+            if (tree is null || tree.SelectedNodes.Count == 0)
                 return;
 
             foreach (TreeNode node in tree.SelectedNodes)
@@ -245,11 +241,11 @@ namespace SourceControl.Managers
                 else return; // unknown node in selection - no action
 
                 GenericNode gnode = (GenericNode)node;
-                if (gnode.Meta == null || !gnode.Meta.ContainsKey(OverlayManager.META_STATUS)
+                if (gnode.Meta is null || !gnode.Meta.ContainsKey(OverlayManager.META_STATUS)
                     || !gnode.Meta.ContainsKey(OverlayManager.META_VC))
                     return; // incomplete status
 
-                if (Manager == null) Manager = gnode.Meta[OverlayManager.META_VC] as IVCManager;
+                if (Manager is null) Manager = gnode.Meta[OverlayManager.META_VC] as IVCManager;
                 else if (gnode.Meta[OverlayManager.META_VC] != Manager)
                     return; // several managers...
 

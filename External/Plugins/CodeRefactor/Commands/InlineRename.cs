@@ -123,7 +123,7 @@ namespace CodeRefactor.Commands
         /// <param name="previewTarget">An <see cref="ASResult"/> object specifying the target. This parameter must not be <code>null</code> if <code>previewChanges</code> is not <code>null</code>.</param>
         public InlineRename(ScintillaControl control, string original, int position, bool? includeComments, bool? includeStrings, bool? previewChanges, ASResult previewTarget)
         {
-            if (previewChanges.HasValue && previewTarget == null)
+            if (previewChanges.HasValue && previewTarget is null)
             {
                 throw new ArgumentNullException(nameof(previewTarget));
             }
@@ -213,7 +213,7 @@ namespace CodeRefactor.Commands
                     var @ref = new ReferenceInfo() { Index = index, Length = length, Value = value };
                     tempRefs.Add(@ref);
 
-                    if (currentRef == null && match.Index == start)
+                    if (currentRef is null && match.Index == start)
                     {
                         currentRef = @ref;
                     }
@@ -244,7 +244,7 @@ namespace CodeRefactor.Commands
         private void AddGetterSetterPreview(List<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
         {
             target = RenamingHelper.FindGetterSetter(target, prefix + name);
-            if (target == null) return;
+            if (target is null) return;
 
             var results = new FRRunner().SearchSync(GetConfig(prefix + name))[currentDoc.FileName];
             int offset = prefix.Length;
@@ -364,7 +364,7 @@ namespace CodeRefactor.Commands
                 sci.DisableAllSciEvents = false;
             }
 
-            if (refs == null)
+            if (refs is null)
             {
                 Highlight(start, end - start);
                 Update?.Invoke(this, /*prevName,*/ newName);
@@ -811,9 +811,6 @@ namespace CodeRefactor.Commands
                 case "Scintilla.ZoomIn":
                 case "Scintilla.ZoomOut":
                     return false;
-                default:
-                    //string.Format("Shortcut \"{0}\" cannot be used during renaming", shortcut.Key)
-                    break;
             }
 
             return true;
@@ -974,7 +971,7 @@ namespace CodeRefactor.Commands
                 sci.DisableAllSciEvents = false;
             }
 
-            if (refs == null)
+            if (refs is null)
             {
                 Highlight(start, end - start);
                 Update?.Invoke(this, /*prevName,*/ newName);

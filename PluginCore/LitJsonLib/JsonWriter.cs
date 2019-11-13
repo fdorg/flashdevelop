@@ -96,7 +96,7 @@ namespace LitJson
 
         public JsonWriter (TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
                 throw new ArgumentNullException (nameof(writer));
 
             this.writer = writer;
@@ -275,7 +275,7 @@ namespace LitJson
 
         public override string ToString ()
         {
-            if (inst_string_builder == null)
+            if (inst_string_builder is null)
                 return string.Empty;
 
             return inst_string_builder.ToString ();
@@ -352,7 +352,7 @@ namespace LitJson
             DoValidation (Condition.Value);
             PutNewline ();
 
-            if (str == null)
+            if (str is null)
                 Put ("null");
             else
                 PutString (str);

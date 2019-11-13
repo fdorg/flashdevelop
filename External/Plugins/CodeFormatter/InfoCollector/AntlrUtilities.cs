@@ -15,7 +15,7 @@ namespace CodeFormatter.InfoCollector
         private static IToken getFirstTreeToken(CommonTree tree)
         {
             IList children = tree.Children;
-            if (children == null)
+            if (children is null)
             {
                 return tree.Token;
             }
@@ -51,10 +51,10 @@ namespace CodeFormatter.InfoCollector
 
         private static IToken getLastTreeToken(CommonTree tree)
         {
-            if (tree == null)
+            if (tree is null)
                 return null;
             IList children = tree.Children;
-            if (children == null)
+            if (children is null)
             {
                 return tree.Token;
             }
@@ -64,10 +64,10 @@ namespace CodeFormatter.InfoCollector
 
         private static int getFirstTreePosition(CommonTree tree)
         {
-            if (tree == null)
+            if (tree is null)
                 return -1;
             IList children = tree.Children;
-            if (children == null)
+            if (children is null)
             {
                 return ((CommonToken)tree.Token).StartIndex;
             }
@@ -83,7 +83,7 @@ namespace CodeFormatter.InfoCollector
         private static int getLastTreePosition(CommonTree tree)
         {
             IList children = tree.Children;
-            if (children == null)
+            if (children is null)
             {
                 return ((CommonToken)tree.Token).StopIndex + 1;
             }
@@ -93,7 +93,7 @@ namespace CodeFormatter.InfoCollector
 
         public static int getLastTreePosition(ParserRuleReturnScope tree)
         {
-            if (tree.Tree==null)
+            if (tree.Tree is null)
             {
                 if (tree.Stop is CommonToken)
                 {
@@ -122,10 +122,10 @@ namespace CodeFormatter.InfoCollector
 
         private static string getCommonTreeText(CommonTree tree)
         {
-            if (tree==null)
+            if (tree is null)
                 return "";
             IList children=tree.Children;
-            if (children==null)
+            if (children is null)
             {
                 return tree.Token.Text;
             }
@@ -201,7 +201,7 @@ namespace CodeFormatter.InfoCollector
         public static List<IToken> getPostHiddenTokens(IToken tok, CommonTokenStream rawTokens)
         {
             List<IToken> results = new List<IToken>();
-            if (tok == null)
+            if (tok is null)
                 return results;
             int currentTokenIndex = ((CommonToken)tok).TokenIndex + 1;
             while (currentTokenIndex < rawTokens.Count)
@@ -236,7 +236,7 @@ namespace CodeFormatter.InfoCollector
 
         public static List<IToken> getPostHiddenTokens(ParserRuleReturnScope tree, CommonTokenStream rawTokens)
         {
-            if (tree.Tree==null)
+            if (tree.Tree is null)
             {
                 //I think this only happens with implied semicolons
                 if (tree.Start is CommonToken)
@@ -257,7 +257,7 @@ namespace CodeFormatter.InfoCollector
         public static List<IToken> getHiddenTokens(IToken tok, CommonTokenStream rawTokens, bool crossLineBoundaries, bool filterNone)
         {
             List<IToken> results = new List<IToken>();
-            if (tok == null)
+            if (tok is null)
                 return results;
             int currentTokenIndex = ((CommonToken)tok).TokenIndex - 1;
             bool seenCR = false;

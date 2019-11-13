@@ -263,11 +263,11 @@ namespace LayoutManager
         {
             this.layoutsListView.Items.Clear();
             string[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
-            for (int i = 0; i < layouts.Length; i++)
+            foreach (var layout in layouts)
             {
-                string label = Path.GetFileNameWithoutExtension(layouts[i]);
-                ListViewItem item = new ListViewItem(label, 0);
-                item.Tag = layouts[i]; // Store full path
+                var label = Path.GetFileNameWithoutExtension(layout);
+                var item = new ListViewItem(label, 0);
+                item.Tag = layout; // Store full path
                 this.layoutsListView.Items.Add(item);
             }
             this.UpdatePluginUI();
@@ -332,16 +332,14 @@ namespace LayoutManager
         {
             try
             {
-                using (SaveFileDialog sfd = new SaveFileDialog())
+                using SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
+                sfd.InitialDirectory = this.GetLayoutsDir();
+                sfd.DefaultExt = "fdl"; sfd.FileName = "";
+                if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
                 {
-                    sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
-                    sfd.InitialDirectory = this.GetLayoutsDir();
-                    sfd.DefaultExt = "fdl"; sfd.FileName = "";
-                    if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
-                    {
-                        PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
-                        this.PopulateLayoutsListView();
-                    }
+                    PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
+                    this.PopulateLayoutsListView();
                 }
             }
             catch (Exception ex)
@@ -353,17 +351,14 @@ namespace LayoutManager
         /// <summary>
         /// Updates the ui when on index change
         /// </summary>
-        private void LayoutsListViewSelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.UpdatePluginUI();
-        }
+        private void LayoutsListViewSelectedIndexChanged(object sender, EventArgs e) => UpdatePluginUI();
 
         /// <summary>
         /// Loads the selected layout on double click
         /// </summary>
         private void LayoutsListViewDoubleClick(object sender, EventArgs e)
         {
-            ListViewItem item = this.GetSelectedItem();
+            var item = this.GetSelectedItem();
             if (item != null && item.ImageIndex != 1)
             {
                 PluginBase.MainForm.CallCommand("RestoreLayout", item.Tag.ToString());
@@ -400,9 +395,9 @@ namespace LayoutManager
         /// </summary>
         private string GetLayoutsDir()
         {
-            string userPath = Settings.Instance.CustomLayoutPath;
+            var userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
-            string path = Path.Combine(this.GetDataDir(), "Layouts");
+            var path = Path.Combine(Path.Combine(PathHelper.DataDir, nameof(LayoutManager)), "Layouts");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }
@@ -414,30 +409,17 @@ namespace LayoutManager
         {
             try
             {
-                string content;
-                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
-                using (StreamReader sr = new StreamReader(src, true))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
+                using var reader = new StreamReader(src, true);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
                 FileHelper.WriteFile(file, content, Encoding.Unicode);
             }
             catch {}
         }
 
-        /// <summary>
-        /// Gets the plugin data directory
-        /// </summary>
-        private string GetDataDir()
-        {
-            return Path.Combine(PathHelper.DataDir, "LayoutManager");
-        }
-
         #endregion
-
     }
-
 }

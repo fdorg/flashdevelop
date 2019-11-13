@@ -419,7 +419,7 @@ namespace PluginCore.Helpers
                 if (((EllipsisFormat.Path | EllipsisFormat.Start | EllipsisFormat.End | EllipsisFormat.Middle) & options) == 0)
                     return text;
 
-                if (font == null)
+                if (font is null)
                     throw new ArgumentNullException(nameof(font));
 
                 Size s = TextRenderer.MeasureText(text, font);

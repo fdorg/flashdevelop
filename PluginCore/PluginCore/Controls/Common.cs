@@ -800,20 +800,18 @@ namespace System.Windows.Forms
                     this.SizeGripStyle = SizeGripStyle.Hide;
                     Color dark = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlDark);
                     Color light = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlLight);
-                    using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
+                    using SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light);
+                    int y = this.ClientRectangle.Bottom - 3 * 2 + 1;
+                    for (int i = 3; i >= 1; i--)
                     {
-                        int y = this.ClientRectangle.Bottom - 3 * 2 + 1;
-                        for (int i = 3; i >= 1; i--)
+                        int x = (this.ClientRectangle.Right - 3 * 2 + 1);
+                        for (int j = 0; j < i; j++)
                         {
-                            int x = (this.ClientRectangle.Right - 3 * 2 + 1);
-                            for (int j = 0; j < i; j++)
-                            {
-                                e.Graphics.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
-                                e.Graphics.FillRectangle(darkBrush, x, y, 2, 2);
-                                x -= 4;
-                            }
-                            y -= 4;
+                            e.Graphics.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
+                            e.Graphics.FillRectangle(darkBrush, x, y, 2, 2);
+                            x -= 4;
                         }
+                        y -= 4;
                     }
                 }
             }
@@ -870,20 +868,18 @@ namespace System.Windows.Forms
                         {
                             Color dark = PluginBase.MainForm.GetThemeColor("StatusBar.3dDarkColor", SystemColors.ControlDark);
                             Color light = PluginBase.MainForm.GetThemeColor("StatusBar.3dLightColor", SystemColors.ControlLight);
-                            using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
+                            using SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light);
+                            int y = this.ClientRectangle.Bottom - 3 * 2 + 1;
+                            for (int i = 3; i >= 1; i--)
                             {
-                                int y = this.ClientRectangle.Bottom - 3 * 2 + 1;
-                                for (int i = 3; i >= 1; i--)
+                                int x = (this.ClientRectangle.Right - 3 * 2 + 1);
+                                for (int j = 0; j < i; j++)
                                 {
-                                    int x = (this.ClientRectangle.Right - 3 * 2 + 1);
-                                    for (int j = 0; j < i; j++)
-                                    {
-                                        g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
-                                        g.FillRectangle(darkBrush, x, y, 2, 2);
-                                        x -= 4;
-                                    }
-                                    y -= 4;
+                                    g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
+                                    g.FillRectangle(darkBrush, x, y, 2, 2);
+                                    x -= 4;
                                 }
+                                y -= 4;
                             }
                         }
                         var tff = TextFormatFlags.VerticalCenter;
@@ -899,7 +895,7 @@ namespace System.Windows.Forms
         private static readonly Padding defaultMargin = new Padding(1, 2, 1, 1);
         private static readonly Padding defaultStatusStripMargin = new Padding(1, 5, 1, 4);
 
-        public ToolStripProgressBarEx() : base()
+        public ToolStripProgressBarEx()
         {
             this.OverrideControl();
             this.Font = PluginBase.Settings.DefaultFont;

@@ -304,8 +304,8 @@ namespace XMLCompletion
 
         public int Compare(ICompletionListItem a, ICompletionListItem b)
         {
-            if (a is HtmlTagItem && b is HtmlTagItem)
-                return string.Compare(((HtmlTagItem)a).Name, ((HtmlTagItem)b).Name);
+            if (a is HtmlTagItem aItem && b is HtmlTagItem bItem)
+                return string.Compare(aItem.Name, bItem.Name);
             return string.Compare(a.Label, b.Label);
         }
 

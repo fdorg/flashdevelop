@@ -52,7 +52,7 @@ namespace HaXeContext
             set => disableVoidTypeDeclaration = value;
         }
 
-        private bool enableLeadingAsterisks = true;
+        bool enableLeadingAsterisks = true;
 
         [DisplayName("Enable Leading Asterisks")]
         [Category("Documentation Generator")]
@@ -77,7 +77,7 @@ namespace HaXeContext
         const bool DEFAULT_FIXPACKAGEAUTOMATICALLY = true;
 
         protected bool checkSyntaxOnSave = DEFAULT_CHECKSYNTAX;
-        private bool lazyClasspathExploration = DEFAULT_LAZYMODE;
+        bool lazyClasspathExploration = DEFAULT_LAZYMODE;
         protected bool completionListAllTypes = DEFAULT_LISTALL;
         protected bool completionShowQualifiedTypes = DEFAULT_QUALIFY;
         protected bool completionEnabled = DEFAULT_COMPLETIONENABLED;
@@ -133,9 +133,7 @@ namespace HaXeContext
 
         public InstalledSDK GetDefaultSDK()
         {
-            if (installedSDKs == null || installedSDKs.Length == 0)
-                return InstalledSDK.INVALID_SDK;
-
+            if (installedSDKs.IsNullOrEmpty()) return InstalledSDK.INVALID_SDK;
             foreach (InstalledSDK sdk in installedSDKs)
                 if (sdk.IsValid) return sdk;
             return InstalledSDK.INVALID_SDK;
@@ -216,27 +214,27 @@ namespace HaXeContext
         [field: NonSerialized]
         public event UseGenericsShortNotationChangedEventHandler UseGenericsShortNotationChanged;
 
-        private const int DEFAULT_COMPLETION_SERVER_PORT = 6000;
-        private const int DEFAULT_FLASHVERSION = 10;
-        private const string DEFAULT_HAXECHECKPARAMS = "";
-        private const HaxeCompletionModeEnum DEFAULT_HAXECOMPLETIONMODE = HaxeCompletionModeEnum.Compiler;
+        const int DEFAULT_COMPLETION_SERVER_PORT = 6000;
+        const int DEFAULT_FLASHVERSION = 10;
+        const string DEFAULT_HAXECHECKPARAMS = "";
+        const HaxeCompletionModeEnum DEFAULT_HAXECOMPLETIONMODE = HaxeCompletionModeEnum.Compiler;
 
-        private const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
-        private const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
-        private const bool DEFAULT_EXPORTHXML = false;
-        private const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
-        private const bool DEFAULT_USEGENERICSSHORTNOTATION = true;
-        private const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage | CompletionFeatures.EnableForFindAllReferences;
+        const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
+        const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
+        const bool DEFAULT_EXPORTHXML = false;
+        const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
+        const bool DEFAULT_USEGENERICSSHORTNOTATION = true;
+        const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage | CompletionFeatures.EnableForFindAllReferences;
 
-        private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
-        private int flashVersion = 10;
-        private string haXeCheckParameters = DEFAULT_HAXECHECKPARAMS;
-        private bool disableMixedCompletion = DEFAULT_DISABLEMIXEDCOMPLETION;
-        private bool disableCompletionOnDemand = DEFAULT_DISABLECOMPLETIONONDEMAND;
-        private bool exportHXML = DEFAULT_EXPORTHXML;
-        private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
-        private bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
-        private bool useGenericsShortNotation = DEFAULT_USEGENERICSSHORTNOTATION;
+        int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
+        int flashVersion = 10;
+        string haXeCheckParameters = DEFAULT_HAXECHECKPARAMS;
+        bool disableMixedCompletion = DEFAULT_DISABLEMIXEDCOMPLETION;
+        bool disableCompletionOnDemand = DEFAULT_DISABLECOMPLETIONONDEMAND;
+        bool exportHXML = DEFAULT_EXPORTHXML;
+        HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
+        bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
+        bool useGenericsShortNotation = DEFAULT_USEGENERICSSHORTNOTATION;
 
         [DisplayName("Default Flash Version")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
@@ -279,7 +277,8 @@ namespace HaXeContext
         public int CompletionServerPort
         {
             get => completionServerPort;
-            set {
+            set
+            {
                 completionServerPort = value;
                 FireCompletionMode();
             }
@@ -337,7 +336,7 @@ namespace HaXeContext
             get => useGenericsShortNotation;
             set
             {
-                if (useGenericsShortNotation != value)
+                if (value != useGenericsShortNotation)
                 {
                     useGenericsShortNotation = value;
                     UseGenericsShortNotationChanged?.Invoke();
@@ -359,6 +358,16 @@ namespace HaXeContext
 
         [Browsable(false)]
         public void Init() => HaxeProject.saveHXML = exportHXML;
+
+        const string DefaultAddSpaceAfter = "if for while do catch switch";
+
+        [
+            DisplayName("Always Add Space After"),
+            LocalizedCategory("ASCompletion.Category.Helpers"),
+            LocalizedDescription("ASCompletion.Description.AddSpaceAfter"),
+            DefaultValue(DefaultAddSpaceAfter),
+        ]
+        public string AddSpaceAfter { get; set; } = DefaultAddSpaceAfter;
     }
 
     public enum HaxeCompletionModeEnum

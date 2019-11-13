@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -31,7 +30,7 @@ namespace ProjectManager.Controls.TreeView
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
 
-            if (References != null && References.Parent == null)
+            if (References != null && References.Parent is null)
             {
                 if (recursive)
                 {
@@ -57,7 +56,7 @@ namespace ProjectManager.Controls.TreeView
 
         private void RefreshReferences(bool recursive)
         {
-            if (References != null && References.Parent == null)
+            if (References != null && References.Parent is null)
             {
                 Nodes.Insert(0, References);
                 References.Refresh(recursive);

@@ -122,7 +122,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Gets a flag value of true if the central header has been added for this archive; false if it has not been added.
         /// </summary>
         /// <remarks>No further entries can be added once this has been done.</remarks>
-        public bool IsFinished => entries == null;
+        public bool IsFinished => entries is null;
 
         /// <summary>
         /// Set the zip file comment.
@@ -239,11 +239,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public void PutNextEntry(ZipEntry entry)
         {
-            if ( entry == null ) {
+            if ( entry is null ) {
                 throw new ArgumentNullException(nameof(entry));
             }
 
-            if (entries == null) {
+            if (entries is null) {
                 throw new InvalidOperationException("ZipOutputStream was finished");
             }
             
@@ -463,7 +463,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public void CloseEntry()
         {
-            if (curEntry == null) {
+            if (curEntry is null) {
                 throw new InvalidOperationException("No open entry");
             }
 
@@ -624,11 +624,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="System.InvalidOperationException">No entry is active.</exception>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (curEntry == null) {
+            if (curEntry is null) {
                 throw new InvalidOperationException("No open entry.");
             }
             
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException(nameof(buffer));
             }
             
@@ -701,7 +701,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public override void Finish()
         {
-            if (entries == null)  {
+            if (entries is null)  {
                 return;
             }
             

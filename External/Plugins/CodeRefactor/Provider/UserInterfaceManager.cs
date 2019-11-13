@@ -20,7 +20,7 @@ namespace CodeRefactor.Provider
         {
             get
             {
-                if (progressDialog == null)
+                if (progressDialog is null)
                 {
                     progressDialog = new ProgressDialog();
                     Main.AddOwnedForm(progressDialog);

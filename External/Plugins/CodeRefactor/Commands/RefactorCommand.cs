@@ -7,15 +7,15 @@ namespace CodeRefactor.Commands
     /// <summary>
     /// Basic underlying Refactoring command.  Refactoring commands can derive from this.
     /// </summary>
-    /// <typeparam name="RefactorResultType">The refactoring results return type</typeparam>
-    public abstract class RefactorCommand<RefactorResultType>
+    /// <typeparam name="TRefactorResultType">The refactoring results return type</typeparam>
+    public abstract class RefactorCommand<TRefactorResultType>
     {
         #region Events
 
         /// <summary>
         /// Fires when the refactoring command completes its operation.
         /// </summary>
-        public EventHandler<RefactorCompleteEventArgs<RefactorResultType>> OnRefactorComplete;
+        public EventHandler<RefactorCompleteEventArgs<TRefactorResultType>> OnRefactorComplete;
 
         #endregion
 
@@ -29,13 +29,13 @@ namespace CodeRefactor.Commands
 
         public bool OutputResults { get; protected set; }
 
-        private RefactorResultType results;
+        private TRefactorResultType results;
         private DocumentHelper associatedDocumentHelper;
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual RefactorResultType Results
+        public virtual TRefactorResultType Results
         {
             get => results;
             protected set => results = value;
@@ -50,9 +50,9 @@ namespace CodeRefactor.Commands
         {
             get
             {
-                if (associatedDocumentHelper == null)
+                if (associatedDocumentHelper is null)
                 {
-                    this.RegisterNewDocumentHelper();
+                    RegisterNewDocumentHelper();
                 }
                 return associatedDocumentHelper;
             }
@@ -68,10 +68,7 @@ namespace CodeRefactor.Commands
         /// Registers a new DocumentHelper to the command.
         /// </summary>
         /// <returns></returns>
-        public DocumentHelper RegisterNewDocumentHelper()
-        {
-            return this.RegisterDocumentHelper(null);
-        }
+        public DocumentHelper RegisterNewDocumentHelper() => RegisterDocumentHelper(null);
 
         /// <summary>
         /// Registers the provided DocumentHelper to the command.
@@ -80,14 +77,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public DocumentHelper RegisterDocumentHelper(DocumentHelper existingDocumentHelper)
         {
-            if (existingDocumentHelper != null)
-            {
-                AssociatedDocumentHelper = existingDocumentHelper;
-            }
-            else
-            {
-                AssociatedDocumentHelper = new DocumentHelper();
-            }
+            AssociatedDocumentHelper = existingDocumentHelper ?? new DocumentHelper();
             return AssociatedDocumentHelper;
         }
 
@@ -100,9 +90,9 @@ namespace CodeRefactor.Commands
         /// </summary>
         public void Execute()
         {
-            if (this.IsValid())
+            if (IsValid())
             {
-                this.ExecutionImplementation();
+                ExecutionImplementation();
             }
         }
 
@@ -115,7 +105,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected void FireOnRefactorComplete()
         {
-            OnRefactorComplete?.Invoke(this, new RefactorCompleteEventArgs<RefactorResultType>(results));
+            OnRefactorComplete?.Invoke(this, new RefactorCompleteEventArgs<TRefactorResultType>(results));
         }
 
         #endregion

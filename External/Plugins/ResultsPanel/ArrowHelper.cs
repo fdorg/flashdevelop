@@ -52,11 +52,11 @@ namespace ResultsPanel
                 {
                     switch (order)
                     {
-                        case System.Windows.Forms.SortOrder.Ascending:
+                        case SortOrder.Ascending:
                             lvColumn.fmt &= ~HDF_SORTDOWN;
                             lvColumn.fmt |= HDF_SORTUP;
                             break;
-                        case System.Windows.Forms.SortOrder.Descending:
+                        case SortOrder.Descending:
                             lvColumn.fmt &= ~HDF_SORTUP;
                             lvColumn.fmt |= HDF_SORTDOWN;
                             break;
