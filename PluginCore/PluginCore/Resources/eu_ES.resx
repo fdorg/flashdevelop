@@ -1750,7 +1750,7 @@ Alternatiba gisa, Adobe Flash Professional ere sintaxi egiaztapenerako erabil da
     <value>Proiektu honek ez du irteerarik eta ezta eraikitzeko konfigurazio komandorik ere.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|Proiektu berria sortu|{0}edo{0}|Existitzen den proiektu bat ireki|{0}edo{0}|Flex Builder proiektu bat inportatu|{0}or{0}|Import a Haxe hxml project|</value>
+    <value>|Open a folder|{0}or{0}|Proiektu berria sortu|{0}edo{0}|Existitzen den proiektu bat ireki|{0}edo{0}|Flex Builder proiektu bat inportatu|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>Ez da txantiloirik aurkitu txantiloien directorioan. Ezin izanen duzu proiektu berririk sortu. FlashDevelop berriro instalatzen saia zaiztezke.</value>
@@ -6351,5 +6351,9 @@ AND - All conditions are met.</value>
   <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
     <value>Initialize {0}</value>
     <comment>Added After 5.3.3</comment>
+  </data>
+  <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
+    <value>Open &amp;Folder...</value>
+    <comment>Added after 5.3.1</comment>
   </data>
 </root>

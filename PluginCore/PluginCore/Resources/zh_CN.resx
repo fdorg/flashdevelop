@@ -1751,7 +1751,7 @@
     <value>项目没有输出,也没有配置编译命令.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|创建新项目|{0}或{0}|打开一个现有的项目|{0}或{0}|导入一个 Flash Builder 项目|{0}or{0}|Import a Haxe hxml project|</value>
+    <value>|Open a folder|{0}or{0}|创建新项目|{0}或{0}|打开一个现有的项目|{0}或{0}|导入一个 Flash Builder 项目|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>无法在模板目录中找到模板.你将无法创建新项目.你可以尝试重新安装 FlashDevelop 软件.</value>
@@ -6363,5 +6363,9 @@ AND - All conditions are met.</value>
   <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
     <value>Initialize {0}</value>
     <comment>Added After 5.3.3</comment>
+  </data>
+  <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
+    <value>Open &amp;Folder...</value>
+    <comment>Added after 5.3.1</comment>
   </data>
 </root>

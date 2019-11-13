@@ -25,7 +25,7 @@ namespace ProjectManager.Projects.Haxe
         public override string Language => "haxe";
         public override string LanguageDisplayName => "Haxe";
         public override bool IsCompilable => true;
-        public override bool ReadOnly => false;
+        public override bool ReadOnly => IsFolderProject();
         public override bool HasLibraries => OutputType == OutputType.Application && IsFlashOutput;
         public override bool RequireLibrary => IsFlashOutput;
         public override string DefaultSearchFilter => "*.hx;*.hxp";

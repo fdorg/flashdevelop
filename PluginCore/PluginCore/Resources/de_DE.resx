@@ -1768,7 +1768,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>Dieses Projekt hat keine Ausgabedatei und und keine Pre- oder Post-Build-Befehle definiert.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|Erstelle neues Projekt|{0}oder{0}|Öffne existierende Projekt|{0}oder{0}|Importiere Flash Builder Projekt|{0}or{0}|Import a Haxe hxml project|</value>
+    <value>|Open a folder|{0}or{0}|Erstelle neues Projekt|{0}oder{0}|Öffne existierende Projekt|{0}oder{0}|Importiere Flash Builder Projekt|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>Keine Vorlagen wurden im Vorlagenverzeichnis gefunden. Sie können keine Projekte erstellen. Sie können dieses Problem beheben, indem Sie FlashDevelop neu installieren.</value>
@@ -6354,5 +6354,9 @@ AND - All conditions are met.</value>
   <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
     <value>Initialize {0}</value>
     <comment>Added After 5.3.3</comment>
+  </data>
+  <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
+    <value>Open &amp;Folder...</value>
+    <comment>Added after 5.3.1</comment>
   </data>
 </root>
