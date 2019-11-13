@@ -13,12 +13,7 @@ namespace TaskListPanel
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "TaskListPanel";
-        private String pluginGuid = "40feac2b-a68a-498e-ad78-52a8268efa45";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a task list panel to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String settingFilename;
+        private string settingFilename;
         private Settings settingObject;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
@@ -29,59 +24,38 @@ namespace TaskListPanel
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(TaskListPanel);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "40feac2b-a68a-498e-ad78-52a8268efa45";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a task list panel to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
-        public Object Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public object Settings => settingObject;
+
         #endregion
         
         #region Required Methods
@@ -91,11 +65,11 @@ namespace TaskListPanel
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreateMenuItem();
-            this.CreatePluginPanel();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreateMenuItem();
+            CreatePluginPanel();
         }
         
         /// <summary>
@@ -103,14 +77,14 @@ namespace TaskListPanel
         /// </summary>
         public void Dispose()
         {
-            this.SaveSettings();
-            this.pluginUI.Terminate();
+            SaveSettings();
+            pluginUI.Terminate();
         }
         
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -119,14 +93,14 @@ namespace TaskListPanel
                     break;
 
                 case EventType.ApplySettings:
-                    this.pluginUI.UpdateSettings();
+                    pluginUI.UpdateSettings();
                     break;
 
                 case EventType.Command:
-                    DataEvent de = (DataEvent)e;
+                    var de = (DataEvent)e;
                     if (de.Action == "ProjectManager.Project")
                     {
-                        this.pluginUI.InitProject();
+                        pluginUI.InitProject();
                     }
                     break;
             }
@@ -141,29 +115,25 @@ namespace TaskListPanel
         /// </summary>
         public void InitBasics()
         {
-            this.pluginDesc = TextHelper.GetString("Info.Description");
-            String dataPath = Path.Combine(PathHelper.DataDir, "TaskListPanel");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginImage = PluginBase.MainForm.FindImage("75");
+            Description = TextHelper.GetString("Info.Description");
+            var path = Path.Combine(PathHelper.DataDir, nameof(TaskListPanel));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            pluginImage = PluginBase.MainForm.FindImage("75");
         }
 
         /// <summary>
         /// Adds the required event handlers
         /// </summary> 
-        public void AddEventHandlers()
-        {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.ApplySettings);
-        }
+        public void AddEventHandlers() => EventManager.AddEventHandler(this, EventType.UIStarted | EventType.ApplySettings);
 
         /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockBottomAutoHide);
         }
 
         /// <summary>
@@ -171,8 +141,8 @@ namespace TaskListPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel), null);
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage, OpenPanel, null);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowTasks", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -182,33 +152,21 @@ namespace TaskListPanel
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
-        {
-            this.pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
-
     }
-    
 }

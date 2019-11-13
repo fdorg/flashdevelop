@@ -12,7 +12,6 @@ namespace PluginCore.Managers
     public class ImageListManager : IDisposable
     {
         private static readonly List<WeakReference> instances;
-        private readonly ImageList imageList;
 
         #region Constructors
 
@@ -29,7 +28,7 @@ namespace PluginCore.Managers
         /// </summary>
         public ImageListManager()
         {
-            imageList = new ImageList();
+            ImageList = new ImageList();
             AddInstance(this);
         }
 
@@ -39,8 +38,8 @@ namespace PluginCore.Managers
         /// <param name="container">An object implementing <see cref="IContainer"/> to associate with the <see cref="ImageList"/> of this instance of <see cref="ImageListManager"/>.</param>
         public ImageListManager(IContainer container)
         {
-            if (container == null) throw new ArgumentNullException("container");
-            imageList = new ImageList(container);
+            if (container is null) throw new ArgumentNullException(nameof(container));
+            ImageList = new ImageList(container);
             AddInstance(this);
         }
 
@@ -50,8 +49,7 @@ namespace PluginCore.Managers
         /// <param name="target">An <see cref="System.Windows.Forms.ImageList"/> object to associate with this instance of <see cref="ImageListManager"/>.</param>
         public ImageListManager(ImageList target)
         {
-            if (target == null) throw new ArgumentNullException("target");
-            imageList = target;
+            ImageList = target ?? throw new ArgumentNullException(nameof(target));
             AddInstance(this);
         }
 
@@ -63,10 +61,7 @@ namespace PluginCore.Managers
         /// Returns the <see cref="ImageList"/> of the specified <see cref="ImageListManager"/> instance.
         /// </summary>
         /// <param name="obj">An <see cref="ImageListManager"/> object.</param>
-        public static implicit operator ImageList(ImageListManager obj)
-        {
-            return obj.imageList;
-        }
+        public static implicit operator ImageList(ImageListManager obj) => obj.ImageList;
 
         /// <summary>
         /// Returns the <see cref="ImageListManager"/> instance associated with the specified <see cref="System.Windows.Forms.ImageList"/> object.
@@ -76,16 +71,18 @@ namespace PluginCore.Managers
         {
             for (int i = 0, length = instances.Count; i < length; i++)
             {
-                var imageListManager = instances[i].Target as ImageListManager;
-                if (imageListManager == null)
+                if (instances[i].Target is ImageListManager imageListManager)
+                {
+                    if (imageListManager.ImageList == obj) return imageListManager;
+                }
+                else
                 {
                     // Free up spaces whenever we are looping through the list lol
                     instances.RemoveAt(i--);
                     length--;
                 }
-                else if (imageListManager.imageList == obj) return imageListManager;
             }
-            throw new InvalidCastException(string.Format("Unable to cast object of type '{0}' to type '{1}'.", obj.GetType(), typeof(ImageListManager)));
+            throw new InvalidCastException($"Unable to cast object of type '{obj.GetType()}' to type '{typeof(ImageListManager)}'.");
         }
 
         #endregion
@@ -102,8 +99,8 @@ namespace PluginCore.Managers
         /// </summary>
         public event EventHandler Disposed
         {
-            add { imageList.Disposed += value; }
-            remove { imageList.Disposed -= value; }
+            add => ImageList.Disposed += value;
+            remove => ImageList.Disposed -= value;
         }
 
         #endregion
@@ -113,35 +110,29 @@ namespace PluginCore.Managers
         /// <summary>
         /// Gets the associated <see cref="System.Windows.Forms.ImageList"/> for this instance of <see cref="ImageListManager"/>.
         /// </summary>
-        public ImageList ImageList
-        {
-            get { return imageList; }
-        }
+        public ImageList ImageList { get; }
 
         /// <summary>
         /// Gets or sets the <see cref="System.Windows.Forms.ColorDepth"/> of the <see cref="ImageList"/>.
         /// </summary>
         public ColorDepth ColorDepth
         {
-            get { return imageList.ColorDepth; }
-            set { imageList.ColorDepth = value; }
+            get => ImageList.ColorDepth;
+            set => ImageList.ColorDepth = value;
         }
 
         /// <summary>
         /// Gets the <see cref="ImageList.ImageCollection"/> for the <see cref="ImageList"/>.
         /// </summary>
-        public ImageList.ImageCollection Images
-        {
-            get { return imageList.Images; }
-        }
+        public ImageList.ImageCollection Images => ImageList.Images;
 
         /// <summary>
         /// Gets or sets the <see cref="Size"/> of the images in the <see cref="ImageList"/>.
         /// </summary>
         public Size ImageSize
         {
-            get { return imageList.ImageSize; }
-            set { imageList.ImageSize = value; }
+            get => ImageList.ImageSize;
+            set => ImageList.ImageSize = value;
         }
 
         /// <summary>
@@ -149,8 +140,8 @@ namespace PluginCore.Managers
         /// </summary>
         public Color TransparentColor
         {
-            get { return imageList.TransparentColor; }
-            set { imageList.TransparentColor = value; }
+            get => ImageList.TransparentColor;
+            set => ImageList.TransparentColor = value;
         }
 
         /// <summary>
@@ -158,8 +149,8 @@ namespace PluginCore.Managers
         /// </summary>
         public object Tag
         {
-            get { return imageList.Tag; }
-            set { imageList.Tag = value; }
+            get => ImageList.Tag;
+            set => ImageList.Tag = value;
         }
 
         #endregion
@@ -173,13 +164,12 @@ namespace PluginCore.Managers
         {
             for (int i = 0, length = instances.Count; i < length; i++)
             {
-                var instance = instances[i].Target as ImageListManager;
-                if (instance == null)
+                if (instances[i].Target is ImageListManager instance) instance.Refresh();
+                else
                 {
                     instances.RemoveAt(i--);
                     length--;
                 }
-                else instance.Refresh();
             }
         }
 
@@ -187,10 +177,7 @@ namespace PluginCore.Managers
         /// Adds a weak reference of an instance to the <see cref="instances"/> list.
         /// </summary>
         /// <param name="instance">An instance of <see cref="ImageListManager"/>.</param>
-        private static void AddInstance(ImageListManager instance)
-        {
-            instances.Add(new WeakReference(instance));
-        }
+        private static void AddInstance(ImageListManager instance) => instances.Add(new WeakReference(instance));
 
         /// <summary>
         /// Removes a weak reference to an instance from the instances list.
@@ -200,35 +187,26 @@ namespace PluginCore.Managers
         {
             for (int i = 0, length = instances.Count; i < length; i++)
             {
-                var imageListManager = instances[i].Target as ImageListManager;
-                if (imageListManager == null)
+                if (instances[i].Target is ImageListManager imageListManager)
                 {
-                    instances.RemoveAt(i--);
-                    length--;
-                }
-                else if (imageListManager == instance)
-                {
+                    if (imageListManager != instance) continue;
                     instances.RemoveAt(i);
                     break;
                 }
+                instances.RemoveAt(i--);
+                length--;
             }
         }
 
         /// <summary>
         /// Refreshes all images contained by the <see cref="ImageList"/>.
         /// </summary>
-        public void Refresh()
-        {
-            OnRefresh();
-        }
+        public void Refresh() => OnRefresh();
 
         /// <summary>
         /// Initializes the <see cref="ImageList"/> by raising the <see cref="Populate"/> event.
         /// </summary>
-        public void Initialize()
-        {
-            Populate?.Invoke(this, EventArgs.Empty);
-        }
+        public void Initialize() => Populate?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
         /// Assigns the specified <see cref="EventHandler"/> to <see cref="Populate"/> and initializes the <see cref="ImageList"/> by calling <see cref="Initialize"/>.
@@ -245,7 +223,7 @@ namespace PluginCore.Managers
         /// </summary>
         public void Dispose()
         {
-            imageList.Dispose();
+            ImageList.Dispose();
             RemoveInstance(this);
         }
 
@@ -254,8 +232,8 @@ namespace PluginCore.Managers
         /// </summary>
         protected virtual void OnRefresh()
         {
-            imageList.Images.Clear();
-            if (Populate != null) Populate(this, EventArgs.Empty);
+            ImageList.Images.Clear();
+            Populate?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion

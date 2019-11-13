@@ -1,0 +1,4 @@
+@echo off
+cd bin
+node $(ProjectID).js
+pause

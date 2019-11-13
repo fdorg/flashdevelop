@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Aga.Controls.Tree;
 using FlashDebugger.Controls;
@@ -11,7 +12,7 @@ namespace FlashDebugger.Helpers
 {
     public class DefaultDataTreeExporter : IDataTreeExporter
     {
-        private readonly static string[] as3DisabledProps = new[] { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
+        private static readonly string[] as3DisabledProps = { "stage", "parent", "root", "loaderInfo", "_nativeWindow", "nativeWindow" };
 
         public int CopyTreeMaxRecursion { get; set; }
 
@@ -30,7 +31,7 @@ namespace FlashDebugger.Helpers
             return sb.ToString();
         }
 
-        private void GetTreeItemsAsText(IList<Node> dataNodes, HashSet<string> visited, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
+        private void GetTreeItemsAsText(IList<Node> dataNodes, ISet<string> visited, string levelSep, int level, StringBuilder sb, DataTreeControl control, int levelLimit)
         {
             // per node
             int len = dataNodes.Count;
@@ -88,7 +89,7 @@ namespace FlashDebugger.Helpers
                         {
                             // error
                             AppendTimes(sb, levelSep, level + 1);
-                            sb.AppendLine(String.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
+                            sb.AppendLine(string.Format(TextHelper.GetString("TreeExporter.DuplicatedObject"), child.Value));
                         }
                         else if (level > CopyTreeMaxRecursion)
                         {
@@ -123,7 +124,7 @@ namespace FlashDebugger.Helpers
             }
         }
 
-        private static bool IsWantedParent(DataNode parent)
+        private static bool IsWantedParent(Node parent)
         {
             try
             {
@@ -132,10 +133,9 @@ namespace FlashDebugger.Helpers
                 // then skip it from opening and closing { } the output
                 if (parent.Nodes.Count == 1 || parent.Nodes.Count == 2)
                 {
-                    ValueNode pNode = parent as ValueNode;
-                    if (pNode != null && pNode.ClassPath == "Array")
+                    if (parent is ValueNode pNode && pNode.ClassPath == "Array")
                     {
-                        DataNode child1 = (DataNode)parent.Nodes[0];
+                        var child1 = (DataNode)parent.Nodes[0];
                         if (child1.Text == "[static]" || child1.Text == "length")
                         {
                             return false;
@@ -154,49 +154,43 @@ namespace FlashDebugger.Helpers
         {
             try
             {
-
                 // skip if static
                 if (child.Text == "[static]")
                 {
                     return false;
                 }
 
-                if (child.Parent != null)
+                var parent = child.Parent as ValueNode;
+                if (parent?.ClassPath != null)
                 {
-                    ValueNode parent = (child.Parent as ValueNode);
-                    if (parent != null && parent.ClassPath != null)
+                    // if is an array []
+                    // skip [static] and "length" properties
+                    if (parent.ClassPath == "Array")
                     {
-
-                        // if is an array []
-                        // skip [static] and "length" properties
-                        if (parent.ClassPath == "Array")
+                        if (child.Text == "length")
                         {
-                            if (child.Text == "length")
-                            {
-                                return false;
-                            }
+                            return false;
                         }
+                    }
 
-                        // if is an AS3 display object,
-                        // don't go upward (stage, parent)
-                        if (parent.ClassPath.StartsWithOrdinal("flash.display.") || parent.ClassPath == "Main")
+                    // if is an AS3 display object,
+                    // don't go upward (stage, parent)
+                    if (parent.ClassPath.StartsWithOrdinal("flash.display.") || parent.ClassPath == "Main")
+                    {
+                        if (as3DisabledProps.Contains(child.Text))
                         {
-                            if (Array.IndexOf(as3DisabledProps, child.Text) > -1)
-                            {
-                                return false;
-                            }
+                            return false;
                         }
+                    }
 
-                        // if is an AS2 display object,
-                        // don't go upward (_parent)
-                        if (parent.ClassPath == "MovieClip" || parent.ClassPath == "Video")
+                    // if is an AS2 display object,
+                    // don't go upward (_parent)
+                    if (parent.ClassPath == "MovieClip" || parent.ClassPath == "Video")
+                    {
+                        if (child.Text == "_parent")
                         {
-                            if (child.Text == "_parent")
-                            {
-                                return false;
-                            }
+                            return false;
                         }
-
                     }
 
                 }

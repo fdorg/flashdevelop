@@ -9,10 +9,10 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle fuseStyles(BBCodeStyle child, BBCodeStyle parent)
         {
-            if (parent == null)
-                return child != null ? child.clone() : null;
+            if (parent is null)
+                return child?.clone();
 
-            if (child == null)
+            if (child is null)
                 return parent.clone();
 
             BBCodeStyle outStyle = child.clone();
@@ -51,12 +51,12 @@ namespace PluginCore.BBCode
             if (string.IsNullOrEmpty(outStyle.fontName))
                 outStyle.fontName = parent.fontName;
 
-            if (outStyle.backColor == null)
+            if (outStyle.backColor is null)
                 outStyle.backColor = parent.backColor;
             else
                 outStyle.backColor = Color.Mix(parent.backColor, outStyle.backColor);
 
-            if (outStyle.foreColor == null)
+            if (outStyle.foreColor is null)
                 outStyle.foreColor = parent.foreColor;
             else
                 outStyle.foreColor = Color.Mix(outStyle.backColor, outStyle.foreColor);
@@ -66,7 +66,7 @@ namespace PluginCore.BBCode
 
         public static BBCodeStyle fuseStyleHierarchy(List<BBCodeStyle> parentToChildHierarchy)
         {
-            if (parentToChildHierarchy == null || parentToChildHierarchy.Count < 1)
+            if (parentToChildHierarchy.IsNullOrEmpty())
                 return null;
 
             if (parentToChildHierarchy.Count == 1)
@@ -74,8 +74,8 @@ namespace PluginCore.BBCode
 
             BBCodeStyle t = parentToChildHierarchy[0].clone();
 
-            if (t.foreColor == null) t.foreColor = new Color(0x000000, Mode.NORMAL);
-            if (t.backColor == null) t.backColor = new Color(0xCC99CC, Mode.NORMAL);
+            if (t.foreColor is null) t.foreColor = new Color(0x000000, Mode.NORMAL);
+            if (t.backColor is null) t.backColor = new Color(0xCC99CC, Mode.NORMAL);
 
             if (t.isBold == StateMode.DEFAULT) t.isBold = StateMode.OFF;
             if (t.isItalic == StateMode.DEFAULT) t.isItalic = StateMode.OFF;
@@ -111,43 +111,39 @@ namespace PluginCore.BBCode
         public StateMode isStriked = StateMode.DEFAULT;
         public StateMode isUnderlined = StateMode.DEFAULT;
 
-        public String fontName = null;
+        public string fontName = null;
         public float fontSize = 0;
         public bool isAbsFontSize = true;
-
         public Color foreColor = null;
         public Color backColor = null;
-
-
+        
         public BBCodeStyle clone()
         {
             BBCodeStyle c = new BBCodeStyle();
-
-            c.isBold = this.isBold;
-            c.isItalic = this.isItalic;
-            c.isStriked = this.isStriked;
-            c.isUnderlined = this.isUnderlined;
-            c.fontName = this.fontName;
-            c.fontSize = this.fontSize;
-            c.isAbsFontSize = this.isAbsFontSize;
-            c.foreColor = this.foreColor == null ? null : this.foreColor.clone();
-            c.backColor = this.backColor == null ? null : this.backColor.clone();
-
+            c.isBold = isBold;
+            c.isItalic = isItalic;
+            c.isStriked = isStriked;
+            c.isUnderlined = isUnderlined;
+            c.fontName = fontName;
+            c.fontSize = fontSize;
+            c.isAbsFontSize = isAbsFontSize;
+            c.foreColor = foreColor?.clone();
+            c.backColor = backColor?.clone();
             return c;
         }
 
-        override public String ToString()
+        public override string ToString()
         {
             return "[bbCodeStyle"
                    + " isBold=" + isBold
                    + " isItalic='" + isItalic + "'"
                    + " isStriked='" + isStriked + "'"
                    + " isUnderlined='" + isUnderlined + "'"
-                   + " fontName='" + (fontName == null ? "null" : fontName) + "'"
+                   + " fontName='" + (fontName ?? "null") + "'"
                    + " fontSize='" + fontSize + "'"
                    + " isAbsFontSize='" + isAbsFontSize + "'"
-                   + " foreColor='" + (foreColor == null ? "null" : foreColor.ToString()) + "'"
-                   + " backColor='" + (backColor == null ? "null" : backColor.ToString()) + "'"
+                   + " foreColor='" + (foreColor is null ? "null" : foreColor.ToString()) + "'"
+                   + " backColor='" + (backColor is null ? "null" : backColor.ToString()) + "'"
                    + "]";
         }
 
@@ -163,17 +159,17 @@ namespace PluginCore.BBCode
 
             public static Color Mix(Color back, Color fore)
             {
-                if (back == null || fore == null)
+                if (back is null || fore is null)
                     return null;
 
-                float backR = ((float)((back.color >> 16) & 0xFF) / 255.0f);
-                float backG = ((float)((back.color >> 8) & 0xFF) / 255.0f);
-                float backB = ((float)((back.color) & 0xFF) / 255.0f);
+                float backR = (((back.color >> 16) & 0xFF) / 255.0f);
+                float backG = (((back.color >> 8) & 0xFF) / 255.0f);
+                float backB = (((back.color) & 0xFF) / 255.0f);
 
-                float foreA = ((float)((fore.color >> 24) & 0xFF) / 255.0f);
-                float foreR = ((float)((fore.color >> 16) & 0xFF) / 255.0f);
-                float foreG = ((float)((fore.color >> 8) & 0xFF) / 255.0f);
-                float foreB = ((float)((fore.color) & 0xFF) / 255.0f);
+                float foreA = (((fore.color >> 24) & 0xFF) / 255.0f);
+                float foreR = (((fore.color >> 16) & 0xFF) / 255.0f);
+                float foreG = (((fore.color >> 8) & 0xFF) / 255.0f);
+                float foreB = (((fore.color) & 0xFF) / 255.0f);
 
                 float outR = MixChannel(backR, foreR, fore.mode);
                 float outG = MixChannel(backG, foreG, fore.mode);
@@ -193,10 +189,10 @@ namespace PluginCore.BBCode
                 if (outB < 0.0f) outB = 0.0f;
                 if (outB > 1.0f) outB = 1.0f;
 
-                return new Color((uint)( ((uint)0xFF000000)
-                                        |((uint)(255.0f * outR) << 16)
-                                        |((uint)(255.0f * outG) << 8)
-                                        |((uint)(255.0f * outB))), Mode.NORMAL);
+                return new Color(0xFF000000
+                                 |((uint)(255.0f * outR) << 16)
+                                 |((uint)(255.0f * outG) << 8)
+                                 |((uint)(255.0f * outB)), Mode.NORMAL);
             }
 
             public static float MixChannel(float back, float fore, Mode mode)
@@ -209,7 +205,7 @@ namespace PluginCore.BBCode
                 return _colorChannelMixers[mode](back, fore);
             }
 
-            public static Mode ResolveColorMode(String modeStr)
+            public static Mode ResolveColorMode(string modeStr)
             {
                 if (string.IsNullOrEmpty(modeStr))
                     return Mode.NORMAL;
@@ -230,7 +226,7 @@ namespace PluginCore.BBCode
 
             private static bool _isInitedStatics = false;
             private static Dictionary<Mode, DColorChannelMixer> _colorChannelMixers;
-            private static Dictionary<String, Mode> _colorChannelMixersHash;
+            private static Dictionary<string, Mode> _colorChannelMixersHash;
 
             private static void _InitStatics()
             {
@@ -238,15 +234,15 @@ namespace PluginCore.BBCode
                     return;
 
                 _colorChannelMixers = new Dictionary<Mode, DColorChannelMixer>();
-                _colorChannelMixers[Mode.NORMAL] = new DColorChannelMixer(_channelMixer_NORMAL);
-                _colorChannelMixers[Mode.ADD] = new DColorChannelMixer(_channelMixer_ADD);
-                _colorChannelMixers[Mode.SUBTRACT] = new DColorChannelMixer(_channelMixer_SUBTRACT);
-                _colorChannelMixers[Mode.MULTIPLY] = new DColorChannelMixer(_channelMixer_MULTIPLY);
-                _colorChannelMixers[Mode.DIVIDE] = new DColorChannelMixer(_channelMixer_DIVIDE);
-                _colorChannelMixers[Mode.DIFFERENCE] = new DColorChannelMixer(_channelMixer_DIFFERENCE);
-                _colorChannelMixers[Mode.EXCLUSION] = new DColorChannelMixer(_channelMixer_EXCLUSION);
-                _colorChannelMixers[Mode.OVERLAY] = new DColorChannelMixer(_channelMixer_OVERLAY);
-                _colorChannelMixers[Mode.HARDLIGHT] = new DColorChannelMixer(_channelMixer_HARDLIGHT);
+                _colorChannelMixers[Mode.NORMAL] = _channelMixer_NORMAL;
+                _colorChannelMixers[Mode.ADD] = _channelMixer_ADD;
+                _colorChannelMixers[Mode.SUBTRACT] = _channelMixer_SUBTRACT;
+                _colorChannelMixers[Mode.MULTIPLY] = _channelMixer_MULTIPLY;
+                _colorChannelMixers[Mode.DIVIDE] = _channelMixer_DIVIDE;
+                _colorChannelMixers[Mode.DIFFERENCE] = _channelMixer_DIFFERENCE;
+                _colorChannelMixers[Mode.EXCLUSION] = _channelMixer_EXCLUSION;
+                _colorChannelMixers[Mode.OVERLAY] = _channelMixer_OVERLAY;
+                _colorChannelMixers[Mode.HARDLIGHT] = _channelMixer_HARDLIGHT;
 
                 _colorChannelMixersHash = new Dictionary<string, Mode>();
                 _colorChannelMixersHash["NORMAL"] = Mode.NORMAL;
@@ -303,31 +299,30 @@ namespace PluginCore.BBCode
             }
             
             #endregion
-
-
-
+            
             public Color()
             {
             }
+
             public Color(uint color)
             {
                 this.color = color;
             }
+
             public Color(uint color, Mode mode)
             {
                 this.color = color;
                 this.mode = mode;
             }
-
-
+            
             public uint color = 0xFF000000;
             public Mode mode = Mode.NORMAL;
-
 
             public Color clone()
             {
                 return new Color(color, mode);
             }
+
             public override string ToString()
             {
                 return "[bbCodeStyle.Color"

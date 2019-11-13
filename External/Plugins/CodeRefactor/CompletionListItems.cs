@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using CodeRefactor.Provider;
@@ -10,10 +9,7 @@ namespace CodeRefactor
 {
     internal sealed class RefactorItem : ICompletionListSpecialItem
     {
-        private ToolStripItem item;
-        private string label;
-        private string description;
-        private Bitmap icon;
+        private readonly ToolStripItem item;
 
         public static void AddItemToList(ToolStripItem item, List<ICompletionListItem> list)
         {
@@ -24,25 +20,16 @@ namespace CodeRefactor
         public RefactorItem(ToolStripItem item)
         {
             this.item = item;
-            label = TextHelper.RemoveMnemonicsAndEllipsis(item.Text);
-            description = TextHelper.GetStringWithoutMnemonics("Label.Refactor");
-            icon = (Bitmap) (item.Image ?? PluginBase.MainForm.FindImage("452")); //452 or 473
+            Label = TextHelper.RemoveMnemonicsAndEllipsis(item.Text);
+            Description = TextHelper.GetStringWithoutMnemonics("Label.Refactor");
+            Icon = (Bitmap) (item.Image ?? PluginBase.MainForm.FindImage("452")); //452 or 473
         }
 
-        public string Description
-        {
-            get { return description; }
-        }
+        public string Description { get; }
 
-        public Bitmap Icon
-        {
-            get { return icon; }
-        }
+        public Bitmap Icon { get; }
 
-        public string Label
-        {
-            get { return label; }
-        }
+        public string Label { get; }
 
         public string Value
         {
@@ -56,40 +43,27 @@ namespace CodeRefactor
 
     internal sealed class SurroundWithItem : ICompletionListSpecialItem
     {
-        private string label;
-        private string description;
-        private Bitmap icon;
-
         public SurroundWithItem(string label)
         {
-            this.label = label;
-            description = TextHelper.GetStringWithoutMnemonics("Label.SurroundWith");
-            icon = (Bitmap) PluginBase.MainForm.FindImage("341");
+            Label = label;
+            Description = TextHelper.GetStringWithoutMnemonics("Label.SurroundWith");
+            Icon = (Bitmap) PluginBase.MainForm.FindImage("341");
         }
 
-        public string Label
-        {
-            get { return label; }
-        }
+        public string Label { get; }
 
         public string Value
         {
             get
             {
-                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(label);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(Label);
                 command.Execute();
                 return null;
             }
         }
 
-        public string Description
-        {
-            get { return description; }
-        }
+        public string Description { get; }
 
-        public Bitmap Icon
-        {
-            get { return icon; }
-        }
+        public Bitmap Icon { get; }
     }
 }

@@ -27,8 +27,8 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Documentation"), LocalizedDescription("ASCompletion.Description.DocumentationCommandLine"), DefaultValue(DEFAULT_DOC_COMMAND)]
         public string DocumentationCommandLine
         {
-            get { return documentationCommandLine; }
-            set { documentationCommandLine = value; }
+            get => documentationCommandLine;
+            set => documentationCommandLine = value;
         }
 
         #endregion
@@ -69,7 +69,7 @@ namespace AS2Context
         const bool DEFAULT_FIXPACKAGEAUTOMATICALLY = true;
 
         protected bool checkSyntaxOnSave = DEFAULT_CHECKSYNTAX;
-        private bool lazyClasspathExploration = DEFAULT_LAZYMODE;
+        bool lazyClasspathExploration = DEFAULT_LAZYMODE;
         protected bool completionListAllTypes = DEFAULT_LISTALL;
         protected bool completionShowQualifiedTypes = DEFAULT_QUALIFY;
         protected bool completionEnabled = DEFAULT_COMPLETIONENABLED;
@@ -80,42 +80,30 @@ namespace AS2Context
         protected InstalledSDK[] installedSDKs = null;
 
         [Browsable(false)]
-        public string LanguageId 
-        {
-            get { return "AS2"; }
-        }
+        public string LanguageId => "AS2";
 
         [Browsable(false)]
-        public string DefaultExtension 
-        {
-            get { return ".as"; }
-        }
+        public string DefaultExtension => ".as";
 
         [Browsable(false)]
-        public string CheckSyntaxRunning
-        {
-            get { return TextHelper.GetString("Info.MTASCRunning"); }
-        }
+        public string CheckSyntaxRunning => TextHelper.GetString("Info.MTASCRunning");
 
         [Browsable(false)]
-        public string CheckSyntaxDone
-        {
-            get { return TextHelper.GetString("Info.MTASCDone"); }
-        }
+        public string CheckSyntaxDone => TextHelper.GetString("Info.MTASCDone");
 
         [DisplayName("Check Syntax On Save")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CheckSyntaxOnSave"), DefaultValue(DEFAULT_CHECKSYNTAX)]
         public bool CheckSyntaxOnSave
         {
-            get { return checkSyntaxOnSave; }
-            set { checkSyntaxOnSave = value; }
+            get => checkSyntaxOnSave;
+            set => checkSyntaxOnSave = value;
         }
 
         [DisplayName("User Classpath")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.UserClasspath")]
         public string[] UserClasspath
         {
-            get { return userClasspath; }
+            get => userClasspath;
             set
             {
                 userClasspath = value;
@@ -127,7 +115,7 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.MtascPath")]
         public InstalledSDK[] InstalledSDKs
         {
-            get { return installedSDKs; }
+            get => installedSDKs;
             set
             {
                 installedSDKs = value;
@@ -137,9 +125,7 @@ namespace AS2Context
 
         public InstalledSDK GetDefaultSDK()
         {
-            if (installedSDKs == null || installedSDKs.Length == 0)
-                return InstalledSDK.INVALID_SDK;
-
+            if (installedSDKs.IsNullOrEmpty()) return InstalledSDK.INVALID_SDK;
             foreach (InstalledSDK sdk in installedSDKs)
                 if (sdk.IsValid) return sdk;
             return InstalledSDK.INVALID_SDK;
@@ -149,16 +135,16 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionEnabled"), DefaultValue(DEFAULT_COMPLETIONENABLED)]
         public bool CompletionEnabled
         {
-            get { return completionEnabled; }
-            set { completionEnabled = value; }
+            get => completionEnabled;
+            set => completionEnabled = value;
         }
 
         [DisplayName("Generate Imports")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.GenerateImports"), DefaultValue(DEFAULT_GENERATEIMPORTS)]
         public bool GenerateImports
         {
-            get { return generateImports; }
-            set { generateImports = value; }
+            get => generateImports;
+            set => generateImports = value;
         }
 
         /// <summary>
@@ -168,8 +154,8 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionListAllTypes"), DefaultValue(DEFAULT_LISTALL)]
         public bool CompletionListAllTypes
         {
-            get { return completionListAllTypes; }
-            set { completionListAllTypes = value; }
+            get => completionListAllTypes;
+            set => completionListAllTypes = value;
         }
 
         /// <summary>
@@ -179,8 +165,8 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.CompletionShowQualifiedTypes"), DefaultValue(DEFAULT_QUALIFY)]
         public bool CompletionShowQualifiedTypes
         {
-            get { return completionShowQualifiedTypes; }
-            set { completionShowQualifiedTypes = value; }
+            get => completionShowQualifiedTypes;
+            set => completionShowQualifiedTypes = value;
         }
 
         /// <summary>
@@ -190,24 +176,24 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.LazyClasspathExploration"), DefaultValue(DEFAULT_LAZYMODE)]
         public bool LazyClasspathExploration
         {
-            get { return lazyClasspathExploration; }
-            set { lazyClasspathExploration = value; }
+            get => lazyClasspathExploration;
+            set => lazyClasspathExploration = value;
         }
 
         [DisplayName("Play After Build")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.PlayAfterBuild"), DefaultValue(DEFAULT_PLAY)]
         public bool PlayAfterBuild
         {
-            get { return playAfterBuild; }
-            set { playAfterBuild = value; }
+            get => playAfterBuild;
+            set => playAfterBuild = value;
         }
 
         [DisplayName("Fix Package Automatically")]
         [LocalizedCategory("ASCompletion.Category.Common"), LocalizedDescription("ASCompletion.Description.FixPackageAutomatically"), DefaultValue(DEFAULT_FIXPACKAGEAUTOMATICALLY)]
         public bool FixPackageAutomatically
         {
-            get { return fixPackageAutomatically; }
-            set { fixPackageAutomatically = value; }
+            get => fixPackageAutomatically;
+            set => fixPackageAutomatically = value;
         }
 
         #endregion
@@ -218,16 +204,16 @@ namespace AS2Context
         const int DEFAULT_FLASHVERSION = 9; // Flash CS3 has a specific FP9 support for AS2
         const string DEFAULT_MTASCCHECKPARAMS = "-mx -wimp";
 
-        private int flashVersion = 9;
-        private string mmClassPath;
-        private bool useMtascIntrinsic = DEFAULT_USEMTASC;
-        private string mtascCheckParameters = DEFAULT_MTASCCHECKPARAMS;
+        int flashVersion = 9;
+        string mmClassPath;
+        bool useMtascIntrinsic = DEFAULT_USEMTASC;
+        string mtascCheckParameters = DEFAULT_MTASCCHECKPARAMS;
 
         [DisplayName("Use MTASC Intrinsics")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.UseMtascIntrinsic"), DefaultValue(DEFAULT_USEMTASC)]
         public bool UseMtascIntrinsic
         {
-            get { return useMtascIntrinsic; }
+            get => useMtascIntrinsic;
             set
             {
                 useMtascIntrinsic = value;
@@ -239,8 +225,8 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.MtascCheckParameters"), DefaultValue(DEFAULT_MTASCCHECKPARAMS)]
         public string MtascCheckParameters
         {
-            get { return mtascCheckParameters; }
-            set { mtascCheckParameters = value; }
+            get => mtascCheckParameters;
+            set => mtascCheckParameters = value;
         }
 
         [DisplayName("Flash IDE Classpath")]
@@ -248,7 +234,7 @@ namespace AS2Context
         [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string MMClassPath
         {
-            get { return mmClassPath; }
+            get => mmClassPath;
             set {
                 if (value == mmClassPath) return;
                 mmClassPath = value;
@@ -260,7 +246,7 @@ namespace AS2Context
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("AS2Context.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
         public int DefaultFlashVersion
         {
-            get { return flashVersion; }
+            get => flashVersion;
             set {
                 if (value == flashVersion) return;
                 if (value >= 6 && value <= 9)
@@ -274,9 +260,9 @@ namespace AS2Context
         #endregion
 
         [Browsable(false)]
-        private void FireChanged()
-        {
-            if (OnClasspathChanged != null) OnClasspathChanged();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
+
+        [Browsable(false)]
+        public string AddSpaceAfter { get; set; }
     }
 }

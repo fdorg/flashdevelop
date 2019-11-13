@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers
@@ -10,7 +9,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Starts a basic process asynchronously
         /// </summary>
-        public static void StartAsync(String path)
+        public static void StartAsync(string path)
         {
             StartDelegate1 dlgt = Start;
             dlgt.BeginInvoke(path, ar =>
@@ -19,7 +18,7 @@ namespace PluginCore.Helpers
                 {
                     dlgt.EndInvoke(ar);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Something wrong, handling for possible leaks
                 }
@@ -29,7 +28,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Starts a process with arguments asynchronously
         /// </summary>
-        public static void StartAsync(String path, String arguments)
+        public static void StartAsync(string path, string arguments)
         {
             StartDelegate2 dlgt = Start;
             dlgt.BeginInvoke(path, arguments, ar =>
@@ -38,7 +37,7 @@ namespace PluginCore.Helpers
                 {
                     dlgt.EndInvoke(ar);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Something wrong, handling for possible leaks
                 }
@@ -50,14 +49,14 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void StartAsync(ProcessStartInfo psi)
         {
-            StartDelegate3 dlgt = new StartDelegate3(Start);
+            StartDelegate3 dlgt = Start;
             dlgt.BeginInvoke(psi, ar =>
                 {
                     try
                     {
                         dlgt.EndInvoke(ar);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Something wrong, handling for possible leaks
                     }
@@ -68,7 +67,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a basic process
         /// </summary>
-        private static void Start(String path)
+        private static void Start(string path)
         {
             try
             {
@@ -83,7 +82,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Runs a process with arguments
         /// </summary>
-        private static void Start(String path, String arguments)
+        private static void Start(string path, string arguments)
         {
             try
             {
@@ -113,8 +112,8 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Event delegates of the class
         /// </summary>
-        private delegate void StartDelegate1(String path);
-        private delegate void StartDelegate2(String path, String arguments);
+        private delegate void StartDelegate1(string path);
+        private delegate void StartDelegate2(string path, string arguments);
         private delegate void StartDelegate3(ProcessStartInfo psi);
 
     }

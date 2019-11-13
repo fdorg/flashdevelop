@@ -1,7 +1,3 @@
-/**
-* Autocompletion context manager
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using ASCompletion.Commands;
 using ASCompletion.Completion;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -23,13 +20,13 @@ namespace ASCompletion.Context
     {
         #region internal
         // all contexts management
-        static protected List<RegisteredContext> allContexts = new List<RegisteredContext>();
-        static protected int currentLine;
-        static protected IASContext context;
-        static protected bool hasContext;
-        static protected List<IASContext> validContexts;
-        static protected ASContext defaultContext;
-        static protected PluginMain plugin;
+        protected static readonly List<RegisteredContext> allContexts = new List<RegisteredContext>();
+        protected readonly Timer cacheRefreshTimer;
+        protected static int currentLine;
+        protected static IASContext context;
+        protected static List<IASContext> validContexts;
+        protected static ASContext defaultContext;
+        protected static PluginMain plugin;
         // context state/models
         protected bool started;
         protected ContextSetupInfos contextSetup;
@@ -40,15 +37,13 @@ namespace ASCompletion.Context
         protected ClassModel cClass;
         protected bool inPrivateSection;
         protected FileModel topLevel;
-        protected string lastClassWarning;
-        protected CompletionCache completionCache;
-        protected Timer cacheRefreshTimer;
+        protected internal CompletionCache completionCache;
         // path normalization
-        static protected bool doPathNormalization;
-        static protected string dirSeparator;
-        static protected char dirSeparatorChar;
-        static protected string dirAltSeparator;
-        static protected char dirAltSeparatorChar;
+        protected static bool doPathNormalization;
+        protected static string dirSeparator;
+        protected static char dirSeparatorChar;
+        protected static string dirAltSeparator;
+        protected static char dirAltSeparatorChar;
         // settings
         protected IContextSettings settings;
         protected ContextFeatures features;
@@ -68,50 +63,29 @@ namespace ASCompletion.Context
             completionCache = new CompletionCache(this, null);
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
-            cacheRefreshTimer.Tick += new EventHandler(cacheRefreshTimer_Tick);
-            CodeGenerator = new ASGenerator();
+            cacheRefreshTimer.Tick += cacheRefreshTimer_Tick;
         }
         #endregion
 
         #region static properties
 
-        static public IMainForm MainForm
-        {
-            get { return PluginBase.MainForm; }
-        }
+        public static IMainForm MainForm => PluginBase.MainForm;
 
-        static public ScintillaControl CurSciControl
-        {
-            get 
-            {
-                ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                return doc != null ? doc.SciControl : null; 
-            }
-        }
+        public static ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
 
-        static public PluginUI Panel
-        {
-            get { return (plugin != null) ? plugin.Panel : null; }
-        }
+        public static PluginUI Panel => plugin?.Panel;
 
-        static public GeneralSettings CommonSettings
-        {
-            get { return plugin.Settings as GeneralSettings; }
-        }
+        public static GeneralSettings CommonSettings => plugin.Settings as GeneralSettings;
 
-        static public string DataPath
-        {
-            get { return plugin.DataPath; }
-        }
+        public static string DataPath => plugin.DataPath;
 
         //static private int setCount = 0;
-        static public IASContext Context
+        public static IASContext Context
         {
-            get { return context; }
+            get => context;
             set
             {
-                if (value == null) context = defaultContext;
-                else context = value;
+                context = value ?? defaultContext;
                 // update GUI
                 if (Panel != null && context.CurrentModel != null)
                 {
@@ -125,31 +99,30 @@ namespace ASCompletion.Context
                 {
                     item.Enabled = isValid;
                 }
+                ClassModel.VoidClass.Name = context.Features.voidKey;
             }
         }
 
-        static public bool HasContext
-        {
-            get { return hasContext; }
-        }
+        public static bool HasContext { get; protected internal set; }
         #endregion
 
         #region context properties
+        
         public virtual IContextSettings Settings
         {
-            get { return null; }
+            get => null;
             set { }
         }
 
         public virtual ContextFeatures Features 
         {
-            get { return features; }
-            set { features = value; }
+            get => features;
+            set => features = value;
         }
 
         public virtual int CurrentLine
         {
-            get { return cLine; }
+            get => cLine;
             set
             {
                 if (cFile != null)
@@ -180,34 +153,32 @@ namespace ASCompletion.Context
             get
             {
                 if (cFile.OutOfDate) UpdateCurrentFile(true);
-                return (cClass != null) ? cClass : ClassModel.VoidClass;
+                return cClass ?? ClassModel.VoidClass;
             }
-            set { cClass = value; }
+            set => cClass = value;
         }
 
         public virtual string CurrentFile
         {
             get
             {
-                if (cFile == null) cFile = FileModel.Ignore;
+                if (cFile is null) cFile = FileModel.Ignore;
                 return cFile.FileName;
             }
             set
             {
                 cacheRefreshTimer.Enabled = false;
-                if (value == null)
+                if (value is null)
                 {
                     cFile = FileModel.Ignore;
                     cLine = -1;
                     return;
                 }
-                else
-                {
-                    // first use
-                    if (!started) BuildClassPath();
-                    // parse file
-                    GetCurrentFileModel(value);
-                }
+
+                // first use
+                if (!started) BuildClassPath();
+                // parse file
+                GetCurrentFileModel(value);
                 // require context
                 Context = this;
             }
@@ -215,8 +186,8 @@ namespace ASCompletion.Context
 
         public virtual FileModel CurrentModel
         {
-            get { return cFile; }
-            set { cFile = value; }
+            get => cFile;
+            set => cFile = value;
         }
 
         /// <summary>
@@ -224,8 +195,8 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual bool InPrivateSection
         {
-            get { return inPrivateSection; }
-            set { inPrivateSection = value; }
+            get => inPrivateSection;
+            set => inPrivateSection = value;
         }
 
         /// <summary>
@@ -236,33 +207,27 @@ namespace ASCompletion.Context
         {
             get 
             {
-                if (cFile == null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings == null)
+                if (cFile is null || cFile == FileModel.Ignore || cFile.Version == 0 || Settings is null)
                     return false;
-                if (cFile.InlinedRanges != null && CurSciControl != null)
+                if (cFile.InlinedRanges is null || !(CurSciControl is { } sci)) return true;
+                var position = sci.CurrentPos;
+                foreach (InlineRange range in cFile.InlinedRanges)
                 {
-                    int position = CurSciControl.CurrentPos;
-                    foreach (InlineRange range in cFile.InlinedRanges)
-                    {
-                        if (position > range.Start && position < range.End) return true;
-                    }
-                    return false;
+                    if (position > range.Start && position < range.End) return true;
                 }
-                else return true;
+                return false;
             }
         }
 
-        virtual public bool CanBuild
-        {
-            get { return false; }
-        }
+        public virtual bool CanBuild => false;
 
         /// <summary>
         /// Language built-in elements
         /// </summary>
         public FileModel TopLevel
         {
-            get { return topLevel; }
-            set { topLevel = value; }
+            get => topLevel;
+            set => topLevel = value;
         }
 
         /// <summary>
@@ -270,8 +235,8 @@ namespace ASCompletion.Context
         /// </summary>
         public List<PathModel> Classpath
         {
-            get { return classPath; }
-            set { classPath = value; }
+            get => classPath;
+            set => classPath = value;
         }
         #endregion
 
@@ -280,7 +245,7 @@ namespace ASCompletion.Context
         /// Init completion engine context
         /// </summary>
         /// <param name="mainForm">Reference to MainForm</param>
-        static internal void GlobalInit(PluginMain pluginMain)
+        internal static void GlobalInit(PluginMain pluginMain)
         {
             dirSeparatorChar = Path.DirectorySeparatorChar;
             dirSeparator = dirSeparatorChar.ToString();
@@ -307,7 +272,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="contextReference">Language context</param>
         /// <param name="language">Language id (ie. Scintilla.ConfigurationLanguage)</param>
-        static public void RegisterLanguage(IASContext contextReference, string language)
+        public static void RegisterLanguage(IASContext contextReference, string language)
         {
             allContexts.Add(new RegisteredContext(contextReference, language, null));
         }
@@ -318,7 +283,7 @@ namespace ASCompletion.Context
         /// <param name="contextReference">Language context</param>
         /// <param name="language">File language id (ie. Scintilla.ConfigurationLanguage)</param>
         /// <param name="inlined">Inlined language id</param>
-        static public void RegisterInlineLanguage(IASContext contextReference, string language, string inlined)
+        public static void RegisterInlineLanguage(IASContext contextReference, string language, string inlined)
         {
             allContexts.Add(new RegisteredContext(contextReference, language, inlined));
         }
@@ -327,13 +292,13 @@ namespace ASCompletion.Context
         /// Return the main context for a language
         /// </summary>
         /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
-        static public IASContext GetLanguageContext(string lang)
+        public static IASContext GetLanguageContext(string lang)
         {
-            if (lang == null) return null;
+            if (lang is null) return null;
             lang = lang.ToLower();
             foreach (RegisteredContext reg in allContexts)
             {
-                if (reg.Language == lang && reg.Inlined == null) return reg.Context;
+                if (reg.Language == lang && reg.Inlined is null) return reg.Context;
             }
             return null;
         }
@@ -343,7 +308,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
         /// <param name="classpath">Additional classpath</param>
-        static public void SetLanguageClassPath(ContextSetupInfos setup)
+        public static void SetLanguageClassPath(ContextSetupInfos setup)
         {
             foreach (RegisteredContext reg in allContexts)
             {
@@ -354,7 +319,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Currently edited document
         /// </summary>
-        static internal void SetCurrentFile(ITabbedDocument doc, bool shouldIgnore)
+        internal static void SetCurrentFile(ITabbedDocument doc, bool shouldIgnore)
         {
             // reset previous contexts
             if (validContexts.Count > 0)
@@ -368,7 +333,7 @@ namespace ASCompletion.Context
 
             // check document
             string filename = "";
-            if (doc != null && doc.FileName != null)
+            if (doc?.FileName != null)
             {
                 filename = doc.FileName;
                 if (doPathNormalization)
@@ -400,18 +365,18 @@ namespace ASCompletion.Context
             else Context.CheckModel(true);
         }
 
-        static internal void SetCurrentLine(int line)
+        internal static void SetCurrentLine(int line)
         {
             ScintillaControl sci = CurSciControl;
-            if (validContexts.Count == 0 || sci == null)
+            if (validContexts.Count == 0 || sci is null)
             {
-                hasContext = false;
+                HasContext = false;
                 return;
             }
             if (line != currentLine)
             {
                 // reevaluate active context
-                hasContext = false;
+                HasContext = false;
                 string needSyntax = null;
                 currentLine = line;
                 foreach (IASContext context in validContexts)
@@ -419,7 +384,7 @@ namespace ASCompletion.Context
                     context.CurrentLine = line;
 
                     // inline language coloring
-                    if (context.CurrentModel != null && context.CurrentModel.InlinedRanges != null)
+                    if (context.CurrentModel?.InlinedRanges != null)
                     {
                         needSyntax = context.CurrentModel.InlinedIn;
                         int start = sci.MBSafeCharPosition(sci.PositionFromLine(line));
@@ -429,28 +394,23 @@ namespace ASCompletion.Context
                             if (start > range.Start && end < range.End)
                             {
                                 needSyntax = range.Syntax;
-                                hasContext = true;
+                                HasContext = true;
                                 break;
                             }
                         }
                     }
-                    else hasContext = true;
+                    else HasContext = true;
                 }
-                if (needSyntax != null)
+                if (needSyntax != null && needSyntax != sci.ConfigurationLanguage)
                 {
-                    if (needSyntax != sci.ConfigurationLanguage)
+                    sci.ConfigurationLanguage = needSyntax;
+                    if (!CommonSettings.DisableKnownTypesColoring && context is ASContext ctx)
                     {
-                        sci.ConfigurationLanguage = needSyntax;
-                        
-                        if (!CommonSettings.DisableKnownTypesColoring && context is ASContext)
-                        {
-                            // known classes colorization
-                            ASContext ctx = context as ASContext;
-                            if (ctx.completionCache.Keywords.Length > 0)
-                                sci.KeyWords(1, ctx.completionCache.Keywords); // additional-keywords index = 1
-                        }
-                        sci.Colourise(0, -1); // re-colorize the editor
+                        // known classes colorization
+                        if (ctx.completionCache.Keywords.Length > 0)
+                            sci.KeyWords(1, ctx.completionCache.Keywords); // additional-keywords index = 1
                     }
+                    sci.Colourise(0, -1); // re-colorize the editor
                 }
                 Panel.Highlight(Context.CurrentClass, Context.CurrentMember);
             }
@@ -459,18 +419,16 @@ namespace ASCompletion.Context
         /// <summary>
         /// Current document's text changed
         /// </summary>
-        static public void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        public static void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            if (validContexts.Count > 0)
-            {
-                foreach (IASContext context in validContexts)
-                    context.TrackTextChange(sender, position, length, linesAdded);
-            }
+            if (validContexts.Count == 0) return;
+            foreach (var context in validContexts)
+                context.TrackTextChange(sender, position, length, linesAdded);
         }
 
         /*private static void RepaintRanges(ScintillaNet.ScintillaControl sci)
         {
-            if (context.CurrentModel == null || context.CurrentModel.InlinedRanges == null)
+            if (context.CurrentModel is null || context.CurrentModel.InlinedRanges is null)
                 return;
 
             int es = sci.EndStyled;
@@ -490,7 +448,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Clear and rebuild classpath models cache
         /// </summary>
-        static public void RebuildClasspath()
+        public static void RebuildClasspath()
         {
             Context = defaultContext;
             validContexts.Clear();
@@ -542,7 +500,7 @@ namespace ASCompletion.Context
         public virtual void Reset()
         {
             cacheRefreshTimer.Enabled = false;
-            if (classPath != null) classPath.Clear();
+            classPath?.Clear();
             cFile = FileModel.Ignore;
             cClass = ClassModel.VoidClass;
             cMember = null;
@@ -580,7 +538,7 @@ namespace ASCompletion.Context
             }
             
             // avoid duplicated pathes
-            string upath = path.ToUpper().TrimEnd(new char[] { '\\', '/' });
+            string upath = path.ToUpper().TrimEnd('\\', '/');
             foreach(PathModel apath in classPath)
             {
                 if (apath.Path.ToUpper() == upath)
@@ -603,20 +561,20 @@ namespace ASCompletion.Context
             foreach(PathModel apath in classPath)
             {
                 if (!apath.IsTemporaryPath && apath.Path.ToUpper() == upath)
-                        return apath;
+                    return apath;
             }
             // add new path
             classPath.Add(path);
             return path;
         }
 
-        protected virtual void ManualExploration(PathModel path, IEnumerable<String> hideDirectories)
+        protected virtual void ManualExploration(PathModel path, IEnumerable<string> hideDirectories)
         {
             PathExplorer explorer = new PathExplorer(this, path);
             path.InUse = true;
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
-            explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
-            explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
+            explorer.OnExplorationDone += RefreshContextCache;
+            explorer.OnExplorationProgress += ExplorationProgress;
             explorer.UseCache = !CommonSettings.DisableCache;
             explorer.Run();
         }
@@ -634,13 +592,14 @@ namespace ASCompletion.Context
             {
                 //TraceManager.Add("EXPLORE: " + path.Path);
                 PathExplorer explorer = new PathExplorer(this, path);
-                explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
-                explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
+                explorer.OnExplorationDone += RefreshContextCache;
+                explorer.OnExplorationProgress += ExplorationProgress;
                 explorer.UseCache = !CommonSettings.DisableCache;
                 explorer.Run();
                 return true;
             }
-            else if (path.WasExplored && path.IsVirtual)
+
+            if (path.WasExplored && path.IsVirtual)
             {
                 // restore metadatas
                 ExploreVirtualPath(path);
@@ -708,11 +667,11 @@ namespace ASCompletion.Context
                 // avoid duplicated pathes
                 path = NormalizePath(path);
                 foreach (PathModel apath in classPath)
-                if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
-                {
-                    temporaryPath = null;
-                    return false;
-                }
+                    if (path.StartsWith(apath.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        temporaryPath = null;
+                        return false;
+                    }
                 // add path
                 temporaryPath = path;
                 PathModel tempModel = PathModel.GetModel(temporaryPath, this);
@@ -740,10 +699,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Build a list of file mask to explore the classpath
         /// </summary>
-        public virtual string[] GetExplorerMask()
-        {
-            if (Settings != null) return new string[] { "*" + Settings.DefaultExtension }; else return null;
-        }
+        public virtual string[] GetExplorerMask() => Settings != null ? new[] { "*" + Settings.DefaultExtension } : null;
 
         /// <summary>
         /// User refreshes project tree
@@ -769,36 +725,34 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual void TrackTextChange(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            if (cFile != FileModel.Ignore && !cFile.OutOfDate)
+            if (cFile == FileModel.Ignore || cFile.OutOfDate) return;
+            // test: modifications inside function body
+            if (linesAdded == 0 && cMember != null && (cMember.Flags & FlagType.Function) > 0)
             {
-                // test: modifications inside function body
-                if (linesAdded == 0 && cMember != null && (cMember.Flags & FlagType.Function) > 0)
+                // TODO  More precise text modifications tracking
+                int line = sender.LineFromPosition(position);
+                if (line > cMember.LineFrom && line <= cMember.LineTo)
                 {
-                    // TODO  More precise text modifications tracking
-                    int line = sender.LineFromPosition(position);
-                    if (line > cMember.LineFrom && line <= cMember.LineTo)
+                    // file AS3 in MXML ranges
+                    if (cFile.InlinedRanges != null)
                     {
-                        // file AS3 in MXML ranges
-                        if (cFile.InlinedRanges != null)
+                        foreach (InlineRange range in cFile.InlinedRanges)
                         {
-                            foreach (InlineRange range in cFile.InlinedRanges)
-                            {
-                                if (range.Start > position) range.Start += length;
-                                if (range.End > position) range.End += length;
-                            }
+                            if (range.Start > position) range.Start += length;
+                            if (range.End > position) range.End += length;
                         }
-                        return;
                     }
-                    /*string fbody = "";
+                    return;
+                }
+                /*string fbody = "";
                     for (int i = cMember.LineFrom; i <= cMember.LineTo; i++)
                     {
                         fbody += sci.GetLine(i);
                     }
                     position -= sci.PositionFromLine(cMember.LineFrom);
                     if (fbody.IndexOf('{') < position) return;*/
-                }
-                cFile.OutOfDate = true;
             }
+            cFile.OutOfDate = true;
         }
 
         /// <summary>
@@ -836,9 +790,8 @@ namespace ASCompletion.Context
                 // check if in cache
                 foreach (PathModel aPath in classPath)
                 {
-                    if (aPath.HasFile(fileName))
+                    if (aPath.TryGetFile(fileName, out nFile))
                     {
-                        nFile = aPath.GetFile(fileName);
                         nFile.Check();
                         return nFile;
                     }
@@ -846,7 +799,7 @@ namespace ASCompletion.Context
             }
 
             // parse and add to cache
-            nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
+            nFile = GetFileModel(fileName);
             if (classPath != null)
             {
                 string upName = fileName.ToUpper();
@@ -869,10 +822,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        public virtual string FilterSource(string fileName, string src)
-        {
-            return src;
-        }
+        public virtual string FilterSource(string fileName, string src) => src;
 
         /// <summary>
         /// Called if a FileModel needs filtering
@@ -910,11 +860,13 @@ namespace ASCompletion.Context
         /// <summary>
         /// Create a new file model using the default file parser
         /// </summary>
-        /// <param name="filename">Full path</param>
+        /// <param name="fileName">Full path</param>
         /// <returns>File model</returns>
         public virtual FileModel GetFileModel(string fileName)
         {
-            return ASFileParser.ParseFile(CreateFileModel(fileName));
+            var result = CreateFileModel(fileName);
+            result.LastWriteTime = File.GetLastWriteTime(result.FileName);
+            return GetCodeModel(result, FileHelper.ReadFile(result.FileName));
         }
 
         /// <summary>
@@ -951,63 +903,56 @@ namespace ASCompletion.Context
         /// <param name="aFile"></param>
         /// <param name="pathModel"></param>
         /// <returns></returns>
-        public virtual bool IsModelValid(FileModel aFile, PathModel pathModel)
+        public virtual bool IsModelValid(FileModel aFile, PathModel pathModel) => (aFile != null);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, false);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(CreateFileModel(string.Empty), src, scriptMode);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result)
         {
-            return (aFile != null);
+            var fileName = result.FileName;
+            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) GetCodeModel(result, FileHelper.ReadFile(fileName));
+            return result;
         }
 
-        /// <summary>
-        /// Parse a raw source code
-        /// </summary>
-        /// <param name="src"></param>
-        /// <returns></returns>
-        public virtual FileModel GetCodeModel(string src)
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result, string src) => GetCodeModel(result, src, false);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
         {
-            ASFileParser parser = GetCodeParser();
-            parser.ScriptMode = true;
-            // parse
-            FileModel temp = new FileModel();
-            temp.haXe = Context.Settings.LanguageId == "HAXE";
-            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(temp, src);
-            return temp;
+            var parser = GetCodeParser();
+            parser.ScriptMode = scriptMode;
+            if (src != null) parser.ParseSrc(result, src);
+            return result;
         }
 
         /// <summary>
         /// Set local code parser features
         /// </summary>
         /// <returns></returns>
-        protected virtual ASFileParser GetCodeParser()
-        {
-            ASFileParser parser = new ASFileParser();
-            parser.Features.varKey = Context.Features.varKey;
-            parser.Features.constKey = Context.Features.constKey;
-            parser.Features.functionKey = Context.Features.functionKey;
-            parser.Features.hasEcmaTyping = Context.Features.hasEcmaTyping;
-            parser.Features.hasConsts = Context.Features.hasConsts;
-            parser.Features.hasVars = Context.Features.hasVars;
-            parser.Features.hasMethods = Context.Features.hasMethods;
-            parser.Features.hasGenerics = Context.Features.hasGenerics;
-            parser.Features.hasCArrays = Context.Features.hasCArrays;
-            parser.Features.CArrayTemplate = Context.Features.CArrayTemplate;
-            return parser;
-        }
+        protected virtual IFileParser GetCodeParser() => new ASFileParser(context.Features);
 
         /// <summary>
         /// Build the file DOM
         /// </summary>
-        /// <param name="filename">File path</param>
+        /// <param name="fileName">File path</param>
         protected virtual void GetCurrentFileModel(string fileName)
         {
             cFile = GetCachedFileModel(fileName);
             cFile.FileName = fileName; // fix casing changes
-            if (cFile.Context == null || cFile.Context != this)
+            if (cFile.Context is null || cFile.Context != this)
             {
                 cFile.Context = this;
                 UpdateCurrentFile(false); // does update line & context
             }
-            else if (CurSciControl != null)
+            else if (CurSciControl is { } sci)
             {
-                cLine = CurSciControl.CurrentLine;
+                cLine = sci.CurrentLine;
                 UpdateContext(cLine);
             }
             // completion need refresh
@@ -1020,11 +965,9 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile == null || CurSciControl == null)
-                return;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, CurSciControl.Text);
-            cLine = CurSciControl.CurrentLine;
+            if (cFile is null || !(CurSciControl is { } sci)) return;
+            GetCodeModel(cFile, sci.Text);
+            cLine = sci.CurrentLine;
             UpdateContext(cLine);
 
             // update outline
@@ -1043,18 +986,16 @@ namespace ASCompletion.Context
                 SetTemporaryPath(null);
                 return;
             }
-            else 
+
+            if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
             {
-                if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
-                {
-                    PathModel tPath = classPath[0];
-                    tPath.AddFile(cFile);
-                }
+                var tPath = classPath[0];
+                tPath.AddFile(cFile);
             }
 
             if (cFile.OutOfDate) UpdateCurrentFile(true);
 
-            ASResult ctx = GetDeclarationAtLine(line);
+            var ctx = GetDeclarationAtLine(line);
             if (ctx.InClass != cClass) 
             {
                 cClass = ctx.InClass;
@@ -1086,11 +1027,10 @@ namespace ASCompletion.Context
         /// <returns></returns>
         public virtual ASResult GetDeclarationAtLine(int line)
         {
-            ASResult result = new ASResult();
-            result.InClass = ClassModel.VoidClass;
-            if (cFile == null) return result;
+            var result = new ASResult {InClass = ClassModel.VoidClass};
+            if (cFile is null) return result;
             // current class
-            foreach (ClassModel aClass in cFile.Classes)
+            foreach (var aClass in cFile.Classes)
             {
                 if (aClass.LineFrom <= line && aClass.LineTo >= line)
                 {
@@ -1104,7 +1044,7 @@ namespace ASCompletion.Context
                             result.Member = member;
                             return result;
                         }
-                        else if (member.LineFrom > line) return result;
+                        if (member.LineFrom > line) return result;
                     }
                     return result;
                 }
@@ -1118,11 +1058,10 @@ namespace ASCompletion.Context
                     result.Member = member;
                     return result;
                 }
-                else if (member.LineFrom > line) return result;
+                if (member.LineFrom > line) return result;
             }
             return result;
         }
-
 
         #endregion
 
@@ -1131,10 +1070,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Default types/member visibility
         /// </summary>
-        public virtual Visibility DefaultVisibility
-        {
-            get { return Visibility.Public; }
-        }
+        public virtual Visibility DefaultVisibility => Visibility.Public;
 
         /// <summary>
         /// Default types inheritance
@@ -1216,6 +1152,12 @@ namespace ASCompletion.Context
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public virtual ClassModel ResolveType(string cname, FileModel inFile) => ClassModel.VoidClass;
 
+        /// <summary>
+        /// Retrieves a class model from string
+        /// </summary>
+        /// <param name="token">String</param>
+        /// <param name="inFile">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public virtual ClassModel ResolveToken(string token, FileModel inFile) => ClassModel.VoidClass;
 
         /// <summary>
@@ -1224,21 +1166,13 @@ namespace ASCompletion.Context
         /// <param name="name">Package path</param>
         /// <param name="onlyUserDefined">Ignore language's intrinsic pathes</param>
         /// <returns>Package folders and types</returns>
-        public virtual FileModel ResolvePackage(string name, bool onlyUserDefined)
-        {
-            // to be implemented
-            return null;
-        }
+        public virtual FileModel ResolvePackage(string name, bool onlyUserDefined) => null; // to be implemented
 
         /// <summary>
         /// Return the top-level elements (this, super) for the current file
         /// </summary>
         /// <returns></returns>
-        public virtual MemberList GetTopLevelElements()
-        {
-            // to be implemented
-            return new MemberList();
-        }
+        public virtual MemberList GetTopLevelElements() => new MemberList(); // to be implemented
 
         /// <summary>
         /// Return the visible elements (types, package-level declarations) visible from the current file
@@ -1255,10 +1189,7 @@ namespace ASCompletion.Context
         /// Return the full project classes list
         /// </summary>
         /// <returns></returns>
-        public virtual MemberList GetAllProjectClasses()
-        {
-            return new MemberList();
-        }
+        public virtual MemberList GetAllProjectClasses() => new MemberList();
 
         /// <inheritdoc />
         public virtual string GetDefaultValue(string type) => null;
@@ -1313,11 +1244,10 @@ namespace ASCompletion.Context
                     ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
             }
-            else if (node.Tag != null && node.Tag is string)
+            else if (node.Tag is string tag)
             {
-                string[] info = (node.Tag as string).Split('@');
-                int line;
-                if (info.Length == 2 && int.TryParse(info[1], out line))
+                string[] info = tag.Split('@');
+                if (info.Length == 2 && int.TryParse(info[1], out var line))
                 {
                     ASComplete.LocateMember("(function|var|const|get|set|property|#region|namespace|,)", info[0], line);
                 }
@@ -1334,9 +1264,11 @@ namespace ASCompletion.Context
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
+        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
+
+        /// <inheritdoc />
+        public virtual void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result)
         {
-            return null;
         }
 
         /// <summary>
@@ -1344,18 +1276,17 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or function signature</returns>
-        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
-        {
-            return null;
-        }
+        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
 
-        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
-        {
-            return false;
-        }
+        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression) => false;
 
-        public IContextualGenerator CodeGenerator { get; protected set; }
+        public IContextualGenerator CodeGenerator { get; protected set; } = new ASGenerator();
+
+        public IContextualGenerator DocumentationGenerator { get; protected set; } = new DocumentationGenerator();
+
+        public ASComplete CodeComplete { get; protected set; } = new ASComplete();
         #endregion
 
         #region plugin commands
@@ -1434,7 +1365,7 @@ namespace ASCompletion.Context
                 SetStatusText(Settings.CheckSyntaxDone);
             }
 
-            if (outputFile == null) return;
+            if (outputFile is null) return;
             string swf = outputFile;
             outputFile = null;
 
@@ -1449,9 +1380,7 @@ namespace ASCompletion.Context
             if (trustFileWanted)
             {
                 FileInfo info = new FileInfo(swf);
-                string path = info.Directory.FullName;
-                string trustFile = "FlashDevelop.cfg";
-                CreateTrustFile.Run(trustFile, path);
+                CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
             }
 
             // stop here if the user doesn't want to automatically play the SWF
@@ -1496,19 +1425,16 @@ namespace ASCompletion.Context
                     dest = list[1];
                 }
             }
-            FileModel aFile;
-            if (src == null) aFile = cFile;
-            else aFile = ASFileParser.ParseFile(CreateFileModel(src));
+            var aFile = src is null ? cFile : GetCodeModel(src);
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);
 
             // no destination, replace text
-            if (dest == null)
+            if (dest is null)
             {
                 MainForm.CallCommand("New", null);
-                ScintillaControl sci = CurSciControl;
-                if (sci != null)
+                if (CurSciControl is { } sci)
                 {
                     sci.CurrentPos = 0;
                     sci.Text = code;
@@ -1529,19 +1455,16 @@ namespace ASCompletion.Context
         #endregion
 
         #region common tool methods
-        static public void SetStatusText(string text)
-        {
-            MainForm.StatusStrip.Items[0].Text = "  " + text;
-        }
-        static protected string GetStatusText()
+        public static void SetStatusText(string text) => MainForm.StatusStrip.Items[0].Text = "  " + text;
+
+        protected static string GetStatusText()
         {
             if (MainForm.StatusStrip.Items[0].Text.Length > 2)
                 return MainForm.StatusStrip.Items[0].Text.Substring(2);
-            else
-                return "";
+            return "";
         }
 
-        static public string NormalizeFilename(string path)
+        public static string NormalizeFilename(string path)
         {
             if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
@@ -1551,7 +1474,7 @@ namespace ASCompletion.Context
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
             return PathHelper.GetLongPathName(path);
         }
-        static public string NormalizePath(string path)
+        public static string NormalizePath(string path)
         {
             if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
@@ -1563,15 +1486,15 @@ namespace ASCompletion.Context
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
             return PathHelper.GetLongPathName(path);
         }
-        static public string GetLastStringToken(string str, string sep)
+        public static string GetLastStringToken(string str, string sep)
         {
-            if (str == null) return "";
-            if (sep == null) return str;
+            if (str is null) return "";
+            if (sep is null) return str;
             int p = str.LastIndexOfOrdinal(sep);
             return (p >= 0) ? str.Substring(p + 1) : str;
         }
 
-        static public void ParseVersion(string version, ref int majorVersion, ref int minorVersion)
+        public static void ParseVersion(string version, ref int majorVersion, ref int minorVersion)
         {
             //if (version == "0.0") return;
             if (string.IsNullOrEmpty(version)) return;
@@ -1581,21 +1504,31 @@ namespace ASCompletion.Context
         }
 
         #endregion
+
+        #region Custom behavior of Scintilla
+
+        /// <summary>
+        /// Provides the support for '<' and '>' matching
+        /// </summary>
+        public virtual void OnBraceMatch(ScintillaControl sci)
+        {
+        }
+        #endregion
     }
 
     #region Registered Context class
     public class RegisteredContext
     {
-        public IASContext Context;
-        public string Language;
-        public string Inlined;
+        public readonly IASContext Context;
+        public readonly string Language;
+        public readonly string Inlined;
         public bool SourceFilter;
 
         public RegisteredContext(IASContext context, string language, string inlinedLanguage)
         {
             Context = context;
             Language = language.ToLower();
-            Inlined = (inlinedLanguage != null) ? inlinedLanguage.ToLower() : null;
+            Inlined = inlinedLanguage?.ToLower();
             //TraceManager.Add("Register context: " + language + " (" + inlinedLanguage + ")");
         }
     }
@@ -1608,7 +1541,7 @@ namespace ASCompletion.Context
         public string TargetBuild;
         public string[] Classpath;
         public string[] HiddenPaths;
-        public List<String> AdditionalPaths;
+        public List<string> AdditionalPaths;
     }
 
     #endregion
@@ -1618,21 +1551,21 @@ namespace ASCompletion.Context
     {
         private bool isDirty;
 
-        public string Package;
+        public readonly string Package;
         public string Classname;
-        public MemberList Elements;
+        public readonly MemberList Elements;
         public MemberList AllTypes;
-        public string Keywords;
+        public readonly string Keywords;
         public MemberList Imports;
         public bool IsDirty
         {
-            get { return isDirty; }
+            get => isDirty;
             set { isDirty = value; Imports = null; }
         }
 
-        public CompletionCache(ASContext context, MemberList elements)
+        public CompletionCache(IASContext context, MemberList elements)
         {
-            if (context.CurrentModel == null)
+            if (context.CurrentModel is null)
             {
                 Package = "";
                 Classname = "";
@@ -1652,21 +1585,19 @@ namespace ASCompletion.Context
         /// </summary>
         private string GetKeywords()
         {
-            if (Elements == null) return "";
-            List<string> keywords = new List<string>();
+            if (Elements is null) return "";
+            var keywords = new List<string>();
             foreach (MemberModel item in Elements)
             {
-                if ((item.Flags & FlagType.Package) == 0)
+                if ((item.Flags & FlagType.Package) != 0) continue;
+                var name = item.Name;
+                if (name.IndexOf('<') is var p1 && p1 > 0)
                 {
-                    string name = item.Name;
-                    if (name.IndexOf('<') > 0)
-                    {
-                        if (name.IndexOfOrdinal(".<") > 0) name = name.Substring(0, name.IndexOfOrdinal(".<"));
-                        else name = name.Substring(0, name.IndexOf('<'));
-                    }
-                    if (name.IndexOf('.') > 0) name = name.Substring(name.LastIndexOf('.') + 1);
-                    if (!keywords.Contains(name)) keywords.Add(name);
+                    if (name.IndexOfOrdinal(".<") is var p2 && p2 > 0) name = name.Substring(0, p2);
+                    else name = name.Substring(0, p1);
                 }
+                if (name.LastIndexOf('.') is var p3 && p3 > 0) name = name.Substring(p3 + 1);
+                if (!keywords.Contains(name)) keywords.Add(name);
             }
             return string.Join(" ", keywords.ToArray());
         }

@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +42,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
@@ -49,54 +52,33 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\NSubstitute.2.0.3\lib\net40\NSubstitute.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nunit.framework, Version=2.7.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NUnit.2.7.0\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeRefactorTests.cs" />
     <Compile Include="Commands\RefactorCommandTests.cs" />
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginUIMock.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Provider\CommandFactoryProviderTests.cs" />
     <Compile Include="Provider\RefactoringHelperTests.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
-      <Project>{74ad0487-cef9-43fe-9283-bc6f79539ade}</Project>
-      <Name>AS2Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\External\Plugins\AS3Context\AS3Context.csproj">
-      <Project>{0263e5f6-d5b2-4118-b12e-87f9a74de8af}</Project>
-      <Name>AS3Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
@@ -105,16 +87,6 @@
     <ProjectReference Include="..\..\..\..\External\Plugins\CodeRefactor\CodeRefactor.csproj">
       <Project>{1f6df858-6011-4cac-b33e-7000ee90ffbe}</Project>
       <Name>CodeRefactor</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\External\Plugins\HaXeContext\HaXeContext.csproj">
-      <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
-      <Name>HaXeContext</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\FlashDevelop\FlashDevelop.csproj">
-      <Project>{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}</Project>
-      <Name>FlashDevelop</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\PluginCore\PluginCore.csproj">
@@ -148,12 +120,6 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\ParameterVar.hx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -166,8 +132,6 @@
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalFunction.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\Type.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateTypedef.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withElseIfDirective.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withElseIfDirective.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalVar_enum.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractMethod_issue1617_case1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractMethod_issue1617_case1.hx" />
@@ -197,6 +161,51 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRename_issue1852.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRename_issue1852_withoutEntryPoint.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRename_issue1852.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_4.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_5.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_6.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_7.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_8.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameParameterVar.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameParameterVar_withoutEntryPoint.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRenameParameterVar.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameClass.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameClass_withoutEntryPoint.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRenameClass.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue592_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue592_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue781_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_4.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_4.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_4.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_5.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_6.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\delegatemethods\as3\DelegateMethodsValidator_7.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_issue2830_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_issue2830_2.as" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

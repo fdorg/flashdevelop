@@ -3,7 +3,7 @@
 	<Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe + Neko (x86)</Name>
-		<Version>3.4.4</Version>
+		<Version>3.4.7</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine 32-bit installer</Desc>
 		<Group>Compilers</Group>
@@ -11,15 +11,15 @@
 			<Bundle>Haxe</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>http://www.haxe.org</Info>
+		<Info>https://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.4/downloads/haxe-3.4.4-win.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.7/downloads/haxe-3.4.7-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>haxe3setup64</Id>
 		<Name>Haxe + Neko (x64)</Name>
-		<Version>3.4.4</Version>
+		<Version>3.4.7</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine 64-bit installer</Desc>
 		<Group>Compilers</Group>
@@ -27,9 +27,41 @@
 			<Bundle>Haxe</Bundle>
 		</Bundles>
 		<Type>Executable</Type>
-		<Info>http://www.haxe.org</Info>
+		<Info>https://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.4/downloads/haxe-3.4.4-win64.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.7/downloads/haxe-3.4.7-win64.exe</Url>
+		</Urls>
+	</Entry>
+  <Entry>
+		<Id>haxe4setup</Id>
+		<Name>Haxe + Neko (x86)</Name>
+		<Version>4.0.2</Version>
+		<Build>1</Build>
+		<Desc>Haxe 4 and Neko virtual machine 32-bit installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://www.haxe.org</Info>
+		<Urls>
+			<Url>https://haxe.org/download/file/4.0.2/haxe-4.0.2-win.exe/</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe4setup64</Id>
+		<Name>Haxe + Neko (x64)</Name>
+		<Version>4.0.2</Version>
+		<Build>1</Build>
+		<Desc>Haxe 4 and Neko virtual machine 64-bit installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://www.haxe.org</Info>
+		<Urls>
+			<Url>https://haxe.org/download/file/4.0.2/haxe-4.0.2-win64.exe/</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -48,8 +80,8 @@
 	<Entry>
 		<Id>flexairsdk</Id>
 		<Name>Flex SDK + AIR SDK</Name>
-		<Version>4.6.0+28.0.0</Version>
-		<Build>23201B+125</Build>
+		<Version>4.6.0+32.0.0</Version>
+		<Build>23201B+89</Build>
 		<Desc>Adobe Flex SDK merged with Adobe AIR SDK</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -58,15 +90,15 @@
 		</Bundles>
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
-			<Url>http://airdownload.adobe.com/air/win/download/28.0/AdobeAIRSDK.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-28.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/32.0/AdobeAIRSDK.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-32.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>ascsdk</Id>		
 		<Name>AIR SDK + ASC 2.0</Name>
-		<Version>28.0.0</Version>
-		<Build>125</Build>
+		<Version>32.0.0</Version>
+		<Build>89</Build>
 		<Desc>Adobe AIR SDK with ASC 2.0</Desc>
 		<Info>http://www.adobe.com/devnet/air.html</Info>
 		<Group>Compilers</Group>
@@ -74,14 +106,14 @@
 			<Bundle>AIR</Bundle>
 		</Bundles>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/28.0/AIRSDK_Compiler.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-28.zip</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/32.0/AIRSDK_Compiler.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-32.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>aflexsdk</Id>
 		<Name>Apache Flex SDK</Name>
-		<Version>3.2.0</Version>
+		<Version>3.3.2</Version>
 		<Build>1</Build>
 		<Desc>Apache Flex SDK and dependencies installer</Desc>
 		<Group>Compilers</Group>
@@ -91,7 +123,7 @@
 		<Type>Executable</Type>
 		<Info>http://flex.apache.org/</Info>
 		<Urls>
-			<Url>http://www.apache.org/dyn/closer.lua/flex/installer/3.2/binaries/apache-flex-sdk-installer-3.2.0-bin.exe</Url>
+			<Url>http://ftp.byfly.by/pub/apache.org/flex/installer/3.3.2/binaries/apache-flex-sdk-installer-3.3.2-bin.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -109,8 +141,8 @@
 	<Entry>
 		<Id>airrt</Id>
 		<Name>Adobe AIR</Name>
-		<Version>28.0.0</Version>
-		<Build>127</Build>
+		<Version>32.0.0</Version>
+		<Build>142</Build>
 		<Desc>Adobe AIR for AIR applications installer</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -119,14 +151,14 @@
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/products/air.html</Info>
 		<Urls>
-			<Url>http://airdownload.adobe.com/air/win/download/28.0/AdobeAIRInstaller.exe</Url>
+			<Url>http://airdownload.adobe.com/air/win/download/32.0/AdobeAIRInstaller.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashsa</Id>
 		<Name>Flash Player (SA)</Name>
-		<Version>28.0.0</Version>
-		<Build>126</Build>
+		<Version>32.0.0</Version>
+		<Build>142</Build>
 		<Desc>Standalone debug Flash Player</Desc>
 		<Group>Runtimes</Group>
 		<Bundles>
@@ -137,52 +169,52 @@
 		</Bundles>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/28/flashplayer_28_sa_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_sa_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashie</Id>
 		<Name>Flash Player (AX)</Name>
-		<Version>28.0.0</Version>
-		<Build>126</Build>
+		<Version>32.0.0</Version>
+		<Build>142</Build>
 		<Desc>Debug Flash Player plugin for Internet Explorer - ActiveX</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/28/flashplayer_28_ax_debug.exe</Url>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_ax_debug.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashnpapi</Id>
 		<Name>Flash Player (NPAPI)</Name>
-		<Version>28.0.0</Version>
-		<Build>126</Build>
+		<Version>32.0.0</Version>
+		<Build>142</Build>
 		<Desc>Debug Flash Player plugin for Firefox - NPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/28/flashplayer_28_plugin_debug.exe</Url>
-    </Urls>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_plugin_debug.exe</Url>
+	</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashppapi</Id>
 		<Name>Flash Player (PPAPI)</Name>
-		<Version>28.0.0</Version>
-		<Build>126</Build>
+		<Version>32.0.0</Version>
+		<Build>142</Build>
 		<Desc>Debug Flash Player plugin for Opera and Chromium based applications - PPAPI</Desc>
 		<Group>Runtimes</Group>
 		<Type>Executable</Type>
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
-			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/28/flashplayer_28_ppapi_debug.exe</Url>
-    </Urls>
+			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/32/flashplayer_32_ppapi_debug.exe</Url>
+	</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>2.5.0.0</Version>
+		<Version>2.7.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -192,13 +224,13 @@
 		<Type>Executable</Type>
 		<Info>https://tortoisegit.org/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/2.5.0.0/TortoiseGit-2.5.0.0-32bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.7.0.0/TortoiseGit-2.7.0.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>2.5.0.0</Version>
+		<Version>2.7.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,14 +240,14 @@
 		<Type>Executable</Type>
 		<Info>https://tortoisegit.org/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/2.5.0.0/TortoiseGit-2.5.0.0-64bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.7.0.0/TortoiseGit-2.7.0.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x86)</Name>
-		<Version>2.15.1</Version>
-		<Build>2</Build>
+		<Version>2.19.0</Version>
+		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
 		<Bundles>
@@ -224,14 +256,14 @@
 		<Type>Executable</Type>
 		<Info>https://git-for-windows.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.15.1.windows.2/Git-2.15.1.2-32-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.19.0.windows.1/Git-2.19.0-32-bit.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win64</Id>
 		<Name>Git For Windows (x64)</Name>
-		<Version>2.15.1</Version>
-		<Build>2</Build>
+		<Version>2.19.0</Version>
+		<Build>1</Build>
 		<Desc>Git command line client 64-bit installer</Desc>
 		<Group>Source Control</Group>
 		<Bundles>
@@ -240,14 +272,14 @@
 		<Type>Executable</Type>
 		<Info>https://git-for-windows.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.15.1.windows.2/Git-2.15.1.2-64-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.19.0.windows.1/Git-2.19.0-64-bit.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN (x86)</Name>
-		<Version>1.9.7</Version>
-		<Build>27907</Build>
+		<Version>1.10.0</Version>
+		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Source Control</Group>
 		<Bundles>
@@ -256,14 +288,14 @@
 		<Type>Executable</Type>
 		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-      <Url>https://netcologne.dl.sourceforge.net/project/tortoisesvn/1.9.7/Application/TortoiseSVN-1.9.7.27907-win32-svn-1.9.7.msi</Url>
+			<Url>https://osdn.net/projects/tortoisesvn/storage/1.10.0/Application/TortoiseSVN-1.10.0.28176-win32-svn-1.10.0.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn64</Id>
 		<Name>TortoiseSVN (x64)</Name>
-		<Version>1.9.7</Version>
-		<Build>27907</Build>
+		<Version>1.10.0</Version>
+		<Build>1</Build>
 		<Desc>Subversion client 64-bit installer</Desc>
 		<Group>Source Control</Group>
 		<Bundles>
@@ -272,7 +304,7 @@
 		<Type>Executable</Type>
 		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>https://netcologne.dl.sourceforge.net/project/tortoisesvn/1.9.7/Application/TortoiseSVN-1.9.7.27907-x64-svn-1.9.7.msi</Url>
+			<Url>https://osdn.net/projects/tortoisesvn/storage/1.10.0/Application/TortoiseSVN-1.10.0.28176-x64-svn-1.10.0.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -310,7 +342,7 @@
 	<Entry>
 		<Id>torhg</Id>
 		<Name>TortoiseHg (x86)</Name>
-		<Version>4.4.2</Version>
+		<Version>4.7</Version>
 		<Build>1</Build>
 		<Desc>TortoiseHg (including Mercurial) 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -320,13 +352,13 @@
 		<Type>Executable</Type>
 		<Info>https://www.mercurial-scm.org/downloads</Info>
 		<Urls>
-			<Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.4.2.exe</Url>
+			<Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.7.1.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torhg64</Id>
 		<Name>TortoiseHg (x64)</Name>
-		<Version>4.4.2</Version>
+		<Version>4.7</Version>
 		<Build>1</Build>
 		<Desc>TortoiseHg (including Mercurial) 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -336,7 +368,7 @@
 		<Type>Executable</Type>
 		<Info>https://www.mercurial-scm.org/downloads</Info>
 		<Urls>
-      <Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.4.2-x64.exe</Url>
+      <Url>https://www.mercurial-scm.org/release/windows/Mercurial-4.7.1-x64.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -464,7 +496,7 @@
 	</Entry>
 	<Entry>
 		<Id>quicknavigate</Id>
-    		<Name>QuickNavigate</Name>
+		<Name>QuickNavigate</Name>
 		<Version>3.0</Version>
 		<Build>89</Build>
 		<Checksum>b9bdc3f75c8743cba2668e39d5ef1d6</Checksum>

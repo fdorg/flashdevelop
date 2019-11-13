@@ -7,9 +7,9 @@ namespace ProjectManager.Building.Haxe
 {
     public class HaxeProjectBuilder : ProjectBuilder
     {
-        HaxeProject project;
+        readonly HaxeProject project;
 
-        string haxePath;
+        readonly string haxePath;
 
         public HaxeProjectBuilder(HaxeProject project, string compilerPath)
             : base(project, compilerPath)
@@ -50,7 +50,7 @@ namespace ProjectManager.Building.Haxe
                 libraryBuilder.BuildLibrarySwf(project, false);
             }
             output = output.TrimEnd('\\', '/');
-            string haxeArgs = connect + " " + String.Join(" ", project.BuildHXML(extraClasspaths, output, noTrace));
+            string haxeArgs = connect + " " + string.Join(" ", project.BuildHXML(extraClasspaths, output, noTrace));
             
             Console.WriteLine("haxe " + haxeArgs);
 
@@ -63,7 +63,7 @@ namespace ProjectManager.Building.Haxe
             List<String> pr = new List<String>();
 
             string builder = HaxeProject.GetBuilder(output);
-            if (builder == null) builder = "openfl";
+            if (builder is null) builder = "openfl";
 
             pr.Add("run " + builder + " build");
             pr.Add(Quote(output));
@@ -77,12 +77,5 @@ namespace ProjectManager.Building.Haxe
 
             return pr.ToArray();
         }*/
-
-        string Quote(string s)
-        {
-            if (s.IndexOf(' ') >= 0)
-                return "\"" + s + "\"";
-            return s;
-        }
     }
 }

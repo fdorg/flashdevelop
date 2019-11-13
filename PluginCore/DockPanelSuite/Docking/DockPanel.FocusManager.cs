@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -44,8 +43,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             {
                 // Internal properties
                 private IntPtr m_hHook = IntPtr.Zero;
-                private NativeMethods.HookProc m_filterFunc = null;
-                private Win32.HookType m_hookType;
+                private readonly NativeMethods.HookProc m_filterFunc = null;
+                private readonly Win32.HookType m_hookType;
 
                 // Event delegate
                 public delegate void HookEventHandler(object sender, HookEventArgs e);
@@ -54,14 +53,13 @@ namespace WeifenLuo.WinFormsUI.Docking
                 public event HookEventHandler HookInvoked;
                 protected void OnHookInvoked(HookEventArgs e)
                 {
-                    if (HookInvoked != null)
-                        HookInvoked(this, e);
+                    HookInvoked?.Invoke(this, e);
                 }
 
                 public LocalWindowsHook(Win32.HookType hook)
                 {
                     m_hookType = hook;
-                    m_filterFunc = new NativeMethods.HookProc(this.CoreHookProc);
+                    m_filterFunc = this.CoreHookProc;
                 }
 
                 // Default filter function
@@ -118,24 +116,21 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            private LocalWindowsHook m_localWindowsHook;
-            private LocalWindowsHook.HookEventHandler m_hookEventHandler;
+            private readonly LocalWindowsHook m_localWindowsHook;
+            private readonly LocalWindowsHook.HookEventHandler m_hookEventHandler;
 
             public FocusManagerImpl(DockPanel dockPanel)
             {
                 m_dockPanel = dockPanel;
                 if (!NativeMethods.ShouldUseWin32()) return;
                 m_localWindowsHook = new LocalWindowsHook(Win32.HookType.WH_CALLWNDPROCRET);
-                m_hookEventHandler = new LocalWindowsHook.HookEventHandler(HookEventHandler);
+                m_hookEventHandler = HookEventHandler;
                 m_localWindowsHook.HookInvoked += m_hookEventHandler;
                 m_localWindowsHook.Install();
             }
 
-            private DockPanel m_dockPanel;
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            private readonly DockPanel m_dockPanel;
+            public DockPanel DockPanel => m_dockPanel;
 
             private bool m_disposed = false;
             protected override void Dispose(bool disposing)
@@ -158,8 +153,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             private IDockContent m_contentActivating = null;
             private IDockContent ContentActivating
             {
-                get { return m_contentActivating; }
-                set { m_contentActivating = value; }
+                get => m_contentActivating;
+                set => m_contentActivating = value;
             }
 
             public void Activate(IDockContent content)
@@ -169,7 +164,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                     ContentActivating = content;
                     return;
                 }
-                if (content == null) return;
+                if (content is null) return;
                 DockContentHandler handler = content.DockHandler;
                 if (handler.Form.IsDisposed) return; // Should not reach here, but better than throwing an exception
                 if (ContentContains(content, handler.ActiveWindowHandle)) NativeMethods.SetFocus(handler.ActiveWindowHandle);
@@ -182,11 +177,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            private List<IDockContent> m_listContent = new List<IDockContent>();
-            private List<IDockContent> ListContent
-            {
-                get { return m_listContent; }
-            }
+            private readonly List<IDockContent> m_listContent = new List<IDockContent>();
+            private List<IDockContent> ListContent => m_listContent;
+
             public void AddToList(IDockContent content)
             {
                 if (ListContent.Contains(content) || IsInActiveList(content))
@@ -206,13 +199,13 @@ namespace WeifenLuo.WinFormsUI.Docking
             private IDockContent m_lastActiveContent = null;
             private IDockContent LastActiveContent
             {
-                get { return m_lastActiveContent; }
-                set { m_lastActiveContent = value; }
+                get => m_lastActiveContent;
+                set => m_lastActiveContent = value;
             }
 
             private bool IsInActiveList(IDockContent content)
             {
-                return !(content.DockHandler.NextActive == null && LastActiveContent != content);
+                return !(content.DockHandler.NextActive is null && LastActiveContent != content);
             }
 
             private void AddLastToActiveList(IDockContent content)
@@ -305,10 +298,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 }
             }
 
-            public bool IsFocusTrackingSuspended
-            {
-                get { return m_countSuspendFocusTracking != 0; }
-            }
+            public bool IsFocusTrackingSuspended => m_countSuspendFocusTracking != 0;
 
             // Windows hook event handler
             private void HookEventHandler(object sender, HookEventArgs e)
@@ -319,7 +309,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 {
                     IntPtr wParam = Marshal.ReadIntPtr(e.lParam, IntPtr.Size * 2);
                     DockPane pane = GetPaneFromHandle(wParam);
-                    if (pane == null)
+                    if (pane is null)
                         RefreshActiveWindow();
                 }
                 else if (msg == Win32.Msgs.WM_SETFOCUS)
@@ -350,10 +340,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private bool m_inRefreshActiveWindow = false;
-            private bool InRefreshActiveWindow
-            {
-                get { return m_inRefreshActiveWindow; }
-            }
+            private bool InRefreshActiveWindow => m_inRefreshActiveWindow;
 
             private void RefreshActiveWindow()
             {
@@ -382,10 +369,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPane m_activePane = null;
-            public DockPane ActivePane
-            {
-                get { return m_activePane; }
-            }
+            public DockPane ActivePane => m_activePane;
 
             private void SetActivePane()
             {
@@ -393,30 +377,24 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (m_activePane == value)
                     return;
 
-                if (m_activePane != null)
-                    m_activePane.SetIsActivated(false);
+                m_activePane?.SetIsActivated(false);
 
                 m_activePane = value;
 
-                if (m_activePane != null)
-                    m_activePane.SetIsActivated(true);
+                m_activePane?.SetIsActivated(true);
             }
 
             private IDockContent m_activeContent = null;
-            public IDockContent ActiveContent
-            {
-                get { return m_activeContent; }
-            }
+            public IDockContent ActiveContent => m_activeContent;
 
             internal void SetActiveContent()
             {
-                IDockContent value = ActivePane == null ? null : ActivePane.ActiveContent;
+                IDockContent value = ActivePane?.ActiveContent;
 
                 if (m_activeContent == value)
                     return;
 
-                if (m_activeContent != null)
-                    m_activeContent.DockHandler.SetIsActivated(false);
+                m_activeContent?.DockHandler.SetIsActivated(false);
 
                 m_activeContent = value;
 
@@ -429,10 +407,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
 
             private DockPane m_activeDocumentPane = null;
-            public DockPane ActiveDocumentPane
-            {
-                get { return m_activeDocumentPane; }
-            }
+            public DockPane ActiveDocumentPane => m_activeDocumentPane;
 
             private void SetActiveDocumentPane()
             {
@@ -441,9 +416,9 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (ActivePane != null && ActivePane.DockState == DockState.Document)
                     value = ActivePane;
 
-                if (value == null && DockPanel.DockWindows != null)
+                if (value is null && DockPanel.DockWindows != null)
                 {
-                    if (ActiveDocumentPane == null)
+                    if (ActiveDocumentPane is null)
                         value = DockPanel.DockWindows[DockState.Document].DefaultPane;
                     else if (ActiveDocumentPane.DockPanel != DockPanel || ActiveDocumentPane.DockState != DockState.Document)
                         value = DockPanel.DockWindows[DockState.Document].DefaultPane;
@@ -454,24 +429,19 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (m_activeDocumentPane == value)
                     return;
 
-                if (m_activeDocumentPane != null)
-                    m_activeDocumentPane.SetIsActiveDocumentPane(false);
+                m_activeDocumentPane?.SetIsActiveDocumentPane(false);
 
                 m_activeDocumentPane = value;
 
-                if (m_activeDocumentPane != null)
-                    m_activeDocumentPane.SetIsActiveDocumentPane(true);
+                m_activeDocumentPane?.SetIsActiveDocumentPane(true);
             }
 
             private IDockContent m_activeDocument = null;
-            public IDockContent ActiveDocument
-            {
-                get { return m_activeDocument; }
-            }
+            public IDockContent ActiveDocument => m_activeDocument;
 
             private void SetActiveDocument()
             {
-                IDockContent value = ActiveDocumentPane == null ? null : ActiveDocumentPane.ActiveContent;
+                IDockContent value = ActiveDocumentPane?.ActiveContent;
 
                 if (m_activeDocument == value)
                     return;
@@ -480,15 +450,9 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
-        private IFocusManager FocusManager
-        {
-            get { return m_focusManager; }
-        }
+        private IFocusManager FocusManager => m_focusManager;
 
-        internal IContentFocusManager ContentFocusManager
-        {
-            get { return m_focusManager; }
-        }
+        internal IContentFocusManager ContentFocusManager => m_focusManager;
 
         internal void SaveFocus()
         {
@@ -496,42 +460,29 @@ namespace WeifenLuo.WinFormsUI.Docking
         }
 
         [Browsable(false)]
-        public IDockContent ActiveContent
-        {
-            get { return FocusManager.ActiveContent; }
-        }
+        public IDockContent ActiveContent => FocusManager.ActiveContent;
 
         [Browsable(false)]
-        public DockPane ActivePane
-        {
-            get { return FocusManager.ActivePane; }
-        }
+        public DockPane ActivePane => FocusManager.ActivePane;
 
         [Browsable(false)]
-        public IDockContent ActiveDocument
-        {
-            get { return FocusManager.ActiveDocument; }
-        }
+        public IDockContent ActiveDocument => FocusManager.ActiveDocument;
 
         [Browsable(false)]
-        public DockPane ActiveDocumentPane
-        {
-            get { return FocusManager.ActiveDocumentPane; }
-        }
+        public DockPane ActiveDocumentPane => FocusManager.ActiveDocumentPane;
 
         private static readonly object ActiveDocumentChangedEvent = new object();
         [LocalizedCategory("Category_PropertyChanged")]
         [LocalizedDescription("DockPanel_ActiveDocumentChanged_Description")]
         public event EventHandler ActiveDocumentChanged
         {
-            add { Events.AddHandler(ActiveDocumentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveDocumentChangedEvent, value); }
+            add => Events.AddHandler(ActiveDocumentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveDocumentChangedEvent, value);
         }
         protected virtual void OnActiveDocumentChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[ActiveDocumentChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object ActiveContentChangedEvent = new object();
@@ -539,14 +490,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ActiveContentChanged_Description")]
         public event EventHandler ActiveContentChanged
         {
-            add { Events.AddHandler(ActiveContentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveContentChangedEvent, value); }
+            add => Events.AddHandler(ActiveContentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveContentChangedEvent, value);
         }
         protected void OnActiveContentChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[ActiveContentChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         private static readonly object ActivePaneChangedEvent = new object();
@@ -554,14 +504,13 @@ namespace WeifenLuo.WinFormsUI.Docking
         [LocalizedDescription("DockPanel_ActivePaneChanged_Description")]
         public event EventHandler ActivePaneChanged
         {
-            add { Events.AddHandler(ActivePaneChangedEvent, value); }
-            remove { Events.RemoveHandler(ActivePaneChangedEvent, value); }
+            add => Events.AddHandler(ActivePaneChangedEvent, value);
+            remove => Events.RemoveHandler(ActivePaneChangedEvent, value);
         }
         protected virtual void OnActivePaneChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[ActivePaneChangedEvent];
-            if (handler != null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
     }
 }

@@ -15,10 +15,10 @@ namespace ProjectManager.Controls.TreeView
     /// </summary>
     public class FileNode : GenericNode
     {
-        static public readonly Dictionary<string, FileNodeFactory> FileAssociations 
+        public static readonly Dictionary<string, FileNodeFactory> FileAssociations 
             = new Dictionary<string, FileNodeFactory>();
 
-        static public event FileNodeRefresh OnFileNodeRefresh;
+        public static event FileNodeRefresh OnFileNodeRefresh;
 
         protected FileNode(string filePath) : base(filePath)
         {
@@ -43,10 +43,9 @@ namespace ProjectManager.Controls.TreeView
 
             if (FileInspector.IsSwf(filePath, ext) || FileInspector.IsSwc(filePath, ext))
                 return new SwfFileNode(filePath);
-            else if (FileAssociations.ContainsKey(ext)) // custom nodes building
+            if (FileAssociations.ContainsKey(ext)) // custom nodes building
                 return FileAssociations[ext](filePath);
-            else
-                return new FileNode(filePath);
+            return new FileNode(filePath);
         }
 
         public override void Refresh(bool recursive)
@@ -64,7 +63,7 @@ namespace ProjectManager.Controls.TreeView
                 ImageIndex = Icons.MxmlFileCompile.Index;
             else if (FileInspector.IsCss(path, ext) && project.IsCompileTarget(path))
                 ImageIndex = Icons.ActionScriptCompile.Index;
-            else if (FileInspector.IsSwc(path) && Parent == null) // external SWC library
+            else if (FileInspector.IsSwc(path) && Parent is null) // external SWC library
                 ImageIndex = Icons.Classpath.Index;
             else
                 ImageIndex = Icons.GetImageForFile(path).Index;
@@ -97,7 +96,7 @@ namespace ProjectManager.Controls.TreeView
             else ForeColorRequest = SystemColors.ControlText;
 
             // hook for plugins
-            if (OnFileNodeRefresh != null) OnFileNodeRefresh(this);
+            OnFileNodeRefresh?.Invoke(this);
         }
     }
 

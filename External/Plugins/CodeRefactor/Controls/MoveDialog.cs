@@ -34,7 +34,7 @@ namespace CodeRefactor.Controls
 
         static string GetClasspath(string path, string projectDirName)
         {
-            path = projectDirName == null ? path : path.Replace(projectDirName, string.Empty);
+            path = projectDirName is null ? path : path.Replace(projectDirName, string.Empty);
             return path.Trim(Path.DirectorySeparatorChar);
         }
 
@@ -70,12 +70,12 @@ namespace CodeRefactor.Controls
             }
         }
 
-        public bool FixPackages { get { return fixPackages.Checked; }}
+        public bool FixPackages => fixPackages.Checked;
 
         void InitializeClasspaths()
         {
             IASContext context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-            if (context == null) return;
+            if (context is null) return;
             string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
             foreach (PathModel classpath in context.Classpath)
             {

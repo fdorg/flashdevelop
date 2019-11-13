@@ -34,12 +34,12 @@ namespace LitJson
         private bool          allow_comments;
         private bool          allow_single_quoted_strings;
         private bool          end_of_input;
-        private FsmContext    fsm_context;
+        private readonly FsmContext    fsm_context;
         private int           input_buffer;
         private int           input_char;
-        private TextReader    reader;
+        private readonly TextReader    reader;
         private int           state;
-        private StringBuilder string_buffer;
+        private readonly StringBuilder string_buffer;
         private string        string_value;
         private int           token;
         private int           unichar;
@@ -48,26 +48,21 @@ namespace LitJson
 
         #region Properties
         public bool AllowComments {
-            get { return allow_comments; }
-            set { allow_comments = value; }
+            get => allow_comments;
+            set => allow_comments = value;
         }
 
         public bool AllowSingleQuotedStrings {
-            get { return allow_single_quoted_strings; }
-            set { allow_single_quoted_strings = value; }
+            get => allow_single_quoted_strings;
+            set => allow_single_quoted_strings = value;
         }
 
-        public bool EndOfInput {
-            get { return end_of_input; }
-        }
+        public bool EndOfInput => end_of_input;
 
-        public int Token {
-            get { return token; }
-        }
+        public int Token => token;
 
-        public string StringValue {
-            get { return string_value; }
-        }
+        public string StringValue => string_value;
+
         #endregion
 
 

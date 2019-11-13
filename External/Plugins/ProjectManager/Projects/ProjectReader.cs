@@ -3,22 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using PluginCore;
 
 namespace ProjectManager.Projects
 {
     public class ProjectReader : XmlTextReader
     {
-        Project project;
         protected int version;
 
         public ProjectReader(string filename, Project project) : base(new FileStream(filename,FileMode.Open,FileAccess.Read))
         {
-            this.project = project;
+            Project = project;
             WhitespaceHandling = WhitespaceHandling.None;
         }
 
-        protected Project Project { get { return project; } }
+        protected Project Project { get; }
 
         public virtual Project ReadProject()
         {
@@ -30,7 +28,7 @@ namespace ProjectManager.Projects
 
             Close();
             PostProcess();
-            return project;
+            return Project;
         }
 
         protected virtual void PostProcess()
@@ -38,12 +36,12 @@ namespace ProjectManager.Projects
             if (version > 1) return;
 
             // import FD3 project
-            if (project.OutputType == OutputType.Unknown)
-                project.OutputType = project.MovieOptions.DefaultOutput(project.MovieOptions.Platform);
+            if (Project.OutputType == OutputType.Unknown)
+                Project.OutputType = Project.MovieOptions.DefaultOutput(Project.MovieOptions.Platform);
 
-            else if (project.OutputType == OutputType.OtherIDE
-                && (!String.IsNullOrEmpty(project.PreBuildEvent) || !String.IsNullOrEmpty(project.PostBuildEvent)))
-                project.OutputType = OutputType.CustomBuild;
+            else if (Project.OutputType == OutputType.OtherIDE
+                && (!string.IsNullOrEmpty(Project.PreBuildEvent) || !string.IsNullOrEmpty(Project.PostBuildEvent)))
+                Project.OutputType = OutputType.CustomBuild;
         }
 
         protected virtual void ProcessRootNode()
@@ -86,7 +84,7 @@ namespace ProjectManager.Projects
                 }
 
                 Read();
-                if (key != null) project.storage.Add(key, Value);
+                if (key != null) Project.storage.Add(key, Value);
                 Read();
                 ReadEndElement();
             }
@@ -102,22 +100,22 @@ namespace ProjectManager.Projects
                 switch (Name)
                 {
                     case "disabled": 
-                        project.OutputType = BoolValue ? OutputType.OtherIDE : OutputType.Application; 
+                        Project.OutputType = BoolValue ? OutputType.OtherIDE : OutputType.Application; 
                         break;
                     case "outputType":
                         if (Enum.IsDefined(typeof(OutputType), Value))
-                            project.OutputType = (OutputType)Enum.Parse(typeof(OutputType), Value); 
+                            Project.OutputType = (OutputType)Enum.Parse(typeof(OutputType), Value); 
                         break;
-                    case "input": project.InputPath = OSPath(Value); break;
-                    case "path": project.OutputPath = OSPath(Value); break;
-                    case "fps": project.MovieOptions.Fps = IntValue; break;
-                    case "width": project.MovieOptions.Width = IntValue; break;
-                    case "height": project.MovieOptions.Height = IntValue; break;
-                    case "version": project.MovieOptions.MajorVersion = IntValue; break;
-                    case "minorVersion": project.MovieOptions.MinorVersion = IntValue; break;
-                    case "platform": project.MovieOptions.Platform = Value; break;
-                    case "background": project.MovieOptions.Background = Value; break;
-                    case "preferredSDK": project.PreferredSDK = Value; break;
+                    case "input": Project.InputPath = OSPath(Value); break;
+                    case "path": Project.OutputPath = OSPath(Value); break;
+                    case "fps": Project.MovieOptions.Fps = IntValue; break;
+                    case "width": Project.MovieOptions.Width = IntValue; break;
+                    case "height": Project.MovieOptions.Height = IntValue; break;
+                    case "version": Project.MovieOptions.MajorVersion = IntValue; break;
+                    case "minorVersion": Project.MovieOptions.MinorVersion = IntValue; break;
+                    case "platform": Project.MovieOptions.Platform = Value; break;
+                    case "background": Project.MovieOptions.Background = Value; break;
+                    case "preferredSDK": Project.PreferredSDK = Value; break;
                 }
                 Read();
             }
@@ -127,21 +125,21 @@ namespace ProjectManager.Projects
         public void ReadClasspaths()
         {
             ReadStartElement("classpaths");
-            ReadPaths("class",project.Classpaths);
+            ReadPaths("class",Project.Classpaths);
             ReadEndElement();
         }
 
         public void ReadCompileTargets()
         {
             ReadStartElement("compileTargets");
-            ReadPaths("compile",project.CompileTargets);
+            ReadPaths("compile",Project.CompileTargets);
             ReadEndElement();
         }
 
         public void ReadHiddenPaths()
         {
             ReadStartElement("hiddenPaths");
-            ReadPaths("hidden",project.HiddenPaths);
+            ReadPaths("hidden",Project.HiddenPaths);
             ReadEndElement();
         }
 
@@ -150,19 +148,19 @@ namespace ProjectManager.Projects
             if (!IsEmptyElement)
             {
                 ReadStartElement("preBuildCommand");
-                project.PreBuildEvent = ReadString().Trim();
+                Project.PreBuildEvent = ReadString().Trim();
                 ReadEndElement();
             }
         }
 
         public void ReadPostBuildCommand()
         {
-            project.AlwaysRunPostBuild = Convert.ToBoolean(GetAttribute("alwaysRun"));
+            Project.AlwaysRunPostBuild = Convert.ToBoolean(GetAttribute("alwaysRun"));
 
             if (!IsEmptyElement)
             {
                 ReadStartElement("postBuildCommand");
-                project.PostBuildEvent = ReadString().Trim();
+                Project.PostBuildEvent = ReadString().Trim();
                 ReadEndElement();
             }
         }
@@ -175,25 +173,25 @@ namespace ProjectManager.Projects
                 MoveToFirstAttribute();
                 switch (Name)
                 {
-                    case "showHiddenPaths": project.ShowHiddenPaths = BoolValue; 
+                    case "showHiddenPaths": Project.ShowHiddenPaths = BoolValue; 
                         break;
 
                     case "testMovie":
                         // Be tolerant of unknown strings (older .fdp projects might have these)
-                        List<string> acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
-                        if (acceptableValues.Contains(Value)) project.TestMovieBehavior = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
-                        else project.TestMovieBehavior = TestMovieBehavior.NewTab;
+                        var acceptableValues  = new List<string>(Enum.GetNames(typeof(TestMovieBehavior)));
+                        if (acceptableValues.Contains(Value)) Project.TestMovieBehavior = (TestMovieBehavior)Enum.Parse(typeof(TestMovieBehavior), Value, true);
+                        else Project.TestMovieBehavior = TestMovieBehavior.NewTab;
                         break;
 
                     case "defaultBuildTargets":
-                        if (!String.IsNullOrEmpty(Value.Trim()) && Value.IndexOf(",", StringComparison.Ordinal) > -1)
+                        if (!string.IsNullOrEmpty(Value.Trim()) && Value.Contains(","))
                         {
-                            String[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<String>();
-                            project.MovieOptions.DefaultBuildTargets = cleaned;
+                            string[] cleaned = Value.Trim().Split(',').Select(x => x.Trim()).ToArray<string>();
+                            Project.MovieOptions.DefaultBuildTargets = cleaned;
                         }
                         break;
 
-                    case "testMovieCommand": project.TestMovieCommand = Value;
+                    case "testMovieCommand": Project.TestMovieCommand = Value;
                         break;
                     
                 }
@@ -202,8 +200,9 @@ namespace ProjectManager.Projects
             ReadEndElement();
         }
 
-        public bool BoolValue { get { return Convert.ToBoolean(Value); } }
-        public int IntValue { get { return Convert.ToInt32(Value); } }
+        public bool BoolValue => Convert.ToBoolean(Value);
+
+        public int IntValue => Convert.ToInt32(Value);
 
         public void ReadPaths(string pathNodeName, IAddPaths paths)
         {

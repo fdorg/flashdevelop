@@ -42,13 +42,13 @@ namespace PluginCore.Helpers
                     if (line.Length < 2 || line.StartsWith("#", StringComparison.Ordinal) || line.StartsWith(";", StringComparison.Ordinal)) continue;
                     if (line.StartsWith("[", StringComparison.Ordinal))
                     {
-                        if (currentSection != null) ini.Add(currentSection, config);
+                        ini.Add(currentSection, config);
                         config = new Dictionary<string, string>();
                         currentSection = line.Substring(1, line.Length - 2);
                     }
                     else
                     {
-                        string[] entry = line.Split(new char[] { '=' }, 2);
+                        string[] entry = line.Split(new[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         config[entry[0].Trim()] = entry[1].Trim();
                     }

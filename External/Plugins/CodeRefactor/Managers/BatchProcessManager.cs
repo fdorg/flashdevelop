@@ -1,16 +1,13 @@
 ﻿using PluginCore;
 using PluginCore.Managers;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace CodeRefactor.Managers
 {
     public static class BatchProcessManager
     {
-        private static List<IBatchProcessor> processors = new List<IBatchProcessor>();
+        private static readonly List<IBatchProcessor> processors = new List<IBatchProcessor>();
 
         /// <summary>
         /// Adds <param name="processor" /> to be selectable from the BatchProcessDialog
@@ -38,28 +35,26 @@ namespace CodeRefactor.Managers
         /// <returns></returns>
         public static IList<IBatchProcessor> GetAvailableProcessors()
         {
-            var procs = new List<IBatchProcessor>();
+            var result = new List<IBatchProcessor>();
             foreach (var processor in processors)
             {
                 if (processor.IsAvailable)
                 {
-                    procs.Add(processor);
+                    result.Add(processor);
                 }
             }
-            return procs;
+            return result;
         }
 
         public static IEnumerable<string> GetAllProjectFiles(IProject project)
         {
-            if (project == null)
-                return null;
+            if (project is null) return null;
             
-            List<String> files = new List<String>();
-            String[] filters = project.DefaultSearchFilter.Split(';');
-
-            foreach (String path in project.SourcePaths)
+            var files = new List<string>();
+            var filters = project.DefaultSearchFilter.Split(';');
+            foreach (var path in project.SourcePaths)
             {
-                foreach (String filter in filters)
+                foreach (var filter in filters)
                 {
                     files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter,
                         SearchOption.AllDirectories));
@@ -76,19 +71,13 @@ namespace CodeRefactor.Managers
         /// <summary>
         /// The text to display in BatchProcessDialog combobox.
         /// </summary>
-        string Text
-        {
-            get;
-        }
+        string Text { get; }
 
         /// <summary>
         /// Whether this processor is currently usable,
         /// If this is false, the processor will not be shown in BatchProcessDialog
         /// </summary>
-        bool IsAvailable
-        {
-            get;
-        }
+        bool IsAvailable { get; }
 
         void Process(IEnumerable<string> files);
         void ProcessProject(IProject project);

@@ -3,10 +3,8 @@
  * See http://www.codeproject.com/info/cpol10.aspx for details
  */
 
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {
@@ -74,8 +72,8 @@ namespace System.Windows.Forms
 		}
 		
 		private static Blend GetBackgroundBlend(){
-			float[] relativeIntensities = new float[]{0f, 0.5f, 1f, 1f};
-			float[] relativePositions = new float[]{0f, 0.5f, 0.51f, 1f};
+			float[] relativeIntensities = new[]{0f, 0.5f, 1f, 1f};
+			float[] relativePositions = new[]{0f, 0.5f, 0.51f, 1f};
 
 
 			Blend blend = new Blend();
@@ -109,32 +107,29 @@ namespace System.Windows.Forms
 				if (closerRect.Contains(this._TabControl.MousePosition)){
 					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect)){
 						graphics.FillPath(Brushes.White, closerPath);
-						using (Pen closerPen = new Pen(Color.FromArgb(229, 195, 101))){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							closerPen.Width = 2;
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
+                        using Pen closerPen = new Pen(Color.FromArgb(229, 195, 101));
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+					using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using Pen closerPen = new Pen(this._CloserColorActive);
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
 				} else {
-					if (index == this._TabControl.SelectedIndex){
-						using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-							using (Pen closerPen = new Pen(this._CloserColor)){
-								closerPen.Width = 2;
-								graphics.DrawPath(closerPen, closerPath);
-							}
-						}
-					} else if (index == this._TabControl.ActiveIndex){
-						using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-							using (Pen closerPen = new Pen(Color.FromArgb(155, 167, 183))){
-								closerPen.Width = 2;
-								graphics.DrawPath(closerPen, closerPath);
-							}
-						}
-					}
+					if (index == this._TabControl.SelectedIndex)
+                    {
+                        using GraphicsPath closerPath = GetCloserPath(closerRect);
+                        using Pen closerPen = new Pen(this._CloserColor);
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    } else if (index == this._TabControl.ActiveIndex)
+                    {
+                        using GraphicsPath closerPath = GetCloserPath(closerRect);
+                        using Pen closerPen = new Pen(Color.FromArgb(155, 167, 183));
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
 				}
 
 			}

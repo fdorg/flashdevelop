@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
@@ -10,14 +11,13 @@ namespace FlashDevelop
     static class Program
     {
         [STAThread]
-        static void Main(String[] arguments)
+        static void Main(string[] arguments)
         {
             if (Win32.ShouldUseWin32()) 
             {
                 if (SingleInstanceApp.AlreadyExists)
                 {
-                    Boolean reUse = Array.IndexOf(arguments, "-reuse") > -1;
-                    if (!MultiInstanceMode || reUse) SingleInstanceApp.NotifyExistingInstance(arguments);
+                    if (!MultiInstanceMode || arguments.Contains("-reuse")) SingleInstanceApp.NotifyExistingInstance(arguments);
                     else RunFlashDevelopWithErrorHandling(arguments, false);
                 }
                 else RunFlashDevelopWithErrorHandling(arguments, true);
@@ -36,17 +36,17 @@ namespace FlashDevelop
         /// <summary>
         /// Run FlashDevelop and catch any unhandled exceptions.
         /// </summary>
-        static void RunFlashDevelopWithErrorHandling(String[] arguments, Boolean isFirst)
+        static void RunFlashDevelopWithErrorHandling(string[] arguments, bool isFirst)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             MainForm.IsFirst = isFirst;
             MainForm.Arguments = arguments;
             MainForm mainForm = new MainForm();
-            SingleInstanceApp.NewInstanceMessage += delegate(Object sender, Object message)
+            SingleInstanceApp.NewInstanceMessage += delegate(object sender, object message)
             {
-                MainForm.Arguments = message as String[];
-                mainForm.ProcessParameters(message as String[]);
+                MainForm.Arguments = message as string[];
+                mainForm.ProcessParameters(message as string[]);
             };
             try
             {
@@ -66,11 +66,11 @@ namespace FlashDevelop
         /// <summary>
         /// Checks if we should run in multi instance mode.
         /// </summary>
-        public static Boolean MultiInstanceMode
+        public static bool MultiInstanceMode
         {
             get 
             {
-                String file = Path.Combine(PathHelper.AppDir, ".multi");
+                string file = Path.Combine(PathHelper.AppDir, ".multi");
                 return File.Exists(file);
             }
         }

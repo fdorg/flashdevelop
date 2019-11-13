@@ -108,7 +108,7 @@ namespace ScintillaNet
                 {
                     var style = useStyles[styleByte];
 
-                    if (style == null)
+                    if (style is null)
                     {
                         // there shouldn't be any style that's not defined but present in the editor
                         // something is wrong if the code reaches here... throw an exception?
@@ -155,8 +155,7 @@ namespace ScintillaNet
                     int backColor = GetBackColor(style);
                     if (lastBackColor != backColor)
                     {
-                        int colorIndex;
-                        if (!colorDef.TryGetValue(backColor, out colorIndex))
+                        if (!colorDef.TryGetValue(backColor, out var colorIndex))
                         {
                             var color = Color.FromArgb(backColor);
                             colorIndex = colorCount++;
@@ -236,16 +235,22 @@ namespace ScintillaNet
 
         private static int GetBackColor(StyleClass style)
         {
-            if (style.back != null)
+            while (true)
             {
-                return GetRgbColor(style.back);
+                if (style.back != null)
+                {
+                    return GetRgbColor(style.back);
+                }
+
+                var parent = style.ParentClass;
+                if (parent != null)
+                {
+                    style = parent;
+                    continue;
+                }
+
+                return 0xFFFFFF;
             }
-            var parent = style.ParentClass;
-            if (parent != null)
-            {
-                return GetBackColor(parent);
-            }
-            return 0xFFFFFF;
         }
 
         private static int GetForeColor(StyleClass style)

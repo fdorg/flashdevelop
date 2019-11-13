@@ -9,41 +9,47 @@ using PluginCore.Localization;
 namespace ASCompletion.Model
 {
     /// <summary>
-    /// Object representation of an Actionscript class
+    /// Object representation of an ActionScript class
     /// </summary>
     [Serializable]
     public class ClassModel: MemberModel
     {
-        static public ClassModel VoidClass;
+        public static readonly ClassModel VoidClass;
 
-        static private Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static private Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reMultiSpacedEOL = new Regex("([ \t]*\n[ \t]*){2,}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reAsdocWordSpace = new Regex("\\s+(?=\\@\\w+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static readonly Regex reAsdocWord = new Regex("(\\n[ \\t]*)?\\@\\w+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         
         static ClassModel()
         {
-            VoidClass = new ClassModel();
-            VoidClass.Name = "void";
-            VoidClass.InFile = new FileModel("");
+            VoidClass = new ClassModel {Name = "void", InFile = new FileModel("")};
         }
 
         public string Constructor;
         public MemberList Members;
 
+        /// <summary>
+        /// 1st extends type
+        /// </summary>
         public string ExtendsType;
+
+        /// <summary>
+        /// Extensible types starting from the second
+        /// </summary>
+        public List<string> ExtendsTypes;
+
         public string IndexType;
         public List<string> Implements;
-        [NonSerialized]
-        private WeakReference resolvedExtend;
+        [NonSerialized] WeakReference resolvedExtend;
 
         public string QualifiedName
         {
             get
             {
                 if (InFile.Package == "") return Name;
-                if (InFile.Module == "" || InFile.Module == Name || (Name.Contains("<") && InFile.Module == BaseType)) return InFile.Package + "." + Name;
+                if (InFile.Module == "" || InFile.Module == Name || (Name.Contains('<') && InFile.Module == BaseType)) return InFile.Package + "." + Name;
                 return InFile.Package + "." + InFile.Module + "." + Name;
             }
         }
@@ -55,41 +61,41 @@ namespace ASCompletion.Model
         {
             get
             {
-                int genericIndex = Name.IndexOf('<');
-                if (genericIndex > 0)
-                    return Name.Substring(0, genericIndex);
-                else return Name;
+                var genericIndex = Name.IndexOf('<');
+                if (genericIndex > 0) return Name.Substring(0, genericIndex);
+                return Name;
             }
         }
 
-        override public string FullName
+        public override string FullName
         {
             get
             {
-                if (Template == null || Name.IndexOf('<') > 0) return Name;
+                if (Template is null || Name.IndexOf('<') > 0) return Name;
                 if (IndexType != null)
                 {
                     if (InFile != null && InFile.haXe) return Name + IndexType;
                     return Name + "." + IndexType;
                 }
-                else if (InFile != null && InFile.haXe) return Name + Template;
-                else return Name + "." + Template;
+                if (InFile != null && InFile.haXe) return Name + Template;
+                return Name + "." + Template;
             }
         }
 
         /// <summary>
         /// Resolved extended type. Update using ResolveExtends()
         /// </summary>
+        /// <returns>An extends ClassModel or empty ClassModel if the class do not have extends</returns>
         public ClassModel Extends
         {
             get 
             {
-                if (resolvedExtend == null || !resolvedExtend.IsAlive)
+                if (resolvedExtend is null || !resolvedExtend.IsAlive)
                 {
                     resolvedExtend = null;
                     return VoidClass;
                 }
-                else return resolvedExtend.Target as ClassModel ?? VoidClass;
+                return resolvedExtend.Target as ClassModel ?? VoidClass;
             }
         }
 
@@ -98,32 +104,32 @@ namespace ASCompletion.Model
         /// </summary>
         public void ResolveExtends()
         {
-            ClassModel aClass = this;
-            List<ClassModel> extensionList = new List<ClassModel> {this};
+            var aClass = this;
+            var extensionList = new List<ClassModel> {this};
             while (!aClass.IsVoid())
             {
                 aClass = aClass.ResolveExtendedType(extensionList);
             }
         }
 
-        private ClassModel ResolveExtendedType(List<ClassModel> extensionList)
+        ClassModel ResolveExtendedType(IList<ClassModel> extensionList)
         {
-            if (InFile.Context == null)
+            if (InFile.Context is null)
             {
                 resolvedExtend = null;
                 return VoidClass;
             }
-            string objectKey = InFile.Context.Features.objectKey;
+            var objectKey = InFile.Context.Features.objectKey;
             if (Name == objectKey && !string.IsNullOrEmpty(InFile.Package))
             {
-                string info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
+                var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
                 MessageBar.ShowWarning(info);
                 resolvedExtend = null;
                 return VoidClass;
             }
             if (string.IsNullOrEmpty(ExtendsType))
             {
-                if (this == VoidClass || (Flags & FlagType.Interface) > 0)
+                if (IsVoid() || (Flags & FlagType.Interface) > 0)
                 {
                     resolvedExtend = null;
                     return VoidClass;
@@ -136,7 +142,7 @@ namespace ASCompletion.Model
                     return VoidClass;
                 }
             }
-            ClassModel extends = InFile.Context.ResolveType(ExtendsType, InFile);
+            var extends = InFile.Context.ResolveType(ExtendsType, InFile);
             if (!extends.IsVoid())
             {
                 // check loops in inheritance
@@ -144,17 +150,14 @@ namespace ASCompletion.Model
                 {
                     foreach(ClassModel model in extensionList)
                     {
-                        if (model.QualifiedName == extends.QualifiedName)
-                        {
-                            string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                            MessageBar.ShowWarning(info);
-                            resolvedExtend = null;
-                            return VoidClass;
-                        }
+                        if (model.QualifiedName != extends.QualifiedName) continue;
+                        var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                        MessageBar.ShowWarning(info);
+                        resolvedExtend = null;
+                        return VoidClass;
                     }
                 }
                 extensionList.Add(extends);
-
                 extends.InFile.Check();
             }
             resolvedExtend = new WeakReference(extends);
@@ -167,66 +170,69 @@ namespace ASCompletion.Model
             Members = new MemberList();
         }
 
-        public bool IsVoid()
-        {
-            return this == VoidClass;
-        }
+        public bool IsVoid() => this == VoidClass;
 
-        public bool IsEnum() {
-            return (this.Flags & FlagType.Enum) != 0;
-        }
+        [Obsolete("Please use (Flags & FlagType.Enum) != 0 or Flags.HasFlag(FlagType.Enum")]
+        public bool IsEnum() => (Flags & FlagType.Enum) != 0;
 
         public new object Clone()
         {
-            ClassModel copy = new ClassModel();
-            copy.Name = Name;
-            copy.Template = Template;
-            copy.Flags = Flags;
-            copy.Access = Access;
-            copy.Namespace = Namespace;
+            var result = new ClassModel();
+            result.Name = Name;
+            result.Template = Template;
+            result.Flags = Flags;
+            result.Access = Access;
+            result.Namespace = Namespace;
             if (Parameters != null)
             {
-                copy.Parameters = new List<MemberModel>();
-                foreach (MemberModel param in Parameters)
-                    copy.Parameters.Add(param.Clone() as MemberModel);
+                result.Parameters = new List<MemberModel>();
+                foreach (var param in Parameters)
+                    result.Parameters.Add((MemberModel) param.Clone());
             }
-            copy.Type = Type;
-            copy.Comments = Comments;
-            copy.InFile = InFile;
-            copy.Constructor = Constructor;
-            if (Implements != null)
-            {
-                copy.Implements = new List<string>();
-                foreach (string cname in Implements) copy.Implements.Add(cname);
-            }
-            copy.ExtendsType = ExtendsType;
-            copy.IndexType = IndexType;
-            copy.Members = new MemberList();
+            result.Type = Type;
+            result.Comments = Comments;
+            result.InFile = InFile;
+            result.Constructor = Constructor;
+            if (Implements != null) result.Implements = new List<string>(Implements);
+            result.ExtendsType = ExtendsType;
+            result.IndexType = IndexType;
+            result.Members = new MemberList();
             foreach (MemberModel item in Members)
-                copy.Members.Add(item.Clone() as MemberModel);
-            copy.LineFrom = LineFrom;
-            copy.LineTo = LineTo;
-
-            return copy;
+                result.Members.Add((MemberModel) item.Clone());
+            result.LineFrom = LineFrom;
+            result.LineTo = LineTo;
+            if (MetaDatas != null)
+            {
+                result.MetaDatas = new List<ASMetaData>();
+                foreach (var meta in MetaDatas)
+                {
+                    result.MetaDatas.Add(new ASMetaData(meta.Name)
+                    {
+                        LineFrom = meta.LineFrom,
+                        LineTo = meta.LineTo,
+                        Params = meta.Params != null ? new Dictionary<string, string>(meta.Params) : null,
+                        RawParams =  meta.RawParams,
+                        Comments = meta.Comments,
+                        Kind = meta.Kind,
+                    });
+                }
+            }
+            return result;
         }
 
         #region Completion-dedicated methods
 
         public MemberModel ToMemberModel()
         {
-            MemberModel self = new MemberModel();
-            //int p = Name.LastIndexOf(".");
-            //self.Name = (p >= 0) ? Name.Substring(p + 1) : Name;
-            self.Comments = Comments;
-            self.Name = Name;
-            self.Type = QualifiedName;
-            self.Flags = Flags;
-            return self;
+            var result = (ClassModel) Clone();
+            result.Type = QualifiedName;
+            result.IndexType = string.Empty;
+            return result;
         }
 
-        internal MemberList GetSortedMembersList()
+        public MemberList GetSortedMembersList()
         {
-            MemberList items = new MemberList();
+            var items = new MemberList();
             foreach (MemberModel item in Members)
                 if ((item.Flags & FlagType.Constructor) == 0) items.Add(item);
             items.Sort();
@@ -239,16 +245,16 @@ namespace ASCompletion.Model
         /// </summary>
         internal MemberList GetSortedInheritedMembersList()
         {
-            MemberList items = new MemberList();
-            ClassModel curClass = this;
+            var items = new MemberList();
+            var curClass = this;
+            curClass.ResolveExtends();
             do
             {
-                curClass.ResolveExtends();
                 curClass = curClass.Extends;
-                MemberList newMembers = curClass.GetSortedMembersList();
+                var newMembers = curClass.GetSortedMembersList();
                 items.Merge(newMembers);
                 
-            } while (curClass.Extends != VoidClass);
+            } while (!curClass.Extends.IsVoid());
             items.RemoveAllWithFlag(FlagType.Static);
             items.Sort();
             return items;
@@ -258,29 +264,17 @@ namespace ASCompletion.Model
 
         #region Sorting
 
-        public void Sort()
-        {
-            Members.Sort();
-        }
+        public void Sort() => Members.Sort();
 
-        public override bool Equals(object obj)
-        {
-            if (!(obj is ClassModel)) return false;
-            return Name.Equals(((ClassModel)obj).Name);
-        }
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
+        public override bool Equals(object obj) => obj is ClassModel model && Name.Equals(model.Name);
+
+        public override int GetHashCode() => Name.GetHashCode();
 
         #endregion
 
         #region Text output
 
-        public override string ToString()
-        {
-            return ClassDeclaration(this);
-        }
+        public override string ToString() => ClassDeclaration(this);
 
         public string GenerateIntrinsic(bool caching)
         {
@@ -289,7 +283,7 @@ namespace ASCompletion.Model
             char semi = ';';
             string tab0 = (!caching && InFile.Version == 3) ? "\t" : "";
             string tab = (caching) ? "" : ((InFile.Version == 3) ? "\t\t" : "\t");
-            bool preventVis = (this.Flags & FlagType.Interface) > 0;
+            bool preventVis = (Flags & FlagType.Interface) > 0;
 
             // SPECIAL DELEGATE
             /*if ((Flags & FlagType.Delegate) > 0)
@@ -311,7 +305,7 @@ namespace ASCompletion.Model
             
             // CLASS
             sb.Append(CommentDeclaration(Comments, tab0)).Append(tab0);
-            if (!caching && InFile.Version != 3 && (this.Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)
+            if (!caching && InFile.Version != 3 && (Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)
             {
                 sb.Append((InFile.haXe) ? "extern " : "intrinsic ");
             }
@@ -319,7 +313,7 @@ namespace ASCompletion.Model
 
             if (ExtendsType != null)
             {
-                if ((this.Flags & FlagType.Abstract) > 0) sb.Append(" from ").Append(ExtendsType);
+                if ((Flags & FlagType.Abstract) > 0) sb.Append(" from ").Append(ExtendsType);
                 else sb.Append(" extends ").Append(ExtendsType);
             }
             if (Implements != null)
@@ -341,16 +335,14 @@ namespace ASCompletion.Model
                 if ((var.Flags & FlagType.Variable) > 0)
                 {
                     ASMetaData.GenerateIntrinsic(var.MetaDatas, sb, nl, tab);
-                    String comment = CommentDeclaration(var.Comments, tab);
-                    if (count == 0 || comment != "") sb.Append(nl);
+                    var comment = CommentDeclaration(var.Comments, tab);
+                    if (count == 0 || comment.Length != 0) sb.Append(nl);
                     sb.Append(comment);
                     sb.Append(tab).Append(MemberDeclaration(var, preventVis)).Append(semi).Append(nl);
                     count++;
                 }
 
             // MEMBERS
-            string decl;
-            MemberModel temp;
             string prevProperty = null;
             foreach (MemberModel property in Members)
                 if ((property.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
@@ -359,8 +351,9 @@ namespace ASCompletion.Model
                     prevProperty = property.Name;
                     ASMetaData.GenerateIntrinsic(property.MetaDatas, sb, nl, tab);
                     sb.Append(CommentDeclaration(property.Comments, tab));
-                    FlagType flags = (property.Flags & ~(FlagType.Setter | FlagType.Getter)) | FlagType.Function;
+                    var flags = (property.Flags & ~(FlagType.Setter | FlagType.Getter)) | FlagType.Function;
 
+                    MemberModel temp;
                     if ((property.Flags & FlagType.Getter) > 0)
                     {
                         temp = (MemberModel)property.Clone();
@@ -373,14 +366,13 @@ namespace ASCompletion.Model
                         // Typed callback declaration (in get property)
                         if ((property.Flags & FlagType.Function) > 0)
                         {
-                            string commentDecl = property.ToDeclarationString();
-                            int idxA = Math.Max(memberDecl.LastIndexOf(':'), memberDecl.LastIndexOf(')') + 1);
-                            int idxB = Math.Min(commentDecl.IndexOf(':'), commentDecl.IndexOfOrdinal("/*"));
+                            var commentDecl = property.ToDeclarationString();
+                            var idxA = Math.Max(memberDecl.LastIndexOf(':'), memberDecl.LastIndexOf(')') + 1);
+                            var idxB = Math.Min(commentDecl.IndexOf(':'), commentDecl.IndexOfOrdinal("/*"));
 
                             if (idxA > 0 && idxB > -1)
                                 memberDecl = memberDecl.Substring(0, idxA) + commentDecl.Substring(idxB);
                         }
-
                         sb.Append(tab).Append(memberDecl).Append(semi).Append(nl);
                     }
                     if ((property.Flags & FlagType.Setter) > 0)
@@ -397,7 +389,7 @@ namespace ASCompletion.Model
             foreach (MemberModel method in Members)
                 if ((method.Flags & FlagType.Function) > 0 && (method.Flags & FlagType.Variable) == 0 && (method.Flags & FlagType.Getter) == 0)
                 {
-                    decl = MemberDeclaration(method, preventVis);
+                    var decl = MemberDeclaration(method, preventVis);
                     if (InFile.haXe && (method.Flags & FlagType.Constructor) > 0)
                         decl = decl.Replace("function " + method.Name, "function new");
                     ASMetaData.GenerateIntrinsic(method.MetaDatas, sb, nl, tab);
@@ -410,111 +402,87 @@ namespace ASCompletion.Model
             return sb.ToString();
         }
 
-        static public string ClassDeclaration(ClassModel ofClass)
-        {
-            return ClassDeclaration(ofClass, true);
-        }
+        public static string ClassDeclaration(ClassModel ofClass) => ClassDeclaration(ofClass, true);
 
-        static public string ClassDeclaration(ClassModel ofClass, bool qualified)
+        public static string ClassDeclaration(ClassModel ofClass, bool qualified)
         {
             // package
-            if (ofClass.Flags == FlagType.Package)
-            {
-                return "package " + ofClass.Name.Replace('\\', '.');
-            }
-            else
-            {
-                // modifiers
-                Visibility acc = ofClass.Access;
-                string modifiers = "";
-                if ((ofClass.Flags & FlagType.Intrinsic) > 0)
-                {
-                    if ((ofClass.Flags & FlagType.Extern) > 0) modifiers += "extern ";
-                    else modifiers += "intrinsic ";
-                }
-                else if (ofClass.InFile.Version > 2)
-                    if (!string.IsNullOrEmpty(ofClass.Namespace) 
-                        && ofClass.Namespace != "internal") 
-                    {
-                    //  if ((ft & FlagType.Interface) == 0)
-                            modifiers += ofClass.Namespace + " ";
-                    }
-                    else
-                    {
-                    //  if ((ft & FlagType.Interface) == 0)
-                    //  {
-                            if ((acc & Visibility.Public) > 0) modifiers += "public ";
-                            else if ((acc & Visibility.Internal) > 0) modifiers += "internal ";
-                            else if ((acc & Visibility.Protected) > 0) modifiers += "protected ";
-                            else if ((acc & Visibility.Private) > 0) modifiers += "private ";
-                    //  }
-                    }
+            if (ofClass.Flags == FlagType.Package) return "package " + ofClass.Name.Replace('\\', '.');
 
-                if ((ofClass.Flags & FlagType.Final) > 0)
-                    modifiers += "final ";
-
-                if ((ofClass.Flags & FlagType.Dynamic) > 0)
-                    modifiers += "dynamic ";
-
-                string classType = "class";
-                if ((ofClass.Flags & FlagType.Interface) > 0) classType = "interface";
-                else if ((ofClass.Flags & FlagType.Enum) > 0) classType = "enum";
-                else if ((ofClass.Flags & FlagType.Abstract) > 0) classType = "abstract";
-                else if ((ofClass.Flags & FlagType.TypeDef) > 0) classType = "typedef";
-                else if ((ofClass.Flags & FlagType.Struct) > 0) classType = "struct";
-                else if ((ofClass.Flags & FlagType.Delegate) > 0) classType = "delegate";
-
-                // signature
-                if (qualified)
-                    return String.Format("{0}{1} {2}", modifiers, classType, ofClass.QualifiedName);
-                else
-                    return String.Format("{0}{1} {2}", modifiers, classType, ofClass.FullName);
-            }
-        }
-
-        static public string MemberDeclaration(MemberModel member)
-        {
-            return MemberDeclaration(member, false);
-        }
-        static public string MemberDeclaration(MemberModel member, bool preventVisibility)
-        {
             // modifiers
-            FlagType ft = member.Flags;
-            Visibility acc = member.Access;
-            string modifiers = "";
-            if ((ft & FlagType.Intrinsic) > 0)
+            var access = ofClass.Access;
+            var modifiers = "";
+            if ((ofClass.Flags & FlagType.Intrinsic) > 0)
             {
-                if ((ft & FlagType.Extern) > 0) modifiers += "extern ";
+                if ((ofClass.Flags & FlagType.Extern) > 0) modifiers += "extern ";
                 else modifiers += "intrinsic ";
             }
-            else if (!string.IsNullOrEmpty(member.Namespace) 
-                && member.Namespace != "internal")
+            else if (ofClass.InFile.Version > 2)
+                if (!string.IsNullOrEmpty(ofClass.Namespace) && ofClass.Namespace != "internal") 
+                {
+                    //if ((ft & FlagType.Interface) == 0)
+                    modifiers += ofClass.Namespace + " ";
+                }
+                else
+                {
+                    //  if ((ft & FlagType.Interface) == 0)
+                    //  {
+                    if ((access & Visibility.Public) > 0) modifiers += "public ";
+                    else if ((access & Visibility.Internal) > 0) modifiers += "internal ";
+                    else if ((access & Visibility.Protected) > 0) modifiers += "protected ";
+                    else if ((access & Visibility.Private) > 0) modifiers += "private ";
+                    //  }
+                }
+
+            if ((ofClass.Flags & FlagType.Final) > 0) modifiers += "final ";
+            if ((ofClass.Flags & FlagType.Dynamic) > 0) modifiers += "dynamic ";
+
+            var classType = "class";
+            if ((ofClass.Flags & FlagType.Interface) > 0) classType = "interface";
+            else if ((ofClass.Flags & FlagType.Enum) > 0) classType = "enum";
+            else if ((ofClass.Flags & FlagType.Abstract) > 0) classType = "abstract";
+            else if ((ofClass.Flags & FlagType.TypeDef) > 0) classType = "typedef";
+            else if ((ofClass.Flags & FlagType.Struct) > 0) classType = "struct";
+            else if ((ofClass.Flags & FlagType.Delegate) > 0) classType = "delegate";
+
+            // signature
+            if (qualified) return $"{modifiers}{classType} {ofClass.QualifiedName}";
+            return $"{modifiers}{classType} {ofClass.FullName}";
+        }
+
+        public static string MemberDeclaration(MemberModel member) => MemberDeclaration(member, false);
+
+        public static string MemberDeclaration(MemberModel member, bool preventVisibility)
+        {
+            // modifiers
+            var flags = member.Flags;
+            var access = member.Access;
+            var modifiers = "";
+            if ((flags & FlagType.Intrinsic) > 0)
             {
-                if ((ft & FlagType.Interface) == 0)
-                    modifiers = member.Namespace + " ";
+                if ((flags & FlagType.Extern) > 0) modifiers += "extern ";
+                else modifiers += "intrinsic ";
+            }
+            else if (!string.IsNullOrEmpty(member.Namespace) && member.Namespace != "internal")
+            {
+                if ((flags & FlagType.Interface) == 0) modifiers = member.Namespace + " ";
             }
             else if (!preventVisibility)
             {
                 if ((member.Flags & FlagType.Interface) == 0)
                 {
-                    if ((acc & Visibility.Public) > 0) modifiers += "public ";
-                //  else if ((acc & Visibility.Internal) > 0) modifiers += "internal "; // AS3 default
-                    else if ((acc & Visibility.Protected) > 0) modifiers += "protected ";
-                    else if ((acc & Visibility.Private) > 0) modifiers += "private ";
+                    if ((access & Visibility.Public) > 0) modifiers += "public ";
+                    //  else if ((acc & Visibility.Internal) > 0) modifiers += "internal "; // AS3 default
+                    else if ((access & Visibility.Protected) > 0) modifiers += "protected ";
+                    else if ((access & Visibility.Private) > 0) modifiers += "private ";
                 }
             }
 
-            if ((ft & FlagType.Final) > 0)
-                modifiers += "final ";
-
-            if ((ft & FlagType.Enum) > 0)
+            if ((flags & FlagType.Final) > 0) modifiers += "final ";
+            if ((flags & FlagType.Enum) > 0) return member.ToString();
+            if ((flags & FlagType.Class) > 0)
             {
-                return member.ToString();
-            }
-            else if ((ft & FlagType.Class) > 0)
-            {
-                if ((ft & FlagType.Dynamic) > 0)
-                    modifiers += "dynamic ";
+                if ((flags & FlagType.Dynamic) > 0) modifiers += "dynamic ";
                 string classType = "class";
                 if ((member.Flags & FlagType.Interface) > 0) classType = "interface";
                 else if ((member.Flags & FlagType.Enum) > 0) classType = "enum";
@@ -522,62 +490,44 @@ namespace ASCompletion.Model
                 else if ((member.Flags & FlagType.TypeDef) > 0) classType = "typedef";
                 else if ((member.Flags & FlagType.Struct) > 0) classType = "struct";
                 else if ((member.Flags & FlagType.Delegate) > 0) classType = "delegate";
-                return String.Format("{0}{1} {2}", modifiers, classType, member.Type);
+                return $"{modifiers}{classType} {member.Type}";
             }
-            else if ((ft & FlagType.Enum) == 0)
+            if ((flags & FlagType.Enum) == 0)
             {
-                if ((ft & FlagType.Native) > 0)
-                    modifiers += "native ";
-                if ((ft & FlagType.Static) > 0)
-                    modifiers += "static ";
+                if ((flags & FlagType.Native) > 0) modifiers += "native ";
+                if ((flags & FlagType.Static) > 0) modifiers += "static ";
             }
 
             // signature
-            if ((ft & FlagType.Namespace) > 0)
+            if ((flags & FlagType.Namespace) > 0) return $"{modifiers}namespace {member.Name}";
+            if ((flags & FlagType.Variable) > 0)
             {
-                return String.Format("{0}namespace {1}", modifiers, member.Name);
-            }
-            else if ((ft & FlagType.Variable) > 0)
-            {
-                if ((ft & FlagType.LocalVar) > 0) modifiers = "local ";
-                if ((ft & FlagType.Constant) > 0)
+                if ((flags & FlagType.LocalVar) > 0) modifiers = "local ";
+                if ((flags & FlagType.Constant) > 0)
                 {
-                    if (member.Value == null)
-                        return String.Format("{0}const {1}", modifiers, member.ToDeclarationString());
-                    else
-                        return String.Format("{0}const {1} = {2}", modifiers, member.ToDeclarationString(), member.Value);
+                    if (member.Value is null) return $"{modifiers}const {member.ToDeclarationString()}";
+                    return $"{modifiers}const {member.ToDeclarationString()} = {member.Value}";
                 }
-                else return String.Format("{0}var {1}", modifiers, member.ToDeclarationString());
+                return $"{modifiers}var {member.ToDeclarationString()}";
             }
-            else if ((ft & (FlagType.Getter | FlagType.Setter)) > 0)
-                return String.Format("{0}property {1}", modifiers, member.ToString());
-            else if ((ft & FlagType.Delegate) > 0)
-                return String.Format("{0}delegate {1}", modifiers, member.ToString());
-            else if ((ft & FlagType.Function) > 0)
-                return String.Format("{0}function {1}", modifiers, member.ToString());
-            else if (ft == FlagType.Package)
-                return String.Format("Package {0}", member.Type);
-            else if (ft == FlagType.Template)
-                return String.Format("Template {0}", member.Type);
-            else if (ft == FlagType.Declaration)
-                return String.Format("Declaration {0}", member.Type);
-            else
-                return String.Format("{0}type {1}", modifiers, member.Type);
+            if ((flags & (FlagType.Getter | FlagType.Setter)) > 0) return $"{modifiers}property {member}";
+            if ((flags & FlagType.Delegate) > 0) return $"{modifiers}delegate {member}";
+            if ((flags & FlagType.Function) > 0) return $"{modifiers}function {member}";
+            if (flags == FlagType.Package) return $"Package {member.Type}";
+            if (flags == FlagType.Template) return $"Template {member.Type}";
+            if (flags == FlagType.Declaration) return $"Declaration {member.Type}";
+            return $"{modifiers}type {member.Type}";
         }
 
-        static public string CommentDeclaration(string comment, string tab)
+        public static string CommentDeclaration(string comment, string tab)
         {
-            if (comment == null) return "";
+            if (comment is null) return "";
             comment = comment.Trim();
             if (comment.Length == 0) return "";
-            Boolean indent = tab != "";
-            String space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
-            Boolean startWithStar = comment.StartsWith('*');
+            var startWithStar = comment.StartsWith('*');
             if (startWithStar || comment.IndexOf('\n') > 0 || comment.IndexOf('\r') > 0)
             {
-                if (!startWithStar)
-                    comment = "* " + comment;
-
+                if (!startWithStar) comment = "* " + comment;
                 comment = reEOLAndStar.Replace(comment, "\n");
                 comment = comment.Replace("\r\n", "\n");
                 comment = comment.Replace("\r", "\n");
@@ -585,34 +535,31 @@ namespace ASCompletion.Model
                 comment = reMultiSpacedEOL.Replace(comment, "\n\n  ");
                 comment = reAsdocWordSpace.Replace(comment, "\n");
                 comment = GetCorrectComment(comment, "\n", "\n  ");
-                if (indent)
+                if (tab != "")
                 {
+                    var space = PluginBase.Settings.CommentBlockStyle == CommentBlockStyle.Indented ? " " : "";
                     comment = comment.Replace("\n", "\r\n" + tab + space + "* ");
                     return tab + "/**\r\n" + tab + space + comment + "\r\n" + tab + space + "*/\r\n";
                 }
-                else return tab + "/**\r\n" + tab + comment + "\r\n" + tab + "*/\r\n";
+                return tab + "/**\r\n" + tab + comment + "\r\n" + tab + "*/\r\n";
             }
-            else return tab + "/// " + comment + "\r\n";
+
+            return tab + "/// " + comment + "\r\n";
         }
 
-        static public string GetCorrectComment(string comment, string eolSrc, string eolRepl)
+        static string GetCorrectComment(string comment, string eolSrc, string eolRepl)
         {
             MatchCollection mc = reAsdocWord.Matches(comment);
 
             string outComment = "";
-            string s;
 
             int j0 = 0;
-            int j1 = 0;
             int i, l = mc.Count;
             for (i = 0; i <= l; i++)
             {
-                if (i < l)
-                    j1 = mc[i].Index;
-                else
-                    j1 = comment.Length;
+                var j1 = i < l ? mc[i].Index : comment.Length;
 
-                s = comment.Substring(j0, j1 - j0);
+                var s = comment.Substring(j0, j1 - j0);
 
                 if (i > 0)
                     s = s.Replace(eolSrc, eolRepl);
@@ -632,7 +579,7 @@ namespace ASCompletion.Model
             return outComment;
         }
 
-        private static bool MoreLines(string text, int count)
+        static bool MoreLines(string text, int count)
         {
             int p = text.IndexOf('\n');
             while (p > 0 && count >= 0)

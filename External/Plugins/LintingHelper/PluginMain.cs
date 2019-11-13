@@ -16,31 +16,20 @@ namespace LintingHelper
 {
     public class PluginMain : IPlugin
     {
-        private const string pluginName = "LintingHelper";
-        private const string pluginGuid = "279C4926-5AC6-49E1-A0AC-66B7275C13DB";
-        private const string pluginHelp = "www.flashdevelop.org/community/";
-        private const string pluginDesc = "Plugin that adds a generic interface for linting / code analysis.";
-        private const string pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
         private string settingFilename;
 
-        public int Api
-        {
-            get
-            {
-                return 1;
-            }
-        }
+        public int Api => 1;
 
-        public string Author => pluginAuth;
+        public string Author => "FlashDevelop Team";
 
-        public string Description => pluginDesc;
+        public string Description => "Plugin that adds a generic interface for linting / code analysis.";
 
-        public string Guid => pluginGuid;
+        public string Guid => "279C4926-5AC6-49E1-A0AC-66B7275C13DB";
 
-        public string Help => pluginHelp;
+        public string Help => "www.flashdevelop.org/community/";
 
-        public string Name => pluginName;
+        public string Name => nameof(LintingHelper);
 
         [Browsable(false)]
         public object Settings => settingObject;
@@ -52,10 +41,7 @@ namespace LintingHelper
             AddEventHandlers();
         }
 
-        public void Dispose()
-        {
-            SaveSettings();
-        }
+        public void Dispose() => SaveSettings();
 
         private void AddEventHandlers()
         {
@@ -65,46 +51,35 @@ namespace LintingHelper
 
         private void InitBasics()
         {
-            string dataPath = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, $"{nameof(Settings)}.fdb");
-
+            var path = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, $"{nameof(Settings)}.fdb");
             TraceManager.RegisterTraceGroup(LintingManager.TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.LintingResults"));
         }
 
         private void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            settingObject = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else settingObject = (Settings) ObjectSerializer.Deserialize(settingFilename, settingObject);
         }
 
-        private void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        private void SaveSettings() => ObjectSerializer.Serialize(settingFilename, settingObject);
 
         public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch(e.Type)
             {
                 case EventType.FileOpen:
-                    if (MessageBar.Locked) return;
+                    if (MessageBar.Locked || !settingObject.LintOnOpen) return;
                     var fileOpen = (TextEvent) e;
-                    if (this.settingObject.LintOnOpen)
-                    {
-                        LintingManager.Cache.RemoveDocument(fileOpen.Value);
-                        LintingManager.LintFiles(new[] { fileOpen.Value });
-                    }
+                    LintingManager.Cache.RemoveDocument(fileOpen.Value);
+                    LintingManager.LintFiles(new[] {fileOpen.Value});
                     break;
                 case EventType.FileSave:
-                    if (MessageBar.Locked) return;
+                    if (MessageBar.Locked || !settingObject.LintOnSave) return;
                     var reason = (e as TextDataEvent)?.Data as string;
-                    if (reason != "HaxeComplete" && this.settingObject.LintOnSave)
+                    if (reason != "HaxeComplete")
                     {
                         var fileSave = (TextEvent) e;
                         LintingManager.Cache.RemoveDocument(fileSave.Value);
@@ -125,7 +100,7 @@ namespace LintingHelper
                                     LintingManager.LintDocument(doc);*/
                             {
                                 ScintillaNet.ScintillaControl sci;
-                                if (doc.IsUntitled || (sci = doc.SciControl) == null) continue;
+                                if (doc.IsUntitled || (sci = doc.SciControl) is null) continue;
 
                                 var files = groupedFiles.GetOrCreate(sci.ConfigurationLanguage);
                                 files.Add(sci.FileName);

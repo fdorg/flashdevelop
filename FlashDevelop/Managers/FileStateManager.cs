@@ -19,11 +19,11 @@ namespace FlashDevelop.Managers
             try
             {
                 if (!document.IsEditable) return;
-                String fileStateDir = FileNameHelper.FileStateDir;
+                string fileStateDir = FileNameHelper.FileStateDir;
                 if (!Directory.Exists(fileStateDir)) Directory.CreateDirectory(fileStateDir);
                 StateObject so = GetStateObject(document.SciControl);
-                String fileName = ConvertToFileName(document.FileName);
-                String stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
+                string fileName = ConvertToFileName(document.FileName);
+                string stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
                 ObjectSerializer.Serialize(stateFile, so);
             }
             catch (Exception ex)
@@ -35,14 +35,13 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies the file state to a scintilla control
         /// </summary>
-        public static void ApplyFileState(ITabbedDocument document, Boolean restorePosition)
+        public static void ApplyFileState(ITabbedDocument document, bool restorePosition)
         {
             try
             {
                 if (!document.IsEditable) return;
-                String fileStateDir = FileNameHelper.FileStateDir;
-                String fileName = ConvertToFileName(document.FileName);
-                String stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
+                string fileName = ConvertToFileName(document.FileName);
+                string stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
                 if (File.Exists(stateFile))
                 {
                     StateObject so = new StateObject();
@@ -59,13 +58,12 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Removes old state file from disk
         /// </summary>
-        public static void RemoveStateFile(String file)
+        public static void RemoveStateFile(string file)
         {
             try
             {
-                String fileName = ConvertToFileName(file);
-                String fileStateDir = FileNameHelper.FileStateDir;
-                String stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
+                string fileName = ConvertToFileName(file);
+                string stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
                 if (File.Exists(stateFile)) File.Delete(stateFile);
             }
             catch (Exception ex)
@@ -83,8 +81,8 @@ namespace FlashDevelop.Managers
             {
                 DateTime timeNow = DateTime.Now;
                 if (!Directory.Exists(FileNameHelper.FileStateDir)) return;
-                String[] foundFiles = Directory.GetFiles(FileNameHelper.FileStateDir);
-                foreach (String foundFile in foundFiles)
+                string[] foundFiles = Directory.GetFiles(FileNameHelper.FileStateDir);
+                foreach (string foundFile in foundFiles)
                 {
                     TimeSpan twoWeeks = new TimeSpan(14, 0, 0, 0);
                     DateTime writeTime = File.GetLastWriteTime(foundFile);
@@ -103,20 +101,18 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Applies the state object to a scintilla control
         /// </summary>
-        private static void ApplyStateObject(ScintillaControl sci, StateObject so, Boolean restorePosition)
+        private static void ApplyStateObject(ScintillaControl sci, StateObject so, bool restorePosition)
         {
             if (so.LineCount != sci.LineCount) return;
             sci.Refresh(); // Update the scintilla control state
-            for (Int32 i = 0; i < so.FoldedLines.Count; i++)
+            foreach (var foldedLine in so.FoldedLines)
             {
-                Int32 foldedLine = so.FoldedLines[i];
                 sci.ToggleFold(foldedLine);
             }
             if (so.BookmarkedLines != null)
             {
-                for (Int32 i = 0; i < so.BookmarkedLines.Count; i++)
+                foreach (var bookmarkedLine in so.BookmarkedLines)
                 {
-                    Int32 bookmarkedLine = so.BookmarkedLines[i];
                     sci.MarkerAdd(bookmarkedLine, 0);
                 }
                 sci.Refresh(); // Update again
@@ -124,7 +120,7 @@ namespace FlashDevelop.Managers
             if (restorePosition)
             {
                 sci.FirstVisibleLine = so.LineScroll;
-                Int32 line = sci.LineFromPosition(so.Position);
+                int line = sci.LineFromPosition(so.Position);
                 sci.SetSel(so.Position, so.Position);
                 sci.EnsureVisible(line);
             }
@@ -140,15 +136,15 @@ namespace FlashDevelop.Managers
             so.Position = sci.CurrentPos;
             so.FileName = sci.FileName;
             so.LineScroll = sci.FirstVisibleLine;
-            for (Int32 line = 0;; line++)
+            for (int line = 0;; line++)
             {
-                Int32 lineNext = sci.ContractedFoldNext(line);
+                int lineNext = sci.ContractedFoldNext(line);
                 if ((line < 0) || (lineNext < line)) break;
                 line = lineNext;
                 so.FoldedLines.Add(line);
             }
-            Int32 lineBookmark = -1;
-            while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1 << 0)) >= 0)
+            int lineBookmark = -1;
+            while ((lineBookmark = sci.MarkerNext(lineBookmark + 1, 1)) >= 0)
             {
                 so.BookmarkedLines.Add(lineBookmark);
             }
@@ -158,7 +154,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Converts a path to a valid file name
         /// </summary>
-        private static String ConvertToFileName(String path)
+        private static string ConvertToFileName(string path)
         {
             return HashCalculator.CalculateSHA1(path);
         }
@@ -168,12 +164,12 @@ namespace FlashDevelop.Managers
     [Serializable]
     public class StateObject
     {
-        public Int32 Position = 0;
-        public Int32 LineCount = 0;
-        public Int32 LineScroll = 0;
-        public String FileName = String.Empty;
-        public List<Int32> BookmarkedLines = new List<Int32>();
-        public List<Int32> FoldedLines = new List<Int32>();
+        public int Position = 0;
+        public int LineCount = 0;
+        public int LineScroll = 0;
+        public string FileName = string.Empty;
+        public List<int> BookmarkedLines = new List<int>();
+        public List<int> FoldedLines = new List<int>();
     }
 
 }

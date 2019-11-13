@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace PluginCore.Helpers
 {
@@ -7,12 +8,11 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Get type name with or without suffix 'Ex' and special cases.
         /// </summary>
-        public static String GetFilteredTypeName(Type type)
+        public static string GetFilteredTypeName(Type type)
         {
-            String name = type.Name;
+            string name = type.Name;
             name = name.EndsWithOrdinal("Ex") ? name.Remove(name.Length - 2) : name;
-            if (name == "CheckedListBox") return "ListBox";
-            else return name;
+            return name == nameof(CheckedListBox) ? nameof(ListBox) : name;
         }
     }
 }

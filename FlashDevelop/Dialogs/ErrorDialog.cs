@@ -1,12 +1,7 @@
 using System;
-using System.Text;
 using System.Media;
 using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using FlashDevelop.Helpers;
 using PluginCore.Controls;
 
 namespace FlashDevelop.Dialogs
@@ -19,7 +14,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button continueButton;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.TextBox infoTextBox;
-        private static Int32 errorCount = 1;
+        private static int errorCount = 1;
 
         public ErrorDialog()
         {
@@ -50,7 +45,7 @@ namespace FlashDevelop.Dialogs
             // 
             // exitButton
             // 
-            this.exitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.exitButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.exitButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.exitButton.Location = new System.Drawing.Point(331, 351);
             this.exitButton.Name = "exitButton";
@@ -58,7 +53,7 @@ namespace FlashDevelop.Dialogs
             this.exitButton.TabIndex = 2;
             this.exitButton.Text = "&Exit";
             this.exitButton.UseVisualStyleBackColor = true;
-            this.exitButton.Click += new System.EventHandler(this.ExitButtonClick);
+            this.exitButton.Click += this.ExitButtonClick;
             // 
             // headerLabel
             // 
@@ -72,7 +67,7 @@ namespace FlashDevelop.Dialogs
             // 
             // continueButton
             // 
-            this.continueButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.continueButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.continueButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.continueButton.Location = new System.Drawing.Point(421, 351);
             this.continueButton.Name = "continueButton";
@@ -80,14 +75,14 @@ namespace FlashDevelop.Dialogs
             this.continueButton.TabIndex = 1;
             this.continueButton.Text = "&Continue";
             this.continueButton.UseVisualStyleBackColor = true;
-            this.continueButton.Click += new System.EventHandler(this.ContinueButtonClick);
+            this.continueButton.Click += this.ContinueButtonClick;
             // 
             // infoTextBox
             // Font needs to be set here so that controls resize correctly in high-dpi
             //
             this.infoTextBox.Font = Globals.Settings.ConsoleFont;
             this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.infoTextBox.Location = new System.Drawing.Point(13, 35);
             this.infoTextBox.Multiline = true;
             this.infoTextBox.Name = "infoTextBox";
@@ -97,7 +92,7 @@ namespace FlashDevelop.Dialogs
             // 
             // countLabel
             // 
-            this.countLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.countLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.countLabel.AutoSize = true;
             this.countLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.countLabel.Location = new System.Drawing.Point(14, 355);
@@ -169,7 +164,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the form error dialog
         /// </summary>
-        private void ContinueButtonClick(Object sender, EventArgs e)
+        private void ContinueButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -177,7 +172,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Exits the application entirely
         /// </summary>
-        private void ExitButtonClick(Object sender, EventArgs e)
+        private void ExitButtonClick(object sender, EventArgs e)
         {
             Environment.Exit(1);
         }
@@ -188,14 +183,12 @@ namespace FlashDevelop.Dialogs
         public static void Show(Exception ex)
         {
             SystemSounds.Hand.Play();
-            using (ErrorDialog errorDialog = new ErrorDialog())
-            {
-                errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
-                errorDialog.countLabel.Text += " " + errorCount++;
-                if (errorCount < 7) errorDialog.exitButton.Enabled = false;
-                else errorDialog.exitButton.Enabled = true;
-                errorDialog.ShowDialog();
-            }
+            using ErrorDialog errorDialog = new ErrorDialog();
+            errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
+            errorDialog.countLabel.Text += " " + errorCount++;
+            if (errorCount < 7) errorDialog.exitButton.Enabled = false;
+            else errorDialog.exitButton.Enabled = true;
+            errorDialog.ShowDialog();
         }
 
         #endregion

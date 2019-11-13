@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ASCompletion.Completion;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using ScintillaNet;
@@ -107,9 +108,41 @@ namespace ASCompletion.Context
         /// <summary>
         /// Parse a raw source code
         /// </summary>
-        /// <param name="src"></param>
+        /// <param name="src">Source code</param>
         /// <returns></returns>
         FileModel GetCodeModel(string src);
+
+        /// <summary>
+        /// Parse a raw source code
+        /// </summary>
+        /// <param name="src">Source code</param>
+        /// <param name="scriptMode"></param>
+        /// <returns></returns>
+        FileModel GetCodeModel(string src, bool scriptMode);
+
+        /// <summary>
+        /// Rebuild a file model
+        /// </summary>
+        /// <param name="result">File model</param>
+        /// <returns></returns>
+        FileModel GetCodeModel(FileModel result);
+
+        /// <summary>
+        /// Rebuild a file model with the source provided
+        /// </summary>
+        /// <param name="result">File model</param>
+        /// <param name="src">Source code</param>
+        /// <returns></returns>
+        FileModel GetCodeModel(FileModel result, string src);
+
+        /// <summary>
+        /// Rebuild a file model with the source provided
+        /// </summary>
+        /// <param name="result">File model</param>
+        /// <param name="src">Source code</param>
+        /// <param name="scriptMode"></param>
+        /// <returns></returns>
+        FileModel GetCodeModel(FileModel result, string src, bool scriptMode);
 
         /// <summary>
         /// Retrieve a fully qualified class in classpath
@@ -132,6 +165,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Called if a FileModel needs filtering
         /// </summary>
+        /// <param name="fileName"></param>
         /// <param name="src"></param>
         /// <returns></returns>
         string FilterSource(string fileName, string src);
@@ -308,16 +342,29 @@ namespace ASCompletion.Context
         MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         /// <summary>
+        /// Let contexts handle code completion
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="expression">Completion context</param>
+        /// <param name="result">Response structure</param>
+        void ResolveDotContext(ScintillaControl sci, ASResult expression, MemberList result);
+
+        /// <summary>
         /// Let contexts resolve function at give position
         /// </summary>
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or function signature</returns>
         MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression);
 
         IContextualGenerator CodeGenerator { get; }
+
+        IContextualGenerator DocumentationGenerator { get; }
+
+        ASComplete CodeComplete { get; }
         #endregion
 
         #region Properties
@@ -376,5 +423,13 @@ namespace ASCompletion.Context
 
         #endregion
 
+        #region Custom behavior of Scintilla
+
+        /// <summary>
+        /// Provides the support for '<' and '>' matching
+        /// </summary>
+        void OnBraceMatch(ScintillaControl sci);
+
+        #endregion
     }
 }

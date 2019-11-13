@@ -41,17 +41,17 @@ namespace LitJson
         #region Fields
         private static IDictionary<int, IDictionary<int, int[]>> parse_table;
 
-        private Stack<int>    automaton_stack;
+        private readonly Stack<int>    automaton_stack;
         private int           current_input;
         private int           current_symbol;
         private bool          end_of_json;
         private bool          end_of_input;
-        private Lexer         lexer;
+        private readonly Lexer         lexer;
         private bool          parser_in_string;
         private bool          parser_return;
         private bool          read_started;
         private TextReader    reader;
-        private bool          reader_is_owned;
+        private readonly bool          reader_is_owned;
         private object        token_value;
         private JsonToken     token;
         #endregion
@@ -59,30 +59,23 @@ namespace LitJson
 
         #region Public Properties
         public bool AllowComments {
-            get { return lexer.AllowComments; }
-            set { lexer.AllowComments = value; }
+            get => lexer.AllowComments;
+            set => lexer.AllowComments = value;
         }
 
         public bool AllowSingleQuotedStrings {
-            get { return lexer.AllowSingleQuotedStrings; }
-            set { lexer.AllowSingleQuotedStrings = value; }
+            get => lexer.AllowSingleQuotedStrings;
+            set => lexer.AllowSingleQuotedStrings = value;
         }
 
-        public bool EndOfInput {
-            get { return end_of_input; }
-        }
+        public bool EndOfInput => end_of_input;
 
-        public bool EndOfJson {
-            get { return end_of_json; }
-        }
+        public bool EndOfJson => end_of_json;
 
-        public JsonToken Token {
-            get { return token; }
-        }
+        public JsonToken Token => token;
 
-        public object Value {
-            get { return token_value; }
-        }
+        public object Value => token_value;
+
         #endregion
 
 
@@ -104,8 +97,8 @@ namespace LitJson
 
         private JsonReader (TextReader reader, bool owned)
         {
-            if (reader == null)
-                throw new ArgumentNullException ("reader");
+            if (reader is null)
+                throw new ArgumentNullException (nameof(reader));
 
             parser_in_string = false;
             parser_return = false;
@@ -254,7 +247,7 @@ namespace LitJson
                 number.IndexOf ('E') != -1) {
 
                 double n_double;
-                if (Double.TryParse (number, out n_double)) {
+                if (double.TryParse (number, out n_double)) {
                     token = JsonToken.Double;
                     token_value = n_double;
 
@@ -263,7 +256,7 @@ namespace LitJson
             }
 
             int n_int32;
-            if (Int32.TryParse (number, out n_int32)) {
+            if (int.TryParse (number, out n_int32)) {
                 token = JsonToken.Int;
                 token_value = n_int32;
 
@@ -271,7 +264,7 @@ namespace LitJson
             }
 
             long n_int64;
-            if (Int64.TryParse (number, out n_int64)) {
+            if (long.TryParse (number, out n_int64)) {
                 token = JsonToken.Long;
                 token_value = n_int64;
 

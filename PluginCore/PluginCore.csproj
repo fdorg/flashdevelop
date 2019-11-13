@@ -69,6 +69,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>Bin\Release\</OutputPath>
@@ -91,12 +92,14 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>Bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -106,12 +109,12 @@
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -311,6 +314,7 @@
     </Compile>
     <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
+    <Compile Include="PluginCore\Collections\EmptyArray.cs" />
     <Compile Include="PluginCore\Collections\FixedSizeQueue.cs" />
     <Compile Include="PluginCore\Controls\CodeTip.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
@@ -319,6 +323,12 @@
     <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
     <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\MemoryMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\MemoryMessageBox.Designer.cs">
+      <DependentUpon>MemoryMessageBox.cs</DependentUpon>
     </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">

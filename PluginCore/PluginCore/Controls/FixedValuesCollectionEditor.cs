@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using PluginCore.Helpers;
-using PluginCore.Utilities;
 
 namespace PluginCore.Controls
 {
@@ -212,10 +205,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets the modified array of items.
         /// </summary>
-        public T[] Value
-        {
-            get { return value; }
-        }
+        public T[] Value => value;
 
         #endregion
 
@@ -410,18 +400,12 @@ namespace PluginCore.Controls
 
         class Item : ListViewItem
         {
-            bool locked;
-            T value;
+            readonly bool locked;
+            readonly T value;
 
-            public bool Locked
-            {
-                get { return locked; }
-            }
+            public bool Locked => locked;
 
-            public T Value
-            {
-                get { return value; }
-            }
+            public T Value => value;
 
             public Item(T value) : this(value, false)
             {

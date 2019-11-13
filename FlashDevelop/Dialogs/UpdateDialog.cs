@@ -18,8 +18,8 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Button downloadButton;
         private System.ComponentModel.BackgroundWorker worker;
-        private String URL = DistroConfig.DISTRIBUTION_VERSION;
-        private static Boolean silentCheck = false;
+        private readonly string URL = DistroConfig.DISTRIBUTION_VERSION;
+        private static bool silentCheck = false;
 
         public UpdateDialog()
         {
@@ -46,7 +46,7 @@ namespace FlashDevelop.Dialogs
             // 
             // downloadButton
             //
-            this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.downloadButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.downloadButton.Enabled = false;
             this.downloadButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.downloadButton.Location = new System.Drawing.Point(72, 69);
@@ -55,11 +55,11 @@ namespace FlashDevelop.Dialogs
             this.downloadButton.TabIndex = 2;
             this.downloadButton.Text = "&Download Update";
             this.downloadButton.UseVisualStyleBackColor = true;
-            this.downloadButton.Click += new System.EventHandler(this.DownloadButtonClick);
+            this.downloadButton.Click += this.DownloadButtonClick;
             // 
             // infoLabel
             //
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.infoLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.infoLabel.Location = new System.Drawing.Point(13, 13);
             this.infoLabel.Name = "infoLabel";
@@ -70,7 +70,7 @@ namespace FlashDevelop.Dialogs
             // 
             // closeButton
             //
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(194, 69);
             this.closeButton.Name = "closeButton";
@@ -78,7 +78,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // UpdateDialog
             //
@@ -96,7 +96,7 @@ namespace FlashDevelop.Dialogs
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Update Check";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DialogClosed);
+            this.FormClosed += this.DialogClosed;
             this.ResumeLayout(false);
 
         }
@@ -119,11 +119,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Downloads the new flashdevelop release
         /// </summary>
-        private void DownloadButtonClick(Object sender, EventArgs e)
+        private void DownloadButtonClick(object sender, EventArgs e)
         {
             try
             {
-                String address = this.updateInfo.DownloadUrl;
+                string address = this.updateInfo.DownloadUrl;
                 ProcessHelper.StartAsync(address);
             }
             catch (Exception ex)
@@ -136,7 +136,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// When the form is closed cancel the update check
         /// </summary>
-        private void DialogClosed(Object sender, FormClosedEventArgs e)
+        private void DialogClosed(object sender, FormClosedEventArgs e)
         {
             if (this.worker.IsBusy)
             {
@@ -147,7 +147,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the dialog when user clicks buttons
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
+        private void CloseButtonClick(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -158,8 +158,8 @@ namespace FlashDevelop.Dialogs
         private void InitializeUpdating()
         {
             this.worker = new BackgroundWorker();
-            this.worker.DoWork += new DoWorkEventHandler(this.WorkerDoWork);
-            this.worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.WorkerCompleted);
+            this.worker.DoWork += this.WorkerDoWork;
+            this.worker.RunWorkerCompleted += this.WorkerCompleted;
             this.worker.WorkerSupportsCancellation = true;
             this.worker.RunWorkerAsync();
         }
@@ -167,7 +167,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Does the actual work on background
         /// </summary>
-        private void WorkerDoWork(Object sender, DoWorkEventArgs e)
+        private void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -175,11 +175,11 @@ namespace FlashDevelop.Dialogs
                 WebResponse response = request.GetResponse();
                 Stream stream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(stream);
-                String version = reader.ReadLine(); // Read version
-                String download = reader.ReadLine(); // Read download
-                String product = Application.ProductName; // Internal version
-                Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
-                String current = product.Substring(lenght, product.IndexOfOrdinal(" for") - lenght);
+                string version = reader.ReadLine(); // Read version
+                string download = reader.ReadLine(); // Read download
+                string product = Application.ProductName; // Internal version
+                int lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
+                string current = product.Substring(lenght, product.IndexOfOrdinal(" for") - lenght);
                 stream.Close(); response.Close(); // Close all resources
                 e.Result = new UpdateInfo(current, version, download);
             }
@@ -193,27 +193,27 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Handles the finish of the update check
         /// </summary>
-        private void WorkerCompleted(Object sender, RunWorkerCompletedEventArgs e)
+        private void WorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.updateInfo = (UpdateInfo)e.Result;
-            if (this.updateInfo == null)
+            if (this.updateInfo is null)
             {
-                String info = TextHelper.GetString("Info.UpdateCheckFailed");
-                String formatted = String.Format(info, "\n\n");
+                string info = TextHelper.GetString("Info.UpdateCheckFailed");
+                string formatted = string.Format(info, "\n\n");
                 this.infoLabel.Text = formatted;
                 if (silentCheck) this.Close();
             }
             else if (this.updateInfo.NeedsUpdate)
             {
                 this.downloadButton.Enabled = true;
-                String info = TextHelper.GetString("Info.UpdateAvailable");
-                String formatted = String.Format(info, "\n\n", this.updateInfo.UserVersion, this.updateInfo.ServerVersion);
+                string info = TextHelper.GetString("Info.UpdateAvailable");
+                string formatted = string.Format(info, "\n\n", this.updateInfo.UserVersion, this.updateInfo.ServerVersion);
                 this.infoLabel.Text = formatted;
                 if (silentCheck) this.ShowDialog();
             }
             else
             {
-                String info = TextHelper.GetString("Info.NoUpdateAvailable");
+                string info = TextHelper.GetString("Info.NoUpdateAvailable");
                 this.infoLabel.Text = info;
                 if (silentCheck) this.Close();
             }
@@ -222,11 +222,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the update dialog
         /// </summary>
-        public static void Show(Boolean silent)
+        public static void Show(bool silent)
         {
             silentCheck = silent;
-            using (UpdateDialog updateDialog = new UpdateDialog())
-                if (!silentCheck) updateDialog.ShowDialog();
+            using UpdateDialog updateDialog = new UpdateDialog();
+            if (!silentCheck) updateDialog.ShowDialog();
         }
 
         #endregion
@@ -237,12 +237,12 @@ namespace FlashDevelop.Dialogs
 
     public class UpdateInfo
     {
-        public String UserVersion = null;
-        public String ServerVersion = null;
-        public String DownloadUrl = "http://www.flashdevelop.org/community/viewforum.php?f=11";
-        public Boolean NeedsUpdate = false;
+        public string UserVersion = null;
+        public string ServerVersion = null;
+        public string DownloadUrl = "http://www.flashdevelop.org/community/viewforum.php?f=11";
+        public bool NeedsUpdate = false;
 
-        public UpdateInfo(String userVersion, String serverVersion, String downloadUrl)
+        public UpdateInfo(string userVersion, string serverVersion, string downloadUrl)
         {
             this.UserVersion = userVersion;
             this.ServerVersion = serverVersion;
@@ -257,7 +257,7 @@ namespace FlashDevelop.Dialogs
         {
             try
             {
-                Int32 result = String.Compare(this.UserVersion, this.ServerVersion, true);
+                int result = string.Compare(this.UserVersion, this.ServerVersion, true);
                 this.NeedsUpdate = (result < 0);
             }
             catch (Exception ex)

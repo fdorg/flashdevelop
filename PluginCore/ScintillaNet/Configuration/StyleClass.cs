@@ -53,11 +53,8 @@ namespace ScintillaNet.Configuration
                 // Caution: It is not programmatically guaranteed that there is a default.
                 if (!name.Equals("default"))
                 {
-                    if (language != null)
-                    {
-                        StyleClass defaultCls = language.usestyles[0]; // First should be default...
-                        if (defaultCls != null) return defaultCls;
-                    }
+                    StyleClass defaultCls = language?.usestyles[0]; // First should be default...
+                    if (defaultCls != null) return defaultCls;
                     return _parent.MasterScintilla.GetStyleClass("default");
                 }
                 return null;
@@ -231,14 +228,14 @@ namespace ScintillaNet.Configuration
                 Color c = Color.FromName(aColor);
                 if (c.ToArgb() == 0)
                 {
-                    if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
-                    else 
+                    if (aColor.IndexOfOrdinal("0x") == 0) return TO_COLORREF(int.Parse(aColor.Substring(2), NumberStyles.HexNumber));
+                    try
                     {
-                        try
-                        {
-                            return TO_COLORREF(Int32.Parse(aColor));
-                        }
-                        catch(Exception){}
+                        return TO_COLORREF(int.Parse(aColor));
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
                 return TO_COLORREF(c.ToArgb() & 0x00ffffff);
@@ -254,20 +251,20 @@ namespace ScintillaNet.Configuration
         {
             if (number != null)
             {
-                Value v = _parent.MasterScintilla.GetValue(number);
+                var v = _parent.MasterScintilla.GetValue(number);
                 while (v != null)
                 {
                     number = v.val;
                     v = _parent.MasterScintilla.GetValue(number);
                 }
-                if (number.IndexOfOrdinal("0x") == 0) return Int32.Parse(number.Substring(2), NumberStyles.HexNumber);
-                else
+                if (number.IndexOfOrdinal("0x") == 0) return int.Parse(number.Substring(2), NumberStyles.HexNumber);
+                try
                 {
-                    try
-                    {
-                        return Int32.Parse(number);
-                    }
-                    catch(Exception){}
+                    return int.Parse(number);
+                }
+                catch
+                {
+                    // ignored
                 }
             }
             return 0;
@@ -276,9 +273,9 @@ namespace ScintillaNet.Configuration
 
         public string ResolveString(string number)
         {
-            Value value = null;
             if (number != null)
             {
+                Value value;
                 for (value = _parent.MasterScintilla.GetValue(number); value != null; value = _parent.MasterScintilla.GetValue(number))
                 {
                     number = value.val;
@@ -289,9 +286,9 @@ namespace ScintillaNet.Configuration
 
         public string ResolveFont(string name)
         {
-            Value value = null;
             if (name != null)
             {
+                Value value;
                 for (value = _parent.MasterScintilla.GetValue(name); value != null; value = _parent.MasterScintilla.GetValue(name))
                 {
                     name = value.val;
@@ -299,8 +296,8 @@ namespace ScintillaNet.Configuration
             }
             try  // Choose first font that is found...
             {
-                String[] fonts = name.Split(',');
-                foreach (String font in fonts)
+                string[] fonts = name.Split(',');
+                foreach (string font in fonts)
                 {
                     if (IsFontInstalled(font)) return font;
                 }
@@ -311,10 +308,8 @@ namespace ScintillaNet.Configuration
 
         private static bool IsFontInstalled(string fontName)
         {
-            using (var testFont = new Font(fontName, 9))
-            {
-                return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
-            }
+            using var testFont = new Font(fontName, 9);
+            return fontName.Equals(testFont.Name, StringComparison.InvariantCultureIgnoreCase);
         }
         
     }

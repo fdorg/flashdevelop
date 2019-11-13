@@ -12,13 +12,10 @@ namespace FlashDebugger.Controls.DataTree
 
         public override string Value
         {
-            get
-            {
-                return base.Value;
-            }
+            get => base.Value;
             set
             {
-                if (m_Variable == null)
+                if (m_Variable is null)
                     return;
 
                 var flashInterface = PluginMain.debugManager.FlashInterface;
@@ -32,7 +29,7 @@ namespace FlashDebugger.Controls.DataTree
         private Variable m_Variable;
         public Variable Variable
         {
-            get { return m_Variable; }
+            get => m_Variable;
             set
             {
                 if (m_Variable == value) return;
@@ -91,26 +88,22 @@ namespace FlashDebugger.Controls.DataTree
 
     internal static class NodeExtensions
     {
-        public static String GetVariablePath(this Node node)
+        public static string GetVariablePath(this Node node)
         {
-            String ret = string.Empty;
-            if (node.Tag != null && node.Tag is String)
-                return (String)node.Tag; // fix for: live tip value has no parent
+            string ret = string.Empty;
+            if (node.Tag is string tag) return tag; // fix for: live tip value has no parent
             if (node.Parent != null) ret = node.Parent.GetVariablePath();
-            if (node is VariableNode)
+            VariableNode datanode = node as VariableNode;
+            if (datanode?.Variable != null)
             {
-                VariableNode datanode = node as VariableNode;
-                if (datanode.Variable != null)
+                if (ret == "") return datanode.Variable.getName();
+                if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
                 {
-                    if (ret == "") return datanode.Variable.getName();
-                    if ((datanode.Variable.getAttributes() & 0x00020000) == 0x00020000) //VariableAttribute_.IS_DYNAMIC
-                    {
-                        ret += "[\"" + datanode.Variable.getName() + "\"]";
-                    }
-                    else
-                    {
-                        ret += "." + datanode.Variable.getName();
-                    }
+                    ret += "[\"" + datanode.Variable.getName() + "\"]";
+                }
+                else
+                {
+                    ret += "." + datanode.Variable.getName();
                 }
             }
             return ret;

@@ -5,10 +5,10 @@ namespace ProjectManager.Building.AS3
 {
     class MxmlcArgumentBuilder : ArgumentBuilder
     {
-        AS3Project project;
-        bool flex45;
-        bool flex410;
-        bool asc2;
+        readonly AS3Project project;
+        readonly bool flex45;
+        readonly bool flex410;
+        readonly bool asc2;
 
         public MxmlcArgumentBuilder(AS3Project project, double sdkVersion, bool asc2Mode)
         {
@@ -54,7 +54,7 @@ namespace ProjectManager.Building.AS3
             bool hasVersion = false;
             if (options.Additional != null)
             {
-                string all = String.Join(" ", options.Additional);
+                string all = string.Join(" ", options.Additional);
                 if (all.IndexOf("configname", StringComparison.Ordinal) > 0) hasConfig = true;
                 if (all.IndexOf("swf-version", StringComparison.Ordinal) > 0) hasVersion = true;
             }
@@ -80,14 +80,8 @@ namespace ProjectManager.Building.AS3
                 Add(options.Additional, releaseMode);
         }
 
-        void AddEq(string argument, string value)
-        {
-            Add(argument + "=" + value);
-        }
+        void AddEq(string argument, string value) => Add(argument + "=" + value);
 
-        void AddEq(string argument, bool value)
-        {
-            AddEq(argument, value ? "true" : "false");
-        }
+        void AddEq(string argument, bool value) => AddEq(argument, value ? "true" : "false");
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 
 namespace ProjectManager.Controls
@@ -13,7 +12,7 @@ namespace ProjectManager.Controls
             public void SimpleTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "src\\Main.hx",
                     "src\\StaticClass.hx",
                     "src\\com\\Test.xml",
@@ -29,7 +28,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
                 });
-                var results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
+                var results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
                 
                 Assert.AreEqual("src\\Main.hx", results[0]); //shortest and also starts with an "m", so should be first
             }
@@ -38,17 +37,17 @@ namespace ProjectManager.Controls
             public void LimitTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "Main.hx",
                     "src\\com\\module\\example\\ExampleModule.hx",
                     "src\\com\\module\\example\\IExampleModule.hx",
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
                 });
-                var results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
+                var results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
                 Assert.AreEqual(results.Count, 1);
 
-                results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
+                results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
                 Assert.Greater(results.Count, 0);
             }
 
@@ -56,7 +55,7 @@ namespace ProjectManager.Controls
             public void IClassTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "hexannotation\\hex\\annotation\\AnnotationData.hx",
                     "hexannotation\\hex\\annotation\\AnnotationReader.hx",
                     "hexannotation\\hex\\annotation\\ArgumentData.hx",
@@ -68,7 +67,7 @@ namespace ProjectManager.Controls
                     "src\\Main.hx",
                     "src\\StaticClass.hx"
                 });
-                var results = SearchUtil.getMatchedItems(files, "iclass", "\\", 2);
+                var results = SearchUtil.getMatchedItems(files, "iclass", '\\', 2);
 
                 //since the file name starts with iclass, it should be prefered over "src\\StaticClass.hx", which has 
                 Assert.AreEqual("hexannotation\\hex\\annotation\\IClassAnnotationDataProvider.hx", results[0]);
@@ -81,7 +80,7 @@ namespace ProjectManager.Controls
             public void TestTest()
             {
                 List<string> files = new List<string>();
-                files.AddRange(new string[] {
+                files.AddRange(new[] {
                     "src\\StaticClass.hx",
                     "src\\com\\module\\ITestModule.hx",
                     "src\\com\\module\\TestModule.hx",
@@ -91,7 +90,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\TestModule.hx"
                 });
 
-                var results = SearchUtil.getMatchedItems(files, "test\\test", "\\", 0);
+                var results = SearchUtil.getMatchedItems(files, "test\\test", '\\', 0);
 
                 //"test\\TestModule.hx" should be first, because it has test in the path and also in the beginning of the file name
                 Assert.AreEqual("src\\com\\module\\test\\TestModule.hx", results[0]);

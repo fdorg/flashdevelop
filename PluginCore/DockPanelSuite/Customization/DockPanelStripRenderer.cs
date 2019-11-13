@@ -44,15 +44,15 @@ namespace System.Windows.Forms
 
     public class DockPanelStripRenderer : ToolStripRenderer
     {
-        private Boolean useTheme;
+        private readonly bool useTheme;
         private ToolStrip toolStrip;
-        private Boolean drawBottomBorder;
-        private ProfessionalColorTable colorTable;
+        private readonly bool drawBottomBorder;
+        private readonly ProfessionalColorTable colorTable;
         private static ToolStripRenderer renderer;
 
         public DockPanelStripRenderer() : this(true) {}
-        public DockPanelStripRenderer(Boolean drawBottomBorder) : this(drawBottomBorder, true) {}
-        public DockPanelStripRenderer(Boolean drawBottomBorder, Boolean useTheme)
+        public DockPanelStripRenderer(bool drawBottomBorder) : this(drawBottomBorder, true) {}
+        public DockPanelStripRenderer(bool drawBottomBorder, bool useTheme)
         {
             this.useTheme = useTheme;
             this.drawBottomBorder = drawBottomBorder;
@@ -62,7 +62,7 @@ namespace System.Windows.Forms
             else renderer = new ToolStripProfessionalRenderer(this.colorTable);
         }
 
-        private Color GetThemeColor(String id)
+        private Color GetThemeColor(string id)
         {
             if (!useTheme) return Color.Empty;
             return PluginBase.MainForm.GetThemeColor(id);
@@ -80,13 +80,13 @@ namespace System.Windows.Forms
         {
             base.InitializeItem(item);
             // Set default blank image to look ok in high dpi
-            if (item.Image == null && item.IsOnDropDown)
+            if (item.Image is null && item.IsOnDropDown)
             {
                 item.Image = PluginBase.MainForm.FindImage("-1", false);
             }
             if (item is ToolStripButton)
             {
-                Double scale = ScaleHelper.GetScale();
+                double scale = ScaleHelper.GetScale();
                 if (scale >= 1.5)
                 {
                     item.Padding = new Padding(4, 2, 4, 2);
@@ -100,22 +100,20 @@ namespace System.Windows.Forms
                     item.Padding = new Padding(2, 2, 2, 2);
                 }
             }
-            else if (item is ToolStripComboBoxEx)
+            else if (item is ToolStripComboBoxEx comboBox)
             {
-                ToolStripComboBoxEx comboBox = item as ToolStripComboBoxEx;
                 comboBox.Margin = new Padding(2, 0, 2, 0);
                 comboBox.FlatCombo.UseTheme = useTheme;
             }
         }
 
-        private void OnToolStripPaint(Object sender, PaintEventArgs e)
+        private void OnToolStripPaint(object sender, PaintEventArgs e)
         {
             Color tborder = GetThemeColor("ToolStripTextBoxControl.BorderColor");
             foreach (ToolStripItem item in this.toolStrip.Items)
             {
-                if (item is ToolStripTextBox)
+                if (item is ToolStripTextBox textBox)
                 {
-                    ToolStripTextBox textBox = item as ToolStripTextBox;
                     if (tborder != Color.Empty)
                     {
                         Size size = textBox.TextBox.Size;
@@ -125,7 +123,7 @@ namespace System.Windows.Forms
                             textBox.Margin = new Padding(2, 1, 2, 1);
                             textBox.BorderStyle = BorderStyle.None;
                         }
-                        e.Graphics.FillRectangle(new SolidBrush(item.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
+                        e.Graphics.FillRectangle(new SolidBrush(textBox.BackColor), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                         e.Graphics.DrawRectangle(new Pen(tborder), location.X - 2, location.Y - 3, size.Width + 2, size.Height + 6);
                     }
                     else if (textBox.BorderStyle != BorderStyle.Fixed3D) // Reset
@@ -140,7 +138,7 @@ namespace System.Windows.Forms
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
             if (e.ToolStrip is StatusStrip) return;
-            else if (e.ToolStrip is ToolStripDropDownMenu)
+            if (e.ToolStrip is ToolStripDropDownMenu)
             {
                 Color back2 = GetThemeColor("ToolStripMenu.BackColor");
                 if (back2 != Color.Empty)
@@ -191,7 +189,7 @@ namespace System.Windows.Forms
                 if (e.ToolStrip is ToolStripDropDownMenu) renderer.DrawSeparator(e);
                 else
                 {
-                    Int32 middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
+                    int middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
                     e.Graphics.DrawLine(SystemPens.ControlDark, middle - 1, e.Item.ContentRectangle.Top + 1, middle - 1, e.Item.ContentRectangle.Bottom - 2);
                     e.Graphics.DrawLine(SystemPens.ControlLightLight, middle, e.Item.ContentRectangle.Top + 1, middle, e.Item.ContentRectangle.Bottom - 2);
                 }
@@ -203,7 +201,7 @@ namespace System.Windows.Forms
                 if (dark != Color.Empty && light != Color.Empty)
                 {
                     Pen pen = new Pen(dark);
-                    Int32 middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
+                    int middle = e.Item.ContentRectangle.Left + e.Item.ContentRectangle.Width / 2;
                     e.Graphics.DrawLine(pen, middle - 1, e.Item.ContentRectangle.Top + 2, middle - 1, e.Item.ContentRectangle.Bottom - 4);
                     pen.Dispose();
                     Pen pen2 = new Pen(light);
@@ -218,7 +216,7 @@ namespace System.Windows.Forms
                 if (sepFore != Color.Empty)
                 {
                     Pen pen2 = new Pen(sepFore);
-                    Int32 middle = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
+                    int middle = e.Item.ContentRectangle.Top + e.Item.ContentRectangle.Height / 2;
                     e.Graphics.DrawLine(pen2, ScaleHelper.Scale(16) + 16, middle, e.Item.ContentRectangle.Right - 6, middle);
                     pen2.Dispose();
                 }
@@ -235,17 +233,17 @@ namespace System.Windows.Forms
                 using (Brush lightBrush = new SolidBrush(fore == Color.Empty ? this.colorTable.GripLight : fore))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 6, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(lightBrush, r);
                         r.Offset(0, 4);
                     }
                 }
                 Color back = GetThemeColor("ToolStrip.3dDarkColor");
-                using (Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark : back))
+                using Brush darkBrush = new SolidBrush(back == Color.Empty ? this.colorTable.GripDark : back);
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 5, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(darkBrush, r);
                         r.Offset(0, 4);
@@ -258,16 +256,17 @@ namespace System.Windows.Forms
                 using (Brush lightBrush = new SolidBrush(this.colorTable.GripLight))
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left, e.GripBounds.Top + 8, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(lightBrush, r);
                         r.Offset(0, 4);
                     }
                 }
-                using (Brush darkBrush = new SolidBrush(this.colorTable.GripDark))
+
+                using Brush darkBrush = new SolidBrush(this.colorTable.GripDark);
                 {
                     Rectangle r = new Rectangle(e.GripBounds.Left - 1, e.GripBounds.Top + 7, 2, 2);
-                    for (Int32 i = 0; i < e.GripBounds.Height - 11; i += 4)
+                    for (int i = 0; i < e.GripBounds.Height - 11; i += 4)
                     {
                         e.Graphics.FillRectangle(darkBrush, r);
                         r.Offset(0, 4);
@@ -327,7 +326,7 @@ namespace System.Windows.Forms
         {
             if (renderer is ToolStripProfessionalRenderer)
             {
-                Boolean isOver = false;
+                bool isOver = false;
                 Color back = GetThemeColor("ToolStripItem.BackColor");
                 Color border = GetThemeColor("ToolStripItem.BorderColor");
                 Color active = GetThemeColor("ToolStripMenu.DropDownBorderColor");
@@ -429,33 +428,31 @@ namespace System.Windows.Forms
             Color light = GetThemeColor("ToolStrip.3dLightColor");
             if (dark != Color.Empty && light != Color.Empty)
             {
-                using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
+                using SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light);
+                // Do we need to invert the drawing edge?
+                bool rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
+                // Find vertical position of the lowest grip line
+                int y = e.AffectedBounds.Bottom - 3 * 2 + 1;
+                // Draw three lines of grips
+                for (int i = 3; i >= 1; i--)
                 {
-                    // Do we need to invert the drawing edge?
-                    Boolean rtl = (e.ToolStrip.RightToLeft == RightToLeft.Yes);
-                    // Find vertical position of the lowest grip line
-                    Int32 y = e.AffectedBounds.Bottom - 3 * 2 + 1;
-                    // Draw three lines of grips
-                    for (Int32 i = 3; i >= 1; i--)
+                    // Find the rightmost grip position on the line
+                    int x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
+                    // Draw grips from right to left on line
+                    for (int j = 0; j < i; j++)
                     {
-                        // Find the rightmost grip position on the line
-                        Int32 x = (rtl ? e.AffectedBounds.Left + 1 : e.AffectedBounds.Right - 3 * 2 + 1);
-                        // Draw grips from right to left on line
-                        for (Int32 j = 0; j < i; j++)
-                        {
-                            // Just the single grip glyph
-                            DrawGripGlyph(e.Graphics, x, y, darkBrush, lightBrush);
-                            // Move left to next grip position
-                            x -= (rtl ? -4 : 4);
-                        }
-                        // Move upwards to next grip line
-                        y -= 4;
+                        // Just the single grip glyph
+                        DrawGripGlyph(e.Graphics, x, y, darkBrush, lightBrush);
+                        // Move left to next grip position
+                        x -= (rtl ? -4 : 4);
                     }
+                    // Move upwards to next grip line
+                    y -= 4;
                 }
             }
             else renderer.DrawStatusStripSizingGrip(e);
         }
-        private void DrawGripGlyph(Graphics g, Int32 x, Int32 y, Brush darkBrush, Brush lightBrush)
+        private void DrawGripGlyph(Graphics g, int x, int y, Brush darkBrush, Brush lightBrush)
         {
             g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
             g.FillRectangle(darkBrush, x, y, 2, 2);
@@ -469,50 +466,48 @@ namespace System.Windows.Forms
             if (!e.Item.Enabled) e.ArrowColor = SystemColors.GrayText;
             else if (color != Color.Empty) e.ArrowColor = color;
             else e.ArrowColor = SystemColors.MenuText;
-            using (Brush brush = new SolidBrush(e.ArrowColor))
+            using Brush brush = new SolidBrush(e.ArrowColor);
+            Point[] arrow;
+            int hor = ScaleHelper.Scale(2);
+            int ver = ScaleHelper.Scale(2);
+            Point middle = new Point(dropDownRect.Left + dropDownRect.Width / 2, dropDownRect.Top + dropDownRect.Height / 2);
+            switch (e.Direction)
             {
-                Point[] arrow;
-                Int32 hor = ScaleHelper.Scale(2);
-                Int32 ver = ScaleHelper.Scale(2);
-                Point middle = new Point(dropDownRect.Left + dropDownRect.Width / 2, dropDownRect.Top + dropDownRect.Height / 2);
-                switch (e.Direction)
-                {
-                    case ArrowDirection.Up:
-                        arrow = new Point[] 
-                        {
-                            new Point(middle.X - hor, middle.Y + 1),
-                            new Point(middle.X + hor + 1, middle.Y + 1),
-                            new Point(middle.X, middle.Y - ver)
-                        };
-                        break;
-                    case ArrowDirection.Left:
-                        arrow = new Point[] 
-                        {
-                            new Point(middle.X + hor, middle.Y - 2 * ver),
-                            new Point(middle.X + hor, middle.Y + 2 * ver),
-                            new Point(middle.X - hor, middle.Y)
-                        };
-                        break;
-                    case ArrowDirection.Right:
-                        arrow = new Point[] 
-                        {
-                            new Point(middle.X - hor, middle.Y - 2 * ver),
-                            new Point(middle.X - hor, middle.Y + 2 * ver),
-                            new Point(middle.X + hor, middle.Y)
-                        };
-                        break;
-                    case ArrowDirection.Down:
-                    default:
-                        arrow = new Point[] 
-                        {
-                            new Point(middle.X - hor, middle.Y - 1),
-                            new Point(middle.X + hor + 1, middle.Y - 1),
-                            new Point(middle.X, middle.Y + ver) 
-                        };
-                        break;
-                }
-                g.FillPolygon(brush, arrow);
+                case ArrowDirection.Up:
+                    arrow = new[] 
+                    {
+                        new Point(middle.X - hor, middle.Y + 1),
+                        new Point(middle.X + hor + 1, middle.Y + 1),
+                        new Point(middle.X, middle.Y - ver)
+                    };
+                    break;
+                case ArrowDirection.Left:
+                    arrow = new[] 
+                    {
+                        new Point(middle.X + hor, middle.Y - 2 * ver),
+                        new Point(middle.X + hor, middle.Y + 2 * ver),
+                        new Point(middle.X - hor, middle.Y)
+                    };
+                    break;
+                case ArrowDirection.Right:
+                    arrow = new[] 
+                    {
+                        new Point(middle.X - hor, middle.Y - 2 * ver),
+                        new Point(middle.X - hor, middle.Y + 2 * ver),
+                        new Point(middle.X + hor, middle.Y)
+                    };
+                    break;
+                case ArrowDirection.Down:
+                default:
+                    arrow = new[] 
+                    {
+                        new Point(middle.X - hor, middle.Y - 1),
+                        new Point(middle.X + hor + 1, middle.Y - 1),
+                        new Point(middle.X, middle.Y + ver) 
+                    };
+                    break;
             }
+            g.FillPolygon(brush, arrow);
         }
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
@@ -532,7 +527,7 @@ namespace System.Windows.Forms
             if (renderer is ToolStripProfessionalRenderer)
             {
                 // Do not render set blank image if its a checked. Workaround for incorrect menu width.
-                if (e.Item is ToolStripMenuItem && e.Item != null && ((ToolStripMenuItem)e.Item).Checked) return;
+                if (e.Item is ToolStripMenuItem && ((ToolStripMenuItem)e.Item).Checked) return;
             }
             renderer.DrawItemImage(e);
         }

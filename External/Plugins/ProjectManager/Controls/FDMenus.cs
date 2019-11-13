@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Windows.Forms;
-using ProjectManager.Controls;
 using PluginCore.Localization;
 using PluginCore;
-using PluginCore.Utilities;
 using System.Collections.Generic;
 using ProjectManager.Projects;
 using PluginCore.Helpers;
@@ -70,7 +65,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector = new ToolStripComboBoxEx();
             ConfigurationSelector.Name = "ConfigurationSelector";
             ConfigurationSelector.ToolTipText = TextHelper.GetString("ToolTip.SelectConfiguration");
-            ConfigurationSelector.Items.AddRange(new string[] { TextHelper.GetString("Info.Debug"), TextHelper.GetString("Info.Release") });
+            ConfigurationSelector.Items.AddRange(new object[] { TextHelper.GetString("Info.Debug"), TextHelper.GetString("Info.Release") });
             ConfigurationSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             ConfigurationSelector.AutoSize = false;
             ConfigurationSelector.Enabled = false;
@@ -99,9 +94,7 @@ namespace ProjectManager.Controls
         private int GetThemeWidth(string themeId, int defaultValue)
         {
             string strValue = PluginBase.MainForm.GetThemeValue(themeId);
-            int intValue;
-            if (int.TryParse(strValue, out intValue)) return intValue;
-            else return defaultValue;
+            return int.TryParse(strValue, out var intValue) ? intValue : defaultValue;
         }
 
         public void EnableTargetBuildSelector(bool enabled)
@@ -113,7 +106,7 @@ namespace ProjectManager.Controls
 
         public bool DisabledForBuild
         {
-            get { return !TestMovie.Enabled; }
+            get => !TestMovie.Enabled;
             set
             {
                 BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
@@ -136,17 +129,20 @@ namespace ProjectManager.Controls
         {
             TargetBuildSelector.Text = "";
             EnableTargetBuildSelector(false);
+            TestMovie.Enabled = false;
+            BuildProject.Enabled = false;
+            ProjectMenu.ProjectItemsEnabled = false;
         }
 
         public void ProjectChanged(Project project)
         {
             TargetBuildSelector.Items.Clear();
-            if (project.MovieOptions.DefaultBuildTargets != null && project.MovieOptions.DefaultBuildTargets.Length > 0)
+            if (!project.MovieOptions.DefaultBuildTargets.IsNullOrEmpty())
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.DefaultBuildTargets);
                 TargetBuildSelector.Text = project.MovieOptions.DefaultBuildTargets[0];
             }
-            else if (project.MovieOptions.TargetBuildTypes != null && project.MovieOptions.TargetBuildTypes.Length > 0)
+            else if (!project.MovieOptions.TargetBuildTypes.IsNullOrEmpty())
             {
                 TargetBuildSelector.Items.AddRange(project.MovieOptions.TargetBuildTypes);
                 string target = project.TargetBuild ?? project.MovieOptions.TargetBuildTypes[0];
@@ -164,7 +160,7 @@ namespace ProjectManager.Controls
 
         internal void AddTargetBuild(string target)
         {
-            if (target == null) return;
+            if (target is null) return;
             target = target.Trim();
             if (target.Length > 0 && !TargetBuildSelector.Items.Contains(target)) 
                 TargetBuildSelector.Items.Insert(0, target);
@@ -194,7 +190,7 @@ namespace ProjectManager.Controls
         public ToolStripMenuItem CleanProject;
         public ToolStripMenuItem Properties;
 
-        private List<ToolStripItem> AllItems;
+        private readonly List<ToolStripItem> AllItems;
 
         public ProjectMenu()
         {

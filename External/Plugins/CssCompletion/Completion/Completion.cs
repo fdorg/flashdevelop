@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PluginCore;
 using PluginCore.Controls;
@@ -13,9 +13,9 @@ namespace CssCompletion
 {
     public class Completion
     {
-        Regex reNavPrefix = new Regex("\\-[a-z]+\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        Settings settings;
-        Language lang;
+        readonly Regex reNavPrefix = new Regex("\\-[a-z]+\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        readonly Settings settings;
+        readonly Language lang;
         string wordChars;
         List<ICompletionListItem> htmlTags;
         List<ICompletionListItem> properties;
@@ -56,7 +56,7 @@ namespace CssCompletion
             bool autoInsert = false;
 
             char c = (char)value;
-            if (wordChars.IndexOf(c) < 0)
+            if (!wordChars.Contains(c))
             {
                 if (c == ':')
                 {
@@ -95,7 +95,7 @@ namespace CssCompletion
             var mode = CompleteMode.None;
 
             if (context.InComments) return;
-            else if (context.InBlock)
+            if (context.InBlock)
             {
                 if (context.Word == "-") mode = CompleteMode.Prefix;
                 else if (context.Word.Length >= 2 || (char)value == '-')
@@ -109,7 +109,7 @@ namespace CssCompletion
                     context.Position++;
                     mode = CompleteMode.Variable;
                 }
-                else if (context.Word.Length == 1 && "abcdefghijklmnopqrstuvwxyz".IndexOf(context.Word[0]) >= 0)
+                else if (context.Word.Length == 1 && "abcdefghijklmnopqrstuvwxyz".Contains(context.Word[0]))
                     mode = CompleteMode.Value;
             }
             else if (c == ':' && !context.IsVar) mode = CompleteMode.Pseudo;
@@ -152,17 +152,17 @@ namespace CssCompletion
 
         private void HandleCompletion(CompleteMode mode, LocalContext context, bool autoInsert, bool autoHide)
         {
-            List<ICompletionListItem> items = null;
-            switch (mode)
+            var items = mode switch
             {
-                case CompleteMode.Selector: items = HandleSelectorCompletion(context); break;
-                case CompleteMode.Pseudo: items = HandlePseudoCompletion(context); break;
-                case CompleteMode.Prefix: items = HandlePrefixCompletion(context); break;
-                case CompleteMode.Attribute: items = HandlePropertyCompletion(context); break;
-                case CompleteMode.Variable: items = HandleVariableCompletion(context); break;
-                case CompleteMode.Value: items = HandleValueCompletion(context); break;
-            }
-            if (items == null) return;
+                CompleteMode.Selector => HandleSelectorCompletion(context),
+                CompleteMode.Pseudo => HandlePseudoCompletion(context),
+                CompleteMode.Prefix => HandlePrefixCompletion(context),
+                CompleteMode.Attribute => HandlePropertyCompletion(context),
+                CompleteMode.Variable => HandleVariableCompletion(context),
+                CompleteMode.Value => HandleValueCompletion(context),
+                _ => null,
+            };
+            if (items is null) return;
 
             if (autoInsert && !string.IsNullOrEmpty(context.Word))
             {
@@ -227,7 +227,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     lastCharPos = i + 1;
                     if (inWord) word = c + word;
@@ -316,16 +316,13 @@ namespace CssCompletion
 
         private bool IsVarDecl(ScintillaControl sci, int i)
         {
-            if (features.Pattern == null) return false;
+            if (features.Pattern is null) return false;
             int line = sci.LineFromPosition(i);
             string text = sci.GetLine(line);
             return features.Pattern.IsMatch(text);
         }
 
-        private bool IsTag(string word)
-        {
-            return Array.IndexOf<string>(tags, word) >= 0;
-        }
+        private bool IsTag(string word) => tags.Contains(word);
 
         private string ReadWordLeft(ScintillaControl sci, int i)
         {
@@ -336,7 +333,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     inWord = true;
                     word = c + word;
@@ -355,7 +352,7 @@ namespace CssCompletion
             {
                 char c = (char)sci.CharAt(i--);
 
-                if (wordChars.IndexOf(c) >= 0)
+                if (wordChars.Contains(c))
                 {
                     inWord = true;
                     word = c + word;
@@ -464,15 +461,9 @@ namespace CssCompletion
 
         #region completion
 
-        private List<ICompletionListItem> HandlePrefixCompletion(LocalContext context)
-        {
-            return prefixes;
-        }
+        private List<ICompletionListItem> HandlePrefixCompletion(LocalContext context) => prefixes;
 
-        private List<ICompletionListItem> HandlePseudoCompletion(LocalContext context)
-        {
-            return pseudos;
-        }
+        private List<ICompletionListItem> HandlePseudoCompletion(LocalContext context) => pseudos;
 
         private List<ICompletionListItem> HandleValueCompletion(LocalContext context)
         {
@@ -538,7 +529,7 @@ namespace CssCompletion
                     {
                         prevLine = prevLine.Trim();
                         if (prevLine.StartsWithOrdinal("//")) break;
-                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.IndexOfOrdinal("/*") >= 0) break;
+                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.Contains("/*")) break;
                     }
                     prevLine = c + prevLine;
                 }
@@ -552,31 +543,23 @@ namespace CssCompletion
             return value.Trim();
         }
 
-        private List<ICompletionListItem> HandlePropertyCompletion(LocalContext context)
-        {
-            return blockLevel;
-        }
+        private List<ICompletionListItem> HandlePropertyCompletion(LocalContext context) => blockLevel;
 
-        private List<ICompletionListItem> HandleSelectorCompletion(LocalContext context)
-        {
-            return htmlTags;
-        }
+        private List<ICompletionListItem> HandleSelectorCompletion(LocalContext context) => htmlTags;
 
-        private void AddProperties(List<ICompletionListItem> items, string name)
+        private void AddProperties(ICollection<ICompletionListItem> items, string name)
         {
-            if (values.ContainsKey(name))
+            if (!values.ContainsKey(name)) return;
+            var vals = values[name];
+            foreach (string val in vals)
             {
-                var vals = values[name];
-                foreach (string val in vals)
+                if (val[0] == '<')
                 {
-                    if (val[0] == '<')
-                    {
-                        string inherit = val.Substring(1, val.Length - 2);
-                        if (inherit != name)
-                            AddProperties(items, inherit);
-                    }
-                    else items.Add(new CompletionItem(val, ItemKind.Value));
+                    string inherit = val.Substring(1, val.Length - 2);
+                    if (inherit != name)
+                        AddProperties(items, inherit);
                 }
+                else items.Add(new CompletionItem(val, ItemKind.Value));
             }
         }
 
@@ -607,7 +590,7 @@ namespace CssCompletion
             }
         }
 
-        private void InitLists(Dictionary<string, string> section)
+        private void InitLists(IDictionary<string, string> section)
         {
             tags = Regex.Split(section["tags"], "\\s+");
             htmlTags = new List<ICompletionListItem>();
@@ -668,7 +651,7 @@ namespace CssCompletion
             int eolMode = Sci.EOLMode;
             string NL = LineEndDetector.GetNewLineMarker(eolMode);
 
-            if (txt.Length > 0 && ")]};,".IndexOf(txt[0]) >= 0)
+            if (txt.Length > 0 && ")]};,".Contains(txt[0]))
             {
                 Sci.BeginUndoAction();
                 try
@@ -683,20 +666,18 @@ namespace CssCompletion
                 }
                 return;
             }
-            else
+
+            while (line < count - 1)
             {
-                while (line < count - 1)
+                txt = Sci.GetLine(line).TrimEnd();
+                if (txt.Length != 0)
                 {
-                    txt = Sci.GetLine(line).TrimEnd();
-                    if (txt.Length != 0)
-                    {
-                        indent = Sci.GetLineIndentation(line);
-                        if (indent <= startIndent) break;
-                        lastLine = line;
-                    }
-                    else break;
-                    line++;
+                    indent = Sci.GetLineIndentation(line);
+                    if (indent <= startIndent) break;
+                    lastLine = line;
                 }
+                else break;
+                line++;
             }
             if (line >= count - 1) lastLine = start;
 

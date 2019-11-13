@@ -39,53 +39,32 @@ namespace PluginCore.Utilities
 
         public IntPtr hwnd
         {
-            set
-            {
-                this._ShFile.hwnd = value;
-            }
+            set => this._ShFile.hwnd = value;
         }
         public FO_Func wFunc
         {
-            set
-            {
-                this._ShFile.wFunc = value;
-            }
+            set => this._ShFile.wFunc = value;
         }
 
         public string pFrom
         {
-            set
-            {
-                this._ShFile.pFrom = value + '\0' + '\0';
-            }
+            set => this._ShFile.pFrom = value + '\0' + '\0';
         }
         public string pTo
         {
-            set
-            {
-                this._ShFile.pTo = value + '\0' + '\0';
-            }
+            set => this._ShFile.pTo = value + '\0' + '\0';
         }
         public bool fAnyOperationsAborted
         {
-            set
-            {
-                this._ShFile.fAnyOperationsAborted = value;
-            }
+            set => this._ShFile.fAnyOperationsAborted = value;
         }
         public IntPtr hNameMappings
         {
-            set
-            {
-                this._ShFile.hNameMappings = value;
-            }
+            set => this._ShFile.hNameMappings = value;
         }
         public string lpszProgressTitle
         {
-            set
-            {
-                this._ShFile.lpszProgressTitle = value + '\0';
-            }
+            set => this._ShFile.lpszProgressTitle = value + '\0';
         }
 
         public InteropSHFileOperation()
@@ -107,7 +86,7 @@ namespace PluginCore.Utilities
             this._ShFile.fFlags = this.fFlags.Flag;
             int returnValue = SHFileOperation(ref this._ShFile);
             if (returnValue == 0) return true;
-            else return false;
+            return false;
         }
 
         public class FILEOP_FLAGS

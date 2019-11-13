@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
@@ -10,9 +11,9 @@ namespace CodeRefactor.Provider
 
     public class CommandFactory : ICommandFactory
     {
-        public virtual DelegateMethodsCommand CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers)
+        public virtual DelegateMethods CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers)
         {
-            return new DelegateMethodsCommand(result, selectedMembers);
+            return new DelegateMethods(result, selectedMembers);
         }
 
         public virtual Command CreateExtractLocalVariableCommand()
@@ -35,53 +36,31 @@ namespace CodeRefactor.Provider
             return new ExtractMethodCommand(newName);
         }
 
-        /// <summary>
-        /// Create a new FindAllReferences refactoring command. Outputs found results.
-        /// Uses the current text location as the declaration target.
-        /// </summary>
+        /// <inheritdoc />
         public virtual Command CreateFindAllReferencesCommand()
         {
             return CreateFindAllReferencesCommand(true);
         }
 
-        /// <summary>
-        /// Create a new FindAllReferences refactoring command.
-        /// Uses the current text location as the declaration target.
-        /// </summary>
-        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <inheritdoc />
         public virtual Command CreateFindAllReferencesCommand(bool output)
         {
             return CreateFindAllReferencesCommand(RefactoringHelper.GetDefaultRefactorTarget(), output);
         }
 
-        /// <summary>
-        /// Create a new FindAllReferences refactoring command.
-        /// </summary>
-        /// <param name="target">The target declaration to find references to.</param>
-        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <inheritdoc />
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output)
         {
             return CreateFindAllReferencesCommand(target, output, false);
         }
 
-        /// <summary>
-        /// Create a new FindAllReferences refactoring command.
-        /// </summary>
-        /// <param name="target">The target declaration to find references to.</param>
-        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
-        /// <param name="ignoreDeclarations"></param>
+        /// <inheritdoc />
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations)
         {
             return CreateFindAllReferencesCommand(target, output, ignoreDeclarations, true);
         }
 
-        /// <summary>
-        /// Create a new FindAllReferences refactoring command.
-        /// </summary>
-        /// <param name="target">The target declaration to find references to.</param>
-        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
-        /// <param name="ignoreDeclarations"></param>
-        /// <param name="onlySourceFiles"></param>
+        /// <inheritdoc />
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
             return new FindAllReferences(target, output, ignoreDeclarations) {OnlySourceFiles = onlySourceFiles};
@@ -151,5 +130,10 @@ namespace CodeRefactor.Provider
         {
             return new SurroundWithCommand(snippet);
         }
+
+        readonly Dictionary<Type, Func<ASResult, bool>> commandToValidator = new Dictionary<Type, Func<ASResult, bool>>();
+
+        public void RegisterValidator(Type command, Func<ASResult, bool> validator) => commandToValidator[command] = validator;
+        public Func<ASResult, bool> GetValidator(Type command) => commandToValidator.ContainsKey(command) ? commandToValidator[command] : null;
     }
 }

@@ -18,28 +18,23 @@ namespace FlashDebugger.Controls
     {
         public event EventHandler ValueChanged;
 
-        private DataTreeModel _model;
+        private readonly DataTreeModel _model;
         private static ViewerForm viewerForm;
-        private ContextMenuStrip _contextMenuStrip;
-        private ToolStripMenuItem copyMenuItem, viewerMenuItem, watchMenuItem, copyValueMenuItem, copyIdMenuItem;
+        private readonly ContextMenuStrip _contextMenuStrip;
+        private readonly ToolStripMenuItem copyMenuItem;
+        private readonly ToolStripMenuItem viewerMenuItem;
+        private readonly ToolStripMenuItem watchMenuItem;
+        private readonly ToolStripMenuItem copyValueMenuItem;
+        private readonly ToolStripMenuItem copyIdMenuItem;
         private DataTreeState state;
-        private bool watchMode;
+        private readonly bool watchMode;
         private bool addingNewExpression;
 
-        public Collection<Node> Nodes
-        {
-            get { return _model.Root.Nodes; }
-        }
+        public Collection<Node> Nodes => _model.Root.Nodes;
 
-        public TreeViewAdv Tree
-        {
-            get { return _tree; }
-        }
+        public TreeViewAdv Tree => _tree;
 
-        public ViewerForm Viewer
-        {
-            get { return viewerForm; }
-        }
+        public ViewerForm Viewer => viewerForm;
 
         public DataTreeControl() : this(false){}
 
@@ -88,7 +83,7 @@ namespace FlashDebugger.Controls
             ValueNodeTextBox.EditorHided += ValueNodeTextBox_EditorHided;
             ValueNodeTextBox.LabelChanged += ValueNodeTextBox_LabelChanged;
             _contextMenuStrip = new ContextMenuStrip();
-            if (PluginBase.MainForm != null && PluginBase.Settings != null)
+            if (PluginBase.Settings != null)
             {
                 _contextMenuStrip.Font = PluginBase.Settings.DefaultFont;
                 _contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
@@ -145,10 +140,9 @@ namespace FlashDebugger.Controls
             SaveState();
             foreach (var node in _model.Root.Nodes)
             {
-                var valueNode = node as ValueNode;
-                if (valueNode != null)
+                if (node is ValueNode valueNode)
                 {
-                    if (node.Nodes != null && node.Nodes.Count > 0)
+                    if (!node.Nodes.IsNullOrEmpty())
                     {
                         // Needed because of static and inherited members.
                         // If we add a different event or check against a previous value we could avoid removing and reevaluating members.
@@ -170,7 +164,7 @@ namespace FlashDebugger.Controls
             Color grayText = PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
-            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
+            if (e.Node.IsSelected && ContainsFocus) e.TextColor = hiliteText;
             try
             {
                 if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
@@ -182,9 +176,9 @@ namespace FlashDebugger.Controls
         {
             if (addingNewExpression)
             {
-                NodeTextBox box = sender as NodeTextBox;
-                var node = box.Parent.CurrentNode.Tag as Node;
-                if (node.Text.Trim() == "") node.Text = TextHelper.GetString("Label.AddExpression");
+                var box = (NodeTextBox) sender;
+                var node = (Node) box.Parent.CurrentNode.Tag;
+                if (node.Text.Trim().Length == 0) node.Text = TextHelper.GetString("Label.AddExpression");
                 addingNewExpression = false;
             }
             // We need to update the tree to avoid some draw problems
@@ -193,9 +187,9 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_EditorShowing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
-            var node = box.Parent.CurrentNode.Tag as Node;
-            if (box.Parent.CurrentNode.NextNode == null)
+            var box = (NodeTextBox) sender;
+            var node = (Node) box.Parent.CurrentNode.Tag;
+            if (box.Parent.CurrentNode.NextNode is null)
             {
                 addingNewExpression = true;
                 node.Text = "";
@@ -210,16 +204,16 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
-            NodeTextBox box = sender as NodeTextBox;
-            if (box.Parent.CurrentNode == null) return;
-            DataNode node = box.Parent.CurrentNode.Tag as DataNode;
-            if (e.NewLabel.Trim() == "" || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
+            var box = (NodeTextBox) sender;
+            if (box.Parent.CurrentNode is null) return;
+            var node = (DataNode) box.Parent.CurrentNode.Tag;
+            if (e.NewLabel.Trim().Length == 0 || e.NewLabel.Trim() == TextHelper.GetString("Label.AddExpression"))
             {
                 node.Text = e.OldLabel != "" ? e.OldLabel : TextHelper.GetString("Label.AddExpression");
                 return;
             }
             bool newExp;
-            if (node.NextNode == null) newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
+            if (node.NextNode is null) newExp = PanelsHelper.watchUI.AddElement(e.NewLabel);
             else newExp = PanelsHelper.watchUI.ReplaceElement(e.OldLabel, e.NewLabel);
             if (!newExp) node.Text = e.OldLabel;
         }
@@ -238,7 +232,7 @@ namespace FlashDebugger.Controls
 
         void Tree_NameNodeMouseClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand && (Tree.SelectedNode == null || Tree.SelectedNode == e.Node))
+            if (e.Node.Level == 1 && e.Control == NameNodeTextBox && !e.Node.CanExpand && (Tree.SelectedNode is null || Tree.SelectedNode == e.Node))
             {
                 NameNodeTextBox.BeginEdit();
                 e.Handled = true;
@@ -248,7 +242,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_LabelChanged(object sender, LabelEventArgs e)
         {
             NodeTextBox box = sender as NodeTextBox;
-            if (box.Parent.CurrentNode == null) return;
+            if (box.Parent.CurrentNode is null) return;
             VariableNode node = box.Parent.CurrentNode.Tag as VariableNode;
             node.IsEditing = false;
             try
@@ -261,7 +255,7 @@ namespace FlashDebugger.Controls
                 var obj = exp.evaluate(ctx);
                 node.Variable = (Variable)obj;
                 if (!watchMode) PanelsHelper.watchUI.UpdateElements();
-                if (ValueChanged != null) ValueChanged(this, EventArgs.Empty);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
             {
@@ -285,7 +279,7 @@ namespace FlashDebugger.Controls
         void ValueNodeTextBox_IsEditEnabledValueNeeded(object sender, NodeControlValueEventArgs e)
         {
             VariableNode node = e.Node.Tag as VariableNode;
-            if (node == null || node.Variable == null)
+            if (node?.Variable is null)
             {
                 e.Value = false;
                 return;
@@ -305,7 +299,7 @@ namespace FlashDebugger.Controls
             Color errorText = PluginBase.MainForm.GetThemeColor("DataTreeControl.ErrorText", Color.Red);
             Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
             e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
-            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
+            if (e.Node.IsSelected && ContainsFocus) e.TextColor = hiliteText;
             try
             {
                 VariableNode variableNode = e.Node.Tag as VariableNode;
@@ -342,14 +336,14 @@ namespace FlashDebugger.Controls
             return _model.GetFullPath(node);
         }
 
-        private void CopyItemClick(Object sender, System.EventArgs e)
+        private void CopyItemClick(object sender, EventArgs e)
         {
             DataNode node = Tree.SelectedNode.Tag as DataNode;
-            Clipboard.SetText(string.Format("{0} = {1}",node.Text, node.Value));
+            Clipboard.SetText($"{node.Text} = {node.Value}");
         }
-        private void ViewerItemClick(Object sender, System.EventArgs e)
+        private void ViewerItemClick(object sender, EventArgs e)
         {
-            if (viewerForm == null)
+            if (viewerForm is null)
             {
                 viewerForm = new ViewerForm();
                 viewerForm.StartPosition = FormStartPosition.Manual;
@@ -375,14 +369,14 @@ namespace FlashDebugger.Controls
             viewerForm.ShowDialog();
         }
 
-        private void WatchItemClick(Object sender, EventArgs e)
+        private void WatchItemClick(object sender, EventArgs e)
         {
             DataNode node = Tree.SelectedNode.Tag as DataNode;
             if (watchMode) PanelsHelper.watchUI.RemoveElement(Tree.SelectedNode.Index);
             else PanelsHelper.watchUI.AddElement(node.GetVariablePath());
         }
 
-        void TreeExpanding(Object sender, TreeViewAdvEventArgs e)
+        void TreeExpanding(object sender, TreeViewAdvEventArgs e)
         {
             if (e.Node.Index >= 0)
             {
@@ -453,7 +447,7 @@ namespace FlashDebugger.Controls
                     node.Nodes.Add(staticNode);
                 }
                 // test children
-                foreach (String ch in node.PlayerValue.getClassHierarchy(false))
+                foreach (string ch in node.PlayerValue.getClassHierarchy(false))
                 {
                     if (ch.Equals("flash.display::DisplayObjectContainer"))
                     {
@@ -533,7 +527,7 @@ namespace FlashDebugger.Controls
             {
                 e.Handled = true;
                 _tree.BeginUpdate();
-                (node.Parent as ValueNode).ChildrenShowLimit += 500;
+                ((ValueNode) node.Parent).ChildrenShowLimit += 500;
                 TreeNodeAdv parent = e.Node.Parent;
                 int ind = e.Node.Index;
                 parent.Collapse(true);
@@ -546,14 +540,14 @@ namespace FlashDebugger.Controls
 
         public void SaveState()
         {
-            if (state == null) state = new DataTreeState();
-            state.Selected = _tree.SelectedNode == null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
+            if (state is null) state = new DataTreeState();
+            state.Selected = _tree.SelectedNode is null ? null : _model.GetFullPath(_tree.SelectedNode.Tag as Node);
             state.Expanded.Clear();
-            if (Nodes != null && Nodes.Count > 0) SaveExpanded(Nodes);
+            if (!Nodes.IsNullOrEmpty()) SaveExpanded(Nodes);
             SaveScrollState();
         }
 
-        private void SaveExpanded(Collection<Node> nodes)
+        private void SaveExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -567,7 +561,7 @@ namespace FlashDebugger.Controls
 
         private void SaveScrollState()
         {
-            if (Nodes.Count < 1)
+            if (Nodes.Count == 0)
             {
                 state.TopPath = state.BottomPath = null;
                 return;
@@ -580,13 +574,13 @@ namespace FlashDebugger.Controls
 
         public void RestoreState()
         {
-            if (state == null) return;
-            if (state.Expanded != null && state.Expanded.Count > 0) RestoreExpanded(Nodes);
+            if (state is null) return;
+            if (!state.Expanded.IsNullOrEmpty()) RestoreExpanded(Nodes);
             if (state.Selected != null) _tree.SelectedNode = _tree.FindNodeByTag(_model.FindNode(state.Selected));
             RestoreScrollState();
         }
 
-        private void RestoreExpanded(Collection<Node> nodes)
+        private void RestoreExpanded(IEnumerable<Node> nodes)
         {
             foreach (Node node in nodes)
             {
@@ -600,7 +594,7 @@ namespace FlashDebugger.Controls
 
         private void RestoreScrollState()
         {
-            if (Nodes.Count < 1) return;
+            if (Nodes.Count == 0) return;
 
             if (state.BottomPath != null)
             {
@@ -643,7 +637,7 @@ namespace FlashDebugger.Controls
         private class DataTreeState
         {
 
-            public HashSet<string> Expanded = new HashSet<String>();
+            public readonly HashSet<string> Expanded = new HashSet<string>();
             public string Selected;
             public string TopPath;
             public string BottomPath;
@@ -653,7 +647,7 @@ namespace FlashDebugger.Controls
         
         #region Copy Value, ID, Tree
 
-        private void CopyItemValueClick(Object sender, System.EventArgs e)
+        private void CopyItemValueClick(object sender, EventArgs e)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
             string value = node.Value;
@@ -663,7 +657,7 @@ namespace FlashDebugger.Controls
                 Clipboard.Clear();
         }
 
-        private void CopyItemIdClick(Object sender, System.EventArgs e)
+        private void CopyItemIdClick(object sender, EventArgs e)
         {
             ValueNode node = Tree.SelectedNode.Tag as ValueNode;
             string id = node.Id;
@@ -673,7 +667,7 @@ namespace FlashDebugger.Controls
                 Clipboard.Clear();
         }
 
-        private void CopyItemTreeClick(Object sender, System.EventArgs e)
+        private void CopyItemTreeClick(object sender, EventArgs e)
         {
             string exporterKey = (string) ((ToolStripItem) sender).Tag;
             CopyTreeInternal(exporterKey, 0);

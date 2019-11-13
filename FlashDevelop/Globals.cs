@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FlashDevelop.Settings;
 using PluginCore;
@@ -11,43 +10,27 @@ namespace FlashDevelop
         /// <summary>
         /// Quick reference to MainForm 
         /// </summary> 
-        public static MainForm MainForm
-        {
-            get; internal set;
-        }
+        public static MainForm MainForm { get; internal set; }
 
         /// <summary>
         /// Quick reference to CurrentDocument 
         /// </summary>
-        public static ITabbedDocument CurrentDocument 
-        {
-            get { return PluginBase.MainForm.CurrentDocument; }
-        }
+        public static ITabbedDocument CurrentDocument => PluginBase.MainForm.CurrentDocument;
 
         /// <summary>
         /// Quick reference to SciControl 
         /// </summary>
-        public static ScintillaControl SciControl
-        {
-            get { return CurrentDocument.SciControl; }
-        }
+        public static ScintillaControl SciControl => CurrentDocument.SciControl;
 
         /// <summary>
         /// Quick reference to PreviousDocuments 
         /// </summary>
-        public static List<String> PreviousDocuments
-        {
-            get { return Settings.PreviousDocuments; }
-        }
+        public static List<string> PreviousDocuments => Settings.PreviousDocuments;
 
         /// <summary>
         /// Quick reference to Settings 
         /// </summary>
-        public static SettingObject Settings
-        {
-            get { return (SettingObject)PluginBase.MainForm.Settings; }
-        }
-
+        public static SettingObject Settings => (SettingObject)PluginBase.MainForm.Settings;
     }
 
 }

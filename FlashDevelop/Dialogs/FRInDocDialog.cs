@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
+using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
@@ -33,7 +34,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button findNextButton;
         private System.Windows.Forms.Button replaceButton;
         private System.Windows.Forms.Button closeButton;
-        private System.Boolean lookupIsDirty = false;
+        private bool lookupIsDirty = false;
         private SearchMatch currentMatch = null;
 
         public FRInDocDialog()
@@ -80,25 +81,25 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceButton
             //
-            this.replaceButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.replaceButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceButton.Location = new System.Drawing.Point(277, 112);
             this.replaceButton.Name = "replaceButton";
             this.replaceButton.Size = new System.Drawing.Size(95, 23);
             this.replaceButton.TabIndex = 8;
             this.replaceButton.Text = "&Replace";
-            this.replaceButton.Click += new System.EventHandler(this.ReplaceButtonClick);
+            this.replaceButton.Click += this.ReplaceButtonClick;
             // 
             // findNextButton
             // 
-            this.findNextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.findNextButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.findNextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findNextButton.Location = new System.Drawing.Point(277, 22);
             this.findNextButton.Name = "findNextButton";
             this.findNextButton.Size = new System.Drawing.Size(95, 23);
             this.findNextButton.TabIndex = 5;
             this.findNextButton.Text = "Find &Next";
-            this.findNextButton.Click += new System.EventHandler(this.FindNextButtonClick);
+            this.findNextButton.Click += this.FindNextButtonClick;
             // 
             // wholeWordCheckBox
             // 
@@ -109,7 +110,7 @@ namespace FlashDevelop.Dialogs
             this.wholeWordCheckBox.Size = new System.Drawing.Size(92, 18);
             this.wholeWordCheckBox.TabIndex = 1;
             this.wholeWordCheckBox.Text = " &Whole word";
-            this.wholeWordCheckBox.CheckedChanged += new System.EventHandler(this.LookupChanged);
+            this.wholeWordCheckBox.CheckedChanged += this.LookupChanged;
             // 
             // matchCaseCheckBox
             // 
@@ -120,40 +121,40 @@ namespace FlashDevelop.Dialogs
             this.matchCaseCheckBox.Size = new System.Drawing.Size(89, 18);
             this.matchCaseCheckBox.TabIndex = 2;
             this.matchCaseCheckBox.Text = " Match &case";
-            this.matchCaseCheckBox.CheckedChanged += new System.EventHandler(this.LookupChanged);
+            this.matchCaseCheckBox.CheckedChanged += this.LookupChanged;
             // 
             // closeButton
             //
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(277, 172);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(95, 23);
             this.closeButton.TabIndex = 10;
             this.closeButton.Text = "&Close";
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // findPrevButton
             // 
-            this.findPrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.findPrevButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.findPrevButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findPrevButton.Location = new System.Drawing.Point(277, 52);
             this.findPrevButton.Name = "findPrevButton";
             this.findPrevButton.Size = new System.Drawing.Size(95, 23);
             this.findPrevButton.TabIndex = 6;
             this.findPrevButton.Text = "Find &Previous";
-            this.findPrevButton.Click += new System.EventHandler(this.FindPrevButtonClick);
+            this.findPrevButton.Click += this.FindPrevButtonClick;
             // 
             // findComboBox
             //
-            this.findComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.findComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.findComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findComboBox.Location = new System.Drawing.Point(13, 23);
             this.findComboBox.Name = "findComboBox";
             this.findComboBox.Size = new System.Drawing.Size(252, 21);
             this.findComboBox.TabIndex = 1;
-            this.findComboBox.TextChanged += new System.EventHandler(this.LookupChanged);
-            this.findComboBox.TextChanged += new EventHandler(this.FindComboBoxTextChanged);
+            this.findComboBox.TextChanged += this.LookupChanged;
+            this.findComboBox.TextChanged += this.FindComboBoxTextChanged;
             // 
             // findLabel
             // 
@@ -174,7 +175,7 @@ namespace FlashDevelop.Dialogs
             this.escapedCheckBox.Size = new System.Drawing.Size(129, 18);
             this.escapedCheckBox.TabIndex = 4;
             this.escapedCheckBox.Text = " &Escaped characters";
-            this.escapedCheckBox.CheckedChanged += new System.EventHandler(this.LookupChanged);
+            this.escapedCheckBox.CheckedChanged += this.LookupChanged;
             // 
             // useRegexCheckBox
             // 
@@ -185,11 +186,11 @@ namespace FlashDevelop.Dialogs
             this.useRegexCheckBox.Size = new System.Drawing.Size(132, 18);
             this.useRegexCheckBox.TabIndex = 3;
             this.useRegexCheckBox.Text = " &Regular expressions";
-            this.useRegexCheckBox.CheckedChanged += new System.EventHandler(this.LookupChanged);
+            this.useRegexCheckBox.CheckedChanged += this.LookupChanged;
             // 
             // infoPictureBox
             //
-            this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.infoPictureBox.Location = new System.Drawing.Point(14, 202);
             this.infoPictureBox.Name = "infoPictureBox";
@@ -199,7 +200,7 @@ namespace FlashDevelop.Dialogs
             // 
             // infoLabel
             //
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.infoLabel.AutoSize = true;
             this.infoLabel.BackColor = System.Drawing.SystemColors.Control;
             this.infoLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -212,7 +213,7 @@ namespace FlashDevelop.Dialogs
             // 
             // optionsGroupBox
             //
-            this.optionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.optionsGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.optionsGroupBox.Controls.Add(this.useRegexCheckBox);
             this.optionsGroupBox.Controls.Add(this.escapedCheckBox);
             this.optionsGroupBox.Controls.Add(this.wholeWordCheckBox);
@@ -227,13 +228,13 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceComboBox
             //
-            this.replaceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.replaceComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceComboBox.Location = new System.Drawing.Point(13, 62);
             this.replaceComboBox.Name = "replaceComboBox";
             this.replaceComboBox.Size = new System.Drawing.Size(252, 21);
             this.replaceComboBox.TabIndex = 2;
-            this.replaceComboBox.TextChanged += new System.EventHandler(this.LookupChanged);
+            this.replaceComboBox.TextChanged += this.LookupChanged;
             // 
             // replaceLabel
             // 
@@ -247,18 +248,18 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceAllButton
             //
-            this.replaceAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceAllButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.replaceAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceAllButton.Location = new System.Drawing.Point(277, 142);
             this.replaceAllButton.Name = "replaceAllButton";
             this.replaceAllButton.Size = new System.Drawing.Size(95, 23);
             this.replaceAllButton.TabIndex = 9;
             this.replaceAllButton.Text = "Replace &All";
-            this.replaceAllButton.Click += new System.EventHandler(this.ReplaceAllButtonClick);
+            this.replaceAllButton.Click += this.ReplaceAllButtonClick;
             // 
             // lookComboBox
             //
-            this.lookComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.lookComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.lookComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lookComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lookComboBox.Items.AddRange(new object[] {
@@ -271,7 +272,7 @@ namespace FlashDevelop.Dialogs
             this.lookComboBox.Name = "lookComboBox";
             this.lookComboBox.Size = new System.Drawing.Size(252, 21);
             this.lookComboBox.TabIndex = 3;
-            this.lookComboBox.TextChanged += new System.EventHandler(this.LookupChanged);
+            this.lookComboBox.TextChanged += this.LookupChanged;
             // 
             // lookLabel
             // 
@@ -285,14 +286,14 @@ namespace FlashDevelop.Dialogs
             // 
             // bookmarkAllButton
             //
-            this.bookmarkAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bookmarkAllButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.bookmarkAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.bookmarkAllButton.Location = new System.Drawing.Point(277, 82);
             this.bookmarkAllButton.Name = "bookmarkAllButton";
             this.bookmarkAllButton.Size = new System.Drawing.Size(95, 23);
             this.bookmarkAllButton.TabIndex = 7;
             this.bookmarkAllButton.Text = "&Bookmark All";
-            this.bookmarkAllButton.Click += new System.EventHandler(this.BookmarkAllButtonClick);
+            this.bookmarkAllButton.Click += this.BookmarkAllButtonClick;
             // 
             // FRInDocDialog
             // 
@@ -326,9 +327,9 @@ namespace FlashDevelop.Dialogs
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Find And Replace";
-            this.Load += new System.EventHandler(this.DialogLoad);
-            this.VisibleChanged += new System.EventHandler(this.VisibleChange);
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.DialogClosing);
+            this.Load += this.DialogLoad;
+            this.VisibleChanged += this.VisibleChange;
+            this.Closing += this.DialogClosing;
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).EndInit();
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
@@ -380,37 +381,37 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Set the case of the text to search
         /// </summary>
-        public void SetMatchCase(Boolean matchCase)
+        public void SetMatchCase(bool matchCase)
         {
-            this.matchCaseCheckBox.CheckedChanged -= new EventHandler(this.LookupChanged);
+            this.matchCaseCheckBox.CheckedChanged -= this.LookupChanged;
             this.matchCaseCheckBox.Checked = matchCase; // Change the value...
-            this.matchCaseCheckBox.CheckedChanged += new EventHandler(this.LookupChanged);
+            this.matchCaseCheckBox.CheckedChanged += this.LookupChanged;
         }
 
         /// <summary>
         /// Set the whole word prop of the text to search
         /// </summary>
-        public void SetWholeWord(Boolean wholeWord)
+        public void SetWholeWord(bool wholeWord)
         {
-            this.wholeWordCheckBox.CheckedChanged -= new EventHandler(this.LookupChanged);
+            this.wholeWordCheckBox.CheckedChanged -= this.LookupChanged;
             this.wholeWordCheckBox.Checked = wholeWord; // Change the value...
-            this.wholeWordCheckBox.CheckedChanged += new EventHandler(this.LookupChanged);
+            this.wholeWordCheckBox.CheckedChanged += this.LookupChanged;
         }
 
         /// <summary>
         /// Set the text to search
         /// </summary>
-        public void SetFindText(String text)
+        public void SetFindText(string text)
         {
-            this.findComboBox.TextChanged -= new EventHandler(this.FindComboBoxTextChanged);
+            this.findComboBox.TextChanged -= this.FindComboBoxTextChanged;
             this.findComboBox.Text = text; // Change the value...
-            this.findComboBox.TextChanged += new EventHandler(this.FindComboBoxTextChanged);
+            this.findComboBox.TextChanged += this.FindComboBoxTextChanged;
         }
 
         /// <summary>
         /// When the text changes, synchronizes the find controls
         /// </summary>
-        private void FindComboBoxTextChanged(Object sender, EventArgs e)
+        private void FindComboBoxTextChanged(object sender, EventArgs e)
         {
             Globals.MainForm.SetFindText(this, this.findComboBox.Text);
         }
@@ -442,20 +443,26 @@ namespace FlashDevelop.Dialogs
             }
         }
 
+        public void FindNext(bool forward) => FindNext(forward, true);
+
+        public void FindNext(bool forward, bool update) => FindNext(forward, update, false);
+
+        public void FindNext(bool forward, bool update, bool simple) => FindNext(forward, update, simple, false);
+
         /// <summary>
         /// Finds the next result based on direction
         /// </summary>
-        public void FindNext(Boolean forward, Boolean update, Boolean simple)
+        public void FindNext(bool forward, bool update, bool simple, bool fixedPosition)
         {
             this.currentMatch = null;
             if (update) this.UpdateFindText();
-            if (Globals.SciControl == null) return;
-            ScintillaControl sci = Globals.SciControl;
-            List<SearchMatch> matches = this.GetResults(sci, simple);
-            if (matches != null && matches.Count != 0)
+            if (Globals.SciControl is null) return;
+            var sci = Globals.SciControl;
+            var matches = this.GetResults(sci, simple);
+            if (!matches.IsNullOrEmpty())
             {
                 FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, false);
+                var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, fixedPosition);
                 if (match != null)
                 {
                     this.currentMatch = match;
@@ -464,9 +471,9 @@ namespace FlashDevelop.Dialogs
                 }
                 if (this.Visible)
                 {
-                    Int32 index = FRDialogGenerics.GetMatchIndex(match, matches);
-                    String message = TextHelper.GetString("Info.ShowingResult");
-                    String formatted = String.Format(message, index, matches.Count);
+                    int index = FRDialogGenerics.GetMatchIndex(match, matches);
+                    string message = TextHelper.GetString("Info.ShowingResult");
+                    string formatted = string.Format(message, index, matches.Count);
                     this.ShowMessage(formatted, 0);
                 }
             }
@@ -474,60 +481,46 @@ namespace FlashDevelop.Dialogs
             {
                 if (this.Visible)
                 {
-                    String message = TextHelper.GetString("Info.NoMatchesFound");
+                    string message = TextHelper.GetString("Info.NoMatchesFound");
                     this.ShowMessage(message, 0);
                 }
             }
             this.SelectText();
         }
-        public void FindNext(Boolean forward, Boolean update)
-        {
-            this.FindNext(forward, update, false);
-        }
-        public void FindNext(Boolean forward)
-        {
-            this.FindNext(forward, true);
-        }
 
         /// <summary>
         /// Finds the next result specified by user input
         /// </summary>
-        private void FindNextButtonClick(Object sender, System.EventArgs e)
-        {
-            this.FindNext(true, false);
-        }
-        
+        private void FindNextButtonClick(object sender, EventArgs e) => FindNext(true, false);
+
         /// <summary>
         /// Finds the previous result specified by user input
         /// </summary>
-        private void FindPrevButtonClick(Object sender, System.EventArgs e)
-        {
-            this.FindNext(false, false);
-        }
+        private void FindPrevButtonClick(object sender, EventArgs e) => FindNext(false, false);
 
         /// <summary>
         /// Bookmarks all results
         /// </summary>
-        private void BookmarkAllButtonClick(Object sender, System.EventArgs e)
+        private void BookmarkAllButtonClick(object sender, EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
             if (matches != null && this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0)
             {
-                Int32 end = sci.MBSafeCharPosition(sci.SelectionEnd);
-                Int32 start = sci.MBSafeCharPosition(sci.SelectionStart);
+                int end = sci.MBSafeCharPosition(sci.SelectionEnd);
+                int start = sci.MBSafeCharPosition(sci.SelectionStart);
                 matches = FRDialogGenerics.FilterMatches(matches, start, end);
             }
-            if (matches != null && matches.Count != 0)
+            if (!matches.IsNullOrEmpty())
             {
                 FRDialogGenerics.BookmarkMatches(sci, matches);
-                String message = TextHelper.GetString("Info.MatchesBookmarked");
+                string message = TextHelper.GetString("Info.MatchesBookmarked");
                 this.ShowMessage(message, 0);
             }
             else
             {
-                String message = TextHelper.GetString("Info.NothingToBookmark");
+                string message = TextHelper.GetString("Info.NothingToBookmark");
                 this.ShowMessage(message, 0);
             }
         }
@@ -535,37 +528,43 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Replaces the next result specified by user input
         /// </summary>
-        private void ReplaceButtonClick(Object sender, System.EventArgs e)
+        private void ReplaceButtonClick(object sender, EventArgs e)
         {
-            if (Globals.SciControl == null) return;
-            ScintillaControl sci = Globals.SciControl;
-            if (sci.SelText.Length == 0) this.FindNext(true);
-            else
+            if (Globals.SciControl is null) return;
+            var sci = Globals.SciControl;
+            if (sci.SelText.Length == 0)
             {
-                String replaceWith = this.GetReplaceText(currentMatch);
-                sci.ReplaceSel(replaceWith);
-                FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
-                String message = TextHelper.GetString("Info.SelectedReplaced");
-                this.ShowMessage(message, 0);
-                this.lookupIsDirty = false;
-                this.FindNext(true);
+                FindNext(true);
+                return;
             }
+            if (useRegexCheckBox.Enabled && currentMatch is null)
+            {
+                FindNext(true, false, false, true);
+                if (currentMatch is null) return;
+            }
+            var replaceWith = GetReplaceText(currentMatch);
+            sci.ReplaceSel(replaceWith);
+            FRDialogGenerics.UpdateComboBoxItems(findComboBox);
+            FRDialogGenerics.UpdateComboBoxItems(replaceComboBox);
+            var message = TextHelper.GetString("Info.SelectedReplaced");
+            ShowMessage(message, 0);
+            lookupIsDirty = false;
+            FindNext(true);
         }
 
         /// <summary>
         /// Replaces all results specified by user input
         /// </summary>
-        private void ReplaceAllButtonClick(Object sender, System.EventArgs e)
+        private void ReplaceAllButtonClick(object sender, EventArgs e)
         {
-            if (Globals.SciControl == null) return;
+            if (Globals.SciControl is null) return;
             ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
-            Boolean selectionOnly = this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0;
+            bool selectionOnly = this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0;
             if (matches != null && selectionOnly)
             {
-                Int32 end = sci.MBSafeCharPosition(sci.SelectionEnd);
-                Int32 start = sci.MBSafeCharPosition(sci.SelectionStart);
+                int end = sci.MBSafeCharPosition(sci.SelectionEnd);
+                int start = sci.MBSafeCharPosition(sci.SelectionStart);
                 matches = FRDialogGenerics.FilterMatches(matches, start, end);
             }
             if (matches != null)
@@ -579,13 +578,13 @@ namespace FlashDevelop.Dialogs
                     {
                         var match = matches[i];
                         var replacement = GetReplaceText(match);
-                        var replacementLenght = sci.MBSafeTextLength(replacement);
-                        if (sci.MBSafePosition(match.Index) < pos) pos += replacementLenght - sci.MBSafeTextLength(match.Value);
+                        var replacementLength = sci.MBSafeTextLength(replacement);
+                        if (sci.MBSafePosition(match.Index) < pos) pos += replacementLength - sci.MBSafeTextLength(match.Value);
                         if (selectionOnly) FRDialogGenerics.SelectMatchInTarget(sci, match);
                         else FRDialogGenerics.SelectMatch(sci, match);
                         FRSearch.PadIndexes(matches, i, match.Value, replacement);
                         sci.EnsureVisible(sci.CurrentLine);
-                        if (selectionOnly) sci.ReplaceTarget(replacementLenght, replacement);
+                        if (selectionOnly) sci.ReplaceTarget(replacementLength, replacement);
                         else sci.ReplaceSel(replacement);
                     }
                     sci.FirstVisibleLine = firstVisibleLine;
@@ -597,8 +596,8 @@ namespace FlashDevelop.Dialogs
                 }
                 FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
                 FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
-                String message = TextHelper.GetString("Info.ReplacedMatches");
-                String formatted = String.Format(message, matches.Count);
+                string message = TextHelper.GetString("Info.ReplacedMatches");
+                string formatted = string.Format(message, matches.Count);
                 this.ShowMessage(formatted, 0);
                 this.lookupIsDirty = false;
             }
@@ -607,15 +606,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the find and replace dialog
         /// </summary>
-        private void CloseButtonClick(Object sender, System.EventArgs e)
-        {
-            this.Close();
-        }
+        private void CloseButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Marks the lookup as dirty
         /// </summary>
-        private void LookupChanged(Object sender, System.EventArgs e)
+        private void LookupChanged(object sender, EventArgs e)
         {
             if (this.Visible)
             {
@@ -635,7 +631,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, System.EventArgs e)
+        private void VisibleChange(object sender, EventArgs e)
         {
             if (this.Visible) this.SelectText();
             else this.lookupIsDirty = false;
@@ -644,7 +640,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(Object sender, System.ComponentModel.CancelEventArgs e)
+        private void DialogClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
             Globals.CurrentDocument.Activate();
@@ -654,9 +650,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Setups the dialog on load
         /// </summary>
-        private void DialogLoad(Object sender, EventArgs e)
+        private void DialogLoad(object sender, EventArgs e)
         {
-            String message = TextHelper.GetString("Info.NoMatches");
+            string message = TextHelper.GetString("Info.NoMatches");
             this.ShowMessage(message, 0);
             this.CenterToParent();
         }
@@ -664,14 +660,15 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Process shortcuts
         /// </summary>
-        protected override Boolean ProcessDialogKey(Keys keyData)
+        protected override bool ProcessDialogKey(Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.F))
             {
                 this.findComboBox.Focus();
                 return true;
             }
-            else if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
+
+            if ((keyData & Keys.KeyCode) == Keys.Enter && (keyData & Keys.Shift) > 0)
             {
                 this.FindNext(false, false);
                 return true;
@@ -682,9 +679,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the replacement text and escapes it if needed
         /// </summary>
-        private String GetReplaceText(SearchMatch match)
+        private string GetReplaceText(SearchMatch match)
         {
-            String replace = this.replaceComboBox.Text;
+            string replace = this.replaceComboBox.Text;
             if (this.escapedCheckBox.Checked) replace = FRSearch.Unescape(replace);
             if (this.useRegexCheckBox.Checked) replace = FRSearch.ExpandGroups(replace, match);
             return replace;
@@ -693,11 +690,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets search results for a document
         /// </summary>
-        private List<SearchMatch> GetResults(ScintillaControl sci, Boolean simple)
+        private List<SearchMatch> GetResults(ScintillaControl sci, bool simple)
         {
             if (IsValidPattern())
             {
-                String pattern = this.findComboBox.Text;
+                string pattern = this.findComboBox.Text;
                 FRSearch search = new FRSearch(pattern);
                 search.NoCase = !this.matchCaseCheckBox.Checked;
                 search.Filter = SearchFilter.None;
@@ -734,7 +731,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private bool IsValidPattern()
         {
-            String pattern = this.findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             if (pattern.Length == 0) return false;
             if (this.useRegexCheckBox.Checked)
             {
@@ -756,7 +753,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the info message in dialog
         /// </summary>
-        private void ShowMessage(String msg, Int32 img)
+        private void ShowMessage(string msg, int img)
         {
             Image image = FRDialogGenerics.GetImage(img);
             this.infoPictureBox.Image = image;

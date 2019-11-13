@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using PluginCore;
 
 namespace FlashDevelop.Controls
 {
@@ -16,7 +15,7 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Contain a reference to the collection of properties to show in the parent PropertyGrid.
         /// </summary>
-        List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
+        readonly List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
 
         /// <summary>
         /// Contain a reference to the array of properties to display in the PropertyGrid.
@@ -46,7 +45,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public new AttributeCollection BrowsableAttributes 
         {
-            get { return m_BrowsableAttributes; }
+            get => m_BrowsableAttributes;
             set 
             {
                 if (m_BrowsableAttributes != value) 
@@ -63,7 +62,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public AttributeCollection HiddenAttributes 
         {
-            get { return m_HiddenAttributes; }
+            get => m_HiddenAttributes;
             set 
             {
                 if (value != m_HiddenAttributes) 
@@ -80,7 +79,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public string[] BrowsableProperties 
         {
-            get { return m_BrowsableProperties; }
+            get => m_BrowsableProperties;
             set 
             {
                 if (value != m_BrowsableProperties) 
@@ -96,7 +95,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         public string[] HiddenProperties 
         {
-            get { return m_HiddenProperties; }
+            get => m_HiddenProperties;
             set 
             {
                 if (value != m_HiddenProperties) 
@@ -112,20 +111,19 @@ namespace FlashDevelop.Controls
         /// </summary>
         public new object SelectedObject 
         {
-            get { return m_Wrapper != null ? ((ObjectWrapper)base.SelectedObject).SelectedObject : null; }
+            get => m_Wrapper != null ? ((ObjectWrapper)base.SelectedObject).SelectedObject : null;
             set 
             {
                 if (value != null)
                 {
-                    if (m_Wrapper == null) 
+                    if (m_Wrapper is null) 
                     {
                         m_Wrapper = new ObjectWrapper(value);
                         RefreshProperties();
                     }
                     else if (m_Wrapper.SelectedObject != value) 
                     {
-                        bool needrefresh;
-                        needrefresh = (value.GetType() != m_Wrapper.SelectedObject.GetType());
+                        var needrefresh = (value.GetType() != m_Wrapper.SelectedObject.GetType());
                         m_Wrapper.SelectedObject = value;
                         if (needrefresh) RefreshProperties();
                     }
@@ -147,7 +145,7 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void OnBrowsablePropertiesChanged() 
         {
-            if(m_Wrapper == null) return;
+            if(m_Wrapper is null) return;
         }
 
         /// <summary>
@@ -155,11 +153,11 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void RefreshProperties() 
         {
-            if (m_Wrapper == null) return;
+            if (m_Wrapper is null) return;
             // Clear the list of properties to be displayed.
             m_PropertyDescriptors.Clear();
             // Check whether the list is filtered 
-            if (m_BrowsableAttributes != null && m_BrowsableAttributes.Count > 0) 
+            if (!m_BrowsableAttributes.IsNullOrEmpty())
             {
                 // Add to the list the attributes that need to be displayed.
                 foreach(Attribute attribute in m_BrowsableAttributes) ShowAttribute(attribute);
@@ -175,10 +173,10 @@ namespace FlashDevelop.Controls
             // Get all the properties of the SelectedObject
             PropertyDescriptorCollection allproperties = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject);
             // Hide if necessary, some properties
-            if (m_HiddenProperties != null && m_HiddenProperties.Length > 0) 
+            if (!m_HiddenProperties.IsNullOrEmpty()) 
             {
                 // Remove from the list the properties that mustn't be displayed.
-                foreach(string propertyname in m_HiddenProperties) 
+                foreach(string propertyname in m_HiddenProperties)
                 {
                     try 
                     {
@@ -192,7 +190,7 @@ namespace FlashDevelop.Controls
                     }
                 }
             }
-            if (m_BrowsableProperties != null && m_BrowsableProperties.Length > 0) 
+            if (!m_BrowsableProperties.IsNullOrEmpty())
             {
                 // Clear properties to filter the list from scratch BY IAP
                 m_PropertyDescriptors.Clear();
@@ -216,8 +214,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private static int CompareDescriptors(PropertyDescriptor a, PropertyDescriptor b)
         {
-            if (a == null) return b == null ? 0 : -1;
-            else if (b == null) return 1;
+            if (a is null) return b is null ? 0 : -1;
+            if (b is null) return 1;
             int value = string.Compare(a.Category, b.Category);
             return value == 0 ? string.Compare(a.DisplayName, b.DisplayName) : value;
         }
@@ -227,8 +225,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void HideAttribute(Attribute attribute) 
         {
-            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new Attribute[] { attribute });
-            if(filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject, new[] { attribute });
+            if(filteredoriginalpropertydescriptors.IsNullOrEmpty()) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) HideProperty(propertydescriptor);
         }
 
@@ -237,8 +235,8 @@ namespace FlashDevelop.Controls
         /// </summary>
         private void ShowAttribute(Attribute attribute) 
         {
-            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new Attribute[] { attribute });
-            if (filteredoriginalpropertydescriptors == null || filteredoriginalpropertydescriptors.Count == 0) throw new ArgumentException("Attribute not found", attribute.ToString());
+            PropertyDescriptorCollection filteredoriginalpropertydescriptors = TypeDescriptor.GetProperties(m_Wrapper.SelectedObject,new[] { attribute });
+            if (filteredoriginalpropertydescriptors.IsNullOrEmpty()) throw new ArgumentException("Attribute not found", attribute.ToString());
             foreach(PropertyDescriptor propertydescriptor in filteredoriginalpropertydescriptors) ShowProperty(propertydescriptor);
         }
 
@@ -268,41 +266,23 @@ namespace FlashDevelop.Controls
     internal class ObjectWrapper : ICustomTypeDescriptor
     {
         /// <summary>
-        /// Contain a reference to the selected objet that will linked to the parent PropertyGrid.
-        /// </summary>
-        private object m_SelectedObject = null;
-
-        /// <summary>
-        /// Contain a reference to the collection of properties to show in the parent PropertyGrid.
-        /// </summary>
-        List<PropertyDescriptor> m_PropertyDescriptors = new List<PropertyDescriptor>();
-
-        /// <summary>
         /// Simple constructor.
         /// </summary>
         /// <param name="obj">A reference to the selected object that will linked to the parent PropertyGrid.</param>
         internal ObjectWrapper(object obj)
         {
-            m_SelectedObject = obj;
+            SelectedObject = obj;
         }
 
         /// <summary>
-        /// Get or set a reference to the selected objet that will linked to the parent PropertyGrid.
+        /// Get or set a reference to the selected object that will linked to the parent PropertyGrid.
         /// </summary>
-        public object SelectedObject
-        {
-            get { return m_SelectedObject; }
-            set { if (m_SelectedObject != value) m_SelectedObject = value; }
-        }
+        public object SelectedObject { get; set; }
 
         /// <summary>
         /// Get or set a reference to the collection of properties to show in the parent PropertyGrid.
         /// </summary>
-        public List<PropertyDescriptor> PropertyDescriptors
-        {
-            get { return m_PropertyDescriptors; }
-            set { m_PropertyDescriptors = value; }
-        }
+        public List<PropertyDescriptor> PropertyDescriptors { get; set; } = new List<PropertyDescriptor>();
 
         #region ICustomTypeDescriptor Members
 
@@ -313,37 +293,37 @@ namespace FlashDevelop.Controls
 
         public PropertyDescriptorCollection GetProperties()
         {
-            return new PropertyDescriptorCollection(m_PropertyDescriptors.ToArray(), true);
+            return new PropertyDescriptorCollection(PropertyDescriptors.ToArray(), true);
         }
 
         public AttributeCollection GetAttributes()
         {
-            return TypeDescriptor.GetAttributes(m_SelectedObject, true);
+            return TypeDescriptor.GetAttributes(SelectedObject, true);
         }
 
-        public String GetClassName()
+        public string GetClassName()
         {
-            return TypeDescriptor.GetClassName(m_SelectedObject, true);
+            return TypeDescriptor.GetClassName(SelectedObject, true);
         }
 
-        public String GetComponentName()
+        public string GetComponentName()
         {
-            return TypeDescriptor.GetComponentName(m_SelectedObject, true);
+            return TypeDescriptor.GetComponentName(SelectedObject, true);
         }
 
         public TypeConverter GetConverter()
         {
-            return TypeDescriptor.GetConverter(m_SelectedObject, true);
+            return TypeDescriptor.GetConverter(SelectedObject, true);
         }
 
         public EventDescriptor GetDefaultEvent()
         {
-            return TypeDescriptor.GetDefaultEvent(m_SelectedObject, true);
+            return TypeDescriptor.GetDefaultEvent(SelectedObject, true);
         }
 
         public PropertyDescriptor GetDefaultProperty()
         {
-            return TypeDescriptor.GetDefaultProperty(m_SelectedObject, true);
+            return TypeDescriptor.GetDefaultProperty(SelectedObject, true);
         }
 
         public object GetEditor(Type editorBaseType)
@@ -353,17 +333,17 @@ namespace FlashDevelop.Controls
 
         public EventDescriptorCollection GetEvents(Attribute[] attributes)
         {
-            return TypeDescriptor.GetEvents(m_SelectedObject, attributes, true);
+            return TypeDescriptor.GetEvents(SelectedObject, attributes, true);
         }
 
         public EventDescriptorCollection GetEvents()
         {
-            return TypeDescriptor.GetEvents(m_SelectedObject, true);
+            return TypeDescriptor.GetEvents(SelectedObject, true);
         }
 
         public object GetPropertyOwner(PropertyDescriptor pd)
         {
-            return m_SelectedObject;
+            return SelectedObject;
         }
 
         #endregion

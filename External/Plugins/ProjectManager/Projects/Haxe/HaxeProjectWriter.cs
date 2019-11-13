@@ -2,12 +2,12 @@ namespace ProjectManager.Projects.Haxe
 {
     public class HaxeProjectWriter : ProjectWriter
     {
-        HaxeProject project;
+        readonly HaxeProject project;
 
-        public HaxeProjectWriter(HaxeProject project, string filename)
+        public HaxeProjectWriter(Project project, string filename)
             : base(project, filename)
         {
-            this.project = base.Project as HaxeProject;
+            this.project = Project as HaxeProject;
         }
 
         protected override void OnAfterWriteClasspaths()

@@ -55,7 +55,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         #endregion
         
         #region Instance Fields
-        byte[] window = new byte[WindowSize]; //The window is 2^15 bytes
+
+        readonly byte[] window = new byte[WindowSize]; //The window is 2^15 bytes
         int windowEnd;
         int windowFilled;
         #endregion
@@ -154,8 +155,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// </exception>
         public void CopyDict(byte[] dictionary, int offset, int length)
         {
-            if ( dictionary == null ) {
-                throw new ArgumentNullException("dictionary");
+            if ( dictionary is null ) {
+                throw new ArgumentNullException(nameof(dictionary));
             }
 
             if (windowFilled > 0) {

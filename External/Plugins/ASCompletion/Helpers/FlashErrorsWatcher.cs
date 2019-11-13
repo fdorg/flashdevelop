@@ -16,18 +16,18 @@ namespace ASCompletion.Helpers
         private string logFile;
         private string docInfo;
         private string publishInfo;
-        private WatcherEx fsWatcher;
-        private Timer updater;
+        private readonly WatcherEx fsWatcher;
+        private readonly Timer updater;
 
-        private Regex reError = new Regex(
+        private readonly Regex reError = new Regex(
             @"^\*\*Error\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        private Regex warnError = new Regex(
+        private readonly Regex warnError = new Regex(
             @"^\*\*Warning\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
             RegexOptions.Compiled | RegexOptions.Multiline);
 
-        private Regex reFlashFile = new Regex(
+        private readonly Regex reFlashFile = new Regex(
             "<flashFileName>(?<output>[^<]+)</flashFileName>",
             RegexOptions.Compiled);
 
@@ -35,14 +35,18 @@ namespace ASCompletion.Helpers
         {
             try
             {
-                string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string logLocation;
                 if (BridgeManager.Active && BridgeManager.Settings.TargetRemoteIDE)
                 {
                     logLocation = Path.Combine(BridgeManager.Settings.SharedDrive, ".FlashDevelop\\flashide");
                     Directory.CreateDirectory(logLocation);
                 }
-                else logLocation = Path.Combine(appData, Path.Combine("Adobe", "FlashDevelop"));
+                else
+                {
+                    var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    logLocation = Path.Combine(appData, Path.Combine("Adobe", "FlashDevelop"));
+                }
+
                 Directory.CreateDirectory(logLocation);
 
                 logFile = Path.Combine(logLocation, "FlashErrors.log");
@@ -51,7 +55,7 @@ namespace ASCompletion.Helpers
 
                 fsWatcher = new WatcherEx(logLocation);
                 fsWatcher.EnableRaisingEvents = true;
-                fsWatcher.Changed += new FileSystemEventHandler(fsWatcher_Changed);
+                fsWatcher.Changed += fsWatcher_Changed;
 
                 updater = new Timer();
                 updater.SynchronizingObject = PluginBase.MainForm as Form;
@@ -90,7 +94,7 @@ namespace ASCompletion.Helpers
                     line += "," + mCol.Groups[1].Value;
                     desc = desc.Substring(mCol.Length);
                 }
-                TraceManager.Add(String.Format("{0}({1}): {2}", file, line, desc), -3);
+                TraceManager.Add($"{file}({line}): {desc}", -3);
             }
             foreach (Match m in warningMatches)
             {
@@ -103,7 +107,7 @@ namespace ASCompletion.Helpers
                     line += "," + mCol.Groups[1].Value;
                     desc = desc.Substring(mCol.Length);
                 }
-                TraceManager.Add(String.Format("{0}({1}): {2}", file, line, desc), -3);
+                TraceManager.Add($"{file}({line}): {desc}", -3);
             }
             te = new TextEvent(EventType.ProcessEnd, "Done(" + errorMatches.Count + ")");
             EventManager.DispatchEvent(this, te);
@@ -117,41 +121,36 @@ namespace ASCompletion.Helpers
                 }
             }
             
-            (PluginBase.MainForm as Form).Activate();
-            (PluginBase.MainForm as Form).Focus();
+            ((Form) PluginBase.MainForm).Activate();
+            ((Form) PluginBase.MainForm).Focus();
         }
 
         private void PlaySWF()
         {
-            if (File.Exists(docInfo) && File.Exists(publishInfo))
+            if (!File.Exists(docInfo) || !File.Exists(publishInfo)) return;
+            var fla = File.ReadAllText(docInfo);
+            if (!File.Exists(fla)) return;
+
+            try
             {
-                string fla = File.ReadAllText(docInfo);
-                if (!File.Exists(fla)) 
-                    return;
+                // don't let another FD instance handle it
+                // TODO Make multi-FD-instances friendly
+                File.Delete(docInfo); 
+            }
+            catch { }
 
-                try
-                {
-                    // don't let another FD instance handle it
-                    // TODO Make multi-FD-instances friendly
-                    File.Delete(docInfo); 
-                }
-                catch { }
-
-                string src = File.ReadAllText(publishInfo);
-                Match m = reFlashFile.Match(src);
-                if (m.Success)
-                {
-                    string output = m.Groups["output"].Value.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                    output = PathHelper.ResolvePath(output, Path.GetDirectoryName(fla));
-                    if (File.Exists(output))
-                    {
-                        FileInfo info = new FileInfo(output);
-                        CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
+            var src = File.ReadAllText(publishInfo);
+            var m = reFlashFile.Match(src);
+            if (!m.Success) return;
+            string output = m.Groups["output"].Value.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            output = PathHelper.ResolvePath(output, Path.GetDirectoryName(fla));
+            if (File.Exists(output))
+            {
+                FileInfo info = new FileInfo(output);
+                CreateTrustFile.Run("FlashDevelop.cfg", info.Directory.FullName);
                         
-                        DataEvent de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", output);
-                        EventManager.DispatchEvent(this, de);
-                    }
-                }
+                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.PlayOutput", output);
+                EventManager.DispatchEvent(this, de);
             }
         }
 

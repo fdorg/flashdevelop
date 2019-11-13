@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 /**
  * Credit: http://www.ko-sw.com/Blog/post/An-Ultra-Fast-CSS-Minify-Algorithm.aspx
@@ -72,7 +71,7 @@ namespace CssCompletion
                 if (aPrevState == CssState.Punctuation && i > 0
                     && theCss[aPrevPos] == '}' && theCss[i] != '}')
                 {
-                    if (Char.IsDigit(theCss[i])) aRet.Append(' ');
+                    if (char.IsDigit(theCss[i])) aRet.Append(' ');
                     else aRet.Append('\n'); // keep blocks on new lines
                 }
 
@@ -129,10 +128,11 @@ namespace CssCompletion
                     // Enforce a whitespace afterwards
                     return CssState.Token;
                 }
-                else
-                    return CssState.StringD;
+
+                return CssState.StringD;
             }
-            else if (theCurState == CssState.StringS)
+
+            if (theCurState == CssState.StringS)
             {
                 if(theCss[i] == '\'')
                 {
@@ -144,8 +144,8 @@ namespace CssCompletion
                     // Enforce a whitespace afterwards
                     return CssState.Token;
                 }
-                else
-                    return CssState.StringS;
+
+                return CssState.StringS;
             }
 
 
@@ -184,38 +184,22 @@ namespace CssCompletion
             if (IsTokenChar(c))
                 return CssState.Token;
 
-            else if (c == '\"')
+            if (c == '\"')
                 return CssState.StringD;
-
-            else if (c == '\'')
+            if (c == '\'')
                 return CssState.StringS;
-
-            else
-                return CssState.Punctuation;
+            return CssState.Punctuation;
         }
 
-        private static bool IsWhitespaceChar(char p)
-        {
-            return p == '\t' || p == '\r' || p == '\n' || p == ' ';
-        }
+        private static bool IsWhitespaceChar(char p) => p == '\t' || p == '\r' || p == '\n' || p == ' ';
 
         private static bool IsTokenChar(char theChar)
         {
-            if(theChar >= 'a' && theChar <= 'z')
-                return true;
-
-            else if (theChar >= '0' && theChar <= '9')
-                return true;
-
-            else if(theChar >= 'A' && theChar <= 'Z')
-                return true;
-
-            else if ( AdditionalTokenChars.IndexOf(theChar) >= 0 )
-                return true;
-
-            else
-                return false;
+            if (theChar >= 'a' && theChar <= 'z') return true;
+            if (theChar >= '0' && theChar <= '9') return true;
+            if (theChar >= 'A' && theChar <= 'Z') return true;
+            if (AdditionalTokenChars.IndexOf(theChar) >= 0) return true;
+            return false;
         }
     }
-
 }

@@ -1,8 +1,5 @@
 ﻿using CodeRefactor.Managers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PluginCore;
 using CodeRefactor.Commands;
 using CodeRefactor.Provider;
@@ -20,9 +17,9 @@ namespace CodeRefactor.BatchProcessors
         {
             foreach (var file in files)
             {
-                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
                 var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document)?.CreateOrganizeImportsCommand();
-                if (command == null) continue;
+                if (command is null) continue;
                 command.SciControl = document.SciControl;
                 command.Execute();
             }

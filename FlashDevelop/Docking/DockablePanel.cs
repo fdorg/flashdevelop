@@ -1,6 +1,5 @@
 using PluginCore.Helpers;
 using PluginCore.Utilities;
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -10,9 +9,9 @@ namespace FlashDevelop.Docking
     public class DockablePanel : DockContent
     {
         private Image image;
-        private String pluginGuid;
+        private readonly string pluginGuid;
 
-        public DockablePanel(Control ctrl, String pluginGuid)
+        public DockablePanel(Control ctrl, string pluginGuid)
         {
             this.Text = ctrl.Text;
             ctrl.Dock = DockStyle.Fill;
@@ -34,7 +33,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         public Image Image
         {
-            get { return image; }
+            get => image;
             set
             {
                 image = value;
@@ -53,7 +52,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Retrieves the guid of the document
         /// </summary>
-        public override String GetPersistString()
+        public override string GetPersistString()
         {
             return this.pluginGuid;
         }
@@ -63,7 +62,7 @@ namespace FlashDevelop.Docking
         /// </summary>
         internal class Template : DockContent
         {
-            private string persistString;
+            private readonly string persistString;
 
             internal Template(string persistString)
             {

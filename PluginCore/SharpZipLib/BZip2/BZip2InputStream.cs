@@ -83,8 +83,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner; }
-            set { isStreamOwner = value; }
+            get => isStreamOwner;
+            set => isStreamOwner = value;
         }
         
 
@@ -92,53 +92,32 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// <summary>
         /// Gets a value indicating if the stream supports reading
         /// </summary>
-        public override bool CanRead 
-        {
-            get {
-                return baseStream.CanRead;
-            }
-        }
-        
+        public override bool CanRead => baseStream.CanRead;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports seeking.
         /// </summary>
-        public override bool CanSeek {
-            get {
-                return baseStream.CanSeek;
-            }
-        }
-        
+        public override bool CanSeek => baseStream.CanSeek;
+
         /// <summary>
         /// Gets a value indicating whether the current stream supports writing.
         /// This property always returns false
         /// </summary>
-        public override bool CanWrite {
-            get {
-                return false;
-            }
-        }
-        
+        public override bool CanWrite => false;
+
         /// <summary>
         /// Gets the length in bytes of the stream.
         /// </summary>
-        public override long Length {
-            get {
-                return baseStream.Length;
-            }
-        }
-        
+        public override long Length => baseStream.Length;
+
         /// <summary>
         /// Gets or sets the streams position.
         /// Setting the position is not supported and will throw a NotSupportException
         /// </summary>
         /// <exception cref="NotSupportedException">Any attempt to set the position</exception>
         public override long Position {
-            get {
-                return baseStream.Position;
-            }
-            set {
-                throw new NotSupportedException("BZip2InputStream position cannot be set");
-            }
+            get => baseStream.Position;
+            set => throw new NotSupportedException("BZip2InputStream position cannot be set");
         }
         
         /// <summary>
@@ -146,9 +125,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public override void Flush()
         {
-            if (baseStream != null) {
-                baseStream.Flush();
-            }
+            baseStream?.Flush();
         }
         
         /// <summary>
@@ -210,9 +187,9 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null )
+            if ( buffer is null )
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             for (int i = 0; i < count; ++i) {
@@ -230,8 +207,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
         /// </summary>
         public override void Close()
         {
-            if ( IsStreamOwner && (baseStream != null) ) {
-                baseStream.Close();
+            if ( IsStreamOwner ) {
+                baseStream?.Close();
             }
         }
         /// <summary>
@@ -342,7 +319,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
             
             // 1528150659
             computedCombinedCRC = ((computedCombinedCRC << 1) & 0xFFFFFFFF) | (computedCombinedCRC >> 31);
-            computedCombinedCRC = computedCombinedCRC ^ (uint)computedBlockCRC;
+            computedCombinedCRC ^= (uint)computedBlockCRC;
         }
         
         void Complete() 
@@ -607,42 +584,42 @@ namespace ICSharpCode.SharpZipLib.BZip2
                         BlockOverrun();
                     }
                     continue;
-                } else {
-                    last++;
-                    if (last >= limitLast) {
-                        BlockOverrun();
-                    }
-                    
-                    byte tmp = yy[nextSym - 1];
-                    unzftab[seqToUnseq[tmp]]++;
-                    ll8[last] = seqToUnseq[tmp];
-                    
-                    for (int j = nextSym-1; j > 0; --j) {
-                        yy[j] = yy[j - 1];
-                    }
-                    yy[0] = tmp;
-                    
-                    if (groupPos == 0) {
-                        groupNo++;
-                        groupPos = BZip2Constants.GroupSize;
-                    }
-                    
-                    groupPos--;
-                    zt = selector[groupNo];
-                    zn = minLens[zt];
-                    zvec = BsR(zn);
-                    while (zvec > limit[zt][zn]) {
-                        zn++;
-                        while (bsLive < 1) {
-                            FillBuffer();
-                        }
-                        zj = (bsBuff >> (bsLive-1)) & 1;
-                        bsLive--;
-                        zvec = (zvec << 1) | zj;
-                    }
-                    nextSym = perm[zt][zvec - baseArray[zt][zn]];
-                    continue;
                 }
+
+                last++;
+                if (last >= limitLast) {
+                    BlockOverrun();
+                }
+                    
+                byte tmp = yy[nextSym - 1];
+                unzftab[seqToUnseq[tmp]]++;
+                ll8[last] = seqToUnseq[tmp];
+                    
+                for (int j = nextSym-1; j > 0; --j) {
+                    yy[j] = yy[j - 1];
+                }
+                yy[0] = tmp;
+                    
+                if (groupPos == 0) {
+                    groupNo++;
+                    groupPos = BZip2Constants.GroupSize;
+                }
+                    
+                groupPos--;
+                zt = selector[groupNo];
+                zn = minLens[zt];
+                zvec = BsR(zn);
+                while (zvec > limit[zt][zn]) {
+                    zn++;
+                    while (bsLive < 1) {
+                        FillBuffer();
+                    }
+                    zj = (bsBuff >> (bsLive-1)) & 1;
+                    bsLive--;
+                    zvec = (zvec << 1) | zj;
+                }
+                nextSym = perm[zt][zvec - baseArray[zt][zn]];
+                continue;
             }
         }
         
@@ -694,7 +671,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
                     }
                 }
                 rNToGo--;
-                ch2 ^= (int)((rNToGo == 1) ? 1 : 0);
+                ch2 ^= (rNToGo == 1) ? 1 : 0;
                 i2++;
                 
                 currentChar  = ch2;
@@ -757,7 +734,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         
         void SetupRandPartC() 
         {
-            if (j2 < (int)z) {
+            if (j2 < z) {
                 currentChar = ch2;
                 mCrc.Update(ch2);
                 j2++;
@@ -792,7 +769,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
         
         void SetupNoRandPartC() 
         {
-            if (j2 < (int)z) {
+            if (j2 < z) {
                 currentChar = ch2;
                 mCrc.Update(ch2);
                 j2++;
@@ -914,16 +891,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
         
         int bsBuff;
         int bsLive;
-        IChecksum mCrc = new StrangeCRC();
-        
-        bool[] inUse = new bool[256];
+        readonly IChecksum mCrc = new StrangeCRC();
+
+        readonly bool[] inUse = new bool[256];
         int    nInUse;
-        
-        byte[] seqToUnseq = new byte[256];
-        byte[] unseqToSeq = new byte[256];
-        
-        byte[] selector    = new byte[BZip2Constants.MaximumSelectors];
-        byte[] selectorMtf = new byte[BZip2Constants.MaximumSelectors];
+
+        readonly byte[] seqToUnseq = new byte[256];
+        readonly byte[] unseqToSeq = new byte[256];
+
+        readonly byte[] selector    = new byte[BZip2Constants.MaximumSelectors];
+        readonly byte[] selectorMtf = new byte[BZip2Constants.MaximumSelectors];
         
         int[] tt;
         byte[] ll8;
@@ -932,12 +909,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
         freq table collected to save a pass over the data
         during decompression.
         --*/
-        int[] unzftab = new int[256];
-        
-        int[][] limit     = new int[BZip2Constants.GroupCount][];
-        int[][] baseArray = new int[BZip2Constants.GroupCount][];
-        int[][] perm      = new int[BZip2Constants.GroupCount][];
-        int[] minLens     = new int[BZip2Constants.GroupCount];
+        readonly int[] unzftab = new int[256];
+
+        readonly int[][] limit     = new int[BZip2Constants.GroupCount][];
+        readonly int[][] baseArray = new int[BZip2Constants.GroupCount][];
+        readonly int[][] perm      = new int[BZip2Constants.GroupCount][];
+        readonly int[] minLens     = new int[BZip2Constants.GroupCount];
         
         Stream baseStream;
         bool   streamEnd;

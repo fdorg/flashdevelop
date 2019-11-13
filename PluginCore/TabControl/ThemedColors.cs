@@ -3,7 +3,6 @@
  * See http://www.codeproject.com/info/cpol10.aspx for details
 */
 
-using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
@@ -20,28 +19,24 @@ namespace System.Drawing
 		private const string Metallic = "Metallic";
 		private const string NoTheme = "NoTheme";
 
-		private static Color[] _toolBorder;
+		private static readonly Color[] _toolBorder;
 		#endregion
 
 		#region "    Properties "
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		public static ColorScheme CurrentThemeIndex {
-			get { return ThemedColors.GetCurrentThemeIndex(); }
-		}
+		public static ColorScheme CurrentThemeIndex => ThemedColors.GetCurrentThemeIndex();
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-		public static Color ToolBorder {
-			get { return ThemedColors._toolBorder[(int)ThemedColors.CurrentThemeIndex]; }
-		}
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		public static Color ToolBorder => ThemedColors._toolBorder[(int)ThemedColors.CurrentThemeIndex];
 
-		#endregion
+        #endregion
 
 		#region "    Constructors "
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
 		static ThemedColors() {
-			ThemedColors._toolBorder = new Color[] {Color.FromArgb(127, 157, 185), Color.FromArgb(164, 185, 127), Color.FromArgb(165, 172, 178), Color.FromArgb(132, 130, 132)};
+			ThemedColors._toolBorder = new[] {Color.FromArgb(127, 157, 185), Color.FromArgb(164, 185, 127), Color.FromArgb(165, 172, 178), Color.FromArgb(132, 130, 132)};
 		}
 
 		private ThemedColors(){}

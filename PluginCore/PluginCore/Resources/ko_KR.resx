@@ -6044,6 +6044,10 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>최근 파일 목록의 최대 길이.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxTraceLines" xml:space="preserve">
+    <value>한 번에 최대 라인 수를 출력 할 수 있습니다.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>이름 바꾸기를 사용할때 인라인 편집을 사용합니다.</value>
     <comment>Added after 5.2.0</comment>
@@ -6249,6 +6253,126 @@ AND - 모든 조건을 만족할때.</value>
   <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
     <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 1.</value>
     <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="PluginCore.Label.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.NoToAll" xml:space="preserve">
+    <value>No to All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.YesToAll" xml:space="preserve">
+    <value>Yes To All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.DontAskAgain" xml:space="preserve">
+    <value>Remember, don't ask again</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="ProjectManager.Description.ShowExternalLibraries" xml:space="preserve">
+    <value>Sets whether or not to include external libraries directories in the project tree.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Info.GenerateSwitch" xml:space="preserve">
+    <value>Generate switch</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.PeekDefinition" xml:space="preserve">
+    <value>Peek Definition</value>
+    <comment>Added after 5.3.4</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateInterface" xml:space="preserve">
+    <value>Create new interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewAs2Interface" xml:space="preserve">
+    <value>New ActionScript 2 Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewAs3Interface" xml:space="preserve">
+    <value>New ActionScript 3 Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewHaxeInterface" xml:space="preserve">
+    <value>New Haxe Interface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.ExtendsInterface" xml:space="preserve">
+    <value>Base Interface:</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Label.NewInterface" xml:space="preserve">
+    <value>INewInterface</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.EmptyInterfaceName" xml:space="preserve">
+    <value>Interface name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.InvalidInterfaceName" xml:space="preserve">
+    <value>Interface name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASClassWizard.Wizard.Error.LowercaseInterfaceName" xml:space="preserve">
+    <value>Interface name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Label.ConvertStaticMethodCallToStaticExtensionCall" xml:space="preserve">
+    <value>To static extension call</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="FlashDevelop.Description.HighlightMatchingWordsCaseSensitive" xml:space="preserve">
+    <value>Match case</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GeneratePrivateStaticVar" xml:space="preserve">
+    <value>Declare private static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GeneratePublicStaticVar" xml:space="preserve">
+    <value>Declare public static variable</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="ASCompletion.Label.GenerateEnum" xml:space="preserve">
+    <value>Create new enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Label.NewEnum" xml:space="preserve">
+    <value>New Haxe Enum</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Info.Description" xml:space="preserve">
+    <value>Adds a Haxe type wizard to FlashDevelop.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.EmptyEnumName" xml:space="preserve">
+    <value>Enum name can't be empty.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.InvalidEnumName" xml:space="preserve">
+    <value>Enum name contains invalid characters.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeTypeWizard.Wizard.Error.LowercaseEnumName" xml:space="preserve">
+    <value>Enum name must start with an uppercase letter.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaxeCompletion.Label.GenerateConstructorWithInitializer" xml:space="preserve">
+    <value>Generate constructor with initializer</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Label.InitializeLocalVariable" xml:space="preserve">
+    <value>Initialize {0}</value>
+    <comment>Added After 5.3.3</comment>
   </data>
   <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
     <value>Open &amp;Folder...</value>

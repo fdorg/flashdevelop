@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace OutputPanel
@@ -10,11 +11,11 @@ namespace OutputPanel
     [Serializable]
     public class Settings
     {
-        private Boolean showOnOutput = false;
-        private Boolean showOnProcessEnd = false;
-        private Boolean useLegacyColoring = false;
+        private bool showOnOutput = false;
+        private bool showOnProcessEnd = false;
+        private bool useLegacyColoring = false;
         private List<HighlightMarker> highlightMarkers;
-        private Boolean wrapOutput = false;
+        private bool wrapOutput = false;
         private ClearModeAction clearMode = ClearModeAction.OnEveryProcess;
 
         /// <summary> 
@@ -22,10 +23,10 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Show On Output")] 
         [LocalizedDescription("OutputPanel.Description.ShowOnOutput"), DefaultValue(false)]
-        public Boolean ShowOnOutput 
+        public bool ShowOnOutput 
         {
-            get { return this.showOnOutput; }
-            set { this.showOnOutput = value; }
+            get => showOnOutput;
+            set => showOnOutput = value;
         }
 
         /// <summary> 
@@ -33,10 +34,10 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Show On Process End")] 
         [LocalizedDescription("OutputPanel.Description.ShowOnProcessEnd"), DefaultValue(false)]
-        public Boolean ShowOnProcessEnd 
+        public bool ShowOnProcessEnd 
         {
-            get { return this.showOnProcessEnd; }
-            set { this.showOnProcessEnd = value; }
+            get => showOnProcessEnd;
+            set => showOnProcessEnd = value;
         }
 
         /// <summary> 
@@ -44,10 +45,10 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Wrap Output")]
         [LocalizedDescription("OutputPanel.Description.WrapOutput"), DefaultValue(false)]
-        public Boolean WrapOutput
+        public bool WrapOutput
         {
-            get { return this.wrapOutput; }
-            set { this.wrapOutput = value; }
+            get => wrapOutput;
+            set => wrapOutput = value;
         }
 
         /// <summary> 
@@ -55,10 +56,10 @@ namespace OutputPanel
         /// </summary>
         [DisplayName("Use Legacy Coloring")]
         [LocalizedDescription("OutputPanel.Description.UseLegacyColoring"), DefaultValue(false)]
-        public Boolean UseLegacyColoring
+        public bool UseLegacyColoring
         {
-            get { return this.useLegacyColoring; }
-            set { this.useLegacyColoring = value; }
+            get => useLegacyColoring;
+            set => useLegacyColoring = value;
         }
 
         [DisplayName("Highlight Markers")]
@@ -68,18 +69,18 @@ namespace OutputPanel
         {
             get
             {
-                if (highlightMarkers == null || highlightMarkers.Count == 0)
+                if (highlightMarkers.IsNullOrEmpty())
                 {
-                    this.highlightMarkers = new List<HighlightMarker>();
-                    this.highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));
-                    this.highlightMarkers.Add(new HighlightMarker("Debug:", LogLevel.Debug));
-                    this.highlightMarkers.Add(new HighlightMarker("Warning:", LogLevel.Warning));
-                    this.highlightMarkers.Add(new HighlightMarker("Error:", LogLevel.Error));
-                    this.highlightMarkers.Add(new HighlightMarker("Fatal:", LogLevel.Fatal));
+                    highlightMarkers = new List<HighlightMarker>();
+                    highlightMarkers.Add(new HighlightMarker("Info:", LogLevel.Info));
+                    highlightMarkers.Add(new HighlightMarker("Debug:", LogLevel.Debug));
+                    highlightMarkers.Add(new HighlightMarker("Warning:", LogLevel.Warning));
+                    highlightMarkers.Add(new HighlightMarker("Error:", LogLevel.Error));
+                    highlightMarkers.Add(new HighlightMarker("Fatal:", LogLevel.Fatal));
                 }
                 return highlightMarkers;
             }
-            set { this.highlightMarkers = value; }
+            set => highlightMarkers = value;
         }
 
         /// <summary> 
@@ -89,8 +90,8 @@ namespace OutputPanel
         [LocalizedDescription("OutputPanel.Description.ClearMode"), DefaultValue(ClearModeAction.OnEveryProcess)]
         public ClearModeAction ClearMode
         {
-            get { return this.clearMode; }
-            set { this.clearMode = value; }
+            get => clearMode;
+            set => clearMode = value;
         }
 
     }
@@ -105,28 +106,28 @@ namespace OutputPanel
     [Serializable]
     public class HighlightMarker
     {
-        public String marker = "Info:";
+        public string marker = "Info:";
         public LogLevel level = LogLevel.Debug;
         
         public HighlightMarker(){}
-        public HighlightMarker(String marker, LogLevel level)
+        public HighlightMarker(string marker, LogLevel level)
         {
             this.marker = marker;
             this.level = level;
         }
 
         [LocalizedDescription("OutputPanel.Description.Marker")]
-        public String Marker
+        public string Marker
         {
-            get { return this.marker; }
-            set { this.marker = value; }
+            get => marker;
+            set => marker = value;
         }
 
         [LocalizedDescription("OutputPanel.Description.Level")]
         public LogLevel Level
         {
-            get { return this.level; }
-            set { this.level = value; }
+            get => level;
+            set => level = value;
         }
 
         /// <summary>

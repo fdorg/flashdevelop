@@ -44,6 +44,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -52,18 +53,21 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -83,6 +87,13 @@
     <Compile Include="Resources\ASClassOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
+    <Compile Include="WizardContext.cs" />
+    <Compile Include="Wizards\AS3InterfaceWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wizards\AS3InterfaceWizard.designer.cs">
+      <DependentUpon>AS3InterfaceWizard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Wizards\AS3ClassWizard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +106,7 @@
     <Compile Include="Wizards\ClassBrowser.designer.cs">
       <DependentUpon>ClassBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Wizards\IWizard.cs" />
     <Compile Include="Wizards\ListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -144,6 +156,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

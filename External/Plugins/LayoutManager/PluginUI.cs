@@ -70,9 +70,9 @@ namespace LayoutManager
             this.layoutsListView.TabIndex = 11;
             this.layoutsListView.UseCompatibleStateImageBehavior = false;
             this.layoutsListView.View = System.Windows.Forms.View.List;
-            this.layoutsListView.DoubleClick += new System.EventHandler(this.LayoutsListViewDoubleClick);
-            this.layoutsListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LayoutsListViewKeyDown);
-            this.layoutsListView.SelectedIndexChanged += new System.EventHandler(this.LayoutsListViewSelectedIndexChanged);
+            this.layoutsListView.DoubleClick += this.LayoutsListViewDoubleClick;
+            this.layoutsListView.KeyDown += this.LayoutsListViewKeyDown;
+            this.layoutsListView.SelectedIndexChanged += this.LayoutsListViewSelectedIndexChanged;
             // 
             // toolStrip
             //
@@ -98,7 +98,7 @@ namespace LayoutManager
             this.loadStripButton.Name = "loadStripButton";
             this.loadStripButton.Size = new System.Drawing.Size(23, 22);
             this.loadStripButton.ToolTipText = "Load Layout";
-            this.loadStripButton.Click += new System.EventHandler(this.LoadButtonClick);
+            this.loadStripButton.Click += this.LoadButtonClick;
             // 
             // deleteStripButton
             //
@@ -108,7 +108,7 @@ namespace LayoutManager
             this.deleteStripButton.Name = "deleteStripButton";
             this.deleteStripButton.Size = new System.Drawing.Size(23, 22);
             this.deleteStripButton.ToolTipText = "Delete Layout";
-            this.deleteStripButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteStripButton.Click += this.DeleteButtonClick;
             // 
             // saveStripButton
             //
@@ -118,7 +118,7 @@ namespace LayoutManager
             this.saveStripButton.Name = "saveStripButton";
             this.saveStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveStripButton.ToolTipText = "Save Current...";
-            this.saveStripButton.Click += new System.EventHandler(this.SaveButtonClick);
+            this.saveStripButton.Click += this.SaveButtonClick;
             // 
             // settingStripButton
             //
@@ -128,7 +128,7 @@ namespace LayoutManager
             this.settingStripButton.Name = "settingsStripButton";
             this.settingStripButton.Size = new System.Drawing.Size(23, 22);
             this.settingStripButton.ToolTipText = "Show Settings...";
-            this.settingStripButton.Click += new System.EventHandler(this.SettingsButtonClick);
+            this.settingStripButton.Click += this.SettingsButtonClick;
             // 
             // toolStripSeparator
             // 
@@ -142,7 +142,7 @@ namespace LayoutManager
             this.Controls.Add(this.layoutsListView);
             this.Controls.Add(this.toolStrip);
             this.Size = new System.Drawing.Size(299, 283);
-            this.Load += new System.EventHandler(this.FormLoaded);
+            this.Load += this.FormLoaded;
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -189,10 +189,10 @@ namespace LayoutManager
         {
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.ImageScalingSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
-            this.menuLoadButton = new ToolStripMenuItem(TextHelper.GetString("Label.LoadLayout"), null, new EventHandler(this.LoadButtonClick));
-            this.menuDeleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.DeleteLayout"), null, new EventHandler(this.DeleteButtonClick));
-            this.menuSaveButton = new ToolStripMenuItem(TextHelper.GetString("Label.SaveCurrent"), null, new EventHandler(this.SaveButtonClick));
-            this.menuSettingButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShowSettings"), null, new EventHandler(this.SettingsButtonClick));
+            this.menuLoadButton = new ToolStripMenuItem(TextHelper.GetString("Label.LoadLayout"), null, this.LoadButtonClick);
+            this.menuDeleteButton = new ToolStripMenuItem(TextHelper.GetString("Label.DeleteLayout"), null, this.DeleteButtonClick);
+            this.menuSaveButton = new ToolStripMenuItem(TextHelper.GetString("Label.SaveCurrent"), null, this.SaveButtonClick);
+            this.menuSettingButton = new ToolStripMenuItem(TextHelper.GetString("Label.ShowSettings"), null, this.SettingsButtonClick);
             menu.Items.AddRange(new ToolStripMenuItem[4] { this.menuLoadButton, this.menuDeleteButton, this.menuSaveButton, this.menuSettingButton});
             menu.Items.Insert(3, new ToolStripSeparator());
             menu.Font = PluginBase.Settings.DefaultFont;
@@ -214,12 +214,12 @@ namespace LayoutManager
         /// <summary>
         /// Populates the list view on load
         /// </summary>
-        private void FormLoaded(Object sender, EventArgs e)
+        private void FormLoaded(object sender, EventArgs e)
         {
             this.toolStrip.Renderer = new DockPanelStripRenderer();
             this.toolStrip.ImageScalingSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
             this.infoListViewItem = new ListViewItem(TextHelper.GetString("Info.NoLayoutsFound"), 1);
-            String file = Path.Combine(this.GetLayoutsDir(), "DefaultLayout.fdl");
+            string file = Path.Combine(this.GetLayoutsDir(), "DefaultLayout.fdl");
             if (!File.Exists(file)) WriteDefaultLayout(file);
             this.PopulateLayoutsListView();
         }
@@ -262,12 +262,12 @@ namespace LayoutManager
         private void PopulateLayoutsListView()
         {
             this.layoutsListView.Items.Clear();
-            String[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
-            for (Int32 i = 0; i < layouts.Length; i++)
+            string[] layouts = Directory.GetFiles(this.GetLayoutsDir(), "*.fdl");
+            foreach (var layout in layouts)
             {
-                String label = Path.GetFileNameWithoutExtension(layouts[i]);
-                ListViewItem item = new ListViewItem(label, 0);
-                item.Tag = layouts[i]; // Store full path
+                var label = Path.GetFileNameWithoutExtension(layout);
+                var item = new ListViewItem(label, 0);
+                item.Tag = layout; // Store full path
                 this.layoutsListView.Items.Add(item);
             }
             this.UpdatePluginUI();
@@ -276,7 +276,7 @@ namespace LayoutManager
         /// <summary>
         /// Shows the plugin settings
         /// </summary>
-        private void SettingsButtonClick(Object sender, EventArgs e)
+        private void SettingsButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace LayoutManager
         /// <summary>
         /// Loads the selected layout
         /// </summary>
-        private void LoadButtonClick(Object sender, EventArgs e)
+        private void LoadButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -307,15 +307,15 @@ namespace LayoutManager
         /// <summary>
         /// Deletes the selected layout
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        private void DeleteButtonClick(object sender, EventArgs e)
         {
             try
             {
                 ListViewItem item = GetSelectedItem();
                 if (!FileHelper.Recycle(item.Tag.ToString()))
                 {
-                    String message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
-                    throw new Exception(message + " " + item.Tag.ToString());
+                    string message = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                    throw new Exception(message + " " + item.Tag);
                 }
                 this.PopulateLayoutsListView();
             }
@@ -328,20 +328,18 @@ namespace LayoutManager
         /// <summary>
         /// Saves the selected layout
         /// </summary>
-        private void SaveButtonClick(Object sender, EventArgs e)
+        private void SaveButtonClick(object sender, EventArgs e)
         {
             try
             {
-                using (SaveFileDialog sfd = new SaveFileDialog())
+                using SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
+                sfd.InitialDirectory = this.GetLayoutsDir();
+                sfd.DefaultExt = "fdl"; sfd.FileName = "";
+                if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
                 {
-                    sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
-                    sfd.InitialDirectory = this.GetLayoutsDir();
-                    sfd.DefaultExt = "fdl"; sfd.FileName = "";
-                    if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
-                    {
-                        PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
-                        this.PopulateLayoutsListView();
-                    }
+                    PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
+                    this.PopulateLayoutsListView();
                 }
             }
             catch (Exception ex)
@@ -353,17 +351,14 @@ namespace LayoutManager
         /// <summary>
         /// Updates the ui when on index change
         /// </summary>
-        private void LayoutsListViewSelectedIndexChanged(Object sender, EventArgs e)
-        {
-            this.UpdatePluginUI();
-        }
+        private void LayoutsListViewSelectedIndexChanged(object sender, EventArgs e) => UpdatePluginUI();
 
         /// <summary>
         /// Loads the selected layout on double click
         /// </summary>
-        private void LayoutsListViewDoubleClick(Object sender, EventArgs e)
+        private void LayoutsListViewDoubleClick(object sender, EventArgs e)
         {
-            ListViewItem item = this.GetSelectedItem();
+            var item = this.GetSelectedItem();
             if (item != null && item.ImageIndex != 1)
             {
                 PluginBase.MainForm.CallCommand("RestoreLayout", item.Tag.ToString());
@@ -398,49 +393,33 @@ namespace LayoutManager
         /// <summary>
         /// Gets the layouts directory
         /// </summary>
-        private String GetLayoutsDir()
+        private string GetLayoutsDir()
         {
-            String userPath = Settings.Instance.CustomLayoutPath;
+            var userPath = Settings.Instance.CustomLayoutPath;
             if (Directory.Exists(userPath)) return userPath;
-            else
-            {
-                String path = Path.Combine(this.GetDataDir(), "Layouts");
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                return path;
-            }
+            var path = Path.Combine(Path.Combine(PathHelper.DataDir, nameof(LayoutManager)), "Layouts");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            return path;
         }
 
         /// <summary>
         /// Copies the default layout file to disk
         /// </summary> 
-        private void WriteDefaultLayout(String file)
+        private void WriteDefaultLayout(string file)
         {
             try
             {
-                String content;
-                Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                Stream src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
-                using (StreamReader sr = new StreamReader(src, true))
-                {
-                    content = sr.ReadToEnd();
-                    sr.Close();
-                }
+                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var src = assembly.GetManifestResourceStream("LayoutManager.Resources.Default.fdl");
+                using var reader = new StreamReader(src, true);
+                var content = reader.ReadToEnd();
+                reader.Close();
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
                 FileHelper.WriteFile(file, content, Encoding.Unicode);
             }
             catch {}
         }
 
-        /// <summary>
-        /// Gets the plugin data directory
-        /// </summary>
-        private String GetDataDir()
-        {
-            return Path.Combine(PathHelper.DataDir, "LayoutManager");
-        }
-
         #endregion
-
     }
-
 }

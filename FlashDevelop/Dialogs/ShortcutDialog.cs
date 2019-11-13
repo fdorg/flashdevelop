@@ -84,7 +84,7 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.Size = new System.Drawing.Size(561, 20);
             this.filterTextBox.TabIndex = 0;
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
+            this.filterTextBox.TextChanged += this.FilterTextChanged;
             // 
             // clearButton
             // 
@@ -94,7 +94,7 @@ namespace FlashDevelop.Dialogs
             this.clearButton.Size = new System.Drawing.Size(26, 23);
             this.clearButton.TabIndex = 1;
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.ClearFilterClick);
+            this.clearButton.Click += this.ClearFilterClick;
             // 
             // idHeader
             // 
@@ -107,7 +107,7 @@ namespace FlashDevelop.Dialogs
             // listView
             // 
             this.listView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.idHeader, this.keyHeader });
+            this.listView.Columns.AddRange(new[] { this.idHeader, this.keyHeader });
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
             this.listView.Location = new System.Drawing.Point(12, 62);
@@ -117,7 +117,7 @@ namespace FlashDevelop.Dialogs
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.KeyDown += new KeyEventHandler(this.ListViewKeyDown);
+            this.listView.KeyDown += this.ListViewKeyDown;
             // 
             // pictureBox
             // 
@@ -144,7 +144,7 @@ namespace FlashDevelop.Dialogs
             this.importButton.Size = new System.Drawing.Size(25, 23);
             this.importButton.TabIndex = 3;
             this.importButton.UseVisualStyleBackColor = true;
-            this.importButton.Click += new System.EventHandler(this.SelectCustomShortcut);
+            this.importButton.Click += this.SelectCustomShortcut;
             // 
             // exportButton
             // 
@@ -154,7 +154,7 @@ namespace FlashDevelop.Dialogs
             this.exportButton.Size = new System.Drawing.Size(25, 23);
             this.exportButton.TabIndex = 4;
             this.exportButton.UseVisualStyleBackColor = true;
-            this.exportButton.Click += new System.EventHandler(this.SaveCustomShortcut);
+            this.exportButton.Click += this.SaveCustomShortcut;
             // 
             // closeButton
             // 
@@ -165,7 +165,7 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Size = new System.Drawing.Size(90, 23);
             this.closeButton.TabIndex = 5;
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // ShortcutDialog
             // 
@@ -189,8 +189,8 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.closeButton);
-            this.FormClosing += new FormClosingEventHandler(this.DialogClosing);
-            this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
+            this.FormClosing += this.DialogClosing;
+            this.FormClosed += this.DialogClosed;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             ((System.ComponentModel.ISupportInitialize)this.pictureBox).EndInit();
@@ -414,7 +414,19 @@ namespace FlashDevelop.Dialogs
             var item = (ShortcutListItem) this.listView.SelectedItems[0];
             this.AssignNewShortcut(item, e.KeyData);
             // Don't trigger list view default shortcuts like Ctrl+Add
-            if (e.KeyData != Keys.Up && e.KeyData != Keys.Down) e.Handled = true;
+            switch (e.KeyData) {
+                case Keys.Up:
+                case Keys.Down:
+                case Keys.PageDown:
+                case Keys.PageUp:
+                case Keys.Home:
+                case Keys.End:
+                    break;
+
+                default:
+                    e.Handled = true;
+                    break;
+            }
         }
 
         /// <summary>
@@ -481,7 +493,7 @@ namespace FlashDevelop.Dialogs
             {
                 var item = this.shortcutListItems[i];
                 if (item.Custom != keys || item == target) continue;
-                if (conflicts == null) conflicts = new List<ShortcutListItem> { target };
+                if (conflicts is null) conflicts = new List<ShortcutListItem> { target };
                 conflicts.Add(item);
                 item.Conflicts = conflicts;
             }
@@ -569,21 +581,19 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void SelectCustomShortcut(object sender, EventArgs e)
         {
-            using (var dialog = new OpenFileDialog
+            using var dialog = new OpenFileDialog
             {
                 Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda",
                 InitialDirectory = PathHelper.ShortcutsDir,
                 Title = " " + TextHelper.GetString("Title.OpenFileDialog")
-            })
+            };
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    this.listView.BeginUpdate();
-                    ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
-                    bool conflicts = this.UpdateAllShortcutsConflicts();
-                    this.listView.EndUpdate();
-                    if (conflicts) this.ShowConflictsPresent(); // Make sure the warning message shows up after the listview is rendered
-                }
+                this.listView.BeginUpdate();
+                ShortcutManager.LoadCustomShortcuts(dialog.FileName, this.shortcutListItems);
+                bool conflicts = this.UpdateAllShortcutsConflicts();
+                this.listView.EndUpdate();
+                if (conflicts) this.ShowConflictsPresent(); // Make sure the warning message shows up after the listview is rendered
             }
         }
 
@@ -592,7 +602,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void SaveCustomShortcut(object sender, EventArgs e)
         {
-            using (var dialog = new SaveFileDialog
+            using var dialog = new SaveFileDialog
             {
                 AddExtension = true,
                 DefaultExt = ".fda",
@@ -600,12 +610,10 @@ namespace FlashDevelop.Dialogs
                 InitialDirectory = PathHelper.ShortcutsDir,
                 OverwritePrompt = true,
                 Title = " " + TextHelper.GetString("Title.SaveFileDialog")
-            })
+            };
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    ShortcutManager.SaveCustomShortcuts(dialog.FileName, this.shortcutListItems);
-                }
+                ShortcutManager.SaveCustomShortcuts(dialog.FileName, this.shortcutListItems);
             }
         }
 
@@ -645,7 +653,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the shortcut dialog.
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
             var shortcutDialog = new ShortcutDialog();
             shortcutDialog.CenterToParent();
@@ -687,25 +695,19 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the associated <see cref="ShortcutItem"/> object.
             /// </summary>
-            public ShortcutItem Item
-            {
-                get { return this.item; }
-            }
+            public ShortcutItem Item => this.item;
 
             /// <summary>
             /// Gets whether this <see cref="ShortcutListItem"/> has other conflicting <see cref="ShortcutListItem"/> objects.
             /// </summary>
-            public bool HasConflicts
-            {
-                get { return this.Conflicts != null; }
-            }
+            public bool HasConflicts => this.Conflicts != null;
 
             /// <summary>
             /// Gets or sets a collection of <see cref="ShortcutListItem"/> objects that have conflicting keys with this instance.
             /// </summary>
             public List<ShortcutListItem> Conflicts
             {
-                get { return this.conflicts; }
+                get => this.conflicts;
                 set
                 {
                     if (this.conflicts == value) return;
@@ -717,25 +719,19 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the ID of the associated <see cref="ShortcutItem"/>.
             /// </summary>
-            public string Id
-            {
-                get { return this.Item.Id; }
-            }
+            public string Id => this.Item.Id;
 
             /// <summary>
             /// Gets the default shortcut keys.
             /// </summary>
-            public Keys Default
-            {
-                get { return this.Item.Default; }
-            }
+            public Keys Default => this.Item.Default;
 
             /// <summary>
             /// Gets or sets the custom shortcut keys.
             /// </summary>
             public Keys Custom
             {
-                get { return this.custom; }
+                get => this.custom;
                 set
                 {
                     if (this.custom == value) return;
@@ -759,10 +755,7 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the modification status of the shortcut.
             /// </summary>
-            public bool IsModified
-            {
-                get { return this.Custom != this.Default; }
-            }
+            public bool IsModified => this.Custom != this.Default;
 
             /// <summary>
             /// Creates a new instance of <see cref="ShortcutListItem"/> with an associated <see cref="ShortcutItem"/>.

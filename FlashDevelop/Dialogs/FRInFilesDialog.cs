@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
@@ -29,7 +30,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.ColumnHeader fileHeader;
         private System.Windows.Forms.ColumnHeader pathHeader;
         private System.Windows.Forms.ColumnHeader replacedHeader;
-        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.ProgressBarEx progressBar;
         private System.Windows.Forms.GroupBox optionsGroupBox;
         private System.Windows.Forms.ComboBox folderComboBox;
         private System.Windows.Forms.ComboBox extensionComboBox;
@@ -116,7 +117,7 @@ namespace FlashDevelop.Dialogs
             this.replaceButton.Size = new System.Drawing.Size(90, 23);
             this.replaceButton.TabIndex = 8;
             this.replaceButton.Text = "&Replace";
-            this.replaceButton.Click += new System.EventHandler(this.ReplaceButtonClick);
+            this.replaceButton.Click += this.ReplaceButtonClick;
             // 
             // regexCheckBox
             // 
@@ -130,7 +131,7 @@ namespace FlashDevelop.Dialogs
             // 
             // optionsGroupBox
             // 
-            this.optionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.optionsGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.optionsGroupBox.Controls.Add(this.stringsCheckBox);
             this.optionsGroupBox.Controls.Add(this.commentsCheckBox);
             this.optionsGroupBox.Controls.Add(this.regexCheckBox);
@@ -168,7 +169,7 @@ namespace FlashDevelop.Dialogs
             this.commentsCheckBox.Name = "commentsCheckBox";
             this.commentsCheckBox.Size = new System.Drawing.Size(119, 18);
             this.commentsCheckBox.TabIndex = 6;
-            this.commentsCheckBox.Text = " Look in &comments";
+            this.commentsCheckBox.Text = " Look in c&omments";
             // 
             // escapedCheckBox
             // 
@@ -214,7 +215,7 @@ namespace FlashDevelop.Dialogs
             // 
             // replaceComboBox
             // 
-            this.replaceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.replaceComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.replaceComboBox.Location = new System.Drawing.Point(12, 61);
             this.replaceComboBox.Name = "replaceComboBox";
@@ -233,7 +234,7 @@ namespace FlashDevelop.Dialogs
             // 
             // findComboBox
             // 
-            this.findComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.findComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.findComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.findComboBox.Location = new System.Drawing.Point(12, 22);
             this.findComboBox.Name = "findComboBox";
@@ -258,17 +259,31 @@ namespace FlashDevelop.Dialogs
             this.findButton.Size = new System.Drawing.Size(90, 23);
             this.findButton.TabIndex = 7;
             this.findButton.Text = "&Find";
-            this.findButton.Click += new System.EventHandler(this.FindButtonClick);
+            this.findButton.Click += this.FindButtonClick;
             // 
             // folderComboBox
             // 
-            this.folderComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.folderComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.folderComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.folderComboBox.Location = new System.Drawing.Point(12, 139);
             this.folderComboBox.Name = "folderComboBox";
             this.folderComboBox.Size = new System.Drawing.Size(293, 21);
             this.folderComboBox.TabIndex = 4;
             this.folderComboBox.Text = "<Project>";
+            this.folderComboBox.TextChanged += (sender, args) =>
+            {
+                var backColor = findComboBox.BackColor;
+                var buttonsEnabled = true;
+                var isValidTopLevel = IsValidTopLevel();
+                if (!IsValidExtensionFilter() || !isValidTopLevel)
+                {
+                    if (!isValidTopLevel && folderComboBox.Text.Trim().Length > 0) backColor = Color.Salmon;
+                    buttonsEnabled = false;
+                }
+                folderComboBox.BackColor = backColor;
+                findButton.Enabled = buttonsEnabled;
+                replaceButton.Enabled = buttonsEnabled;
+            };
             // 
             // folderLabel
             // 
@@ -282,13 +297,27 @@ namespace FlashDevelop.Dialogs
             // 
             // extensionComboBox
             // 
-            this.extensionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.extensionComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.extensionComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.extensionComboBox.Location = new System.Drawing.Point(12, 100);
             this.extensionComboBox.Name = "extensionComboBox";
             this.extensionComboBox.Size = new System.Drawing.Size(324, 21);
             this.extensionComboBox.TabIndex = 3;
             this.extensionComboBox.Text = ".ext";
+            this.extensionComboBox.TextChanged += (sender, args) =>
+            {
+                var backColor = findComboBox.BackColor;
+                var buttonsEnabled = true;
+                var isValidExtensionFilter = IsValidExtensionFilter();
+                if (!isValidExtensionFilter || !IsValidTopLevel())
+                {
+                    if (!isValidExtensionFilter && extensionComboBox.Text.Trim().Length > 0) backColor = Color.Salmon;
+                    buttonsEnabled = false;
+                }
+                extensionComboBox.BackColor = backColor;
+                findButton.Enabled = buttonsEnabled;
+                replaceButton.Enabled = buttonsEnabled;
+            };
             // 
             // extensionLabel
             // 
@@ -302,12 +331,12 @@ namespace FlashDevelop.Dialogs
             // 
             // browseButton
             // 
-            this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.browseButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.browseButton.Location = new System.Drawing.Point(311, 136);
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(26, 24);
             this.browseButton.TabIndex = 5;
-            this.browseButton.Click += new System.EventHandler(this.BrowseButtonClick);
+            this.browseButton.Click += this.BrowseButtonClick;
             // 
             // replacedHeader
             // 
@@ -322,7 +351,7 @@ namespace FlashDevelop.Dialogs
             this.cancelButton.Size = new System.Drawing.Size(90, 23);
             this.cancelButton.TabIndex = 9;
             this.cancelButton.Text = "Ca&ncel";
-            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
+            this.cancelButton.Click += this.CancelButtonClick;
             // 
             // infoLabel
             // 
@@ -359,8 +388,8 @@ namespace FlashDevelop.Dialogs
             // 
             // resultsView
             // 
-            this.resultsView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.resultsView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.resultsView.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
+            this.resultsView.Columns.AddRange(new[] {
             this.lineHeader,
             this.descHeader,
             this.fileHeader,
@@ -376,11 +405,11 @@ namespace FlashDevelop.Dialogs
             this.resultsView.TabIndex = 11;
             this.resultsView.UseCompatibleStateImageBehavior = false;
             this.resultsView.View = System.Windows.Forms.View.Details;
-            this.resultsView.DoubleClick += new System.EventHandler(this.ResultsViewDoubleClick);
+            this.resultsView.DoubleClick += this.ResultsViewDoubleClick;
             // 
             // progressBar
             // 
-            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.progressBar.Location = new System.Drawing.Point(12, 392);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(491, 14);
@@ -394,11 +423,11 @@ namespace FlashDevelop.Dialogs
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(0, 0);
             this.closeButton.TabIndex = 29;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // sendCheckBox
             // 
-            this.redirectCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right)));
+            this.redirectCheckBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Right;
             this.redirectCheckBox.AutoSize = true;
             this.redirectCheckBox.Checked = true;
             this.redirectCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -409,7 +438,7 @@ namespace FlashDevelop.Dialogs
             this.redirectCheckBox.Size = new System.Drawing.Size(230, 25);
             this.redirectCheckBox.TabIndex = 8;
             this.redirectCheckBox.Text = " Send results to Results Panel";
-            this.redirectCheckBox.CheckedChanged += new EventHandler(this.RedirectCheckBoxCheckChanged);
+            this.redirectCheckBox.CheckedChanged += this.RedirectCheckBoxCheckChanged;
             // 
             // FRInFilesDialog
             // 
@@ -445,9 +474,9 @@ namespace FlashDevelop.Dialogs
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = " Find And Replace In Files";
-            this.Load += new System.EventHandler(this.DialogLoaded);
-            this.VisibleChanged += new System.EventHandler(this.VisibleChange);
-            this.Closing += new System.ComponentModel.CancelEventHandler(this.DialogClosing);
+            this.Load += this.DialogLoaded;
+            this.VisibleChanged += this.VisibleChange;
+            this.Closing += this.DialogClosing;
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             this.ResumeLayout(false);
@@ -465,7 +494,7 @@ namespace FlashDevelop.Dialogs
         public void UpdateSettings()
         {
             FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-            Boolean useGroups = Globals.MainForm.Settings.UseListViewGrouping;
+            bool useGroups = Globals.MainForm.Settings.UseListViewGrouping;
             this.resultsView.ShowGroups = useGroups;
             this.resultsView.GridLines = !useGroups;
         }
@@ -516,7 +545,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Changes the redirection setting and updates the check state.
         /// </summary>
-        private void RedirectCheckBoxCheckChanged(Object sender, EventArgs e)
+        private void RedirectCheckBoxCheckChanged(object sender, EventArgs e)
         {
             Globals.Settings.RedirectFilesResults = !Globals.Settings.RedirectFilesResults;
             this.redirectCheckBox.Checked = Globals.Settings.RedirectFilesResults;
@@ -525,139 +554,120 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Runs the find based on the user specified arguments
         /// </summary>
-        private void FindButtonClick(Object sender, EventArgs e)
+        private void FindButtonClick(object sender, EventArgs e)
         {
-            String mask = this.extensionComboBox.Text;
-            Boolean recursive = this.subDirectoriesCheckBox.Checked;
-            if (IsValidPattern() && this.IsValidFileMask(mask))
+            if (!IsValidPattern()) return;
+            var mask = extensionComboBox.Text.Trim();
+            if (!IsValidFileMask(mask)) return;
+            var recursive = subDirectoriesCheckBox.Checked;
+            var paths = folderComboBox.Text.Trim().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var path in paths)
             {
-                String[] paths = this.folderComboBox.Text.Split(';');
-                foreach (String path in paths)
-                {
-                    FRConfiguration config = this.GetFRConfig(path, mask, recursive);
-                    if (config == null) return;
-                    config.CacheDocuments = true;
-                    this.UpdateUIState(true);
-                    this.runner = new FRRunner();
-                    this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
-                    this.runner.Finished += new FRFinishedHandler(this.FindFinished);
-                    this.runner.SearchAsync(config);
-                    FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                }
+                var config = GetFRConfig(path, mask, recursive);
+                if (config is null) return;
+                config.CacheDocuments = true;
+                UpdateUIState(true);
+                runner = new FRRunner();
+                runner.ProgressReport += RunnerProgress;
+                runner.Finished += FindFinished;
+                runner.SearchAsync(config);
+                FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(extensionComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(findComboBox);
             }
         }
 
         /// <summary>
         /// Runs the replace based on the user specified arguments
         /// </summary>
-        private void ReplaceButtonClick(Object sender, EventArgs e)
+        private void ReplaceButtonClick(object sender, EventArgs e)
         {
-            String mask = this.extensionComboBox.Text;
-            Boolean recursive = this.subDirectoriesCheckBox.Checked;
-            if (IsValidPattern() && this.IsValidFileMask(mask))
+            if (!IsValidPattern()) return;
+            var mask = extensionComboBox.Text.Trim();
+            if (!IsValidFileMask(mask)) return;
+            if (!Globals.Settings.DisableReplaceFilesConfirm)
             {
-                if (!Globals.Settings.DisableReplaceFilesConfirm)
-                {
-                    String caption = TextHelper.GetString("Title.ConfirmDialog");
-                    String message = TextHelper.GetString("Info.AreYouSureToReplaceInFiles");
-                    DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                    if (result == DialogResult.Cancel) return;
-                }
-                String[] paths = this.folderComboBox.Text.Split(';');
-                foreach (String path in paths)
-                {
-                    FRConfiguration config = this.GetFRConfig(path, mask, recursive);
-                    if (config == null) return;
-                    config.CacheDocuments = true;
-                    config.UpdateSourceFileOnly = false;
-                    config.Replacement = this.replaceComboBox.Text;
-                    this.UpdateUIState(true);
-                    this.runner = new FRRunner();
-                    this.runner.ProgressReport += new FRProgressReportHandler(this.RunnerProgress);
-                    this.runner.Finished += new FRFinishedHandler(this.ReplaceFinished);
-                    this.runner.ReplaceAsync(config);
-                    FRDialogGenerics.UpdateComboBoxItems(this.folderComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.extensionComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
-                    FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                }
+                var caption = TextHelper.GetString("Title.ConfirmDialog");
+                var message = TextHelper.GetString("Info.AreYouSureToReplaceInFiles");
+                var result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Cancel) return;
+            }
+            var recursive = subDirectoriesCheckBox.Checked;
+            var paths = folderComboBox.Text.Trim().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var path in paths)
+            {
+                var config = GetFRConfig(path, mask, recursive);
+                if (config is null) return;
+                config.CacheDocuments = true;
+                config.UpdateSourceFileOnly = false;
+                config.Replacement = replaceComboBox.Text;
+                UpdateUIState(true);
+                runner = new FRRunner();
+                runner.ProgressReport += RunnerProgress;
+                runner.Finished += ReplaceFinished;
+                runner.ReplaceAsync(config);
+                FRDialogGenerics.UpdateComboBoxItems(folderComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(extensionComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(replaceComboBox);
+                FRDialogGenerics.UpdateComboBoxItems(findComboBox);
             }
         }
 
         /// <summary>
         /// Closes the dialog window
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void CloseButtonClick(object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Selects the path for the find and replace
         /// </summary>
-        private void BrowseButtonClick(Object sender, EventArgs e)
+        private void BrowseButtonClick(object sender, EventArgs e)
         {
-            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
+            using var fbd = new VistaFolderBrowserDialog {Multiselect = true};
+            var curDir = folderComboBox.Text.Trim();
+            if (curDir == "<Project>")
             {
-                fbd.Multiselect = true;
-                String curDir = this.folderComboBox.Text;
-                if (curDir == "<Project>")
-                {
-                    if (PluginBase.CurrentProject != null)
-                    {
-                        String projectPath = PluginBase.CurrentProject.ProjectPath;
-                        curDir = Path.GetDirectoryName(projectPath);
-                    }
-                    else curDir = Globals.MainForm.WorkingDirectory;
-                }
-                if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
-                if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
-                {
-                    this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
-                    this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
-                }
+                curDir = PluginBase.CurrentProject is null
+                    ? Globals.MainForm.WorkingDirectory
+                    : Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
+            }
+            if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
+            if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
+            {
+                folderComboBox.Text = string.Join(";", fbd.SelectedPaths);
+                folderComboBox.SelectionStart = folderComboBox.Text.Length;
             }
         }
 
         /// <summary>
         /// Handles the double click event from results view
         /// </summary>
-        private void ResultsViewDoubleClick(Object sender, System.EventArgs e)
+        private void ResultsViewDoubleClick(object sender, System.EventArgs e)
         {
-            if (this.resultsView.SelectedItems.Count < 1) return;
-            ListViewItem item = this.resultsView.SelectedItems[0];
-            KeyValuePair<String, SearchMatch> data = (KeyValuePair<String, SearchMatch>)item.Tag;
-            if (File.Exists(data.Key))
+            if (this.resultsView.SelectedItems.Count == 0) return;
+            var item = this.resultsView.SelectedItems[0];
+            var data = (KeyValuePair<string, SearchMatch>)item.Tag;
+            if (!File.Exists(data.Key)) return;
+            Globals.MainForm.Activate();
+            var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
+            if (doc != null && doc.IsEditable && this.resultsView.Columns.Count == 4)
             {
-                Globals.MainForm.Activate();
-                var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
-                if (doc != null && doc.IsEditable)
-                {
-                    if (this.resultsView.Columns.Count == 4)
-                    {
-                        FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
-                    }
-                }
+                FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
             }
         }
 
         /// <summary>
         /// Cancels the find or replace lookup
         /// </summary>
-        private void CancelButtonClick(Object sender, System.EventArgs e)
+        private void CancelButtonClick(object sender, System.EventArgs e)
         {
-            if (this.runner != null)
-            {
-                this.runner.CancelAsync();
-            }
+            runner?.CancelAsync();
         }
 
         /// <summary>
         /// Runner reports how much of the lookup is done
         /// </summary>
-        private void RunnerProgress(Int32 percentDone)
+        private void RunnerProgress(int percentDone)
         {
             this.progressBar.Value = percentDone;
         }
@@ -669,51 +679,53 @@ namespace FlashDevelop.Dialogs
         {
             this.SetupResultsView(true);
             this.resultsView.Items.Clear();
-            if (results == null)
+            if (results is null)
             {
-                String message = TextHelper.GetString("Info.FindLookupCanceled");
+                string message = TextHelper.GetString("Info.FindLookupCanceled");
                 this.infoLabel.Text = message;
             }
             else if (results.Count == 0)
             {
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
             else
             {
                 if (!this.redirectCheckBox.Checked)
                 {
-                    Int32 fileCount = 0;
-                    Int32 matchCount = 0;
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    resultsView.BeginUpdate();
+                    var fileCount = 0;
+                    var matchCount = 0;
+                    foreach (var entry in results)
                     {
                         fileCount++;
-                        foreach (SearchMatch match in entry.Value)
+                        foreach (var match in entry.Value)
                         {
                             matchCount++;
-                            ListViewItem item = new ListViewItem();
+                            var item = new ListViewItem();
                             item.Text = match.Line.ToString();
                             item.SubItems.Add(match.LineText.Trim());
                             item.SubItems.Add(Path.GetFileName(entry.Key));
                             item.SubItems.Add(Path.GetDirectoryName(entry.Key));
-                            item.Tag = new KeyValuePair<String, SearchMatch>(entry.Key, match);
+                            item.Tag = new KeyValuePair<string, SearchMatch>(entry.Key, match);
                             this.resultsView.Items.Add(item);
                             this.AddToGroup(item, entry.Key);
                         }
                     }
-                    String message = TextHelper.GetString("Info.FoundInFiles");
-                    String formatted = String.Format(message, matchCount, fileCount);
+                    var message = TextHelper.GetString("Info.FoundInFiles");
+                    var formatted = string.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
+                    resultsView.EndUpdate();
                 } 
                 else 
                 {
-                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    foreach (var entry in results)
                     {
-                        foreach (SearchMatch match in entry.Value)
+                        foreach (var match in entry.Value)
                         {
-                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
+                            var message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
                             TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
@@ -731,54 +743,52 @@ namespace FlashDevelop.Dialogs
         {
             this.SetupResultsView(false);
             this.resultsView.Items.Clear();
-            if (results == null)
+            if (results is null)
             {
-                String message = TextHelper.GetString("Info.ReplaceLookupCanceled");
+                string message = TextHelper.GetString("Info.ReplaceLookupCanceled");
                 this.infoLabel.Text = message;
             }
             else if (results.Count == 0)
             {
-                String message = TextHelper.GetString("Info.NoMatchesFound");
+                string message = TextHelper.GetString("Info.NoMatchesFound");
                 this.infoLabel.Text = message;
             }
             else
             {
                 if (!this.redirectCheckBox.Checked)
                 {
-                    Int32 fileCount = 0;
-                    Int32 matchCount = 0;
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    resultsView.BeginUpdate();
+                    var fileCount = 0;
+                    var matchCount = 0;
+                    foreach (var entry in results)
                     {
                         fileCount++;
-                        Int32 replaceCount = 0;
-                        ListViewItem item = new ListViewItem();
-                        foreach (SearchMatch match in entry.Value)
-                        {
-                            replaceCount++;
-                            matchCount++;
-                        }
+                        var replaceCount = entry.Value.Count;
                         if (replaceCount == 0) continue;
-                        item.Tag = new KeyValuePair<String, SearchMatch>(entry.Key, null);
+                        matchCount += replaceCount;
+                        var item = new ListViewItem();
+                        item.Tag = new KeyValuePair<string, SearchMatch>(entry.Key, null);
                         item.Text = replaceCount.ToString();
                         item.SubItems.Add(Path.GetFileName(entry.Key));
                         item.SubItems.Add(Path.GetDirectoryName(entry.Key));
                         this.resultsView.Items.Add(item);
                         this.AddToGroup(item, entry.Key);
                     }
-                    String message = TextHelper.GetString("Info.ReplacedInFiles");
-                    String formatted = String.Format(message, matchCount, fileCount);
+                    var message = TextHelper.GetString("Info.ReplacedInFiles");
+                    var formatted = string.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
+                    resultsView.EndUpdate();
                 } 
                 else
                 {
-                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    var groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
-                    foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                    foreach (var entry in results)
                     {
-                        foreach (SearchMatch match in entry.Value)
+                        foreach (var match in entry.Value)
                         {
-                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
-                            TraceManager.Add(message, (Int32)TraceType.Info, groupData);
+                            var message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
+                            TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
@@ -791,57 +801,50 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, String path)
+        private void AddToGroup(ListViewItem item, string path)
         {
-            String gpname;
-            Boolean found = false;
-            ListViewGroup gp = null;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("Group.Other");
             foreach (ListViewGroup lvg in this.resultsView.Groups)
             {
                 if (lvg.Tag.ToString() == path)
                 {
-                    found = true;
-                    gp = lvg;
-                    break;
+                    lvg.Items.Add(item);
+                    return;
                 }
             }
-            if (found) gp.Items.Add(item);
-            else
-            {
-                gp = new ListViewGroup();
-                gp.Tag = path;
-                gp.Header = gpname;
-                this.resultsView.Groups.Add(gp);
-                gp.Items.Add(item);
-            }
+            string gpname;
+            if (File.Exists(path)) gpname = Path.GetFileName(path);
+            else gpname = TextHelper.GetString("Group.Other");
+            var gp = new ListViewGroup();
+            gp.Tag = path;
+            gp.Header = gpname;
+            this.resultsView.Groups.Add(gp);
+            gp.Items.Add(item);
         }
 
         /// <summary>
         /// Setups the resultsView.Columns for find and replace
         /// </summary>
-        private void SetupResultsView(Boolean finding)
+        private void SetupResultsView(bool finding)
         {
             if (finding && this.resultsView.Columns.Count != 4)
             {
                 this.resultsView.Columns.Clear();
-                this.resultsView.Columns.AddRange(new ColumnHeader[] { this.lineHeader, this.descHeader, this.fileHeader, this.pathHeader });
+                this.resultsView.Columns.AddRange(new[] { this.lineHeader, this.descHeader, this.fileHeader, this.pathHeader });
             }
             else if (!finding && this.resultsView.Columns.Count != 3)
             {
                 this.resultsView.Columns.Clear();
-                this.resultsView.Columns.AddRange(new ColumnHeader[] { this.replacedHeader, this.fileHeader, this.pathHeader });
+                this.resultsView.Columns.AddRange(new[] { this.replacedHeader, this.fileHeader, this.pathHeader });
             }
         }
 
         /// <summary>
         /// Just hides the dialog window when closing
         /// </summary>
-        private void DialogClosing(Object sender, CancelEventArgs e)
+        private void DialogClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            if (this.runner != null) this.runner.CancelAsync();
+            runner?.CancelAsync();
             Globals.CurrentDocument.Activate();
             this.Hide();
         }
@@ -849,10 +852,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Setups the dialog on load
         /// </summary>
-        private void DialogLoaded(Object sender, System.EventArgs e)
+        private void DialogLoaded(object sender, System.EventArgs e)
         {
             this.cancelButton.Enabled = false;
-            String message = TextHelper.GetString("Info.NoMatches");
+            string message = TextHelper.GetString("Info.NoMatches");
             this.infoLabel.Text = message;
             this.CenterToParent();
         }
@@ -860,7 +863,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Process shortcuts
         /// </summary>
-        protected override Boolean ProcessDialogKey(Keys keyData)
+        protected override bool ProcessDialogKey(Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.F))
             {
@@ -873,7 +876,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, System.EventArgs e)
+        private void VisibleChange(object sender, EventArgs e)
         {
             if (this.Visible)
             {
@@ -885,9 +888,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Checks if the file mask is somewhat valid
         /// </summary>
-        private Boolean IsValidFileMask(String mask)
+        private bool IsValidFileMask(string mask)
         {
-            return !String.IsNullOrEmpty(mask) && mask.Trim().StartsWithOrdinal("*.") && !mask.Contains("..") && !mask.Contains("/") && !mask.Contains("\\");
+            return !string.IsNullOrEmpty(mask) && mask.Trim().StartsWithOrdinal("*.") && !mask.Contains("..")
+                   && !mask.Contains('/') && !mask.Contains('\\') && !mask.Contains(':') && Path.GetInvalidPathChars().All(it => !mask.Contains(it));
         }
 
         /// <summary>
@@ -896,33 +900,33 @@ namespace FlashDevelop.Dialogs
         private void UpdateDialogArguments()
         {
             IProject project = PluginBase.CurrentProject;
-            Boolean doRefresh = lastProject != null && lastProject != project;
+            bool doRefresh = lastProject != null && lastProject != project;
             if (project != null)
             {
-                String path = Path.GetDirectoryName(project.ProjectPath);
-                if (String.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
+                string path = Path.GetDirectoryName(project.ProjectPath);
+                if (string.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
                 {
                     this.folderComboBox.Text = path;
                 }
             }
-            else if (String.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
+            else if (string.IsNullOrEmpty(this.folderComboBox.Text) || doRefresh)
             {
                 this.folderComboBox.Text = Globals.MainForm.WorkingDirectory;
             }
             this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
-            this.redirectCheckBox.CheckedChanged -= new EventHandler(this.RedirectCheckBoxCheckChanged);
+            this.redirectCheckBox.CheckedChanged -= this.RedirectCheckBoxCheckChanged;
             this.redirectCheckBox.Checked = Globals.Settings.RedirectFilesResults;
-            this.redirectCheckBox.CheckedChanged += new EventHandler(this.RedirectCheckBoxCheckChanged);
+            this.redirectCheckBox.CheckedChanged += this.RedirectCheckBoxCheckChanged;
             if (!this.IsValidFileMask(this.extensionComboBox.Text) || doRefresh)
             {
                 if (project != null)
                 {
-                    String filter = project.DefaultSearchFilter;
+                    string filter = project.DefaultSearchFilter;
                     this.extensionComboBox.Text = filter;
                 }
                 else
                 {
-                    String def = Globals.Settings.DefaultFileExtension;
+                    string def = Globals.Settings.DefaultFileExtension;
                     this.extensionComboBox.Text = "*." + def;
                 }
             }
@@ -933,7 +937,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the ui based on the running state
         /// </summary> 
-        private void UpdateUIState(Boolean running)
+        private void UpdateUIState(bool running)
         {
             if (running)
             {
@@ -953,47 +957,40 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets search config for find and replace
         /// </summary>
-        private FRConfiguration GetFRConfig(String path, String mask, Boolean recursive)
+        private FRConfiguration GetFRConfig(string path, string mask, bool recursive)
         {
-            if (path.Trim() == "<Project>")
+            if (path.Trim() != "<Project>") return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
+            if (PluginBase.CurrentProject is null) return null;
+            var allFiles = new List<string>();
+            var project = PluginBase.CurrentProject;
+            var projPath = Path.GetDirectoryName(project.ProjectPath);
+            var walker = new PathWalker(projPath, mask, recursive);
+            var projFiles = walker.GetFiles();
+            foreach (string file in projFiles)
             {
-                if (PluginBase.CurrentProject != null)
-                {
-                    PathWalker walker;
-                    List<String> allFiles = new List<String>();
-                    IProject project = PluginBase.CurrentProject;
-                    String projPath = Path.GetDirectoryName(project.ProjectPath);
-                    walker = new PathWalker(projPath, mask, recursive);
-                    List<String> projFiles = walker.GetFiles();
-                    foreach (String file in projFiles)
-                    {
-                        if (!IsFileHidden(file, project)) allFiles.Add(file);
-                    }
-                    for (var i = 0; i < project.SourcePaths.Length; i++)
-                    {
-                        String sourcePath = project.GetAbsolutePath(project.SourcePaths[i]);
-                        if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
-                        {
-                            walker = new PathWalker(sourcePath, mask, recursive);
-                            allFiles.AddRange(walker.GetFiles());
-                        }
-                    }
-                    return new FRConfiguration(allFiles, this.GetFRSearch());
-                }
-                else return null;
+                if (!IsFileHidden(file, project)) allFiles.Add(file);
             }
-            else return new FRConfiguration(path, mask, recursive, this.GetFRSearch());
+            foreach (var sp in project.SourcePaths)
+            {
+                string sourcePath = project.GetAbsolutePath(sp);
+                if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
+                {
+                    walker = new PathWalker(sourcePath, mask, recursive);
+                    allFiles.AddRange(walker.GetFiles());
+                }
+            }
+            return new FRConfiguration(allFiles, this.GetFRSearch());
         }
 
         /// <summary>
         /// Check if file is hidden in project
         /// </summary>
-        private Boolean IsFileHidden(String file, IProject project)
+        private bool IsFileHidden(string file, IProject project)
         {
-            String[] hiddenPaths = project.GetHiddenPaths();
-            foreach (String hiddenPath in hiddenPaths)
+            string[] hiddenPaths = project.GetHiddenPaths();
+            foreach (string hiddenPath in hiddenPaths)
             {
-                String absHiddenPath = project.GetAbsolutePath(hiddenPath);
+                string absHiddenPath = project.GetAbsolutePath(hiddenPath);
                 if (Directory.Exists(absHiddenPath) && file.StartsWithOrdinal(absHiddenPath)) return true;
             }
             return false;
@@ -1002,9 +999,9 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Control user pattern
         /// </summary>
-        private Boolean IsValidPattern()
+        private bool IsValidPattern()
         {
-            String pattern = this.findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             if (pattern.Length == 0) return false;
             if (this.regexCheckBox.Checked)
             {
@@ -1023,12 +1020,29 @@ namespace FlashDevelop.Dialogs
             return true;
         }
 
+        private bool IsValidExtensionFilter()
+        {
+            var text = extensionComboBox.Text.Trim();
+            if (text.Length == 0) return false;
+            var paths = text.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            return paths.Length > 0 && paths.All(IsValidFileMask);
+        }
+
+        private bool IsValidTopLevel()
+        {
+            var text = folderComboBox.Text.Trim();
+            if (text.Length == 0) return false;
+            if (text == "<Project>") return true;
+            var paths = text.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            return paths.Length > 0 && paths.All(Directory.Exists);
+        }
+
         /// <summary>
         /// Gets search object for find and replace
         /// </summary>
         private FRSearch GetFRSearch()
         {
-            String pattern = this.findComboBox.Text;
+            string pattern = this.findComboBox.Text;
             FRSearch search = new FRSearch(pattern);
             search.IsRegex = this.regexCheckBox.Checked;
             search.IsEscaped = this.escapedCheckBox.Checked;
@@ -1049,10 +1063,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Sets the path to find
         /// </summary>
-        public void SetFindPath(String path)
-        {
-            this.folderComboBox.Text = path;
-        }
+        public void SetFindPath(string path) => folderComboBox.Text = path;
 
         /// <summary>
         /// Update the dialog args when show is called

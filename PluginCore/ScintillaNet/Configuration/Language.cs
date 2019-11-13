@@ -69,8 +69,8 @@ namespace ScintillaNet.Configuration
         public override void init(ConfigurationUtility utility, ConfigFile theParent)
         {
             base.init(utility, theParent);
-            if (usekeywords == null) usekeywords = new UseKeyword[0];
-            if (usestyles == null) usestyles = new UseStyle[0];
+            if (usekeywords is null) usekeywords = new UseKeyword[0];
+            if (usestyles is null) usestyles = new UseStyle[0];
             for (int j = 0; j<usekeywords.Length; j++)
             {
                 usekeywords[j].init(utility, _parent);
@@ -80,17 +80,18 @@ namespace ScintillaNet.Configuration
                 usestyles[i].language = this;
                 usestyles[i].init(utility, _parent);
             }
-            if (lexer != null) lexer.init(utility, _parent);
-            if (characterclass == null) characterclass = new CharacterClass();
+
+            lexer?.init(utility, _parent);
+            if (characterclass is null) characterclass = new CharacterClass();
             characterclass.init(utility, _parent);
-            if (editorstyle != null) editorstyle.init(utility, _parent);
+            editorstyle?.init(utility, _parent);
         }
 
         public void AddExtension(string extension)
         {
             if (!HasExtension(extension))
             {
-                if (String.IsNullOrEmpty(fileextensions))
+                if (string.IsNullOrEmpty(fileextensions))
                     fileextensions = extension;
                 else
                     fileextensions += "," + extension;
@@ -101,7 +102,7 @@ namespace ScintillaNet.Configuration
         {
             var extensions = new List<string>(fileextensions.Split(','));
             bool anyRemoved = extensions.RemoveAll(s => s == extension) > 0;
-            fileextensions = String.Join(",", extensions.ToArray());
+            fileextensions = string.Join(",", extensions.ToArray());
             return anyRemoved;
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -15,7 +14,7 @@ namespace PluginCore
         public static string FLASHPLAYER_PLATFORM = "Flash Player";
         public static string JAVASCRIPT_PLATFORM = "JavaScript";
 
-        public static Dictionary<String, SupportedLanguage> SupportedLanguages;
+        public static Dictionary<string, SupportedLanguage> SupportedLanguages;
 
         public static string ResolveFlashPlayerVersion(string lang, string platformName, string version)
         {
@@ -30,7 +29,8 @@ namespace PluginCore
                     if (otherVersion.Value == version)
                     {
                         foreach (var flashVersion in flashPlatform.Versions)
-                            if (flashVersion.SwfVersion == otherVersion.SwfVersion) return flashVersion.Value;
+                            if (flashVersion.SwfVersion == otherVersion.SwfVersion)
+                                return flashVersion.Value;
                     }
             }
             // default to last FP
@@ -54,7 +54,7 @@ namespace PluginCore
 
         public static void Load(string path)
         {
-            SupportedLanguages = new Dictionary<String, SupportedLanguage>();
+            SupportedLanguages = new Dictionary<string, SupportedLanguage>();
             if (!Directory.Exists(path)) return;
 
             // walk AS2, AS3, Haxe...
@@ -62,7 +62,7 @@ namespace PluginCore
             {
                 try
                 {
-                    SupportedLanguage lang = new SupportedLanguage
+                    var lang = new SupportedLanguage
                     {
                         Name = Path.GetFileNameWithoutExtension(langDir),
                         Platforms = LoadPlatforms(langDir)
@@ -75,7 +75,7 @@ namespace PluginCore
             }
         }
 
-        private static Dictionary<string, LanguagePlatform> LoadPlatforms(string langDir)
+        static Dictionary<string, LanguagePlatform> LoadPlatforms(string langDir)
         {
             // walk flashplayer.xml, openfl.xml,... for one language (ie. Haxe)
             var platforms = new Dictionary<string, LanguagePlatform>();
@@ -96,7 +96,7 @@ namespace PluginCore
             return platforms;
         }
 
-        private static LanguagePlatform ParsePlatform(XmlNode node)
+        static LanguagePlatform ParsePlatform(XmlNode node)
         {
             // parse platform file, ie. flashplayer.xml
             List<PlatformVersion> versions = null;
@@ -123,35 +123,26 @@ namespace PluginCore
                 DefaultProjectFile = GetList(node, "default-project"),
                 HaxeTarget = GetAttribute(node, "haxe-target"),
                 DebuggerSupported = GetList(node, "debugger"),
-                RawData = node
+                RawData = node,
+                VersionNames = new string[versions.Count],
             };
-            platform.VersionNames = new string[platform.Versions.Count];
             for (int i = 0; i < platform.Versions.Count; i++)
                 platform.VersionNames[i] = platform.Versions[i].Value;
             return platform;
         }
 
-        private static bool GetBool(XmlNode node, string attribute)
-        {
-            return (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
-        }
+        static bool GetBool(XmlNode node, string attribute) => (GetAttribute(node, attribute) ?? "false").ToLower() == "true";
 
-        private static string GetAttribute(XmlNode node, string name)
-        {
-            var attr = node.Attributes[name];
-            if (attr != null) return attr.Value;
-            return null;
-        }
+        static string GetAttribute(XmlNode node, string name) => node.Attributes?[name]?.Value;
 
-        private static string[] GetList(XmlNode node, string attribute)
+        static string[] GetList(XmlNode node, string attribute)
         {
             // build targets, ie. html5, flash, android for openfl
-            var attr = node.Attributes[attribute];
-            if (attr == null) return null;
-            else return attr.Value.Split(',');
+            var attr = node.Attributes?[attribute];
+            return attr?.Value.Split(',');
         }
 
-        private static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
+        static List<PlatformVersion> ParseVersions(XmlNode language, Dictionary<string, PlatformCommand> defaultCommands)
         {
             if (!language.HasChildNodes) return new List<PlatformVersion>
             {
@@ -175,10 +166,10 @@ namespace PluginCore
             return versions;
         }
 
-        private static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
+        static Dictionary<string, PlatformCommand> ParseCommands(XmlNode version, Dictionary<string, PlatformCommand> defaultCommands)
         {
             // custom display/build/run/clean commands, ie. for openfl
-            var commands = defaultCommands == null 
+            var commands = defaultCommands is null 
                 ? new Dictionary<string, PlatformCommand>()
                 : new Dictionary<string, PlatformCommand>(defaultCommands);
 
@@ -199,11 +190,7 @@ namespace PluginCore
             return null;
         }
 
-        private static string ParseSwfVersion(XmlNode node)
-        {
-            var attr = node.Attributes["swf-version"];
-            return attr != null ? attr.Value : null;
-        }
+        static string ParseSwfVersion(XmlNode node) => node.Attributes["swf-version"]?.Value;
 
         #endregion
     }
@@ -243,10 +230,7 @@ namespace PluginCore
         public string GetProjectTemplate(string target)
         {
             var templateNode = RawData.SelectSingleNode("templates/template[@target='" + target + "']/@value");
-                
-            if (templateNode != null) return templateNode.Value;
-
-            return null;
+            return templateNode?.Value;
         }
     }
 
@@ -265,4 +249,3 @@ namespace PluginCore
         public XmlNode RawData;
     }
 }
-

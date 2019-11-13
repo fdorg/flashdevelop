@@ -4,25 +4,19 @@ namespace ProjectManager.Projects.AS2
 {
     public class AS2ProjectWriter : ProjectWriter
     {
-        AS2Project project;
-        string filename;
+        readonly AS2Project project;
+        readonly string filename;
 
-        public AS2ProjectWriter(AS2Project project, string filename)
+        public AS2ProjectWriter(Project project, string filename)
             : base(project, filename)
         {
-            this.project = base.Project as AS2Project;
+            this.project = Project as AS2Project;
             this.filename = filename;
         }
 
-        protected override void OnAfterWriteClasspaths()
-        {
-            WriteBuildOptions();
-        }
+        protected override void OnAfterWriteClasspaths() => WriteBuildOptions();
 
-        protected override void OnAfterWriteCompileTargets()
-        {
-            WriteLibraryAssets();
-        }
+        protected override void OnAfterWriteCompileTargets() => WriteLibraryAssets();
 
         public void WriteLibraryAssets()
         {

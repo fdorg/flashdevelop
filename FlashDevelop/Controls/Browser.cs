@@ -4,34 +4,32 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using PluginCore.Localization;
 using PluginCore.Helpers;
-using PluginCore;
 using Microsoft.Win32;
-using System.Reflection;
 using System.IO;
 
 namespace FlashDevelop.Controls
 {
     public class Browser : UserControl
     {
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton goButton;
-        private System.Windows.Forms.ToolStripButton backButton;
-        private System.Windows.Forms.ToolStripButton forwardButton;
-        private System.Windows.Forms.ToolStripButton refreshButton;
-        private System.Windows.Forms.ToolStripSpringComboBox addressComboBox;
-        private FlashDevelop.Controls.WebBrowserEx webBrowser;
+        ToolStrip toolStrip;
+        ToolStripButton goButton;
+        ToolStripButton backButton;
+        ToolStripButton forwardButton;
+        ToolStripButton refreshButton;
+        ToolStripSpringComboBox addressComboBox;
+        WebBrowserEx webBrowser;
 
         static Browser()
         {
             try
             {
                 // Sets a key in registry so that latest .NET browser control is used
-                String valueName = Path.GetFileName(Application.ExecutablePath);
-                String subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
+                string valueName = Path.GetFileName(Application.ExecutablePath);
+                string subKey = "Software\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION\\";
                 RegistryKey emu = Registry.CurrentUser.OpenSubKey(subKey, true);
                 {
-                    Object value = emu.GetValue(valueName);
-                    if (value == null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
+                    object value = emu.GetValue(valueName);
+                    if (value is null) emu.SetValue(valueName, 0, RegistryValueKind.DWord);
                 }
             }
             catch { } // No errors please...
@@ -39,10 +37,10 @@ namespace FlashDevelop.Controls
 
         public Browser()
         {
-            this.Font = Globals.Settings.DefaultFont;
-            this.InitializeComponent();
-            this.InitializeLocalization();
-            this.InitializeInterface();
+            Font = Globals.Settings.DefaultFont;
+            InitializeComponent();
+            InitializeLocalization();
+            InitializeInterface();
         }
 
         #region Windows Forms Designer Generated Code
@@ -51,111 +49,111 @@ namespace FlashDevelop.Controls
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Browser));
-            this.toolStrip = new PluginCore.Controls.ToolStripEx();
-            this.backButton = new System.Windows.Forms.ToolStripButton();
-            this.forwardButton = new System.Windows.Forms.ToolStripButton();
-            this.refreshButton = new System.Windows.Forms.ToolStripButton();
-            this.addressComboBox = new System.Windows.Forms.ToolStripSpringComboBox();
-            this.goButton = new System.Windows.Forms.ToolStripButton();
-            this.webBrowser = new FlashDevelop.Controls.WebBrowserEx();
-            this.toolStrip.SuspendLayout();
-            this.SuspendLayout();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(Browser));
+            toolStrip = new PluginCore.Controls.ToolStripEx();
+            backButton = new ToolStripButton();
+            forwardButton = new ToolStripButton();
+            refreshButton = new ToolStripButton();
+            addressComboBox = new ToolStripSpringComboBox();
+            goButton = new ToolStripButton();
+            webBrowser = new WebBrowserEx();
+            toolStrip.SuspendLayout();
+            SuspendLayout();
             // 
             // toolStrip
             // 
-            this.toolStrip.CanOverflow = false;
-            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.backButton, this.forwardButton, this.refreshButton, this.addressComboBox, this.goButton});
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(2, 1, 2, 2);
-            this.toolStrip.Size = new System.Drawing.Size(620, 25);
-            this.toolStrip.TabIndex = 3;
+            toolStrip.CanOverflow = false;
+            toolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip.Items.AddRange(new ToolStripItem[] {backButton, forwardButton, refreshButton, addressComboBox, goButton});
+            toolStrip.Location = new Point(0, 0);
+            toolStrip.Name = "toolStrip";
+            toolStrip.Padding = new Padding(2, 1, 2, 2);
+            toolStrip.Size = new Size(620, 25);
+            toolStrip.TabIndex = 3;
             // 
             // backButton
             //
-            this.backButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.backButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.backButton.Enabled = false;
-            this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("backButton.Image")));
-            this.backButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(23, 22);
-            this.backButton.Text = "Back";
-            this.backButton.Click += new System.EventHandler(this.BackButtonClick);
+            backButton.Margin = new Padding(0, 1, 0, 1);
+            backButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            backButton.Enabled = false;
+            backButton.Image = ((Image)(resources.GetObject("backButton.Image")));
+            backButton.ImageTransparentColor = Color.Magenta;
+            backButton.Name = "backButton";
+            backButton.Size = new Size(23, 22);
+            backButton.Text = "Back";
+            backButton.Click += BackButtonClick;
             // 
             // forwardButton
             //
-            this.forwardButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.forwardButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.forwardButton.Enabled = false;
-            this.forwardButton.Image = ((System.Drawing.Image)(resources.GetObject("forwardButton.Image")));
-            this.forwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.forwardButton.Name = "forwardButton";
-            this.forwardButton.Size = new System.Drawing.Size(23, 22);
-            this.forwardButton.Text = "Forward";
-            this.forwardButton.Click += new System.EventHandler(this.ForwardButtonClick);
+            forwardButton.Margin = new Padding(0, 1, 0, 1);
+            forwardButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            forwardButton.Enabled = false;
+            forwardButton.Image = ((Image)(resources.GetObject("forwardButton.Image")));
+            forwardButton.ImageTransparentColor = Color.Magenta;
+            forwardButton.Name = "forwardButton";
+            forwardButton.Size = new Size(23, 22);
+            forwardButton.Text = "Forward";
+            forwardButton.Click += ForwardButtonClick;
             // 
             // refreshButton
             //
-            this.refreshButton.Margin = new System.Windows.Forms.Padding(0, 1, 1, 1);
-            this.refreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image")));
-            this.refreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(23, 22);
-            this.refreshButton.Text = "Refresh";
-            this.refreshButton.Click += new System.EventHandler(this.RefreshButtonClick);
+            refreshButton.Margin = new Padding(0, 1, 1, 1);
+            refreshButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            refreshButton.Image = ((Image)(resources.GetObject("refreshButton.Image")));
+            refreshButton.ImageTransparentColor = Color.Magenta;
+            refreshButton.Name = "refreshButton";
+            refreshButton.Size = new Size(23, 22);
+            refreshButton.Text = "Refresh";
+            refreshButton.Click += RefreshButtonClick;
             // 
             // addressComboBox
             //
-            this.addressComboBox.Name = "addressComboBox";
-            this.addressComboBox.Size = new System.Drawing.Size(450, 21);
-            this.addressComboBox.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-            this.addressComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddressComboBoxKeyPress);
-            this.addressComboBox.FlatCombo.SelectedIndexChanged += new System.EventHandler(this.AddressComboBoxSelectedIndexChanged);
+            addressComboBox.Name = "addressComboBox";
+            addressComboBox.Size = new Size(450, 21);
+            addressComboBox.Padding = new Padding(0, 0, 1, 0);
+            addressComboBox.KeyPress += AddressComboBoxKeyPress;
+            addressComboBox.FlatCombo.SelectedIndexChanged += AddressComboBoxSelectedIndexChanged;
             // 
             // goButton
             //
-            this.goButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.goButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.goButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.goButton.Image = ((System.Drawing.Image)(resources.GetObject("goButton.Image")));
-            this.goButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.goButton.Name = "goButton";
-            this.goButton.Size = new System.Drawing.Size(23, 22);
-            this.goButton.Text = "Go";
-            this.goButton.Click += new System.EventHandler(this.BrowseButtonClick);
+            goButton.Margin = new Padding(0, 1, 0, 1);
+            goButton.Alignment = ToolStripItemAlignment.Right;
+            goButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            goButton.Image = ((Image)(resources.GetObject("goButton.Image")));
+            goButton.ImageTransparentColor = Color.Magenta;
+            goButton.Name = "goButton";
+            goButton.Size = new Size(23, 22);
+            goButton.Text = "Go";
+            goButton.Click += BrowseButtonClick;
             // 
             // webBrowser
             //
-            this.webBrowser.AllowWebBrowserDrop = true;
-            this.webBrowser.ScriptErrorsSuppressed = true;
-            this.webBrowser.WebBrowserShortcutsEnabled = false;
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser.Location = new System.Drawing.Point(0, 25);
-            this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(620, 375);
-            this.webBrowser.TabIndex = 2;
-            this.webBrowser.CanGoForwardChanged += new System.EventHandler(this.WebBrowserPropertyUpdated);
-            this.webBrowser.CanGoBackChanged += new System.EventHandler(this.WebBrowserPropertyUpdated);
-            this.webBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.WebBrowserNavigated);
-            this.webBrowser.DocumentTitleChanged += new System.EventHandler(this.WebBrowserDocumentTitleChanged);
-            this.webBrowser.NewWindow += new System.ComponentModel.CancelEventHandler(this.WebBrowserNewWindow);
+            webBrowser.AllowWebBrowserDrop = true;
+            webBrowser.ScriptErrorsSuppressed = true;
+            webBrowser.WebBrowserShortcutsEnabled = false;
+            webBrowser.Dock = DockStyle.Fill;
+            webBrowser.Location = new Point(0, 25);
+            webBrowser.Name = "webBrowser";
+            webBrowser.Size = new Size(620, 375);
+            webBrowser.TabIndex = 2;
+            webBrowser.CanGoForwardChanged += WebBrowserPropertyUpdated;
+            webBrowser.CanGoBackChanged += WebBrowserPropertyUpdated;
+            webBrowser.Navigated += WebBrowserNavigated;
+            webBrowser.DocumentTitleChanged += WebBrowserDocumentTitleChanged;
+            webBrowser.NewWindow += WebBrowserNewWindow;
             // 
             // Browser
             // 
-            this.Controls.Add(this.webBrowser);
-            this.Controls.Add(this.toolStrip);
-            this.Name = "Browser";
-            this.Size = new System.Drawing.Size(620, 400);
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            Controls.Add(webBrowser);
+            Controls.Add(toolStrip);
+            Name = "Browser";
+            Size = new Size(620, 400);
+            toolStrip.ResumeLayout(false);
+            toolStrip.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -166,152 +164,146 @@ namespace FlashDevelop.Controls
         /// <summary>
         /// Accessor for the webBrowser
         /// </summary>
-        public WebBrowser WebBrowser
-        {
-            get { return this.webBrowser; }
-        }
+        public WebBrowser WebBrowser => webBrowser;
 
         /// <summary>
         /// Accessor for the addressComboBox
         /// </summary>
-        public ToolStripComboBoxEx AddressBox
-        {
-            get { return this.addressComboBox; }
-        }
+        public ToolStripComboBoxEx AddressBox => addressComboBox;
 
         /// <summary>
         /// Initializes localized texts to the controls
         /// </summary>
-        private void InitializeLocalization()
+        void InitializeLocalization()
         {
-            this.goButton.Text = TextHelper.GetString("Label.Go");
-            this.backButton.Text = TextHelper.GetString("Label.Back");
-            this.forwardButton.Text = TextHelper.GetString("Label.Forward");
-            this.refreshButton.Text = TextHelper.GetString("Label.Refresh");
+            goButton.Text = TextHelper.GetString("Label.Go");
+            backButton.Text = TextHelper.GetString("Label.Back");
+            forwardButton.Text = TextHelper.GetString("Label.Forward");
+            refreshButton.Text = TextHelper.GetString("Label.Refresh");
         }
 
         /// <summary>
         /// Initializes the ui based on settings
         /// </summary>
-        private void InitializeInterface()
+        void InitializeInterface()
         {
-            this.addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
-            this.toolStrip.Renderer = new DockPanelStripRenderer(true, true);
-            this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
+            toolStrip.Renderer = new DockPanelStripRenderer(true, true);
+            toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)
             {
                 ComponentResourceManager resources = new ComponentResourceManager(typeof(Browser));
-                this.goButton.Image = ((System.Drawing.Image)(resources.GetObject("goButton.Image32")));
-                this.forwardButton.Image = ((System.Drawing.Image)(resources.GetObject("forwardButton.Image32")));
-                this.refreshButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshButton.Image32")));
-                this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("backButton.Image32")));
-                this.Refresh();
+                goButton.Image = ((Image)(resources.GetObject("goButton.Image32")));
+                forwardButton.Image = ((Image)(resources.GetObject("forwardButton.Image32")));
+                refreshButton.Image = ((Image)(resources.GetObject("refreshButton.Image32")));
+                backButton.Image = ((Image)(resources.GetObject("backButton.Image32")));
+                Refresh();
             }
         }
 
         /// <summary>
         /// If the page tries to open a new window use a fd tab instead
         /// </summary>
-        private void WebBrowserNewWindow(Object sender, CancelEventArgs e)
+        void WebBrowserNewWindow(object sender, CancelEventArgs e)
         {
-            Globals.MainForm.CallCommand("Browse", this.webBrowser.StatusText);
+            Globals.MainForm.CallCommand("Browse", webBrowser.StatusText);
             e.Cancel = true;
         }
 
         /// <summary>
         /// Handles the web browser property changed event
         /// </summary>
-        private void WebBrowserPropertyUpdated(Object sender, EventArgs e)
+        void WebBrowserPropertyUpdated(object sender, EventArgs e)
         {
-            this.backButton.Enabled = this.webBrowser.CanGoBack;
-            this.forwardButton.Enabled = this.webBrowser.CanGoForward;
+            backButton.Enabled = webBrowser.CanGoBack;
+            forwardButton.Enabled = webBrowser.CanGoForward;
         }
 
         /// <summary>
         /// Handles the web browser navigated event
         /// </summary>
-        private void WebBrowserNavigated(Object sender, WebBrowserNavigatedEventArgs e)
+        void WebBrowserNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            this.addressComboBox.Text = this.webBrowser.Url.ToString();
+            addressComboBox.Text = webBrowser.Url.ToString();
             Globals.MainForm.OnScintillaControlUpdateControl(Globals.SciControl);
         }
 
         /// <summary>
         /// Handles the web browser title changed event
         /// </summary>
-        private void WebBrowserDocumentTitleChanged(Object sender, EventArgs e)
+        void WebBrowserDocumentTitleChanged(object sender, EventArgs e)
         {
-            if (this.webBrowser.DocumentTitle.Trim() == "")
+            if (webBrowser.DocumentTitle.Trim().Length == 0)
             {
-                String domain = this.webBrowser.Document.Domain.Trim();
-                if (!String.IsNullOrEmpty(domain)) this.Parent.Text = domain;
-                else this.Parent.Text = TextHelper.GetString("Info.UntitledFileStart");
+                string domain = webBrowser.Document.Domain.Trim();
+                if (!string.IsNullOrEmpty(domain)) Parent.Text = domain;
+                else Parent.Text = TextHelper.GetString("Info.UntitledFileStart");
             }
-            else this.Parent.Text = this.webBrowser.DocumentTitle;
+            else Parent.Text = webBrowser.DocumentTitle;
         }
 
         /// <summary>
         /// Handles the combo box index changed event
         /// </summary>
-        private void AddressComboBoxSelectedIndexChanged(Object sender, EventArgs e)
+        void AddressComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.addressComboBox.SelectedItem != null)
+            if (addressComboBox.SelectedItem != null)
             {
-                String url = this.addressComboBox.SelectedItem.ToString();
-                this.webBrowser.Navigate(url);
+                string url = addressComboBox.SelectedItem.ToString();
+                webBrowser.Navigate(url);
             }
         }
 
         /// <summary>
         /// Browses to the previous page in history
         /// </summary>
-        private void BackButtonClick(Object sender, EventArgs e)
+        void BackButtonClick(object sender, EventArgs e)
         {
-            this.webBrowser.GoBack();
+            webBrowser.GoBack();
         }
 
         /// <summary>
         /// Browses to the next page in history
         /// </summary>
-        private void ForwardButtonClick(Object sender, EventArgs e)
+        void ForwardButtonClick(object sender, EventArgs e)
         {
-            this.webBrowser.GoForward();
+            webBrowser.GoForward();
         }
 
         /// <summary>
         /// Reloads the current pages contents
         /// </summary>
-        private void RefreshButtonClick(Object sender, EventArgs e)
+        void RefreshButtonClick(object sender, EventArgs e)
         {
-            this.webBrowser.Refresh();
+            webBrowser.Refresh();
         }
 
         /// <summary>
         /// Browses to the specified url on click
         /// </summary>
-        private void BrowseButtonClick(Object sender, EventArgs e)
+        void BrowseButtonClick(object sender, EventArgs e)
         {
-            String url = this.addressComboBox.Text;
-            if (!this.addressComboBox.Items.Contains(url))
+            string url = addressComboBox.Text;
+            if (!addressComboBox.Items.Contains(url))
             {
-                this.addressComboBox.Items.Insert(0, url);
+                addressComboBox.Items.Insert(0, url);
             }
-            this.webBrowser.Navigate(url);
+            webBrowser.Navigate(url);
         }
 
         /// <summary>
         /// Handles the combo box key press event
         /// </summary>
-        private void AddressComboBoxKeyPress(Object sender, KeyPressEventArgs e)
+        void AddressComboBoxKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (Char)Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                String url = this.addressComboBox.Text;
-                if (!this.addressComboBox.Items.Contains(url))
+                string url = addressComboBox.Text;
+                if (!addressComboBox.Items.Contains(url))
                 {
-                    this.addressComboBox.Items.Insert(0, url);
+                    addressComboBox.Items.Insert(0, url);
                 }
-                this.webBrowser.Navigate(url);
+                webBrowser.Navigate(url);
             }
         }
 
@@ -321,12 +313,12 @@ namespace FlashDevelop.Controls
 
     #region WebBrowserEx
 
-    class WebBrowserEx : WebBrowser
+    internal class WebBrowserEx : WebBrowser
     {
         /// <summary>
         /// Redirect events to MainForm.
         /// </summary>
-        public override Boolean PreProcessMessage(ref Message msg)
+        public override bool PreProcessMessage(ref Message msg)
         {
             return Globals.MainForm.PreProcessMessage(ref msg);
         }

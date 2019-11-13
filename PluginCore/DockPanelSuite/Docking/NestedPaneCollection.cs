@@ -6,47 +6,30 @@ namespace WeifenLuo.WinFormsUI.Docking
 {
     public sealed class NestedPaneCollection : ReadOnlyCollection<DockPane>
     {
-        private INestedPanesContainer m_container;
-        private VisibleNestedPaneCollection m_visibleNestedPanes;
-
         internal NestedPaneCollection(INestedPanesContainer container)
             : base(new List<DockPane>())
         {
-            m_container = container;
-            m_visibleNestedPanes = new VisibleNestedPaneCollection(this);
+            Container = container;
+            VisibleNestedPanes = new VisibleNestedPaneCollection(this);
         }
 
-        public INestedPanesContainer Container
-        {
-            get {   return m_container; }
-        }
-        
-        public VisibleNestedPaneCollection VisibleNestedPanes
-        {
-            get {   return m_visibleNestedPanes;    }
-        }
+        public INestedPanesContainer Container { get; }
 
-        public DockState DockState
-        {
-            get {   return Container.DockState; }
-        }
+        public VisibleNestedPaneCollection VisibleNestedPanes { get; }
 
-        public bool IsFloat
-        {
-            get {   return DockState == DockState.Float;    }
-        }
+        public DockState DockState => Container.DockState;
+
+        public bool IsFloat => DockState == DockState.Float;
 
         internal void Add(DockPane pane)
         {
-            if (pane == null)
+            if (pane is null)
                 return;
 
-            NestedPaneCollection oldNestedPanes = (pane.NestedPanesContainer == null) ? null : pane.NestedPanesContainer.NestedPanes;
-            if (oldNestedPanes != null)
-                oldNestedPanes.InternalRemove(pane);
+            NestedPaneCollection oldNestedPanes = pane.NestedPanesContainer?.NestedPanes;
+            oldNestedPanes?.InternalRemove(pane);
             Items.Add(pane);
-            if (oldNestedPanes != null)
-                oldNestedPanes.CheckFloatWindowDispose();
+            oldNestedPanes?.CheckFloatWindowDispose();
         }
 
         private void CheckFloatWindowDispose()

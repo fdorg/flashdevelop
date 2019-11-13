@@ -3,7 +3,7 @@ package org.flashdevelop.test.as3.generator.extractlocalvariable {
 
 	public class ExtractLocalVariable extends Sprite {
 		public function ExtractLocalVariable() {
-			var newVar:Number = 0;
+			var newVar:int = 0;
 			var name:String = getChildAt(newVar).name;
 		}
 	}

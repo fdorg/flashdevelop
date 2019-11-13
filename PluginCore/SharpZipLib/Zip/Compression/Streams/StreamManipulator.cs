@@ -125,24 +125,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <returns>
         /// the number of bits available.
         /// </returns>
-        public int AvailableBits {
-            get {
-                return bitsInBuffer_;
-            }
-        }
-        
+        public int AvailableBits => bitsInBuffer_;
+
         /// <summary>
         /// Gets the number of bytes available.
         /// </summary>
         /// <returns>
         /// The number of bytes available.
         /// </returns>
-        public int AvailableBytes {
-            get {
-                return windowEnd_ - windowStart_ + (bitsInBuffer_ >> 3);
-            }
-        }
-        
+        public int AvailableBytes => windowEnd_ - windowStart_ + (bitsInBuffer_ >> 3);
+
         /// <summary>
         /// Skips to the next byte boundary.
         /// </summary>
@@ -155,12 +147,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <summary>
         /// Returns true when SetInput can be called
         /// </summary>
-        public bool IsNeedingInput {
-            get {
-                return windowStart_ == windowEnd_;
-            }
-        }
-        
+        public bool IsNeedingInput => windowStart_ == windowEnd_;
+
         /// <summary>
         /// Copies bytes from input buffer to output buffer starting
         /// at output[offset].  You have to make sure, that the buffer is
@@ -188,7 +176,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         public int CopyBytes(byte[] output, int offset, int length)
         {
             if (length < 0) {
-                throw new ArgumentOutOfRangeException("length");
+                throw new ArgumentOutOfRangeException(nameof(length));
             }
 
             if ((bitsInBuffer_ & 7) != 0) {
@@ -242,15 +230,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
         /// <param name="count">number of bytes of input to add.</param>
         public void SetInput(byte[] buffer, int offset, int count)
         {
-            if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+            if ( buffer is null ) {
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             if ( offset < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "Cannot be negative");
 #endif              
             }
 
@@ -258,7 +246,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "Cannot be negative");
 #endif              
             }
 
@@ -271,7 +259,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
             // We want to throw an ArrayIndexOutOfBoundsException early.
             // Note the check also handles integer wrap around.
             if ((offset > end) || (end > buffer.Length) ) {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
             
             if ((count & 1) != 0) {

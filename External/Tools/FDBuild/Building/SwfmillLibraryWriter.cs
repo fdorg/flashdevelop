@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -14,7 +13,7 @@ namespace ProjectManager.Building
 
         public SwfmillLibraryWriter(string libraryPath) : base(libraryPath, Encoding.UTF8)
         {
-            base.Formatting = Formatting.Indented;
+            Formatting = Formatting.Indented;
         }
 
         public void WriteProject(Project project)
@@ -174,7 +173,7 @@ namespace ProjectManager.Building
 
         private string GetSafeId(string id)
         {
-            return (project.Language == "haxe") ? Char.ToUpper(id[2]) + id.Substring(3) : id;
+            return (project.Language == "haxe") ? char.ToUpper(id[2]) + id.Substring(3) : id;
         }
 
         #endregion

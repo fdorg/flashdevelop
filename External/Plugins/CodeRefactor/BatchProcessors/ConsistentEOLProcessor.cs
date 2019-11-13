@@ -1,8 +1,5 @@
 ﻿using CodeRefactor.Managers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using PluginCore;
 using PluginCore.Localization;
 
@@ -18,7 +15,7 @@ namespace CodeRefactor.BatchProcessors
         {
             foreach (var file in files)
             {
-                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var document = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(file);
                 document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
             }
         }

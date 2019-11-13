@@ -35,15 +35,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {
     public class EUCKRProber : CharsetProber
     {
-        private CodingStateMachine codingSM;
-        private EUCKRDistributionAnalyser distributionAnalyser;
-        private byte[] lastChar = new byte[2];
+        private readonly CodingStateMachine codingSM;
+        private readonly EUCKRDistributionAnalyser distributionAnalyser;
+        private readonly byte[] lastChar = new byte[2];
 
         public EUCKRProber()
         {

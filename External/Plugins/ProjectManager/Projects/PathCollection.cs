@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -12,7 +11,10 @@ namespace ProjectManager.Projects
 
     public class PathCollection : List<string>, IAddPaths
     {
-        public PathCollection() : base() { }
+        public PathCollection()
+        {
+        }
+
         public PathCollection(IEnumerable<string> paths) : base(paths) { }
 
         /// <summary>

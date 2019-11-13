@@ -47,18 +47,19 @@ namespace CodeRefactor.Commands
         #endregion
 
         private int start, end;
-        private string oldName, newName/*, prevName*/;
-        private bool includeComments;
-        private bool includeStrings;
-        private bool previewChanges;
+        private readonly string oldName/*, prevName*/;
+        private string newName/*, prevName*/;
+        private readonly bool includeComments;
+        private readonly bool includeStrings;
+        private readonly bool previewChanges;
 
-        private ScintillaControl sci;
+        private readonly ScintillaControl sci;
         private ITabbedDocument currentDoc;
 
         private ReferenceInfo currentRef;
         private ReferenceInfo[] refs;
 
-        private DelayedExecution delayedExecution;
+        private readonly DelayedExecution delayedExecution;
         private List<string> history;
         private int historyIndex;
 
@@ -88,10 +89,7 @@ namespace CodeRefactor.Commands
         /// Gets a value specifying whether there is an <see cref="InlineRename"/> object currently
         /// working in progress.
         /// </summary>
-        public static bool InProgress
-        {
-            get { return Current != null; }
-        }
+        public static bool InProgress => Current != null;
 
         /// <summary>
         /// Cancels any existing <see cref="InlineRename"/> in progress, and returns a
@@ -125,9 +123,9 @@ namespace CodeRefactor.Commands
         /// <param name="previewTarget">An <see cref="ASResult"/> object specifying the target. This parameter must not be <code>null</code> if <code>previewChanges</code> is not <code>null</code>.</param>
         public InlineRename(ScintillaControl control, string original, int position, bool? includeComments, bool? includeStrings, bool? previewChanges, ASResult previewTarget)
         {
-            if (previewChanges.HasValue && previewTarget == null)
+            if (previewChanges.HasValue && previewTarget is null)
             {
-                throw new ArgumentNullException("previewTarget");
+                throw new ArgumentNullException(nameof(previewTarget));
             }
 
             CancelCurrent();
@@ -162,26 +160,17 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a value specifying whether current renaming process includes comments.
         /// </summary>
-        public bool IncludeComments
-        {
-            get { return includeComments; }
-        }
+        public bool IncludeComments => includeComments;
 
         /// <summary>
         /// Gets a value specifying whether current renaming process includes strings.
         /// </summary>
-        public bool IncludeStrings
-        {
-            get { return includeStrings; }
-        }
+        public bool IncludeStrings => includeStrings;
 
         /// <summary>
         /// Gets a value specifying whether current renaming previews changes.
         /// </summary>
-        public bool PreviewChanges
-        {
-            get { return previewChanges; }
-        }
+        public bool PreviewChanges => previewChanges;
 
         #endregion
 
@@ -224,7 +213,7 @@ namespace CodeRefactor.Commands
                     var @ref = new ReferenceInfo() { Index = index, Length = length, Value = value };
                     tempRefs.Add(@ref);
 
-                    if (currentRef == null && match.Index == start)
+                    if (currentRef is null && match.Index == start)
                     {
                         currentRef = @ref;
                     }
@@ -255,7 +244,7 @@ namespace CodeRefactor.Commands
         private void AddGetterSetterPreview(List<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
         {
             target = RenamingHelper.FindGetterSetter(target, prefix + name);
-            if (target == null) return;
+            if (target is null) return;
 
             var results = new FRRunner().SearchSync(GetConfig(prefix + name))[currentDoc.FileName];
             int offset = prefix.Length;
@@ -375,10 +364,10 @@ namespace CodeRefactor.Commands
                 sci.DisableAllSciEvents = false;
             }
 
-            if (refs == null)
+            if (refs is null)
             {
                 Highlight(start, end - start);
-                if (Update != null) Update(this, /*prevName,*/ newName);
+                Update?.Invoke(this, /*prevName,*/ newName);
             }
             else
             {
@@ -514,7 +503,7 @@ namespace CodeRefactor.Commands
         {
             UpdateReferences(newName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, true);
 
-            if (Update != null) Update(this, /*prevName,*/ newName);
+            Update?.Invoke(this, /*prevName,*/ newName);
         }
 
         /// <summary>
@@ -526,7 +515,7 @@ namespace CodeRefactor.Commands
             sci.EndUndoAction();
             sci.Undo();
 
-            if (Apply != null) Apply(this, oldName, newName);
+            Apply?.Invoke(this, oldName, newName);
         }
 
         /// <summary>
@@ -538,7 +527,7 @@ namespace CodeRefactor.Commands
             sci.EndUndoAction();
             sci.Undo();
 
-            if (Cancel != null) Cancel(this);
+            Cancel?.Invoke(this);
         }
 
         #endregion
@@ -691,10 +680,6 @@ namespace CodeRefactor.Commands
                 end -= length;
                 OnUpdate();
             }
-            else
-            {
-                //OnCancel();
-            }
         }
 
         #endregion
@@ -826,9 +811,6 @@ namespace CodeRefactor.Commands
                 case "Scintilla.ZoomIn":
                 case "Scintilla.ZoomOut":
                     return false;
-                default:
-                    //string.Format("Shortcut \"{0}\" cannot be used during renaming", shortcut.Key)
-                    break;
             }
 
             return true;
@@ -892,18 +874,12 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether the cursor is at the start of the current target.
         /// </summary>
-        private bool AtLeftmost
-        {
-            get { return sci.CurrentPos == start; }
-        }
+        private bool AtLeftmost => sci.CurrentPos == start;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether the cursor is at the end of the current target.
         /// </summary>
-        private bool AtRightmost
-        {
-            get { return sci.CurrentPos == end; }
-        }
+        private bool AtRightmost => sci.CurrentPos == end;
 
         /// <summary>
         /// Gets a <see cref="bool"/> value specifying whether a character is valid for an identifier.
@@ -995,10 +971,10 @@ namespace CodeRefactor.Commands
                 sci.DisableAllSciEvents = false;
             }
 
-            if (refs == null)
+            if (refs is null)
             {
                 Highlight(start, end - start);
-                if (Update != null) Update(this, /*prevName,*/ newName);
+                Update?.Invoke(this, /*prevName,*/ newName);
             }
             else
             {

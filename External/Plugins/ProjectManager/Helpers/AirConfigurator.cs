@@ -7,10 +7,8 @@ namespace ProjectManager.Helpers
 {
     public class AirConfigurator
     {
-
-        private static Regex BatchParamRegEx = new Regex("(^\\s*set\\s+)(\\w+)(\\s*=\\s*)(.*)", RegexOptions.IgnoreCase | RegexOptions.Multiline |
+        private static readonly Regex BatchParamRegEx = new Regex("(^\\s*set\\s+)(\\w+)(\\s*=\\s*)(.*)", RegexOptions.IgnoreCase | RegexOptions.Multiline |
                                                              RegexOptions.Compiled);
-
         public const string DescriptorPath = "APP_XML";
         public const string PackageDir = "APP_DIR";
         public const string AndroidCert = "AND_CERT_FILE";
@@ -18,10 +16,9 @@ namespace ProjectManager.Helpers
         public const string AppleDevCert = "IOS_DEV_CERT_FILE";
         public const string AppleProvision = "IOS_PROVISION";
 
-        public string SdkSetupBatch { get; set; }
         public string ApplicationSetupBatch { get; set; }
 
-        public Dictionary<string, string> ApplicationSetupParams { get; private set; }
+        public Dictionary<string, string> ApplicationSetupParams { get; }
 
         public AirConfigurator()
         {
@@ -36,17 +33,13 @@ namespace ProjectManager.Helpers
                 string contents = BatchParamRegEx.Replace(fileInfo.Contents, ParseApplicationSetupBatchParams);
                 FileHelper.WriteFile(ApplicationSetupBatch, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
             }
-
         }
 
         private string ParseApplicationSetupBatchParams(Match m)
         {
-            string paramValue;
-            if (ApplicationSetupParams.TryGetValue(m.Groups[2].Value, out paramValue))
+            if (ApplicationSetupParams.TryGetValue(m.Groups[2].Value, out var paramValue))
                 return m.Groups[1].Value + m.Groups[2].Value + m.Groups[3].Value + paramValue;
-
             return m.Value;
         }
     }
 }
-

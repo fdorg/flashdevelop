@@ -1,6 +1,5 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -17,7 +16,7 @@ namespace System.Windows.Forms
     {
         string topPath;
         string bottomPath;
-        ArrayList expandedPaths = new ArrayList();
+        readonly List<string> expandedPaths = new List<string>();
 
         public void BeginStatefulUpdate()
         {
@@ -46,8 +45,7 @@ namespace System.Windows.Forms
             foreach (string path in expandedPaths)
             {
                 TreeNode node = FindClosestPath(path);
-                if (node != null)
-                    node.Expand();
+                node?.Expand();
             }
         }
 
@@ -91,7 +89,7 @@ namespace System.Windows.Forms
 
         public void SaveScrollState()
         {
-            if (base.Nodes.Count < 1) return;
+            if (base.Nodes.Count == 0) return;
 
             // store what nodes were at the top and bottom so we can try and preserve scroll
             // use the tag instead of node reference because you're most likely rebuilding
@@ -107,16 +105,14 @@ namespace System.Windows.Forms
 
         public void RestoreScrollState()
         {
-            if (base.Nodes.Count < 1) return;
+            if (base.Nodes.Count == 0) return;
 
             TreeNode bottomNode = FindClosestPath(bottomPath);
             TreeNode topNode = FindClosestPath(topPath);
 
-            if (bottomNode != null)
-                bottomNode.EnsureVisible();
+            bottomNode?.EnsureVisible();
 
-            if (topNode != null)
-                topNode.EnsureVisible();
+            topNode?.EnsureVisible();
 
             // manually scroll all the way to the left
             if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);
@@ -139,8 +135,7 @@ namespace System.Windows.Forms
                 {
                     if (queue.Count > 0 && node.Nodes.Count > 0)
                         return FindClosestPath(node.Nodes,queue);
-                    else
-                        return node; // as close as we'll get
+                    return node; // as close as we'll get
                 }
             }
             return null;

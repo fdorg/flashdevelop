@@ -1,10 +1,5 @@
-using System;
-using System.Text;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Collections.Generic;
 using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Managers;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -21,9 +16,9 @@ namespace System.Windows.Forms
 
     public class DockPanelControl : UserControl
     {
-        Pen borderPen;
+        readonly Pen borderPen;
         DockBorders borders;
-        public Boolean AutoKeyHandling = false;
+        public bool AutoKeyHandling = false;
 
         public DockPanelControl()
         {
@@ -35,7 +30,7 @@ namespace System.Windows.Forms
 
         private DockBorders Borders
         {
-            get { return borders; }
+            get => borders;
             set
             {
                 borders = value;
@@ -43,7 +38,7 @@ namespace System.Windows.Forms
             }
         }
         
-        protected override Boolean ProcessDialogKey(Keys keyData)
+        protected override bool ProcessDialogKey(Keys keyData)
         {
             if (this.AutoKeyHandling && this.ContainsFocus)
             {
@@ -90,9 +85,9 @@ namespace System.Windows.Forms
         /// </summary>
         private void CheckDockPosition()
         {
-            Boolean isOnlyTab;
+            bool isOnlyTab;
             DockContent dock = this.Parent as DockContent;
-            if (dock == null || dock.Pane == null) return;
+            if (dock?.Pane is null) return;
             if (dock.IsFloat)
             {
                 DockBorders local;
@@ -110,7 +105,7 @@ namespace System.Windows.Forms
             }
         }
 
-        private Boolean IsAutoHidden(DockContent content)
+        private bool IsAutoHidden(DockContent content)
         {
             DockState state = content.DockState;
             return state == DockState.DockLeftAutoHide || state == DockState.DockRightAutoHide 
@@ -120,11 +115,11 @@ namespace System.Windows.Forms
         /// <summary>
         /// Counts the the contents excluding hidden and floating (option) windows
         /// </summary>
-        private Int32 CountPanels(Boolean includeFloats)
+        private int CountPanels(bool includeFloats)
         {
-            Int32 count = 0;
+            int count = 0;
             DockContent dock = this.Parent as DockContent;
-            for (Int32 i = 0; i < dock.Pane.Contents.Count; i++)
+            for (int i = 0; i < dock.Pane.Contents.Count; i++)
             {
                 if (dock.Pane.Contents[i] is DockContent)
                 {

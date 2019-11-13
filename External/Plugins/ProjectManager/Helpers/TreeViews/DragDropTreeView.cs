@@ -1,8 +1,6 @@
-using System;
 using System.Drawing;
-using System.Collections;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Windows.Forms
 {
@@ -23,8 +21,8 @@ namespace System.Windows.Forms
         protected override void OnItemDrag(ItemDragEventArgs e)
         {
             // can't drag the root node
-            if (!base.SelectedNodes.Contains(base.Nodes[0]))
-                DoDragDrop(BeginDragNodes(base.SelectedNodes), DragDropEffects.All);
+            if (!SelectedNodes.Contains(Nodes[0]))
+                DoDragDrop(BeginDragNodes(SelectedNodes), DragDropEffects.All);
             else
                 base.OnItemDrag(e);
         }
@@ -32,9 +30,9 @@ namespace System.Windows.Forms
         /// <summary>
         /// Constructs draggable DataObjects from a list of dragged nodes.
         /// </summary>
-        protected virtual DataObject BeginDragNodes(ArrayList nodes)
+        protected virtual DataObject BeginDragNodes(List<TreeNode> nodes)
         {
-            DataObject data = new DataObject();
+            var data = new DataObject();
             data.SetData(nodes);
             return data;
         }
@@ -60,12 +58,12 @@ namespace System.Windows.Forms
             else
                 return;
 
-            TreeNode node = base.GetNodeAt(PointToClient(new Point(e.X,e.Y)));
+            TreeNode node = GetNodeAt(PointToClient(new Point(e.X, e.Y)));
             node = ChangeDropTarget(node);
 
             if (node != null)
             {
-                if (!base.SelectedNodes.Contains(node))
+                if (!SelectedNodes.Contains(node))
                     HighlightTarget(node);
             }
             else
@@ -80,19 +78,19 @@ namespace System.Windows.Forms
         {
             if (IsOurDrag(e.Data))
             {
-                ArrayList draggedNodes = (ArrayList)e.Data.GetData(typeof(ArrayList));
-                TreeNode targetNode = base.GetNodeAt(PointToClient(new Point(e.X,e.Y)));
+                var draggedNodes = (List<TreeNode>)e.Data.GetData(typeof(List<TreeNode>));
+                var targetNode = GetNodeAt(PointToClient(new Point(e.X,e.Y)));
                 targetNode = ChangeDropTarget(targetNode);
 
                 if (draggedNodes != null && targetNode != null)
-                    DragNodes(draggedNodes,targetNode,e.Effect);
+                    DragNodes(draggedNodes, targetNode, e.Effect);
             }
             else if (IsFileDrop(e.Data))
             {
-                TreeNode targetNode = base.GetNodeAt(PointToClient(new Point(e.X,e.Y)));
+                TreeNode targetNode = GetNodeAt(PointToClient(new Point(e.X,e.Y)));
                 targetNode = ChangeDropTarget(targetNode);
 
-                if (targetNode == null) return;
+                if (targetNode is null) return;
                 
                 // the data is in the form of an array of paths
                 Array aFiledrop = (Array)e.Data.GetData(DataFormats.FileDrop);
@@ -103,7 +101,7 @@ namespace System.Windows.Forms
                     paths[i] = aFiledrop.GetValue(i) as string;
 
                 // queue the copy/move operation so we don't hang this thread and block the calling app
-                BeginInvoke(new OnFileDropHandler(OnFileDrop),new object[]{paths,targetNode});
+                BeginInvoke(new OnFileDropHandler(OnFileDrop), paths, targetNode);
 
                 // somehow querycontinuedrag doesn't work in this case
                 UnhighlightTarget();
@@ -111,7 +109,7 @@ namespace System.Windows.Forms
             else base.OnDragDrop(e);
         }
 
-        private delegate void OnFileDropHandler(string[] paths,TreeNode targetNode);
+        delegate void OnFileDropHandler(string[] paths,TreeNode targetNode);
 
         protected override void OnQueryContinueDrag(QueryContinueDragEventArgs e)
         {
@@ -120,7 +118,7 @@ namespace System.Windows.Forms
                 UnhighlightTarget();
         }
 
-        private void DragNodes(ArrayList nodes, TreeNode targetNode, DragDropEffects effect)
+        void DragNodes(List<TreeNode> nodes, TreeNode targetNode, DragDropEffects effect)
         {
             if (nodes.Contains(targetNode))
                 return; // fail silently
@@ -129,15 +127,15 @@ namespace System.Windows.Forms
             nodes = Simplify(nodes);
 
             // ignore stupid things
-            foreach (TreeNode node in nodes)
+            foreach (var node in nodes)
                 if (IsAncestor(node,targetNode) || node.Parent == targetNode)
                     return;
 
             // we didn't make it :(
-            if (nodes.Count < 1) return;
+            if (nodes.Count == 0) return;
 
             // ok it's time to move it move it
-            foreach (TreeNode node in nodes)
+            foreach (var node in nodes)
                 if (effect == DragDropEffects.Move)
                     OnMoveNode(node,targetNode);
                 else if (effect == DragDropEffects.Copy)
@@ -154,39 +152,30 @@ namespace System.Windows.Forms
         /// node if you know for a fact that it doesn't make sense to drop things on
         /// the target node.
         /// </summary>
-        protected virtual TreeNode ChangeDropTarget(TreeNode targetNode)
-        {
-            return targetNode;
-        }
+        protected virtual TreeNode ChangeDropTarget(TreeNode targetNode) => targetNode;
 
-        private ArrayList Simplify(ArrayList nodes)
+        static List<TreeNode> Simplify(List<TreeNode> nodes)
         {
-            ArrayList simpleNodes = new ArrayList(nodes);
-            foreach (TreeNode node1 in nodes)
-                foreach (TreeNode node2 in nodes)
+            var result = nodes.ToList();
+            foreach (var node1 in nodes)
+                foreach (var node2 in nodes)
                     if (IsAncestor(node1,node2))
-                        simpleNodes.Remove(node2);
-            return simpleNodes;
+                        result.Remove(node2);
+            return result;
         }
 
-        private bool IsAncestor(TreeNode node1, TreeNode node2)
+        static bool IsAncestor(TreeNode node1, TreeNode node2)
         {
-            for (TreeNode parent = node2.Parent; parent != null; parent = parent.Parent)
+            for (var parent = node2.Parent; parent != null; parent = parent.Parent)
                 if (parent == node1) return true;
             return false;
         }
 
-        private bool IsOurDrag(IDataObject o)
-        {
-            return (o.GetDataPresent(typeof(ArrayList)));
-        }
+        static bool IsOurDrag(IDataObject o) => o.GetDataPresent(typeof(List<TreeNode>));
 
-        private bool IsFileDrop(IDataObject o)
-        {
-            return (o.GetDataPresent(DataFormats.FileDrop));
-        }
+        static bool IsFileDrop(IDataObject o) => o.GetDataPresent(DataFormats.FileDrop);
 
-        private void HighlightTarget(TreeNode node)
+        void HighlightTarget(TreeNode node)
         {
             if (node != highlightedNode)
             {
@@ -199,7 +188,7 @@ namespace System.Windows.Forms
             }
         }
 
-        private void UnhighlightTarget()
+        void UnhighlightTarget()
         {
             if (highlightedNode != null)
             {
@@ -214,12 +203,12 @@ namespace System.Windows.Forms
         //  and drop. If the drag cursor moves to the bottom
         //  or top of the treeview, call the Windows API
         //  SendMessage function to scroll up or down automatically.
-        private void DragScroll(DragEventArgs e)
+        void DragScroll(DragEventArgs e)
         {
             if (!PluginCore.Win32.ShouldUseWin32()) return;
 
             // Set a constant to define the autoscroll region
-            const Single scrollRegion = 20;
+            const float scrollRegion = 20;
 
             // See where the cursor is
             Point pt = PointToClient(Cursor.Position);

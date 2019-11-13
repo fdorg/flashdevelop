@@ -22,7 +22,9 @@ namespace ASCompletion.Completion
         public bool hasClasses;
         public bool hasMultipleDefs;
         public bool hasExtends;
+        public string ExtendsKey;
         public bool hasImplements;
+        public string ImplementsKey;
         public bool hasInterfaces;
         public bool hasEnums;
         public bool hasTypeDefs;
@@ -40,6 +42,7 @@ namespace ASCompletion.Completion
         public bool hasStaticInheritance;
         public bool hasInference;
         public bool hasStringInterpolation;
+        public bool HasMultilineString;
         public bool checkFileName;
         public char hiddenPackagePrefix;
 
@@ -72,16 +75,18 @@ namespace ASCompletion.Completion
         public string objectKey;
         public string booleanKey;
         public string numberKey;
+        public string IntegerKey;
         public string stringKey;
         public string arrayKey;
         public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
-        public string[] typesPreKeys = new string[] { };
-        public string[] accessKeywords = new string[] { };
-        public string[] codeKeywords = new string[] { };
-        public string[] declKeywords = new string[] { };
-        public string[] typesKeywords = new string[] { };
+        public string[] typesPreKeys = { };
+        public string[] accessKeywords = { };
+        public string[] codeKeywords = { };
+        public string[] declKeywords = { };
+        public string[] typesKeywords = { };
+        public HashSet<string> Literals = new HashSet<string>();
         public string varKey;
         public string constKey;
         public string functionKey;
@@ -98,6 +103,8 @@ namespace ASCompletion.Completion
         public string inlineKey;
         public string namespaceKey;
         public string stringInterpolationQuotes = "";
+        public string ThisKey;
+        public string BaseKey;
 
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
@@ -107,7 +114,9 @@ namespace ASCompletion.Completion
         public bool HasGenericsShortNotation;
         public HashSet<char> ArithmeticOperators = new HashSet<char>();
         public string[] IncrementDecrementOperators = {};
-        public HashSet<string> OtherOperators = new HashSet<string>();
+        public string[] BitwiseOperators = { };
+        public string[] BooleanOperators = { };
+        public string[] TernaryOperators = { };
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')
@@ -129,8 +138,8 @@ namespace ASCompletion.Completion
         /// <returns>Keywords list</returns>
         internal List<string> GetDeclarationKeywords(string text, bool insideClass)
         {
-            List<string> access = new List<string>(accessKeywords);
-            List<string> members = new List<string>(declKeywords);
+            var access = new List<string>(accessKeywords);
+            var members = new List<string>(declKeywords);
             if (!insideClass) members.AddRange(typesKeywords);
 
             string foundMember = null;
@@ -171,7 +180,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (foundMember == null)
+            if (foundMember is null)
             {
                 access.AddRange(members);
             }

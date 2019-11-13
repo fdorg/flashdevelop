@@ -1,0 +1,7 @@
+-debug
+
+# flash specific debug flags
+-D fdb
+-D advanced-telemetry
+-D network-sandbox
+-D native-trace

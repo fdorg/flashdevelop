@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace PHPContext
@@ -11,13 +12,13 @@ namespace PHPContext
     public class Context : AS2Context.Context
     {
         #region initialization
-        new static readonly protected Regex re_CMD_BuildCommand =
+        protected new static readonly Regex re_CMD_BuildCommand =
             new Regex("@php[\\s]+(?<params>.*)", RegexOptions.Compiled | RegexOptions.Multiline);
 
-        static private readonly Regex re_PHPext =
+        private static readonly Regex re_PHPext =
             new Regex(".php[3-9]?", RegexOptions.Compiled);
 
-        private ContextSettings langSettings;
+        private readonly ContextSettings langSettings;
         private List<InlineRange> phpRanges; // inlined PHP ranges in HTML
 
         public Context(ContextSettings initSettings)
@@ -64,8 +65,8 @@ namespace PHPContext
             features.dot = "->";
             features.voidKey = "void";
             features.objectKey = "Object";
-            features.typesPreKeys = new string[] { "namespace", "new", "extends", "implements", "as" };
-            features.codeKeywords = new string[] {
+            features.typesPreKeys = new[] { "namespace", "new", "extends", "implements", "as" };
+            features.codeKeywords = new[] {
                 "and", "or", "xor", "exception", "as", "break", "case", "continue", "declare", "default", 
                 "do", "else", "elseif", "enddeclare", "endfor", "endforeach", "endif", "endswitch", 
                 "endwhile", "for", "foreach", "global", "if", "new", "switch", "use", "while", 
@@ -93,8 +94,8 @@ namespace PHPContext
         {
             ReleaseClasspath();
             started = true;
-            if (langSettings == null) throw new Exception("BuildClassPath() must be overridden");
-            if (contextSetup == null)
+            if (langSettings is null) throw new Exception("BuildClassPath() must be overridden");
+            if (contextSetup is null)
             {
                 contextSetup = new ContextSetupInfos();
                 contextSetup.Lang = settings.LanguageId;
@@ -125,7 +126,7 @@ namespace PHPContext
             // add library
             AddPath(Path.Combine(PathHelper.LibraryDir, settings.LanguageId + "/classes"));
             // add user pathes from settings
-            if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
+            if (!settings.UserClasspath.IsNullOrEmpty())
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
@@ -149,7 +150,7 @@ namespace PHPContext
         /// <summary>
         /// Build the file DOM
         /// </summary>
-        /// <param name="filename">File path</param>
+        /// <param name="fileName">File path</param>
         protected override void GetCurrentFileModel(string fileName)
         {
             string ext = Path.GetExtension(fileName);
@@ -219,29 +220,7 @@ namespace PHPContext
             if (withClass != null && inClass.InFile.Package == withClass.InFile.Package)
                 return Visibility.Public;
             // public only
-            else
-                return Visibility.Public;
-        }
-
-
-        /// <summary>
-        /// Return the full project classes list
-        /// </summary>
-        /// <returns></returns>
-        public override MemberList GetAllProjectClasses()
-        {
-            return base.GetAllProjectClasses();
-        }
-
-        /// <summary>
-        /// Retrieves a class model from its name
-        /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
-        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public override ClassModel ResolveType(string cname, FileModel inFile)
-        {
-            return base.ResolveType(cname, inFile);
+            return Visibility.Public;
         }
 
         /// <summary>
@@ -254,12 +233,15 @@ namespace PHPContext
 
             // search top-level declaration
             foreach (PathModel aPath in classPath)
-                if (File.Exists(Path.Combine(aPath.Path, filename)))
+            {
+                var path = Path.Combine(aPath.Path, filename);
+                if (File.Exists(path))
                 {
-                    filename = Path.Combine(aPath.Path, filename);
+                    filename = path;
                     topLevel = GetCachedFileModel(filename);
                     break;
                 }
+            }
 
             if (File.Exists(filename))
             {
@@ -273,10 +255,6 @@ namespace PHPContext
                 }*/
             }
             // not found
-            else
-            {
-                //ErrorHandler.ShowInfo("Top-level elements class not found. Please check your Program Settings.");
-            }
 
             // special variables
             topLevel.Members.Add(new MemberModel("$this", "", FlagType.Variable, Visibility.Public));
@@ -301,8 +279,7 @@ namespace PHPContext
         /// </summary>
         protected override void UpdateTopLevelElements()
         {
-            MemberModel special;
-            special = topLevel.Members.Search("$this", 0, 0);
+            var special = topLevel.Members.Search("$this", 0, 0);
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.Name;
@@ -318,7 +295,7 @@ namespace PHPContext
             if (special != null)
             {
                 cClass.ResolveExtends();
-                ClassModel extends = cClass.Extends;
+                var extends = cClass.Extends;
                 if (!extends.IsVoid()) special.Type = extends.Name;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
             }
@@ -357,10 +334,7 @@ namespace PHPContext
             // to be implemented
         }
 
-        override public bool CanBuild
-        {
-            get { return false; }
-        }
+        public override bool CanBuild => false;
 
         /// <summary>
         /// Run compiler in the current files's base folder with current classpath

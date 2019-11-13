@@ -1,6 +1,5 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -10,10 +9,10 @@ namespace System.Windows.Forms
         public string highlight;
         public string TopPath;
         public string BottomPath;
-        public ArrayList ExpandedPaths;
+        public List<string> ExpandedPaths;
         public TreeState()
         {
-            ExpandedPaths = new ArrayList();
+            ExpandedPaths = new List<string>();
         }
     }
 
@@ -51,13 +50,13 @@ namespace System.Windows.Forms
             RestoreScrollState();
         }
 
-        new public void BeginUpdate()
+        public new void BeginUpdate()
         {
             Win32.SendMessage(Handle, Win32.WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             base.BeginUpdate();
         }
 
-        new public void EndUpdate()
+        public new void EndUpdate()
         {
             base.EndUpdate();
             Win32.SendMessage(Handle, Win32.WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
@@ -76,8 +75,7 @@ namespace System.Windows.Forms
             foreach (string path in State.ExpandedPaths)
             {
                 TreeNode node = FindClosestPath(path);
-                if (node != null)
-                    node.Expand();
+                node?.Expand();
             }
         }
 
@@ -121,7 +119,7 @@ namespace System.Windows.Forms
 
         public void SaveScrollState()
         {
-            if (base.Nodes.Count < 1) return;
+            if (base.Nodes.Count == 0) return;
 
             // store what nodes were at the top and bottom so we can try and preserve scroll
             // use the tag instead of node reference because you're most likely rebuilding
@@ -137,16 +135,14 @@ namespace System.Windows.Forms
 
         public void RestoreScrollState()
         {
-            if (base.Nodes.Count < 1) return;
+            if (base.Nodes.Count == 0) return;
 
             TreeNode bottomNode = FindClosestPath(State.BottomPath);
             TreeNode topNode = FindClosestPath(State.TopPath);
 
-            if (bottomNode != null)
-                bottomNode.EnsureVisible();
+            bottomNode?.EnsureVisible();
 
-            if (topNode != null)
-                topNode.EnsureVisible();
+            topNode?.EnsureVisible();
 
             // manually scroll all the way to the left
             if (Win32.ShouldUseWin32()) Win32.ScrollToLeft(this);
@@ -169,8 +165,7 @@ namespace System.Windows.Forms
                 {
                     if (queue.Count > 0 && node.Nodes.Count > 0)
                         return FindClosestPath(node.Nodes,queue);
-                    else
-                        return node; // as close as we'll get
+                    return node; // as close as we'll get
                 }
             }
             return null;

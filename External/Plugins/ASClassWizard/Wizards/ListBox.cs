@@ -6,8 +6,6 @@ namespace ASClassWizard.Wizards
 {
     public class ListBox : ListBoxEx, IThemeHandler
     {
-        private ImageList _myImageList;
-
         public ListBox()
         {
             // Set owner draw mode
@@ -15,11 +13,7 @@ namespace ASClassWizard.Wizards
             this.DrawMode = DrawMode.OwnerDrawFixed;
         }
 
-        public ImageList ImageList
-        {
-            get { return _myImageList; }
-            set { _myImageList = value; }
-        }
+        public ImageList ImageList { get; set; }
 
         public void AfterTheming()
         {
@@ -34,12 +28,11 @@ namespace ASClassWizard.Wizards
         {
             e.DrawBackground();
             e.DrawFocusRectangle();
-            ListBoxItem item;
             Rectangle bounds = e.Bounds;
-            Size imageSize = _myImageList.ImageSize;
+            Size imageSize = ImageList.ImageSize;
             try
             {
-                item = (ListBoxItem)Items[e.Index];
+                var item = (ListBoxItem)Items[e.Index];
                 if (item.ImageIndex != -1)
                 {
                     ImageList.Draw(e.Graphics, bounds.Left, bounds.Top, item.ImageIndex);
@@ -70,34 +63,22 @@ namespace ASClassWizard.Wizards
 
         public class ListBoxItem
         {
-            public int matchScore;
-        
-            private string _myText;
-            private int _myImageIndex;
-
             // properties 
-            public string Text
-            {
-                get { return _myText; }
-                set { _myText = value; }
-            }
-            public int ImageIndex
-            {
-                get { return _myImageIndex; }
-                set { _myImageIndex = value; }
-            }
-        
+            public string Text { get; set; }
+
+            public int ImageIndex { get; set; }
+
+            public ListBoxItem() : this("") { }
+
+            public ListBoxItem(string text) : this(text, -1) { }
+
             public ListBoxItem(string text, int index)
             {
-                _myText = text;
-                _myImageIndex = index;
+                Text = text;
+                ImageIndex = index;
             }
-            public ListBoxItem(string text) : this(text, -1) { }
-            public ListBoxItem() : this("") { }
-            public override string ToString()
-            {
-             return _myText;
-            }
+            
+            public override string ToString() => Text;
         }
     }
 }

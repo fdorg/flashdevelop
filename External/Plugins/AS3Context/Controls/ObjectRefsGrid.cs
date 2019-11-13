@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Aga.Controls.Tree;
+﻿using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore;
 using PluginCore.Helpers;
@@ -11,9 +8,9 @@ namespace AS3Context.Controls
 {
     public class ObjectRefsGrid:TreeViewAdv
     {
-        NodeTextBox methodTB;
-        NodeTextBox fileTB;
-        NodeTextBox lineTB;
+        readonly NodeTextBox methodTB;
+        readonly NodeTextBox fileTB;
+        readonly NodeTextBox lineTB;
 
         public ObjectRefsGrid()
         {
@@ -62,10 +59,10 @@ namespace AS3Context.Controls
 
     public class ObjectRefsNode : Node
     {
-        string method;
-        string path;
-        string file;
-        string line;
+        readonly string method;
+        readonly string path;
+        readonly string file;
+        readonly string line;
 
         public ObjectRefsNode(string method, string file, string line)
         {
@@ -77,22 +74,13 @@ namespace AS3Context.Controls
             this.line = line;
         }
 
-        public String Method
-        {
-            get { return method; }
-        }
-        public String Path
-        {
-            get { return path; }
-        }
-        public String File
-        {
-            get { return file; }
-        }
-        public String Line
-        {
-            get { return line; }
-        }
+        public string Method => method;
+
+        public string Path => path;
+
+        public string File => file;
+
+        public string Line => line;
     }
 
     public class ObjectRefsModel : TreeModel

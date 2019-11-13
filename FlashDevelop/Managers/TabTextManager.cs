@@ -20,7 +20,7 @@ namespace FlashDevelop.Managers
                 {
                     if (doc.IsEditable)
                     {
-                        String name = Path.GetFileName(doc.FileName);
+                        string name = Path.GetFileName(doc.FileName);
                         if (doc.IsModified) doc.Text = name + "*";
                         else doc.Text = name;
                     }
@@ -32,7 +32,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Sets the tab text if needed
         /// </summary>
-        public static void SetTabText(ITabbedDocument doc, String text)
+        public static void SetTabText(ITabbedDocument doc, string text)
         {
             if (doc.Text != text) doc.Text = text;
         }
@@ -42,14 +42,14 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static void DifferentiateTabTexts()
         {
-            var byName = new Dictionary<String, List<String>>();
+            var byName = new Dictionary<string, List<string>>();
             foreach (var doc in Globals.MainForm.Documents)
             {
                 if (doc.IsEditable)
                 {
-                    String fileName = doc.FileName;
-                    String name = Path.GetFileName(fileName);
-                    if (!byName.ContainsKey(name)) byName[name] = new List<String>();
+                    string fileName = doc.FileName;
+                    string name = Path.GetFileName(fileName);
+                    if (!byName.ContainsKey(name)) byName[name] = new List<string>();
                     byName[name].Add(doc.FileName);
                 }
             }
@@ -77,7 +77,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Collects a list of path differences
         /// </summary>
-        private static List<ExplodePath> Discriminate(List<String> tabs)
+        private static List<ExplodePath> Discriminate(List<string> tabs)
         {
             var paths = new List<ExplodePath>();
             ExplodePath.Longer = 0;
@@ -92,12 +92,12 @@ namespace FlashDevelop.Managers
             {
                 bool notMatch = false;
                 bool hasMatch = false;
-                String match = paths[0][i];
+                string match = paths[0][i];
                 for (var j = 1; j < paths.Count; j++)
                 {
                     var path = paths[j];
-                    String part = path[i];
-                    if (part == null) continue;
+                    string part = path[i];
+                    if (part is null) continue;
                     if (part != match) notMatch = true;
                     else hasMatch = true;
                 }
@@ -105,7 +105,7 @@ namespace FlashDevelop.Managers
                 {
                     foreach (var path in paths)
                     {
-                        if (path[i] == null) continue;
+                        if (path[i] is null) continue;
                         if (path.Diff.Length > 0)
                         {
                             path.Diff = Path.DirectorySeparatorChar + path.Diff;
@@ -126,31 +126,26 @@ namespace FlashDevelop.Managers
 
     class ExplodePath
     {
-        public String Tab;
-        public String Diff;
-        public String[] Parts;
-        public static Int32 Longer = 0;
-        public Int32 Length { get { return Parts.Length; } }
+        public string Tab;
+        public string Diff;
+        public string[] Parts;
+        public static int Longer;
+        public int Length => Parts.Length;
 
-        public ExplodePath(String tab)
+        public ExplodePath(string tab)
         {
             Tab = tab;
-            String path = tab;
-            String[] parts = Regex.Split(Path.GetDirectoryName(path), "[\\\\/]+");
+            string path = tab;
+            string[] parts = Regex.Split(Path.GetDirectoryName(path), "[\\\\/]+");
             Array.Reverse(parts);
             if (parts.Length > Longer) Longer = parts.Length;
             Parts = parts;
             Diff = "";
         }
-        public static Int32 LongerFirst(ExplodePath a, ExplodePath b)
-        {
-            return a.Length - b.Length;
-        }
-        public String this[Int32 i]
-        {
-            get { return i < Parts.Length ? Parts[i] : null; }
-        }
 
+        public static int LongerFirst(ExplodePath a, ExplodePath b) => a.Length - b.Length;
+
+        public string this[int i] => i < Parts.Length ? Parts[i] : null;
     }
 
 }

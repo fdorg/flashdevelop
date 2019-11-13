@@ -3,10 +3,8 @@
  * See http://www.codeproject.com/info/cpol10.aspx for details
  */
 
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {
@@ -145,12 +143,12 @@ namespace System.Windows.Forms
 		}
 		
 		private Blend GetBackgroundBlend(int index){
-			float[] relativeIntensities = new float[]{0f, 0.7f, 1f};
-			float[] relativePositions = new float[]{0f, 0.8f, 1f};
+			float[] relativeIntensities = new[]{0f, 0.7f, 1f};
+			float[] relativePositions = new[]{0f, 0.8f, 1f};
 
 			if (this._TabControl.SelectedIndex != index) {
-				relativeIntensities = new float[]{0f, 0.3f, 1f};
-				relativePositions = new float[]{0f, 0.2f, 1f};
+				relativeIntensities = new[]{0f, 0.3f, 1f};
+				relativePositions = new[]{0f, 0.2f, 1f};
 			}
 	
 			Blend blend = new Blend();
@@ -167,25 +165,22 @@ namespace System.Windows.Forms
 				if (closerRect.Contains(this._TabControl.MousePosition)){
 					using (GraphicsPath closerPath = GetCloserButtonPath(closerRect)){
 						graphics.FillPath(Brushes.White, closerPath);
-						using (Pen closerPen = new Pen(this.BorderColor)){
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColorActive)){
-							closerPen.Width = 2;
-							graphics.DrawPath(closerPen, closerPath);
-						}
-					}
-				} else {
-					using (GraphicsPath closerPath = GetCloserPath(closerRect)){
-						using (Pen closerPen = new Pen(this._CloserColor)){
-							closerPen.Width = 2;
-							graphics.DrawPath(closerPen, closerPath);
-
-						}
-					}
-				}
+                        using Pen closerPen = new Pen(this.BorderColor);
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+					using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using Pen closerPen = new Pen(this._CloserColorActive);
+                        closerPen.Width = 2;
+                        graphics.DrawPath(closerPen, closerPath);
+                    }
+				} else
+                {
+                    using GraphicsPath closerPath = GetCloserPath(closerRect);
+                    using Pen closerPen = new Pen(this._CloserColor);
+                    closerPen.Width = 2;
+                    graphics.DrawPath(closerPen, closerPath);
+                }
 
 			}
 		}

@@ -36,18 +36,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Ude.Core
 {
     // We use gb18030 to replace gb2312, because 18030 is a superset. 
     public class GB18030Prober : CharsetProber
     {
-        private CodingStateMachine codingSM;
-        private GB18030DistributionAnalyser analyser;
-        private byte[] lastChar;
+        private readonly CodingStateMachine codingSM;
+        private readonly GB18030DistributionAnalyser analyser;
+        private readonly byte[] lastChar;
 
         public GB18030Prober()
         {

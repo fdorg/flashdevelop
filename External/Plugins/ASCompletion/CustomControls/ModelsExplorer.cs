@@ -22,16 +22,16 @@ namespace ASCompletion
     {
         #region Docking
 
-        static private string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
-        static private DockContent panelCtrl;
+        private static readonly string panelGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4f";
+        private static DockContent panelCtrl;
 
-        static public void CreatePanel()
+        public static void CreatePanel()
         {
             Image panelIcon = PluginBase.MainForm.FindImage("202");
             panelCtrl = PluginBase.MainForm.CreateDockablePanel(Instance, panelGuid, panelIcon, DockState.Hidden);
             panelCtrl.VisibleState = DockState.Float;
         }
-        static public void Open()
+        public static void Open()
         {
             panelCtrl.Show();
             Instance.filterTextBox.Focus();
@@ -43,7 +43,7 @@ namespace ASCompletion
 
         class ClasspathTreeNode : TreeNode
         {
-            public string Path;
+            public readonly string Path;
             public ClasspathTreeNode(string path, int count)
                 : base(path + " (" + count + ")", PluginUI.ICON_FOLDER_CLOSED, PluginUI.ICON_FOLDER_OPEN) 
             {
@@ -53,7 +53,8 @@ namespace ASCompletion
 
         class ExploreTreeNode : TreeNode
         {
-            public ExploreTreeNode() : base() { }
+            public ExploreTreeNode()
+            { }
         }
 
         class PackageTreeNode : TreeNode
@@ -85,7 +86,7 @@ namespace ASCompletion
                 TreeNode b = (TreeNode)y;
                 if (a.ImageIndex == b.ImageIndex)
                     return string.Compare(a.Text, b.Text);
-                else return a.ImageIndex - b.ImageIndex;
+                return a.ImageIndex - b.ImageIndex;
             }
         }
 
@@ -93,17 +94,11 @@ namespace ASCompletion
 
         #region Initialization
 
-        static public bool HasFocus
-        {
-            get { return instance != null && instance.filterTextBox.Focused; }
-        }
+        public static bool HasFocus => instance != null && instance.filterTextBox.Focused;
 
-        static public ModelsExplorer Instance
-        {
-            get { return instance ?? new ModelsExplorer(); }
-        }
+        public static ModelsExplorer Instance => instance ?? new ModelsExplorer();
 
-        static private ModelsExplorer instance;
+        private static ModelsExplorer instance;
         private IASContext current;
         private Dictionary<string, TreeNodeCollection> packages;
         private TreeNodeCollection rootNodes;
@@ -130,7 +125,7 @@ namespace ASCompletion
         private void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             TreeNode node = outlineTreeView.GetNodeAt(outlineTreeView.PointToClient(Control.MousePosition));
-            if (node == null) e.Cancel = true;
+            if (node is null) e.Cancel = true;
             else
             {
                 outlineTreeView.SelectedNode = node;
@@ -189,7 +184,7 @@ namespace ASCompletion
                 outlineTreeView.ImageList = ASContext.Panel.TreeIcons;
 
                 allTypes = new List<TreeNode>();
-                if (current == null || current.Classpath == null || current.Classpath.Count == 0) return;
+                if (current is null || current.Classpath.IsNullOrEmpty()) return;
 
                 foreach (PathModel path in current.Classpath)
                 {
@@ -220,7 +215,7 @@ namespace ASCompletion
         private TreeNodeCollection FindPackage(string package)
         {
             if (package == "") return rootNodes;
-            else if (packages.ContainsKey(package)) return packages[package];
+            if (packages.ContainsKey(package)) return packages[package];
 
             int p = package.LastIndexOf('.');
             string newPackage = (p < 0) ? package : package.Substring(p+1);
@@ -246,7 +241,7 @@ namespace ASCompletion
                 PluginUI.AddMembers(nodes, model.Members);
 
             if (model.Classes != null)
-                foreach (ClassModel aClass in model.Classes) if (aClass.IndexType == null)
+                foreach (ClassModel aClass in model.Classes) if (aClass.IndexType is null)
                 {
                     TypeTreeNode node = new TypeTreeNode(aClass);
                     AddExplore(node);
@@ -310,14 +305,14 @@ namespace ASCompletion
 
         private void outlineTreeView_Click(object sender, EventArgs e)
         {
-            if (outlineTreeView.SelectedNode == null)
+            if (outlineTreeView.SelectedNode is null)
                 return;
             TreeNode node = outlineTreeView.SelectedNode;
             TypeTreeNode tnode;
-            if (node is TypeTreeNode)
+            if (node is TypeTreeNode treeNode)
             {
-                tnode = node as TypeTreeNode;
-                string filename = (tnode.Tag as string).Split('@')[0];
+                tnode = treeNode;
+                string filename = ((string) tnode.Tag).Split('@')[0];
 
                 FileModel model = OpenFile(filename);
                 if (model != null)
@@ -326,26 +321,26 @@ namespace ASCompletion
                     if (!theClass.IsVoid())
                     {
                         int line = theClass.LineFrom;
-                        ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                        var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                         if (sci != null && !theClass.IsVoid() && line > 0 && line < sci.LineCount)
                             sci.GotoLineIndent(line);
                     }
                 }
             }
-            else if (node is MemberTreeNode && node.Parent is TypeTreeNode)
+            else if (node is MemberTreeNode && node.Parent is TypeTreeNode parent)
             {
-                tnode = node.Parent as TypeTreeNode;
-                string filename = (tnode.Tag as string).Split('@')[0];
+                tnode = parent;
+                string filename = ((string) tnode.Tag).Split('@')[0];
 
                 FileModel model = OpenFile(filename);
                 if (model != null)
                 {
                     ClassModel theClass = model.GetClassByName(tnode.Text);
-                    string memberName = (node.Tag as String).Split('@')[0];
+                    string memberName = ((string) node.Tag).Split('@')[0];
                     MemberModel member = theClass.Members.Search(memberName, 0, 0);
-                    if (member == null) return;
-                    int line = member.LineFrom;
-                    ScintillaNet.ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    if (member is null) return;
+                    var line = member.LineFrom;
+                    var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                     if (sci != null && line > 0 && line < sci.LineCount)
                         sci.GotoLineIndent(line);
                 }
@@ -357,7 +352,7 @@ namespace ASCompletion
         /// </summary>
         public FileModel OpenFile(string filename)
         {
-            if (current == null) DetectContext();
+            if (current is null) DetectContext();
             return OpenFile(filename, current);
         }
 
@@ -366,13 +361,12 @@ namespace ASCompletion
         /// </summary>
         public FileModel OpenFile(string filename, IASContext context)
         {
-            if (context == null || context.Classpath == null)
+            if (context?.Classpath is null)
                 return null;
             FileModel model = null;
             foreach (PathModel aPath in context.Classpath)
-                if (aPath.HasFile(filename))
+                if (aPath.TryGetFile(filename, out model))
                 {
-                    model = aPath.GetFile(filename);
                     break;
                 }
             if (model != null)
@@ -390,25 +384,23 @@ namespace ASCompletion
 
         private ClassModel ResolveClass(TreeNode node)
         {
-            if (!(node is TypeTreeNode) || node.Tag == null)
+            if (!(node is TypeTreeNode) || node.Tag is null)
                 return ClassModel.VoidClass;
 
             ResolvedPath resolved = ResolvePath(node);
-            if (resolved.model == null) return ClassModel.VoidClass;
+            if (resolved.model is null) return ClassModel.VoidClass;
 
-            string[] info = (node.Tag as string).Split('@');
+            string[] info = ((string) node.Tag).Split('@');
             FileModel model = resolved.model.GetFile(info[0]);
             return model.GetClassByName(info[1]);
         }
 
         private int ResolveMemberLine(TreeNode node)
         {
-            if (!(node is MemberTreeNode) || node.Tag == null)
+            if (!(node is MemberTreeNode) || node.Tag is null)
                 return 0;
-            string[] info = (node.Tag as string).Split('@');
-            int line;
-            if (int.TryParse(info[1], out line)) return line;
-            else return 0;
+            var info = ((string) node.Tag).Split('@');
+            return int.TryParse(info[1], out var line) ? line : 0;
         }
 
         #endregion
@@ -493,22 +485,24 @@ namespace ASCompletion
                 FindNextMatch(filterTextBox.Text);
                 return true;
             }
-            else if (keys == (Keys.Shift | Keys.F3))
+
+            if (keys == (Keys.Shift | Keys.F3))
             {
                 FindPrevMatch(filterTextBox.Text);
                 return true;
             }
-            else if (keys == Keys.F5 || keys == (Keys.Control | Keys.J))
+            if (keys == Keys.F5 || keys == (Keys.Control | Keys.J))
             {
                 UpdateTree();
                 return true;
             }
-            else if (keys == Keys.Escape)
+            if (keys == Keys.Escape)
             {
                 if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
                 if (PluginBase.MainForm.CurrentDocument.IsEditable)
                     PluginBase.MainForm.CurrentDocument.SciControl.Focus();
             }
+
             return false;
         }
 
@@ -558,36 +552,36 @@ namespace ASCompletion
         private void ExploreToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null) return;
+            if (node is null) return;
 
             string path = GetPathFromNode(node);
             if (path != null)
-                PluginBase.MainForm.CallCommand("RunProcess", String.Format("explorer.exe;/e,\"{0}\"", path));
+                PluginBase.MainForm.CallCommand("RunProcess", $"explorer.exe;/e,\"{path}\"");
         }
 
         private void EditToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null) return;
+            if (node is null) return;
             outlineTreeView_Click(null, null);
         }
 
         private void ConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TreeNode node = outlineTreeView.SelectedNode;
-            if (node == null || current == null || current.Classpath == null) return;
+            if (node is null || current?.Classpath is null) return;
 
             ResolvedPath resolved = ResolvePath(node);
             string package = resolved.package;
             PathModel thePath = resolved.model;
-            if (thePath == null) 
+            if (thePath is null) 
                 return;
 
             if (node is TypeTreeNode)
             {
                 string filename = (node.Tag as string).Split('@')[0];
                 FileModel theModel = thePath.GetFile(filename);
-                if (theModel == null)
+                if (theModel is null)
                     return;
 
                 saveFileDialog.Title = TextHelper.GetString("Title.SaveIntrinsicAs");
@@ -651,7 +645,7 @@ namespace ASCompletion
                 cp = cp.Parent;
             }
             result.package = package;
-            if (cp == null) return result;
+            if (cp is null) return result;
 
             string path = (cp as ClasspathTreeNode).Path;
             foreach (PathModel aPath in current.Classpath)

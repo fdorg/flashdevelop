@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 using Antlr.Runtime;
-using Stack         = Antlr.Runtime.Collections.StackList;
+using Stack = Antlr.Runtime.Collections.StackList;
 
 
 /** XML parser by Oliver Zeigermann October 10, 2005; posted to Antlr examples */
@@ -45,7 +45,7 @@ public class MXMLLexer : Lexer {
     public const int EQ_int = 31;
     public const int CDATA = 26;
 
-       private List<CommonToken> mRawTokens=new List<CommonToken>();
+       private readonly List<CommonToken> mRawTokens=new List<CommonToken>();
        int lastLine=1;
        int lastCharPos=0;
        public void AddToken( CommonToken t, int type, int channel)
@@ -63,13 +63,10 @@ public class MXMLLexer : Lexer {
           return mRawTokens;
        }
        
-       override public void Reset()
+       public override void Reset()
        {
           base.Reset(); // reset all recognizer state variables
-          if (input is ANTLRStringStream)
-          {
-         ((ANTLRStringStream)input).Reset();
-          }
+          (input as ANTLRStringStream)?.Reset();
        }
 
        
@@ -91,10 +88,7 @@ public class MXMLLexer : Lexer {
 
     }
     
-    override public string GrammarFileName
-    {
-        get { return "MXMLLexer.g3";} 
-    }
+    public override string GrammarFileName => "MXMLLexer.g3";
 
     // $ANTLR start "DOCUMENT"
     public void mDOCUMENT() // throws RecognitionException [2]
@@ -2289,7 +2283,7 @@ public class MXMLLexer : Lexer {
     }
     // $ANTLR end "EOL_HELPER"
 
-    override public void mTokens() // throws RecognitionException 
+    public override void mTokens() // throws RecognitionException 
     {
         // MXMLLexer.g3:1:8: ( DOCUMENT )
         // MXMLLexer.g3:1:10: DOCUMENT
@@ -2306,10 +2300,10 @@ public class MXMLLexer : Lexer {
     protected DFA13 dfa13;
     private void InitializeCyclicDFAs()
     {
-        this.dfa14 = new DFA14(this);
-        this.dfa13 = new DFA13(this);
-        this.dfa14.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA14_SpecialStateTransition);
-        this.dfa13.specialStateTransitionHandler = new DFA.SpecialStateTransitionHandler(DFA13_SpecialStateTransition);
+        dfa14 = new DFA14(this);
+        dfa13 = new DFA13(this);
+        dfa14.specialStateTransitionHandler = DFA14_SpecialStateTransition;
+        dfa13.specialStateTransitionHandler = DFA13_SpecialStateTransition;
     }
 
     const string DFA14_eotS =
@@ -2481,22 +2475,18 @@ public class MXMLLexer : Lexer {
         public DFA14(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 14;
-            this.eot = DFA14_eot;
-            this.eof = DFA14_eof;
-            this.min = DFA14_min;
-            this.max = DFA14_max;
-            this.accept = DFA14_accept;
-            this.special = DFA14_special;
-            this.transition = DFA14_transition;
+            decisionNumber = 14;
+            eot = DFA14_eot;
+            eof = DFA14_eof;
+            min = DFA14_min;
+            max = DFA14_max;
+            accept = DFA14_accept;
+            special = DFA14_special;
+            transition = DFA14_transition;
 
         }
 
-        override public string Description
-        {
-            get { return "108:7: ( START_TAG ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )* END_TAG | EMPTY_ELEMENT )"; }
-        }
-
+        public override string Description => "108:7: ( START_TAG ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )* END_TAG | EMPTY_ELEMENT )";
     }
 
 
@@ -2593,22 +2583,18 @@ public class MXMLLexer : Lexer {
         public DFA13(BaseRecognizer recognizer)
         {
             this.recognizer = recognizer;
-            this.decisionNumber = 13;
-            this.eot = DFA13_eot;
-            this.eof = DFA13_eof;
-            this.min = DFA13_min;
-            this.max = DFA13_max;
-            this.accept = DFA13_accept;
-            this.special = DFA13_special;
-            this.transition = DFA13_transition;
+            decisionNumber = 13;
+            eot = DFA13_eot;
+            eof = DFA13_eof;
+            min = DFA13_min;
+            max = DFA13_max;
+            accept = DFA13_accept;
+            special = DFA13_special;
+            transition = DFA13_transition;
 
         }
 
-        override public string Description
-        {
-            get { return "()* loopback of 109:13: ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )*"; }
-        }
-
+        public override string Description => "()* loopback of 109:13: ( ELEMENT | EOL | t= PCDATA | t= CDATA | t= COMMENT | pi= PI )*";
     }
 
 

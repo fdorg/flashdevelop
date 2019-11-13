@@ -8,7 +8,6 @@ namespace ProjectManager.Projects.AS3
     [Serializable]
     public class MxmlNamespace
     {
-
         [Category("Location")]
         [Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
         [DisplayName("Manifest File")]
@@ -17,9 +16,6 @@ namespace ProjectManager.Projects.AS3
         [Category("Properties")]
         public string Uri { get; set; }
 
-        public override string ToString()
-        {
-            return String.IsNullOrEmpty(Uri) ? "New Namespace" : Uri;
-        }
+        public override string ToString() => string.IsNullOrEmpty(Uri) ? "New Namespace" : Uri;
     }
 }

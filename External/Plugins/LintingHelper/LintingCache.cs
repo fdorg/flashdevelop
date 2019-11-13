@@ -7,7 +7,7 @@ namespace LintingHelper
 {
     class LintingCache
     {
-        Dictionary<string, List<LintingResult>> results;
+        readonly Dictionary<string, List<LintingResult>> results;
 
         public LintingCache()
         {
@@ -17,45 +17,36 @@ namespace LintingHelper
         /// <summary>
         /// Returns all cached results of all files that are still in the cache
         /// </summary>
-        public List<LintingResult> GetAllResults()
-        {
-            return results.Values.SelectMany(i => i).ToList();
-        }
+        public List<LintingResult> GetAllResults() => results.Values.SelectMany(i => i).ToList();
 
         public List<LintingResult> GetResultsFromPosition(ITabbedDocument document, int position)
         {
-            List<LintingResult> list;
-            if (results.TryGetValue(document.FileName, out list))
+            if (!results.TryGetValue(document.FileName, out var list)) return null;
+            var line = document.SciControl.LineFromPosition(position);
+
+            var localResults = new List<LintingResult>();
+            foreach (var result in list)
             {
-                var line = document.SciControl.LineFromPosition(position);
-
-                var localResults = new List<LintingResult>();
-                foreach (var result in list)
+                var start = document.SciControl.PositionFromLine(result.Line - 1);
+                var len = document.SciControl.LineLength(result.Line - 1);
+                start += result.FirstChar;
+                if (result.Length > 0)
                 {
-                    var start = document.SciControl.PositionFromLine(result.Line - 1);
-                    var len = document.SciControl.LineLength(result.Line - 1);
-                    start += result.FirstChar;
-                    if (result.Length > 0)
-                    {
-                        len = result.Length;
-                    }
-                    else
-                    {
-                        len -= result.FirstChar;
-                    }
-                    var end = start + len;
-                    
-                    if (start <= position && (end >= position || result.Length < 0 && result.Line == line + 1))
-                    {
-                        //suitable result
-                        localResults.Add(result);
-                    }
+                    len = result.Length;
                 }
-
-                return localResults;
+                else
+                {
+                    len -= result.FirstChar;
+                }
+                var end = start + len;
+                    
+                if (start <= position && (end >= position || result.Length == -1 && result.Line == line + 1))
+                {
+                    //suitable result
+                    localResults.Add(result);
+                }
             }
-
-            return null;
+            return localResults;
         }
 
         /// <summary>
@@ -72,7 +63,7 @@ namespace LintingHelper
         private void AddResult(string document, LintingResult result)
         {
             var list = results.GetOrCreate(document);
-            if (list.Find(result.Equals) == null)
+            if (list.Find(result.Equals) is null)
                 list.Add(result);
         }
 
@@ -87,10 +78,7 @@ namespace LintingHelper
         /// <summary>
         /// Clears the whole cache
         /// </summary>
-        public void RemoveAll()
-        {
-            results.Clear();
-        }
+        public void RemoveAll() => results.Clear();
 
         /// <summary>
         /// Removes all documents except the given ones from the cache

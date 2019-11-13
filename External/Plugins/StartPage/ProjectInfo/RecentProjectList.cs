@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -7,26 +6,26 @@ namespace StartPage.ProjectInfo
 {
     public class RecentProjectList : List<RecentProject>
     {
-        private XmlSerializer xmlSerializer;
+        readonly XmlSerializer xmlSerializer;
 
         public RecentProjectList()
         {
-            this.xmlSerializer = XmlSerializer.FromTypes(new[]{this.GetType()})[0];
+            xmlSerializer = XmlSerializer.FromTypes(new[]{GetType()})[0];
         }
-        public RecentProjectList(List<String> recentProjects)
+        public RecentProjectList(List<string> recentProjects)
         {
-            this.Update(recentProjects);
+            Update(recentProjects);
         }
 
         /// <summary>
         /// Updates the recent project list from list of paths
         /// </summary>
-        public void Update(List<String> recentProjects)
+        public void Update(List<string> recentProjects)
         {
-            this.Clear();
-            foreach (String recentProject in recentProjects)
+            Clear();
+            foreach (string recentProject in recentProjects)
             {
-                this.Add(new RecentProject(recentProject));
+                Add(new RecentProject(recentProject));
             }
         }
 
@@ -35,39 +34,36 @@ namespace StartPage.ProjectInfo
         /// </summary>
         public string ToXml()
         {
-            StringWriter sw = new StringWriter();
-            this.xmlSerializer.Serialize(sw, this);
-            return sw.ToString();
+            var writer = new StringWriter();
+            xmlSerializer.Serialize(writer, this);
+            return writer.ToString();
         }
-
     }
 
     public class RecentProject
     {
-        public String Path = "";
-        public String Name = "";
-        public String Type = "";
-        public String Created = "Error getting file information.";
-        public String Modified = "Error getting file information.";
+        public string Path = "";
+        public string Name = "";
+        public string Type = "";
+        public string Created = "Error getting file information.";
+        public string Modified = "Error getting file information.";
 
-        public RecentProject() {}
-        public RecentProject(String path)
+        public RecentProject() { }
+        public RecentProject(string path)
         {
-            FileInfo fileInfo = new FileInfo(path);
-            this.Path = path; // Store the path...
-            this.Name = fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
-            if (this.Name.Length == 0) // FlexBuilder project are "path/to/.actionscriptProperties"
+            var fileInfo = new FileInfo(path);
+            Path = path; // Store the path...
+            Name = fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
+            if (Name.Length == 0) // FlexBuilder project are "path/to/.actionscriptProperties"
             {
-                this.Name = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetDirectoryName(path));
+                Name = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetDirectoryName(path));
             }
-            this.Type = fileInfo.Extension;
+            Type = fileInfo.Extension;
             if (fileInfo.Exists)
             {
-                this.Created = fileInfo.CreationTime.ToString();
-                this.Modified = fileInfo.LastWriteTime.ToString();
+                Created = fileInfo.CreationTime.ToString();
+                Modified = fileInfo.LastWriteTime.ToString();
             }
         }
-
     }
-
 }

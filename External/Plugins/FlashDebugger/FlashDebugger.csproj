@@ -45,6 +45,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591</NoWarn>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -53,6 +54,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -61,12 +63,14 @@
     <Optimize>false</Optimize>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -86,9 +90,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\fdb.j4n.dll</HintPath>
     </Reference>
-    <Reference Include="jni4net.n-0.8.8.0, Version=0.8.8.0, Culture=neutral, PublicKeyToken=134a23405600bab4, processorArchitecture=MSIL">
+    <Reference Include="jni4net.n-0.8.9.0, Version=0.8.9.0, Culture=neutral, PublicKeyToken=9f9a8ed97ffef0ce, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\jni4net.n-0.8.8.0.dll</HintPath>
+      <HintPath>.\jni4net.n-0.8.9.0.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Design" />
@@ -185,7 +189,10 @@
     <Content Include="Icons\Breakpoints\Enabled.png" />
     <Content Include="Icons\Continue.png" />
     <Content Include="Icons\Current.png" />
-    <Content Include="jni4net.n.w32.v40-0.8.8.0.dll">
+    <Content Include="jni4net.j-0.8.9.0.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="jni4net.n.w32.v40-0.8.9.0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Icons\DeleteBreakpoints.png" />
@@ -199,9 +206,6 @@
     <Content Include="Icons\RunToCursor.png" />
     <Content Include="Icons\Stop.png" />
     <None Include="Icons\ToggleBreakpoints.png" />
-    <Content Include="jni4net.j-0.8.8.0.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">

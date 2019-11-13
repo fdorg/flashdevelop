@@ -36,16 +36,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Ude.Core
 {
     public class UTF8Prober : CharsetProber
     {
-        private static float ONE_CHAR_PROB = 0.50f;
-        private CodingStateMachine codingSM;
+        private static readonly float ONE_CHAR_PROB = 0.50f;
+        private readonly CodingStateMachine codingSM;
         private int numOfMBChar;
 
         public UTF8Prober()

@@ -21,7 +21,7 @@ namespace PluginCore.PluginCore.Utilities
     /// </summary>
     public unsafe class OctreeQuantizer : Quantizer
     {
-        Color _transparentColor;
+        readonly Color _transparentColor;
 
         /// <summary>
         /// Construct the octree quantizer
@@ -36,10 +36,10 @@ namespace PluginCore.PluginCore.Utilities
         public OctreeQuantizer(int maxColors, int maxColorBits, Color transparentColor) : base(false)
         {
             if (maxColors > 255)
-                throw new ArgumentOutOfRangeException("maxColors", maxColors, "The number of colors should be less than 256");
+                throw new ArgumentOutOfRangeException(nameof(maxColors), maxColors, "The number of colors should be less than 256");
 
             if ((maxColorBits < 1) | (maxColorBits > 8))
-                throw new ArgumentOutOfRangeException("maxColorBits", maxColorBits, "This should be between 1 and 8");
+                throw new ArgumentOutOfRangeException(nameof(maxColorBits), maxColorBits, "This should be between 1 and 8");
 
             // Construct the octree
             _octree = new Octree(maxColorBits);
@@ -101,12 +101,12 @@ namespace PluginCore.PluginCore.Utilities
         /// <summary>
         /// Stores the tree
         /// </summary>
-        private Octree _octree;
+        private readonly Octree _octree;
 
         /// <summary>
         /// Maximum allowed color depth
         /// </summary>
-        private int _maxColors;
+        private readonly int _maxColors;
 
         /// <summary>
         /// Class which does the actual quantization
@@ -181,17 +181,14 @@ namespace PluginCore.PluginCore.Utilities
             /// </summary>
             public int Leaves
             {
-                get { return _leafCount; }
-                set { _leafCount = value; }
+                get => _leafCount;
+                set => _leafCount = value;
             }
 
             /// <summary>
             /// Return the array of reducible nodes
             /// </summary>
-            protected OctreeNode[] ReducibleNodes
-            {
-                get { return _reducibleNodes; }
-            }
+            protected OctreeNode[] ReducibleNodes => _reducibleNodes;
 
             /// <summary>
             /// Keep track of the previous node that was quantized
@@ -234,12 +231,12 @@ namespace PluginCore.PluginCore.Utilities
             /// <summary>
             /// Mask used when getting the appropriate pixels for a given node
             /// </summary>
-            private static int[] mask = new int[8] { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+            private static readonly int[] mask = new int[8] { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 
             /// <summary>
             /// The root of the octree
             /// </summary>
-            private OctreeNode _root;
+            private readonly OctreeNode _root;
 
             /// <summary>
             /// Number of leaves in the tree
@@ -249,12 +246,12 @@ namespace PluginCore.PluginCore.Utilities
             /// <summary>
             /// Array of reducible nodes
             /// </summary>
-            private OctreeNode[] _reducibleNodes;
+            private readonly OctreeNode[] _reducibleNodes;
 
             /// <summary>
             /// Maximum number of significant bits in the image
             /// </summary>
-            private int _maxColorBits;
+            private readonly int _maxColorBits;
 
             /// <summary>
             /// Store the last node quantized
@@ -345,17 +342,14 @@ namespace PluginCore.PluginCore.Utilities
                 /// </summary>
                 public OctreeNode NextReducible
                 {
-                    get { return _nextReducible; }
-                    set { _nextReducible = value; }
+                    get => _nextReducible;
+                    set => _nextReducible = value;
                 }
 
                 /// <summary>
                 /// Return the child nodes
                 /// </summary>
-                public OctreeNode[] Children
-                {
-                    get { return _children; }
-                }
+                public OctreeNode[] Children => _children;
 
                 /// <summary>
                 /// Reduce this node by removing all of its children
@@ -475,7 +469,7 @@ namespace PluginCore.PluginCore.Utilities
                 /// <summary>
                 /// Pointers to any child nodes
                 /// </summary>
-                private OctreeNode[] _children;
+                private readonly OctreeNode[] _children;
 
                 /// <summary>
                 /// Pointer to next reducible node
@@ -498,7 +492,7 @@ namespace PluginCore.PluginCore.Utilities
     /// </summary>
     public unsafe class RecolorQuantizer : Quantizer
     {
-        Color _newColor;
+        readonly Color _newColor;
 
 
         /// <summary>
@@ -528,7 +522,7 @@ namespace PluginCore.PluginCore.Utilities
     /// <summary>
     /// Summary description for Class1.
     /// </summary>
-    public unsafe abstract class Quantizer
+    public abstract unsafe class Quantizer
     {
         /// <summary>
         /// Construct the quantizer
@@ -565,13 +559,11 @@ namespace PluginCore.PluginCore.Utilities
             Bitmap output = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
 
             // Now lock the bitmap into memory
-            using (Graphics g = Graphics.FromImage(copy))
-            {
-                g.PageUnit = GraphicsUnit.Pixel;
+            using var graphics = Graphics.FromImage(copy);
+            graphics.PageUnit = GraphicsUnit.Pixel;
 
-                // Draw the source image onto the copy bitmap
-                g.DrawImage(source, bounds);
-            }
+            // Draw the source image onto the copy bitmap
+            graphics.DrawImage(source, bounds);
 
             // Define a pointer to the bitmap data
             BitmapData sourceData = null;
@@ -615,13 +607,13 @@ namespace PluginCore.PluginCore.Utilities
             // Define the source data pointers. The source row is a byte to
             // keep addition of the stride value easier (as this is in bytes)
             byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
-            Int32* pSourcePixel;
+            int* pSourcePixel;
 
             // Loop through each row
             for (int row = 0; row < height; row++)
             {
                 // Set the source pixel to the first pixel in this row
-                pSourcePixel = (Int32*)pSourceRow;
+                pSourcePixel = (int*)pSourceRow;
 
                 // And loop through each column
                 for (int col = 0; col < width; col++, pSourcePixel++)
@@ -653,8 +645,8 @@ namespace PluginCore.PluginCore.Utilities
                 // Define the source data pointers. The source row is a byte to
                 // keep addition of the stride value easier (as this is in bytes)
                 byte* pSourceRow = (byte*)sourceData.Scan0.ToPointer();
-                Int32* pSourcePixel = (Int32*)pSourceRow;
-                Int32* pPreviousPixel = pSourcePixel;
+                int* pSourcePixel = (int*)pSourceRow;
+                int* pPreviousPixel = pSourcePixel;
 
                 // Now define the destination data pointers
                 byte* pDestinationRow = (byte*)outputData.Scan0.ToPointer();
@@ -670,7 +662,7 @@ namespace PluginCore.PluginCore.Utilities
                 for (int row = 0; row < height; row++)
                 {
                     // Set the source pixel to the first pixel in this row
-                    pSourcePixel = (Int32*)pSourceRow;
+                    pSourcePixel = (int*)pSourceRow;
 
                     // And set the destination pixel pointer to the first pixel in the row
                     pDestinationPixel = pDestinationRow;
@@ -736,7 +728,7 @@ namespace PluginCore.PluginCore.Utilities
         /// <summary>
         /// Flag used to indicate whether a single pass or two passes are needed for quantization.
         /// </summary>
-        private bool _singlePass;
+        private readonly bool _singlePass;
 
         /// <summary>
         /// Struct that defines a 32 bpp colour
@@ -779,10 +771,7 @@ namespace PluginCore.PluginCore.Utilities
             /// <summary>
             /// Return the color for this Color32 object
             /// </summary>
-            public Color Color
-            {
-                get { return Color.FromArgb(Alpha, Red, Green, Blue); }
-            }
+            public Color Color => Color.FromArgb(Alpha, Red, Green, Blue);
         }
     }
 }

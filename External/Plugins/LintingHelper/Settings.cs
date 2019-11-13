@@ -1,9 +1,6 @@
 ﻿using PluginCore.Localization;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace LintingHelper
 {
@@ -17,16 +14,16 @@ namespace LintingHelper
         [LocalizedDescription("LintingHelper.Description.LintOnSave"), DefaultValue(true)]
         public bool LintOnSave
         {
-            get { return this.lintOnSave; }
-            set { this.lintOnSave = value; }
+            get => lintOnSave;
+            set => lintOnSave = value;
         }
 
         [DisplayName("Lint after opening a file")]
         [LocalizedDescription("LintingHelper.Description.LintOnOpen"), DefaultValue(true)]
         public bool LintOnOpen
         {
-            get { return this.lintOnOpen; }
-            set { this.lintOnOpen = value; }
+            get => lintOnOpen;
+            set => lintOnOpen = value;
         }
     }
 }

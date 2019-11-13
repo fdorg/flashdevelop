@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
@@ -11,7 +8,7 @@ namespace HaXeContext.Helpers
 {
     class FlagEnumEditor : UITypeEditor
     {
-        FlagCheckedListBox<CompletionFeatures> list;
+        readonly FlagCheckedListBox<CompletionFeatures> list;
 
         public FlagEnumEditor()
         {
@@ -25,7 +22,7 @@ namespace HaXeContext.Helpers
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            if (context?.PropertyDescriptor == null) return null;
+            if (context?.PropertyDescriptor is null) return null;
 
             var service = (IWindowsFormsEditorService) provider.GetService(typeof(IWindowsFormsEditorService));
 

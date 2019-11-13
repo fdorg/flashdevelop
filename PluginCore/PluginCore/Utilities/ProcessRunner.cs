@@ -9,84 +9,77 @@ namespace PluginCore.Utilities
 {
     public class ProcessRunner
     {
-        Process process;
-        Boolean isRunning;
         StreamReader outputReader;
         StreamReader errorReader;
-        Int32 tasksFinished;
+        int tasksFinished;
         
         public event LineOutputHandler Output;
         public event LineOutputHandler Error;
         public event ProcessEndedHandler ProcessEnded;
 
-        public String WorkingDirectory;
-        public Process HostedProcess { get { return process; } }
-        public Boolean IsRunning { get { return isRunning; } }
-        public Boolean RedirectInput;
-        NextTask nextTask = null;
+        public string WorkingDirectory;
+        public Process HostedProcess { get; set; }
+        public bool IsRunning { get; set; }
+        public bool RedirectInput;
+        NextTask nextTask;
 
-        public void Run(String fileName, String arguments)
-        {
-            Run(fileName, arguments, false);
-        }
+        public void Run(string fileName, string arguments) => Run(fileName, arguments, false);
 
-        public void Run(String fileName, String arguments, Boolean shellCommand)
+        public void Run(string fileName, string arguments, bool shellCommand)
         {
-            if (isRunning)
+            if (IsRunning)
             {
                 // kill process and queue Run command
-                nextTask = () => {
-                    Run(fileName, arguments, shellCommand);
-                };
-                this.KillProcess();
+                nextTask = () => Run(fileName, arguments, shellCommand);
+                KillProcess();
                 return;
             }
 
             if (!shellCommand && !File.Exists(fileName))
                 throw new FileNotFoundException("The program '" + fileName + "' was not found.", fileName);
 
-            isRunning = true;
-            process = new Process();
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardInput = RedirectInput;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.StandardOutputEncoding = Encoding.Default;
-            process.StartInfo.StandardErrorEncoding = Encoding.Default;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.FileName = fileName;
-            process.StartInfo.Arguments = arguments;
-            process.StartInfo.WorkingDirectory = WorkingDirectory ?? PluginBase.MainForm.WorkingDirectory;
-            process.Start();
+            IsRunning = true;
+            HostedProcess = new Process();
+            HostedProcess.StartInfo.UseShellExecute = false;
+            HostedProcess.StartInfo.RedirectStandardInput = RedirectInput;
+            HostedProcess.StartInfo.RedirectStandardOutput = true;
+            HostedProcess.StartInfo.RedirectStandardError = true;
+            HostedProcess.StartInfo.StandardOutputEncoding = Encoding.Default;
+            HostedProcess.StartInfo.StandardErrorEncoding = Encoding.Default;
+            HostedProcess.StartInfo.CreateNoWindow = true;
+            HostedProcess.StartInfo.FileName = fileName;
+            HostedProcess.StartInfo.Arguments = arguments;
+            HostedProcess.StartInfo.WorkingDirectory = WorkingDirectory ?? PluginBase.MainForm.WorkingDirectory;
+            HostedProcess.Start();
             
-            outputReader = process.StandardOutput;
-            errorReader = process.StandardError;
+            outputReader = HostedProcess.StandardOutput;
+            errorReader = HostedProcess.StandardError;
             
             // we need to wait for all 3 threadpool operations 
             // to finish (processexit, readoutput, readerror)
             tasksFinished = 0;
             
-            ThreadStart waitForExitDel = new ThreadStart(process.WaitForExit);
-            waitForExitDel.BeginInvoke(new AsyncCallback(TaskFinished), null);
+            ThreadStart waitForExitDel = HostedProcess.WaitForExit;
+            waitForExitDel.BeginInvoke(TaskFinished, null);
             
-            ThreadStart readOutputDel = new ThreadStart(ReadOutput);
-            ThreadStart readErrorDel = new ThreadStart(ReadError);
+            ThreadStart readOutputDel = ReadOutput;
+            ThreadStart readErrorDel = ReadError;
             
-            readOutputDel.BeginInvoke(new AsyncCallback(TaskFinished), null);
-            readErrorDel.BeginInvoke(new AsyncCallback(TaskFinished), null);
+            readOutputDel.BeginInvoke(TaskFinished, null);
+            readErrorDel.BeginInvoke(TaskFinished, null);
         }
         
         public void KillProcess()
         {
-            if (process == null) return;
+            if (HostedProcess is null) return;
             try
             {
-                if (isRunning) TraceManager.AddAsync("Kill active process...", -3);
-                isRunning = false;
+                if (IsRunning) TraceManager.AddAsync("Kill active process...", -3);
+                IsRunning = false;
                 // recursive kill (parent and children)
-                Process KillerP = new Process();
+                var KillerP = new Process();
                 KillerP.StartInfo.FileName = "taskkill.exe";
-                KillerP.StartInfo.Arguments = "/PID " + process.Id + " /T /F";
+                KillerP.StartInfo.Arguments = "/PID " + HostedProcess.Id + " /T /F";
                 KillerP.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 KillerP.Start();
                 KillerP.WaitForExit();
@@ -101,9 +94,9 @@ namespace PluginCore.Utilities
         {
             while (true)
             {
-                string line = outputReader.ReadLine();
-                if (line == null) break;
-                if (Output != null) Output(this, line);
+                var line = outputReader.ReadLine();
+                if (line is null) break;
+                Output?.Invoke(this, line);
             }
         }
         
@@ -111,9 +104,9 @@ namespace PluginCore.Utilities
         {
             while (true)
             {
-                string line = errorReader.ReadLine();
-                if (line == null) break;
-                if (Error != null) Error(this, line);
+                var line = errorReader.ReadLine();
+                if (line is null) break;
+                Error?.Invoke(this, line);
             }
         }
         
@@ -123,7 +116,7 @@ namespace PluginCore.Utilities
             {
                 if (++tasksFinished >= 3) 
                 {
-                    isRunning = false;
+                    IsRunning = false;
 
                     if (nextTask != null)
                     {
@@ -131,16 +124,16 @@ namespace PluginCore.Utilities
                         nextTask = null;
                         // do not call ProcessEnd if another process was queued after the kill
                     }
-                    else if (process != null && ProcessEnded != null) 
-                        ProcessEnded(this, process.ExitCode);
+                    else if (HostedProcess != null) 
+                        ProcessEnded?.Invoke(this, HostedProcess.ExitCode);
                 }
             }
         }
 
     }
     
-    public delegate void LineOutputHandler(Object sender, String line);
-    public delegate void ProcessEndedHandler(Object sender, Int32 exitCode);
-    public delegate void ProcessOutputHandler(Object sender, String line);
+    public delegate void LineOutputHandler(object sender, string line);
+    public delegate void ProcessEndedHandler(object sender, int exitCode);
+    public delegate void ProcessOutputHandler(object sender, string line);
     delegate void NextTask();
 }

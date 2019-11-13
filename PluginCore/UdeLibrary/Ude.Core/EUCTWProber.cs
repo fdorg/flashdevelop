@@ -36,15 +36,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {
     public class EUCTWProber : CharsetProber
     {
-        private CodingStateMachine codingSM;
-        private EUCTWDistributionAnalyser distributionAnalyser;
-        private byte[] lastChar = new byte[2];
+        private readonly CodingStateMachine codingSM;
+        private readonly EUCTWDistributionAnalyser distributionAnalyser;
+        private readonly byte[] lastChar = new byte[2];
 
         public EUCTWProber()
         {

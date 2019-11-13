@@ -12,14 +12,14 @@ namespace FlashDevelop.Managers
     class LayoutManager
     {
         public static List<DockContent> PluginPanels;
-        private static DeserializeDockContent contentDeserializer;
-        private static HashSet<string> savedPersistStrings;
-        private static List<DockContent> dynamicContentTemplates;
+        private static readonly DeserializeDockContent contentDeserializer;
+        private static readonly HashSet<string> savedPersistStrings;
+        private static readonly List<DockContent> dynamicContentTemplates;
 
         static LayoutManager()
         {
             PluginPanels = new List<DockContent>();
-            contentDeserializer = new DeserializeDockContent(GetContentFromPersistString);
+            contentDeserializer = GetContentFromPersistString;
             savedPersistStrings = new HashSet<string>();
             dynamicContentTemplates = new List<DockContent>();
         }
@@ -55,38 +55,32 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Retrieves the content by persist string
         /// </summary>
-        private static DockContent GetContentFromPersistString(String persistString)
+        private static DockContent GetContentFromPersistString(string persistString)
         {
-            for (int i = 0; i < PluginPanels.Count; i++)
+            foreach (var pluginPanel in PluginPanels)
             {
-                var pluginPanel = PluginPanels[i];
-                if (pluginPanel.GetPersistString() == persistString)
+                if (pluginPanel.GetPersistString() != persistString) continue;
+                if (pluginPanel.DockPanel is null) // Duplicate persistString
                 {
-                    if (pluginPanel.DockPanel == null) // Duplicate persistString
-                    {
-                        savedPersistStrings.Add(persistString);
-                        return pluginPanel;
-                    }
+                    savedPersistStrings.Add(persistString);
+                    return pluginPanel;
                 }
             }
             if (persistString == typeof(TabbedDocument).ToString())
             {
                 return null;
             }
-            for (int i = 0; i < dynamicContentTemplates.Count; i++)
+            foreach (var template in dynamicContentTemplates)
             {
-                var template = dynamicContentTemplates[i];
-                if (template.GetPersistString() == persistString)
+                if (template.GetPersistString() != persistString) continue;
+                // Choose the first template content layout
+                // During layout reload, template may already exist, in which case DockPanel is null from CloseDynamicContentTemplates()
+                if (template.DockPanel is null)
                 {
-                    // Choose the first template content layout
-                    // During layout reload, template may already exist, in which case DockPanel == null from CloseDynamicContentTemplates()
-                    if (template.DockPanel == null)
-                    {
-                        savedPersistStrings.Add(persistString);
-                        return template;
-                    }
-                    return null;
+                    savedPersistStrings.Add(persistString);
+                    return template;
                 }
+                return null;
             }
             var newTemplate = new DockablePanel.Template(persistString);
             dynamicContentTemplates.Add(newTemplate);
@@ -99,7 +93,7 @@ namespace FlashDevelop.Managers
             for (int i = 0; i < PluginPanels.Count; i++)
             {
                 var pluginPanel = PluginPanels[i];
-                if (pluginPanel.DockPanel == null)
+                if (pluginPanel.DockPanel is null)
                 {
                     PluginPanels.RemoveAt(i--);
                 }
@@ -161,7 +155,7 @@ namespace FlashDevelop.Managers
             for (int i = PluginPanels.Count - 1; i >= 0; i--)
             {
                 var pluginPanel = PluginPanels[i];
-                if (pluginPanel.DockPanel == null)
+                if (pluginPanel.DockPanel is null)
                 {
                     PluginPanels.RemoveAt(i);
                 }
@@ -200,7 +194,7 @@ namespace FlashDevelop.Managers
             for (int i = dynamicContentTemplates.Count - 1; i >= 0; i--)
             {
                 var template = dynamicContentTemplates[i];
-                if (template.DockPanel == null)
+                if (template.DockPanel is null)
                 {
                     dynamicContentTemplates.RemoveAt(i);
                 }
@@ -214,7 +208,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Restores the specified panel layout
         /// </summary>
-        public static void RestoreLayout(String file)
+        public static void RestoreLayout(string file)
         {
             try
             {

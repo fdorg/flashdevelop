@@ -19,32 +19,28 @@ namespace ProjectManager.Projects.AS3
         
         public override string Name 
         { 
-            get 
+            get
             {
                 if (FileInspector.IsFlexBuilderProject(ProjectPath)) return Path.GetFileName(Path.GetDirectoryName(ProjectPath));
-                else return Path.GetFileNameWithoutExtension(ProjectPath); 
+                return Path.GetFileNameWithoutExtension(ProjectPath);
             } 
         }
 
-        public override string Language { get { return "as3"; } }
-        public override string LanguageDisplayName { get { return "AS3"; } }
-        public override bool IsCompilable { get { return true; } }
-        public override bool ReadOnly { get { return FileInspector.IsFlexBuilderProject(ProjectPath); } }
-        public override bool HasLibraries { get { return OutputType == OutputType.Application || OutputType == OutputType.Library; } }
-        public override int MaxTargetsCount { get { return 1; } }
-        public override string DefaultSearchFilter { get { return "*.as;*.mxml"; } }
+        public override string Language => "as3";
+        public override string LanguageDisplayName => "AS3";
+        public override bool IsCompilable => true;
+        public override bool ReadOnly => FileInspector.IsFlexBuilderProject(ProjectPath);
+        public override bool HasLibraries => OutputType == OutputType.Application || OutputType == OutputType.Library;
+        public override int MaxTargetsCount => 1;
+        public override string DefaultSearchFilter => "*.as;*.mxml";
 
-        public new MxmlcOptions CompilerOptions { get { return (MxmlcOptions)base.CompilerOptions; } }
+        public new MxmlcOptions CompilerOptions => (MxmlcOptions)base.CompilerOptions;
 
-        public override PropertiesDialog CreatePropertiesDialog()
-        {
-            return new AS3PropertiesDialog();
-        }
+        public override PropertiesDialog CreatePropertiesDialog() => new AS3PropertiesDialog();
 
         public override void ValidateBuild(out string error)
         {
-            if (CompileTargets.Count == 0) error = "Description.MissingEntryPoint";
-            else error = null;
+            error = CompileTargets.Count == 0 ? "Description.MissingEntryPoint" : null;
         }
 
         public override string GetInsertFileText(string inFile, string path, string export, string nodeType)
@@ -60,25 +56,22 @@ namespace ProjectManager.Projects.AS3
             string fileExt = Path.GetExtension(path).ToLower();
             if (export != null)
             {
-                if (export.IndexOf('(') > 0)
+                if (export.IndexOf('(') is var p && p > 0)
                 {
-                    string fontName = export.Substring(0, export.IndexOf('(')).Trim();
-                    return String.Format("{0}Embed(source=\"{1}\", fontFamily=\"{2}\"){3}", pre, relPath, fontName, post);
+                    var fontName = export.Substring(0, p).Trim();
+                    return $"{pre}Embed(source=\"{relPath}\", fontFamily=\"{fontName}\"){post}";
                 }
-                else return String.Format("{0}Embed(source=\"{1}\", symbol=\"{2}\"){3}", pre, relPath, export, post);
+                return $"{pre}Embed(source=\"{relPath}\", symbol=\"{export}\"){post}";
             }
-            else if (FileInspector.IsImage(relPath, fileExt) || IsText(fileExt) 
+            if (FileInspector.IsImage(relPath, fileExt) || IsText(fileExt) 
                 || FileInspector.IsFont(relPath, fileExt) || FileInspector.IsSound(relPath, fileExt))
             {
-                return String.Format("{0}Embed(source=\"{1}\"){2}", pre, relPath, post);
+                return $"{pre}Embed(source=\"{relPath}\"){post}";
             }
-            else return String.Format("{0}Embed(source=\"{1}\", mimeType=\"application/octet-stream\"){2}", pre, relPath, post);
+            return $"{pre}Embed(source=\"{relPath}\", mimeType=\"application/octet-stream\"){post}";
         }
 
-        private bool IsText(string ext)
-        {
-            return ext == ".txt" || ext == ".xml";
-        }
+        private bool IsText(string ext) => ext == ".txt" || ext == ".xml";
 
         public override CompileTargetType AllowCompileTarget(string path, bool isDirectory)
         {
@@ -92,10 +85,7 @@ namespace ProjectManager.Projects.AS3
             return CompileTargetType.DocumentClass; // can actually be outside of the classpath...
         }
 
-        public override bool IsDocumentClass(string path)
-        {
-            return IsCompileTarget(path);
-        }
+        public override bool IsDocumentClass(string path) => IsCompileTarget(path);
 
         public override void SetDocumentClass(string path, bool isMain)
         {
@@ -128,15 +118,15 @@ namespace ProjectManager.Projects.AS3
 
         public override bool IsLibraryAsset(string path)
         {
-            if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) return base.IsLibraryAsset(path);
-            else return SwcLibraries.Contains(path) || SwcLibraries.Contains(GetRelativePath(path));
+            if (!FileInspector.IsSwc(path) && !IsDirectory(path)) return base.IsLibraryAsset(path);
+            return SwcLibraries.Contains(path) || SwcLibraries.Contains(GetRelativePath(path));
         }
 
         public override LibraryAsset GetAsset(string path)
         {
-            if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) return base.GetAsset(path);
-            else if (SwcLibraries.Contains(path)) return SwcLibraries[path];
-            else return SwcLibraries[GetRelativePath(path)];
+            if (!FileInspector.IsSwc(path) && !IsDirectory(path)) return base.GetAsset(path);
+            if (SwcLibraries.Contains(path)) return SwcLibraries[path];
+            return SwcLibraries[GetRelativePath(path)];
         }
 
         public override void ChangeAssetPath(string fromPath, string toPath)
@@ -153,7 +143,7 @@ namespace ProjectManager.Projects.AS3
 
         public override void SetLibraryAsset(string path, bool isLibraryAsset)
         {
-            if (!FileInspector.IsSwc(path) && !base.IsDirectory(path)) base.SetLibraryAsset(path, isLibraryAsset);
+            if (!FileInspector.IsSwc(path) && !IsDirectory(path)) base.SetLibraryAsset(path, isLibraryAsset);
             else
             {
                 string relPath = GetRelativePath(path);
@@ -214,8 +204,8 @@ namespace ProjectManager.Projects.AS3
             }
             catch (XmlException exception)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.",
-                    exception.LineNumber, exception.LinePosition);
+                string format =
+                    $"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.";
                 throw new Exception(format, exception);
             }
             finally { reader.Close(); }

@@ -15,15 +15,12 @@ namespace ProjectManager.Actions
         static Process process;
         static int portServed = 2000;
 
-        public static bool Enabled
-        {
-            get { return portServed > 0; }
-        }
+        public static bool Enabled => portServed > 0;
 
         public static int Port
         {
-            get { return portServed; }
-            set { portServed = value; }
+            get => portServed;
+            set => portServed = value;
         }
                 
         public static void StartServer(string path)
@@ -51,14 +48,14 @@ namespace ProjectManager.Actions
                 path = Path.GetDirectoryName(path);
             }
             else fileServed = "";
-            pathServed = path.TrimEnd(new char[] { '/', '\\' });
+            pathServed = path.TrimEnd('/', '\\');
         }
 
         static void CreateServer()
         {
             var ToolsWebserver = Path.Combine(PathHelper.ToolDir, "webserver");
             var config = GetServerConfig(Path.Combine(ToolsWebserver, "server.ini"));
-            if (config == null) return;
+            if (config is null) return;
 
             var server = Path.Combine(ToolsWebserver, config["executable"]);
             var arguments = config["arguments"].Replace("{doc}", pathServed).Replace("{port}", portServed.ToString());

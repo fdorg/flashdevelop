@@ -8,14 +8,14 @@ namespace SourceControl.Sources.Mercurial
     {
         public event VCManagerStatusChange OnChange;
 
-        Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
-        IVCMenuItems menuItems = new MenuItems();
-        IVCFileActions fileActions = new FileActions();
-        Regex reIgnore = new Regex("([/\\\\]\\.hg[/\\\\]|hg-checkexec)");
+        readonly Dictionary<string, Status> statusCache = new Dictionary<string, Status>();
+        readonly IVCMenuItems menuItems = new MenuItems();
+        readonly IVCFileActions fileActions = new FileActions();
+        readonly Regex reIgnore = new Regex("([/\\\\]\\.hg[/\\\\]|hg-checkexec)");
         bool ignoreDirty = false;
 
-        public IVCMenuItems MenuItems { get { return menuItems; } }
-        public IVCFileActions FileActions { get { return fileActions; } }
+        public IVCMenuItems MenuItems => menuItems;
+        public IVCFileActions FileActions => fileActions;
 
         public MercurialManager()
         {
@@ -30,7 +30,7 @@ namespace SourceControl.Sources.Mercurial
         {
             StatusNode snode = FindNode(path, rootPath);
             if (snode != null) return snode.Status;
-            else return VCItemStatus.Unknown;
+            return VCItemStatus.Unknown;
         }
 
         private StatusNode FindNode(string path, string rootPath)
@@ -51,7 +51,7 @@ namespace SourceControl.Sources.Mercurial
         public List<VCStatusReport> GetAllOverlays(string path, string rootPath)
         {
             StatusNode root = FindNode(path, rootPath);
-            if (root == null) return null;
+            if (root is null) return null;
 
             List<StatusNode> children = new List<StatusNode>();
             GetChildren(root, children);
@@ -75,7 +75,7 @@ namespace SourceControl.Sources.Mercurial
 
         private void GetChildren(StatusNode node, List<StatusNode> result)
         {
-            if (node.Children == null) return;
+            if (node.Children is null) return;
             foreach (StatusNode child in node.Children.Values)
             {
                 result.Add(child);
@@ -89,7 +89,7 @@ namespace SourceControl.Sources.Mercurial
             if (!statusCache.ContainsKey(rootPath))
             {
                 status = new Status(rootPath);
-                status.OnResult += new StatusResult(Status_OnResult);
+                status.OnResult += Status_OnResult;
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -100,7 +100,7 @@ namespace SourceControl.Sources.Mercurial
         void Status_OnResult(Status status)
         {
             ignoreDirty = false;
-            if (OnChange != null) OnChange(this);
+            OnChange?.Invoke(this);
         }
 
         public bool SetPathDirty(string path, string rootPath)

@@ -104,12 +104,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         /// <value>The record size in bytes.
         /// This is equal to the <see cref="BlockFactor"/> multiplied by the <see cref="BlockSize"/></value>
-        public int RecordSize 
-        {
-            get { 
-                return recordSize; 
-            }
-        }
+        public int RecordSize => recordSize;
 
         /// <summary>
         /// Get the TAR Buffer's record size.
@@ -126,11 +121,7 @@ or which contains garbage records after a zero block.
         /// Get the Blocking factor for the buffer
         /// </summary>
         /// <value>This is the number of blocks in each record.</value>
-        public int BlockFactor {
-            get { 
-                return blockFactor; 
-            }
-        }
+        public int BlockFactor => blockFactor;
 
         /// <summary>
         /// Get the TAR Buffer's block factor
@@ -156,9 +147,9 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for input.</returns>
         public static TarBuffer CreateInputTarBuffer(Stream inputStream)
         {
-            if ( inputStream == null )
+            if ( inputStream is null )
             {
-                throw new ArgumentNullException("inputStream");
+                throw new ArgumentNullException(nameof(inputStream));
             }
 
             return CreateInputTarBuffer(inputStream, DefaultBlockFactor);
@@ -172,9 +163,9 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for input.</returns>
         public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockFactor)
         {
-            if ( inputStream == null )
+            if ( inputStream is null )
             {
-                throw new ArgumentNullException("inputStream");
+                throw new ArgumentNullException(nameof(inputStream));
             }
             
             if ( blockFactor <= 0 )
@@ -182,7 +173,7 @@ or which contains garbage records after a zero block.
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("blockFactor");
 #else
-                throw new ArgumentOutOfRangeException("blockFactor", "Factor cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(blockFactor), "Factor cannot be negative");
 #endif              
             }
 
@@ -201,9 +192,9 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for output.</returns>
         public static TarBuffer CreateOutputTarBuffer(Stream outputStream)
         {
-            if ( outputStream == null )
+            if ( outputStream is null )
             {
-                throw new ArgumentNullException("outputStream");
+                throw new ArgumentNullException(nameof(outputStream));
             }
 
             return CreateOutputTarBuffer(outputStream, DefaultBlockFactor);
@@ -217,9 +208,9 @@ or which contains garbage records after a zero block.
         /// <returns>A new <see cref="TarBuffer"/> suitable for output.</returns>
         public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockFactor)
         {
-            if ( outputStream == null )
+            if ( outputStream is null )
             {
-                throw new ArgumentNullException("outputStream");
+                throw new ArgumentNullException(nameof(outputStream));
             }
 
             if ( blockFactor <= 0 )
@@ -227,7 +218,7 @@ or which contains garbage records after a zero block.
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("blockFactor");
 #else
-                throw new ArgumentOutOfRangeException("blockFactor", "Factor cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(blockFactor), "Factor cannot be negative");
 #endif              
             }
 
@@ -270,8 +261,8 @@ or which contains garbage records after a zero block.
         [Obsolete("Use IsEndOfArchiveBlock instead")]
         public bool IsEOFBlock(byte[] block)
         {
-            if ( block == null ) {
-                throw new ArgumentNullException("block");
+            if ( block is null ) {
+                throw new ArgumentNullException(nameof(block));
             }
 
             if ( block.Length != BlockSize ) 
@@ -300,8 +291,8 @@ or which contains garbage records after a zero block.
         /// <returns>Returns true if the block is an EOF block; false otherwise.</returns>
         public static bool IsEndOfArchiveBlock(byte[] block)
         {
-            if ( block == null ) {
-                throw new ArgumentNullException("block");
+            if ( block is null ) {
+                throw new ArgumentNullException(nameof(block));
             }
 
             if ( block.Length != BlockSize ) {
@@ -322,7 +313,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         public void SkipBlock()
         {
-            if (inputStream == null) {
+            if (inputStream is null) {
                 throw new TarException("no input stream defined");
             }
             
@@ -343,7 +334,7 @@ or which contains garbage records after a zero block.
         /// </returns>
         public byte[] ReadBlock()
         {
-            if (inputStream == null) {
+            if (inputStream is null) {
                 throw new TarException("TarBuffer.ReadBlock - no input stream defined");
             }
             
@@ -368,7 +359,7 @@ or which contains garbage records after a zero block.
         /// </returns>
         bool ReadRecord()
         {
-            if (inputStream == null) {
+            if (inputStream is null) {
                 throw new TarException("no input stream stream defined");
             }
                         
@@ -410,10 +401,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         /// <remarks>Block numbers are zero based values</remarks>
         /// <seealso cref="RecordSize"/>
-        public int CurrentBlock
-        {
-            get { return currentBlockIndex; }
-        }
+        public int CurrentBlock => currentBlockIndex;
 
         /// <summary>
         /// Get/set flag indicating ownership of the underlying stream.
@@ -421,8 +409,8 @@ or which contains garbage records after a zero block.
         /// </summary>
         public bool IsStreamOwner
         {
-            get { return isStreamOwner_; }
-            set { isStreamOwner_ = value; }
+            get => isStreamOwner_;
+            set => isStreamOwner_ = value;
         }
 
         /// <summary>
@@ -446,10 +434,7 @@ or which contains garbage records after a zero block.
         /// <returns>
         /// The current zero based record number.
         /// </returns>
-        public int CurrentRecord
-        {
-            get { return currentRecordIndex; }
-        }
+        public int CurrentRecord => currentRecordIndex;
 
         /// <summary>
         /// Get the current record number.
@@ -471,17 +456,17 @@ or which contains garbage records after a zero block.
         /// </param>
         public void WriteBlock(byte[] block)
         {
-            if ( block == null ) {
-                throw new ArgumentNullException("block");
+            if ( block is null ) {
+                throw new ArgumentNullException(nameof(block));
             }
 
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteBlock - no output stream defined");
             }
                         
             if (block.Length != BlockSize) {
-                string errorText = string.Format("TarBuffer.WriteBlock - block to write has length '{0}' which is not the block size of '{1}'",
-                    block.Length, BlockSize );
+                string errorText =
+                    $"TarBuffer.WriteBlock - block to write has length '{block.Length}' which is not the block size of '{BlockSize}'";
                 throw new TarException(errorText);
             }
             
@@ -506,22 +491,22 @@ or which contains garbage records after a zero block.
         /// </param>
         public void WriteBlock(byte[] buffer, int offset)
         {
-            if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+            if ( buffer is null ) {
+                throw new ArgumentNullException(nameof(buffer));
             }
 
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteBlock - no output stream stream defined");
             }
                         
             if ( (offset < 0) || (offset >= buffer.Length) )
             {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
             if ((offset + BlockSize) > buffer.Length) {
-                string errorText = string.Format("TarBuffer.WriteBlock - record has length '{0}' with offset '{1}' which is less than the record size of '{2}'",
-                    buffer.Length, offset, recordSize);
+                string errorText =
+                    $"TarBuffer.WriteBlock - record has length '{buffer.Length}' with offset '{offset}' which is less than the record size of '{recordSize}'";
                 throw new TarException(errorText);
             }
             
@@ -539,7 +524,7 @@ or which contains garbage records after a zero block.
         /// </summary>
         void WriteRecord()
         {
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteRecord no output stream defined");
             }
             
@@ -557,7 +542,7 @@ or which contains garbage records after a zero block.
         /// for the end of a tar stream.</remarks>
         void WriteFinalRecord()
         {
-            if (outputStream == null) {
+            if (outputStream is null) {
                 throw new TarException("TarBuffer.WriteFinalRecord no output stream defined");
             }
             

@@ -31,7 +31,7 @@ namespace ASCompletion.Model
     [Serializable]
     public class ASMetaData: IComparable
     {
-        static private Regex reNameTypeParams = 
+        private static readonly Regex reNameTypeParams = 
             new Regex("([^\"'\\s]+)\\s*=\\s*[\"']([^\"']+)[\"'],{0,1}\\s*", RegexOptions.Compiled);
 
         public int LineFrom;
@@ -51,25 +51,23 @@ namespace ASCompletion.Model
         {
             RawParams = raw;
             Params = new Dictionary<string, string>();
-            if (Enum.IsDefined(typeof(ASMetaKind), Name))
+            if (!Enum.IsDefined(typeof(ASMetaKind), Name)) return;
+            Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
+            var mParams = reNameTypeParams.Matches(raw);
+            if (mParams.Count > 0)
             {
-                Kind = (ASMetaKind)Enum.Parse(typeof(ASMetaKind), Name);
-                var mParams = reNameTypeParams.Matches(raw);
-                if (mParams.Count > 0)
-                {
-                    for (int i = 0, c = mParams.Count; i < c; i++)
-                        Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
-                }
-                else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
-                    Kind = ASMetaKind.Unknown;
+                for (int i = 0, c = mParams.Count; i < c; i++)
+                    Params[mParams[i].Groups[1].Value] = mParams[i].Groups[2].Value;
             }
+            else if (Kind == ASMetaKind.Event || Kind == ASMetaKind.Style) // invalid Event
+                Kind = ASMetaKind.Unknown;
         }
 
         public int CompareTo(object obj)
         {
             if (!(obj is ASMetaData))
                 throw new InvalidCastException("This object is not of type ASMetaData");
-            ASMetaData meta = obj as ASMetaData;
+            var meta = (ASMetaData) obj;
             if (Kind == ASMetaKind.Event && meta.Kind == ASMetaKind.Event)
                 return Params["type"].CompareTo(meta.Params["type"]);
             return Name.CompareTo(meta.Name);
@@ -77,7 +75,7 @@ namespace ASCompletion.Model
 
         internal static void GenerateIntrinsic(List<ASMetaData> src, StringBuilder sb, string nl, string tab)
         {
-            if (src == null) return;
+            if (src is null) return;
 
             foreach (var meta in src)
             {
@@ -98,8 +96,8 @@ namespace ASCompletion.Model
     [Serializable]
     public class FileModel
     {
-        static public FileModel Ignore = new FileModel();
-        static internal event Action<FileModel> OnFileUpdate;
+        public static readonly FileModel Ignore = new FileModel();
+        internal static event Action<FileModel> OnFileUpdate;
 
         [NonSerialized]
         public TreeState OutlineState;
@@ -163,7 +161,7 @@ namespace ASCompletion.Model
             Package = "";
             Module = "";
             FileName = fileName ?? "";
-            haXe = (FileName.Length > 3) ? FileInspector.IsHaxeFile(FileName, Path.GetExtension(FileName)) : false;
+            haXe = (FileName.Length > 3) && FileInspector.IsHaxeFile(FileName, Path.GetExtension(FileName));
             //
             Namespaces = new Dictionary<string, Visibility>();
             //
@@ -178,7 +176,7 @@ namespace ASCompletion.Model
             if (FileName.Length == 0) return null;
             
             string path = Path.GetDirectoryName(FileName);
-            if (String.IsNullOrEmpty(Package)) return path;
+            if (string.IsNullOrEmpty(Package)) return path;
 
             // get up the packages path
             string packPath = Path.DirectorySeparatorChar + Package.Replace('.', Path.DirectorySeparatorChar);
@@ -186,35 +184,29 @@ namespace ASCompletion.Model
             {
                 return path.Substring(0, path.Length - packPath.Length);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public void Check()
         {
-            if (this == Ignore) return;
-
-            if (OutOfDate)
+            if (this == Ignore || !OutOfDate) return;
+            OutOfDate = false;
+            if (FileName == "" || !File.Exists(FileName) || LastWriteTime >= File.GetLastWriteTime(FileName)) return;
+            try
+            {
+                if (Context != null) Context.GetCodeModel(this);
+                else ASFileParser.ParseFile(this);
+                OnFileUpdate?.Invoke(this);
+            }
+            catch
             {
                 OutOfDate = false;
-                if (FileName != "" && File.Exists(FileName) && LastWriteTime < File.GetLastWriteTime(FileName))
-                    try
-                    {
-                        ASFileParser.ParseFile(this);
-                        OnFileUpdate?.Invoke(this);
-                    }
-                    catch
-                    {
-                        OutOfDate = false;
-                        Imports.Clear();
-                        Classes.Clear();
-                        Members.Clear();
-                        PrivateSectionIndex = 0;
-                        Package = "";
-                    }
-
+                Imports.Clear();
+                Classes.Clear();
+                Members.Clear();
+                PrivateSectionIndex = 0;
+                Package = "";
             }
         }
 
@@ -258,18 +250,14 @@ namespace ASCompletion.Model
         /// <returns></returns>
         internal MemberList GetSortedMembersList()
         {
-            MemberList items = new MemberList();
-            items.Add(Members);
+            var items = new MemberList {Members};
             items.Sort();
             return items;
         }
 
         #region Text output
 
-        public override string ToString()
-        {
-            return String.Format("package {0} ({1})", Package, FileName);
-        }
+        public override string ToString() => $"package {Package} ({FileName})";
 
         public string GenerateIntrinsic(bool caching)
         {

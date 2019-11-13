@@ -33,7 +33,7 @@ namespace Interop.ShockwaveFlashObjects
   // Event interface for Shockwave Flash
   [Guid("D27CDB6D-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)4112)]
+  [TypeLibType(4112)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface _IShockwaveFlashEvents
   {
@@ -129,8 +129,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.OnReadyStateChange (int newState)
     {
-      if (OnReadyStateChangeDelegate!=null)
-        OnReadyStateChangeDelegate(newState);
+        OnReadyStateChangeDelegate?.Invoke(newState);
     }
 
     public event _IShockwaveFlashEvents_OnProgressEventHandler OnProgressDelegate = null;
@@ -148,8 +147,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.OnProgress (int percentDone)
     {
-      if (OnProgressDelegate!=null)
-        OnProgressDelegate(percentDone);
+        OnProgressDelegate?.Invoke(percentDone);
     }
 
     public event _IShockwaveFlashEvents_FSCommandEventHandler FSCommandDelegate = null;
@@ -167,8 +165,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.FSCommand (string command, string args)
     {
-      if (FSCommandDelegate!=null)
-        FSCommandDelegate(command, args);
+        FSCommandDelegate?.Invoke(command, args);
     }
 
     public event _IShockwaveFlashEvents_FlashCallEventHandler FlashCallDelegate = null;
@@ -186,8 +183,7 @@ namespace Interop.ShockwaveFlashObjects
     }
     void _IShockwaveFlashEvents.FlashCall (string request)
     {
-      if (FlashCallDelegate!=null)
-        FlashCallDelegate(request);
+        FlashCallDelegate?.Invoke(request);
     }
   }
 
@@ -199,7 +195,7 @@ namespace Interop.ShockwaveFlashObjects
     int ConnectionCount;
 
     // Constructor: remember ConnectionPointContainer
-    _IShockwaveFlashEvents_EventProvider(object CPContainer) : base()
+    _IShockwaveFlashEvents_EventProvider(object CPContainer)
     {
       ConnectionPointContainer = (IConnectionPointContainer)CPContainer;
     }
@@ -222,7 +218,7 @@ namespace Interop.ShockwaveFlashObjects
     // Connect to ActiveX event source
     void Connect()
     {
-      if (ConnectionPoint == null)
+      if (ConnectionPoint is null)
       {
         ConnectionCount = 0;
         Guid g = new Guid("D27CDB6D-AE6D-11CF-96B8-444553540000");
@@ -249,7 +245,7 @@ namespace Interop.ShockwaveFlashObjects
     void CheckDisconnect()
     {
       ConnectionCount--;
-      if (ConnectionCount <= 0)
+      if (ConnectionCount == 0)
         Disconnect();
     }
 
@@ -362,7 +358,7 @@ namespace Interop.ShockwaveFlashObjects
   // Shockwave Flash
   [Guid("D27CDB6C-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)4160)]
+  [TypeLibType(4160)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IShockwaveFlash
   {
@@ -1180,7 +1176,7 @@ namespace Interop.ShockwaveFlashObjects
   /// <summary><para><c>IDispatchEx</c> interface.</para></summary>
   [Guid("A6EF9860-C720-11D0-9337-00A0C90DCAA9")]
   [ComImport]
-  [TypeLibType((short)4096)]
+  [TypeLibType(4096)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IDispatchEx
   {
@@ -1255,7 +1251,7 @@ namespace Interop.ShockwaveFlashObjects
   // IFlashObjectInterface Interface
   [Guid("D27CDB72-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)4096)]
+  [TypeLibType(4096)]
   [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
   public interface IFlashObjectInterface
   {
@@ -1292,7 +1288,7 @@ namespace Interop.ShockwaveFlashObjects
   // IFlashObjectInterface Interface
   [Guid("D27CDB71-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)2)]
+  [TypeLibType(2)]
   [ClassInterface(ClassInterfaceType.None)]
   public class FlashObjectInterfaceClass // : IFlashObjectInterface, FlashObjectInterface
   {
@@ -1314,7 +1310,7 @@ namespace Interop.ShockwaveFlashObjects
   // Macromedia Flash Player Properties
   [Guid("1171A62F-05D2-11D1-83FC-00A0C9089C5A")]
   [ComImport]
-  [TypeLibType((short)2)]
+  [TypeLibType(2)]
   [ClassInterface(ClassInterfaceType.None)]
   public class FlashPropClass // : FlashProp
   {
@@ -1337,7 +1333,7 @@ namespace Interop.ShockwaveFlashObjects
   // Shockwave Flash
   [Guid("D27CDB6E-AE6D-11CF-96B8-444553540000")]
   [ComImport]
-  [TypeLibType((short)2)]
+  [TypeLibType(2)]
   [ClassInterface(ClassInterfaceType.None)]
   [ComSourceInterfaces("_IShockwaveFlashEvents")]
   public class ShockwaveFlashClass // : IShockwaveFlash, ShockwaveFlash, _IShockwaveFlashEvents_Event

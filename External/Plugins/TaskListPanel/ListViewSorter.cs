@@ -1,66 +1,52 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Windows.Forms;
 
 namespace TaskListPanel
 {
     public class ListViewSorter : IComparer
     {
-        private Int32 ColumnToSort;
-        private SortOrder OrderOfSort;
-        private CaseInsensitiveComparer Comparer;
+        private readonly CaseInsensitiveComparer Comparer;
 
         public ListViewSorter()
         {
-            this.ColumnToSort = 0;
+            this.SortColumn = 0;
             this.Comparer = new CaseInsensitiveComparer();
-            this.OrderOfSort = SortOrder.None;
+            this.Order = SortOrder.None;
         }
 
         /// <summary>
         /// This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
         /// </summary>
-        public Int32 Compare(Object x, Object y)
+        public int Compare(object x, object y)
         {
-            Int32 compareResult;
+            int compareResult;
             ListViewItem listviewX = (ListViewItem)x;
             ListViewItem listviewY = (ListViewItem)y;
-            if (this.ColumnToSort == 1)
+            if (this.SortColumn == 1)
             {
-                Int32 xVal = Int32.Parse(listviewX.SubItems[1].Text);
-                Int32 yVal = Int32.Parse(listviewY.SubItems[1].Text);
+                int xVal = int.Parse(listviewX.SubItems[1].Text);
+                int yVal = int.Parse(listviewY.SubItems[1].Text);
                 compareResult = xVal.CompareTo(yVal);
-                if (this.OrderOfSort == SortOrder.Ascending) return compareResult;
-                else if (this.OrderOfSort == SortOrder.Descending) return (-compareResult);
-                else return 0;
+                if (this.Order == SortOrder.Ascending) return compareResult;
+                if (this.Order == SortOrder.Descending) return (-compareResult);
+                return 0;
             }
-            else
-            {
-                compareResult = Comparer.Compare(listviewX.SubItems[this.ColumnToSort].Text, listviewY.SubItems[this.ColumnToSort].Text);
-                if (this.OrderOfSort == SortOrder.Ascending) return compareResult;
-                else if (this.OrderOfSort == SortOrder.Descending) return (-compareResult);
-                else return 0;
-            }
+
+            compareResult = Comparer.Compare(listviewX.SubItems[this.SortColumn].Text, listviewY.SubItems[this.SortColumn].Text);
+            if (this.Order == SortOrder.Ascending) return compareResult;
+            if (this.Order == SortOrder.Descending) return (-compareResult);
+            return 0;
         }
 
         /// <summary>
         /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
         /// </summary>
-        public Int32 SortColumn
-        {
-            set { this.ColumnToSort = value; }
-            get { return this.ColumnToSort; }
-        }
+        public int SortColumn { set; get; }
 
         /// <summary>
         /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
         /// </summary>
-        public SortOrder Order
-        {
-            set { this.OrderOfSort = value; }
-            get { return this.OrderOfSort; }
-        }
+        public SortOrder Order { set; get; }
 
     }
-
 }

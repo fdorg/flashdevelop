@@ -42,7 +42,7 @@
 //  22-02-2010  Z-1648  Zero byte entries would create invalid zip files
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
@@ -122,12 +122,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// Gets a flag value of true if the central header has been added for this archive; false if it has not been added.
         /// </summary>
         /// <remarks>No further entries can be added once this has been done.</remarks>
-        public bool IsFinished 
-        {
-            get {
-                return entries == null;
-            }
-        }
+        public bool IsFinished => entries is null;
 
         /// <summary>
         /// Set the zip file comment.
@@ -143,7 +138,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             // TODO: Its not yet clear how to handle unicode comments here.
             byte[] commentBytes = ZipConstants.ConvertToArray(comment);
             if (commentBytes.Length > 0xffff) {
-                throw new ArgumentOutOfRangeException("comment");
+                throw new ArgumentOutOfRangeException(nameof(comment));
             }
             zipComment = commentBytes;
         }
@@ -181,8 +176,8 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// larger then 4GB will fail.</remarks>
         public UseZip64 UseZip64
         {
-            get { return useZip64_; }
-            set { useZip64_ = value; }
+            get => useZip64_;
+            set => useZip64_ = value;
         }
         
         /// <summary>
@@ -244,11 +239,11 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public void PutNextEntry(ZipEntry entry)
         {
-            if ( entry == null ) {
-                throw new ArgumentNullException("entry");
+            if ( entry is null ) {
+                throw new ArgumentNullException(nameof(entry));
             }
 
-            if (entries == null) {
+            if (entries is null) {
                 throw new InvalidOperationException("ZipOutputStream was finished");
             }
             
@@ -324,7 +319,7 @@ namespace ICSharpCode.SharpZipLib.Zip
             }
 
             entry.Offset = offset;
-            entry.CompressionMethod = (CompressionMethod)method;
+            entry.CompressionMethod = method;
             
             curMethod = method;
             sizePatchPos = -1;
@@ -468,7 +463,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public void CloseEntry()
         {
-            if (curEntry == null) {
+            if (curEntry is null) {
                 throw new InvalidOperationException("No open entry");
             }
 
@@ -629,19 +624,19 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <exception cref="System.InvalidOperationException">No entry is active.</exception>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (curEntry == null) {
+            if (curEntry is null) {
                 throw new InvalidOperationException("No open entry.");
             }
             
-            if ( buffer == null ) {
-                throw new ArgumentNullException("buffer");
+            if ( buffer is null ) {
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if ( offset < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("offset");
 #else
-                throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(offset), "Cannot be negative");
 #endif
             }
 
@@ -649,7 +644,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(count), "Cannot be negative");
 #endif
             }
 
@@ -706,7 +701,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// </exception>
         public override void Finish()
         {
-            if (entries == null)  {
+            if (entries is null)  {
                 return;
             }
             
@@ -843,12 +838,12 @@ namespace ICSharpCode.SharpZipLib.Zip
         /// <summary>
         /// The entries for the archive.
         /// </summary>
-        ArrayList entries  = new ArrayList();
+        List<ZipEntry> entries  = new List<ZipEntry>();
         
         /// <summary>
         /// Used to track the crc of data added to entries.
         /// </summary>
-        Crc32 crc = new Crc32();
+        readonly Crc32 crc = new Crc32();
         
         /// <summary>
         /// The current entry being added.

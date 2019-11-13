@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 
 namespace SourceControl.Sources.Mercurial
 {
@@ -10,7 +6,7 @@ namespace SourceControl.Sources.Mercurial
     {
         public AddCommand(string path)
         {
-            string args = String.Format("add \"{0}\"", Path.GetFileName(path));
+            string args = $"add \"{Path.GetFileName(path)}\"";
             Run(args, Path.GetDirectoryName(path));
         }
     }

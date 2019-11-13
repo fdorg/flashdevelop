@@ -1,21 +1,16 @@
 using System;
-using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS2;
 using PluginCore.Localization;
 
 namespace ProjectManager.Controls.AS2
 {
     public class LibraryAssetDialog : System.Windows.Forms.Form
     {
-        Boolean isAS3;
-        Boolean isSWC;
-        Boolean modified;
-        LibraryAsset asset;
+        readonly bool isAS3;
+        readonly bool isSWC;
+        bool modified;
+        readonly LibraryAsset asset;
 
         #region Windows Form Designer
 
@@ -85,7 +80,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // cancelButton
             // 
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(239, 202);
@@ -93,22 +88,22 @@ namespace ProjectManager.Controls.AS2
             this.cancelButton.Size = new System.Drawing.Size(75, 21);
             this.cancelButton.TabIndex = 2;
             this.cancelButton.Text = "&Cancel";
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.cancelButton.Click += this.cancelButton_Click;
             // 
             // okButton
             // 
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.okButton.Location = new System.Drawing.Point(156, 202);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 21);
             this.okButton.TabIndex = 1;
             this.okButton.Text = "&OK";
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += this.okButton_Click;
             // 
             // autoIDBox
             // 
-            this.autoIDBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.autoIDBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.autoIDBox.Checked = true;
             this.autoIDBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.autoIDBox.Location = new System.Drawing.Point(16, 73);
@@ -116,22 +111,22 @@ namespace ProjectManager.Controls.AS2
             this.autoIDBox.Size = new System.Drawing.Size(266, 18);
             this.autoIDBox.TabIndex = 0;
             this.autoIDBox.Text = "Auto-generate &ID for attachMovie():";
-            this.autoIDBox.CheckedChanged += new System.EventHandler(this.autoIDBox_CheckedChanged);
+            this.autoIDBox.CheckedChanged += this.autoIDBox_CheckedChanged;
             // 
             // idTextBox
             // 
-            this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.idTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.idTextBox.Enabled = false;
             this.idTextBox.Location = new System.Drawing.Point(34, 94);
             this.idTextBox.Name = "idTextBox";
             this.idTextBox.Size = new System.Drawing.Size(248, 20);
             this.idTextBox.TabIndex = 1;
             this.idTextBox.Text = "Library.WorkerGuy.png";
-            this.idTextBox.TextChanged += new System.EventHandler(this.idTextBox_TextChanged);
+            this.idTextBox.TextChanged += this.idTextBox_TextChanged;
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.tabControl.Controls.Add(this.swfTabPage);
             this.tabControl.Controls.Add(this.swcTabPage);
             this.tabControl.Controls.Add(this.fontTabPage);
@@ -159,7 +154,7 @@ namespace ProjectManager.Controls.AS2
             // 
             // specifySharepointBox
             // 
-            this.specifySharepointBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.specifySharepointBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.specifySharepointBox.BackColor = System.Drawing.Color.Transparent;
             this.specifySharepointBox.Location = new System.Drawing.Point(35, 81);
             this.specifySharepointBox.Name = "specifySharepointBox";
@@ -167,7 +162,7 @@ namespace ProjectManager.Controls.AS2
             this.specifySharepointBox.TabIndex = 3;
             this.specifySharepointBox.Text = "&Specify sharepoint ID:";
             this.specifySharepointBox.UseVisualStyleBackColor = false;
-            this.specifySharepointBox.CheckedChanged += new System.EventHandler(this.specifySharepointBox_CheckedChanged);
+            this.specifySharepointBox.CheckedChanged += this.specifySharepointBox_CheckedChanged;
             // 
             // addPreloaderButton
             // 
@@ -177,7 +172,7 @@ namespace ProjectManager.Controls.AS2
             this.addPreloaderButton.Size = new System.Drawing.Size(184, 16);
             this.addPreloaderButton.TabIndex = 1;
             this.addPreloaderButton.Text = " Add as &preloader";
-            this.addPreloaderButton.CheckedChanged += new System.EventHandler(this.addPreloaderButton_CheckedChanged);
+            this.addPreloaderButton.CheckedChanged += this.addPreloaderButton_CheckedChanged;
             // 
             // explainLink
             // 
@@ -188,7 +183,7 @@ namespace ProjectManager.Controls.AS2
             this.explainLink.TabStop = true;
             this.explainLink.Text = "Explain these options";
             this.explainLink.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.explainLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.explainLink_LinkClicked);
+            this.explainLink.LinkClicked += this.explainLink_LinkClicked;
             // 
             // sharepointTextBox
             // 
@@ -197,7 +192,7 @@ namespace ProjectManager.Controls.AS2
             this.sharepointTextBox.Name = "sharepointTextBox";
             this.sharepointTextBox.Size = new System.Drawing.Size(197, 20);
             this.sharepointTextBox.TabIndex = 4;
-            this.sharepointTextBox.TextChanged += new System.EventHandler(this.sharepointTextBox_TextChanged);
+            this.sharepointTextBox.TextChanged += this.sharepointTextBox_TextChanged;
             // 
             // sharedLibraryButton
             // 
@@ -207,7 +202,7 @@ namespace ProjectManager.Controls.AS2
             this.sharedLibraryButton.Size = new System.Drawing.Size(224, 16);
             this.sharedLibraryButton.TabIndex = 2;
             this.sharedLibraryButton.Text = " Load at &runtime (shared library)";
-            this.sharedLibraryButton.CheckedChanged += new System.EventHandler(this.sharedLibraryButton_CheckedChanged);
+            this.sharedLibraryButton.CheckedChanged += this.sharedLibraryButton_CheckedChanged;
             // 
             // addLibraryButton
             // 
@@ -219,7 +214,7 @@ namespace ProjectManager.Controls.AS2
             this.addLibraryButton.TabIndex = 0;
             this.addLibraryButton.TabStop = true;
             this.addLibraryButton.Text = " Add to &library";
-            this.addLibraryButton.CheckedChanged += new System.EventHandler(this.addLibraryButton_CheckedChanged);
+            this.addLibraryButton.CheckedChanged += this.addLibraryButton_CheckedChanged;
             // 
             // swcTabPage
             // 
@@ -242,7 +237,7 @@ namespace ProjectManager.Controls.AS2
             this.swcIncOption.Size = new System.Drawing.Size(250, 16);
             this.swcIncOption.TabIndex = 4;
             this.swcIncOption.Text = "&Included library (include completely)";
-            this.swcIncOption.CheckedChanged += new System.EventHandler(this.swcLibOption_CheckedChanged);
+            this.swcIncOption.CheckedChanged += this.swcLibOption_CheckedChanged;
             // 
             // swcExtOption
             // 
@@ -252,7 +247,7 @@ namespace ProjectManager.Controls.AS2
             this.swcExtOption.Size = new System.Drawing.Size(250, 16);
             this.swcExtOption.TabIndex = 5;
             this.swcExtOption.Text = "&External library (not included)";
-            this.swcExtOption.CheckedChanged += new System.EventHandler(this.swcLibOption_CheckedChanged);
+            this.swcExtOption.CheckedChanged += this.swcLibOption_CheckedChanged;
             // 
             // swcLibOption
             // 
@@ -264,7 +259,7 @@ namespace ProjectManager.Controls.AS2
             this.swcLibOption.TabIndex = 3;
             this.swcLibOption.TabStop = true;
             this.swcLibOption.Text = "&Library (include referenced classes)";
-            this.swcLibOption.CheckedChanged += new System.EventHandler(this.swcLibOption_CheckedChanged);
+            this.swcLibOption.CheckedChanged += this.swcLibOption_CheckedChanged;
             // 
             // fontTabPage
             // 
@@ -280,28 +275,28 @@ namespace ProjectManager.Controls.AS2
             // 
             // charactersTextBox
             // 
-            this.charactersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.charactersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.charactersTextBox.Location = new System.Drawing.Point(35, 64);
             this.charactersTextBox.Multiline = true;
             this.charactersTextBox.Name = "charactersTextBox";
             this.charactersTextBox.Size = new System.Drawing.Size(247, 79);
             this.charactersTextBox.TabIndex = 2;
-            this.charactersTextBox.TextChanged += new System.EventHandler(this.charactersTextBox_TextChanged);
+            this.charactersTextBox.TextChanged += this.charactersTextBox_TextChanged;
             // 
             // embedTheseButton
             // 
-            this.embedTheseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.embedTheseButton.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.embedTheseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.embedTheseButton.Location = new System.Drawing.Point(16, 36);
             this.embedTheseButton.Name = "embedTheseButton";
             this.embedTheseButton.Size = new System.Drawing.Size(266, 16);
             this.embedTheseButton.TabIndex = 1;
             this.embedTheseButton.Text = " Embed &these characters:";
-            this.embedTheseButton.CheckedChanged += new System.EventHandler(this.embedTheseButton_CheckedChanged);
+            this.embedTheseButton.CheckedChanged += this.embedTheseButton_CheckedChanged;
             // 
             // embedAllButton
             // 
-            this.embedAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.embedAllButton.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.embedAllButton.Checked = true;
             this.embedAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.embedAllButton.Location = new System.Drawing.Point(16, 16);
@@ -310,7 +305,7 @@ namespace ProjectManager.Controls.AS2
             this.embedAllButton.TabIndex = 0;
             this.embedAllButton.TabStop = true;
             this.embedAllButton.Text = " Embed &all characters";
-            this.embedAllButton.CheckedChanged += new System.EventHandler(this.embedAllButton_CheckedChanged);
+            this.embedAllButton.CheckedChanged += this.embedAllButton_CheckedChanged;
             // 
             // advancedTabPage
             // 
@@ -335,27 +330,27 @@ namespace ProjectManager.Controls.AS2
             this.browseButton.Size = new System.Drawing.Size(72, 21);
             this.browseButton.TabIndex = 4;
             this.browseButton.Text = "&Browse...";
-            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
+            this.browseButton.Click += this.browseButton_Click;
             // 
             // updatedTextBox
             // 
-            this.updatedTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.updatedTextBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.updatedTextBox.Enabled = false;
             this.updatedTextBox.Location = new System.Drawing.Point(34, 37);
             this.updatedTextBox.Name = "updatedTextBox";
             this.updatedTextBox.Size = new System.Drawing.Size(170, 20);
             this.updatedTextBox.TabIndex = 3;
-            this.updatedTextBox.TextChanged += new System.EventHandler(this.updatedTextBox_TextChanged);
+            this.updatedTextBox.TextChanged += this.updatedTextBox_TextChanged;
             // 
             // keepUpdatedBox
             // 
-            this.keepUpdatedBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.keepUpdatedBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.keepUpdatedBox.Location = new System.Drawing.Point(16, 16);
             this.keepUpdatedBox.Name = "keepUpdatedBox";
             this.keepUpdatedBox.Size = new System.Drawing.Size(266, 18);
             this.keepUpdatedBox.TabIndex = 2;
             this.keepUpdatedBox.Text = "&Keep updated by copying source file:";
-            this.keepUpdatedBox.CheckedChanged += new System.EventHandler(this.keepUpdatedBox_CheckedChanged);
+            this.keepUpdatedBox.CheckedChanged += this.keepUpdatedBox_CheckedChanged;
             // 
             // bitmapLinkageBox
             // 
@@ -442,7 +437,7 @@ namespace ProjectManager.Controls.AS2
 
             #region Setup Form
 
-            autoIDBox.Checked = asset.ManualID == null;
+            autoIDBox.Checked = asset.ManualID is null;
             idTextBox.Text = asset.ID;
             keepUpdatedBox.Checked = (asset.UpdatePath != null);
             updatedTextBox.Text = asset.UpdatePath;
@@ -451,7 +446,7 @@ namespace ProjectManager.Controls.AS2
             sharedLibraryButton.Checked = (asset.SwfMode == SwfAssetMode.Shared);
             specifySharepointBox.Checked = asset.Sharepoint != null;
             sharepointTextBox.Text = asset.Sharepoint;
-            embedAllButton.Checked = (asset.FontGlyphs == null);
+            embedAllButton.Checked = (asset.FontGlyphs is null);
             embedTheseButton.Checked = (asset.FontGlyphs != null);
             charactersTextBox.Text = asset.FontGlyphs;
             bitmapLinkageBox.Checked = asset.BitmapLinkage;
@@ -580,7 +575,7 @@ namespace ProjectManager.Controls.AS2
             if (autoIDBox.Checked)
                 idTextBox.Text = asset.GetAutoID();
             else
-                idTextBox.Text = (asset.ManualID == null) ? asset.GetAutoID() : asset.ManualID;
+                idTextBox.Text = asset.ManualID ?? asset.GetAutoID();
 
             Modified();
 
@@ -590,23 +585,21 @@ namespace ProjectManager.Controls.AS2
 
         private void browseButton_Click(object sender, System.EventArgs e)
         {
-            using (OpenFileDialog dialog = new OpenFileDialog())
+            using OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = TextHelper.GetString("Info.FileFilter");
+
+            // try pre-setting the current update path
+            try
             {
-                dialog.Filter = TextHelper.GetString("Info.FileFilter");
-
-                // try pre-setting the current update path
-                try
-                {
-                    if (asset.UpdatePath.Length > 0)
-                        dialog.FileName = asset.Project.GetAbsolutePath(asset.UpdatePath);
-                    else
-                        dialog.FileName = asset.Project.GetAbsolutePath(asset.Path);
-                }
-                catch { }
-
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                    updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
+                if (asset.UpdatePath.Length > 0)
+                    dialog.FileName = asset.Project.GetAbsolutePath(asset.UpdatePath);
+                else
+                    dialog.FileName = asset.Project.GetAbsolutePath(asset.Path);
             }
+            catch { }
+
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+                updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
         }
 
         private void swcLibOption_CheckedChanged(object sender, EventArgs e)

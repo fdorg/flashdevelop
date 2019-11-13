@@ -188,7 +188,7 @@ function handleXmlData(projectXml, rssUrl)
 {
 	if (rssUrl != null)
 	{
-		var hdUrl = "http://www.haxedevelop.org/latest.txt";
+		var hdUrl = "https://haxedevelop.org/latest.txt";
 		loadTextDocument(hdUrl, handleVersionInfo);
 		loadTextDocument(rssUrl, handleRssFeedXml);
 	}

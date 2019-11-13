@@ -8,12 +8,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Encodes bytes to a base16 string.
         /// </summary>
-        public static String Encode(Byte[] bytes)
+        public static string Encode(byte[] bytes)
         {
-            String hex = "";
-            for (Int32 i = 0; i < bytes.Length; i++)
+            string hex = "";
+            foreach (var it in bytes)
             {
-                hex += bytes[i].ToString("x2");
+                hex += it.ToString("x2");
             }
             return hex;
         }
@@ -21,12 +21,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Decodes base16 string to bytes.
         /// </summary>
-        public static Byte[] Decode(String base16)
+        public static byte[] Decode(string base16)
         {
-            Byte[] bytes = new Byte[base16.Length / 2];
-            for (Int32 i = 0; i < base16.Length; i += 2)
+            byte[] bytes = new byte[base16.Length / 2];
+            for (int i = 0; i < base16.Length; i += 2)
             {
-                Byte value = (Byte)Convert.ToInt32(base16.Substring(i, 2), 16);
+                byte value = (byte)Convert.ToInt32(base16.Substring(i, 2), 16);
                 bytes.SetValue(value, i / 2);
             }
             return bytes;
@@ -39,19 +39,12 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Encodes bytes to a base64 string.
         /// </summary>
-        public static String Encode(Byte[] bytes)
-        {
-            return Convert.ToBase64String(bytes);
-        }
+        public static string Encode(byte[] bytes) => Convert.ToBase64String(bytes);
 
         /// <summary>
         /// Decodes base64 string to bytes.
         /// </summary>
-        public static Byte[] Decode(String base64)
-        {
-            return Convert.FromBase64String(base64);
-        }
-
+        public static byte[] Decode(string base64) => Convert.FromBase64String(base64);
     }
 
     public class MD5
@@ -59,7 +52,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the MD5 checksum for the bytes.
         /// </summary>
-        public static Byte[] Compute(Byte[] bytes)
+        public static byte[] Compute(byte[] bytes)
         {
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
             return md5.ComputeHash(bytes);
@@ -68,7 +61,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the HMAC-MD5 for the key and bytes.
         /// </summary>
-        public static Byte[] ComputeHMAC(Byte[] key, Byte[] bytes)
+        public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
             HMACMD5 hmac = new HMACMD5(key);
             return hmac.ComputeHash(bytes);
@@ -83,7 +76,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the SHA-1 checksum for the bytes.
         /// </summary>
-        public static Byte[] Compute(Byte[] bytes)
+        public static byte[] Compute(byte[] bytes)
         {
             if (fipsComplianceRequired) return ComputeFIPS(bytes);
             try
@@ -97,7 +90,7 @@ namespace PluginCore.Utilities
                 return ComputeFIPS(bytes);
             }
         }
-        static Byte[] ComputeFIPS(Byte[] bytes)
+        static byte[] ComputeFIPS(byte[] bytes)
         {
             SHA1Cng sha1 = new SHA1Cng();
             return sha1.ComputeHash(bytes);
@@ -106,7 +99,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the HMAC-SHA-1 for the key and bytes.
         /// </summary>
-        public static Byte[] ComputeHMAC(Byte[] key, Byte[] bytes)
+        public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
             HMACSHA1 hmac = new HMACSHA1(key);
             return hmac.ComputeHash(bytes);
@@ -121,7 +114,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the SHA-256 checksum for the bytes.
         /// </summary>
-        public static Byte[] Compute(Byte[] bytes)
+        public static byte[] Compute(byte[] bytes)
         {
             if (fipsComplianceRequired) return ComputeFIPS(bytes);
             try
@@ -135,7 +128,7 @@ namespace PluginCore.Utilities
                 return ComputeFIPS(bytes);
             }
         }
-        static Byte[] ComputeFIPS(Byte[] bytes)
+        static byte[] ComputeFIPS(byte[] bytes)
         {
             SHA256Cng sha256 = new SHA256Cng();
             return sha256.ComputeHash(bytes);
@@ -144,7 +137,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the HMAC-SHA-256 for the key and bytes.
         /// </summary>
-        public static Byte[] ComputeHMAC(Byte[] key, Byte[] bytes)
+        public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
             HMACSHA256 hmac = new HMACSHA256(key);
             return hmac.ComputeHash(bytes);
@@ -157,7 +150,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the RIPEMD-160 checksum for the bytes.
         /// </summary>
-        public static Byte[] Compute(Byte[] bytes)
+        public static byte[] Compute(byte[] bytes)
         {
             RIPEMD160Managed rmd160 = new RIPEMD160Managed();
             return rmd160.ComputeHash(bytes);
@@ -166,7 +159,7 @@ namespace PluginCore.Utilities
         /// <summary>
         /// Computes the HMAC-RIPEMD-160 for the key and bytes.
         /// </summary>
-        public static Byte[] ComputeHMAC(Byte[] key, Byte[] bytes)
+        public static byte[] ComputeHMAC(byte[] key, byte[] bytes)
         {
             HMACRIPEMD160 hmac = new HMACRIPEMD160(key);
             return hmac.ComputeHash(bytes);

@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.3.1"
+!define VERSION "5.3.4"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"
@@ -689,11 +689,11 @@ Function .onInit
 	Call GetDotNETVersion
 	Pop $0
 	${If} $0 == "not_found"
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing ${DIST_NAME}."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 4.0 runtime before installing ${DIST_NAME}."
 	${Else}
-	${VersionCompare} $0 "3.5" $1
+	${VersionCompare} $0 "4.0" $1
 	${If} $1 == 2
-	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 3.5 runtime before installing ${DIST_NAME}. You have $0."
+	MessageBox MB_OK|MB_ICONSTOP "You need to install Microsoft.NET 4.0 runtime before installing ${DIST_NAME}. You have $0."
 	${EndIf}
 	${EndIf}
 	

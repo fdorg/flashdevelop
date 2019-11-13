@@ -28,7 +28,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.ComboBox languageDropDown;
         private System.Windows.Forms.TextBox snippetNameTextBox;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
-        private System.Collections.Generic.Dictionary<String, String[]> snippets;
+        private System.Collections.Generic.Dictionary<string, string[]> snippets;
         private Ookii.Dialogs.VistaFolderBrowserDialog browseDialog;
         private System.Windows.Forms.ColumnHeader columnHeader;
         private System.Windows.Forms.ComboBox insertComboBox;
@@ -36,9 +36,9 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button addButton;
-        private System.String currentSyntax;
-        private System.Int32 folderCount;
-        private System.Int32 eolMode;
+        private string currentSyntax;
+        private int folderCount;
+        private int eolMode;
 
         public SnippetDialog()
         {
@@ -88,10 +88,10 @@ namespace FlashDevelop.Dialogs
             // 
             // contentsTextBox
             //
-            this.contentsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.contentsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.contentsTextBox.AcceptsTab = true;
             this.contentsTextBox.AcceptsReturn = true;
-            this.contentsTextBox.Font = new System.Drawing.Font("Courier New", 8.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.contentsTextBox.Font = new System.Drawing.Font("Courier New", 8.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             this.contentsTextBox.Location = new System.Drawing.Point(151, 53);
             this.contentsTextBox.ScrollBars = ScrollBars.Vertical;
             this.contentsTextBox.Multiline = true;
@@ -99,11 +99,11 @@ namespace FlashDevelop.Dialogs
             this.contentsTextBox.Size = new System.Drawing.Size(453, 299);
             this.contentsTextBox.TabIndex = 8;
             this.contentsTextBox.WordWrap = false;
-            this.contentsTextBox.TextChanged += new System.EventHandler(this.ToggleCreate);
+            this.contentsTextBox.TextChanged += this.ToggleCreate;
             // 
             // addButton
             //
-            this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.addButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.addButton.Location = new System.Drawing.Point(254, 358);
             this.addButton.Name = "addButton";
@@ -111,11 +111,11 @@ namespace FlashDevelop.Dialogs
             this.addButton.TabIndex = 3;
             this.addButton.Text = "&Add";
             this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new System.EventHandler(this.AddButtonClick);
+            this.addButton.Click += this.AddButtonClick;
             // 
             // deleteButton
             //
-            this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.deleteButton.Location = new System.Drawing.Point(343, 358);
             this.deleteButton.Name = "deleteButton";
@@ -123,7 +123,7 @@ namespace FlashDevelop.Dialogs
             this.deleteButton.TabIndex = 3;
             this.deleteButton.Text = "&Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
-            this.deleteButton.Click += new System.EventHandler(this.DeleteButtonClick);
+            this.deleteButton.Click += this.DeleteButtonClick;
             // 
             // snippetNameTextBox
             //
@@ -131,7 +131,7 @@ namespace FlashDevelop.Dialogs
             this.snippetNameTextBox.Name = "snippetNameTextBox";
             this.snippetNameTextBox.Size = new System.Drawing.Size(140, 19);
             this.snippetNameTextBox.TabIndex = 6;
-            this.snippetNameTextBox.TextChanged += new System.EventHandler(this.ToggleCreate);
+            this.snippetNameTextBox.TextChanged += this.ToggleCreate;
             // 
             // nameLabel
             // 
@@ -155,7 +155,7 @@ namespace FlashDevelop.Dialogs
             // 
             // snippetListView
             //
-            this.snippetListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left)));
+            this.snippetListView.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left;
             this.snippetListView.MultiSelect = false;
             this.snippetListView.HideSelection = false;
             this.snippetListView.Columns.Add(this.columnHeader);
@@ -166,11 +166,11 @@ namespace FlashDevelop.Dialogs
             this.snippetListView.Name = "snippetListBox";
             this.snippetListView.Size = new System.Drawing.Size(130, 329);
             this.snippetListView.TabIndex = 5;
-            this.snippetListView.SelectedIndexChanged += new System.EventHandler(this.SnippetListViewSelectedIndexChanged);
+            this.snippetListView.SelectedIndexChanged += this.SnippetListViewSelectedIndexChanged;
             // 
             // saveButton
             //
-            this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.saveButton.Location = new System.Drawing.Point(431, 358);
             this.saveButton.Name = "saveButton";
@@ -178,16 +178,16 @@ namespace FlashDevelop.Dialogs
             this.saveButton.TabIndex = 2;
             this.saveButton.Text = "&Save";
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.SaveButtonClick);
+            this.saveButton.Click += this.SaveButtonClick;
             // 
             // exportButton
             //
-            this.exportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.exportButton.Name = "exportButton";
             this.exportButton.TabIndex = 9;
             this.exportButton.Size = new System.Drawing.Size(30, 23);
             this.exportButton.Location = new System.Drawing.Point(150, 358);
-            this.exportButton.Click += new System.EventHandler(this.ExportButtonClick);
+            this.exportButton.Click += this.ExportButtonClick;
             // 
             // insertLabel
             // 
@@ -207,11 +207,11 @@ namespace FlashDevelop.Dialogs
             this.languageDropDown.TabIndex = 4;
             this.languageDropDown.Location = new System.Drawing.Point(12, 25);
             this.languageDropDown.Size = new System.Drawing.Size(130, 23);
-            this.languageDropDown.SelectedIndexChanged += new System.EventHandler(this.LanguagesSelectedIndexChanged);
+            this.languageDropDown.SelectedIndexChanged += this.LanguagesSelectedIndexChanged;
             // 
             // closeButton
             //
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(519, 358);
             this.closeButton.Name = "closeButton";
@@ -219,21 +219,21 @@ namespace FlashDevelop.Dialogs
             this.closeButton.TabIndex = 1;
             this.closeButton.Text = "&Close";
             this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
+            this.closeButton.Click += this.CloseButtonClick;
             // 
             // revertButton
             //
-            this.revertButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.revertButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.revertButton.Location = new System.Drawing.Point(188, 358);
             this.revertButton.Name = "revertButton";
             this.revertButton.Size = new System.Drawing.Size(30, 23);
             this.revertButton.TabIndex = 10;
             this.revertButton.UseVisualStyleBackColor = true;
-            this.revertButton.Click += new System.EventHandler(this.RevertButtonClick);
+            this.revertButton.Click += this.RevertButtonClick;
             // 
             // insertComboBox
             //
-            this.insertComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.insertComboBox.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right;
             this.insertComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.insertComboBox.FormattingEnabled = true;
             this.insertComboBox.Location = new System.Drawing.Point(299, 25);
@@ -241,7 +241,7 @@ namespace FlashDevelop.Dialogs
             this.insertComboBox.Name = "insertComboBox";
             this.insertComboBox.Size = new System.Drawing.Size(305, 21);
             this.insertComboBox.TabIndex = 7;
-            this.insertComboBox.SelectedIndexChanged += new System.EventHandler(this.InsertComboBoxSelectedIndexChanged);
+            this.insertComboBox.SelectedIndexChanged += this.InsertComboBoxSelectedIndexChanged;
             // 
             // SnippetDialog
             //
@@ -286,10 +286,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Gets the path to the language directory
         /// </summary>
-        private String SnippetDir
-        {
-            get { return PathHelper.SnippetDir; }
-        }
+        private string SnippetDir => PathHelper.SnippetDir;
 
         /// <summary>
         /// Initializes the graphics
@@ -341,13 +338,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PopulateControls()
         {
-            this.snippets = new Dictionary<String, String[]>();
+            this.snippets = new Dictionary<string, string[]>();
             this.ListSnippetFolders();
             this.UpdateSnippetList();
             this.PopulateInsertComboBox();
-            Boolean foundSyntax = false;
-            String curSyntax = ArgsProcessor.GetCurSyntax();
-            foreach (Object item in this.languageDropDown.Items)
+            bool foundSyntax = false;
+            string curSyntax = ArgsProcessor.GetCurSyntax();
+            foreach (object item in this.languageDropDown.Items)
             {
                 if (item.ToString().ToLower() == curSyntax)
                 {
@@ -366,7 +363,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the view based on the syntax selected
         /// </summary>
-        private void LanguagesSelectedIndexChanged(Object sender, EventArgs e)
+        private void LanguagesSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.saveButton.Enabled) this.PromptToSaveSnippet();
             this.currentSyntax = this.languageDropDown.Text.ToLower();
@@ -379,7 +376,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Saves the snippet with the selected name
         /// </summary>
-        private void SaveButtonClick(Object sender, EventArgs e)
+        private void SaveButtonClick(object sender, EventArgs e)
         {
             try
             {
@@ -395,7 +392,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the snippet manager dialog
         /// </summary>
-        private void CloseButtonClick(Object sender, EventArgs e)
+        private void CloseButtonClick(object sender, EventArgs e)
         {
             if (this.saveButton.Enabled) this.PromptToSaveSnippet();
             this.Close();
@@ -404,7 +401,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Updates the view based on the selected snippet name
         /// </summary>
-        private void ToggleCreate(Object sender, EventArgs e)
+        private void ToggleCreate(object sender, EventArgs e)
         {
             if (this.contentsTextBox.Text.Length > 0 && this.snippetNameTextBox.Text.Length > 0)
             {
@@ -428,14 +425,13 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the activated snippet's contents
         /// </summary>
-        private void SnippetListViewSelectedIndexChanged(Object sender, EventArgs e)
+        private void SnippetListViewSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.snippetListView.SelectedItems.Count == 0) return;
             if (this.saveButton.Enabled) this.PromptToSaveSnippet();
-            String name = this.snippetListView.SelectedItems[0].Text;
-            String path = Path.Combine(this.SnippetDir, this.currentSyntax);
-            path = Path.Combine(path, name + ".fds");
-            String content = File.ReadAllText(path);
+            string name = this.snippetListView.SelectedItems[0].Text;
+            var path = Path.Combine(SnippetDir, currentSyntax, name + ".fds");
+            string content = File.ReadAllText(path);
             // Convert eols to windows and save current eol mode
             this.eolMode = LineEndDetector.DetectNewLineMarker(content, 0);
             content = content.Replace(LineEndDetector.GetNewLineMarker(this.eolMode), "\r\n");
@@ -447,16 +443,15 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Deletes the currently selected snippet
         /// </summary>
-        private void DeleteButtonClick(Object sender, EventArgs e)
+        private void DeleteButtonClick(object sender, EventArgs e)
         {
-            String caption = TextHelper.GetString("Title.ConfirmDialog");
-            String message = TextHelper.GetString("Info.ConfirmSnippetDelete");
+            string caption = TextHelper.GetString("Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.ConfirmSnippetDelete");
             if (MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return;
-            String path = Path.Combine(this.SnippetDir, this.currentSyntax);
-            path = Path.Combine(path, this.snippetNameTextBox.Text + ".fds");
+            var path = Path.Combine(SnippetDir, currentSyntax, this.snippetNameTextBox.Text + ".fds");
             if (!FileHelper.Recycle(path))
             {
-                String error = TextHelper.GetString("Info.CouldNotBeRecycled");
+                string error = TextHelper.GetString("Info.CouldNotBeRecycled");
                 throw new Exception(error + " " + path);
             }
             this.UpdateSnippetList();
@@ -467,15 +462,15 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ListSnippetFolders()
         {
-            String[] folders = Directory.GetDirectories(this.SnippetDir);
+            string[] folders = Directory.GetDirectories(this.SnippetDir);
             this.folderCount = folders.Length;
             this.languageDropDown.Items.Clear();
-            foreach (String folderPath in folders)
+            foreach (string folderPath in folders)
             {
                 DirectoryInfo info = new DirectoryInfo(folderPath);
                 if ((info.Attributes & FileAttributes.Hidden) > 0) continue;
-                String folderName = Path.GetFileNameWithoutExtension(folderPath);
-                String[] files = Directory.GetFiles(folderPath);
+                string folderName = Path.GetFileNameWithoutExtension(folderPath);
+                string[] files = Directory.GetFiles(folderPath);
                 this.snippets.Add(folderName, files);
                 this.languageDropDown.Items.Add(folderName.ToUpper());
             }
@@ -489,36 +484,36 @@ namespace FlashDevelop.Dialogs
         {
             this.UpdateSnippetList(null);
         }
-        private void UpdateSnippetList(String toSelect)
+        private void UpdateSnippetList(string toSelect)
         {
             try
             {
-                Int32 selectedIndex = 0;
+                int selectedIndex = 0;
                 if (this.snippetListView.SelectedIndices.Count > 0)
                 {
                     selectedIndex = this.snippetListView.SelectedIndices[0];
                 }
                 this.snippetListView.BeginUpdate();
                 this.snippetListView.Items.Clear();
-                String path = Path.Combine(this.SnippetDir, this.currentSyntax);
+                string path = Path.Combine(this.SnippetDir, this.currentSyntax);
                 this.snippets[this.currentSyntax] = Directory.GetFiles(path);
-                foreach (String file in this.snippets[this.currentSyntax])
+                foreach (string file in this.snippets[this.currentSyntax])
                 {
-                    String snippet = Path.GetFileNameWithoutExtension(file);
+                    string snippet = Path.GetFileNameWithoutExtension(file);
                     ListViewItem lvi = new ListViewItem(snippet, 0);
                     this.snippetListView.Items.Add(lvi);
-                    if (!String.IsNullOrEmpty(toSelect) && snippet == toSelect)
+                    if (!string.IsNullOrEmpty(toSelect) && snippet == toSelect)
                     {
                         lvi.Selected = true;
                     }
                 }
                 this.snippetListView.EndUpdate();
-                if (this.snippetListView.Items.Count > 0 && String.IsNullOrEmpty(toSelect))
+                if (this.snippetListView.Items.Count > 0 && string.IsNullOrEmpty(toSelect))
                 {
                     try { this.snippetListView.Items[selectedIndex].Selected = true; }
                     catch 
                     { 
-                        Int32 last = this.snippetListView.Items.Count - 1;
+                        int last = this.snippetListView.Items.Count - 1;
                         this.snippetListView.Items[last].Selected = true;
                     }
                 }
@@ -537,17 +532,17 @@ namespace FlashDevelop.Dialogs
         {
             try
             {
-                String locale = Globals.Settings.LocaleVersion.ToString();
-                Stream stream = ResourceHelper.GetStream(String.Format("SnippetVars.{0}.txt", locale));
-                String contents = new StreamReader(stream).ReadToEnd();
+                string locale = Globals.Settings.LocaleVersion.ToString();
+                Stream stream = ResourceHelper.GetStream($"SnippetVars.{locale}.txt");
+                string contents = new StreamReader(stream).ReadToEnd();
                 if (DistroConfig.DISTRIBUTION_NAME != "FlashDevelop")
                 {
                     #pragma warning disable CS0162 // Unreachable code detected
                     contents = contents.Replace("FlashDevelop", DistroConfig.DISTRIBUTION_NAME);
                     #pragma warning restore CS0162 // Unreachable code detected
                 }
-                String[] varLines = contents.Split(new Char[1]{'\n'}, StringSplitOptions.RemoveEmptyEntries);
-                foreach (String line in varLines)
+                string[] varLines = contents.Split(new char[1]{'\n'}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string line in varLines)
                 {
                     this.insertComboBox.Items.Add(line.Trim());
                 }
@@ -563,16 +558,16 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Handles the inserting of an instruction
         /// </summary>
-        private void InsertComboBoxSelectedIndexChanged(Object sender, EventArgs e)
+        private void InsertComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.insertComboBox.SelectedItem != null && this.insertComboBox.SelectedIndex != 0)
             {
                 this.contentsTextBox.Focus();
-                String data = this.insertComboBox.SelectedItem.ToString();
+                var data = this.insertComboBox.SelectedItem.ToString();
                 if (!data.StartsWith('-'))
                 {
-                    Int32 variableEnd = data.IndexOfOrdinal(")") + 1;
-                    String variable = data.Substring(0, variableEnd);
+                    var variableEnd = data.IndexOf(')') + 1;
+                    var variable = data.Substring(0, variableEnd);
                     this.InsertText(this.contentsTextBox, variable);
                 }
                 this.insertComboBox.SelectedIndex = 0;
@@ -585,8 +580,8 @@ namespace FlashDevelop.Dialogs
         private void PromptToSaveSnippet()
         {
             if (this.snippetNameTextBox.Text.Length == 0) return;
-            String message = TextHelper.GetString("Info.SaveCurrentSnippet");
-            String caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.SaveCurrentSnippet");
+            string caption = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             if (MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 this.saveButton.Enabled = false;
@@ -597,7 +592,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Clears the texts to present a creation of a new item
         /// </summary>
-        private void AddButtonClick(Object sender, EventArgs e)
+        private void AddButtonClick(object sender, EventArgs e)
         {
             this.contentsTextBox.Text = "";
             this.snippetNameTextBox.Text = "";
@@ -608,11 +603,11 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Opens the revert settings dialog
         /// </summary>
-        private void RevertButtonClick(Object sender, EventArgs e)
+        private void RevertButtonClick(object sender, EventArgs e)
         {
-            String caption = TextHelper.GetString("Title.ConfirmDialog");
-            String message = TextHelper.GetString("Info.RevertSnippetFiles");
-            String appSnippetDir = Path.Combine(PathHelper.AppDir, "Snippets");
+            string caption = TextHelper.GetString("Title.ConfirmDialog");
+            string message = TextHelper.GetString("Info.RevertSnippetFiles");
+            string appSnippetDir = Path.Combine(PathHelper.AppDir, "Snippets");
             DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
@@ -626,16 +621,16 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Asks to export the snippet files
         /// </summary>
-        private void ExportButtonClick(Object sender, EventArgs e)
+        private void ExportButtonClick(object sender, EventArgs e)
         {
             if (this.saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 ZipFile zipFile = ZipFile.Create(this.saveFileDialog.FileName);
-                String[] snippetFiles = Directory.GetFiles(this.SnippetDir, "*.fds", SearchOption.AllDirectories);
+                string[] snippetFiles = Directory.GetFiles(this.SnippetDir, "*.fds", SearchOption.AllDirectories);
                 zipFile.BeginUpdate();
-                foreach (String snippetFile in snippetFiles)
+                foreach (string snippetFile in snippetFiles)
                 {
-                    Int32 index = snippetFile.IndexOfOrdinal("\\Snippets\\");
+                    int index = snippetFile.IndexOfOrdinal("\\Snippets\\");
                     zipFile.Add(snippetFile, "$(BaseDir)" + snippetFile.Substring(index));
                 }
                 zipFile.CommitUpdate();
@@ -646,13 +641,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Writes the snippet to the specified file
         /// </summary>
-        private void WriteFile(String name, String content)
+        private void WriteFile(string name, string content)
         {
             StreamWriter file;
             // Restore previous eol mode
             content = content.Replace("\r\n", LineEndDetector.GetNewLineMarker(this.eolMode));
-            String path = Path.Combine(this.SnippetDir, this.currentSyntax);
-            path = Path.Combine(path, name + ".fds");
+            var path = Path.Combine(SnippetDir, currentSyntax, name + ".fds");
             file = File.CreateText(path);
             file.Write(content);
             file.Close();
@@ -662,7 +656,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Inserts text to the current location or selection
         /// </summary>
-        private void InsertText(TextBox target, String text)
+        private void InsertText(TextBox target, string text)
         {
             target.SelectedText = text;
             target.Focus();
@@ -671,7 +665,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Shows the snippets dialog
         /// </summary>
-        public static new void Show()
+        public new static void Show()
         {
             SnippetDialog snippetDialog = new SnippetDialog();
             snippetDialog.CenterToParent();

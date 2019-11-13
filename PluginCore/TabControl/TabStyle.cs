@@ -3,8 +3,6 @@
  * See http://www.codeproject.com/info/cpol10.aspx for details
  */
 
-using System.Windows.Forms;
-
 namespace System.Windows.Forms
 {
 	public enum TabStyle{

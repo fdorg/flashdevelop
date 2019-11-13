@@ -1,9 +1,5 @@
-using System;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
@@ -14,10 +10,10 @@ namespace ProjectManager.Controls
 
     public class RecentProjectsMenu : ToolStripMenuItem
     {
-        private ToolStripMenuItem cleanItemMenu;
-        private ToolStripMenuItem cleanItemToolbar;
-        private ToolStripMenuItem clearItemMenu;
-        private ToolStripMenuItem clearItemToolbar;
+        private readonly ToolStripMenuItem cleanItemMenu;
+        private readonly ToolStripMenuItem cleanItemToolbar;
+        private readonly ToolStripMenuItem clearItemMenu;
+        private readonly ToolStripMenuItem clearItemToolbar;
         public event ProjectEventHandler ProjectSelected;
         public ToolStripDropDownButton ToolbarSelector;
 
@@ -137,7 +133,8 @@ namespace ProjectManager.Controls
                 RemoveOpenedProject(projectPath);
                 return;
             }
-            if (ProjectSelected != null) ProjectSelected(projectPath);
+
+            ProjectSelected?.Invoke(projectPath);
         }
 
     }

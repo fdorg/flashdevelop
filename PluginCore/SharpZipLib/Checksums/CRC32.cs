@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
     {
         const uint CrcSeed = 0xFFFFFFFF;
         
-        readonly static uint[] CrcTable = new uint[] {
+        static readonly uint[] CrcTable = new uint[] {
             0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419,
             0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832, 0x79DCB8A4,
             0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07,
@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
         
         internal static uint ComputeCrc32(uint oldCrc, byte value)
         {
-            return (uint)(CrcTable[(oldCrc ^ value) & 0xFF] ^ (oldCrc >> 8));
+            return CrcTable[(oldCrc ^ value) & 0xFF] ^ (oldCrc >> 8);
         }
         
         /// <summary>
@@ -137,12 +137,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// Returns the CRC32 data checksum computed so far.
         /// </summary>
         public long Value {
-            get {
-                return (long)crc;
-            }
-            set {
-                crc = (uint)value;
-            }
+            get => crc;
+            set => crc = (uint)value;
         }
         
         /// <summary>
@@ -174,8 +170,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// </param>
         public void Update(byte[] buffer)
         {
-            if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+            if (buffer is null) {
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             Update(buffer, 0, buffer.Length);
@@ -195,20 +191,20 @@ namespace ICSharpCode.SharpZipLib.Checksums
         /// </param>
         public void Update(byte[] buffer, int offset, int count)
         {
-            if (buffer == null) {
-                throw new ArgumentNullException("buffer");
+            if (buffer is null) {
+                throw new ArgumentNullException(nameof(buffer));
             }
             
             if ( count < 0 ) {
 #if NETCF_1_0
                 throw new ArgumentOutOfRangeException("count");
 #else
-                throw new ArgumentOutOfRangeException("count", "Count cannot be less than zero");
+                throw new ArgumentOutOfRangeException(nameof(count), "Count cannot be less than zero");
 #endif              
             }
             
             if (offset < 0 || offset + count > buffer.Length) {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
             
             crc ^= CrcSeed;

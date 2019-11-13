@@ -19,15 +19,11 @@ namespace ProjectManager.Projects
                     para[0] = file;
                     return (Project)projectType.GetMethod("Load").Invoke(null, para);
                 }
-                else
-                {
-                    throw new Exception("Invalid project type: " + Path.GetFileName(file));
-                }
+
+                throw new Exception("Invalid project type: " + Path.GetFileName(file));
             }
-            else
-            {
-                throw new Exception("Unknown project extension: " + Path.GetFileName(file));
-            }
+
+            throw new Exception("Unknown project extension: " + Path.GetFileName(file));
         }
     }
 }

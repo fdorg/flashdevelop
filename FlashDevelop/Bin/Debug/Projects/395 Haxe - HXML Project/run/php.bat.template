@@ -1,0 +1,4 @@
+@echo off
+cd "bin\php"
+php index.php
+pause

@@ -36,8 +36,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {
     /// <summary>
@@ -53,20 +51,16 @@ namespace Ude.Core
         public BitPackage stateTable;
         public int[] charLenTable;
         
-        private string name;
+        private readonly string name;
         
-        public string Name {
-            get { return name;  }
-        }
+        public string Name => name;
 
-        private int classFactor;
+        private readonly int classFactor;
 
-        public int ClassFactor {
-            get { return classFactor;  }
-        }
+        public int ClassFactor => classFactor;
 
         public SMModel(BitPackage classTable, int classFactor,
-            BitPackage stateTable, int[] charLenTable, String name)
+            BitPackage stateTable, int[] charLenTable, string name)
         {
             this.classTable = classTable;
             this.classFactor = classFactor;
@@ -77,7 +71,7 @@ namespace Ude.Core
         
         public int GetClass(byte b)
         {        
-            return classTable.Unpack((int)b);            
+            return classTable.Unpack(b);            
         }
     }    
 }

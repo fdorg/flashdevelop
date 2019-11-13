@@ -17,21 +17,21 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Path to the current application directory
         /// </summary>
-        public static String BaseDir => PluginBase.MainForm.StandaloneMode ? AppDir : UserAppDir;
+        public static string BaseDir => PluginBase.MainForm.StandaloneMode ? AppDir : UserAppDir;
 
         /// <summary>
         /// Path to the main application directory
         /// </summary>
-        public static String AppDir => Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
+        public static string AppDir => Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
 
         /// <summary>
         /// Path to the user's application directory
         /// </summary>
-        public static String UserAppDir
+        public static string UserAppDir
         {
             get
             {
-                String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 return Path.Combine(userAppDir, DistroConfig.DISTRIBUTION_NAME);
             }
         }
@@ -39,175 +39,109 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Path to the docs directory
         /// </summary>
-        public static String DocDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Docs");
-            }
-        }
+        public static string DocDir => Path.Combine(AppDir, "Docs");
 
         /// <summary>
         /// Path to the data directory
         /// </summary>
-        public static String DataDir
-        {
-            get
-            {
-                return Path.Combine(BaseDir, "Data");
-            }
-        }
+        public static string DataDir => Path.Combine(BaseDir, "Data");
 
         /// <summary>
         /// Path to the snippets directory
         /// </summary>
-        public static String SnippetDir
+        public static string SnippetDir
         {
             get
             {
-                String custom = PluginBase.Settings.CustomSnippetDir;
-                if (!String.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                else return Path.Combine(BaseDir, "Snippets");
+                string custom = PluginBase.Settings.CustomSnippetDir;
+                if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
+                return Path.Combine(BaseDir, "Snippets");
             }
         }
 
         /// <summary>
         /// Path to the templates directory
         /// </summary>
-        public static String TemplateDir
+        public static string TemplateDir
         {
             get
             {
-                String custom = PluginBase.Settings.CustomTemplateDir;
-                if (!String.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                else return Path.Combine(BaseDir, "Templates");
+                string custom = PluginBase.Settings.CustomTemplateDir;
+                if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
+                return Path.Combine(BaseDir, "Templates");
             }
         }
 
         /// <summary>
         /// Path to the project templates directory
         /// </summary>
-        public static String ProjectsDir
+        public static string ProjectsDir
         {
             get
             {
-                String custom = PluginBase.Settings.CustomProjectsDir;
-                if (!String.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
-                else return Path.Combine(AppDir, "Projects");
+                string custom = PluginBase.Settings.CustomProjectsDir;
+                if (!string.IsNullOrEmpty(custom) && Directory.Exists(custom)) return custom;
+                return Path.Combine(AppDir, "Projects");
             }
         }
 
         /// <summary>
         /// Path to the settings directory
         /// </summary>
-        public static String SettingDir
-        {
-            get
-            {
-                return Path.Combine(BaseDir, "Settings");
-            }
-        }
+        public static string SettingDir => Path.Combine(BaseDir, "Settings");
 
         /// <summary>
         /// Path to the custom shortcut directory
         /// </summary>
-        public static String ShortcutsDir
-        {
-            get
-            {
-                return Path.Combine(SettingDir, "Shortcuts");
-            }
-        }
+        public static string ShortcutsDir => Path.Combine(SettingDir, "Shortcuts");
 
         /// <summary>
         /// Path to the themes directory
         /// </summary>
-        public static String ThemesDir
-        {
-            get
-            {
-                return Path.Combine(SettingDir, "Themes");
-            }
-        }
+        public static string ThemesDir => Path.Combine(SettingDir, "Themes");
 
         /// <summary>
         /// Path to the user project templates directory
         /// </summary>
-        public static String UserProjectsDir
-        {
-            get
-            {
-                return Path.Combine(UserAppDir, "Projects");
-            }
-        }
+        public static string UserProjectsDir => Path.Combine(UserAppDir, "Projects");
 
         /// <summary>
         /// Path to the user lirbrary directory
         /// </summary>
-        public static String UserLibraryDir
-        {
-            get
-            {
-                return Path.Combine(UserAppDir, "Library");
-            }
-        }
+        public static string UserLibraryDir => Path.Combine(UserAppDir, "Library");
 
         /// <summary>
         /// Path to the library directory
         /// </summary>
-        public static String LibraryDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Library");
-            }
-        }
+        public static string LibraryDir => Path.Combine(AppDir, "Library");
 
         /// <summary>
         /// Path to the plugin directory
         /// </summary>
-        public static String PluginDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Plugins");
-            }
-        }
+        public static string PluginDir => Path.Combine(AppDir, "Plugins");
 
         /// <summary>
         /// Path to the users plugin directory
         /// </summary>
-        public static String UserPluginDir
-        {
-            get
-            {
-                return Path.Combine(UserAppDir, "Plugins");
-            }
-        }
+        public static string UserPluginDir => Path.Combine(UserAppDir, "Plugins");
 
         /// <summary>
         /// Path to the tools directory
         /// </summary>
-        public static String ToolDir
-        {
-            get
-            {
-                return Path.Combine(AppDir, "Tools");
-            }
-        }
+        public static string ToolDir => Path.Combine(AppDir, "Tools");
 
         /// <summary>
         /// Resolve the path to the mm.cfg file
         /// </summary>
-        public static String ResolveMMConfig()
+        public static string ResolveMMConfig()
         {
-            String homePath = Environment.GetEnvironmentVariable("HOMEPATH");
-            String homeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
-            if (!String.IsNullOrEmpty(homeDrive) && homePath != null)
+            string homePath = Environment.GetEnvironmentVariable("HOMEPATH");
+            string homeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
+            if (!string.IsNullOrEmpty(homeDrive) && homePath != null)
             {
                 try
                 {
-                    String tempPath = homeDrive + homePath;
+                    string tempPath = homeDrive + homePath;
                     DirectorySecurity security = Directory.GetAccessControl(tempPath);
                     AuthorizationRuleCollection rules = security.GetAccessRules(true, true, typeof(SecurityIdentifier));
                     WindowsIdentity currentUser = WindowsIdentity.GetCurrent();
@@ -224,7 +158,7 @@ namespace PluginCore.Helpers
                 }
                 catch {} // Not working...
             }
-            String userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
+            string userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
             return Path.Combine(userProfile, "mm.cfg");
         }
 
@@ -233,10 +167,7 @@ namespace PluginCore.Helpers
         /// - absolute or
         /// - relative to base path
         /// </summary>
-        public static String ResolvePath(String path)
-        {
-            return ResolvePath(path, null);
-        }
+        public static string ResolvePath(string path) => ResolvePath(path, null);
 
         /// <summary>
         /// Resolve a path which may be:
@@ -244,14 +175,14 @@ namespace PluginCore.Helpers
         /// - relative to a specified path, or 
         /// - relative to base path
         /// </summary>
-        public static String ResolvePath(String path, String relativeTo)
+        public static string ResolvePath(string path, string relativeTo)
         {
             if (string.IsNullOrEmpty(path)) return null;
-            Boolean isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
-            Boolean isPathAbsSlashed = (path.StartsWith('\\') || path.StartsWith('/')) && !isPathNetworked;
+            bool isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
+            bool isPathAbsSlashed = (path.StartsWith('\\') || path.StartsWith('/')) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
-            String resolvedPath;
+            string resolvedPath;
             if (relativeTo != null)
             {
                 resolvedPath = Path.Combine(relativeTo, path);
@@ -270,24 +201,22 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Converts a long path to a short representative one using ellipsis if necessary
         /// </summary>
-        public static String GetCompactPath(String path)
+        public static string GetCompactPath(string path)
         {
             try
             {
                 if (Win32.ShouldUseWin32())
                 {
-                    Int32 max = 64;
+                    const int max = 64;
                     StringBuilder sb = new StringBuilder(max);
                     Win32.PathCompactPathEx(sb, path, max, 0);
                     return sb.ToString();
                 }
-                else // For other platforms
-                {
-                    const String pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
-                    const String replacement = "$1$2...$3";
-                    if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
-                    else return path;
-                }
+
+                const string pattern = @"^(w+:|)([^]+[^]+).*([^]+[^]+)$";
+                const string replacement = "$1$2...$3";
+                if (Regex.IsMatch(path, pattern)) return Regex.Replace(path, pattern, replacement);
+                return path;
             }
             catch (Exception ex)
             {
@@ -299,18 +228,19 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Converts a long filename to a short one
         /// </summary>
-        public static String GetShortPathName(String longName)
+        public static string GetShortPathName(string longName)
         {
             try
             {
                 if (Win32.ShouldUseWin32())
                 {
-                    Int32 max = longName.Length + 1;
+                    int max = longName.Length + 1;
                     StringBuilder sb = new StringBuilder(max);
                     Win32.GetShortPathName(longName, sb, max);
                     return sb.ToString();
                 }
-                else return longName; // For other platforms
+
+                return longName; // For other platforms
             }
             catch (Exception ex)
             {
@@ -322,7 +252,7 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Converts a short filename to a long one
         /// </summary>
-        public static String GetLongPathName(String shortName)
+        public static string GetLongPathName(string shortName)
         {
             try
             {
@@ -332,7 +262,8 @@ namespace PluginCore.Helpers
                     Win32.GetLongPathName(shortName, longNameBuffer, longNameBuffer.Capacity);
                     return longNameBuffer.ToString();
                 }
-                else return shortName; // For other platforms
+
+                return shortName; // For other platforms
             }
             catch (Exception ex)
             {
@@ -344,23 +275,21 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Gets the correct physical path from the file system
         /// </summary>
-        public static String GetPhysicalPathName(String path)
+        public static string GetPhysicalPathName(string path)
         {
             try
             {
                 if (Win32.ShouldUseWin32())
                 {
-                    uint r;
-                    IntPtr ppidl;
                     int rgflnOut = 0;
-                    r = Win32.SHILCreateFromPath(path, out ppidl, ref rgflnOut);
+                    var r = Win32.SHILCreateFromPath(path, out var ppidl, ref rgflnOut);
                     if (r == 0)
                     {
                         StringBuilder sb = new StringBuilder(260);
                         if (Win32.SHGetPathFromIDList(ppidl, sb))
                         {
-                            Char sep = Path.DirectorySeparatorChar;
-                            Char alt = Path.AltDirectorySeparatorChar;
+                            char sep = Path.DirectorySeparatorChar;
+                            char alt = Path.AltDirectorySeparatorChar;
                             return sb.ToString().Replace(alt, sep);
                         }
                     }
@@ -377,39 +306,35 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Finds an app from 32-bit or 64-bit program files directories
         /// </summary>
-        public static String FindFromProgramFiles(String partialPath)
+        public static string FindFromProgramFiles(string partialPath)
         {
             // This return always x86, FlashDevelop is x86
-            String programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
-            String toolPath = Path.Combine(programFiles, partialPath);
+            string programFiles = Environment.GetEnvironmentVariable("ProgramFiles");
+            string toolPath = Path.Combine(programFiles, partialPath);
             if (File.Exists(toolPath)) return toolPath;
             if (programFiles.Contains(" (x86)")) // Is the app in x64 program files?
             {
                 toolPath = Path.Combine(programFiles.Replace(" (x86)", ""), partialPath);
                 if (File.Exists(toolPath)) return toolPath;
             }
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>
         /// Gets the 32-bit Java install path
         /// </summary>
-        public static String GetJavaInstallPath()
+        public static string GetJavaInstallPath()
         {
-            String javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
-            using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(javaKey))
-            {
-                String currentVersion = rk.GetValue("CurrentVersion").ToString();
-                using (RegistryKey key = rk.OpenSubKey(currentVersion))
-                {
-                    return key.GetValue("JavaHome").ToString();
-                }
-            }
+            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+            using var rk = Registry.LocalMachine.OpenSubKey(javaKey);
+            string currentVersion = rk.GetValue("CurrentVersion").ToString();
+            using var key = rk.OpenSubKey(currentVersion);
+            return key.GetValue("JavaHome").ToString();
         }
 
-        private static String GetAssemblyPath(Assembly assembly)
+        private static string GetAssemblyPath(Assembly assembly)
         {
-            String codeBase = assembly.CodeBase;
+            string codeBase = assembly.CodeBase;
 
             if (codeBase.ToLower().StartsWith(Uri.UriSchemeFile))
             {
@@ -474,8 +399,8 @@ namespace PluginCore.Helpers
             /// </summary>
             public const string EllipsisChars = "...";
 
-            private static Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
-            private static Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
+            private static readonly Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
+            private static readonly Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
 
             /// <summary>
             /// Truncates a text string to fit within a given width by replacing trimmed text with ellipses. 
@@ -490,12 +415,12 @@ namespace PluginCore.Helpers
                 if (string.IsNullOrEmpty(text))
                     return text;
 
-                // no aligment information
+                // no alignment information
                 if (((EllipsisFormat.Path | EllipsisFormat.Start | EllipsisFormat.End | EllipsisFormat.Middle) & options) == 0)
                     return text;
 
-                if (font == null)
-                    throw new ArgumentNullException("font");
+                if (font is null)
+                    throw new ArgumentNullException(nameof(font));
 
                 Size s = TextRenderer.MeasureText(text, font);
 
@@ -563,7 +488,7 @@ namespace PluginCore.Helpers
                     // restore path with <drive> and <filename>
                     if (isPath)
                     {
-                        tst = Path.Combine(Path.Combine(pre, tst), post);
+                        tst = Path.Combine(pre, tst, post);
                     }
                     s = TextRenderer.MeasureText(tst, font);
 
@@ -600,7 +525,7 @@ namespace PluginCore.Helpers
                         // "C:\...\filename.ext" No need to check for drive, but generates extra check
                         if (pre.Length > 0)
                         {
-                            fit = Path.Combine(Path.Combine(pre, EllipsisChars), post);
+                            fit = Path.Combine(pre, EllipsisChars, post);
 
                             s = TextRenderer.MeasureText(fit, font);
 

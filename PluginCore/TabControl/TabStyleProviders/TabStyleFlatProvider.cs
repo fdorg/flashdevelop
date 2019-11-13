@@ -26,12 +26,12 @@ namespace System.Windows.Forms
             this.RefreshColors();
         }
 
-        private Color GetThemeColor(String id)
+        private Color GetThemeColor(string id)
         {
             return PluginBase.MainForm.GetThemeColor(id);
         }
 
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.ApplyTheme) RefreshColors();
         }
@@ -81,7 +81,7 @@ namespace System.Windows.Forms
         {
             if (this._FocusTrack && this._TabControl.Focused && index == this._TabControl.SelectedIndex)
             {
-                Int32 width = 3;
+                int width = 3;
                 Rectangle focusRect = Rectangle.Empty;
                 RectangleF pathRect = tabpath.GetBounds();
                 Brush focusBrush = new SolidBrush(this._FocusColor);

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ResultsPanel
@@ -55,11 +52,11 @@ namespace ResultsPanel
                 {
                     switch (order)
                     {
-                        case System.Windows.Forms.SortOrder.Ascending:
+                        case SortOrder.Ascending:
                             lvColumn.fmt &= ~HDF_SORTDOWN;
                             lvColumn.fmt |= HDF_SORTUP;
                             break;
-                        case System.Windows.Forms.SortOrder.Descending:
+                        case SortOrder.Descending:
                             lvColumn.fmt &= ~HDF_SORTUP;
                             lvColumn.fmt |= HDF_SORTDOWN;
                             break;

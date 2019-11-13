@@ -17,87 +17,57 @@ namespace FileExplorer
 {
     public class PluginMain : IPlugin
     {
-        private String pluginName = "FileExplorer";
-        private String pluginGuid = "f534a520-bcc7-4fe4-a4b9-6931948b2686";
-        private String pluginHelp = "www.flashdevelop.org/community/";
-        private String pluginDesc = "Adds a file explorer panel to FlashDevelop.";
-        private String pluginAuth = "FlashDevelop Team";
-        private String settingFilename;
-        private String configFilename;
-        private Settings settingObject;
+        private string settingFilename;
+        private string configFilename;
         private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Image pluginImage;
-        private const String explorerAction = "explorer.exe /e,{0}";
+        private const string explorerAction = "explorer.exe /e,{0}";
 
         #region Required Properties
         
         /// <summary>
         /// Api level of the plugin
         /// </summary>
-        public Int32 Api
-        {
-            get { return 1; }
-        }
+        public int Api => 1;
 
         /// <summary>
         /// Name of the plugin
         /// </summary> 
-        public String Name
-        {
-            get { return this.pluginName; }
-        }
+        public string Name { get; } = nameof(FileExplorer);
 
         /// <summary>
         /// GUID of the plugin
         /// </summary>
-        public String Guid
-        {
-            get { return this.pluginGuid; }
-        }
+        public string Guid { get; } = "f534a520-bcc7-4fe4-a4b9-6931948b2686";
 
         /// <summary>
         /// Author of the plugin
         /// </summary> 
-        public String Author
-        {
-            get { return this.pluginAuth; }
-        }
+        public string Author { get; } = "FlashDevelop Team";
 
         /// <summary>
         /// Description of the plugin
         /// </summary> 
-        public String Description
-        {
-            get { return this.pluginDesc; }
-        }
+        public string Description { get; set; } = "Adds a file explorer panel to FlashDevelop.";
 
         /// <summary>
         /// Web address for help
         /// </summary> 
-        public String Help
-        {
-            get { return this.pluginHelp; }
-        }
+        public string Help { get; } = "www.flashdevelop.org/community/";
 
         /// <summary>
         /// Object that contains the settings
         /// </summary>
         [Browsable(false)]
-        Object IPlugin.Settings
-        {
-            get { return this.settingObject; }
-        }
+        object IPlugin.Settings => Settings;
 
         /// <summary>
         /// Internal access to settings
         /// </summary>
         [Browsable(false)]
-        public Settings Settings
-        {
-            get { return this.settingObject; }
-        }
-        
+        public Settings Settings { get; set; }
+
         #endregion
         
         #region Required Methods
@@ -107,69 +77,66 @@ namespace FileExplorer
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.AddEventHandlers();
-            this.CreatePluginPanel();
-            this.CreateMenuItem();
+            InitBasics();
+            LoadSettings();
+            AddEventHandlers();
+            CreatePluginPanel();
+            CreateMenuItem();
         }
         
         /// <summary>
         /// Disposes the plugin
         /// </summary>
-        public void Dispose()
-        {
-            this.SaveSettings();
-        }
-        
+        public void Dispose() => SaveSettings();
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
                 case EventType.UIStarted:
-                    this.pluginUI.Initialize(null, null);
+                    pluginUI.Initialize(null, null);
                     break;
 
                 case EventType.Command:
-                    DataEvent evnt = (DataEvent)e;
-                    switch (evnt.Action)
+                    var de = (DataEvent)e;
+                    switch (de.Action)
                     {
                         case "FileExplorer.BrowseTo":
-                            this.pluginUI.BrowseTo(evnt.Data.ToString());
-                            this.OpenPanel(null, null);
-                            evnt.Handled = true;
+                            pluginUI.BrowseTo(de.Data.ToString());
+                            OpenPanel(null, null);
+                            de.Handled = true;
                             break;
 
                         case "FileExplorer.Explore":
-                            ExploreDirectory(evnt.Data.ToString());
-                            evnt.Handled = true;
+                            ExploreDirectory(de.Data.ToString());
+                            de.Handled = true;
                             break;
 
                         case "FileExplorer.FindHere":
-                            FindHere((String[])evnt.Data);
-                            evnt.Handled = true;
+                            FindHere((string[])de.Data);
+                            de.Handled = true;
                             break;
 
                         case "FileExplorer.PromptHere":
-                            PromptHere(evnt.Data.ToString());
-                            evnt.Handled = true;
+                            PromptHere(de.Data.ToString());
+                            de.Handled = true;
                             break;
 
                         case "FileExplorer.GetContextMenu":
-                            evnt.Data = this.pluginUI.GetContextMenu();
-                            evnt.Handled = true;
+                            de.Data = pluginUI.GetContextMenu();
+                            de.Handled = true;
                             break;
                     }
                     break;
 
                 case EventType.FileOpen:
-                    TextEvent evnt2 = (TextEvent)e;
-                    if (File.Exists(evnt2.Value))
+                    TextEvent te = (TextEvent)e;
+                    if (File.Exists(te.Value))
                     {
-                        this.pluginUI.AddToMRU(evnt2.Value);
+                        pluginUI.AddToMRU(te.Value);
                     }
                     break;
             }
@@ -194,13 +161,13 @@ namespace FileExplorer
                 }
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("explorer")) config["explorer"] = explorerAction;
-                String explorer = PluginBase.MainForm.ProcessArgString(config["explorer"]);
-                int start = explorer.StartsWith('\"') ? explorer.IndexOfOrdinal("\"", 2) : 0;
-                int p = explorer.IndexOfOrdinal(" ", start);
+                string explorer = PluginBase.MainForm.ProcessArgString(config["explorer"]);
+                int start = explorer.StartsWith('\"') ? explorer.IndexOf('\"', 2) : 0;
+                int p = explorer.IndexOf(' ', start);
                 if (!path.StartsWith('\"')) path = "\"" + path + "\"";
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(explorer.Substring(0, p));
-                psi.Arguments = String.Format(explorer.Substring(p + 1), path);
+                psi.Arguments = string.Format(explorer.Substring(p + 1), path);
                 psi.WorkingDirectory = path;
                 ProcessHelper.StartAsync(psi);
             }
@@ -213,16 +180,14 @@ namespace FileExplorer
         /// <summary>
         /// Opens the selected path in command prompt
         /// </summary>
-        private void FindHere(string[] paths)
+        private void FindHere(IEnumerable<string> paths)
         {
-            if (paths == null) return;
-            List<String> pathsList = new List<String>(paths);
+            if (paths is null) return;
+            var pathsList = new List<string>(paths);
             pathsList.RemoveAll(p => !Directory.Exists(p));
-            if (pathsList.Count > 0)
-            {
-                String path = String.Join(";", pathsList.ToArray());
-                PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
-            }
+            if (pathsList.Count == 0) return;
+            string path = string.Join(";", pathsList.ToArray());
+            PluginBase.MainForm.CallCommand("FindAndReplaceInFilesFrom", path);
         }
 
         /// <summary>
@@ -240,13 +205,13 @@ namespace FileExplorer
                 }*/
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("cmd")) config["cmd"] = PluginBase.MainForm.CommandPromptExecutable;
-                String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
-                int start = cmd.StartsWith('\"') ? cmd.IndexOfOrdinal("\"", 2) : 0;
-                int p = cmd.IndexOfOrdinal(" ", start);
+                string cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
+                int start = cmd.StartsWith('\"') ? cmd.IndexOf('\"', 2) : 0;
+                int p = cmd.IndexOf(' ', start);
                 if (path.StartsWith('\"') && path.Length > 2) path = path.Substring(1, path.Length - 2);
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(p > 0 ? cmd.Substring(0, p) : cmd);
-                if (p > 0) psi.Arguments = String.Format(cmd.Substring(p + 1), path);
+                if (p > 0) psi.Arguments = string.Format(cmd.Substring(p + 1), path);
                 psi.WorkingDirectory = path;
                 ProcessHelper.StartAsync(psi);
             }
@@ -261,12 +226,12 @@ namespace FileExplorer
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "FileExplorer");
-            if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.configFilename = Path.Combine(dataPath, "Config.ini");
-            this.pluginDesc = TextHelper.GetString("Info.Description");
-            this.pluginImage = PluginBase.MainForm.FindImage("209");
+            var path = Path.Combine(PathHelper.DataDir, nameof(FileExplorer));
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            settingFilename = Path.Combine(path, "Settings.fdb");
+            configFilename = Path.Combine(path, "Config.ini");
+            Description = TextHelper.GetString("Info.Description");
+            pluginImage = PluginBase.MainForm.FindImage("209");
         }
 
         /// <summary>
@@ -274,7 +239,7 @@ namespace FileExplorer
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
+            const EventType eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
             EventManager.AddEventHandler(this, eventMask, HandlingPriority.Low);
         }
 
@@ -283,9 +248,9 @@ namespace FileExplorer
         /// </summary>
         public void CreateMenuItem()
         {
-            String label = TextHelper.GetString("Label.ViewMenuItem");
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, new EventHandler(this.OpenPanel));
+            var label = TextHelper.GetString("Label.ViewMenuItem");
+            var viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
+            var viewItem = new ToolStripMenuItem(label, pluginImage, OpenPanel);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowFiles", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }
@@ -295,9 +260,8 @@ namespace FileExplorer
         /// </summary>
         public void CreatePluginPanel()
         {
-            this.pluginUI = new PluginUI(this);
-            this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockRight);
+            pluginUI = new PluginUI(this) {Text = TextHelper.GetString("Title.PluginPanel")};
+            pluginPanel = PluginBase.MainForm.CreateDockablePanel(pluginUI, Guid, pluginImage, DockState.DockRight);
         }
 
         /// <summary>
@@ -305,13 +269,9 @@ namespace FileExplorer
         /// </summary>
         public void LoadSettings()
         {
-            this.settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) this.SaveSettings();
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
-                this.settingObject = (Settings)obj;
-            }
+            Settings = new Settings();
+            if (!File.Exists(settingFilename)) SaveSettings();
+            else Settings = (Settings) ObjectSerializer.Deserialize(settingFilename, Settings);
             if (!File.Exists(configFilename))
             {
                 File.WriteAllText(configFilename, "[actions]\r\n#explorer=" + explorerAction + "\r\n#cmd=" + PluginBase.MainForm.CommandPromptExecutable + "\r\n");
@@ -321,21 +281,13 @@ namespace FileExplorer
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(settingFilename, Settings);
 
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
-        {
-            this.pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         #endregion
-
     }
-    
 }
