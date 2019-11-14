@@ -460,12 +460,7 @@ namespace FlashDevelop
             EventManager.DispatchEvent(this, te);
             if (te.Handled)
             {
-                if (Documents.Length == 0)
-                {
-                    SmartNew(null, null);
-                    return null;
-                }
-
+                if (Documents.Length == 0) SmartNew(null, null);
                 return null;
             }
 
@@ -3860,8 +3855,7 @@ namespace FlashDevelop
                     }
                     else
                     {
-                        ProcessStartInfo psi = new ProcessStartInfo(args);
-                        psi.WorkingDirectory = WorkingDirectory;
+                        var psi = new ProcessStartInfo(args) {WorkingDirectory = WorkingDirectory};
                         ProcessHelper.StartAsync(psi);
                     }
                 }
@@ -3917,12 +3911,12 @@ namespace FlashDevelop
         /// </summary>
         void ProcessEnded(object sender, int exitCode)
         {
-            if (InvokeRequired) BeginInvoke((MethodInvoker)delegate { ProcessEnded(sender, exitCode); });
+            if (InvokeRequired) BeginInvoke((MethodInvoker)(() => ProcessEnded(sender, exitCode)));
             else
             {
-                string result = $"Done({exitCode})";
+                var result = $"Done({exitCode})";
                 TraceManager.Add(result, (int)TraceType.ProcessEnd);
-                TextEvent te = new TextEvent(EventType.ProcessEnd, result);
+                var te = new TextEvent(EventType.ProcessEnd, result);
                 EventManager.DispatchEvent(this, te);
                 ButtonManager.UpdateFlaggedButtons();
             }

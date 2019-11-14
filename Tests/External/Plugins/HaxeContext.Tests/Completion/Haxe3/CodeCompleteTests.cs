@@ -470,7 +470,7 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData("GetToolTipText_issue2439_1")
-                    .SetName("var type:Class<complete>. Issue2439_1. Issue 2439. Case 1")
+                    .SetName("var type:Class<complete>. Issue 2439. Case 1")
                     .Returns("public class ClassIssue2439_1");
             }
         }
@@ -480,8 +480,18 @@ namespace HaXeContext.Completion.Haxe3
             get
             {
                 yield return new TestCaseData("GetToolTipText_issue2804_1")
-                    .SetName("case First<complete>. Issue2804_1. Issue 2804. Case 1")
+                    .SetName("case First<complete>. Issue 2804. Case 1")
                     .Returns("static public inline var First : AInt = 1\n[COLOR=Black]in Issue2804_1[/COLOR]");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GetToolTipTextIssue2818TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetToolTipText_issue2818_1")
+                    .SetName("a +<complete> b. Issue 2818. Case 1")
+                    .Returns("static public inline plus (a:AType, b:Int) : AType\n[COLOR=Black]in Issue2818_1[/COLOR]");
             }
         }
 
@@ -490,6 +500,7 @@ namespace HaXeContext.Completion.Haxe3
             TestCaseSource(nameof(GetToolTipTextTestCases)),
             TestCaseSource(nameof(GetToolTipTextIssue2439TestCases)),
             TestCaseSource(nameof(GetToolTipTextIssue2804TestCases)),
+            TestCaseSource(nameof(GetToolTipTextIssue2818TestCases)),
         ]
         public string GetToolTipText(string fileName)
         {

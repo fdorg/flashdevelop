@@ -1425,7 +1425,7 @@ namespace ASCompletion.Completion
                 prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
                 string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text, false);
+                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text);
             }
 
             // highlight
@@ -1693,8 +1693,7 @@ namespace ASCompletion.Completion
         {
             if (calltipMember?.Parameters is null || paramIndex >= calltipMember.Parameters.Count)
                 return ClassModel.VoidClass;
-            var param = calltipMember.Parameters[paramIndex];
-            var type = param.Type;
+            var type = calltipMember.Parameters[paramIndex].Type;
             if (indexTypeOnly && (string.IsNullOrEmpty(type) || !type.Contains('@')))
                 return ClassModel.VoidClass;
             if (ASContext.Context.Features.objectKey == "Dynamic" && type.StartsWithOrdinal("Dynamic@"))
@@ -2161,16 +2160,14 @@ namespace ASCompletion.Completion
             currentClassHash = classScope?.QualifiedName;
 
             // if the completion history has a matching entry, it means the user has previously completed from this class.
-            if (currentClassHash != null && completionHistory.ContainsKey(currentClassHash))
+            if (currentClassHash is null || !completionHistory.ContainsKey(currentClassHash)) return;
+            // If the last-completed member for the class starts with the currently typed text (tail), select it!
+            // Note that if the tail is currently empty (i.e., the user has just typed the first dot), this still passes.
+            // This allows it to highlight the last-completed member instantly just by hitting the dot.
+            // Also does a check if the tail matches exactly the currently selected item; don't change it!
+            if (CompletionList.SelectedLabel != tail && completionHistory[currentClassHash].ToLower().StartsWithOrdinal(tail.ToLower()))
             {
-                // If the last-completed member for the class starts with the currently typed text (tail), select it!
-                // Note that if the tail is currently empty (i.e., the user has just typed the first dot), this still passes.
-                // This allows it to highlight the last-completed member instantly just by hitting the dot.
-                // Also does a check if the tail matches exactly the currently selected item; don't change it!
-                if (CompletionList.SelectedLabel != tail && completionHistory[currentClassHash].ToLower().StartsWithOrdinal(tail.ToLower()))
-                {
-                    CompletionList.SelectItem(completionHistory[currentClassHash]);
-                }
+                CompletionList.SelectItem(completionHistory[currentClassHash]);
             }
         }
 
@@ -3280,8 +3277,7 @@ namespace ASCompletion.Completion
                     if (tmpClass.InFile.Version < 3)
                     {
                         if (token.EndsWithOrdinal("_mc") || token.StartsWithOrdinal("mc")) autoType = "MovieClip";
-                        else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt"))
-                            autoType = "TextField";
+                        else if (token.EndsWithOrdinal("_txt") || token.StartsWithOrdinal("txt")) autoType = "TextField";
                         else if (token.EndsWithOrdinal("_btn") || token.StartsWithOrdinal("bt")) autoType = "Button";
                     }
                     else if (tmpClass.InFile.Version == 3)
@@ -4846,12 +4842,12 @@ namespace ASCompletion.Completion
             return code.ToString();
         }
 
-        static string GetFileContents(FileModel model)
+        private static string GetFileContents(FileModel model)
         {
-            if (model is null || model.FileName.Length == 0 || !File.Exists(model.FileName)) return null;
+            if (model is null || string.IsNullOrEmpty(model.FileName) || !File.Exists(model.FileName)) return null;
             foreach (var doc in PluginBase.MainForm.Documents)
             {
-                if (doc.IsEditable && doc.FileName.Equals(model.FileName, StringComparison.OrdinalIgnoreCase))
+                if (doc.IsEditable && string.Equals(doc.FileName, model.FileName, StringComparison.CurrentCultureIgnoreCase))
                 {
                     return doc.SciControl.Text;
                 }
@@ -4888,7 +4884,7 @@ namespace ASCompletion.Completion
         protected virtual string GetConstructorTooltipText(ClassModel type)
         {
             var name = type.Name;
-            var member = type.Members.Search(name, FlagType.Constructor, 0)
+            var member = type.Members.Search(name, FlagType.Constructor, 0) 
                          ?? new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
             return MemberTooltipText(member, type) + GetToolTipDoc(member);
         }

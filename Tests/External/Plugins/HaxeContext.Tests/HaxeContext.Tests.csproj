@@ -1797,6 +1797,7 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_6.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeInitializeLocalVariable_issue2762_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_issue2818_1.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
