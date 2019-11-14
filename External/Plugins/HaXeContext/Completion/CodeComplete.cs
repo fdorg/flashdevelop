@@ -1235,7 +1235,7 @@ namespace HaXeContext.Completion
                     {
                         var endPosition = ExpressionEndPosition(sci, position + 1, true);
                         var rightExpr = GetExpressionType(sci, endPosition, false, true);
-                        foreach (MemberModel member in leftExprType.Members)
+                        foreach (var member in leftExprType.Members)
                         {
                             if ((rightExpr.Type is null || (member.Parameters?.Count >= 2 && member.Parameters[1].Type == rightExpr.Type.Name))
                                 && member.MetaDatas?.FirstOrDefault(it => it.Name == ":op") is { } meta
