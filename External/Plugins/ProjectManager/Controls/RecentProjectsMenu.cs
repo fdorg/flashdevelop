@@ -39,6 +39,7 @@ namespace ProjectManager.Controls
 
         public void AddOpenedProject(string projectPath)
         {
+            if (!File.Exists(projectPath)) return;
             if (PluginMain.Settings.RecentProjects.Contains(projectPath))
             {
                 PluginMain.Settings.RecentProjects.Remove(projectPath);

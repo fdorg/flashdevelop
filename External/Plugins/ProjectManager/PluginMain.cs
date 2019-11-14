@@ -27,6 +27,7 @@ namespace ProjectManager
     public static class ProjectManagerCommands
     {
         public const string NewProject = "ProjectManager.NewProject";
+        public const string OpenFolder = "ProjectManager.OpenFolder";
         public const string OpenProject = "ProjectManager.OpenProject";
         public const string SendProject = "ProjectManager.SendProject";
         public const string BuildProject = "ProjectManager.BuildProject";
@@ -92,7 +93,7 @@ namespace ProjectManager
 
         const EventType eventMask = EventType.UIStarted | EventType.UIClosing | EventType.FileOpening
             | EventType.FileOpen | EventType.FileSave | EventType.FileSwitch | EventType.ProcessStart | EventType.ProcessEnd
-            | EventType.ProcessArgs | EventType.Command | EventType.Keys | EventType.ApplySettings;
+            | EventType.ProcessArgs | EventType.Command | EventType.Keys | EventType.ApplySettings | EventType.FolderOpen;
 
         #region Load/Save Settings
 
@@ -201,6 +202,7 @@ namespace ProjectManager
             
             menus.ProjectMenu.NewProject.Click += delegate { NewProject(); };
             menus.ProjectMenu.OpenProject.Click += delegate { OpenProject(); };
+            menus.ProjectMenu.OpenFolder.Click += delegate { OpenFolder(); };
             menus.ProjectMenu.ImportProject.Click += ImportProject;
             menus.ProjectMenu.CloseProject.Click += delegate { CloseProject(false); };
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
@@ -227,6 +229,7 @@ namespace ProjectManager
 
             pluginUI = new PluginUI(menus, fileActions, projectActions);
             pluginUI.NewProject += delegate { NewProject(); };
+            pluginUI.OpenFolder += delegate { OpenFolder(); };
             pluginUI.OpenProject += delegate { OpenProject(); };
             pluginUI.ImportProject += ImportProject;
             pluginUI.Rename += fileActions.Rename;
@@ -401,6 +404,14 @@ namespace ProjectManager
                     }
                     break;
 
+                case EventType.FolderOpen:
+                    if (Directory.Exists(te.Value))
+                    {
+                        te.Handled = true;
+                        OpenFolderSilent(te.Value);
+                    }
+                    break;
+
                 case EventType.FileOpening:
                     // if this is a project file, we can handle it ourselves
                     if (FileInspector.IsProject(te.Value) || ProjectCreator.IsKnownProject(Path.GetExtension(te.Value).ToLower()))
@@ -453,6 +464,15 @@ namespace ProjectManager
                         if (de.Action == ProjectManagerCommands.NewProject)
                         {
                             NewProject();
+                            e.Handled = true;
+                        }
+                        else if (de.Action == ProjectManagerCommands.OpenFolder)
+                        {
+                            if (de.Data != null && Directory.Exists((string)de.Data))
+                            {
+                                OpenFolderSilent((string)de.Data);
+                            }
+                            else OpenFolder();
                             e.Handled = true;
                         }
                         else if (de.Action == ProjectManagerCommands.OpenProject)
@@ -984,6 +1004,10 @@ namespace ProjectManager
 
         public void UpdateUIStatus(ProjectManagerUIStatus status)
         {
+            if (activeProject != null && activeProject.IsFolderProject())
+            {
+                status = ProjectManagerUIStatus.Disabled;
+            }
             var contextMenuItem = pluginUI.Menu.BuildProject;
             var menuItem = menus.ProjectMenu.BuildProject;
             var menuButton = menus.BuildProject;
@@ -1041,6 +1065,18 @@ namespace ProjectManager
         void OpenProject()
         {
             var project = projectActions.OpenProject();
+            if (project != null) SetProject(project);
+        }
+
+        void OpenFolder()
+        {
+            Project project = projectActions.OpenFolder();
+            if (project != null) SetProject(project);
+        }
+
+        void OpenFolderSilent(string path)
+        {
+            Project project = projectActions.OpenFolderSilent(path);
             if (project != null) SetProject(project);
         }
 

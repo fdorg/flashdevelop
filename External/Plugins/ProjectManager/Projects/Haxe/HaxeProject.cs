@@ -25,7 +25,7 @@ namespace ProjectManager.Projects.Haxe
         public override string Language => "haxe";
         public override string LanguageDisplayName => "Haxe";
         public override bool IsCompilable => true;
-        public override bool ReadOnly => false;
+        public override bool ReadOnly => IsFolderProject();
         public override bool HasLibraries => OutputType == OutputType.Application && IsFlashOutput;
         public override bool RequireLibrary => IsFlashOutput;
         public override string DefaultSearchFilter => "*.hx;*.hxp";
@@ -42,7 +42,7 @@ namespace ProjectManager.Projects.Haxe
         public string[] RawHXML
         {
             get => rawHXML;
-            set => ParseHXML(value);
+            set => ParseHxml(value);
         }
 
         public new HaxeOptions CompilerOptions => (HaxeOptions)base.CompilerOptions;
@@ -151,10 +151,7 @@ namespace ProjectManager.Projects.Haxe
             var pr = new List<string>();
             var isFlash = IsFlashOutput;
 
-            if (rawHXML != null)
-            {
-                pr.AddRange(rawHXML);
-            }
+            if (rawHXML != null) pr.AddRange(rawHXML);
             else
             {
                 // SWC libraries
@@ -326,59 +323,49 @@ namespace ProjectManager.Projects.Haxe
 
         #region HXML parsing
 
-        void ParseHXML(string[] raw)
+        void ParseHxml(string[] lines)
         {
-            if (raw != null && (raw.Length == 0 || raw[0] is null))
-                raw = null;
-            rawHXML = raw;
+            if (lines != null && (lines.Length == 0 || lines[0] is null)) lines = null;
+            rawHXML = lines;
+            var entries = new HxmlEntries();
+            if (lines != null) ParseHxmlEntries(lines, entries);
 
-            var libs = new List<string>();
-            var defs = new List<string>();
-            var cps = new List<string>();
-            var add = new List<string>();
-            var target = PlatformData.JAVASCRIPT_PLATFORM;
-            var haxeTarget = "js";
-            var output = string.Empty;
-            if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ".");
-
-            CompilerOptions.Directives = defs.ToArray();
-            CompilerOptions.Libraries = libs.ToArray();
-            CompilerOptions.Additional = add.ToArray();
+            CompilerOptions.Directives = entries.defs.ToArray();
+            CompilerOptions.Libraries = entries.libs.ToArray();
+            CompilerOptions.Additional = entries.add.ToArray();
             Classpaths.Clear();
-            if (cps.Count == 0) Classpaths.Add(".");
-            else Classpaths.AddRange(cps);
-
+            if (entries.cps.Count == 0) Classpaths.Add(".");
+            else Classpaths.AddRange(entries.cps);
             if (MovieOptions.HasPlatformSupport)
             {
                 var platform = MovieOptions.PlatformSupport;
                 MovieOptions.TargetBuildTypes = platform.Targets;
 
                 if (platform.Name == "hxml" && string.IsNullOrEmpty(TargetBuild))
-                    TargetBuild = haxeTarget ?? string.Empty;
+                    TargetBuild = entries.haxeTarget ?? string.Empty;
             }
             else MovieOptions.TargetBuildTypes = null;
             if (MovieOptions.TargetBuildTypes is null)
             {
-                OutputPath = output;
+                OutputPath = entries.output;
                 OutputType = OutputType.Application;
-                MovieOptions.Platform = target;
+                MovieOptions.Platform = entries.target;
             }
         }
 
-        void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
+        void ParseHxmlEntries(string[] lines, HxmlEntries entries)
         {
             var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
-            foreach (var line in lines)
+            for (var i = 0; i < lines.Length; i++)
             {
+                var line = lines[i];
                 if (line is null) break;
                 var trimmedLine = line.Trim();
                 var m = reHxOp.Match(trimmedLine);
                 if (m.Success)
                 {
                     var op = m.Groups[1].Value;
-                    if (op == "-next")
-                        break; // ignore the rest
-
+                    if (op == "-next") break; // ignore the rest
                     var value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
@@ -386,21 +373,21 @@ namespace ProjectManager.Projects.Haxe
                         case "D":
                         // Haxe 4
                         case "-define":
-                            defs.Add(value);
+                            entries.defs.Add(value);
                             break;
                         // Haxe 3
                         case "cp":
                         // Haxe 4
                         case "p":
                         case "-class-path":
-                            cps.Add(CleanPath(value, cwd));
+                            entries.cps.Add(CleanPath(value, entries.cwd));
                             break;
                         // Haxe 3
                         case "lib":
                         // Haxe 4
                         case "L":
                         case "-library":
-                            libs.Add(value);
+                            entries.libs.Add(value);
                             break;
                         // Haxe 3
                         case "main":
@@ -414,9 +401,9 @@ namespace ProjectManager.Projects.Haxe
                         case "swf9":
                         // Haxe 4
                         case "-swf":
-                            target = PlatformData.FLASHPLAYER_PLATFORM;
-                            haxeTarget = "flash";
-                            output = value;
+                            entries.target = PlatformData.FLASHPLAYER_PLATFORM;
+                            entries.haxeTarget = "flash";
+                            entries.output = value;
                             break;
                         // Haxe 3
                         case "swf-header":
@@ -431,41 +418,47 @@ namespace ProjectManager.Projects.Haxe
                         case "-connect": break; // ignore
                         case "-each": break; // ignore
                         case "-cwd":
-                            cwd = CleanPath(value, cwd);
+                            entries.cwd = CleanPath(value, entries.cwd);
+                            break;
+                        // Haxe 3
+                        case "as3":
+                        // Haxe 4
+                        case "-as3":
+                            entries.target = PlatformData.CUSTOM_PLATFORM;
+                            entries.haxeTarget = "flash";
+                            entries.output = "as3";
                             break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
                             var targetPlatform = FindPlatform(op);
                             if (targetPlatform != null)
                             {
-                                target = targetPlatform.Name;
-                                haxeTarget = targetPlatform.HaxeTarget;
-                                output = value;
+                                entries.target = targetPlatform.Name;
+                                entries.haxeTarget = targetPlatform.HaxeTarget;
+                                entries.output = value;
                             }
-                            else add.Add(line);
+                            else entries.add.Add(line);
                             break;
                     }
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    var subhxml = GetAbsolutePath(CleanPath(trimmedLine, cwd));
-                    if (File.Exists(subhxml))
+                    var subhxml = GetAbsolutePath(CleanPath(trimmedLine, entries.cwd));
+                    if (entries.Dependencies.Contains(subhxml))
                     {
-                        ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output, cwd);
+                        // Cyclic dependency
+                        // TODO slavara: print error
+                    }
+                    else if (File.Exists(subhxml))
+                    {
+                        entries.Dependencies.Add(subhxml);
+                        ParseHxmlEntries(File.ReadAllLines(subhxml), entries);
                     }
                 }
             }
         }
 
-        static LanguagePlatform FindPlatform(string op)
-        {
-            var lang = PlatformData.SupportedLanguages["haxe"];
-            foreach (var platform in lang.Platforms.Values)
-            {
-                if (platform.HaxeTarget == op) return platform;
-            }
-            return null;
-        }
+        static LanguagePlatform FindPlatform(string target) => PlatformData.SupportedLanguages["haxe"].Platforms.Values.FirstOrDefault(it => it.HaxeTarget == target);
 
         string CleanPath(string path, string cwd)
         {
@@ -479,5 +472,18 @@ namespace ProjectManager.Projects.Haxe
             return GetRelativePath(absPath);
         }
         #endregion
+
+        class HxmlEntries
+        {
+            public readonly HashSet<string> Dependencies = new HashSet<string>();
+            public readonly List<string> defs = new List<string>();
+            public readonly List<string> cps = new List<string>();
+            public readonly List<string> libs = new List<string>();
+            public readonly List<string> add = new List<string>();
+            public string target = PlatformData.JAVASCRIPT_PLATFORM;
+            public string haxeTarget = "js";
+            public string output = string.Empty;
+            public string cwd = ".";
+        }
     }
 }

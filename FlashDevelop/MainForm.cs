@@ -1347,19 +1347,24 @@ namespace FlashDevelop
                 BeginInvoke((MethodInvoker)(() => OnScintillaControlDropFiles(null, data)));
                 return;
             }
-            string[] files = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
-            foreach (string file in files)
+            var files = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
+            foreach (var file in files)
             {
                 if (File.Exists(file))
                 {
-                    DockContent doc = OpenEditableDocument(file);
+                    var doc = OpenEditableDocument(file);
                     if (doc is null || ModifierKeys == Keys.Control) return;
-                    DockContent drop = DocumentManager.FindDocument(sci) as DockContent;
+                    var drop = DocumentManager.FindDocument(sci) as DockContent;
                     if (drop?.Pane != null)
                     {
                         doc.DockTo(drop.Pane, DockStyle.Fill, -1);
                         doc.Activate();
                     }
+                }
+                else if (Directory.Exists(file))
+                {
+                    var de = new TextEvent(EventType.FolderOpen, file);
+                    EventManager.DispatchEvent(this, de);
                 }
             }
         }
