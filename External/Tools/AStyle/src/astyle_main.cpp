@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // astyle_main.cpp
 // Copyright (c) 2016 by Jim Pattee <jimp03@email.com>.
 // Licensed under the MIT license.
